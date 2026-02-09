@@ -64,7 +64,7 @@ export class MessageService {
     setTimeout(() => this.removeToast(toast.id), duration);
   }
 
-  private removeToast(id: number): void {
+  removeToast(id: number): void {
     this.toasts$.next(this.toasts$.value.filter(t => t.id !== id));
   }
 }
