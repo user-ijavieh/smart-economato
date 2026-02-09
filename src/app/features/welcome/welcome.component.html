@@ -1,0 +1,43 @@
+<div class="container">
+  <!-- Carrusel de Fondo -->
+  <div class="backgroundCarousel">
+    @for (slide of slides; track slide; let i = $index) {
+      <div
+        class="carousel-slide"
+        [class.active]="i === currentSlide"
+        [style.background-image]="'url(' + slide + ')'"
+      ></div>
+    }
+  </div>
+
+  <!-- Overlay semitransparente -->
+  <div class="overlay"></div>
+
+  <!-- Header -->
+  <div class="header">
+    <img src="/assets/img/Candelaria.svg" alt="Candelaria" class="header-logo">
+    <h1>Inicio</h1>
+  </div>
+
+  <!-- Contenido -->
+  <div class="mainContent">
+    <h2 class="welcome-title">¡Bienvenido a Smart Economato!</h2>
+
+    <div class="buttonsContainer">
+      @for (card of navCards; track card.route) {
+        <a [routerLink]="card.route" class="btn-card">
+          <div class="btn-card-icon">
+            <img [src]="card.icon" [alt]="card.label">
+          </div>
+          <span>{{ card.label }}</span>
+        </a>
+      }
+      <a href="javascript:void(0)" (click)="logout()" class="btn-card btn-logout">
+        <div class="btn-card-icon">
+          <img src="/assets/img/icons/arrow.svg" alt="Cerrar Sesión">
+        </div>
+        <span>Cerrar Sesión</span>
+      </a>
+    </div>
+  </div>
+</div>

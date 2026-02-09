@@ -1,1 +1,85 @@
-/* You can add global styles to this file, and also import other style files */
+/* ============================================
+   TEMA PERSONALIZADO - Smart Economato
+   ============================================ */
+
+:root {
+  /* Colores principales */
+  --primary-color: #B84B44;
+  --secondary-color: #FAE7E0;
+  --login-background-color: #fae7e0b1;
+
+  /* Sidebar */
+  --base-clr: #B84B44;
+  --line-clr: rgba(255, 255, 255, 0.15);
+  --hover-clr: rgba(255, 255, 255, 0.1);
+  --text-clr: #ffffff;
+  --accent-clr: #ffffff;
+  --secondary-text-clr: rgba(255, 255, 255, 0.7);
+  --content-bg: #FAE7E0;
+
+  /* Toast / Message Service */
+  --toast-success-bg: #10b981;
+  --toast-success-border: #059669;
+  --toast-error-bg: #ef4444;
+  --toast-error-border: #dc2626;
+  --toast-info-bg: #3b82f6;
+  --toast-info-border: #2563eb;
+  --toast-warning-bg: #f59e0b;
+  --toast-warning-border: #d97706;
+
+  /* Modal */
+  --modal-overlay-bg: rgba(0, 0, 0, 0.5);
+  --modal-bg: #ffffff;
+  --modal-border-color: #e5e7eb;
+  --modal-icon-color: #f59e0b;
+  --modal-title-color: #111827;
+  --modal-text-color: #4b5563;
+  --modal-confirm-bg: #3b82f6;
+  --modal-confirm-hover: #2563eb;
+  --modal-confirm-focus: rgba(59, 130, 246, 0.3);
+  --modal-cancel-bg: #f3f4f6;
+  --modal-cancel-hover: #e5e7eb;
+  --modal-cancel-text: #374151;
+  --modal-danger-bg: #ef4444;
+  --modal-danger-hover: #dc2626;
+}
+
+/* Fuente personalizada */
+@font-face {
+  font-family: 'Deserta';
+  src: url('assets/fonts/Deserta.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: Poppins, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.5rem;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a03d37;
+}
