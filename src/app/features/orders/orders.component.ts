@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OrderService } from '../../core/services/order.service';
@@ -15,6 +15,7 @@ import { Order } from '../../shared/models/order.model';
 export class OrdersComponent implements OnInit {
   private orderService = inject(OrderService);
   private messageService = inject(MessageService);
+  private cdr = inject(ChangeDetectorRef);
 
   orders: Order[] = [];
   filteredOrders: Order[] = [];
@@ -32,10 +33,11 @@ export class OrdersComponent implements OnInit {
         this.orders = orders;
         this.filteredOrders = [...this.orders];
         this.loading = false;
+        this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError('Error al cargar pedidos');
         this.loading = false;
+        this.cdr.markForCheck();
       }
     });
   }

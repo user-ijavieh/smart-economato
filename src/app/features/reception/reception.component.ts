@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OrderService } from '../../core/services/order.service';
@@ -27,6 +27,7 @@ export class ReceptionComponent implements OnInit {
   private orderService = inject(OrderService);
   private productService = inject(ProductService);
   private messageService = inject(MessageService);
+  private cdr = inject(ChangeDetectorRef);
 
   items: ReceptionItem[] = [];
   showForm = false;
@@ -48,8 +49,11 @@ export class ReceptionComponent implements OnInit {
 
   ngOnInit(): void {
     this.productService.getAll(0, 500).subscribe({
-      next: (page) => this.products = page.content,
-      error: () => this.messageService.showError('Error al cargar productos')
+      next: (page) => {
+        this.products = page.content;
+        this.cdr.markForCheck();
+      },
+      error: () => this.cdr.markForCheck()
     });
   }
 
