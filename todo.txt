@@ -1,0 +1,10 @@
+- Refactorizar inventario y recepción (Se puede eliminar completamente)
+- Revisar modelos de respuestas del backend (models)
+
+
+- Desarrollo de páginas restantes 
+- Funciones CRUD (Añadir,editar...)
+
+
+- Añidar arrays con los modales,funciones,etc ... que pueden usar cada usuario
+- Añadir función para convertir a pdf
