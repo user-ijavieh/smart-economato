@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -12,6 +12,7 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class WelcomeComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
 
   slides = [
     '/assets/img/carousel/carousel1.jpg',
@@ -32,6 +33,7 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.intervalId = setInterval(() => {
       this.currentSlide = (this.currentSlide + 1) % this.slides.length;
+      this.cdr.markForCheck();
     }, 3000);
   }
 
