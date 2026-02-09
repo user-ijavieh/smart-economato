@@ -1,0 +1,23 @@
+main {
+  transition: margin-left 300ms ease-in-out;
+  padding: min(30px, 7%);
+  background-color: var(--content-bg);
+  min-height: 100vh;
+}
+
+main.main-collapsed {
+  margin-left: 250px;
+}
+
+main.main-expanded {
+  margin-left: 60px;
+}
+
+@media (max-width: 800px) {
+  main,
+  main.main-collapsed,
+  main.main-expanded {
+    margin-left: 0;
+    padding: 2em 1em 60px 1em;
+  }
+}

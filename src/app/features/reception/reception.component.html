@@ -1,0 +1,133 @@
+<div class="reception-page">
+  <!-- Header -->
+  <header class="reception-header">
+    <h1>RECEPCION DE PRODUCTOS</h1>
+  </header>
+
+  <!-- Contenido Principal -->
+  <div class="reception-content">
+    <!-- Botones de Acción Superior -->
+    <div class="top-actions">
+      <button type="button" class="btn-add-item" (click)="toggleForm()">
+        + AGREGAR ITEM
+      </button>
+      <button
+        type="button"
+        class="btn-save-reception"
+        [disabled]="items.length === 0"
+        (click)="saveReception()"
+      >
+        GUARDAR RECEPCION
+      </button>
+    </div>
+
+    <!-- Formulario Inline de Nuevo Item -->
+    @if (showForm) {
+      <section class="form-section">
+        <div class="form-container">
+          <div class="form-header">
+            <h3 class="form-title">AGREGAR NUEVO ITEM</h3>
+          </div>
+
+          <form class="inline-form" (ngSubmit)="addItem()">
+            <!-- Fila 1: Nombre, Proveedor -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="nombreProducto">NOMBRE DEL PRODUCTO *</label>
+                <div class="autocomplete-container">
+                  <input
+                    type="text"
+                    id="nombreProducto"
+                    [(ngModel)]="formItem.productName"
+                    name="productName"
+                    placeholder="Escribe el nombre del producto..."
+                    autocomplete="off"
+                    (input)="onProductSearch(formItem.productName)"
+                    required
+                  >
+                  @if (showAutocomplete) {
+                    <div class="autocomplete-dropdown show">
+                      @for (p of filteredProducts; track p.id) {
+                        <div class="autocomplete-item" (click)="selectProduct(p)">
+                          <div class="autocomplete-item-name">{{ p.name }}</div>
+                          <div class="autocomplete-item-info">{{ p.price | number:'1.2-2' }} € — Stock: {{ p.stock }}</div>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="proveedorProducto">PROVEEDOR</label>
+                <input type="text" id="proveedorProducto" [(ngModel)]="formItem.supplier" name="supplier" [readOnly]="true">
+              </div>
+            </div>
+
+            <!-- Fila 2: Cantidad y Precio -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cantidadProducto">CANTIDAD *</label>
+                <input type="number" id="cantidadProducto" [(ngModel)]="formItem.quantity" name="quantity" placeholder="0" min="1" required>
+              </div>
+              <div class="form-group">
+                <label for="precioProducto">PRECIO (€) *</label>
+                <input type="number" id="precioProducto" [(ngModel)]="formItem.price" name="price" placeholder="0.00" step="0.01" min="0" required>
+              </div>
+            </div>
+
+            <!-- Fila 3: Notas -->
+            <div class="form-row">
+              <div class="form-group full-width">
+                <label for="notasProducto">NOTAS</label>
+                <textarea id="notasProducto" [(ngModel)]="formItem.notes" name="notes" rows="3" placeholder="NOTAS ADICIONALES..."></textarea>
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="form-actions">
+              <button type="submit" class="btn-agregar">AGREGAR ITEM</button>
+              <button type="button" class="btn-cancelar" (click)="toggleForm()">CANCELAR</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    }
+
+    <!-- Sección de Items de Recepción -->
+    <section class="items-section">
+      <h2 class="section-title">ITEMS DE RECEPCION</h2>
+
+      @if (items.length === 0) {
+        <div class="empty-state">
+          <p class="empty-message">
+            NO HAY ITEMS AGREGADOS. HAZ CLIC EN "AGREGAR ITEM" PARA COMENZAR.
+          </p>
+        </div>
+      } @else {
+        <div class="items-list">
+          @for (item of items; track $index) {
+            <div class="item-card">
+              <div class="item-info">
+                <span class="item-name">{{ item.productName }}</span>
+                <span class="item-category">{{ item.category || 'Sin categoría' }}</span>
+              </div>
+              <div class="item-data">
+                <span class="item-label">CANTIDAD</span>
+                <span class="item-value">{{ item.quantity }}</span>
+              </div>
+              <div class="item-data">
+                <span class="item-label">PRECIO</span>
+                <span class="item-value">{{ item.price | number:'1.2-2' }} €</span>
+              </div>
+              <div class="item-data">
+                <span class="item-label">TOTAL</span>
+                <span class="item-value item-total">{{ getItemTotal(item) | number:'1.2-2' }} €</span>
+              </div>
+              <button class="btn-eliminar" (click)="removeItem($index)">ELIMINAR</button>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  </div>
+</div>

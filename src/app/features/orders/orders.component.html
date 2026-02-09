@@ -1,0 +1,60 @@
+<!-- Header -->
+<div class="header-inventario">
+  <h1>Pedidos</h1>
+</div>
+
+<!-- Contenido -->
+<div class="contenedor-principal">
+  <div class="controles">
+    <select [(ngModel)]="statusFilter" (change)="filterByStatus()">
+      <option value="">-- Estado --</option>
+      <option value="CREATED">Creado</option>
+      <option value="PENDING">Pendiente</option>
+      <option value="REVIEW">En revisión</option>
+      <option value="COMPLETED">Completado</option>
+      <option value="INCOMPLETE">Incompleto</option>
+    </select>
+    <button (click)="filterByStatus()">Filtrar</button>
+    <button (click)="showAll()">Mostrar Todos</button>
+  </div>
+
+  <!-- Tabla de Pedidos -->
+  <div class="tabla-contenedor">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Usuario</th>
+          <th>Estado</th>
+          <th>Fecha</th>
+          <th>Items</th>
+          <th>Total (€)</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (order of filteredOrders; track order.id) {
+          <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.user?.name || '—' }}</td>
+            <td>
+              <span class="status-badge" [attr.data-status]="order.status">
+                {{ getStatusLabel(order.status) }}
+              </span>
+            </td>
+            <td>{{ order.orderDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ order.details?.length || 0 }}</td>
+            <td>{{ getOrderTotal(order) | number:'1.2-2' }} €</td>
+          </tr>
+        }
+        @if (filteredOrders.length === 0 && !loading) {
+          <tr><td colspan="6" style="text-align: center; padding: 2rem;">No se encontraron pedidos</td></tr>
+        }
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="6">Total: {{ filteredOrders.length }} pedidos</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>

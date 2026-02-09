@@ -1,0 +1,10 @@
+<app-sidebar
+  (sidebarToggled)="onSidebarToggled($event)"
+  (logoutClicked)="logout()"
+></app-sidebar>
+<main [class.main-expanded]="!sidebarOpen" [class.main-collapsed]="sidebarOpen">
+  <router-outlet></router-outlet>
+</main>
+
+<!-- Toast Notifications -->
+<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>

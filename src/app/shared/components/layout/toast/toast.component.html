@@ -1,0 +1,11 @@
+<div class="toast-container">
+  @for (toast of toasts; track toast.id) {
+    <div
+      [class]="'toast ' + getTypeClass(toast.type)"
+      role="alert"
+    >
+      <span class="toast-icon">{{ getIconClass(toast.type) }}</span>
+      <p class="toast-message">{{ toast.message }}</p>
+    </div>
+  }
+</div>
