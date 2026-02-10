@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OrderService } from '../../../core/services/order.service';
@@ -24,7 +24,7 @@ interface OrderItem {
   templateUrl: './order-modal.component.html',
   styleUrl: './order-modal.component.css'
 })
-export class OrderModalComponent implements OnInit {
+export class OrderModalComponent implements OnInit, OnDestroy {
   private orderService = inject(OrderService);
   private productService = inject(ProductService);
   private userService = inject(UserService);
@@ -37,10 +37,15 @@ export class OrderModalComponent implements OnInit {
   users: User[] = [];
   selectedUserId: number | null = null;
   products: Product[] = [];
-  filteredProducts: Product[] = [];
   orderItems: OrderItem[] = [];
-  showAutocomplete = false;
+  showProductDropdown = false;
   isSubmitting = false;
+  
+  // Paginación para productos
+  currentPage = 0;
+  pageSize = 20;
+  hasMoreProducts = true;
+  isLoadingProducts = false;
 
   // Form for adding products
   itemForm = {
@@ -54,6 +59,21 @@ export class OrderModalComponent implements OnInit {
   ngOnInit(): void {
     this.loadUsers();
     this.loadProducts();
+    // Listener para cerrar dropdown al hacer clic fuera
+    document.addEventListener('click', this.onDocumentClick.bind(this));
+  }
+  
+  ngOnDestroy(): void {
+    document.removeEventListener('click', this.onDocumentClick.bind(this));
+  }
+  
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const dropdown = target.closest('.autocomplete-container');
+    if (!dropdown && this.showProductDropdown) {
+      this.showProductDropdown = false;
+      this.cdr.markForCheck();
+    }
   }
 
   loadUsers(): void {
@@ -70,27 +90,39 @@ export class OrderModalComponent implements OnInit {
   }
 
   loadProducts(): void {
-    this.productService.getAll(0, 500).subscribe({
+    if (this.isLoadingProducts || !this.hasMoreProducts) return;
+    
+    this.isLoadingProducts = true;
+    this.productService.getAll(this.currentPage, this.pageSize).subscribe({
       next: (page) => {
-        this.products = page.content;
+        this.products = [...this.products, ...page.content];
+        this.hasMoreProducts = !page.last;
+        this.currentPage++;
+        this.isLoadingProducts = false;
         this.cdr.markForCheck();
       },
       error: () => {
         this.messageService.showError('Error al cargar productos');
+        this.isLoadingProducts = false;
         this.cdr.markForCheck();
       }
     });
   }
 
-  onProductSearch(term: string): void {
-    if (!term || term.length < 2) {
-      this.showAutocomplete = false;
-      return;
+  toggleProductDropdown(): void {
+    this.showProductDropdown = !this.showProductDropdown;
+  }
+  
+  onProductDropdownScroll(event: Event): void {
+    const element = event.target as HTMLElement;
+    const threshold = 50; // píxeles antes del final
+    const position = element.scrollTop + element.offsetHeight;
+    const height = element.scrollHeight;
+    
+    // Si estamos cerca del final y hay más productos para cargar
+    if (position >= height - threshold && !this.isLoadingProducts && this.hasMoreProducts) {
+      this.loadProducts();
     }
-    this.filteredProducts = this.products.filter(p =>
-      p.name.toLowerCase().includes(term.toLowerCase())
-    ).slice(0, 10);
-    this.showAutocomplete = this.filteredProducts.length > 0;
   }
 
   selectProduct(product: Product): void {
@@ -98,7 +130,7 @@ export class OrderModalComponent implements OnInit {
     this.itemForm.productName = product.name;
     this.itemForm.unitPrice = product.unitPrice;
     this.itemForm.unit = product.unit || 'unidad';
-    this.showAutocomplete = false;
+    this.showProductDropdown = false;
   }
 
   addItemToOrder(): void {

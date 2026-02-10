@@ -237,7 +237,30 @@
   background: #f9fafb;
   display: flex;
   justify-content: flex-end;
+  gap: 15px;
   border-top: 1px solid #e5e7eb;
+}
+
+.btn-print {
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-print:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-print:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .btn-close-modal {
