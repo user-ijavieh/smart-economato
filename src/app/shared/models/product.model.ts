@@ -1,3 +1,6 @@
+import { Supplier } from './supplier.model';
+
+// Interfaz para mostrar datos (GET)
 export interface Product {
   id: number;
   name: string;
@@ -5,24 +8,15 @@ export interface Product {
   unit: string;
   unitPrice: number;
   productCode?: string;
+  
+  // Stock property - favoring currentStock as per recent changes but keeping stock for compatibility if backend sends it
+  stock?: number; 
   currentStock: number;
-  minStock?: number;
+  minStock: number;
+  
   supplier?: Supplier;
-}
-
-export interface ProductRequest {
-  name: string;
-  type?: string;
-  unit: string;
-  unitPrice: number;
-  productCode?: string;
-  currentStock?: number;
-  supplierId?: number;
-  // Legacy fields for backward compatibility
-  stock?: number;
-  minStock?: number;
-  price?: number;
   barcode?: string;
+  price?: number;
   brand?: string;
   expirationDate?: string;
   description?: string;
@@ -30,8 +24,27 @@ export interface ProductRequest {
   active?: boolean;
 }
 
-export interface Supplier {
-  id: number;
+// Interfaz para enviar datos (POST/PUT)
+export interface ProductRequest {
   name: string;
-  contact: string;
+  productCode?: string;
+  type?: string;
+  barcode?: string;
+  
+  // Price
+  price?: number; 
+  unitPrice: number;
+
+  // Stock
+  stock?: number;
+  currentStock: number;
+  minStock: number;
+
+  unit: string;
+  supplierId?: number;
+  active?: boolean;
+  description?: string;
+  image?: string;
+  brand?: string;
+  expirationDate?: string;
 }
