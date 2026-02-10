@@ -101,4 +101,28 @@ export class OrdersComponent implements OnInit {
     this.showDetailsModal = false;
     this.selectedOrder = null;
   }
+
+  printOrder(order: Order, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    
+    if (!order?.id) return;
+
+    this.orderService.downloadPdf(order.id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `pedido-${order.id}.pdf`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        this.messageService.showSuccess('PDF descargado correctamente');
+      },
+      error: (error) => {
+        console.error('Error al descargar el PDF:', error);
+        this.messageService.showError('Error al descargar el PDF');
+      }
+    });
+  }
 }

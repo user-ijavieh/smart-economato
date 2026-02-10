@@ -284,6 +284,22 @@
   font-family: 'Deserta', sans-serif;
 }
 
+.btn-print {
+  flex: 0 0 50px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-print:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
 .btn-details {
   background: #f3f4f6;
   color: #374151;

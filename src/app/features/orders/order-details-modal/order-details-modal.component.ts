@@ -1,6 +1,8 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Order } from '../../../shared/models/order.model';
+import { OrderService } from '../../../core/services/order.service';
+import { MessageService } from '../../../core/services/message.service';
 
 @Component({
   selector: 'app-order-details-modal',
@@ -12,6 +14,10 @@ import { Order } from '../../../shared/models/order.model';
 export class OrderDetailsModalComponent {
   @Input() order: Order | null = null;
   @Output() closeModal = new EventEmitter<void>();
+
+  private orderService = inject(OrderService);
+  private messageService = inject(MessageService);
+  isDownloading = false;
 
   close(): void {
     this.closeModal.emit();
@@ -58,5 +64,28 @@ export class OrderDetailsModalComponent {
       'CANCELLED': '#ef4444'
     };
     return colors[status] || '#6b7280';
+  }
+
+  printOrder(): void {
+    if (!this.order?.id) return;
+
+    this.isDownloading = true;
+    this.orderService.downloadPdf(this.order.id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `pedido-${this.order?.id}.pdf`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        this.messageService.showSuccess('PDF descargado correctamente');
+        this.isDownloading = false;
+      },
+      error: (error) => {
+        console.error('Error al descargar el PDF:', error);
+        this.messageService.showError('Error al descargar el PDF');
+        this.isDownloading = false;
+      }
+    });
   }
 }
