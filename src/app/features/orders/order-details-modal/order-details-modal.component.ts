@@ -41,7 +41,7 @@ export class OrderDetailsModalComponent {
       'CREATED': 'Creado',
       'PENDING': 'Pendiente',
       'REVIEW': 'En Revisión',
-      'COMPLETED': 'Completado',
+      'CONFIRMED': 'Confirmado',
       'INCOMPLETE': 'Incompleto',
       'CANCELLED': 'Cancelado'
     };
@@ -53,7 +53,7 @@ export class OrderDetailsModalComponent {
       'CREATED': '#3b82f6',
       'PENDING': '#f59e0b',
       'REVIEW': '#8b5cf6',
-      'COMPLETED': '#10b981',
+      'CONFIRMED': '#10b981',
       'INCOMPLETE': '#6b7280',
       'CANCELLED': '#ef4444'
     };

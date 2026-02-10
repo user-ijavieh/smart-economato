@@ -9,7 +9,7 @@ import { OrderDetailsModalComponent } from '../orders/order-details-modal/order-
 interface OrdersByStatus {
   PENDING: Order[];
   REVIEW: Order[];
-  COMPLETED: Order[];
+  CONFIRMED: Order[];
   CANCELLED: Order[];
   INCOMPLETE: Order[];
 }
@@ -29,7 +29,7 @@ export class ReceptionComponent implements OnInit {
   ordersByStatus: OrdersByStatus = {
     PENDING: [],
     REVIEW: [],
-    COMPLETED: [],
+    CONFIRMED: [],
     CANCELLED: [],
     INCOMPLETE: []
   };
@@ -51,7 +51,7 @@ export class ReceptionComponent implements OnInit {
         this.ordersByStatus = {
           PENDING: orders.filter(o => o.status === 'PENDING'),
           REVIEW: orders.filter(o => o.status === 'REVIEW'),
-          COMPLETED: orders.filter(o => o.status === 'COMPLETED'),
+          CONFIRMED: orders.filter(o => o.status === 'CONFIRMED'),
           CANCELLED: orders.filter(o => o.status === 'CANCELLED'),
           INCOMPLETE: orders.filter(o => o.status === 'INCOMPLETE')
         };
@@ -71,7 +71,7 @@ export class ReceptionComponent implements OnInit {
       CREATED: 'Creado',
       PENDING: 'Pendiente',
       REVIEW: 'En Revisión',
-      COMPLETED: 'Completado',
+      CONFIRMED: 'Confirmado',
       CANCELLED: 'Cancelado',
       INCOMPLETE: 'Incompleto'
     };
@@ -83,7 +83,7 @@ export class ReceptionComponent implements OnInit {
       CREATED: '#3b82f6',
       PENDING: '#f59e0b',
       REVIEW: '#8b5cf6',
-      COMPLETED: '#10b981',
+      CONFIRMED: '#10b981',
       CANCELLED: '#6b7280',
       INCOMPLETE: '#ef4444'
     };
@@ -109,6 +109,9 @@ export class ReceptionComponent implements OnInit {
 
   // Action handlers
   reviewOrder(order: Order): void {
+    if (!confirm(`¿Mover la orden #${order.id} a revisión?`)) {
+      return;
+    }
     this.messageService.showInfo(`Revisando orden #${order.id}`);
     // Change status from PENDING to REVIEW
     this.orderService.updateStatus(order.id, 'REVIEW').subscribe({
@@ -123,9 +126,23 @@ export class ReceptionComponent implements OnInit {
   }
 
   confirmOrder(order: Order): void {
-    this.orderService.updateStatus(order.id, 'COMPLETED').subscribe({
+    if (!confirm(`¿Confirmar la orden #${order.id}? Esto guardará el stock en el sistema.`)) {
+      return;
+    }
+
+    // Construir el request de recepción con las cantidades recibidas
+    const receptionRequest = {
+      orderId: order.id,
+      status: 'CONFIRMED' as const,
+      items: (order.details || []).map(detail => ({
+        productId: detail.productId,
+        quantityReceived: detail.quantityReceived || detail.quantity // Usar cantidad recibida o la solicitada
+      }))
+    };
+
+    this.orderService.processReception(receptionRequest).subscribe({
       next: () => {
-        this.messageService.showSuccess('Orden confirmada');
+        this.messageService.showSuccess('Orden confirmada y stock actualizado');
         this.loadOrders();
       },
       error: () => {
@@ -135,6 +152,9 @@ export class ReceptionComponent implements OnInit {
   }
 
   markIncomplete(order: Order): void {
+    if (!confirm(`¿Marcar la orden #${order.id} como incompleta?`)) {
+      return;
+    }
     this.orderService.updateStatus(order.id, 'INCOMPLETE').subscribe({
       next: () => {
         this.messageService.showWarning('Orden marcada como incompleta');
@@ -147,6 +167,9 @@ export class ReceptionComponent implements OnInit {
   }
 
   cancelOrder(order: Order): void {
+    if (!confirm(`¿Cancelar la orden #${order.id}? Esta acción no se puede deshacer.`)) {
+      return;
+    }
     this.orderService.updateStatus(order.id, 'CANCELLED').subscribe({
       next: () => {
         this.messageService.showWarning('Orden cancelada');
@@ -154,6 +177,21 @@ export class ReceptionComponent implements OnInit {
       },
       error: () => {
         this.messageService.showError('Error al cancelar orden');
+      }
+    });
+  }
+
+  deleteOrder(order: Order): void {
+    if (!confirm(`¿Eliminar permanentemente la orden #${order.id}? Esta acción no se puede deshacer.`)) {
+      return;
+    }
+    this.orderService.delete(order.id).subscribe({
+      next: () => {
+        this.messageService.showSuccess('Orden eliminada correctamente');
+        this.loadOrders();
+      },
+      error: () => {
+        this.messageService.showError('Error al eliminar orden');
       }
     });
   }

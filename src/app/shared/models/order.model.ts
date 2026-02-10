@@ -1,4 +1,4 @@
-export type OrderStatus = 'CREATED' | 'PENDING' | 'REVIEW' | 'COMPLETED' | 'CANCELLED' | 'INCOMPLETE';
+export type OrderStatus = 'CREATED' | 'PENDING' | 'REVIEW' | 'CONFIRMED' | 'CANCELLED' | 'INCOMPLETE';
 
 export interface Order {
   id: number;
@@ -29,5 +29,6 @@ export interface OrderRequest {
 
 export interface OrderReceptionRequest {
   orderId: number;
-  items: { productId: number; receivedQuantity: number }[];
+  status: OrderStatus;
+  items: { productId: number; quantityReceived: number }[];
 }

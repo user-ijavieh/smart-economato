@@ -153,18 +153,18 @@
 
       <!-- CONFIRMED Section -->
       <section class="status-section">
-        <h2 class="section-title" [style.border-color]="getStatusColor('COMPLETED')">
-          {{ getStatusLabel('COMPLETED') }} ({{ ordersByStatus.COMPLETED?.length || 0 }})
+        <h2 class="section-title" [style.border-color]="getStatusColor('CONFIRMED')">
+          {{ getStatusLabel('CONFIRMED') }} ({{ ordersByStatus.CONFIRMED?.length || 0 }})
         </h2>
-        @if ((ordersByStatus.COMPLETED?.length || 0) === 0) {
+        @if ((ordersByStatus.CONFIRMED?.length || 0) === 0) {
           <div class="empty-section">
             No hay órdenes confirmadas
           </div>
         } @else {
           <div class="orders-container">
-            @for (order of ordersByStatus.COMPLETED; track order.id) {
-              <div class="order-card completed" [style.border-left-color]="getStatusColor('COMPLETED')">
-                <div class="order-header" [style.background]="getStatusColor('COMPLETED')">
+            @for (order of ordersByStatus.CONFIRMED; track order.id) {
+              <div class="order-card completed" [style.border-left-color]="getStatusColor('CONFIRMED')">
+                <div class="order-header" [style.background]="getStatusColor('CONFIRMED')">
                   <div class="order-title">
                     <div class="order-user">
                       <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
@@ -272,6 +272,9 @@
                   <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
                     Ver Detalles
                   </button>
+                  <button class="btn-action btn-delete" (click)="deleteOrder(order)">
+                    Eliminar
+                  </button>
                 </div>
               </div>
             }
@@ -335,6 +338,9 @@
                 <div class="order-actions">
                   <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
                     Ver Detalles
+                  </button>
+                  <button class="btn-action btn-delete" (click)="deleteOrder(order)">
+                    Eliminar
                   </button>
                 </div>
               </div>
