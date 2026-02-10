@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Page } from '../../shared/models/page.model';
 import { Supplier, SupplierRequest } from '../../shared/models/supplier.model';
@@ -14,7 +14,34 @@ export class SupplierService {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
-    return this.http.get<Page<Supplier>>(this.url, { params });
+
+    return this.http.get<any>(this.url, { params }).pipe(
+      tap(response => console.log('📦 Raw API Response (Suppliers):', response)),
+      map(response => {
+        const rawContent = response.content || (Array.isArray(response) ? response : []);
+        
+        const mappedContent: Supplier[] = rawContent.map((item: any) => ({
+          ...item,
+          id: item.id,
+          name: item.name || item.nombre || 'Sin nombre',
+          contactPerson: item.contactPerson || item.contacto || item.contact || '',
+          phone: item.phone || item.telefono || '',
+          email: item.email || item.correo || '',
+          address: item.address || item.direccion || ''
+        }));
+
+        return {
+          content: mappedContent,
+          totalElements: response.totalElements ?? mappedContent.length,
+          totalPages: response.totalPages ?? 1,
+          size: response.size ?? size,
+          number: response.number ?? page,
+          first: response.first ?? true,
+          last: response.last ?? true,
+          empty: mappedContent.length === 0
+        };
+      })
+    );
   }
 
   getById(id: number): Observable<Supplier> {

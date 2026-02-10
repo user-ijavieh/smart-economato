@@ -45,7 +45,7 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-.controles input[type="text"] {
+.controles input[type='text'] {
   padding: 10px 15px;
   border-radius: 8px;
   border: 2px solid #e0e0e0;
@@ -55,7 +55,7 @@
   min-width: 200px;
 }
 
-.controles input[type="text"]:focus {
+.controles input[type='text']:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(184, 75, 68, 0.1);
@@ -86,7 +86,7 @@ button:active {
 }
 
 #btnAgregarProducto {
-  background: #4CAF50;
+  background: #4caf50;
 }
 
 #btnAgregarProducto:hover {
@@ -155,130 +155,19 @@ th.sortable {
   position: relative;
 }
 
-th.sortable[data-sort-dir="asc"]::after {
+th.sortable[data-sort-dir='asc']::after {
   content: ' ▲';
   font-size: 0.8em;
-  color: #4CAF50;
+  color: #4caf50;
 }
 
-th.sortable[data-sort-dir="desc"]::after {
+th.sortable[data-sort-dir='desc']::after {
   content: ' ▼';
   font-size: 0.8em;
   color: #f44336;
 }
 
-/** ===== FORMULARIO NUEVO PRODUCTO ===== */
 
-.formulario-producto {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  padding: 30px;
-  margin-bottom: 2rem;
-  animation: slideDown 0.4s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.formulario-producto h3 {
-  color: var(--primary-color);
-  margin-bottom: 20px;
-  font-size: 1.5rem;
-  text-align: center;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.form-group label {
-  font-weight: bold;
-  color: #333;
-  font-size: 0.9rem;
-}
-
-.form-group input,
-.form-group select {
-  padding: 12px 15px;
-  border-radius: 8px;
-  border: 2px solid #e0e0e0;
-  font-size: 0.9rem;
-  font-family: 'Deserta', sans-serif;
-  transition: all 0.3s ease;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(184, 75, 68, 0.1);
-}
-
-.form-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.btn-guardar {
-  padding: 12px 30px;
-  background: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-guardar:hover {
-  background: #45a049;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
-}
-
-.btn-cancelar {
-  padding: 12px 30px;
-  background: rgb(160, 61, 55);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-cancelar:hover {
-  background: #da190b;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
-}
 
 /** ===== RESPONSIVE ===== */
 
@@ -290,4 +179,89 @@ form {
   .contenedor-principal {
     padding: 20px;
   }
+}
+
+/** ===== SKELETON LOADING ===== */
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+  height: 20px;
+  width: 100%;
+  display: block;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-row td {
+  padding: 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.skeleton-text {
+  height: 16px;
+  margin-bottom: 0;
+}
+
+/** ===== PAGINATION ===== */
+
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  font-family: 'Deserta', sans-serif;
+}
+
+.items-per-page {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.pagination-size-input {
+  width: 60px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  font-family: inherit;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.pagination-size-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(184, 75, 68, 0.1);
+}
+
+.pagination-controls button {
+  padding: 5px 15px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-left: 5px;
+}
+
+.pagination-controls button:disabled {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.pagination-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
