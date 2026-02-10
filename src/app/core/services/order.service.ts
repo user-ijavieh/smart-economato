@@ -51,8 +51,7 @@ export class OrderService {
   updateStatus(id: number, status: string): Observable<Order> {
     return this.http.patch<Order>(
       `${this.url}/${id}/status`,
-      null,
-      { params: new HttpParams().set('status', status) }
+      { status: status }
     );
   }
 
