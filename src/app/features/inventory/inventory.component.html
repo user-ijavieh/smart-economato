@@ -1,83 +1,155 @@
-<!-- Header -->
 <div class="header-inventario">
   <h1>Inventario</h1>
 </div>
 
-<!-- Contenido -->
 <div class="contenedor-principal">
   <div class="controles">
-    <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar producto..." (keyup.enter)="onSearch()" />
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Buscar producto..."
+      (keyup.enter)="onSearch()"
+    />
     <button (click)="onSearch()">Buscar</button>
     <button (click)="checkStock()">Comprobar Stock</button>
-    <button id="btnAgregarProducto" (click)="toggleForm()">Agregar Producto</button>
+    <button id="btnAgregarProducto" (click)="toggleForm()">
+      {{ showForm ? 'Cerrar Formulario' : 'Agregar Producto' }}
+    </button>
     <button (click)="showAll()">Mostrar Todos</button>
   </div>
 
-  <!-- Formulario para agregar producto -->
   @if (showForm) {
-    <div class="formulario-producto">
-      <h3>Agregar Nuevo Producto</h3>
-      <form (ngSubmit)="submitProduct()">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="nombreProducto">Nombre *</label>
-            <input type="text" id="nombreProducto" [(ngModel)]="formProduct.name" name="name" required>
-          </div>
-          <div class="form-group">
-            <label for="precioProducto">Precio (€) *</label>
-            <input type="number" id="precioProducto" [(ngModel)]="formProduct.price" name="price" step="0.01" min="0" required>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="stockProducto">Stock *</label>
-            <input type="number" id="stockProducto" [(ngModel)]="formProduct.stock" name="stock" min="0" required>
-          </div>
-          <div class="form-group">
-            <label for="stockMinimoProducto">Stock Mínimo *</label>
-            <input type="number" id="stockMinimoProducto" [(ngModel)]="formProduct.minStock" name="minStock" min="0" required>
-          </div>
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn-guardar">Guardar Producto</button>
-          <button type="button" class="btn-cancelar" (click)="cancelForm()">Cancelar</button>
-        </div>
-      </form>
-    </div>
+    <app-product-form
+      [product]="selectedProduct"
+      [suppliers]="suppliers"
+      (save)="onSaveProduct($event)"
+      (cancel)="onCancelForm()"
+      (delete)="onDeleteProduct()"
+    ></app-product-form>
   }
 
-  <!-- Tabla de Productos -->
   <div class="tabla-contenedor">
     <table>
       <thead>
         <tr>
-          <th class="sortable" (click)="sort('id')" [attr.data-sort-dir]="getSortDir('id')">ID</th>
-          <th>Nombre</th>
-          <th (click)="sort('price')" class="sortable" [attr.data-sort-dir]="getSortDir('price')">Precio (€)</th>
-          <th (click)="sort('stock')" class="sortable" [attr.data-sort-dir]="getSortDir('stock')">Stock</th>
-          <th>Stock Mínimo</th>
-          <th>Proveedor</th>
+          <th class="sortable" (click)="onSortChange('id')" [attr.data-sort-dir]="getSortDir('id')">
+            ID
+          </th>
+          <th
+            class="sortable"
+            (click)="onSortChange('name')"
+            [attr.data-sort-dir]="getSortDir('name')"
+          >
+            Nombre
+          </th>
+          <th
+            class="sortable"
+            (click)="onSortChange('type')"
+            [attr.data-sort-dir]="getSortDir('type')"
+          >
+            Tipo
+          </th>
+          <th
+            class="sortable"
+            (click)="onSortChange('price')"
+            [attr.data-sort-dir]="getSortDir('price')"
+          >
+            Precio (€)
+          </th>
+          <th
+            class="sortable"
+            (click)="onSortChange('stock')"
+            [attr.data-sort-dir]="getSortDir('stock')"
+          >
+            Stock
+          </th>
+          <th>Unidad</th>
+          <th
+            class="sortable"
+            (click)="onSortChange('supplier')"
+            [attr.data-sort-dir]="getSortDir('supplier')"
+          >
+            Proveedor
+          </th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
-        @for (product of filteredProducts; track product.id) {
-          <tr [class.alerta]="isLowStock(product)">
-            <td>{{ product.id }}</td>
-            <td>{{ product.name }}</td>
-            <td>{{ product.price | number:'1.2-2' }} €</td>
-            <td>{{ product.stock }}</td>
-            <td>{{ product.minStock }}</td>
-            <td>{{ product.supplier?.name || '—' }}</td>
-          </tr>
+        @if (loading) {
+          @for (i of [1, 2, 3, 4, 5]; track i) {
+            <tr class="skeleton-row">
+              <td><span class="skeleton skeleton-text"></span></td>
+              <!-- ID -->
+              <td><span class="skeleton skeleton-text" style="width: 150px"></span></td>
+              <!-- Name -->
+              <td><span class="skeleton skeleton-text" style="width: 80px"></span></td>
+              <!-- Type -->
+              <td><span class="skeleton skeleton-text" style="width: 60px"></span></td>
+              <!-- Price -->
+              <td><span class="skeleton skeleton-text" style="width: 60px"></span></td>
+              <!-- Stock -->
+              <td><span class="skeleton skeleton-text" style="width: 40px"></span></td>
+              <!-- Unit -->
+              <td><span class="skeleton skeleton-text" style="width: 100px"></span></td>
+              <!-- Supplier -->
+              <td><span class="skeleton skeleton-text" style="width: 30px"></span></td>
+              <!-- Actions -->
+            </tr>
+          }
+        } @else {
+          @for (product of products; track product.id) {
+            <tr [class.alerta]="isLowStock(product)">
+              <td>{{ product.id }}</td>
+              <td>{{ product.name }}</td>
+              <td>{{ product.type || '—' }}</td>
+              <td>{{ product.price | number: '1.2-2' }} €</td>
+              <td>{{ product.stock }}</td>
+              <td>{{ product.unit }}</td>
+              <td>{{ product.supplier?.name || '—' }}</td>
+              <td>
+                <button class="btn-editar" (click)="editProduct(product)" title="Editar">✏️</button>
+              </td>
+            </tr>
+          }
         }
-        @if (filteredProducts.length === 0 && !loading) {
-          <tr><td colspan="6" style="text-align: center; padding: 2rem;">No se encontraron productos</td></tr>
+        @if (products.length === 0 && !loading) {
+          <tr>
+            <td colspan="8" style="text-align: center; padding: 2rem">
+              No se encontraron productos
+            </td>
+          </tr>
         }
       </tbody>
       <tfoot>
         <tr>
-          <td colspan="6">
-            Total: {{ totalProducts }} productos
+          <td colspan="8">
+            <div class="pagination-controls">
+              <div class="pagination-info">
+                Total: {{ totalElements }} productos | Página {{ page + 1 }} de {{ totalPages }}
+              </div>
+              <div class="pagination-actions">
+                <div class="items-per-page">
+                  <label for="itemsPerPage">Mostrar:</label>
+                  <input
+                    id="itemsPerPage"
+                    type="number"
+                    min="1"
+                    [value]="size"
+                    (change)="onSizeChange($event)"
+                    class="pagination-size-input"
+                  />
+                </div>
+                <button (click)="onPageChange(page - 1)" [disabled]="page === 0 || loading">
+                  Anterior
+                </button>
+                <button
+                  (click)="onPageChange(page + 1)"
+                  [disabled]="page >= totalPages - 1 || loading"
+                >
+                  Siguiente
+                </button>
+              </div>
+            </div>
           </td>
         </tr>
       </tfoot>
