@@ -1,0 +1,208 @@
+<!-- Header -->
+<div class="header-recetas">
+  <h1>Recetas</h1>
+</div>
+
+<!-- Contenido -->
+<div class="contenedor-principal">
+
+  <!-- Controles de búsqueda -->
+  <div class="controles">
+    <div class="controles-left">
+      @if (canEdit()) {
+        <button class="btn-crear" (click)="openCreateModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Crear Receta
+        </button>
+      }
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        placeholder="Buscar receta..."
+        (input)="onSearch()"
+      />
+    </div>
+    <div class="controles-right">
+      <button class="btn-filtros" (click)="toggleFilters()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        Filtros
+        @if (activeFilterCount > 0) {
+          <span class="filter-badge">{{ activeFilterCount }}</span>
+        }
+      </button>
+      @if (activeFilterCount > 0) {
+        <button class="btn-limpiar-filtros" (click)="clearFilters()" @fadeSlide>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Limpiar filtros
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Panel de filtros -->
+  <div class="filtros-wrapper" [class.open]="showFilters">
+    <div class="filtros-panel">
+      <div class="filtro-grupo">
+        <label>Alérgenos</label>
+        <select [(ngModel)]="filterAllergens" (ngModelChange)="applyFilters()">
+          <option value="all">Todos</option>
+          <option value="with">Con alérgenos</option>
+          <option value="without">Sin alérgenos</option>
+        </select>
+      </div>
+
+      <div class="filtro-grupo">
+        <label>Precio máximo (€)</label>
+        <input
+          type="number"
+          [(ngModel)]="filterMaxPrice"
+          placeholder="Sin límite"
+          min="0"
+          step="0.5"
+          (input)="applyFilters()"
+        />
+      </div>
+
+      <div class="filtro-grupo">
+        <label>Ingredientes (mín)</label>
+        <input
+          type="number"
+          [(ngModel)]="filterMinIngredients"
+          placeholder="Mín"
+          min="0"
+          (input)="applyFilters()"
+        />
+      </div>
+
+      <div class="filtro-grupo">
+        <label>Ingredientes (máx)</label>
+        <input
+          type="number"
+          [(ngModel)]="filterMaxIngredients"
+          placeholder="Máx"
+          min="0"
+          (input)="applyFilters()"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Skeleton -->
+  @if (loading) {
+    <div class="recipes-grid">
+      @for (skeleton of [1,2,3,4,5,6,7,8,9,10,11,12]; track skeleton) {
+        <div class="recipe-card skeleton">
+          <div class="skeleton-badge"></div>
+          <div class="card-body">
+            <div class="skeleton-title"></div>
+            <div class="skeleton-text"></div>
+            <div class="skeleton-text short"></div>
+          </div>
+          <div class="card-footer">
+            <div class="skeleton-price"></div>
+            <div class="skeleton-components"></div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Grid de tarjetas -->
+  @if (!loading) {
+    <div class="recipes-grid">
+      @for (recipe of paginatedRecipes; track recipe.id) {
+        <div
+          class="recipe-card"
+          [class.has-allergens]="hasAllergens(recipe)"
+          (click)="openRecipe(recipe)"
+        >
+          <!-- Indicador de alérgenos -->
+          @if (hasAllergens(recipe)) {
+            <div class="allergen-badge" title="Contiene alérgenos">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              <span>Alérgenos</span>
+            </div>
+          } @else {
+            <div class="allergen-badge safe" title="Sin alérgenos">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              <span>Sin alérgenos</span>
+            </div>
+          }
+
+          <!-- Info de la receta -->
+          <div class="card-body">
+            <h3 class="card-title">{{ recipe.name }}</h3>
+            @if (recipe.presentation) {
+              <p class="card-presentation">{{ recipe.presentation }}</p>
+            }
+          </div>
+
+          <!-- Precio -->
+          <div class="card-footer">
+            <span class="card-price">{{ recipe.totalCost | number:'1.2-2' }} €</span>
+            <span class="card-components">{{ recipe.components.length }} ingredientes</span>
+          </div>
+        </div>
+      }
+
+      @if (filteredRecipes.length === 0) {
+        <div class="empty-state">
+          <p>No se encontraron recetas</p>
+        </div>
+      }
+    </div>
+
+    <!-- Paginación -->
+    @if (totalPages > 1) {
+      <div class="pagination">
+        <button class="page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">❮</button>
+        @for (page of pages; track page) {
+          <button
+            class="page-btn"
+            [class.active]="page === currentPage"
+            (click)="goToPage(page)"
+          >
+            {{ page }}
+          </button>
+        }
+        <button class="page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">❯</button>
+      </div>
+    }
+  }
+</div>
+
+<!-- Modal de detalle -->
+@if (showModal && selectedRecipe) {
+  <app-recipe-detail-modal
+    [recipe]="selectedRecipe"
+    [canEdit]="canEdit()"
+    (close)="closeModal()"
+    (print)="printRecipe()"
+    (edit)="openEditModal()"
+    (cook)="onCookRecipe($event)"
+  />
+}
+
+<!-- Modal de Edición -->
+@if (showEditModal && selectedRecipe) {
+  <app-recipe-edit-modal
+    [recipe]="selectedRecipe"
+    (close)="closeEditModal()"
+    (save)="onSaveRecipe($event)"
+  />
+}
+
+<!-- Modal de Creación -->
+@if (showCreateModal) {
+  <app-recipe-create-modal
+    (close)="closeCreateModal()"
+    (save)="onCreateRecipe($event)"
+  />
+}
