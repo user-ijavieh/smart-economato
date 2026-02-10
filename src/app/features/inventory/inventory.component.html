@@ -25,13 +25,13 @@
           </div>
           <div class="form-group">
             <label for="precioProducto">Precio (€) *</label>
-            <input type="number" id="precioProducto" [(ngModel)]="formProduct.price" name="price" step="0.01" min="0" required>
+            <input type="number" id="precioProducto" [(ngModel)]="formProduct.unitPrice" name="unitPrice" step="0.01" min="0" required>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label for="stockProducto">Stock *</label>
-            <input type="number" id="stockProducto" [(ngModel)]="formProduct.stock" name="stock" min="0" required>
+            <input type="number" id="stockProducto" [(ngModel)]="formProduct.currentStock" name="currentStock" min="0" required>
           </div>
           <div class="form-group">
             <label for="stockMinimoProducto">Stock Mínimo *</label>
@@ -53,8 +53,8 @@
         <tr>
           <th class="sortable" (click)="sort('id')" [attr.data-sort-dir]="getSortDir('id')">ID</th>
           <th>Nombre</th>
-          <th (click)="sort('price')" class="sortable" [attr.data-sort-dir]="getSortDir('price')">Precio (€)</th>
-          <th (click)="sort('stock')" class="sortable" [attr.data-sort-dir]="getSortDir('stock')">Stock</th>
+          <th (click)="sort('unitPrice')" class="sortable" [attr.data-sort-dir]="getSortDir('unitPrice')">Precio (€)</th>
+          <th (click)="sort('currentStock')" class="sortable" [attr.data-sort-dir]="getSortDir('currentStock')">Stock</th>
           <th>Stock Mínimo</th>
           <th>Proveedor</th>
         </tr>
@@ -64,9 +64,9 @@
           <tr [class.alerta]="isLowStock(product)">
             <td>{{ product.id }}</td>
             <td>{{ product.name }}</td>
-            <td>{{ product.price | number:'1.2-2' }} €</td>
-            <td>{{ product.stock }}</td>
-            <td>{{ product.minStock }}</td>
+            <td>{{ product.unitPrice | number:'1.2-2' }} €</td>
+            <td>{{ product.currentStock | number:'1.0-2' }}</td>
+            <td>{{ product.minStock || 0 }}</td>
             <td>{{ product.supplier?.name || '—' }}</td>
           </tr>
         }
