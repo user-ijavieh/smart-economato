@@ -25,8 +25,8 @@ export class InventoryComponent implements OnInit {
   // Form fields
   formProduct = {
     name: '',
-    price: 0,
-    stock: 0,
+    unitPrice: 0,
+    currentStock: 0,
     minStock: 0,
     unit: '',
     supplierId: undefined as number | undefined
@@ -92,15 +92,14 @@ export class InventoryComponent implements OnInit {
   }
 
   resetForm(): void {
-    this.formProduct = { name: '', price: 0, stock: 0, minStock: 0, unit: '', supplierId: undefined };
+    this.formProduct = { name: '', unitPrice: 0, currentStock: 0, minStock: 0, unit: '', supplierId: undefined };
   }
 
   submitProduct(): void {
     this.productService.create({
       name: this.formProduct.name,
-      price: this.formProduct.price,
-      stock: this.formProduct.stock,
-      minStock: this.formProduct.minStock,
+      unitPrice: this.formProduct.unitPrice,
+      currentStock: this.formProduct.currentStock,
       unit: this.formProduct.unit || 'Ud',
       supplierId: this.formProduct.supplierId
     }).subscribe({
@@ -134,8 +133,8 @@ export class InventoryComponent implements OnInit {
       let valA: any, valB: any;
       switch (column) {
         case 'id': valA = a.id; valB = b.id; break;
-        case 'price': valA = a.price; valB = b.price; break;
-        case 'stock': valA = a.stock; valB = b.stock; break;
+        case 'unitPrice': valA = a.unitPrice; valB = b.unitPrice; break;
+        case 'currentStock': valA = a.currentStock; valB = b.currentStock; break;
         default: return 0;
       }
       return this.sortDir === 'asc' ? valA - valB : valB - valA;
@@ -151,10 +150,10 @@ export class InventoryComponent implements OnInit {
   }
 
   get totalValue(): number {
-    return this.filteredProducts.reduce((sum, p) => sum + (p.price * p.stock), 0);
+    return this.filteredProducts.reduce((sum, p) => sum + (p.unitPrice * p.currentStock), 0);
   }
 
   isLowStock(product: Product): boolean {
-    return product.stock <= product.minStock;
+    return product.currentStock <= (product.minStock || 0);
   }
 }
