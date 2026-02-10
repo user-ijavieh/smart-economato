@@ -30,8 +30,7 @@ export class InventoryComponent implements OnInit {
   searchTerm = '';
   showForm = false;
   selectedProduct: Product | null = null;
-  // Previously: isEditing, currentProductId (now derived from selectedProduct)
-
+  
   // Pagination State
   page = 0;
   size = 20;
@@ -112,14 +111,7 @@ export class InventoryComponent implements OnInit {
     this.loadProducts();
   }
 
-  checkStock(): void {
-    const lowStockProducts = this.products.filter(p => this.isLowStock(p));
-    if (lowStockProducts.length === 0) {
-      this.messageService.showSuccess('Todos los productos tienen stock suficiente');
-    } else {
-      this.messageService.showWarning(`${lowStockProducts.length} producto(s) con stock bajo`);
-    }
-  }
+
 
   // --- LÓGICA DEL FORMULARIO ---
 
@@ -197,32 +189,31 @@ export class InventoryComponent implements OnInit {
   private softDeleteProduct(): void {
     if (!this.selectedProduct) return;
 
-    // Validate and sanitize data before sending update
-    // Ensure unit is valid, default to 'UND' if not in allowed list or missing
+    // Validate and sanitize data
     const allowedUnits = ['KG', 'G', 'L', 'ML', 'UND'];
     let unit = this.selectedProduct.unit || 'UND';
     if (!allowedUnits.includes(unit)) {
         unit = 'UND';
     }
 
-    // Ensure price is valid (> 0), default to 0.01 if invalid
-    let price = this.selectedProduct.price;
+    // Ensure price is valid
+    let price = this.selectedProduct.unitPrice;
     if (!price || price < 0.01) {
         price = 0.01;
     }
 
     const productRequest: ProductRequest = {
       name: this.selectedProduct.name,
-      productCode: this.selectedProduct.productCode || `PROD-${this.selectedProduct.id}`, // Ensure productCode exists
+      productCode: this.selectedProduct.productCode || `PROD-${this.selectedProduct.id}`,
       type: this.selectedProduct.type || 'Ingrediente',
-      price: price,
-      unitPrice: price, // Required by backend
-      stock: this.selectedProduct.stock || 0,
-      currentStock: this.selectedProduct.stock || 0, // Required by backend
+      unitPrice: price,
+      price: price, // legacy?
+      currentStock: this.selectedProduct.currentStock || 0,
+      stock: this.selectedProduct.currentStock || 0, // legacy?
       minStock: this.selectedProduct.minStock || 0,
       unit: unit,
       supplierId: this.selectedProduct.supplier?.id,
-      active: false // Soft delete
+      active: false
     };
 
     this.productService.update(this.selectedProduct.id, productRequest).subscribe({
@@ -254,7 +245,11 @@ export class InventoryComponent implements OnInit {
     return this.totalElements;
   }
 
+  get totalValue(): number {
+    return this.products.reduce((sum, p) => sum + (p.unitPrice * p.currentStock), 0);
+  }
+
   isLowStock(product: Product): boolean {
-    return product.stock <= product.minStock;
+    return product.currentStock <= (product.minStock || 0);
   }
 }

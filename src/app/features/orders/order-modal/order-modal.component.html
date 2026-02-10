@@ -1,0 +1,154 @@
+<div class="modal-overlay" (click)="close()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Crear Nuevo Pedido</h2>
+      <button type="button" class="btn-close" (click)="close()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- User Selection -->
+      <div class="user-selection-section">
+        <h3>Seleccionar Usuario</h3>
+        <div class="form-group">
+          <label for="userSelect">Usuario *</label>
+          <select
+            id="userSelect"
+            [(ngModel)]="selectedUserId"
+            class="form-control"
+          >
+            <option [ngValue]="null">-- Seleccionar usuario --</option>
+            @for (user of users; track user.id) {
+              <option [ngValue]="user.id">
+                {{ user.name }} ({{ user.email }}) - {{ user.role }}
+              </option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <!-- Product Search Form -->
+      <div class="product-search-section">
+        <h3>Agregar Productos</h3>
+        <div class="form-row">
+          <div class="form-group flex-2">
+            <label for="productSearch">Producto *</label>
+            <div class="autocomplete-container">
+              <input
+                type="text"
+                id="productSearch"
+                [(ngModel)]="itemForm.productName"
+                (click)="toggleProductDropdown()"
+                placeholder="Seleccionar producto..."
+                autocomplete="off"
+                class="form-control dropdown-trigger"
+                readonly
+              >
+              <span class="dropdown-arrow" (click)="toggleProductDropdown()">▼</span>
+              @if (showProductDropdown) {
+                <div class="autocomplete-dropdown" (scroll)="onProductDropdownScroll($event)">
+                  @for (product of products; track product.id) {
+                    <div class="autocomplete-item" (click)="selectProduct(product)">
+                      <div class="autocomplete-item-name">{{ product.name }}</div>
+                      <div class="autocomplete-item-info">
+                        {{ product.unitPrice | number:'1.2-2' }} € - Stock: {{ product.currentStock | number:'1.0-3' }}
+                      </div>
+                    </div>
+                  }
+                  @if (isLoadingProducts) {
+                    <div class="autocomplete-loading">
+                      <span>Cargando más productos...</span>
+                    </div>
+                  }
+                  @if (!isLoadingProducts && products.length === 0) {
+                    <div class="autocomplete-empty">
+                      <span>No hay productos disponibles</span>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="quantity">Cantidad *</label>
+            <input
+              type="number"
+              id="quantity"
+              [(ngModel)]="itemForm.quantity"
+              min="1"
+              step="1"
+              class="form-control"
+            >
+          </div>
+
+          @if (itemForm.productId > 0) {
+            <div class="form-group">
+              <label>Precio Unitario</label>
+              <div class="price-display">
+                {{ itemForm.unitPrice | number:'1.2-2' }} €
+              </div>
+            </div>
+          }
+
+          <div class="form-group">
+            <button type="button" class="btn-add-item" (click)="addItemToOrder()">
+              + Agregar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Items List -->
+      @if (orderItems.length > 0) {
+        <div class="order-items-section">
+          <h3>Productos en el Pedido ({{ orderItems.length }})</h3>
+          <div class="items-list">
+            @for (item of orderItems; track $index) {
+              <div class="order-item">
+                <div class="item-info">
+                  <div class="item-name">{{ item.productName }}</div>
+                  <div class="item-details">
+                    {{ item.quantity }} {{ item.unit }} x {{ item.unitPrice | number:'1.2-2' }} €
+                  </div>
+                </div>
+                <div class="item-actions">
+                  <span class="item-total">{{ item.quantity * item.unitPrice | number:'1.2-2' }} €</span>
+                  <button type="button" class="btn-remove" (click)="removeItem($index)">
+                    &times;
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="order-summary">
+            <div class="summary-row">
+              <span class="summary-label">Total:</span>
+              <span class="summary-value">{{ getOrderTotal() | number:'1.2-2' }} €</span>
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (orderItems.length === 0) {
+        <div class="empty-order">
+          <p>No hay productos agregados. Busca y agrega productos para crear el pedido.</p>
+        </div>
+      }
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="close()">
+        Cancelar
+      </button>
+      <button
+        type="button"
+        class="btn-submit"
+        (click)="submitOrder()"
+        [disabled]="!selectedUserId || orderItems.length === 0 || isSubmitting"
+      >
+        {{ isSubmitting ? 'Creando...' : 'Crear Pedido' }}
+      </button>
+    </div>
+  </div>
+</div>

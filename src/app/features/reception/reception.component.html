@@ -1,133 +1,361 @@
 <div class="reception-page">
   <!-- Header -->
   <header class="reception-header">
-    <h1>RECEPCION DE PRODUCTOS</h1>
+    <h1>RECEPCIÓN DE ÓRDENES</h1>
   </header>
 
   <!-- Contenido Principal -->
   <div class="reception-content">
-    <!-- Botones de Acción Superior -->
-    <div class="top-actions">
-      <button type="button" class="btn-add-item" (click)="toggleForm()">
-        + AGREGAR ITEM
-      </button>
-      <button
-        type="button"
-        class="btn-save-reception"
-        [disabled]="items.length === 0"
-        (click)="saveReception()"
-      >
-        GUARDAR RECEPCION
-      </button>
-    </div>
-
-    <!-- Formulario Inline de Nuevo Item -->
-    @if (showForm) {
-      <section class="form-section">
-        <div class="form-container">
-          <div class="form-header">
-            <h3 class="form-title">AGREGAR NUEVO ITEM</h3>
+    @if (loading) {
+      <div class="loading-message">
+        <p>Cargando órdenes...</p>
+      </div>
+    } @else {
+      <!-- PENDING Section -->
+      <section class="status-section">
+        <h2 class="section-title" [style.border-color]="getStatusColor('PENDING')">
+          {{ getStatusLabel('PENDING') }} ({{ ordersByStatus.PENDING?.length || 0 }})
+        </h2>
+        @if ((ordersByStatus.PENDING?.length || 0) === 0) {
+          <div class="empty-section">
+            No hay órdenes pendientes
           </div>
-
-          <form class="inline-form" (ngSubmit)="addItem()">
-            <!-- Fila 1: Nombre, Proveedor -->
-            <div class="form-row">
-              <div class="form-group">
-                <label for="nombreProducto">NOMBRE DEL PRODUCTO *</label>
-                <div class="autocomplete-container">
-                  <input
-                    type="text"
-                    id="nombreProducto"
-                    [(ngModel)]="formItem.productName"
-                    name="productName"
-                    placeholder="Escribe el nombre del producto..."
-                    autocomplete="off"
-                    (input)="onProductSearch(formItem.productName)"
-                    required
-                  >
-                  @if (showAutocomplete) {
-                    <div class="autocomplete-dropdown show">
-                      @for (p of filteredProducts; track p.id) {
-                        <div class="autocomplete-item" (click)="selectProduct(p)">
-                          <div class="autocomplete-item-name">{{ p.name }}</div>
-                          <div class="autocomplete-item-info">{{ p.price | number:'1.2-2' }} € — Stock: {{ p.stock }}</div>
-                        </div>
-                      }
+        } @else {
+          <div class="orders-container">
+            @for (order of ordersByStatus.PENDING; track order.id) {
+              <div class="order-card" [style.border-left-color]="getStatusColor('PENDING')">
+                <div class="order-header" [style.background]="getStatusColor('PENDING')">
+                  <div class="order-title">
+                    <div class="order-user">
+                      <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
+                      <div>
+                        <h3>Orden #{{ order.id }}</h3>
+                        <p>{{ order.userName }}</p>
+                      </div>
                     </div>
-                  }
+                  </div>
+                  <span class="order-status">{{ getStatusLabel(order.status) }}</span>
+                </div>
+
+                <div class="order-body">
+                  <div class="order-detail">
+                    <span class="detail-label">Fecha:</span>
+                    <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
+                  </div>
+                  <div class="order-detail">
+                    <span class="detail-label">Productos:</span>
+                    <span class="detail-value">{{ order.details?.length || 0 }}</span>
+                  </div>
+                  <div class="order-detail">
+                    <span class="detail-label">Total:</span>
+                    <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
+                  </div>
+
+                  <div class="order-items-preview">
+                    @for (detail of (order.details || []).slice(0, 2); track $index) {
+                      <div class="item-preview">
+                        <span>{{ detail.productName }}</span>
+                        <span>{{ detail.quantity }} uds</span>
+                      </div>
+                    }
+                    @if ((order.details?.length || 0) > 2) {
+                      <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
+                    }
+                  </div>
+                </div>
+
+                <div class="order-actions">
+                  <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
+                    Ver Detalles
+                  </button>
+                  <button class="btn-action btn-primary" (click)="reviewOrder(order)">
+                    Revisar Orden
+                  </button>
+                  <button class="btn-action btn-secondary" (click)="cancelOrder(order)">
+                    Cancelar
+                  </button>
                 </div>
               </div>
-              <div class="form-group">
-                <label for="proveedorProducto">PROVEEDOR</label>
-                <input type="text" id="proveedorProducto" [(ngModel)]="formItem.supplier" name="supplier" [readOnly]="true">
-              </div>
-            </div>
+            }
+          </div>
+        }
+      </section>
 
-            <!-- Fila 2: Cantidad y Precio -->
-            <div class="form-row">
-              <div class="form-group">
-                <label for="cantidadProducto">CANTIDAD *</label>
-                <input type="number" id="cantidadProducto" [(ngModel)]="formItem.quantity" name="quantity" placeholder="0" min="1" required>
-              </div>
-              <div class="form-group">
-                <label for="precioProducto">PRECIO (€) *</label>
-                <input type="number" id="precioProducto" [(ngModel)]="formItem.price" name="price" placeholder="0.00" step="0.01" min="0" required>
-              </div>
-            </div>
+      <!-- IN_REVIEW Section -->
+      <section class="status-section">
+        <h2 class="section-title" [style.border-color]="getStatusColor('REVIEW')">
+          {{ getStatusLabel('REVIEW') }} ({{ ordersByStatus.REVIEW?.length || 0 }})
+        </h2>
+        @if ((ordersByStatus.REVIEW?.length || 0) === 0) {
+          <div class="empty-section">
+            No hay órdenes en revisión
+          </div>
+        } @else {
+          <div class="orders-container">
+            @for (order of ordersByStatus.REVIEW; track order.id) {
+              <div class="order-card" [style.border-left-color]="getStatusColor('REVIEW')">
+                <div class="order-header" [style.background]="getStatusColor('REVIEW')">
+                  <div class="order-title">
+                    <div class="order-user">
+                      <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
+                      <div>
+                        <h3>Orden #{{ order.id }}</h3>
+                        <p>{{ order.userName }}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="order-status">{{ getStatusLabel(order.status) }}</span>
+                </div>
 
-            <!-- Fila 3: Notas -->
-            <div class="form-row">
-              <div class="form-group full-width">
-                <label for="notasProducto">NOTAS</label>
-                <textarea id="notasProducto" [(ngModel)]="formItem.notes" name="notes" rows="3" placeholder="NOTAS ADICIONALES..."></textarea>
-              </div>
-            </div>
+                <div class="order-body">
+                  <div class="order-detail">
+                    <span class="detail-label">Fecha:</span>
+                    <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
+                  </div>
+                  <div class="order-detail">
+                    <span class="detail-label">Productos:</span>
+                    <span class="detail-value">{{ order.details?.length || 0 }}</span>
+                  </div>
+                  <div class="order-detail">
+                    <span class="detail-label">Total:</span>
+                    <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
+                  </div>
 
-            <!-- Botones -->
-            <div class="form-actions">
-              <button type="submit" class="btn-agregar">AGREGAR ITEM</button>
-              <button type="button" class="btn-cancelar" (click)="toggleForm()">CANCELAR</button>
-            </div>
-          </form>
-        </div>
+                  <div class="order-items-preview">
+                    @for (detail of (order.details || []).slice(0, 2); track $index) {
+                      <div class="item-preview">
+                        <span>{{ detail.productName }}</span>
+                        <span>{{ detail.quantity }} uds</span>
+                      </div>
+                    }
+                    @if ((order.details?.length || 0) > 2) {
+                      <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
+                    }
+                  </div>
+                </div>
+
+                <div class="order-actions">
+                  <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
+                    Ver Detalles
+                  </button>
+                  <button class="btn-action btn-success" (click)="confirmOrder(order)">
+                    Confirmar Completa
+                  </button>
+                  <button class="btn-action btn-danger" (click)="markIncomplete(order)">
+                    Marcar Incompleta
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- CONFIRMED Section -->
+      <section class="status-section">
+        <h2 class="section-title" [style.border-color]="getStatusColor('CONFIRMED')">
+          {{ getStatusLabel('CONFIRMED') }} ({{ ordersByStatus.CONFIRMED?.length || 0 }})
+        </h2>
+        @if ((ordersByStatus.CONFIRMED?.length || 0) === 0) {
+          <div class="empty-section">
+            No hay órdenes confirmadas
+          </div>
+        } @else {
+          <div class="orders-container">
+            @for (order of ordersByStatus.CONFIRMED; track order.id) {
+              <div class="order-card completed" [style.border-left-color]="getStatusColor('CONFIRMED')">
+                <div class="order-header" [style.background]="getStatusColor('CONFIRMED')">
+                  <div class="order-title">
+                    <div class="order-user">
+                      <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
+                      <div>
+                        <h3>Orden #{{ order.id }}</h3>
+                        <p>{{ order.userName }}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="order-status">{{ getStatusLabel(order.status) }}</span>
+                </div>
+
+                <div class="order-body">
+                  <div class="order-detail">
+                    <span class="detail-label">Fecha:</span>
+                    <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
+                  </div>
+                  <div class="order-detail">
+                    <span class="detail-label">Productos:</span>
+                    <span class="detail-value">{{ order.details?.length || 0 }}</span>
+                  </div>
+                  <div class="order-detail">
+                    <span class="detail-label">Total:</span>
+                    <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
+                  </div>
+
+                  <div class="order-items-preview">
+                    @for (detail of (order.details || []).slice(0, 2); track $index) {
+                      <div class="item-preview">
+                        <span>{{ detail.productName }}</span>
+                        <span>{{ detail.quantity }} uds</span>
+                      </div>
+                    }
+                    @if ((order.details?.length || 0) > 2) {
+                      <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
+                    }
+                  </div>
+                </div>
+
+                <div class="order-actions">
+                  <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
+                    Ver Detalles
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- INCOMPLETE Section -->
+      <section class="status-section">
+        <h2 class="section-title" [style.border-color]="getStatusColor('INCOMPLETE')">
+          {{ getStatusLabel('INCOMPLETE') }} ({{ ordersByStatus.INCOMPLETE?.length || 0 }})
+        </h2>
+        @if ((ordersByStatus.INCOMPLETE?.length || 0) === 0) {
+          <div class="empty-section">
+            No hay órdenes incompletas
+          </div>
+        } @else {
+          <div class="orders-container">
+            @for (order of ordersByStatus.INCOMPLETE; track order.id) {
+              <div class="order-card incomplete" [style.border-left-color]="getStatusColor('INCOMPLETE')">
+                <div class="order-header" [style.background]="getStatusColor('INCOMPLETE')">
+                  <div class="order-title">
+                    <div class="order-user">
+                      <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
+                      <div>
+                        <h3>Orden #{{ order.id }}</h3>
+                        <p>{{ order.userName }}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="order-status">{{ getStatusLabel(order.status) }}</span>
+                </div>
+
+                <div class="order-body">
+                  <div class="order-detail">
+                    <span class="detail-label">Fecha:</span>
+                    <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
+                  </div>
+                  <div class="order-detail">
+                    <span class="detail-label">Productos:</span>
+                    <span class="detail-value">{{ order.details?.length || 0 }}</span>
+                  </div>
+                  <div class="order-detail">
+                    <span class="detail-label">Total:</span>
+                    <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
+                  </div>
+
+                  <div class="order-items-preview">
+                    @for (detail of (order.details || []).slice(0, 2); track $index) {
+                      <div class="item-preview">
+                        <span>{{ detail.productName }}</span>
+                        <span>{{ detail.quantity }} uds</span>
+                      </div>
+                    }
+                    @if ((order.details?.length || 0) > 2) {
+                      <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
+                    }
+                  </div>
+                </div>
+
+                <div class="order-actions">
+                  <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
+                    Ver Detalles
+                  </button>
+                  <button class="btn-action btn-delete" (click)="deleteOrder(order)">
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- CANCELLED Section -->
+      <section class="status-section">
+        <h2 class="section-title" [style.border-color]="getStatusColor('CANCELLED')">
+          {{ getStatusLabel('CANCELLED') }} ({{ ordersByStatus.CANCELLED?.length || 0 }})
+        </h2>
+        @if ((ordersByStatus.CANCELLED?.length || 0) === 0) {
+          <div class="empty-section">
+            No hay órdenes canceladas
+          </div>
+        } @else {
+          <div class="orders-container">
+            @for (order of ordersByStatus.CANCELLED; track order.id) {
+              <div class="order-card cancelled" [style.border-left-color]="getStatusColor('CANCELLED')">
+                <div class="order-header" [style.background]="getStatusColor('CANCELLED')">
+                  <div class="order-title">
+                    <div class="order-user">
+                      <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
+                      <div>
+                        <h3>Orden #{{ order.id }}</h3>
+                        <p>{{ order.userName }}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="order-status">{{ getStatusLabel(order.status) }}</span>
+                </div>
+
+                <div class="order-body">
+                  <div class="order-detail">
+                    <span class="detail-label">Fecha:</span>
+                    <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
+                  </div>
+                  <div class="order-detail">
+                    <span class="detail-label">Productos:</span>
+                    <span class="detail-value">{{ order.details?.length || 0 }}</span>
+                  </div>
+                  <div class="order-detail">
+                    <span class="detail-label">Total:</span>
+                    <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
+                  </div>
+
+                  <div class="order-items-preview">
+                    @for (detail of (order.details || []).slice(0, 2); track $index) {
+                      <div class="item-preview">
+                        <span>{{ detail.productName }}</span>
+                        <span>{{ detail.quantity }} uds</span>
+                      </div>
+                    }
+                    @if ((order.details?.length || 0) > 2) {
+                      <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
+                    }
+                  </div>
+                </div>
+
+                <div class="order-actions">
+                  <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
+                    Ver Detalles
+                  </button>
+                  <button class="btn-action btn-delete" (click)="deleteOrder(order)">
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
       </section>
     }
-
-    <!-- Sección de Items de Recepción -->
-    <section class="items-section">
-      <h2 class="section-title">ITEMS DE RECEPCION</h2>
-
-      @if (items.length === 0) {
-        <div class="empty-state">
-          <p class="empty-message">
-            NO HAY ITEMS AGREGADOS. HAZ CLIC EN "AGREGAR ITEM" PARA COMENZAR.
-          </p>
-        </div>
-      } @else {
-        <div class="items-list">
-          @for (item of items; track $index) {
-            <div class="item-card">
-              <div class="item-info">
-                <span class="item-name">{{ item.productName }}</span>
-                <span class="item-category">{{ item.category || 'Sin categoría' }}</span>
-              </div>
-              <div class="item-data">
-                <span class="item-label">CANTIDAD</span>
-                <span class="item-value">{{ item.quantity }}</span>
-              </div>
-              <div class="item-data">
-                <span class="item-label">PRECIO</span>
-                <span class="item-value">{{ item.price | number:'1.2-2' }} €</span>
-              </div>
-              <div class="item-data">
-                <span class="item-label">TOTAL</span>
-                <span class="item-value item-total">{{ getItemTotal(item) | number:'1.2-2' }} €</span>
-              </div>
-              <button class="btn-eliminar" (click)="removeItem($index)">ELIMINAR</button>
-            </div>
-          }
-        </div>
-      }
-    </section>
   </div>
 </div>
+
+<!-- Details Modal -->
+@if (showDetailsModal && selectedOrder) {
+  <app-order-details-modal
+    [order]="selectedOrder"
+    (closeModal)="closeDetailsModal()"
+  ></app-order-details-modal>
+}

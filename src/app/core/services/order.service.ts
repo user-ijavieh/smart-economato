@@ -51,13 +51,18 @@ export class OrderService {
   updateStatus(id: number, status: string): Observable<Order> {
     return this.http.patch<Order>(
       `${this.url}/${id}/status`,
-      null,
-      { params: new HttpParams().set('status', status) }
+      { status: status }
     );
   }
 
   getByDateRange(start: string, end: string): Observable<Order[]> {
     const params = new HttpParams().set('start', start).set('end', end);
     return this.http.get<Order[]>(`${this.url}/by-date-range`, { params });
+  }
+
+  downloadPdf(id: number): Observable<Blob> {
+    return this.http.get(`${this.url}/${id}/pdf`, {
+      responseType: 'blob'
+    });
   }
 }

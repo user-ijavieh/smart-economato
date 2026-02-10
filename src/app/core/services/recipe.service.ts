@@ -2,18 +2,15 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Recipe, RecipeRequest } from '../../shared/models/recipe.model';
+import { Recipe, RecipeRequest, CookRequest } from '../../shared/models/recipe.model';
 
 @Injectable({ providedIn: 'root' })
 export class RecipeService {
   private http = inject(HttpClient);
   private url = `${environment.apiUrl}/api/recipes`;
 
-  getAll(page = 0, size = 20): Observable<Recipe[]> {
-    const params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString());
-    return this.http.get<Recipe[]>(this.url, { params });
+  getAll(): Observable<Recipe[]> {
+    return this.http.get<Recipe[]>(this.url);
   }
 
   getById(id: number): Observable<Recipe> {
@@ -41,6 +38,16 @@ export class RecipeService {
   findByMaxCost(maxCost: number): Observable<Recipe[]> {
     return this.http.get<Recipe[]>(`${this.url}/by-max-cost`, {
       params: new HttpParams().set('maxCost', maxCost.toString())
+    });
+  }
+
+  cook(request: CookRequest): Observable<Recipe> {
+    return this.http.post<Recipe>(`${this.url}/cook`, request);
+  }
+
+  getPdf(id: number): Observable<Blob> {
+    return this.http.get(`${this.url}/${id}/pdf`, {
+      responseType: 'blob'
     });
   }
 }

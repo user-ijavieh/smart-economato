@@ -1,6 +1,7 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../../../core/services/auth.service';
 
 interface NavItem {
   label: string;
@@ -16,6 +17,8 @@ interface NavItem {
   styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent {
+  private authService = inject(AuthService);
+  
   isOpen = false;
 
   @Output() sidebarToggled = new EventEmitter<boolean>();
@@ -37,5 +40,27 @@ export class SidebarComponent {
 
   onLogout(): void {
     this.logoutClicked.emit();
+  }
+
+  // Métodos para obtener información del usuario
+  getUserRole(): string | null {
+    return this.authService.getRole();
+  }
+
+  getUserToken(): string | null {
+    return this.authService.getToken();
+  }
+
+  // Si tienes el nombre del usuario en localStorage
+  getUserName(): string | null {
+    const name = this.authService.getName();
+    return name || 'Admin'; // Por defecto "Admin" si no hay nombre
+  }
+
+  // Método para obtener la primera letra del rol
+  getUserInitials(): string {
+    const role = this.getUserRole();
+    if (!role) return 'U';
+    return role.charAt(0).toUpperCase();
   }
 }

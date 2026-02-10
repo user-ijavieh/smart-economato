@@ -1,26 +1,38 @@
 export interface Recipe {
   id: number;
   name: string;
-  description?: string;
-  cost: number;
+  elaboration?: string;
+  presentation?: string;
+  totalCost: number;
   components: RecipeComponent[];
-  allergens?: Allergen[];
+  allergens: Allergen[];
 }
 
 export interface RecipeComponent {
   id: number;
-  product: { id: number; name: string };
+  parentRecipeId: number;
+  productId: number;
+  productName: string;
   quantity: number;
-  unit: string;
+  subtotal: number;
 }
 
 export interface RecipeRequest {
   name: string;
-  description?: string;
-  components: { productId: number; quantity: number; unit: string }[];
+  elaboration?: string;
+  presentation?: string;
+  components: { productId: number; quantity: number }[];
+  allergenIds?: number[];
 }
 
 export interface Allergen {
   id: number;
   name: string;
+}
+
+
+export interface CookRequest {
+  recipeId: number;
+  quantity: number;
+  details: string;
 }
