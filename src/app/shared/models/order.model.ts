@@ -1,18 +1,25 @@
-export type OrderStatus = 'CREATED' | 'PENDING' | 'REVIEW' | 'COMPLETED' | 'INCOMPLETE';
+export type OrderStatus = 'CREATED' | 'PENDING' | 'REVIEW' | 'CONFIRMED' | 'CANCELLED' | 'INCOMPLETE';
 
 export interface Order {
   id: number;
-  user: { id: number; name: string };
+  userId: number;
+  userName: string;
   status: OrderStatus;
   orderDate: string;
-  details: OrderDetail[];
+  receptionDate?: string;
+  totalPrice?: number;
+  details?: OrderDetail[];
 }
 
 export interface OrderDetail {
-  id: number;
-  product: { id: number; name: string };
+  id?: number;
+  orderId?: number;
+  productId: number;
+  productName: string;
   quantity: number;
+  quantityReceived?: number;
   unitPrice: number;
+  subtotal?: number;
 }
 
 export interface OrderRequest {
@@ -22,5 +29,6 @@ export interface OrderRequest {
 
 export interface OrderReceptionRequest {
   orderId: number;
-  items: { productId: number; receivedQuantity: number }[];
+  status: OrderStatus;
+  items: { productId: number; quantityReceived: number }[];
 }

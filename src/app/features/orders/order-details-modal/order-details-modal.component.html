@@ -1,0 +1,92 @@
+<div class="modal-overlay" (click)="close()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    @if (order) {
+      <div class="modal-header">
+        <div>
+          <h2>Detalles del Pedido #{{ order.id }}</h2>
+          <span class="order-status-badge" [style.background]="getStatusColor(order.status)">
+            {{ getStatusLabel(order.status) }}
+          </span>
+        </div>
+        <button type="button" class="btn-close" (click)="close()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- User Information -->
+        <div class="info-section">
+          <h3>Información del Usuario</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Nombre:</span>
+              <span class="info-value">{{ order.userName }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">ID:</span>
+              <span class="info-value">#{{ order.userId }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Information -->
+        <div class="info-section">
+          <h3>Información del Pedido</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Fecha de Creación:</span>
+              <span class="info-value">{{ formatDate(order.orderDate) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Estado:</span>
+              <span class="info-value">{{ getStatusLabel(order.status) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Products List -->
+        <div class="info-section">
+          <h3>Productos ({{ order.details?.length || 0 }})</h3>
+          <div class="products-table">
+            <div class="table-header">
+              <div class="col-product">Producto</div>
+              <div class="col-quantity">Cantidad</div>
+              <div class="col-price">Precio Unit.</div>
+              <div class="col-total">Subtotal</div>
+            </div>
+            @for (detail of (order.details || []); track $index) {
+              @if (detail.productName) {
+                <div class="table-row">
+                  <div class="col-product">
+                    <div class="product-name">{{ detail.productName }}</div>
+                  </div>
+                  <div class="col-quantity">
+                    {{ detail.quantity }} uds
+                  </div>
+                  <div class="col-price">
+                    {{ detail.unitPrice | number:'1.2-2' }} €
+                  </div>
+                  <div class="col-total">
+                    {{ (detail.quantity * detail.unitPrice) | number:'1.2-2' }} €
+                  </div>
+                </div>
+              }
+            }
+          </div>
+
+          <!-- Total -->
+          <div class="order-total">
+            <div class="total-row">
+              <span class="total-label">Total del Pedido:</span>
+              <span class="total-value">{{ getOrderTotal() | number:'1.2-2' }} €</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-close-modal" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    }
+  </div>
+</div>

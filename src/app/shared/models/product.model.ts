@@ -3,27 +3,31 @@ export interface Product {
   name: string;
   type?: string;
   unit: string;
-  price: number;
+  unitPrice: number;
   productCode?: string;
-  stock: number;
-  minStock: number;
+  currentStock: number;
+  minStock?: number;
   supplier?: Supplier;
 }
 
 export interface ProductRequest {
   name: string;
-  barcode?: string;
-  price: number;
-  unitPrice?: number;
-  stock: number;
-  minStock: number;
+  type?: string;
   unit: string;
+  unitPrice: number;
+  productCode?: string;
+  currentStock?: number;
+  supplierId?: number;
+  // Legacy fields for backward compatibility
+  stock?: number;
+  minStock?: number;
+  price?: number;
+  barcode?: string;
   brand?: string;
   expirationDate?: string;
   description?: string;
   image?: string;
   active?: boolean;
-  supplierId?: number;
 }
 
 export interface Supplier {
