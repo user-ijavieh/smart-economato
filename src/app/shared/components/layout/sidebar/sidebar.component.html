@@ -1,13 +1,23 @@
 <nav id="sidebar" [class.close]="!isOpen">
   <ul>
-    <!-- Header: Logo + Toggle -->
-    <li>
-      <span class="logo">Smart Economato</span>
+    <!-- Toggle -->
+    <li class="toggle-item">
       <button id="toggle-btn" [class.rotate]="!isOpen" (click)="toggleSidebar()" aria-label="Alternar menú">
         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
           <path d="M440-240 200-480l240-240 56 56-183 184 183 184-56 56Zm264 0L464-480l240-240 56 56-183 184 183 184-56 56Z"/>
         </svg>
       </button>
+    </li>
+    <!-- Avatar -->
+    <li class="avatar-item">
+      <div class="user-info">
+        <div class="user-avatar">
+          {{ getUserInitials() }}
+        </div>
+        <div class="user-details" *ngIf="isOpen">
+          <span class="user-name">{{ getUserName() }}</span>
+        </div>
+      </div>
     </li>
     <!-- Inicio -->
     <li>
@@ -63,8 +73,8 @@
         <span>Perfil</span>
       </a>
     </li>
-    <!-- Cerrar Sesión -->
-    <li>
+    <!-- Cerrar Sesión (al fondo) -->
+    <li class="logout-item">
       <a href="javascript:void(0)" (click)="onLogout()" aria-label="Cerrar sesión">
         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
           <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>

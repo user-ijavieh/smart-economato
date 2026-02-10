@@ -1,4 +1,3 @@
-// src/app/shared/models/product.model.ts
 import { Supplier } from './supplier.model';
 
 // Interfaz para mostrar datos (GET)
@@ -7,30 +6,45 @@ export interface Product {
   name: string;
   type?: string;
   unit: string;
-  price: number;
+  unitPrice: number;
   productCode?: string;
-  stock: number;
+  
+  // Stock property - favoring currentStock as per recent changes but keeping stock for compatibility if backend sends it
+  stock?: number; 
+  currentStock: number;
   minStock: number;
-  active?: boolean;
+  
   supplier?: Supplier;
-}
-
-// Interfaz para enviar datos (POST/PUT)
-export interface ProductRequest {
-  name: string;
-  productCode?: string; // New field
-  type?: string;        // New field
   barcode?: string;
-  price: number;
-  unitPrice?: number;   // New field (preferred over price)
-  stock: number;
-  currentStock?: number; // New field (preferred over stock)
-  minStock: number;
-  unit: string;
+  price?: number;
   brand?: string;
   expirationDate?: string;
   description?: string;
   image?: string;
   active?: boolean;
+}
+
+// Interfaz para enviar datos (POST/PUT)
+export interface ProductRequest {
+  name: string;
+  productCode?: string;
+  type?: string;
+  barcode?: string;
+  
+  // Price
+  price?: number; 
+  unitPrice: number;
+
+  // Stock
+  stock?: number;
+  currentStock: number;
+  minStock: number;
+
+  unit: string;
   supplierId?: number;
+  active?: boolean;
+  description?: string;
+  image?: string;
+  brand?: string;
+  expirationDate?: string;
 }

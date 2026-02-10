@@ -11,7 +11,6 @@
       (keyup.enter)="onSearch()"
     />
     <button (click)="onSearch()">Buscar</button>
-    <button (click)="checkStock()">Comprobar Stock</button>
     <button id="btnAgregarProducto" (click)="toggleForm()">
       {{ showForm ? 'Cerrar Formulario' : 'Agregar Producto' }}
     </button>
@@ -51,15 +50,15 @@
           </th>
           <th
             class="sortable"
-            (click)="onSortChange('price')"
-            [attr.data-sort-dir]="getSortDir('price')"
+            (click)="onSortChange('unitPrice')"
+            [attr.data-sort-dir]="getSortDir('unitPrice')"
           >
             Precio (€)
           </th>
           <th
             class="sortable"
-            (click)="onSortChange('stock')"
-            [attr.data-sort-dir]="getSortDir('stock')"
+            (click)="onSortChange('currentStock')"
+            [attr.data-sort-dir]="getSortDir('currentStock')"
           >
             Stock
           </th>
@@ -102,8 +101,8 @@
               <td>{{ product.id }}</td>
               <td>{{ product.name }}</td>
               <td>{{ product.type || '—' }}</td>
-              <td>{{ product.price | number: '1.2-2' }} €</td>
-              <td>{{ product.stock }}</td>
+              <td>{{ product.unitPrice | number: '1.2-2' }} €</td>
+              <td>{{ product.currentStock }}</td>
               <td>{{ product.unit }}</td>
               <td>{{ product.supplier?.name || '—' }}</td>
               <td>

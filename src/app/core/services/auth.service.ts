@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap, BehaviorSubject } from 'rxjs';
+import { Observable, tap, BehaviorSubject, switchMap } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { Role, hasPermission } from '../../shared/models/role-permissions';
 
 interface LoginRequest {
   name: string;
@@ -11,6 +12,10 @@ interface LoginRequest {
 
 interface LoginResponse {
   token: string;
+}
+
+interface RoleResponse {
+  role: string;
 }
 
 interface TokenValidation {
@@ -24,18 +29,28 @@ export class AuthService {
   private router = inject(Router);
   private apiUrl = environment.apiUrl;
   private TOKEN_KEY = 'auth_token';
+  private ROLE_KEY = 'user_role';
+  private NAME_KEY = 'user_name';
 
   private isLoggedIn$ = new BehaviorSubject<boolean>(this.hasToken());
 
-  login(name: string, password: string): Observable<LoginResponse> {
+  login(name: string, password: string): Observable<RoleResponse> {
     return this.http.post<LoginResponse>(
       `${this.apiUrl}/api/auth/login`,
       { name, password } as LoginRequest
     ).pipe(
       tap(response => {
         localStorage.setItem(this.TOKEN_KEY, response.token);
-        this.isLoggedIn$.next(true);
-      })
+        localStorage.setItem(this.NAME_KEY, name);
+      }),
+      switchMap(() =>
+        this.http.get<RoleResponse>(`${this.apiUrl}/api/auth/role`).pipe(
+          tap(response => {
+            localStorage.setItem(this.ROLE_KEY, response.role);
+            this.isLoggedIn$.next(true);
+          })
+        )
+      )
     );
   }
 
@@ -54,12 +69,32 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.ROLE_KEY);
+    localStorage.removeItem(this.NAME_KEY);
     this.isLoggedIn$.next(false);
     this.router.navigate(['/login']);
   }
 
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  getRole(): string | null {
+    return localStorage.getItem(this.ROLE_KEY);
+  }
+
+  getName(): string | null {
+    return localStorage.getItem(this.NAME_KEY);
+  }
+
+  hasPermission(method: string, url: string): boolean {
+    const role = this.getRole() as Role;
+    if (!role) return false;
+    return hasPermission(role, method, url);
+  }
+
+  canAccess(endpoint: string, method: string = 'GET'): boolean {
+    return this.hasPermission(method, `/api${endpoint}`);
   }
 
   isAuthenticated(): boolean {

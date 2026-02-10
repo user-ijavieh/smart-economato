@@ -1,60 +1,100 @@
 <!-- Header -->
-<div class="header-inventario">
-  <h1>Pedidos</h1>
+<div class="header-pedidos">
+  <h1>PEDIDOS</h1>
 </div>
 
 <!-- Contenido -->
 <div class="contenedor-principal">
-  <div class="controles">
-    <select [(ngModel)]="statusFilter" (change)="filterByStatus()">
-      <option value="">-- Estado --</option>
-      <option value="CREATED">Creado</option>
-      <option value="PENDING">Pendiente</option>
-      <option value="REVIEW">En revisión</option>
-      <option value="COMPLETED">Completado</option>
-      <option value="INCOMPLETE">Incompleto</option>
-    </select>
-    <button (click)="filterByStatus()">Filtrar</button>
-    <button (click)="showAll()">Mostrar Todos</button>
+  <!-- Action Button -->
+  <div class="top-actions">
+    <button class="btn-create-order" (click)="openCreateOrderModal()">
+      + CREAR PEDIDO
+    </button>
   </div>
 
-  <!-- Tabla de Pedidos -->
-  <div class="tabla-contenedor">
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Usuario</th>
-          <th>Estado</th>
-          <th>Fecha</th>
-          <th>Items</th>
-          <th>Total (€)</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (order of filteredOrders; track order.id) {
-          <tr>
-            <td>{{ order.id }}</td>
-            <td>{{ order.user?.name || '—' }}</td>
-            <td>
-              <span class="status-badge" [attr.data-status]="order.status">
-                {{ getStatusLabel(order.status) }}
-              </span>
-            </td>
-            <td>{{ order.orderDate | date:'dd/MM/yyyy' }}</td>
-            <td>{{ order.details?.length || 0 }}</td>
-            <td>{{ getOrderTotal(order) | number:'1.2-2' }} €</td>
-          </tr>
-        }
-        @if (filteredOrders.length === 0 && !loading) {
-          <tr><td colspan="6" style="text-align: center; padding: 2rem;">No se encontraron pedidos</td></tr>
-        }
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="6">Total: {{ filteredOrders.length }} pedidos</td>
-        </tr>
-      </tfoot>
-    </table>
-  </div>
+  <!-- Orders Grid -->
+  @if (loading) {
+    <div class="loading-message">
+      <p>Cargando pedidos...</p>
+    </div>
+  } @else if (orders.length === 0) {
+    <div class="empty-state">
+      <h3>No hay pedidos pendientes</h3>
+      <p>Crea un nuevo pedido para comenzar</p>
+    </div>
+  } @else {
+    <div class="orders-grid">
+      @for (order of orders; track order.id) {
+        <div class="order-card">
+          <div class="order-card-header">
+            <div class="order-card-user">
+              <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
+              <div class="user-info">
+                <h4>Pedido #{{ order.id }}</h4>
+                <p>{{ order.userName || 'Usuario desconocido' }}</p>
+              </div>
+            </div>
+            <span class="order-status created">CREADO</span>
+          </div>
+
+          <div class="order-card-body">
+            <div class="order-detail">
+              <span class="detail-label">Fecha:</span>
+              <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Productos:</span>
+              <span class="detail-value">{{ order.details?.length || 0 }}</span>
+            </div>
+            <div class="order-detail total">
+              <span class="detail-label">Total:</span>
+              <span class="detail-value">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
+            </div>
+          </div>
+
+          <div class="order-items-preview">
+            @for (detail of (order.details || []).slice(0, 3); track $index) {
+              @if (detail.productName) {
+                <div class="item-preview">
+                  <span class="item-name">{{ detail.productName }}</span>
+                  <span class="item-qty">{{ detail.quantity }}</span>
+                </div>
+              }
+            }
+            @if ((order.details?.length || 0) > 3) {
+              <div class="items-more">+{{ (order.details?.length || 0) - 3 }} más</div>
+            }
+          </div>
+
+          <div class="order-card-actions">
+            <button class="btn-action btn-print" (click)="printOrder(order, $event)" title="Imprimir PDF">
+              🖨️
+            </button>
+            <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
+              Ver Detalles
+            </button>
+            <button class="btn-action btn-confirm" (click)="confirmOrder(order)">
+              Confirmar Pedido
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
 </div>
+
+<!-- Modal -->
+@if (showModal) {
+  <app-order-modal
+    (closeModal)="closeModal()"
+    (orderCreated)="onOrderCreated()"
+  ></app-order-modal>
+}
+
+<!-- Details Modal -->
+@if (showDetailsModal && selectedOrder) {
+  <app-order-details-modal
+    [order]="selectedOrder"
+    (closeModal)="closeDetailsModal()"
+  ></app-order-details-modal>
+}

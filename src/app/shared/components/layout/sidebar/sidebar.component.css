@@ -22,7 +22,6 @@
   width: 60px;
 }
 
-#sidebar.close .logo,
 #sidebar.close a span {
   opacity: 0;
   pointer-events: none;
@@ -36,19 +35,77 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
-#sidebar > ul > li:first-child {
+/** ===== TOGGLE (arriba) ===== */
+
+.toggle-item {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 16px;
+  padding: 0.5em 0;
 }
 
-#sidebar > ul > li:first-child .logo {
-  font-weight: 600;
-  color: white;
-  font-size: 1rem;
+#sidebar.close .toggle-item {
+  justify-content: center;
 }
+
+/** ===== AVATAR ===== */
+
+.avatar-item {
+  padding: 0 0 1em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  margin-bottom: 0.75em;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  padding: 0.85em;
+  padding-left: calc(0.85em - 8px);
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1rem;
+  color: white;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#sidebar.close .user-details {
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  overflow: hidden;
+}
+
+/** ===== LINKS ===== */
 
 #sidebar ul li.active a,
 #sidebar ul li a.active {
@@ -64,8 +121,7 @@
   fill: white;
 }
 
-#sidebar a,
-#sidebar .logo {
+#sidebar a {
   border-radius: 0.5em;
   padding: 0.85em;
   text-decoration: none;
@@ -95,6 +151,15 @@
 
 #sidebar a:hover svg {
   fill: white;
+}
+
+/** ===== LOGOUT (abajo) ===== */
+
+.logout-item {
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding-top: 0.5em;
+  margin-bottom: 0.5em;
 }
 
 /** ===== TOGGLE BUTTON ===== */
@@ -142,6 +207,7 @@
     grid-auto-flow: column;
     align-items: center;
     overflow-x: scroll;
+    height: auto;
   }
 
   #sidebar ul li {
@@ -157,7 +223,14 @@
   }
 
   #sidebar ul li span,
-  #sidebar ul li:first-child {
+  .toggle-item,
+  .avatar-item {
     display: none;
+  }
+
+  .logout-item {
+    margin-top: 0;
+    border-top: none;
+    padding-top: 0;
   }
 }

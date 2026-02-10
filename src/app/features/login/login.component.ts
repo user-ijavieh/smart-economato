@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -16,6 +16,7 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
   private messageService = inject(MessageService);
+  private cdr = inject(ChangeDetectorRef);
 
   loginForm = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -38,12 +39,9 @@ export class LoginComponent {
         this.messageService.showSuccess('Sesión iniciada correctamente');
         this.router.navigate(['/welcome']);
       },
-      error: (err) => {
+      error: () => {
         this.loading = false;
-        this.errorMessage = err.status === 401
-          ? 'Credenciales incorrectas'
-          : 'Error de conexión con el servidor';
-        this.messageService.showError(this.errorMessage);
+        this.cdr.markForCheck();
       }
     });
   }
