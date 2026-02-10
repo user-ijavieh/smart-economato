@@ -146,45 +146,45 @@
 }
 
 .container .logos img:hover {
-  transform: scale(1.05);
+  transform: scale(1.05); 
 }
 
 /*responsive*/
 
 @media (max-width: 1024px) {
   .container {
-    width: 50vw; /* De 30vw a 50vw para dar aire al texto */
+    width: 50vw; 
     margin-left: 10%;
-    height: auto; /* Dejamos que el contenido dicte la altura */
+    height: auto; 
     padding-bottom: 30px;
   }
 }
 
 @media (max-width: 768px) {
   .login-wrapper {
-    align-items: center; /* Centramos el formulario horizontalmente */
+    align-items: center; 
     padding: 20px;
   }
 
   .container {
-    width: 90vw; /* Ocupa casi todo el ancho del móvil */
-    margin-left: 0; /* Eliminamos el margen lateral de escritorio */
+    width: 90vw; 
+    margin-left: 0; 
     height: auto;
     min-height: 60vh;
   }
 
   .title h1 {
-    font-size: 1.5rem; /* Reducimos el título para que no rompa en dos líneas */
+    font-size: 1.5rem; 
   }
 
   .login form input, 
   .login form button[type="submit"],
   .error-banner {
-    width: 90%; /* Ajustamos los campos para que aprovechen el contenedor */
+    width: 90%; 
   }
 
   .container .logos img {
-    width: 100px; /* Logos más pequeños para que quepan uno al lado del otro */
+    width: 100px; 
   }
 }
 
