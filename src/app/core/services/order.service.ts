@@ -59,4 +59,10 @@ export class OrderService {
     const params = new HttpParams().set('start', start).set('end', end);
     return this.http.get<Order[]>(`${this.url}/by-date-range`, { params });
   }
+
+  downloadPdf(id: number): Observable<Blob> {
+    return this.http.get(`${this.url}/${id}/pdf`, {
+      responseType: 'blob'
+    });
+  }
 }
