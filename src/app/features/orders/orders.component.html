@@ -67,6 +67,9 @@
           </div>
 
           <div class="order-card-actions">
+            <button class="btn-action btn-print" (click)="printOrder(order, $event)" title="Imprimir PDF">
+              🖨️
+            </button>
             <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
               Ver Detalles
             </button>

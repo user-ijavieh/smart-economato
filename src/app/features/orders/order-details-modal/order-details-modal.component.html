@@ -83,6 +83,10 @@
       </div>
 
       <div class="modal-footer">
+        <button type="button" class="btn-print" (click)="printOrder()" [disabled]="isDownloading">
+          <span *ngIf="!isDownloading">🖨️ Imprimir PDF</span>
+          <span *ngIf="isDownloading">Descargando...</span>
+        </button>
         <button type="button" class="btn-close-modal" (click)="close()">
           Cerrar
         </button>
