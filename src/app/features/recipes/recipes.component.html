@@ -8,19 +8,21 @@
 
   <!-- Controles de búsqueda -->
   <div class="controles">
-    <input
-      type="text"
-      [(ngModel)]="searchTerm"
-      placeholder="Buscar receta..."
-      (input)="onSearch()"
-    />
-    <div class="controles-right">
-      @if (activeFilterCount > 0) {
-        <button class="btn-limpiar-filtros" (click)="clearFilters()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          Limpiar filtros
+    <div class="controles-left">
+      @if (canEdit()) {
+        <button class="btn-crear" (click)="openCreateModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Crear Receta
         </button>
       }
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        placeholder="Buscar receta..."
+        (input)="onSearch()"
+      />
+    </div>
+    <div class="controles-right">
       <button class="btn-filtros" (click)="toggleFilters()">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
         Filtros
@@ -28,6 +30,12 @@
           <span class="filter-badge">{{ activeFilterCount }}</span>
         }
       </button>
+      @if (activeFilterCount > 0) {
+        <button class="btn-limpiar-filtros" (click)="clearFilters()" @fadeSlide>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Limpiar filtros
+        </button>
+      }
     </div>
   </div>
 
@@ -76,8 +84,6 @@
           (input)="applyFilters()"
         />
       </div>
-
-      <button class="btn-limpiar" (click)="clearFilters()">Limpiar filtros</button>
     </div>
   </div>
 
@@ -190,5 +196,13 @@
     [recipe]="selectedRecipe"
     (close)="closeEditModal()"
     (save)="onSaveRecipe($event)"
+  />
+}
+
+<!-- Modal de Creación -->
+@if (showCreateModal) {
+  <app-recipe-create-modal
+    (close)="closeCreateModal()"
+    (save)="onCreateRecipe($event)"
   />
 }

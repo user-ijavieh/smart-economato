@@ -1,21 +1,34 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { RecipeService } from '../../core/services/recipe.service';
 import { MessageService } from '../../core/services/message.service';
 import { AuthService } from '../../core/services/auth.service';
 import { Recipe, RecipeRequest } from '../../shared/models/recipe.model';
 import { RecipeDetailModalComponent } from './recipe-detail-modal/recipe-detail-modal.component';
 import { RecipeEditModalComponent } from './recipe-edit-modal/recipe-edit-modal.component';
+import { RecipeCreateModalComponent } from './recipe-create-modal/recipe-create-modal.component';
 import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-recipes',
   standalone: true,
-  imports: [CommonModule, FormsModule, RecipeDetailModalComponent, RecipeEditModalComponent],
+  imports: [CommonModule, FormsModule, RecipeDetailModalComponent, RecipeEditModalComponent, RecipeCreateModalComponent],
   templateUrl: './recipes.component.html',
   styleUrl: './recipes.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger('fadeSlide', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateX(-10px)' }),
+        animate('400ms cubic-bezier(0.4, 0, 0.2, 1)', style({ opacity: 1, transform: 'translateX(0)' }))
+      ]),
+      transition(':leave', [
+        animate('300ms cubic-bezier(0.4, 0, 0.2, 1)', style({ opacity: 0, transform: 'translateX(-10px)' }))
+      ])
+    ])
+  ]
 })
 export class RecipesComponent implements OnInit {
   private recipeService = inject(RecipeService);
@@ -32,6 +45,7 @@ export class RecipesComponent implements OnInit {
   showModal = false;
   showFilters = false;
   showEditModal = false;
+  showCreateModal = false;
 
   // Filtros
   filterAllergens: 'all' | 'with' | 'without' = 'all';
@@ -171,7 +185,30 @@ export class RecipesComponent implements OnInit {
   }
 
   printRecipe(): void {
-    // TODO: Implementar impresión
+    if (!this.selectedRecipe) return;
+
+    this.recipeService.getPdf(this.selectedRecipe.id).subscribe({
+      next: (blob) => {
+        // Crear URL del blob
+        const url = window.URL.createObjectURL(blob);
+        
+        // Crear enlace temporal para descargar
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `receta-${this.selectedRecipe!.name.replace(/\s+/g, '-').toLowerCase()}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        
+        // Limpiar
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        
+        this.messageService.showSuccess('PDF descargado correctamente');
+      },
+      error: () => {
+        this.messageService.showError('Error al generar el PDF');
+      }
+    });
   }
 
   openEditModal(): void {
@@ -180,6 +217,16 @@ export class RecipesComponent implements OnInit {
 
   closeEditModal(): void {
     this.showEditModal = false;
+  }
+
+  openCreateModal(): void {
+    this.showCreateModal = true;
+    this.cdr.markForCheck();
+  }
+
+  closeCreateModal(): void {
+    this.showCreateModal = false;
+    this.cdr.markForCheck();
   }
 
   onSaveRecipe(recipeRequest: RecipeRequest): void {
@@ -194,6 +241,20 @@ export class RecipesComponent implements OnInit {
       },
       error: (err) => {
         const msg = err.error?.message || err.error || 'Error al actualizar la receta';
+        this.messageService.showError(msg);
+      }
+    });
+  }
+
+  onCreateRecipe(recipeRequest: RecipeRequest): void {
+    this.recipeService.create(recipeRequest).subscribe({
+      next: (recipe) => {
+        this.messageService.showSuccess(`Receta "${recipe.name}" creada con éxito`);
+        this.closeCreateModal();
+        this.loadRecipes();
+      },
+      error: (err) => {
+        const msg = err.error?.message || err.error || 'Error al crear la receta';
         this.messageService.showError(msg);
       }
     });

@@ -33,11 +33,11 @@
 /** ===== CONTROLES ===== */
 
 .controles {
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.5rem;
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 10px;
+  justify-content: flex-start;
   align-items: center;
   background: white;
   padding: 25px;
@@ -45,9 +45,16 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
+.controles-left {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .controles-right {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
 }
 
@@ -58,9 +65,8 @@
   font-size: 0.9rem;
   font-family: 'Deserta', sans-serif;
   transition: all 0.3s ease;
-  flex: 1;
-  min-width: 250px;
-  max-width: 500px;
+  width: 380px;
+  flex-shrink: 0;
 }
 
 .controles input[type="text"]:focus {
@@ -92,9 +98,34 @@
 .btn-filtros {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   position: relative;
-  min-width: 110px;
+  min-width: 180px;
+}
+
+.btn-crear {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+  font-family: 'Deserta', sans-serif;
+  font-weight: bold;
+  background: #16a34a;
+  color: white;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
+  white-space: nowrap;
+}
+
+.btn-crear:hover {
+  background: #15803d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
 }
 
 .btn-limpiar-filtros {
@@ -103,7 +134,6 @@
   gap: 8px;
   background: #6b7280;
   box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3);
-  animation: fadeInSlideRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-limpiar-filtros:hover {
@@ -144,7 +174,7 @@
 .filtros-wrapper.open {
   grid-template-rows: 1fr;
   opacity: 1;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1.50rem;
 }
 
 .filtros-wrapper > .filtros-panel {
@@ -521,6 +551,18 @@
   .controles {
     flex-direction: column;
     align-items: stretch;
+    gap: 12px;
+  }
+
+  .controles-left {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .btn-crear {
+    width: 100%;
+    justify-content: center;
   }
 
   .controles input[type="text"] {
@@ -530,6 +572,7 @@
   .controles-right {
     justify-content: stretch;
     width: 100%;
+    gap: 12px;
   }
 
   .controles-right button {

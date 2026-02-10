@@ -44,4 +44,10 @@ export class RecipeService {
   cook(request: CookRequest): Observable<Recipe> {
     return this.http.post<Recipe>(`${this.url}/cook`, request);
   }
+
+  getPdf(id: number): Observable<Blob> {
+    return this.http.get(`${this.url}/${id}/pdf`, {
+      responseType: 'blob'
+    });
+  }
 }
