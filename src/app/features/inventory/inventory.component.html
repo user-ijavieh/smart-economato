@@ -17,6 +17,23 @@
     @if (hasActiveFilters()) {
       <button (click)="clearFilters()">Limpiar Filtros</button>
     }
+    <button class="btn-excel" (click)="exportToExcel()" title="Descargar Excel">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        fill="currentColor"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M5.884 6.68a.5.5 0 1 0-.768.64L7.349 10l-2.233 2.68a.5.5 0 0 0 .768.64L8 10.781l2.116 2.54a.5.5 0 0 0 .768-.641L8.651 10l2.233-2.68a.5.5 0 0 0-.768-.64L8 9.219l-2.116-2.54z"
+        />
+        <path
+          d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"
+        />
+      </svg>
+      Descargar Excel
+    </button>
   </div>
 
   @if (showForm) {
@@ -33,9 +50,6 @@
     <table>
       <thead>
         <tr>
-          <th class="sortable" (click)="onSortChange('id')" [attr.data-sort-dir]="getSortDir('id')">
-            ID
-          </th>
           <th
             class="sortable"
             (click)="onSortChange('name')"
@@ -44,14 +58,14 @@
             Nombre
           </th>
           <th
-            class="sortable"
+            class="sortable hide-on-mobile"
             (click)="onSortChange('type')"
             [attr.data-sort-dir]="getSortDir('type')"
           >
             Tipo
           </th>
           <th
-            class="sortable"
+            class="sortable hide-on-mobile"
             (click)="onSortChange('unitPrice')"
             [attr.data-sort-dir]="getSortDir('unitPrice')"
           >
@@ -64,55 +78,86 @@
           >
             Stock
           </th>
-          <th>Unidad</th>
+          <th class="hide-on-mobile">Unidad</th>
           <th
-            class="sortable"
+            class="sortable hide-on-mobile"
             (click)="onSortChange('supplier')"
             [attr.data-sort-dir]="getSortDir('supplier')"
           >
             Proveedor
           </th>
           @if (isAdmin) {
-            <th>Acciones</th>
+            <th class="hide-on-mobile">Acciones</th>
           }
+          <th class="show-on-mobile-only mobile-icon-col"></th>
         </tr>
       </thead>
       <tbody [class.loading]="loading && !initialLoad">
         @if (loading && initialLoad) {
           @for (i of [1, 2, 3, 4, 5]; track i) {
             <tr class="skeleton-row">
-              <td><span class="skeleton skeleton-text"></span></td>
-              <!-- ID -->
               <td><span class="skeleton skeleton-text" style="width: 150px"></span></td>
               <!-- Name -->
-              <td><span class="skeleton skeleton-text" style="width: 80px"></span></td>
+              <td class="hide-on-mobile">
+                <span class="skeleton skeleton-text" style="width: 80px"></span>
+              </td>
               <!-- Type -->
-              <td><span class="skeleton skeleton-text" style="width: 60px"></span></td>
+              <td class="hide-on-mobile">
+                <span class="skeleton skeleton-text" style="width: 60px"></span>
+              </td>
               <!-- Price -->
               <td><span class="skeleton skeleton-text" style="width: 60px"></span></td>
               <!-- Stock -->
-              <td><span class="skeleton skeleton-text" style="width: 40px"></span></td>
+              <td class="hide-on-mobile">
+                <span class="skeleton skeleton-text" style="width: 40px"></span>
+              </td>
               <!-- Unit -->
-              <td><span class="skeleton skeleton-text" style="width: 100px"></span></td>
+              <td class="hide-on-mobile">
+                <span class="skeleton skeleton-text" style="width: 100px"></span>
+              </td>
               <!-- Supplier -->
               @if (isAdmin) {
-                <td><span class="skeleton skeleton-text" style="width: 30px"></span></td>
+                <td class="hide-on-mobile">
+                  <span class="skeleton skeleton-text" style="width: 30px"></span>
+                </td>
                 <!-- Actions -->
               }
+              <td class="show-on-mobile-only mobile-icon-col"></td>
             </tr>
           }
         } @else {
           @for (product of products; track product.id) {
-            <tr [class.alerta]="isLowStock(product)">
-              <td>{{ product.id }}</td>
+            <tr
+              [class.alerta]="isLowStock(product)"
+              class="clickable-row"
+              (click)="openDetailModal(product)"
+            >
               <td>{{ product.name }}</td>
-              <td>{{ product.type || '—' }}</td>
-              <td>{{ product.unitPrice | number: '1.2-2' }} €</td>
+              <td class="hide-on-mobile">{{ product.type || '—' }}</td>
+              <td class="hide-on-mobile">{{ product.unitPrice | number: '1.2-2' }} €</td>
               <td>{{ product.currentStock }}</td>
-              <td>{{ product.unit }}</td>
-              <td>{{ product.supplier?.name || '—' }}</td>
+              <td class="hide-on-mobile">{{ product.unit }}</td>
+              <td class="hide-on-mobile">{{ product.supplier?.name || '—' }}</td>
               @if (isAdmin) {
-                <td>
+                <td class="hide-on-mobile" (click)="$event.stopPropagation()">
+                  <button
+                    class="btn-stock"
+                    (click)="openStockModal(product)"
+                    title="Ajustar Stock"
+                    style="margin-right: 0.5rem"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"
+                      />
+                    </svg>
+                  </button>
                   <button class="btn-editar" (click)="editProduct(product)" title="Editar">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -132,12 +177,26 @@
                   </button>
                 </td>
               }
+              <td class="show-on-mobile-only mobile-icon-col">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
+                  />
+                </svg>
+              </td>
             </tr>
           }
         }
         @if (products.length === 0 && !loading && !initialLoad) {
           <tr>
-            <td [attr.colspan]="isAdmin ? 8 : 7" style="text-align: center; padding: 2rem">
+            <td [attr.colspan]="isAdmin ? 7 : 6" style="text-align: center; padding: 2rem">
               No se encontraron productos
             </td>
           </tr>
@@ -214,3 +273,23 @@
 
 <!-- Toast Notifications -->
 <app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
+
+<!-- Modal de ajuste de Stock -->
+@if (showStockModal && selectedProduct) {
+  <app-stock-update-modal
+    [product]="selectedProduct"
+    (save)="onSaveStock($event)"
+    (close)="onCloseStockModal()"
+  ></app-stock-update-modal>
+}
+
+<!-- Modal de detalles del producto -->
+@if (showDetailModal && selectedProduct) {
+  <app-product-detail-modal
+    [product]="selectedProduct"
+    [isAdmin]="isAdmin"
+    (close)="onCloseDetailModal()"
+    (edit)="onEditFromDetail($event)"
+    (adjustStock)="onAdjustStockFromDetail($event)"
+  ></app-product-detail-modal>
+}
