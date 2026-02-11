@@ -562,23 +562,23 @@
 /*tablet*/
 @media (max-width: 1024px) {
   .controles {
-    flex-wrap: wrap; /* Permite que los bloques bajen si no caben */
+    flex-wrap: wrap; 
     padding: 20px;
   }
 
   .controles-left {
-    flex: 1 1 100%; /* El buscador y el botón crear ocupan toda la fila superior */
+    flex: 1 1 100%; 
     justify-content: space-between;
   }
 
   .controles input[type="text"] {
-    width: 100%; /* Ocupa el espacio disponible */
+    width: 100%; 
     max-width: none; 
     flex-shrink: 1;
   }
 
   .controles-right {
-    flex: 1 1 100%; /* Los botones de filtro y limpiar bajan a una segunda fila */
+    flex: 1 1 100%; 
     justify-content: flex-start;
   }
 }
