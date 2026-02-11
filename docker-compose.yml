@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  frontend:
+    build: .
+    container_name: inventory-frontend
+    ports:
+      - "8082:80"
+    restart: unless-stopped
+    networks:
+      - inventory-network
+
+networks:
+  inventory-network:
+    external: true
