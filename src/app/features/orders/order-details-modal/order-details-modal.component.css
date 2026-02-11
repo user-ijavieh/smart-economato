@@ -40,15 +40,17 @@
   animation: slideUp 0.3s ease;
 }
 
-.modal-dialog {
+
+ .modal-dialog {
   background: white;
   border-radius: 16px;
   max-height: 85vh;
-  overflow-y: auto;
+  display: flex; 
+  flex-direction: column;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
-.modal-header {
+ .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -57,6 +59,7 @@
   background: linear-gradient(135deg, #b84b44 0%, #a03d37 100%);
   border-radius: 16px 16px 0 0;
   color: white;
+  flex-shrink: 0; 
 }
 
 .modal-header h2 {
@@ -94,10 +97,11 @@
   transform: scale(1.05);
 }
 
+
 .modal-body {
   padding: 30px;
-  overflow-y: auto;
-  flex: 1;
+  overflow-y: auto; 
+  flex: 1; 
 }
 
 .info-section {
@@ -138,11 +142,12 @@
   font-weight: 500;
 }
 
-.products-table {
+ .products-table {
   background: #f9fafb;
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid #e5e7eb;
+  width: 100%;
 }
 
 .table-header {
@@ -289,16 +294,71 @@
   box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .modal-dialog {
-    max-width: 95%;
+.table-header,
+.table-row {
+  display: grid;
+  grid-template-columns: 2fr 100px 120px 120px;
+  gap: 15px;
+  padding: 15px 20px;
+  align-items: center;
+}
+
+.table-header {
+  background: #b84b44;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.table-row {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.2s;
+}
+
+.table-row:hover {
+  background: #f3f4f6;
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+/* 3. DISEÑO PARA TABLET (Pantallas medianas - max 992px) */
+@media (max-width: 992px) {
+  .table-header, 
+  .table-row {
+    grid-template-columns: 1.5fr 80px 100px 100px;
+    font-size: 0.9rem;
+    padding: 12px 15px;
+    gap: 10px;
+  }
+}
+
+/* 4. DISEÑO PARA MÓVIL (Pantallas pequeñas - max 650px) */
+@media (max-width: 650px) {
+  .modal-header {
+    padding: 10px 20px; 
   }
 
-  .table-header,
+  .modal-header h2 {
+    font-size: 1.2rem; 
+    margin-bottom: 5px;
+  }
+
+  
+
+  .order-status-badge {
+    font-size: 0.75rem; 
+    padding: 4px 10px;
+  }
+
   .table-row {
-    grid-template-columns: 1fr;
-    gap: 10px;
+    grid-template-columns: 1fr; 
+    gap: 12px;
+    padding: 12px;
+    border-bottom: 2px solid #eee;
   }
 
   .col-product,
@@ -306,20 +366,43 @@
   .col-price,
   .col-total {
     display: grid;
-    grid-template-columns: 120px 1fr;
-    gap: 10px;
+    grid-template-columns: 90px 1fr; 
+    align-items: center;
+    font-size: 0.9rem;
   }
 
+  
   .col-product::before,
   .col-quantity::before,
   .col-price::before,
   .col-total::before {
-    content: attr(data-label);
-    font-weight: 600;
-    color: #666;
+    content: attr(data-label); 
+    font-weight: 700;
+    color: #b84b44;
+    font-size: 0.75rem;
+    text-transform: uppercase;
   }
 
-  .info-grid {
-    grid-template-columns: 1fr;
+  .product-name {
+    font-weight: 700;
+    color: #333;
+  }
+  
+  .col-total {
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top: 1px dashed #ddd;
+  }
+
+  .order-total {
+    padding: 12px 15px;
+  }
+  
+ .total-label {
+  font-size: 1rem; 
+}
+
+  .total-value {
+    font-size: 1.2rem;
   }
 }
