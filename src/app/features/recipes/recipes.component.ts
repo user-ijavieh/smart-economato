@@ -9,7 +9,7 @@ import { Recipe, RecipeRequest } from '../../shared/models/recipe.model';
 import { RecipeDetailModalComponent } from './recipe-detail-modal/recipe-detail-modal.component';
 import { RecipeEditModalComponent } from './recipe-edit-modal/recipe-edit-modal.component';
 import { RecipeCreateModalComponent } from './recipe-create-modal/recipe-create-modal.component';
-import { finalize } from 'rxjs';
+import { finalize, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-recipes',
@@ -37,9 +37,10 @@ export class RecipesComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
 
   recipes: Recipe[] = [];
-  filteredRecipes: Recipe[] = [];
+  // filteredRecipes no longer needed as we filter on backend or just show current page
   loading = false;
   searchTerm = '';
+  private searchSubject = new Subject<string>();
 
   selectedRecipe: Recipe | null = null;
   showModal = false;
@@ -54,25 +55,53 @@ export class RecipesComponent implements OnInit {
   filterMaxIngredients: number | null = null;
 
   // Paginación
-  currentPage = 1;
+  // Paginación
+  currentPage = 0; // 0-indexed for backend
   pageSize = 12;
+  totalElements = 0;
+  totalPages = 0;
 
   ngOnInit(): void {
+    this.initialiseSearchSubscription();
     this.loadRecipes();
+  }
+
+  initialiseSearchSubscription(): void {
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.performSearch(term);
+    });
+  }
+
+  private getSortString(): string {
+    if (this.filterAllergens === 'with') {
+      return 'allergens,asc';
+    } else if (this.filterAllergens === 'without') {
+      return 'allergens,desc';
+    }
+    return 'name,asc';
   }
 
   loadRecipes(): void {
     this.loading = true;
     this.cdr.markForCheck();
-    this.recipeService.getAll().pipe(
+
+    const sort = this.getSortString();
+
+    this.recipeService.getAll(this.currentPage, this.pageSize, sort).pipe(
       finalize(() => {
         this.loading = false;
         this.cdr.markForCheck();
       })
     ).subscribe({
-      next: (recipes) => {
-        this.recipes = recipes;
-        this.filteredRecipes = [...this.recipes];
+      next: (page) => {
+        console.log('📦 Recipes Loaded:', page);
+        this.recipes = page.content;
+        this.totalElements = page.totalElements;
+        this.totalPages = page.totalPages;
+        console.log('🔢 Total Pages:', this.totalPages);
         this.cdr.markForCheck();
       },
       error: () => {
@@ -82,40 +111,50 @@ export class RecipesComponent implements OnInit {
   }
 
   onSearch(): void {
-    this.applyFilters();
+    this.searchSubject.next(this.searchTerm);
+  }
+
+  performSearch(term: string): void {
+    if (!term.trim()) {
+      this.loadRecipes();
+      return;
+    }
+
+    this.loading = true;
+    this.cdr.markForCheck();
+
+    const sort = this.getSortString();
+
+    this.recipeService.searchByName(term, this.currentPage, this.pageSize, sort)
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.cdr.markForCheck();
+        })
+      )
+      .subscribe({
+        next: (page) => {
+          this.recipes = page.content;
+          this.totalElements = page.totalElements;
+          this.totalPages = page.totalPages;
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.messageService.showError('Error al buscar recetas');
+        }
+      });
   }
 
   applyFilters(): void {
-    let results = [...this.recipes];
-
-    // Filtro por nombre
-    const term = this.searchTerm.toLowerCase().trim();
-    if (term) {
-      results = results.filter(r => r.name.toLowerCase().includes(term));
+    // Client-side filters now only apply to the current page if absolutely necessary, 
+    // but ideally we should move everything to backend.
+    // For now, we will just reload recipes which resets to page 0
+    this.currentPage = 0;
+    if (this.searchTerm) {
+      this.onSearch();
+    } else {
+      this.loadRecipes();
     }
-
-    // Filtro por alérgenos
-    if (this.filterAllergens === 'with') {
-      results = results.filter(r => r.allergens && r.allergens.length > 0);
-    } else if (this.filterAllergens === 'without') {
-      results = results.filter(r => !r.allergens || r.allergens.length === 0);
-    }
-
-    // Filtro por precio máximo
-    if (this.filterMaxPrice !== null && this.filterMaxPrice > 0) {
-      results = results.filter(r => r.totalCost <= this.filterMaxPrice!);
-    }
-
-    // Filtro por número de ingredientes
-    if (this.filterMinIngredients !== null && this.filterMinIngredients > 0) {
-      results = results.filter(r => r.components.length >= this.filterMinIngredients!);
-    }
-    if (this.filterMaxIngredients !== null && this.filterMaxIngredients > 0) {
-      results = results.filter(r => r.components.length <= this.filterMaxIngredients!);
-    }
-
-    this.filteredRecipes = results;
-    this.currentPage = 1;
   }
 
   clearFilters(): void {
@@ -124,8 +163,9 @@ export class RecipesComponent implements OnInit {
     this.filterMinIngredients = null;
     this.filterMaxIngredients = null;
     this.searchTerm = '';
-    this.filteredRecipes = [...this.recipes];
-    this.currentPage = 1;
+    this.searchTerm = '';
+    this.currentPage = 0;
+    this.loadRecipes();
   }
 
   toggleFilters(): void {
@@ -166,22 +206,24 @@ export class RecipesComponent implements OnInit {
 
   // Paginación
   get paginatedRecipes(): Recipe[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredRecipes.slice(start, start + this.pageSize);
+    return this.recipes;
   }
 
-  get totalPages(): number {
-    return Math.ceil(this.filteredRecipes.length / this.pageSize);
-  }
+
 
   goToPage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
+    if (page >= 0 && page < this.totalPages) {
       this.currentPage = page;
+      if (this.searchTerm) {
+        this.onSearch();
+      } else {
+        this.loadRecipes();
+      }
     }
   }
 
   get pages(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+    return Array.from({ length: this.totalPages }, (_, i) => i);
   }
 
   printRecipe(): void {

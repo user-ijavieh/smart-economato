@@ -55,14 +55,14 @@
 
           @if (!loadingProducts) {
             <div class="components-list">
-              @for (component of editForm.components; track $index; let i = $index) {
+              @for (component of formComponents; track $index; let i = $index) {
                 <div class="component-row">
                   <div class="product-select-wrapper" (click)="$event.stopPropagation()">
                     <input
                       type="text"
-                      [value]="getProductName(component.productId)"
+                      [(ngModel)]="component.searchText"
                       (focus)="toggleProductDropdown(i)"
-                      (input)="onProductSearch($any($event.target).value, i)"
+                      (ngModelChange)="onProductSearch($event, i)"
                       [name]="'product-search-' + i"
                       class="product-select"
                       placeholder="Buscar producto..."
