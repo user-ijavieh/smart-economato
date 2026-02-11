@@ -18,21 +18,11 @@
       <button (click)="clearFilters()">Limpiar Filtros</button>
     }
     <button class="btn-excel" (click)="exportToExcel()" title="Descargar Excel">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        fill="currentColor"
-        viewBox="0 0 16 16"
-      >
-        <path
-          d="M5.884 6.68a.5.5 0 1 0-.768.64L7.349 10l-2.233 2.68a.5.5 0 0 0 .768.64L8 10.781l2.116 2.54a.5.5 0 0 0 .768-.641L8.651 10l2.233-2.68a.5.5 0 0 0-.768-.64L8 9.219l-2.116-2.54z"
-        />
-        <path
-          d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"
-        />
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
+        <path d="M5.75 6.75a.5.5 0 0 1 .71 0L8 8.29l1.54-1.54a.5.5 0 1 1 .71.71L8.71 9l1.54 1.54a.5.5 0 0 1-.71.71L8 9.71l-1.54 1.54a.5.5 0 0 1-.71-.71L7.29 9 5.75 7.46a.5.5 0 0 1 0-.71z"/>
       </svg>
-      Descargar Excel
+      Exportar a Excel
     </button>
   </div>
 
@@ -135,7 +125,10 @@
               <td>{{ product.name }}</td>
               <td class="hide-on-mobile">{{ product.type || '—' }}</td>
               <td class="hide-on-mobile">{{ product.unitPrice | number: '1.2-2' }} €</td>
-              <td>{{ product.currentStock }}</td>
+              <td>
+                {{ product.currentStock }}
+                <span class="mobile-unit">{{ product.unit }}</span>
+              </td>
               <td class="hide-on-mobile">{{ product.unit }}</td>
               <td class="hide-on-mobile">{{ product.supplier?.name || '—' }}</td>
               @if (isAdmin) {
