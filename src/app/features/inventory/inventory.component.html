@@ -8,7 +8,7 @@
       type="text"
       [(ngModel)]="searchTerm"
       placeholder="Buscar producto..."
-      (keydown)="onSearch()"
+      (keydown.enter)="onSearch()"
     />
     <button (click)="onSearch()">Buscar</button>
     @if (isAdmin) {
