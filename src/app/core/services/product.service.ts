@@ -126,4 +126,10 @@ export class ProductService {
   updateStockManually(id: number, product: ProductRequest): Observable<Product> {
     return this.http.put<Product>(`${this.url}/${id}/stock-manual`, product);
   }
+
+  exportToExcel(): Observable<Blob> {
+    return this.http.get(`${this.url}/export/excel`, {
+      responseType: 'blob'
+    });
+  }
 }

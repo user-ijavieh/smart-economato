@@ -1,0 +1,46 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Actualizar Stock</h2>
+      <button class="btn-close" (click)="onClose()" aria-label="Cerrar">×</button>
+    </div>
+
+    <form #stockForm="ngForm" (ngSubmit)="onSubmit()" class="modal-body">
+      <div class="product-info">
+        <p><strong>Producto:</strong> {{ productName }}</p>
+        <p *ngIf="product">
+          <strong>Stock Actual en Sistema:</strong> {{ product.currentStock }} {{ product.unit }}
+        </p>
+      </div>
+
+      <div class="form-group">
+        <label for="newStock">Nuevo Stock Real *</label>
+        <div class="input-group">
+          <input
+            type="number"
+            id="newStock"
+            [(ngModel)]="currentStock"
+            name="newStock"
+            required
+            min="0"
+            step="0.001"
+            placeholder="0"
+          />
+          <span class="unit-label" *ngIf="product">{{ product.unit }}</span>
+        </div>
+        <small class="hint">
+          El sistema calculará automáticamente la diferencia y registrará un movimiento de AJUSTE.
+        </small>
+      </div>
+
+      <div class="modal-footer">
+        <div class="modal-footer-right">
+          <button type="button" class="btn-cancel" (click)="onClose()">Cancelar</button>
+          <button type="submit" class="btn-save" [disabled]="!stockForm.valid">
+            Confirmar Ajuste
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
