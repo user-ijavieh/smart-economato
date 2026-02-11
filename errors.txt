@@ -1,0 +1,189 @@
+❯ Building...
+✔ Building...
+Initial chunk files | Names               |  Raw size | Estimated transfer size
+chunk-PVLZ3JIZ.js   | -                   | 140.34 kB |                41.77 kB
+chunk-IVSECRR3.js   | -                   |  97.71 kB |                24.14 kB
+chunk-3JNCLYPK.js   | -                   |  33.51 kB |                 9.46 kB
+main-HPG3VF6U.js    | main                |   6.78 kB |                 2.42 kB
+chunk-QA36FMZU.js   | -                   |   2.24 kB |               901 bytes
+styles-UJKENP6O.css | styles              |   2.01 kB |               663 bytes
+chunk-ULWNOWQY.js   | -                   | 936 bytes |               936 bytes
+
+                    | Initial total       | 283.53 kB |                80.29 kB
+
+Lazy chunk files    | Names               |  Raw size | Estimated transfer size
+chunk-PUZ6OX2O.js   | recipes-component   |  71.52 kB |                11.40 kB
+chunk-HDIKZWMM.js   | browser             |  64.21 kB |                17.19 kB
+chunk-7PPBLJLL.js   | inventory-component |  48.22 kB |                 8.85 kB
+chunk-RAEBTYSA.js   | -                   |  42.07 kB |                 8.68 kB
+chunk-256E7X7V.js   | orders-component    |  32.52 kB |                 7.38 kB
+chunk-B2S3GKFL.js   | reception-component |  21.59 kB |                 3.94 kB
+chunk-BTEMNML4.js   | -                   |  12.01 kB |                 3.50 kB
+chunk-63KYNWV5.js   | layout-component    |  11.19 kB |                 3.39 kB
+chunk-3IGW7BVV.js   | welcome-component   |   7.98 kB |                 2.17 kB
+chunk-HSSODMR5.js   | login-component     |   7.32 kB |                 2.04 kB
+chunk-MLMGL4QO.js   | -                   |   3.91 kB |                 1.03 kB
+chunk-FQC6RTAA.js   | -                   |   2.43 kB |               826 bytes
+chunk-76OZHUFA.js   | profile-component   | 980 bytes |               980 bytes
+
+Application bundle generation complete. [2.098 seconds] - 2026-02-11T10:06:46.319Z
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/reception/reception.component.html:17:70:
+[37m      17 │ ...tusLabel('PENDING') }} ({{ ordersByStatus.PENDING?.[32mlength[37m || 0 }})
+         ╵                                                       [32m~~~~~~[0m
+
+  Warning occurs in the template of component ReceptionComponent.
+
+    src/app/features/reception/reception.component.ts:21:15:
+[37m      21 │   templateUrl: [32m'./reception.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/reception/reception.component.html:19:38:
+[37m      19 │         @if ((ordersByStatus.PENDING?.[32mlength[37m || 0) === 0) {
+         ╵                                       [32m~~~~~~[0m
+
+  Warning occurs in the template of component ReceptionComponent.
+
+    src/app/features/reception/reception.component.ts:21:15:
+[37m      21 │   templateUrl: [32m'./reception.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/reception/reception.component.html:87:68:
+[37m      87 │ ...tatusLabel('REVIEW') }} ({{ ordersByStatus.REVIEW?.[32mlength[37m || 0 }})
+         ╵                                                       [32m~~~~~~[0m
+
+  Warning occurs in the template of component ReceptionComponent.
+
+    src/app/features/reception/reception.component.ts:21:15:
+[37m      21 │   templateUrl: [32m'./reception.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/reception/reception.component.html:89:37:
+[37m      89 │         @if ((ordersByStatus.REVIEW?.[32mlength[37m || 0) === 0) {
+         ╵                                      [32m~~~~~~[0m
+
+  Warning occurs in the template of component ReceptionComponent.
+
+    src/app/features/reception/reception.component.ts:21:15:
+[37m      21 │   templateUrl: [32m'./reception.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/reception/reception.component.html:157:74:
+[37m      157 │ ...bel('CONFIRMED') }} ({{ ordersByStatus.CONFIRMED?.[32mlength[37m || 0 }})
+          ╵                                                      [32m~~~~~~[0m
+
+  Warning occurs in the template of component ReceptionComponent.
+
+    src/app/features/reception/reception.component.ts:21:15:
+[37m      21 │   templateUrl: [32m'./reception.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/reception/reception.component.html:159:40:
+[37m      159 │         @if ((ordersByStatus.CONFIRMED?.[32mlength[37m || 0) === 0) {
+          ╵                                         [32m~~~~~~[0m
+
+  Warning occurs in the template of component ReceptionComponent.
+
+    src/app/features/reception/reception.component.ts:21:15:
+[37m      21 │   templateUrl: [32m'./reception.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/reception/reception.component.html:221:76:
+[37m      221 │ ...l('INCOMPLETE') }} ({{ ordersByStatus.INCOMPLETE?.[32mlength[37m || 0 }})
+          ╵                                                      [32m~~~~~~[0m
+
+  Warning occurs in the template of component ReceptionComponent.
+
+    src/app/features/reception/reception.component.ts:21:15:
+[37m      21 │   templateUrl: [32m'./reception.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/reception/reception.component.html:223:41:
+[37m      223 │         @if ((ordersByStatus.INCOMPLETE?.[32mlength[37m || 0) === 0) {
+          ╵                                          [32m~~~~~~[0m
+
+  Warning occurs in the template of component ReceptionComponent.
+
+    src/app/features/reception/reception.component.ts:21:15:
+[37m      21 │   templateUrl: [32m'./reception.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/reception/reception.component.html:288:74:
+[37m      288 │ ...bel('CANCELLED') }} ({{ ordersByStatus.CANCELLED?.[32mlength[37m || 0 }})
+          ╵                                                      [32m~~~~~~[0m
+
+  Warning occurs in the template of component ReceptionComponent.
+
+    src/app/features/reception/reception.component.ts:21:15:
+[37m      21 │   templateUrl: [32m'./reception.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/reception/reception.component.html:290:40:
+[37m      290 │         @if ((ordersByStatus.CANCELLED?.[32mlength[37m || 0) === 0) {
+          ╵                                         [32m~~~~~~[0m
+
+  Warning occurs in the template of component ReceptionComponent.
+
+    src/app/features/reception/reception.component.ts:21:15:
+[37m      21 │   templateUrl: [32m'./reception.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1msrc/app/features/orders/order-modal/order-modal.component.css exceeded maximum budget. Budget 4.00 kB was not met by 3.41 kB with a total of 7.41 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1msrc/app/features/inventory/inventory.component.css exceeded maximum budget. Budget 4.00 kB was not met by 80 bytes with a total of 4.08 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1msrc/app/features/recipes/recipe-edit-modal/recipe-edit-modal.component.css exceeded maximum budget. Budget 4.00 kB was not met by 1.75 kB with a total of 5.75 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1msrc/app/features/recipes/recipe-create-modal/recipe-create-modal.component.css exceeded maximum budget. Budget 4.00 kB was not met by 1.75 kB with a total of 5.75 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1msrc/app/features/orders/order-details-modal/order-details-modal.component.css exceeded maximum budget. Budget 4.00 kB was not met by 93 bytes with a total of 4.09 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1msrc/app/features/orders/orders.component.css exceeded maximum budget. Budget 4.00 kB was not met by 1.97 kB with a total of 5.97 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1msrc/app/features/reception/reception.component.css exceeded maximum budget. Budget 4.00 kB was not met by 203 bytes with a total of 4.20 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1msrc/app/features/welcome/welcome.component.css exceeded maximum budget. Budget 4.00 kB was not met by 305 bytes with a total of 4.30 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1msrc/app/features/recipes/recipes.component.css exceeded maximum budget. Budget 4.00 kB was not met by 4.90 kB with a total of 8.90 kB.[0m
+
+
+Output location: /Users/Daniel/Documents/GitHub/smart-economato/dist/smart-economato
+

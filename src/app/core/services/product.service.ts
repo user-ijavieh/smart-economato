@@ -22,24 +22,7 @@ export class ProductService {
         const rawContent = response.content || (Array.isArray(response) ? response : []);
         
           // 2. Map items to ensure valid Product models
-        const mappedContent: Product[] = rawContent.map((item: any) => ({
-          ...item,
-          id: item.id,
-          // Fallback strategies for English/Spanish properties
-          name: item.name || item.nombre || 'Sin nombre',
-          productCode: item.productCode || item.codigo || '',
-          type: item.type || item.tipo || '',
-          unitPrice: Number(item.unitPrice ?? item.price ?? item.precio ?? 0),
-          currentStock: Number(item.currentStock ?? item.stock ?? 0),
-          minStock: item.minStock !== undefined ? Number(item.minStock) : undefined,
-          unit: item.unit || item.unidad || 'Ud',
-          supplier: item.supplier ? {
-            id: item.supplier.id,
-            name: item.supplier.name || item.supplier.nombre,
-            contactPerson: item.supplier.contact || item.supplier.contacto,
-            phone: item.supplier.phone || item.supplier.telefono
-          } : undefined
-        }));
+        const mappedContent: Product[] = rawContent.map((item: any) => this.mapToProduct(item));
 
         // 3. Return valid Page object
         return {
@@ -72,23 +55,7 @@ export class ProductService {
       map(response => {
         const rawContent = response.content || (Array.isArray(response) ? response : []);
         
-        const mappedContent: Product[] = rawContent.map((item: any) => ({
-          ...item,
-          id: item.id,
-          name: item.name || item.nombre || 'Sin nombre',
-          productCode: item.productCode || item.codigo || '',
-          type: item.type || item.tipo || '',
-          unitPrice: Number(item.unitPrice ?? item.price ?? item.precio ?? 0),
-          currentStock: Number(item.currentStock ?? item.stock ?? 0),
-          minStock: item.minStock !== undefined ? Number(item.minStock) : undefined,
-          unit: item.unit || item.unidad || 'Ud',
-          supplier: item.supplier ? {
-            id: item.supplier.id,
-            name: item.supplier.name || item.supplier.nombre,
-            contactPerson: item.supplier.contact || item.supplier.contacto,
-            phone: item.supplier.phone || item.supplier.telefono
-          } : undefined
-        }));
+        const mappedContent: Product[] = rawContent.map((item: any) => this.mapToProduct(item));
 
         return {
           content: mappedContent,
@@ -104,6 +71,28 @@ export class ProductService {
     );
   }
 
+  private mapToProduct(item: any): Product {
+    return {
+      ...item,
+      id: item.id,
+      // Fallback strategies for English/Spanish properties
+      name: item.name || item.nombre || 'Sin nombre',
+      productCode: item.productCode || item.codigo || '',
+      type: item.type || item.tipo || '',
+      // Ensure numeric values
+      unitPrice: Number(item.unitPrice ?? item.price ?? item.precio ?? 0),
+      // Map both stock properties to ensure compatibility
+      currentStock: Number(item.currentStock ?? item.stock ?? 0),
+      stock: Number(item.currentStock ?? item.stock ?? 0), // legacy support
+      minStock: Number(item.minStock ?? item.stockMinimo ?? 0),
+      unit: item.unit || item.unidad || 'Ud',
+      supplier: item.supplier ? {
+        id: item.supplier.id,
+        name: item.supplier.name || item.supplier.nombre,
+        contact: item.supplier.contact || item.supplier.contacto
+      } : undefined
+    };
+  }
   create(product: ProductRequest): Observable<Product> {
     return this.http.post<Product>(this.url, product);
   }
@@ -136,5 +125,11 @@ export class ProductService {
 
   updateStockManually(id: number, product: ProductRequest): Observable<Product> {
     return this.http.put<Product>(`${this.url}/${id}/stock-manual`, product);
+  }
+
+  exportToExcel(): Observable<Blob> {
+    return this.http.get(`${this.url}/export/excel`, {
+      responseType: 'blob'
+    });
   }
 }

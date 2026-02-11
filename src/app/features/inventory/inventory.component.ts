@@ -12,11 +12,13 @@ import { ProductEditModalComponent } from './product-edit-modal/product-edit-mod
 import { ProductCreateModalComponent } from './product-create-modal/product-create-modal.component';
 import { ToastComponent } from '../../shared/components/layout/toast/toast.component';
 import { ConfirmDialogComponent } from '../../shared/components/layout/confirm-dialog/confirm-dialog.component';
+import { StockUpdateModalComponent } from './stock-update-modal/stock-update-modal.component';
+import { ProductDetailModalComponent } from './product-detail-modal/product-detail-modal.component';
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductFormComponent, ProductEditModalComponent, ProductCreateModalComponent, ToastComponent, ConfirmDialogComponent],
+  imports: [CommonModule, FormsModule, ProductFormComponent, ProductEditModalComponent, ProductCreateModalComponent, StockUpdateModalComponent, ProductDetailModalComponent, ToastComponent, ConfirmDialogComponent],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.css'
 })
@@ -37,7 +39,10 @@ export class InventoryComponent implements OnInit {
   searchTerm = '';
   showForm = false;
   showEditModal = false;
+
   showCreateModal = false;
+  showStockModal = false;
+  showDetailModal = false;
   selectedProduct: Product | null = null;
   
   // Pagination State
@@ -118,6 +123,7 @@ export class InventoryComponent implements OnInit {
   }
 
   onSearch(): void {
+
     if (!this.searchTerm || this.searchTerm.trim() === '') {
       this.loadProducts();
       return;
@@ -145,11 +151,7 @@ export class InventoryComponent implements OnInit {
     });
   }
 
-  showAll(): void {
-    this.searchTerm = '';
-    this.page = 0;
-    this.loadProducts();
-  }
+
 
   clearFilters(): void {
     this.sortColumn = 'id';
@@ -161,6 +163,24 @@ export class InventoryComponent implements OnInit {
 
   hasActiveFilters(): boolean {
     return this.sortColumn !== 'id' || this.sortDir !== 'asc';
+  }
+
+  exportToExcel(): void {
+    this.productService.exportToExcel().subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `productos_${new Date().toISOString().split('T')[0]}.xlsx`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        this.messageService.showSuccess('Excel descargado correctamente');
+      },
+      error: (err) => {
+        const errorMessage = err.error?.message || err.message || 'Error al descargar Excel';
+        this.messageService.showError(errorMessage);
+      }
+    });
   }
 
 
@@ -244,6 +264,59 @@ export class InventoryComponent implements OnInit {
         this.messageService.showError(errorMessage);
       }
     });
+  }
+
+  // --- LOGICA DEL MODAL DE STOCK ---
+
+  openStockModal(product: Product): void {
+    this.selectedProduct = product;
+    this.showStockModal = true;
+  }
+
+  onCloseStockModal(): void {
+    this.showStockModal = false;
+    this.selectedProduct = null;
+  }
+
+  onSaveStock(productData: ProductRequest): void {
+    if (!this.selectedProduct) return;
+
+    this.productService.updateStockManually(this.selectedProduct.id, productData).subscribe({
+      next: (response) => {
+        this.messageService.showSuccess('Stock actualizado correctamente');
+        this.showStockModal = false;
+        this.selectedProduct = null;
+        this.loadProducts();
+      },
+      error: (err) => {
+        const errorMessage = err.error?.message || err.message || 'Error al actualizar stock';
+        this.messageService.showError(errorMessage);
+      }
+    });
+  }
+
+  // --- LOGICA DEL MODAL DE DETALLES ---
+
+  openDetailModal(product: Product): void {
+    this.selectedProduct = product;
+    this.showDetailModal = true;
+  }
+
+  onCloseDetailModal(): void {
+    this.showDetailModal = false;
+    this.selectedProduct = null;
+  }
+
+  onEditFromDetail(product: Product): void {
+    // Close detail modal and open edit modal
+    this.showDetailModal = false;
+    this.editProduct(product);
+  }
+
+  onAdjustStockFromDetail(product: Product): void {
+    // Close detail modal and open stock modal
+    this.showDetailModal = false;
+    this.openStockModal(product);
   }
 
   onDeleteProduct(): void {

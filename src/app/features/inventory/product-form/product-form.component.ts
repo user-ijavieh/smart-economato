@@ -52,8 +52,8 @@ export class ProductFormComponent implements OnChanges {
         name: this.product.name,
         productCode: this.product.productCode || '',
         type: this.product.type || 'Ingrediente',
-        price: this.product.unitPrice,
-        stock: this.product.currentStock,
+        price: this.product.unitPrice || 0,
+        stock: this.product.currentStock || 0,
         minStock: this.product.minStock || 0,
         unit: this.product.unit || 'UND',
         supplierId: this.product.supplier?.id
