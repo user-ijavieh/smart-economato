@@ -7,7 +7,7 @@ COPY . .
 RUN npm run build -- --configuration production --base-href /cliente/
 FROM nginx:alpine
 
-COPY --from=build /app/dist/turing-frontend/browser /usr/share/nginx/html
+COPY --from=build /app/dist/turing-frontend /usr/share/nginx/html
 
 COPY nginx-custom.conf /etc/nginx/conf.d/default.conf
 
