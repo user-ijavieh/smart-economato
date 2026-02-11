@@ -9,7 +9,7 @@ services:
   networks:
     inventory-network:
       external: true
-      name: turing-backend_inventory-network  <-- AÑADE ESTA LÍNEA EXACTA
+      name: turing-backend_inventory-network 
 
 networks:
   inventory-network:
