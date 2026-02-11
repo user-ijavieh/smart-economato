@@ -25,6 +25,9 @@ export class OrdersComponent implements OnInit {
   showDetailsModal = false;
   selectedOrder: Order | null = null;
 
+  // Paginación
+  displayCount = 1;
+
   ngOnInit(): void {
     this.loadOrders();
   }
@@ -35,6 +38,7 @@ export class OrdersComponent implements OnInit {
     this.orderService.getByStatus('CREATED').subscribe({
       next: (orders) => {
         this.orders = orders;
+        this.displayCount = 1;
         this.loading = false;
         this.cdr.markForCheck();
       },
@@ -57,6 +61,19 @@ export class OrdersComponent implements OnInit {
   onOrderCreated(): void {
     this.loadOrders();
     this.showModal = false;
+  }
+
+  // Paginación
+  get displayedOrders(): Order[] {
+    return this.orders.slice(0, this.displayCount);
+  }
+
+  get hasMoreOrders(): boolean {
+    return this.displayCount < this.orders.length;
+  }
+
+  loadMore(): void {
+    this.displayCount += 10;
   }
 
   getOrderTotal(order: Order): number {
@@ -106,7 +123,7 @@ export class OrdersComponent implements OnInit {
     if (event) {
       event.stopPropagation();
     }
-    
+
     if (!order?.id) return;
 
     this.orderService.downloadPdf(order.id).subscribe({

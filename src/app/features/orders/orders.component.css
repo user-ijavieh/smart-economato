@@ -34,8 +34,9 @@
 
 .orders-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   gap: 24px;
+  grid-auto-rows: 1fr;
 }
 
 .order-card {
@@ -377,6 +378,7 @@
   padding: 14px 20px;
   background: #f9fafb;
   border-top: 1px solid #f3f4f6;
+  margin-top: auto;
 }
 
 .btn-action {
@@ -438,6 +440,34 @@
   color: #6b7280;
   font-size: 1.1rem;
   font-family: 'Deserta', sans-serif;
+}
+
+/** ===== LOAD MORE ===== */
+
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.btn-load-more {
+  padding: 12px 32px;
+  border-radius: 10px;
+  border: 2px solid #e0e0e0;
+  background: white;
+  color: #374151;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Deserta', sans-serif;
+}
+
+.btn-load-more:hover {
+  border-color: #b84b44;
+  color: #b84b44;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(184, 75, 68, 0.15);
 }
 
 /** ===== RESPONSIVE ===== */

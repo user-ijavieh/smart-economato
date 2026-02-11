@@ -38,6 +38,15 @@ export class ReceptionComponent implements OnInit {
   showDetailsModal = false;
   selectedOrder: Order | null = null;
 
+  // Paginación por sección
+  displayCounts: Record<string, number> = {
+    PENDING: 1,
+    REVIEW: 1,
+    CONFIRMED: 1,
+    CANCELLED: 1,
+    INCOMPLETE: 1
+  };
+
   ngOnInit(): void {
     this.loadOrders();
   }
@@ -47,7 +56,6 @@ export class ReceptionComponent implements OnInit {
     // Load all orders except CREATED (which are shown in Pedidos)
     this.orderService.getAll(0, 200).subscribe({
       next: (orders) => {
-        // Group orders by status
         this.ordersByStatus = {
           PENDING: orders.filter(o => o.status === 'PENDING'),
           REVIEW: orders.filter(o => o.status === 'REVIEW'),
@@ -55,6 +63,7 @@ export class ReceptionComponent implements OnInit {
           CANCELLED: orders.filter(o => o.status === 'CANCELLED'),
           INCOMPLETE: orders.filter(o => o.status === 'INCOMPLETE')
         };
+        this.resetDisplayCounts();
         this.loading = false;
         this.cdr.markForCheck();
       },
@@ -105,6 +114,32 @@ export class ReceptionComponent implements OnInit {
 
   getOrderTotal(order: Order): number {
     return (order.details || []).reduce((sum, d) => sum + d.quantity * d.unitPrice, 0);
+  }
+
+  // Paginación
+  resetDisplayCounts(): void {
+    for (const key of Object.keys(this.displayCounts)) {
+      this.displayCounts[key] = 1;
+    }
+  }
+
+  getDisplayedOrders(status: string): Order[] {
+    const orders = (this.ordersByStatus as any)[status] || [];
+    return orders.slice(0, this.displayCounts[status] || 1);
+  }
+
+  hasMore(status: string): boolean {
+    const orders = (this.ordersByStatus as any)[status] || [];
+    return (this.displayCounts[status] || 1) < orders.length;
+  }
+
+  loadMoreOrders(status: string): void {
+    this.displayCounts[status] = (this.displayCounts[status] || 1) + 10;
+  }
+
+  getRemainingCount(status: string): number {
+    const orders = (this.ordersByStatus as any)[status] || [];
+    return orders.length - (this.displayCounts[status] || 1);
   }
 
   // Action handlers
