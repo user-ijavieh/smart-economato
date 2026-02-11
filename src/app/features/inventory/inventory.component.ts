@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../core/services/product.service';
@@ -14,6 +14,7 @@ import { ToastComponent } from '../../shared/components/layout/toast/toast.compo
 import { ConfirmDialogComponent } from '../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { StockUpdateModalComponent } from './stock-update-modal/stock-update-modal.component';
 import { ProductDetailModalComponent } from './product-detail-modal/product-detail-modal.component';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-inventory',
@@ -22,7 +23,7 @@ import { ProductDetailModalComponent } from './product-detail-modal/product-deta
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.css'
 })
-export class InventoryComponent implements OnInit {
+export class InventoryComponent implements OnInit, OnDestroy {
   private productService = inject(ProductService);
   private supplierService = inject(SupplierService);
   messageService = inject(MessageService);
@@ -37,6 +38,7 @@ export class InventoryComponent implements OnInit {
   loading = false;
   initialLoad = true;
   searchTerm = '';
+  private searchSubject = new Subject<string>();
   showForm = false;
   showEditModal = false;
 
@@ -44,7 +46,7 @@ export class InventoryComponent implements OnInit {
   showStockModal = false;
   showDetailModal = false;
   selectedProduct: Product | null = null;
-  
+
   // Pagination State
   page = 0;
   size = 20;
@@ -57,6 +59,7 @@ export class InventoryComponent implements OnInit {
   sortInteracted = false;
 
   ngOnInit(): void {
+    this.initialiseSearchSubscription();
     this.loadProducts();
     // Solo cargar proveedores si el usuario puede editar productos
     if (this.isAdmin || this.authService.getRole() === 'CHEF') {
@@ -64,10 +67,23 @@ export class InventoryComponent implements OnInit {
     }
   }
 
+  ngOnDestroy(): void {
+    this.searchSubject.complete();
+  }
+
+  initialiseSearchSubscription(): void {
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.performSearch(term);
+    });
+  }
+
   loadProducts(): void {
     this.loading = true;
     const sortParam = `${this.sortColumn},${this.sortDir}`;
-    
+
     this.productService.getAll(this.page, this.size, sortParam).subscribe({
       next: (page) => {
         this.products = page.content;
@@ -123,16 +139,19 @@ export class InventoryComponent implements OnInit {
   }
 
   onSearch(): void {
+    this.searchSubject.next(this.searchTerm);
+  }
 
-    if (!this.searchTerm || this.searchTerm.trim() === '') {
+  performSearch(term: string): void {
+    if (!term || term.trim() === '') {
       this.loadProducts();
       return;
     }
-    
+
     this.loading = true;
     const sortParam = `${this.sortColumn},${this.sortDir}`;
-    
-    this.productService.searchByName(this.searchTerm.trim(), this.page, this.size, sortParam).subscribe({
+
+    this.productService.searchByName(term.trim(), this.page, this.size, sortParam).subscribe({
       next: (page) => {
         this.products = page.content;
         this.totalElements = page.totalElements;
@@ -237,11 +256,11 @@ export class InventoryComponent implements OnInit {
     this.productService.update(this.selectedProduct.id, productData).subscribe({
       next: (response) => {
         this.messageService.showSuccess('Producto actualizado correctamente');
-        
+
         // Cerrar modal inmediatamente
         this.showEditModal = false;
         this.selectedProduct = null;
-        
+
         // Recargar la lista completa para asegurar que los datos estén sincronizados
         this.loadProducts();
       },
@@ -350,13 +369,13 @@ export class InventoryComponent implements OnInit {
     const allowedUnits = ['KG', 'G', 'L', 'ML', 'UND'];
     let unit = this.selectedProduct.unit || 'UND';
     if (!allowedUnits.includes(unit)) {
-        unit = 'UND';
+      unit = 'UND';
     }
 
     // Ensure price is valid
     let price = this.selectedProduct.unitPrice;
     if (!price || price < 0.01) {
-        price = 0.01;
+      price = 0.01;
     }
 
     const productRequest: ProductRequest = {

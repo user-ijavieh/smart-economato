@@ -149,7 +149,7 @@
         </div>
       }
 
-      @if (filteredRecipes.length === 0) {
+      @if (recipes.length === 0) {
         <div class="empty-state">
           <p>No se encontraron recetas</p>
         </div>
@@ -159,17 +159,17 @@
     <!-- Paginación -->
     @if (totalPages > 1) {
       <div class="pagination">
-        <button class="page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">❮</button>
+        <button class="page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 0">❮</button>
         @for (page of pages; track page) {
           <button
             class="page-btn"
             [class.active]="page === currentPage"
             (click)="goToPage(page)"
           >
-            {{ page }}
+            {{ page + 1 }}
           </button>
         }
-        <button class="page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">❯</button>
+        <button class="page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages - 1">❯</button>
       </div>
     }
   }
