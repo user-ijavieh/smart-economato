@@ -358,7 +358,7 @@ th.sortable[data-sort-dir='desc']::after {
 
   th,
   td {
-    padding: 10px 6px;
+    padding: 10px 8px;
     font-size: 0.8rem;
   }
 
@@ -432,8 +432,8 @@ th.sortable[data-sort-dir='desc']::after {
 
   th,
   td {
-    padding: 8px 4px;
-    font-size: 0.75rem;
+    padding: 10px 8px;
+    font-size: 0.78rem;
   }
 
   th.sortable::after {
@@ -478,8 +478,8 @@ th.sortable[data-sort-dir='desc']::after {
 
   th,
   td {
-    padding: 6px 3px;
-    font-size: 0.7rem;
+    padding: 8px 6px;
+    font-size: 0.73rem;
   }
 
   .pagination-info {
