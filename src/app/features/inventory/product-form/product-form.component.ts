@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Product, ProductRequest } from '../../../../shared/models/product.model';
-import { Supplier } from '../../../../shared/models/supplier.model';
+import { Product, ProductRequest } from '../../../shared/models/product.model';
+import { Supplier } from '../../../shared/models/supplier.model';
 
 export interface ProductFormState {
   name: string;
@@ -54,7 +54,7 @@ export class ProductFormComponent implements OnChanges {
         type: this.product.type || 'Ingrediente',
         price: this.product.unitPrice,
         stock: this.product.currentStock,
-        minStock: this.product.minStock,
+        minStock: this.product.minStock || 0,
         unit: this.product.unit || 'UND',
         supplierId: this.product.supplier?.id
       };

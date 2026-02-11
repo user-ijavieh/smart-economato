@@ -14,7 +14,14 @@ export const errorHandlingInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      handleError(error, messageService);
+      // No mostrar errores 403 en peticiones GET, ya que pueden deberse a configuración del backend
+      // y los componentes manejan estos errores individualmente
+      const isGetRequest = req.method === 'GET';
+      const isForbidden = error.status === 403;
+      
+      if (!(isGetRequest && isForbidden)) {
+        handleError(error, messageService);
+      }
       return throwError(() => error);
     })
   );

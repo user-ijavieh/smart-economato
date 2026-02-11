@@ -33,6 +33,16 @@ export class SidebarComponent {
     { label: 'Perfil', route: '/profile', icon: 'person' }
   ];
 
+  get filteredNavItems(): NavItem[] {
+    const userRole = this.getUserRole();
+    if (userRole === 'USER') {
+      return this.navItems.filter(item => 
+        item.label !== 'Recepción' && item.label !== 'Pedidos'
+      );
+    }
+    return this.navItems;
+  }
+
   toggleSidebar(): void {
     this.isOpen = !this.isOpen;
     this.sidebarToggled.emit(this.isOpen);
