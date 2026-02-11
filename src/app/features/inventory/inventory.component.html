@@ -11,8 +11,8 @@
       (keydown)="onSearch()"
     />
     @if (isAdmin) {
-      <button id="btnAgregarProducto" (click)="toggleForm()">
-        {{ showForm ? 'Cerrar Formulario' : 'Agregar Producto' }}
+      <button id="btnAgregarProducto" (click)="openCreateModal()">
+        Agregar Producto
       </button>
     }
     <button (click)="showAll()">Mostrar Todos</button>
@@ -166,6 +166,15 @@
   </div>
 </div>
 
+<!-- Modal de creación -->
+@if (showCreateModal) {
+  <app-product-create-modal
+    [suppliers]="suppliers"
+    (save)="onSaveProduct($event)"
+    (close)="onCloseCreateModal()"
+  ></app-product-create-modal>
+}
+
 <!-- Modal de edición -->
 @if (showEditModal && selectedProduct) {
   <app-product-edit-modal
@@ -176,6 +185,12 @@
     (close)="onCloseEditModal()"
   ></app-product-edit-modal>
 }
+
+<!-- Confirm Dialog -->
+<app-confirm-dialog></app-confirm-dialog>
+
+<!-- Toast Notifications -->
+<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
 
 <!-- Confirm Dialog -->
 <app-confirm-dialog></app-confirm-dialog>

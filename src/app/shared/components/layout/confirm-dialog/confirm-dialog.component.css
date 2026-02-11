@@ -51,6 +51,8 @@
   font-size: 1.25rem;
   font-weight: 600;
   color: #1f2937;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
 }
 
 .dialog-body {
@@ -62,6 +64,8 @@
   font-size: 0.95rem;
   line-height: 1.6;
   color: #4b5563;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
 }
 
 .dialog-footer {
@@ -81,6 +85,7 @@
   border: none;
   cursor: pointer;
   transition: all 0.2s;
+  font-family: var(--font-body);
 }
 
 .btn-cancel {

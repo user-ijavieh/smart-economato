@@ -19,6 +19,8 @@
   letter-spacing: 2px;
   flex: 1;
   text-align: center;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
 }
 
 /** ===== CONTENEDOR PRINCIPAL ===== */
@@ -50,7 +52,8 @@
   border-radius: 8px;
   border: 2px solid #e0e0e0;
   font-size: 0.9rem;
-  font-family: 'Deserta', sans-serif;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
   transition: all 0.3s ease;
   min-width: 200px;
 }
@@ -66,8 +69,8 @@ button {
   border-radius: 8px;
   border: none;
   font-size: 0.9rem;
-  font-family: 'Deserta', sans-serif;
-  font-weight: bold;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
   background: var(--primary-color);
   color: white;
   cursor: pointer;
@@ -121,7 +124,8 @@ button {
 table {
   width: 100%;
   border-collapse: collapse;
-  font-family: 'Deserta', sans-serif;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
 }
 
 th,
@@ -135,7 +139,7 @@ td {
 th {
   background: linear-gradient(135deg, var(--primary-color) 0%, #a03d37 100%);
   color: white;
-  font-weight: bold;
+  font-weight: var(--font-heading-weight);
   letter-spacing: 0.5px;
   position: sticky;
   top: 0;
@@ -184,7 +188,7 @@ tr.alerta:hover {
 }
 
 tfoot td {
-  font-weight: bold;
+  font-weight: var(--font-heading-weight);
   background: #f9f9f9;
   border-top: 2px solid var(--primary-color);
   color: var(--primary-color);
@@ -259,7 +263,8 @@ th.sortable[data-sort-dir='desc']::after {
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  font-family: 'Deserta', sans-serif;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
 }
 
 .items-per-page {

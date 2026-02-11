@@ -129,7 +129,7 @@
 
 .modal-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   gap: 12px;
   margin-top: 24px;
@@ -143,8 +143,7 @@
 }
 
 .btn-cancel,
-.btn-save,
-.btn-delete {
+.btn-save {
   padding: 10px 24px;
   border-radius: 8px;
   border: none;
@@ -166,15 +165,15 @@
 }
 
 .btn-save {
-  background: var(--primary-color);
+  background: #16a34a;
   color: white;
-  box-shadow: 0 2px 8px rgba(184, 75, 68, 0.3);
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
 }
 
 .btn-save:hover {
-  background: #a03d37;
+  background: #15803d;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(184, 75, 68, 0.4);
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
 }
 
 .btn-save:active {
@@ -186,22 +185,6 @@
   cursor: not-allowed;
   box-shadow: none;
   transform: none;
-}
-
-.btn-delete {
-  background: #ef4444;
-  color: white;
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
-}
-
-.btn-delete:hover {
-  background: #dc2626;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-}
-
-.btn-delete:active {
-  transform: translateY(0);
 }
 
 @media (max-width: 768px) {
