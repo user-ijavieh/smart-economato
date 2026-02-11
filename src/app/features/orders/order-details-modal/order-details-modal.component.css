@@ -142,97 +142,34 @@
   font-weight: 500;
 }
 
- .products-table {
-  background: #f9fafb;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid #e5e7eb;
+.ingredients-table {
   width: 100%;
-}
-
-.table-header {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 15px;
-  padding: 15px 20px;
-  background: #b84b44;
-  color: white;
-  font-weight: 600;
+  border-collapse: collapse;
   font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
-.table-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 15px;
-  padding: 15px 20px;
-  border-bottom: 1px solid #e5e7eb;
-  transition: background 0.2s;
-}
-
-.table-row:hover {
-  background: #f3f4f6;
-}
-
-.table-row:last-child {
-  border-bottom: none;
-}
-
-.col-product {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.product-name {
+.ingredients-table thead th {
+  background: #f9fafb;
+  padding: 12px;
+  text-align: left;
   font-weight: 600;
-  color: #333;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
 }
 
-.product-category {
-  font-size: 0.85rem;
-  color: #666;
+.ingredients-table tbody td {
+  padding: 10px 12px;
+  color: #6b7280;
+  border-bottom: 1px solid #f3f4f6;
 }
 
-.col-quantity,
-.col-price,
-.col-total {
-  display: flex;
-  align-items: center;
-  font-size: 0.95rem;
-  color: #555;
-}
-
-.col-total {
-  font-weight: 600;
-  color: #b84b44;
-}
-
-.order-total {
-  margin-top: 20px;
-  padding: 20px;
-  background: linear-gradient(135deg, rgba(184, 75, 68, 0.95) 0%, rgba(160, 61, 55, 0.95) 100%);
-  border-radius: 8px;
-}
-
-.total-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.total-label {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: white;
-}
-
-.total-value {
-  font-size: 1.8rem;
+.ingredients-table tfoot td {
+  padding: 16px 12px;
   font-weight: 700;
-  color: white;
+  color: #b84b44;
+  border-top: 2px solid #e5e7eb;
+  background: #fef2f2;
+  font-size: 1.1rem;
 }
 
 .modal-footer {
@@ -294,49 +231,7 @@
   box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
 }
 
-.table-header,
-.table-row {
-  display: grid;
-  grid-template-columns: 2fr 100px 120px 120px;
-  gap: 15px;
-  padding: 15px 20px;
-  align-items: center;
-}
-
-.table-header {
-  background: #b84b44;
-  color: white;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.85rem;
-  letter-spacing: 0.5px;
-}
-
-.table-row {
-  border-bottom: 1px solid #e5e7eb;
-  transition: background 0.2s;
-}
-
-.table-row:hover {
-  background: #f3f4f6;
-}
-
-.table-row:last-child {
-  border-bottom: none;
-}
-
-/* 3. DISEÑO PARA TABLET (Pantallas medianas - max 992px) */
-@media (max-width: 992px) {
-  .table-header, 
-  .table-row {
-    grid-template-columns: 1.5fr 80px 100px 100px;
-    font-size: 0.9rem;
-    padding: 12px 15px;
-    gap: 10px;
-  }
-}
-
-/* 4. DISEÑO PARA MÓVIL (Pantallas pequeñas - max 650px) */
+/* DISEÑO PARA MÓVIL (Pantallas pequeñas - max 650px) */
 @media (max-width: 650px) {
   .modal-header {
     padding: 10px 20px; 
@@ -347,62 +242,29 @@
     margin-bottom: 5px;
   }
 
-  
-
   .order-status-badge {
     font-size: 0.75rem; 
     padding: 4px 10px;
   }
 
-  .table-row {
-    grid-template-columns: 1fr; 
-    gap: 12px;
-    padding: 12px;
-    border-bottom: 2px solid #eee;
+  .modal-body {
+    padding: 16px;
   }
 
-  .col-product,
-  .col-quantity,
-  .col-price,
-  .col-total {
-    display: grid;
-    grid-template-columns: 90px 1fr; 
-    align-items: center;
-    font-size: 0.9rem;
+  .ingredients-table {
+    font-size: 0.78rem;
+    width: 100%;
   }
 
-  
-  .col-product::before,
-  .col-quantity::before,
-  .col-price::before,
-  .col-total::before {
-    content: attr(data-label); 
-    font-weight: 700;
-    color: #b84b44;
-    font-size: 0.75rem;
-    text-transform: uppercase;
+  .ingredients-table thead th,
+  .ingredients-table tbody td,
+  .ingredients-table tfoot td {
+    padding: 8px 5px;
   }
 
-  .product-name {
-    font-weight: 700;
-    color: #333;
-  }
-  
-  .col-total {
-    margin-top: 5px;
-    padding-top: 5px;
-    border-top: 1px dashed #ddd;
-  }
-
-  .order-total {
-    padding: 12px 15px;
-  }
-  
- .total-label {
-  font-size: 1rem; 
-}
-
-  .total-value {
-    font-size: 1.2rem;
+  .ingredients-table thead th:nth-child(n+2),
+  .ingredients-table tbody td:nth-child(n+2),
+  .ingredients-table tfoot td {
+    white-space: nowrap;
   }
 }
