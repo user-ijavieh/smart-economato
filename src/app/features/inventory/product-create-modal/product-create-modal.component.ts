@@ -14,7 +14,7 @@ import { MessageService } from '../../../core/services/message.service';
 })
 export class ProductCreateModalComponent {
   @Input() suppliers: Supplier[] = [];
-  
+
   @Output() save = new EventEmitter<ProductRequest>();
   @Output() close = new EventEmitter<void>();
 
@@ -52,8 +52,8 @@ export class ProductCreateModalComponent {
     // Asegurar que los valores numéricos sean números válidos
     const unitPrice = Number(this.formData.unitPrice);
     const currentStock = Number(this.formData.currentStock);
-    const supplierId = this.formData.supplierId !== undefined && this.formData.supplierId !== null 
-      ? Number(this.formData.supplierId) 
+    const supplierId = this.formData.supplierId !== undefined && this.formData.supplierId !== null
+      ? Number(this.formData.supplierId)
       : undefined;
 
     // Validar que los números sean válidos
@@ -87,7 +87,7 @@ export class ProductCreateModalComponent {
     this.close.emit();
   }
 
-  onBackdropClick(event: MouseEvent): void {
+  onOverlayClick(event: MouseEvent): void {
     // Modal no se cierra al hacer click fuera - solo con botones específicos
     // No hacer nada para prevenir el cierre accidental
   }
