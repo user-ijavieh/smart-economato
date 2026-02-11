@@ -29,14 +29,15 @@ export class ProductService {
           name: item.name || item.nombre || 'Sin nombre',
           productCode: item.productCode || item.codigo || '',
           type: item.type || item.tipo || '',
-          price: Number(item.unitPrice ?? item.price ?? item.precio ?? 0),
-          stock: Number(item.currentStock ?? item.stock ?? 0),
-          minStock: Number(item.minStock ?? item.stockMinimo ?? 0),
+          unitPrice: Number(item.unitPrice ?? item.price ?? item.precio ?? 0),
+          currentStock: Number(item.currentStock ?? item.stock ?? 0),
+          minStock: item.minStock !== undefined ? Number(item.minStock) : undefined,
           unit: item.unit || item.unidad || 'Ud',
           supplier: item.supplier ? {
             id: item.supplier.id,
             name: item.supplier.name || item.supplier.nombre,
-            contact: item.supplier.contact || item.supplier.contacto
+            contactPerson: item.supplier.contact || item.supplier.contacto,
+            phone: item.supplier.phone || item.supplier.telefono
           } : undefined
         }));
 
@@ -77,14 +78,15 @@ export class ProductService {
           name: item.name || item.nombre || 'Sin nombre',
           productCode: item.productCode || item.codigo || '',
           type: item.type || item.tipo || '',
-          price: Number(item.unitPrice ?? item.price ?? item.precio ?? 0),
-          stock: Number(item.currentStock ?? item.stock ?? 0),
-          minStock: Number(item.minStock ?? item.stockMinimo ?? 0),
+          unitPrice: Number(item.unitPrice ?? item.price ?? item.precio ?? 0),
+          currentStock: Number(item.currentStock ?? item.stock ?? 0),
+          minStock: item.minStock !== undefined ? Number(item.minStock) : undefined,
           unit: item.unit || item.unidad || 'Ud',
           supplier: item.supplier ? {
             id: item.supplier.id,
             name: item.supplier.name || item.supplier.nombre,
-            contact: item.supplier.contact || item.supplier.contacto
+            contactPerson: item.supplier.contact || item.supplier.contacto,
+            phone: item.supplier.phone || item.supplier.telefono
           } : undefined
         }));
 
@@ -107,7 +109,25 @@ export class ProductService {
   }
 
   update(id: number, product: ProductRequest): Observable<Product> {
-    return this.http.put<Product>(`${this.url}/${id}`, product);
+    return this.http.put<any>(`${this.url}/${id}`, product).pipe(
+      map(response => ({
+        ...response,
+        id: response.id,
+        name: response.name || response.nombre || 'Sin nombre',
+        productCode: response.productCode || response.codigo || '',
+        type: response.type || response.tipo || '',
+        unitPrice: Number(response.unitPrice ?? response.price ?? response.precio ?? 0),
+        currentStock: Number(response.currentStock ?? response.stock ?? 0),
+        minStock: response.minStock !== undefined ? Number(response.minStock) : undefined,
+        unit: response.unit || response.unidad || 'Ud',
+        supplier: response.supplier ? {
+          id: response.supplier.id,
+          name: response.supplier.name || response.supplier.nombre,
+          contactPerson: response.supplier.contact || response.supplier.contacto,
+          phone: response.supplier.phone || response.supplier.telefono
+        } : undefined
+      }))
+    );
   }
 
   delete(id: number): Observable<void> {

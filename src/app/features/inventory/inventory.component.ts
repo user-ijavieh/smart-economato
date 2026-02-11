@@ -8,18 +8,21 @@ import { AuthService } from '../../core/services/auth.service';
 import { Product, ProductRequest } from '../../shared/models/product.model';
 import { Supplier } from '../../shared/models/supplier.model';
 import { ProductFormComponent } from './product-form/product-form.component';
+import { ProductEditModalComponent } from './product-edit-modal/product-edit-modal.component';
+import { ToastComponent } from '../../shared/components/layout/toast/toast.component';
+import { ConfirmDialogComponent } from '../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductFormComponent],
+  imports: [CommonModule, FormsModule, ProductFormComponent, ProductEditModalComponent, ToastComponent, ConfirmDialogComponent],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.css'
 })
 export class InventoryComponent implements OnInit {
   private productService = inject(ProductService);
   private supplierService = inject(SupplierService);
-  private messageService = inject(MessageService);
+  messageService = inject(MessageService);
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
 
@@ -32,6 +35,7 @@ export class InventoryComponent implements OnInit {
   initialLoad = true;
   searchTerm = '';
   showForm = false;
+  showEditModal = false;
   selectedProduct: Product | null = null;
   
   // Pagination State
@@ -170,7 +174,7 @@ export class InventoryComponent implements OnInit {
 
   editProduct(product: Product): void {
     this.selectedProduct = product;
-    this.showForm = true;
+    this.showEditModal = true;
   }
 
   onCancelForm(): void {
@@ -178,9 +182,52 @@ export class InventoryComponent implements OnInit {
     this.selectedProduct = null;
   }
 
+  onCloseEditModal(): void {
+    this.showEditModal = false;
+    this.selectedProduct = null;
+  }
+
+  onDeleteProductFromModal(): void {
+    if (!this.selectedProduct) return;
+
+    this.productService.delete(this.selectedProduct.id).subscribe({
+      next: () => {
+        this.messageService.showSuccess('Producto eliminado correctamente');
+        this.showEditModal = false;
+        this.selectedProduct = null;
+        this.loadProducts();
+      },
+      error: (err) => {
+        const errorMessage = err.error?.message || err.message || 'Error al eliminar producto';
+        this.messageService.showError(errorMessage);
+      }
+    });
+  }
+
+  onSaveEditedProduct(productData: ProductRequest): void {
+    if (!this.selectedProduct) return;
+
+    this.productService.update(this.selectedProduct.id, productData).subscribe({
+      next: (response) => {
+        this.messageService.showSuccess('Producto actualizado correctamente');
+        
+        // Cerrar modal inmediatamente
+        this.showEditModal = false;
+        this.selectedProduct = null;
+        
+        // Recargar la lista completa para asegurar que los datos estén sincronizados
+        this.loadProducts();
+      },
+      error: (err) => {
+        const errorMessage = err.error?.message || err.message || 'Error al actualizar producto';
+        this.messageService.showError(errorMessage);
+      }
+    });
+  }
+
   onSaveProduct(productData: ProductRequest): void {
     if (this.selectedProduct) {
-      // UPDATE
+      // UPDATE (from form)
       this.productService.update(this.selectedProduct.id, productData).subscribe({
         next: () => {
           this.messageService.showSuccess('Producto actualizado correctamente');

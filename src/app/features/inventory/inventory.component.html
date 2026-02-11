@@ -165,3 +165,20 @@
     </table>
   </div>
 </div>
+
+<!-- Modal de edición -->
+@if (showEditModal && selectedProduct) {
+  <app-product-edit-modal
+    [product]="selectedProduct"
+    [suppliers]="suppliers"
+    (save)="onSaveEditedProduct($event)"
+    (delete)="onDeleteProductFromModal()"
+    (close)="onCloseEditModal()"
+  ></app-product-edit-modal>
+}
+
+<!-- Confirm Dialog -->
+<app-confirm-dialog></app-confirm-dialog>
+
+<!-- Toast Notifications -->
+<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
