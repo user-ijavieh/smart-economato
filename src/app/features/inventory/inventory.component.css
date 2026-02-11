@@ -130,6 +130,7 @@ button {
   background: #217346;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
 }
 
@@ -278,6 +279,19 @@ th.sortable[data-sort-dir='desc']::after {
 
 .show-on-mobile-only {
   display: none;
+}
+
+.mobile-unit {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-unit {
+    display: inline;
+    margin-left: 4px;
+    font-size: 0.9em;
+    color: #666;
+  }
 }
 
 
