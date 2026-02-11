@@ -1,122 +1,108 @@
-.modal-backdrop {
+/** ===== MODAL OVERLAY ===== */
+
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1000;
+  justify-content: center;
+  z-index: 10000;
   padding: 20px;
   animation: fadeIn 0.2s ease;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 .modal-content {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
   max-width: 500px;
   width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
+  max-height: 75vh;
+  display: flex;
+  flex-direction: column;
   animation: slideUp 0.3s ease;
 }
 
-@keyframes slideUp {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
+/** ===== MODAL HEADER ===== */
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 24px 30px;
+  background: linear-gradient(135deg, #b84b44 0%, #a03d37 100%);
+  border-radius: 16px 16px 0 0;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .modal-header h2 {
-  margin: 0;
   font-size: 1.5rem;
-  color: var(--primary-color);
-  font-family: var(--font-heading);
-  font-weight: var(--font-heading-weight);
+  color: white;
+  margin: 0;
+  font-weight: 700;
 }
 
-.btn-close {
-  background: none;
+.modal-close {
+  width: 36px;
+  height: 36px;
   border: none;
-  font-size: 2rem;
-  color: #666;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: white;
   cursor: pointer;
-  padding: 0;
-  width: 32px;
-  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
 }
 
-.btn-close:hover {
-  background: #f0f0f0;
-  color: var(--primary-color);
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
 }
+
+/** ===== MODAL BODY ===== */
 
 .modal-body {
-  padding: 24px;
+  padding: 30px;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .product-info {
   margin-bottom: 20px;
   padding: 16px;
-  background: #f8f9fa;
+  background: #f9fafb;
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #e5e7eb;
 }
 
 .product-info p {
   margin: 6px 0;
-  color: #555;
-  font-family: var(--font-body);
-  font-weight: var(--font-body-weight);
+  color: #4b5563;
+  font-size: 0.95rem;
 }
 
 .product-info strong {
-  color: #333;
+  color: #374151;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
 }
 
 .form-group label {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  color: #333;
-  margin-bottom: 6px;
-  font-family: var(--font-subheading);
-  font-weight: var(--font-subheading-weight);
+  color: #374151;
+  margin-bottom: 8px;
 }
 
 .input-group {
@@ -131,52 +117,45 @@
 
 .unit-label {
   font-weight: 600;
-  color: #666;
+  color: #6b7280;
   min-width: 40px;
-  font-family: var(--font-body);
-  font-weight: var(--font-body-weight);
 }
 
 input {
   width: 100%;
-  padding: 10px 12px;
-  border: 2px solid #e0e0e0;
+  padding: 10px 14px;
+  border: 2px solid #e5e7eb;
   border-radius: 8px;
   font-size: 0.95rem;
-  font-family: var(--font-body);
-  font-weight: var(--font-body-weight);
-  transition: all 0.3s ease;
+  transition: border-color 0.2s;
+  font-family: inherit;
 }
 
 input:focus {
   outline: none;
-  border-color: var(--primary-color);
+  border-color: #b84b44;
   box-shadow: 0 0 0 3px rgba(184, 75, 68, 0.1);
 }
 
 .hint {
   display: block;
-  margin-top: 6px;
+  margin-top: 8px;
   font-size: 0.85rem;
-  color: #666;
+  color: #6b7280;
   font-style: italic;
-  font-family: var(--font-body);
-  font-weight: var(--font-body-weight);
 }
+
+/** ===== MODAL FOOTER ===== */
 
 .modal-footer {
+  padding: 20px 30px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+  border-radius: 0 0 16px 16px;
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 12px;
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid #e0e0e0;
-}
-
-.modal-footer-right {
-  display: flex;
-  gap: 12px;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .btn-cancel,
@@ -184,37 +163,36 @@ input:focus {
   padding: 10px 24px;
   border-radius: 8px;
   border: none;
-  font-size: 0.95rem;
-  font-family: var(--font-body);
-  font-weight: var(--font-body-weight);
+  font-size: 0.9rem;
+  font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
+  width: 100%;
+  text-align: center;
 }
 
 .btn-cancel {
-  background: #f0f0f0;
-  color: #666;
+  background: #6b7280;
+  color: white;
+  box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3);
 }
 
 .btn-cancel:hover {
-  background: #e0e0e0;
-  color: #333;
+  background: #4b5563;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
 }
 
 .btn-save {
-  background: var(--primary-color);
+  background: #b84b44;
   color: white;
   box-shadow: 0 2px 8px rgba(184, 75, 68, 0.3);
 }
 
 .btn-save:hover {
   background: #a03d37;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(184, 75, 68, 0.4);
-}
-
-.btn-save:active {
-  transform: translateY(0);
 }
 
 .btn-save:disabled {
@@ -224,8 +202,45 @@ input:focus {
   transform: none;
 }
 
+/** ===== ANIMATIONS ===== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/** ===== RESPONSIVE ===== */
+
 @media (max-width: 768px) {
   .modal-content {
-    max-height: 95vh;
+    width: 95%;
+    max-height: 80vh;
+  }
+
+  .modal-header {
+    padding: 18px 20px;
+  }
+
+  .modal-body {
+    padding: 20px;
+  }
+
+  .modal-footer {
+    padding: 14px 20px;
   }
 }

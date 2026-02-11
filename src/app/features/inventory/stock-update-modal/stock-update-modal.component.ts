@@ -37,7 +37,7 @@ export class StockUpdateModalComponent implements OnChanges {
     // Build the ProductRequest with ONLY stock updated, and existing values for others
     // The backend logic checks stockDelta, so currentStock is crucial.
     // Other fields are required by ProductRequestDTO validity checks (e.g. valid unit), so we pass them along.
-    
+
     // We must ensure we don't accidentally wipe out other fields if the product has them.
     // However, the backend logic for updateStockManually validates existing vs new name, etc.
     // Ideally we send the exact same data as the product has, just with new stock.
@@ -50,9 +50,9 @@ export class StockUpdateModalComponent implements OnChanges {
       unitPrice: this.product.unitPrice,
       supplierId: this.product.supplier?.id,
       currentStock: this.currentStock,
-      
+
       // Legacy/Compat fields just in case
-      price: this.product.unitPrice, 
+      price: this.product.unitPrice,
       stock: this.currentStock,
       minStock: this.product.minStock
     };
@@ -64,7 +64,7 @@ export class StockUpdateModalComponent implements OnChanges {
     this.close.emit();
   }
 
-  onBackdropClick(event: MouseEvent): void {
+  onOverlayClick(event: MouseEvent): void {
     // Optional: close on backdrop click if desired
   }
 }
