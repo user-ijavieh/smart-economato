@@ -556,7 +556,35 @@
   }
 }
 
+
+
 /** ===== RESPONSIVE ===== */
+/*tablet*/
+@media (max-width: 1024px) {
+  .controles {
+    flex-wrap: wrap; 
+    padding: 20px;
+  }
+
+  .controles-left {
+    flex: 1 1 100%; 
+    justify-content: space-between;
+  }
+
+  .controles input[type="text"] {
+    width: 100%; 
+    max-width: none; 
+    flex-shrink: 1;
+  }
+
+  .controles-right {
+    flex: 1 1 100%; 
+    justify-content: flex-start;
+  }
+}
+
+
+/*movil*/
 
 @media (max-width: 768px) {
   .contenedor-principal {
