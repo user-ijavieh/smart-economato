@@ -69,6 +69,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   gap: 20px;
+  grid-auto-rows: 1fr;
 }
 
 /** ===== TARJETAS DE PEDIDOS ===== */
@@ -237,6 +238,7 @@
   display: flex;
   gap: 12px;
   border-top: 1px solid #e0e0e0;
+  margin-top: auto;
 }
 
 .btn-action {
@@ -320,6 +322,35 @@
 
 .btn-delete:hover {
   background: #b91c1c;
+}
+
+/** ===== LOAD MORE ===== */
+
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+  grid-column: 1 / -1;
+}
+
+.btn-load-more {
+  padding: 12px 32px;
+  border-radius: 10px;
+  border: 2px solid #e0e0e0;
+  background: white;
+  color: #374151;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Deserta', sans-serif;
+}
+
+.btn-load-more:hover {
+  border-color: #b84b44;
+  color: #b84b44;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(184, 75, 68, 0.15);
 }
 
 /** ===== RESPONSIVE ===== */

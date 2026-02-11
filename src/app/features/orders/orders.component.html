@@ -24,7 +24,7 @@
     </div>
   } @else {
     <div class="orders-grid">
-      @for (order of orders; track order.id) {
+      @for (order of displayedOrders; track order.id) {
         <div class="order-card">
           <div class="order-card-header">
             <div class="order-card-user">
@@ -78,6 +78,14 @@
         </div>
       }
     </div>
+
+    @if (hasMoreOrders) {
+      <div class="load-more-container">
+        <button class="btn-load-more" (click)="loadMore()">
+          Cargar más antiguas ({{ orders.length - displayCount }} restantes)
+        </button>
+      </div>
+    }
   }
 </div>
 
