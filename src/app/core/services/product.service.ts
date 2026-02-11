@@ -63,6 +63,45 @@ export class ProductService {
     return this.http.get<Product>(`${this.url}/barcode/${barcode}`);
   }
 
+  searchByName(name: string, page = 0, size = 10, sort = 'name,asc'): Observable<Page<Product>> {
+    const queryString = `name=${encodeURIComponent(name)}&page=${page}&size=${size}&sort=${sort}`;
+    const fullUrl = `${this.url}/search?${queryString}`;
+
+    return this.http.get<any>(fullUrl).pipe(
+      map(response => {
+        const rawContent = response.content || (Array.isArray(response) ? response : []);
+        
+        const mappedContent: Product[] = rawContent.map((item: any) => ({
+          ...item,
+          id: item.id,
+          name: item.name || item.nombre || 'Sin nombre',
+          productCode: item.productCode || item.codigo || '',
+          type: item.type || item.tipo || '',
+          price: Number(item.unitPrice ?? item.price ?? item.precio ?? 0),
+          stock: Number(item.currentStock ?? item.stock ?? 0),
+          minStock: Number(item.minStock ?? item.stockMinimo ?? 0),
+          unit: item.unit || item.unidad || 'Ud',
+          supplier: item.supplier ? {
+            id: item.supplier.id,
+            name: item.supplier.name || item.supplier.nombre,
+            contact: item.supplier.contact || item.supplier.contacto
+          } : undefined
+        }));
+
+        return {
+          content: mappedContent,
+          totalElements: response.totalElements ?? mappedContent.length,
+          totalPages: response.totalPages ?? 1,
+          size: response.size ?? size,
+          number: response.number ?? page,
+          first: response.first ?? true,
+          last: response.last ?? true,
+          empty: mappedContent.length === 0
+        };
+      })
+    );
+  }
+
   create(product: ProductRequest): Observable<Product> {
     return this.http.post<Product>(this.url, product);
   }
