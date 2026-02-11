@@ -42,16 +42,16 @@
                 type="text"
                 id="productSearch"
                 [(ngModel)]="itemForm.productName"
-                (click)="toggleProductDropdown()"
-                placeholder="Seleccionar producto..."
+                (input)="onProductSearch($any($event.target).value)"
+                (focus)="showProductDropdown = true"
+                placeholder="Buscar producto..."
                 autocomplete="off"
                 class="form-control dropdown-trigger"
-                readonly
               >
               <span class="dropdown-arrow" (click)="toggleProductDropdown()">▼</span>
               @if (showProductDropdown) {
                 <div class="autocomplete-dropdown" (scroll)="onProductDropdownScroll($event)">
-                  @for (product of products; track product.id) {
+                  @for (product of filteredProducts; track product.id) {
                     <div class="autocomplete-item" (click)="selectProduct(product)">
                       <div class="autocomplete-item-name">{{ product.name }}</div>
                       <div class="autocomplete-item-info">
@@ -64,7 +64,7 @@
                       <span>Cargando más productos...</span>
                     </div>
                   }
-                  @if (!isLoadingProducts && products.length === 0) {
+                  @if (!isLoadingProducts && filteredProducts.length === 0) {
                     <div class="autocomplete-empty">
                       <span>No hay productos disponibles</span>
                     </div>

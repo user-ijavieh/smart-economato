@@ -46,6 +46,7 @@ export class RecipeEditModalComponent implements OnInit {
   showProductDropdown: { [key: number]: boolean } = {};
   activeComponentIndex: number | null = null;
   productNamesMap: { [key: number]: string } = {};
+  private searchTimeout: any = null;
 
   ngOnInit(): void {
     this.initializeForm();
@@ -63,7 +64,7 @@ export class RecipeEditModalComponent implements OnInit {
       })),
       allergenIds: this.recipe.allergens?.map(a => a.id) || []
     };
-    
+
     // Crear mapa de nombres de productos para mostrar inmediatamente
     this.recipe.components.forEach(c => {
       this.productNamesMap[c.productId] = c.productName;
@@ -82,13 +83,13 @@ export class RecipeEditModalComponent implements OnInit {
       this.loadingProducts = true;
     }
 
-    this.productService.getAll(page, 20).subscribe({
+    this.productService.getAll(page, 50).subscribe({
       next: (response) => {
         if (append) {
           this.availableProducts = [...this.availableProducts, ...response.content];
           // Actualizar resultados de búsqueda si hay filtro activo
           if (this.productSearchQuery && this.productSearchQuery.trim() !== '') {
-            const newResults = response.content.filter(p => 
+            const newResults = response.content.filter(p =>
               p.name.toLowerCase().includes(this.productSearchQuery.toLowerCase())
             );
             this.productSearchResults = [...this.productSearchResults, ...newResults];
@@ -171,26 +172,47 @@ export class RecipeEditModalComponent implements OnInit {
     this.productSearchQuery = query;
     this.activeComponentIndex = index;
     this.showProductDropdown[index] = true;
-    
+
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
+
     if (!query || query.trim() === '') {
       this.productSearchResults = this.availableProducts;
-    } else {
-      this.productSearchResults = this.availableProducts.filter(p => 
-        p.name.toLowerCase().includes(query.toLowerCase())
-      );
+      this.cdr.markForCheck();
+      return;
     }
-    this.cdr.markForCheck();
+
+    this.searchTimeout = setTimeout(() => {
+      this.productService.searchByName(query.trim(), 0, 50).subscribe({
+        next: (response) => {
+          this.productSearchResults = response.content;
+          // Actualizar mapa de nombres
+          response.content.forEach(p => {
+            this.productNamesMap[p.id] = p.name;
+          });
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          // Fallback a filtro local
+          this.productSearchResults = this.availableProducts.filter(p =>
+            p.name.toLowerCase().includes(query.toLowerCase())
+          );
+          this.cdr.markForCheck();
+        }
+      });
+    }, 400);
   }
 
   selectProduct(productId: number, index: number): void {
     this.editForm.components[index].productId = productId;
-    
+
     // Actualizar el mapa de nombres con el nuevo producto
     const selectedProduct = this.availableProducts.find(p => p.id === productId);
     if (selectedProduct) {
       this.productNamesMap[productId] = selectedProduct.name;
     }
-    
+
     this.showProductDropdown[index] = false;
     this.activeComponentIndex = null;
     this.productSearchQuery = '';
@@ -202,12 +224,12 @@ export class RecipeEditModalComponent implements OnInit {
     if (productId === 0) {
       return '';
     }
-    
+
     // Usar el mapa de nombres primero (inmediato)
     if (this.productNamesMap[productId]) {
       return this.productNamesMap[productId];
     }
-    
+
     // Fallback a availableProducts
     const product = this.availableProducts.find(p => p.id === productId);
     return product ? product.name : '';
@@ -217,7 +239,7 @@ export class RecipeEditModalComponent implements OnInit {
     const element = event.target as HTMLElement;
     const scrollPosition = element.scrollTop + element.clientHeight;
     const scrollHeight = element.scrollHeight;
-    
+
     // Si está a 100px del final y hay más páginas
     if (scrollHeight - scrollPosition < 100 && !this.loadingMoreProducts) {
       if (this.currentProductPage < this.totalProductPages - 1) {
@@ -233,7 +255,7 @@ export class RecipeEditModalComponent implements OnInit {
         this.showProductDropdown[Number(key)] = false;
       }
     });
-    
+
     this.showProductDropdown[index] = !this.showProductDropdown[index];
     if (this.showProductDropdown[index]) {
       this.activeComponentIndex = index;

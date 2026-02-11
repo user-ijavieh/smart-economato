@@ -40,12 +40,13 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   orderItems: OrderItem[] = [];
   showProductDropdown = false;
   isSubmitting = false;
-  
-  // Paginación para productos
+
   currentPage = 0;
   pageSize = 20;
   hasMoreProducts = true;
   isLoadingProducts = false;
+  private searchTimeout: any = null;
+  private productSearchResults: Product[] | null = null;
 
   // Form for adding products
   itemForm = {
@@ -62,11 +63,11 @@ export class OrderModalComponent implements OnInit, OnDestroy {
     // Listener para cerrar dropdown al hacer clic fuera
     document.addEventListener('click', this.onDocumentClick.bind(this));
   }
-  
+
   ngOnDestroy(): void {
     document.removeEventListener('click', this.onDocumentClick.bind(this));
   }
-  
+
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
     const dropdown = target.closest('.autocomplete-container');
@@ -91,7 +92,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
 
   loadProducts(): void {
     if (this.isLoadingProducts || !this.hasMoreProducts) return;
-    
+
     this.isLoadingProducts = true;
     this.productService.getAll(this.currentPage, this.pageSize).subscribe({
       next: (page) => {
@@ -111,14 +112,51 @@ export class OrderModalComponent implements OnInit, OnDestroy {
 
   toggleProductDropdown(): void {
     this.showProductDropdown = !this.showProductDropdown;
+    if (this.showProductDropdown) {
+      this.productSearchResults = null; // Show all products
+    }
   }
-  
+
+  get filteredProducts(): Product[] {
+    return this.productSearchResults ?? this.products;
+  }
+
+  onProductSearch(query: string): void {
+    this.showProductDropdown = true;
+
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
+
+    if (!query || query.trim() === '') {
+      this.productSearchResults = null;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.searchTimeout = setTimeout(() => {
+      this.productService.searchByName(query.trim(), 0, 50).subscribe({
+        next: (response) => {
+          this.productSearchResults = response.content;
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          // Fallback a filtro local
+          this.productSearchResults = this.products.filter(p =>
+            p.name.toLowerCase().includes(query.toLowerCase())
+          );
+          this.cdr.markForCheck();
+        }
+      });
+    }, 400);
+  }
+
   onProductDropdownScroll(event: Event): void {
     const element = event.target as HTMLElement;
     const threshold = 50; // píxeles antes del final
     const position = element.scrollTop + element.offsetHeight;
     const height = element.scrollHeight;
-    
+
     // Si estamos cerca del final y hay más productos para cargar
     if (position >= height - threshold && !this.isLoadingProducts && this.hasMoreProducts) {
       this.loadProducts();
@@ -131,6 +169,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
     this.itemForm.unitPrice = product.unitPrice;
     this.itemForm.unit = product.unit || 'unidad';
     this.showProductDropdown = false;
+    this.productSearchResults = null;
   }
 
   addItemToOrder(): void {
