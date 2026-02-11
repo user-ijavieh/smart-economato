@@ -47,12 +47,26 @@ export class ProductService {
     return this.http.get<Product>(`${this.url}/barcode/${barcode}`);
   }
 
-  searchByName(name: string): Observable<Product[]> {
-    return this.http.get<any>(`${this.url}/search?name=${name}`).pipe(
+  searchByName(name: string, page = 0, size = 10, sort = 'name,asc'): Observable<Page<Product>> {
+    const queryString = `name=${encodeURIComponent(name)}&page=${page}&size=${size}&sort=${sort}`;
+    const fullUrl = `${this.url}/search?${queryString}`;
+
+    return this.http.get<any>(fullUrl).pipe(
       map(response => {
-        // Handle both direct array and paginated response (where items are in 'content')
         const rawContent = response.content || (Array.isArray(response) ? response : []);
-        return rawContent.map((item: any) => this.mapToProduct(item));
+        
+        const mappedContent: Product[] = rawContent.map((item: any) => this.mapToProduct(item));
+
+        return {
+          content: mappedContent,
+          totalElements: response.totalElements ?? mappedContent.length,
+          totalPages: response.totalPages ?? 1,
+          size: response.size ?? size,
+          number: response.number ?? page,
+          first: response.first ?? true,
+          last: response.last ?? true,
+          empty: mappedContent.length === 0
+        };
       })
     );
   }
@@ -79,13 +93,30 @@ export class ProductService {
       } : undefined
     };
   }
-
   create(product: ProductRequest): Observable<Product> {
     return this.http.post<Product>(this.url, product);
   }
 
   update(id: number, product: ProductRequest): Observable<Product> {
-    return this.http.put<Product>(`${this.url}/${id}`, product);
+    return this.http.put<any>(`${this.url}/${id}`, product).pipe(
+      map(response => ({
+        ...response,
+        id: response.id,
+        name: response.name || response.nombre || 'Sin nombre',
+        productCode: response.productCode || response.codigo || '',
+        type: response.type || response.tipo || '',
+        unitPrice: Number(response.unitPrice ?? response.price ?? response.precio ?? 0),
+        currentStock: Number(response.currentStock ?? response.stock ?? 0),
+        minStock: response.minStock !== undefined ? Number(response.minStock) : undefined,
+        unit: response.unit || response.unidad || 'Ud',
+        supplier: response.supplier ? {
+          id: response.supplier.id,
+          name: response.supplier.name || response.supplier.nombre,
+          contactPerson: response.supplier.contact || response.supplier.contacto,
+          phone: response.supplier.phone || response.supplier.telefono
+        } : undefined
+      }))
+    );
   }
 
   delete(id: number): Observable<void> {

@@ -80,6 +80,9 @@
   overflow: hidden;
   transition: all 0.3s ease;
   border-left: 5px solid;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .order-card:hover {
@@ -158,6 +161,7 @@
 
 .order-body {
   padding: 20px;
+  flex: 1;
 }
 
 .order-detail {
@@ -187,7 +191,7 @@
 .detail-value.total {
   font-size: 1.2rem;
   font-weight: bold;
-  color: var(--primary-color);
+  color: #b84b44;
 }
 
 .order-items-preview {
@@ -255,12 +259,13 @@
 }
 
 .btn-primary {
-  background: #3b82f6;
+  background: #b84b44;
   color: white;
 }
 
 .btn-primary:hover {
-  background: #2563eb;
+  background: #a03d37;
+  box-shadow: 0 4px 12px rgba(184, 75, 68, 0.4);
 }
 
 .btn-secondary {

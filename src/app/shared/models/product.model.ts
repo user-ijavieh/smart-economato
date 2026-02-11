@@ -12,7 +12,7 @@ export interface Product {
   // Stock property - favoring currentStock as per recent changes but keeping stock for compatibility if backend sends it
   stock?: number; 
   currentStock: number;
-  minStock: number;
+  minStock?: number;  // Opcional porque el backend no siempre lo devuelve
   
   supplier?: Supplier;
   barcode?: string;
@@ -38,7 +38,7 @@ export interface ProductRequest {
   // Stock
   stock?: number;
   currentStock: number;
-  minStock: number;
+  minStock?: number;  // Opcional
 
   unit: string;
   supplierId?: number;
