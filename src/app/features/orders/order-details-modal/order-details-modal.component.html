@@ -1,5 +1,6 @@
 <div class="modal-overlay" (click)="close()">
-  <div class="modal-dialog" (click)="$event.stopPropagation()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-dialog">
     @if (order) {
       <div class="modal-header">
         <div>
@@ -8,7 +9,12 @@
             {{ getStatusLabel(order.status) }}
           </span>
         </div>
-        <button type="button" class="btn-close" (click)="close()">&times;</button>
+        <button type="button" class="modal-close" (click)="close()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
       </div>
 
       <div class="modal-body">
@@ -84,7 +90,10 @@
 
       <div class="modal-footer">
         <button type="button" class="btn-print" (click)="printOrder()" [disabled]="isDownloading">
-          <span *ngIf="!isDownloading">🖨️ Imprimir PDF</span>
+          <span *ngIf="!isDownloading">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Imprimir PDF
+          </span>
           <span *ngIf="isDownloading">Descargando...</span>
         </button>
         <button type="button" class="btn-close-modal" (click)="close()">
@@ -92,5 +101,6 @@
         </button>
       </div>
     }
+    </div>
   </div>
 </div>
