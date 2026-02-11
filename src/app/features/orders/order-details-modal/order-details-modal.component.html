@@ -51,48 +51,42 @@
         <!-- Products List -->
         <div class="info-section">
           <h3>Productos ({{ order.details?.length || 0 }})</h3>
-          <div class="products-table">
-            <div class="table-header">
-              <div class="col-product">Producto</div>
-              <div class="col-quantity">Cantidad</div>
-              <div class="col-price">Precio Unit.</div>
-              <div class="col-total">Subtotal</div>
-            </div>
-            @for (detail of (order.details || []); track $index) {
-              @if (detail.productName) {
-                <div class="table-row">
-                  <div class="col-product" data-label="Producto">
-                    <div class="product-name">{{ detail.productName }}</div>
-                  </div>
-                  <div class="col-quantity" data-label="Cantidad">
-                    {{ detail.quantity }} uds
-                  </div>
-                  <div class="col-price" data-label="Precio">
-                    {{ detail.unitPrice | number:'1.2-2' }} €
-                  </div>
-                  <div class="col-total" data-label="Total">
-                    {{ (detail.quantity * detail.unitPrice) | number:'1.2-2' }} €
-                  </div>
-                </div>
+          <table class="ingredients-table">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unit.</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (detail of (order.details || []); track $index) {
+                @if (detail.productName) {
+                  <tr>
+                    <td>{{ detail.productName }}</td>
+                    <td>{{ detail.quantity }} uds</td>
+                    <td>{{ detail.unitPrice | number:'1.2-2' }} €</td>
+                    <td>{{ (detail.quantity * detail.unitPrice) | number:'1.2-2' }} €</td>
+                  </tr>
+                }
               }
-            }
-          </div>
-
-          <!-- Total -->
-          <div class="order-total">
-            <div class="total-row">
-              <span class="total-label">Total del Pedido:</span>
-              <span class="total-value">{{ getOrderTotal() | number:'1.2-2' }} €</span>
-            </div>
-          </div>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3">Total del Pedido</td>
+                <td>{{ getOrderTotal() | number:'1.2-2' }} €</td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
       </div>
 
       <div class="modal-footer">
         <button type="button" class="btn-print" (click)="printOrder()" [disabled]="isDownloading">
           <span *ngIf="!isDownloading">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-            Imprimir PDF
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            Exportar
           </span>
           <span *ngIf="isDownloading">Descargando...</span>
         </button>

@@ -26,7 +26,8 @@
   background: white;
   border-radius: 16px;
   max-height: 85vh;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
@@ -39,10 +40,7 @@
   padding: 24px 30px;
   background: linear-gradient(135deg, #b84b44 0%, #a03d37 100%);
   border-radius: 16px 16px 0 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;             
-  flex-shrink: 0;           
+  flex-shrink: 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -76,6 +74,8 @@
 
 .modal-body {
   padding: 30px;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .modal-section {
@@ -300,17 +300,10 @@
   .modal-content {
     width: 95%;
     max-height: 90vh;
-    overflow-y: auto; 
-    position: relative;
   }
 
- .modal-header {
+  .modal-header {
     padding: 18px 20px;
-    position: sticky;
-    top: 0;
-    z-index: 100; 
-    border-radius: 16px 16px 0 0; 
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
   }
 
   .modal-body {
