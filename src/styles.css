@@ -54,7 +54,7 @@
 
 /* Fuente personalizada */
 @font-face {
-  font-family: 'Deserta';
+  font-family: 'arial';
   src: url('assets/fonts/Deserta.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
@@ -90,7 +90,7 @@
 }
 
 html {
-  font-family: Poppins, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: arial, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.5rem;
 }
 
