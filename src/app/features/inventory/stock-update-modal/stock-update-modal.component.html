@@ -1,11 +1,16 @@
-<div class="modal-backdrop" (click)="onBackdropClick($event)">
-  <div class="modal-content">
+<div class="modal-overlay" (click)="onOverlayClick($event)">
+  <form #stockForm="ngForm" (ngSubmit)="onSubmit()" class="modal-content">
     <div class="modal-header">
       <h2>Actualizar Stock</h2>
-      <button class="btn-close" (click)="onClose()" aria-label="Cerrar">×</button>
+      <button type="button" class="modal-close" (click)="onClose()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
     </div>
 
-    <form #stockForm="ngForm" (ngSubmit)="onSubmit()" class="modal-body">
+    <div class="modal-body">
       <div class="product-info">
         <p><strong>Producto:</strong> {{ productName }}</p>
         <p *ngIf="product">
@@ -32,15 +37,13 @@
           El sistema calculará automáticamente la diferencia y registrará un movimiento de AJUSTE.
         </small>
       </div>
+    </div>
 
-      <div class="modal-footer">
-        <div class="modal-footer-right">
-          <button type="button" class="btn-cancel" (click)="onClose()">Cancelar</button>
-          <button type="submit" class="btn-save" [disabled]="!stockForm.valid">
-            Confirmar Ajuste
-          </button>
-        </div>
-      </div>
-    </form>
-  </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="onClose()">Cancelar</button>
+      <button type="submit" class="btn-save" [disabled]="!stockForm.valid">
+        Confirmar Ajuste
+      </button>
+    </div>
+  </form>
 </div>

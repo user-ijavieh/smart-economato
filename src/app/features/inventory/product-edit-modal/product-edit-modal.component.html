@@ -1,11 +1,16 @@
-<div class="modal-backdrop" (click)="onBackdropClick($event)">
-  <div class="modal-content">
+<div class="modal-overlay" (click)="onOverlayClick($event)">
+  <form #editForm="ngForm" (ngSubmit)="onSubmit()" class="modal-content">
     <div class="modal-header">
       <h2>Editar Producto</h2>
-      <button class="btn-close" (click)="onClose()" aria-label="Cerrar">×</button>
+      <button type="button" class="modal-close" (click)="onClose()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
     </div>
 
-    <form #editForm="ngForm" (ngSubmit)="onSubmit()" class="modal-body">
+    <div class="modal-body">
       <div class="form-grid">
         <div class="form-group">
           <label for="name">Nombre *</label>
@@ -63,29 +68,6 @@
           />
         </div>
 
-        <div class="form-group">
-          <label for="currentStock">Stock Actual *</label>
-          <input
-            type="number"
-            id="currentStock"
-            [(ngModel)]="formData.currentStock"
-            name="currentStock"
-            required
-            min="0"
-            step="0.01"
-            placeholder="0"
-            disabled
-            readonly
-            title="Utilice el botón de ajuste de stock para modificar el inventario"
-          />
-          <small
-            class="hint-text"
-            style="color: #64748b; font-size: 0.8rem; margin-top: 0.25rem; display: block"
-          >
-            Para ajustar el stock, utilice el botón dedicado en la lista de productos.
-          </small>
-        </div>
-
         <div class="form-group full-width">
           <label for="supplierId">Proveedor</label>
           <select id="supplierId" [(ngModel)]="formData.supplierId" name="supplierId">
@@ -96,16 +78,16 @@
           </select>
         </div>
       </div>
+    </div>
 
-      <div class="modal-footer">
-        <button type="button" class="btn-delete" (click)="onDelete()">Eliminar</button>
-        <div class="modal-footer-right">
-          <button type="button" class="btn-cancel" (click)="onClose()">Cancelar</button>
-          <button type="submit" class="btn-save" [disabled]="!editForm.valid">
-            Guardar Cambios
-          </button>
-        </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-delete" (click)="onDelete()">Eliminar</button>
+      <div class="modal-footer-right">
+        <button type="button" class="btn-cancel" (click)="onClose()">Cancelar</button>
+        <button type="submit" class="btn-save" [disabled]="!editForm.valid">
+          Guardar Cambios
+        </button>
       </div>
-    </form>
-  </div>
+    </div>
+  </form>
 </div>
