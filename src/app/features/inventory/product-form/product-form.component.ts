@@ -54,7 +54,7 @@ export class ProductFormComponent implements OnChanges {
         type: this.product.type || 'Ingrediente',
         price: this.product.unitPrice,
         stock: this.product.currentStock,
-        minStock: this.product.minStock,
+        minStock: this.product.minStock || 0,
         unit: this.product.unit || 'UND',
         supplierId: this.product.supplier?.id
       };
