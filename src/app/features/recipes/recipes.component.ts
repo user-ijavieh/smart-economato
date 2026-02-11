@@ -191,18 +191,18 @@ export class RecipesComponent implements OnInit {
       next: (blob) => {
         // Crear URL del blob
         const url = window.URL.createObjectURL(blob);
-        
+
         // Crear enlace temporal para descargar
         const link = document.createElement('a');
         link.href = url;
         link.download = `receta-${this.selectedRecipe!.name.replace(/\s+/g, '-').toLowerCase()}.pdf`;
         document.body.appendChild(link);
         link.click();
-        
+
         // Limpiar
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
-        
+
         this.messageService.showSuccess('PDF descargado correctamente');
       },
       error: () => {
