@@ -4,21 +4,27 @@ import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../core/services/product.service';
 import { MessageService } from '../../core/services/message.service';
 import { SupplierService } from '../../core/services/supplier.service';
+import { AuthService } from '../../core/services/auth.service';
 import { Product, ProductRequest } from '../../shared/models/product.model';
 import { Supplier } from '../../shared/models/supplier.model';
-import { ProductFormComponent } from './components/product-form/product-form.component';
+import { ProductFormComponent } from './product-form/product-form.component';
+import { ProductEditModalComponent } from './product-edit-modal/product-edit-modal.component';
+import { ProductCreateModalComponent } from './product-create-modal/product-create-modal.component';
+import { ToastComponent } from '../../shared/components/layout/toast/toast.component';
+import { ConfirmDialogComponent } from '../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductFormComponent],
+  imports: [CommonModule, FormsModule, ProductFormComponent, ProductEditModalComponent, ProductCreateModalComponent, ToastComponent, ConfirmDialogComponent],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.css'
 })
 export class InventoryComponent implements OnInit {
   private productService = inject(ProductService);
   private supplierService = inject(SupplierService);
-  private messageService = inject(MessageService);
+  messageService = inject(MessageService);
+  private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
 
   // Listas de datos
@@ -27,8 +33,11 @@ export class InventoryComponent implements OnInit {
 
   // Estado de la vista
   loading = false;
+  initialLoad = true;
   searchTerm = '';
   showForm = false;
+  showEditModal = false;
+  showCreateModal = false;
   selectedProduct: Product | null = null;
   
   // Pagination State
@@ -40,10 +49,14 @@ export class InventoryComponent implements OnInit {
   // Sorting
   sortColumn = 'id';
   sortDir: 'asc' | 'desc' = 'asc';
+  sortInteracted = false;
 
   ngOnInit(): void {
     this.loadProducts();
-    this.loadSuppliers();
+    // Solo cargar proveedores si el usuario puede editar productos
+    if (this.isAdmin || this.authService.getRole() === 'CHEF') {
+      this.loadSuppliers();
+    }
   }
 
   loadProducts(): void {
@@ -56,12 +69,14 @@ export class InventoryComponent implements OnInit {
         this.totalElements = page.totalElements;
         this.totalPages = page.totalPages;
         this.loading = false;
+        this.initialLoad = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('❌ Error loading products:', err);
         this.messageService.showError('Error al cargar productos');
         this.loading = false;
+        this.initialLoad = false;
         this.cdr.detectChanges();
       }
     });
@@ -79,6 +94,7 @@ export class InventoryComponent implements OnInit {
   }
 
   onSortChange(column: string): void {
+    this.sortInteracted = true;
     if (this.sortColumn === column) {
       this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
     } else {
@@ -93,30 +109,38 @@ export class InventoryComponent implements OnInit {
       next: (page) => {
         this.suppliers = page.content;
       },
-      error: () => console.error('Error cargando proveedores')
+      error: (err) => {
+        console.error('Error cargando proveedores:', err);
+        // No mostrar mensaje de error al usuario, no es crítico
+        this.suppliers = [];
+      }
     });
   }
 
   onSearch(): void {
-    if (!this.searchTerm) {
+
+    if (!this.searchTerm || this.searchTerm.trim() === '') {
       this.loadProducts();
       return;
     }
     
     this.loading = true;
-    this.productService.searchByName(this.searchTerm).subscribe({
-      next: (products) => {
-        this.products = products;
-        this.totalElements = products.length;
-        this.totalPages = 1;
-        this.page = 0;
+    const sortParam = `${this.sortColumn},${this.sortDir}`;
+    
+    this.productService.searchByName(this.searchTerm.trim(), this.page, this.size, sortParam).subscribe({
+      next: (page) => {
+        this.products = page.content;
+        this.totalElements = page.totalElements;
+        this.totalPages = page.totalPages;
         this.loading = false;
+        this.initialLoad = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error searching products:', err);
+        console.error('❌ Error searching products:', err);
         this.messageService.showError('Error al buscar productos');
         this.loading = false;
+        this.initialLoad = false;
         this.cdr.detectChanges();
       }
     });
@@ -124,20 +148,37 @@ export class InventoryComponent implements OnInit {
 
 
 
+  clearFilters(): void {
+    this.sortColumn = 'id';
+    this.sortDir = 'asc';
+    this.sortInteracted = false;
+    this.page = 0;
+    this.loadProducts();
+  }
+
+  hasActiveFilters(): boolean {
+    return this.sortColumn !== 'id' || this.sortDir !== 'asc';
+  }
+
 
 
   // --- LÓGICA DEL FORMULARIO ---
 
   toggleForm(): void {
-    this.showForm = !this.showForm;
-    if (!this.showForm) {
-      this.selectedProduct = null;
-    }
+    this.showCreateModal = true;
+  }
+
+  openCreateModal(): void {
+    this.showCreateModal = true;
+  }
+
+  onCloseCreateModal(): void {
+    this.showCreateModal = false;
   }
 
   editProduct(product: Product): void {
     this.selectedProduct = product;
-    this.showForm = true;
+    this.showEditModal = true;
   }
 
   onCancelForm(): void {
@@ -145,34 +186,61 @@ export class InventoryComponent implements OnInit {
     this.selectedProduct = null;
   }
 
+  onCloseEditModal(): void {
+    this.showEditModal = false;
+    this.selectedProduct = null;
+  }
+
+  onDeleteProductFromModal(): void {
+    if (!this.selectedProduct) return;
+
+    this.productService.delete(this.selectedProduct.id).subscribe({
+      next: () => {
+        this.messageService.showSuccess('Producto eliminado correctamente');
+        this.showEditModal = false;
+        this.selectedProduct = null;
+        this.loadProducts();
+      },
+      error: (err) => {
+        const errorMessage = err.error?.message || err.message || 'Error al eliminar producto';
+        this.messageService.showError(errorMessage);
+      }
+    });
+  }
+
+  onSaveEditedProduct(productData: ProductRequest): void {
+    if (!this.selectedProduct) return;
+
+    this.productService.update(this.selectedProduct.id, productData).subscribe({
+      next: (response) => {
+        this.messageService.showSuccess('Producto actualizado correctamente');
+        
+        // Cerrar modal inmediatamente
+        this.showEditModal = false;
+        this.selectedProduct = null;
+        
+        // Recargar la lista completa para asegurar que los datos estén sincronizados
+        this.loadProducts();
+      },
+      error: (err) => {
+        const errorMessage = err.error?.message || err.message || 'Error al actualizar producto';
+        this.messageService.showError(errorMessage);
+      }
+    });
+  }
+
   onSaveProduct(productData: ProductRequest): void {
-    if (this.selectedProduct) {
-      // UPDATE
-      this.productService.update(this.selectedProduct.id, productData).subscribe({
-        next: () => {
-          this.messageService.showSuccess('Producto actualizado correctamente');
-          this.finalizeSubmit();
-        },
-        error: (err) => {
-          console.error('Error updating product:', err);
-          const errorMessage = err.error?.message || err.message || 'Error al actualizar producto';
-          this.messageService.showError(errorMessage);
-        }
-      });
-    } else {
-      // CREATE
-      this.productService.create(productData).subscribe({
-        next: () => {
-          this.messageService.showSuccess('Producto creado correctamente');
-          this.finalizeSubmit();
-        },
-        error: (err) => {
-          console.error('Error creating product:', err);
-          const errorMessage = err.error?.message || err.message || 'Error al crear producto';
-          this.messageService.showError(errorMessage);
-        }
-      });
-    }
+    this.productService.create(productData).subscribe({
+      next: () => {
+        this.messageService.showSuccess('Producto creado correctamente');
+        this.showCreateModal = false;
+        this.loadProducts();
+      },
+      error: (err) => {
+        const errorMessage = err.error?.message || err.message || 'Error al crear producto';
+        this.messageService.showError(errorMessage);
+      }
+    });
   }
 
   onDeleteProduct(): void {
@@ -251,6 +319,7 @@ export class InventoryComponent implements OnInit {
   // --- UTILIDADES ---
 
   getSortDir(column: string): string {
+    if (!this.sortInteracted) return 'none';
     return this.sortColumn === column ? this.sortDir : 'none';
   }
 
@@ -264,5 +333,9 @@ export class InventoryComponent implements OnInit {
 
   isLowStock(product: Product): boolean {
     return product.currentStock <= (product.minStock || 0);
+  }
+
+  get isAdmin(): boolean {
+    return this.authService.getRole() === 'ADMIN';
   }
 }

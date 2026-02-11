@@ -8,12 +8,15 @@
       type="text"
       [(ngModel)]="searchTerm"
       placeholder="Buscar producto..."
-      (keyup.enter)="onSearch()"
+      (keydown)="onSearch()"
     />
     <button (click)="onSearch()">Buscar</button>
-    <button id="btnAgregarProducto" (click)="toggleForm()">
-      {{ showForm ? 'Cerrar Formulario' : 'Agregar Producto' }}
-    </button>
+    @if (isAdmin) {
+      <button id="btnAgregarProducto" (click)="openCreateModal()">Agregar Producto</button>
+    }
+    @if (hasActiveFilters()) {
+      <button (click)="clearFilters()">Limpiar Filtros</button>
+    }
   </div>
 
   @if (showForm) {
@@ -69,11 +72,13 @@
           >
             Proveedor
           </th>
-          <th>Acciones</th>
+          @if (isAdmin) {
+            <th>Acciones</th>
+          }
         </tr>
       </thead>
-      <tbody>
-        @if (loading) {
+      <tbody [class.loading]="loading && !initialLoad">
+        @if (loading && initialLoad) {
           @for (i of [1, 2, 3, 4, 5]; track i) {
             <tr class="skeleton-row">
               <td><span class="skeleton skeleton-text"></span></td>
@@ -90,8 +95,10 @@
               <!-- Unit -->
               <td><span class="skeleton skeleton-text" style="width: 100px"></span></td>
               <!-- Supplier -->
-              <td><span class="skeleton skeleton-text" style="width: 30px"></span></td>
-              <!-- Actions -->
+              @if (isAdmin) {
+                <td><span class="skeleton skeleton-text" style="width: 30px"></span></td>
+                <!-- Actions -->
+              }
             </tr>
           }
         } @else {
@@ -104,31 +111,33 @@
               <td>{{ product.currentStock }}</td>
               <td>{{ product.unit }}</td>
               <td>{{ product.supplier?.name || '—' }}</td>
-              <td>
-                <button class="btn-editar" (click)="editProduct(product)" title="Editar">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    viewBox="0 0 16 16"
-                  >
-                    <path
-                      d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
-                    />
-                  </svg>
-                </button>
-              </td>
+              @if (isAdmin) {
+                <td>
+                  <button class="btn-editar" (click)="editProduct(product)" title="Editar">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"
+                      />
+                      <path
+                        fill-rule="evenodd"
+                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
+                      />
+                    </svg>
+                  </button>
+                </td>
+              }
             </tr>
           }
         }
-        @if (products.length === 0 && !loading) {
+        @if (products.length === 0 && !loading && !initialLoad) {
           <tr>
-            <td colspan="8" style="text-align: center; padding: 2rem">
+            <td [attr.colspan]="isAdmin ? 8 : 7" style="text-align: center; padding: 2rem">
               No se encontraron productos
             </td>
           </tr>
@@ -173,3 +182,35 @@
     </table>
   </div>
 </div>
+
+<!-- Modal de creación -->
+@if (showCreateModal) {
+  <app-product-create-modal
+    [suppliers]="suppliers"
+    (save)="onSaveProduct($event)"
+    (close)="onCloseCreateModal()"
+  ></app-product-create-modal>
+}
+
+<!-- Modal de edición -->
+@if (showEditModal && selectedProduct) {
+  <app-product-edit-modal
+    [product]="selectedProduct"
+    [suppliers]="suppliers"
+    (save)="onSaveEditedProduct($event)"
+    (delete)="onDeleteProductFromModal()"
+    (close)="onCloseEditModal()"
+  ></app-product-edit-modal>
+}
+
+<!-- Confirm Dialog -->
+<app-confirm-dialog></app-confirm-dialog>
+
+<!-- Toast Notifications -->
+<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
+
+<!-- Confirm Dialog -->
+<app-confirm-dialog></app-confirm-dialog>
+
+<!-- Toast Notifications -->
+<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>

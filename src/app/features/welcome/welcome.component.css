@@ -78,7 +78,8 @@
 }
 
 .header h1 {
-  font-family: 'Deserta', sans-serif;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
   font-size: 2rem;
   color: white;
   letter-spacing: 5px;
@@ -98,16 +99,16 @@
 }
 
 .welcome-title {
-  font-family: 'Deserta', sans-serif;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
   font-size: 2.5rem;
   color: white;
   text-align: center;
   letter-spacing: 3px;
   margin-bottom: 60px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  font-weight: 900;
   background: rgba(0, 0, 0, 0.6);
-  padding: 30px 40px;
+  padding: 1em 2em;
   border-radius: 15px;
   display: inline-block;
   margin-left: auto;
@@ -140,9 +141,9 @@
   border: 2px solid rgba(255, 255, 255, 0.6);
   text-decoration: none;
   color: white;
-  font-family: 'Deserta', sans-serif;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
   font-size: 1.1rem;
-  font-weight: 900;
   transition: all 0.3s ease-in-out;
   cursor: pointer;
   text-align: center;
@@ -275,7 +276,7 @@
     font-size: 1.5rem;
     margin-bottom: 30px;
     letter-spacing: 1px;
-    padding: 0 20px;
+    padding: 0.8em 1.2em;
   }
 
   .buttonsContainer {
@@ -328,9 +329,9 @@
 
   .welcome-title {
     font-size: 1.2rem;
+    padding: 0.8em 1.2em; 
     margin-bottom: 20px;
-    letter-spacing: 0.5px;
-    padding: 0 10px;
+    width: 90%; 
   }
 
   .buttonsContainer {

@@ -34,7 +34,8 @@
 }
 
 .title h1 {
-  font-family: 'Deserta', sans-serif;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
   font-size: 2rem;
   color: var(--primary-color);
   transition: font-size 0.3s ease;
@@ -53,9 +54,9 @@
 }
 
 .login form label {
-  font-family: 'Deserta', sans-serif;
+  font-family: var(--font-subheading);
+  font-weight: var(--font-subheading-weight);
   color: var(--primary-color);
-  font-weight: bold;
 }
 
 .login form input {
@@ -66,7 +67,8 @@
   padding: 5px 10px;
   box-sizing: border-box;
   border: 2px solid #e0e0e0;
-  font-family: 'Deserta', sans-serif;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
   transition: all 0.3s ease;
 }
 
@@ -91,8 +93,8 @@
   color: white;
   cursor: pointer;
   border: none;
-  font-weight: bold;
-  font-family: 'Deserta', sans-serif;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
   font-size: 1rem;
   transition: all 0.3s ease;
 }
@@ -116,6 +118,8 @@
   color: var(--toast-error-bg);
   font-size: 0.75rem;
   margin-top: -8px;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
 }
 
 .error-banner {
@@ -126,6 +130,8 @@
   padding: 0.75rem;
   border-radius: 10px;
   width: 85%;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
 }
 
 /* Logos */
@@ -146,5 +152,45 @@
 }
 
 .container .logos img:hover {
-  transform: scale(1.05);
+  transform: scale(1.05); 
 }
+
+/*responsive*/
+
+@media (max-width: 1024px) {
+  .container {
+    width: 50vw; 
+    margin-left: 10%;
+    height: auto; 
+    padding-bottom: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .login-wrapper {
+    align-items: center; 
+    padding: 20px;
+  }
+
+  .container {
+    width: 90vw; 
+    margin-left: 0; 
+    height: auto;
+    min-height: 60vh;
+  }
+
+  .title h1 {
+    font-size: 1.5rem; 
+  }
+
+  .login form input, 
+  .login form button[type="submit"],
+  .error-banner {
+    width: 90%; 
+  }
+
+  .container .logos img {
+    width: 100px; 
+  }
+}
+
