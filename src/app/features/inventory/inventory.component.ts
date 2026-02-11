@@ -9,13 +9,14 @@ import { Product, ProductRequest } from '../../shared/models/product.model';
 import { Supplier } from '../../shared/models/supplier.model';
 import { ProductFormComponent } from './product-form/product-form.component';
 import { ProductEditModalComponent } from './product-edit-modal/product-edit-modal.component';
+import { ProductCreateModalComponent } from './product-create-modal/product-create-modal.component';
 import { ToastComponent } from '../../shared/components/layout/toast/toast.component';
 import { ConfirmDialogComponent } from '../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductFormComponent, ProductEditModalComponent, ToastComponent, ConfirmDialogComponent],
+  imports: [CommonModule, FormsModule, ProductFormComponent, ProductEditModalComponent, ProductCreateModalComponent, ToastComponent, ConfirmDialogComponent],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.css'
 })
@@ -36,6 +37,7 @@ export class InventoryComponent implements OnInit {
   searchTerm = '';
   showForm = false;
   showEditModal = false;
+  showCreateModal = false;
   selectedProduct: Product | null = null;
   
   // Pagination State
@@ -166,10 +168,15 @@ export class InventoryComponent implements OnInit {
   // --- LÓGICA DEL FORMULARIO ---
 
   toggleForm(): void {
-    this.showForm = !this.showForm;
-    if (!this.showForm) {
-      this.selectedProduct = null;
-    }
+    this.showCreateModal = true;
+  }
+
+  openCreateModal(): void {
+    this.showCreateModal = true;
+  }
+
+  onCloseCreateModal(): void {
+    this.showCreateModal = false;
   }
 
   editProduct(product: Product): void {
@@ -226,33 +233,17 @@ export class InventoryComponent implements OnInit {
   }
 
   onSaveProduct(productData: ProductRequest): void {
-    if (this.selectedProduct) {
-      // UPDATE (from form)
-      this.productService.update(this.selectedProduct.id, productData).subscribe({
-        next: () => {
-          this.messageService.showSuccess('Producto actualizado correctamente');
-          this.finalizeSubmit();
-        },
-        error: (err) => {
-          console.error('Error updating product:', err);
-          const errorMessage = err.error?.message || err.message || 'Error al actualizar producto';
-          this.messageService.showError(errorMessage);
-        }
-      });
-    } else {
-      // CREATE
-      this.productService.create(productData).subscribe({
-        next: () => {
-          this.messageService.showSuccess('Producto creado correctamente');
-          this.finalizeSubmit();
-        },
-        error: (err) => {
-          console.error('Error creating product:', err);
-          const errorMessage = err.error?.message || err.message || 'Error al crear producto';
-          this.messageService.showError(errorMessage);
-        }
-      });
-    }
+    this.productService.create(productData).subscribe({
+      next: () => {
+        this.messageService.showSuccess('Producto creado correctamente');
+        this.showCreateModal = false;
+        this.loadProducts();
+      },
+      error: (err) => {
+        const errorMessage = err.error?.message || err.message || 'Error al crear producto';
+        this.messageService.showError(errorMessage);
+      }
+    });
   }
 
   onDeleteProduct(): void {

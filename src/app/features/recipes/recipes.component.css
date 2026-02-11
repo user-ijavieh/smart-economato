@@ -19,6 +19,8 @@
   letter-spacing: 2px;
   flex: 1;
   text-align: center;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
 }
 
 /** ===== CONTENEDOR PRINCIPAL ===== */
@@ -63,7 +65,8 @@
   border-radius: 8px;
   border: 2px solid #e0e0e0;
   font-size: 0.9rem;
-  font-family: 'Deserta', sans-serif;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
   transition: all 0.3s ease;
   width: 380px;
   flex-shrink: 0;
@@ -80,8 +83,8 @@
   border-radius: 8px;
   border: none;
   font-size: 1rem;
-  font-family: 'Deserta', sans-serif;
-  font-weight: bold;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
   background: var(--primary-color);
   color: white;
   cursor: pointer;
@@ -112,8 +115,8 @@
   border-radius: 8px;
   border: none;
   font-size: 1rem;
-  font-family: 'Deserta', sans-serif;
-  font-weight: bold;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
   background: #16a34a;
   color: white;
   cursor: pointer;
@@ -206,6 +209,8 @@
   color: #374151;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-family: var(--font-subheading);
+  font-weight: var(--font-subheading-weight);
 }
 
 .filtro-grupo select,
@@ -214,7 +219,8 @@
   border-radius: 8px;
   border: 2px solid #e0e0e0;
   font-size: 0.9rem;
-  font-family: 'Deserta', sans-serif;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
   transition: all 0.3s ease;
   background: white;
 }
@@ -231,8 +237,8 @@
   border-radius: 8px;
   border: 2px solid #e0e0e0;
   font-size: 0.9rem;
-  font-family: 'Deserta', sans-serif;
-  font-weight: bold;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
   background: white;
   color: #6b7280;
   cursor: pointer;
@@ -256,7 +262,8 @@
   padding: 60px 20px;
   color: #6b7280;
   font-size: 1.1rem;
-  font-family: 'Deserta', sans-serif;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
 }
 
 /** ===== GRID DE TARJETAS ===== */
@@ -316,6 +323,7 @@
   width: fit-content;
   background: #fef3c7;
   color: #92400e;
+  font-family: var(--font-body);
 }
 
 .allergen-badge svg {
@@ -340,6 +348,8 @@
   color: #1f2937;
   margin-bottom: 6px;
   line-height: 1.3;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
 }
 
 .card-presentation {
@@ -351,6 +361,8 @@
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
 }
 
 /** ===== CARD FOOTER ===== */
@@ -368,12 +380,14 @@
   font-size: 1.2rem;
   font-weight: 800;
   color: var(--primary-color);
+  font-family: var(--font-heading);
 }
 
 .card-components {
   font-size: 0.8rem;
   color: #9ca3af;
   font-weight: 500;
+  font-family: var(--font-body);
 }
 
 /** ===== EMPTY STATE ===== */
@@ -384,7 +398,8 @@
   padding: 60px 20px;
   color: #6b7280;
   font-size: 1.1rem;
-  font-family: 'Deserta', sans-serif;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
 }
 
 /** ===== PAGINACIÓN ===== */

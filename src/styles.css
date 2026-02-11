@@ -42,6 +42,14 @@
   --modal-cancel-text: #374151;
   --modal-danger-bg: #ef4444;
   --modal-danger-hover: #dc2626;
+
+  /* Tipografía */
+  --font-heading: 'Sora', sans-serif;
+  --font-heading-weight: 600;
+  --font-subheading: 'Sora', sans-serif;
+  --font-subheading-weight: 300;
+  --font-body: 'Sora', sans-serif;
+  --font-body-weight: 400;
 }
 
 /* Fuente personalizada */
@@ -49,6 +57,28 @@
   font-family: 'Deserta';
   src: url('assets/fonts/Deserta.otf') format('opentype');
   font-weight: normal;
+  font-style: normal;
+}
+
+/* Fuentes Sora */
+@font-face {
+  font-family: 'Sora';
+  src: url('assets/fonts/Sora/static/Sora-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sora';
+  src: url('assets/fonts/Sora/static/Sora-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sora';
+  src: url('assets/fonts/Sora/static/Sora-Regular.ttf') format('truetype');
+  font-weight: 400;
   font-style: normal;
 }
 

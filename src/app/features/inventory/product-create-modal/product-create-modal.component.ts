@@ -1,26 +1,24 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ViewChild, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Product, ProductRequest } from '../../../shared/models/product.model';
+import { ProductRequest } from '../../../shared/models/product.model';
 import { Supplier } from '../../../shared/models/supplier.model';
 import { MessageService } from '../../../core/services/message.service';
 
 @Component({
-  selector: 'app-product-edit-modal',
+  selector: 'app-product-create-modal',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './product-edit-modal.component.html',
-  styleUrl: './product-edit-modal.component.css'
+  templateUrl: './product-create-modal.component.html',
+  styleUrl: './product-create-modal.component.css'
 })
-export class ProductEditModalComponent implements OnChanges {
-  @Input() product: Product | null = null;
+export class ProductCreateModalComponent {
   @Input() suppliers: Supplier[] = [];
   
   @Output() save = new EventEmitter<ProductRequest>();
   @Output() close = new EventEmitter<void>();
-  @Output() delete = new EventEmitter<void>();
 
-  @ViewChild('editForm') editForm?: NgForm;
+  @ViewChild('createForm') createForm?: NgForm;
 
   private messageService = inject(MessageService);
 
@@ -37,25 +35,19 @@ export class ProductEditModalComponent implements OnChanges {
   allowedUnits = ['KG', 'G', 'L', 'ML', 'UND'];
   productTypes = ['Ingrediente', 'Producto terminado', 'Bebida', 'Otro'];
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['product'] && this.product) {
-      this.formData = {
-        name: this.product.name,
-        productCode: this.product.productCode || '',
-        type: this.product.type || 'Ingrediente',
-        unitPrice: Number(this.product.unitPrice) || 0,
-        currentStock: Number(this.product.currentStock) || 0,
-        unit: this.product.unit || 'KG',
-        supplierId: this.product.supplier?.id
-      };
-    }
-  }
-
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     // Verificar si el formulario es válido
-    if (this.editForm && !this.editForm.valid) {
+    if (this.createForm && !this.createForm.valid) {
       return;
     }
+
+    // Mostrar diálogo de confirmación
+    const confirmed = await this.messageService.confirm(
+      'Confirmar creación',
+      `¿Estás seguro de que deseas crear el producto "${this.formData.name}"?`
+    );
+
+    if (!confirmed) return;
 
     // Asegurar que los valores numéricos sean números válidos
     const unitPrice = Number(this.formData.unitPrice);
@@ -100,14 +92,15 @@ export class ProductEditModalComponent implements OnChanges {
     // No hacer nada para prevenir el cierre accidental
   }
 
-  async onDelete(): Promise<void> {
-    const confirmed = await this.messageService.confirm(
-      'Confirmar eliminación',
-      `¿Estás seguro de que deseas eliminar "${this.product?.name}"? Esta acción no se puede deshacer.`
-    );
-
-    if (confirmed) {
-      this.delete.emit();
-    }
+  resetForm(): void {
+    this.formData = {
+      name: '',
+      productCode: '',
+      type: 'Ingrediente',
+      unitPrice: 0,
+      currentStock: 0,
+      unit: 'KG',
+      supplierId: undefined
+    };
   }
 }
