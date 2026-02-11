@@ -8,6 +8,7 @@ import { MessageService } from '../../../core/services/message.service';
 import { Product } from '../../../shared/models/product.model';
 import { User } from '../../../shared/models/user.model';
 import { OrderRequest } from '../../../shared/models/order.model';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 interface OrderItem {
   productId: number;
@@ -45,7 +46,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   pageSize = 20;
   hasMoreProducts = true;
   isLoadingProducts = false;
-  private searchTimeout: any = null;
+  private searchSubject = new Subject<string>();
   private productSearchResults: Product[] | null = null;
 
   // Form for adding products
@@ -58,6 +59,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   };
 
   ngOnInit(): void {
+    this.initialiseSearchSubscription();
     this.loadUsers();
     this.loadProducts();
     // Listener para cerrar dropdown al hacer clic fuera
@@ -66,6 +68,16 @@ export class OrderModalComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     document.removeEventListener('click', this.onDocumentClick.bind(this));
+    this.searchSubject.complete();
+  }
+
+  private initialiseSearchSubscription(): void {
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.performSearch(term);
+    });
   }
 
   onDocumentClick(event: MouseEvent): void {
@@ -123,32 +135,29 @@ export class OrderModalComponent implements OnInit, OnDestroy {
 
   onProductSearch(query: string): void {
     this.showProductDropdown = true;
+    this.searchSubject.next(query);
+  }
 
-    if (this.searchTimeout) {
-      clearTimeout(this.searchTimeout);
-    }
-
+  performSearch(query: string): void {
     if (!query || query.trim() === '') {
       this.productSearchResults = null;
       this.cdr.markForCheck();
       return;
     }
 
-    this.searchTimeout = setTimeout(() => {
-      this.productService.searchByName(query.trim(), 0, 50).subscribe({
-        next: (response) => {
-          this.productSearchResults = response.content;
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          // Fallback a filtro local
-          this.productSearchResults = this.products.filter(p =>
-            p.name.toLowerCase().includes(query.toLowerCase())
-          );
-          this.cdr.markForCheck();
-        }
-      });
-    }, 400);
+    this.productService.searchByName(query.trim(), 0, 50).subscribe({
+      next: (response) => {
+        this.productSearchResults = response.content;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        // Fallback a filtro local
+        this.productSearchResults = this.products.filter(p =>
+          p.name.toLowerCase().includes(query.toLowerCase())
+        );
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   onProductDropdownScroll(event: Event): void {

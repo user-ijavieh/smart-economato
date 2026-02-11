@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, ChangeDetectionStrategy, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, Output, EventEmitter, ChangeDetectionStrategy, OnInit, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RecipeRequest } from '../../../shared/models/recipe.model';
@@ -7,6 +7,13 @@ import { Allergen } from '../../../shared/models/allergen.model';
 import { ProductService } from '../../../core/services/product.service';
 import { AllergenService } from '../../../core/services/allergen.service';
 import { MessageService } from '../../../core/services/message.service';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+
+interface FormComponent {
+  productId: number;
+  quantity: number;
+  searchText: string;
+}
 
 @Component({
   selector: 'app-recipe-create-modal',
@@ -16,7 +23,7 @@ import { MessageService } from '../../../core/services/message.service';
   styleUrl: './recipe-create-modal.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RecipeCreateModalComponent implements OnInit {
+export class RecipeCreateModalComponent implements OnInit, OnDestroy {
   private productService = inject(ProductService);
   private allergenService = inject(AllergenService);
   private messageService = inject(MessageService);
@@ -33,6 +40,8 @@ export class RecipeCreateModalComponent implements OnInit {
     allergenIds: []
   };
 
+  formComponents: FormComponent[] = [];
+
   availableProducts: Product[] = [];
   availableAllergens: Allergen[] = [];
   loadingProducts = false;
@@ -44,10 +53,24 @@ export class RecipeCreateModalComponent implements OnInit {
   productSearchResults: Product[] = [];
   showProductDropdown: { [key: number]: boolean } = {};
   activeComponentIndex: number | null = null;
-  private searchTimeout: any = null;
+  private searchSubject = new Subject<{ query: string, index: number }>();
 
   ngOnInit(): void {
+    this.initialiseSearchSubscription();
     this.loadFormData();
+  }
+
+  ngOnDestroy(): void {
+    this.searchSubject.complete();
+  }
+
+  private initialiseSearchSubscription(): void {
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged((prev, curr) => prev.query === curr.query && prev.index === curr.index)
+    ).subscribe(({ query, index }) => {
+      this.performSearch(query, index);
+    });
   }
 
   private loadFormData(): void {
@@ -108,12 +131,12 @@ export class RecipeCreateModalComponent implements OnInit {
   }
 
   addComponent(): void {
-    this.createForm.components.push({ productId: 0, quantity: 0 });
+    this.formComponents.push({ productId: 0, quantity: 0, searchText: '' });
     this.cdr.markForCheck();
   }
 
   removeComponent(index: number): void {
-    this.createForm.components.splice(index, 1);
+    this.formComponents.splice(index, 1);
     delete this.showProductDropdown[index];
     this.cdr.markForCheck();
   }
@@ -153,7 +176,13 @@ export class RecipeCreateModalComponent implements OnInit {
   }
 
   selectProduct(productId: number, index: number): void {
-    this.createForm.components[index].productId = productId;
+    this.formComponents[index].productId = productId;
+
+    const product = this.availableProducts.find(p => p.id === productId);
+    if (product) {
+      this.formComponents[index].searchText = product.name;
+    }
+
     this.showProductDropdown[index] = false;
     this.activeComponentIndex = null;
     this.productSearchQuery = '';
@@ -166,31 +195,29 @@ export class RecipeCreateModalComponent implements OnInit {
     this.showProductDropdown[index] = true;
     this.activeComponentIndex = index;
 
-    if (this.searchTimeout) {
-      clearTimeout(this.searchTimeout);
-    }
+    this.searchSubject.next({ query, index });
+  }
 
+  performSearch(query: string, index: number): void {
     if (!query.trim()) {
       this.productSearchResults = this.availableProducts;
       this.cdr.markForCheck();
       return;
     }
 
-    this.searchTimeout = setTimeout(() => {
-      this.productService.searchByName(query.trim(), 0, 50).subscribe({
-        next: (response) => {
-          this.productSearchResults = response.content;
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          // Fallback a filtro local
-          this.productSearchResults = this.availableProducts.filter(p =>
-            p.name.toLowerCase().includes(query.toLowerCase())
-          );
-          this.cdr.markForCheck();
-        }
-      });
-    }, 400);
+    this.productService.searchByName(query.trim(), 0, 50).subscribe({
+      next: (response) => {
+        this.productSearchResults = response.content;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        // Fallback a filtro local
+        this.productSearchResults = this.availableProducts.filter(p =>
+          p.name.toLowerCase().includes(query.toLowerCase())
+        );
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   onProductDropdownScroll(event: Event, index: number): void {
@@ -241,6 +268,12 @@ export class RecipeCreateModalComponent implements OnInit {
       this.messageService.showError('Debe agregar al menos un componente');
       return;
     }
+
+    // Map formComponents to createForm.components
+    this.createForm.components = this.formComponents.map(c => ({
+      productId: c.productId,
+      quantity: c.quantity
+    }));
 
     const invalidComponents = this.createForm.components.some(c => c.productId === 0 || c.quantity <= 0);
     if (invalidComponents) {

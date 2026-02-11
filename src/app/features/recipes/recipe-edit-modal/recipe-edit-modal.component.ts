@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnInit, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Recipe, RecipeRequest } from '../../../shared/models/recipe.model';
@@ -7,6 +7,13 @@ import { Allergen } from '../../../shared/models/allergen.model';
 import { ProductService } from '../../../core/services/product.service';
 import { AllergenService } from '../../../core/services/allergen.service';
 import { MessageService } from '../../../core/services/message.service';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+
+interface FormComponent {
+  productId: number;
+  quantity: number;
+  searchText: string;
+}
 
 @Component({
   selector: 'app-recipe-edit-modal',
@@ -16,7 +23,7 @@ import { MessageService } from '../../../core/services/message.service';
   styleUrl: './recipe-edit-modal.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RecipeEditModalComponent implements OnInit {
+export class RecipeEditModalComponent implements OnInit, OnDestroy {
   private productService = inject(ProductService);
   private allergenService = inject(AllergenService);
   private messageService = inject(MessageService);
@@ -34,6 +41,8 @@ export class RecipeEditModalComponent implements OnInit {
     allergenIds: []
   };
 
+  formComponents: FormComponent[] = [];
+
   availableProducts: Product[] = [];
   availableAllergens: Allergen[] = [];
   loadingProducts = false;
@@ -46,11 +55,25 @@ export class RecipeEditModalComponent implements OnInit {
   showProductDropdown: { [key: number]: boolean } = {};
   activeComponentIndex: number | null = null;
   productNamesMap: { [key: number]: string } = {};
-  private searchTimeout: any = null;
+  private searchSubject = new Subject<{ query: string, index: number }>();
 
   ngOnInit(): void {
+    this.initialiseSearchSubscription();
     this.initializeForm();
     this.loadFormData();
+  }
+
+  ngOnDestroy(): void {
+    this.searchSubject.complete();
+  }
+
+  private initialiseSearchSubscription(): void {
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged((prev, curr) => prev.query === curr.query && prev.index === curr.index)
+    ).subscribe(({ query, index }) => {
+      this.performSearch(query, index);
+    });
   }
 
   private initializeForm(): void {
@@ -65,7 +88,14 @@ export class RecipeEditModalComponent implements OnInit {
       allergenIds: this.recipe.allergens?.map(a => a.id) || []
     };
 
-    // Crear mapa de nombres de productos para mostrar inmediatamente
+    // Initialize formComponents
+    this.formComponents = this.recipe.components.map(c => ({
+      productId: c.productId,
+      quantity: c.quantity,
+      searchText: c.productName || ''
+    }));
+
+    // Map existing product names
     this.recipe.components.forEach(c => {
       this.productNamesMap[c.productId] = c.productName;
     });
@@ -142,12 +172,12 @@ export class RecipeEditModalComponent implements OnInit {
   }
 
   addComponent(): void {
-    this.editForm.components.push({ productId: 0, quantity: 0 });
+    this.formComponents.push({ productId: 0, quantity: 0, searchText: '' });
     this.cdr.markForCheck();
   }
 
   removeComponent(index: number): void {
-    this.editForm.components.splice(index, 1);
+    this.formComponents.splice(index, 1);
     this.cdr.markForCheck();
   }
 
@@ -173,44 +203,43 @@ export class RecipeEditModalComponent implements OnInit {
     this.activeComponentIndex = index;
     this.showProductDropdown[index] = true;
 
-    if (this.searchTimeout) {
-      clearTimeout(this.searchTimeout);
-    }
+    this.searchSubject.next({ query, index });
+  }
 
+  performSearch(query: string, index: number): void {
     if (!query || query.trim() === '') {
       this.productSearchResults = this.availableProducts;
       this.cdr.markForCheck();
       return;
     }
 
-    this.searchTimeout = setTimeout(() => {
-      this.productService.searchByName(query.trim(), 0, 50).subscribe({
-        next: (response) => {
-          this.productSearchResults = response.content;
-          // Actualizar mapa de nombres
-          response.content.forEach(p => {
-            this.productNamesMap[p.id] = p.name;
-          });
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          // Fallback a filtro local
-          this.productSearchResults = this.availableProducts.filter(p =>
-            p.name.toLowerCase().includes(query.toLowerCase())
-          );
-          this.cdr.markForCheck();
-        }
-      });
-    }, 400);
+    this.productService.searchByName(query.trim(), 0, 50).subscribe({
+      next: (response) => {
+        this.productSearchResults = response.content;
+        // Actualizar mapa de nombres
+        response.content.forEach(p => {
+          this.productNamesMap[p.id] = p.name;
+        });
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        // Fallback a filtro local
+        this.productSearchResults = this.availableProducts.filter(p =>
+          p.name.toLowerCase().includes(query.toLowerCase())
+        );
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   selectProduct(productId: number, index: number): void {
-    this.editForm.components[index].productId = productId;
+    this.formComponents[index].productId = productId;
 
     // Actualizar el mapa de nombres con el nuevo producto
     const selectedProduct = this.availableProducts.find(p => p.id === productId);
     if (selectedProduct) {
       this.productNamesMap[productId] = selectedProduct.name;
+      this.formComponents[index].searchText = selectedProduct.name;
     }
 
     this.showProductDropdown[index] = false;
@@ -277,6 +306,13 @@ export class RecipeEditModalComponent implements OnInit {
     if (!this.validateForm()) {
       return;
     }
+
+    // Map formComponents to editForm.components
+    this.editForm.components = this.formComponents.map(c => ({
+      productId: c.productId,
+      quantity: c.quantity
+    }));
+
     this.save.emit(this.editForm);
   }
 
@@ -286,12 +322,12 @@ export class RecipeEditModalComponent implements OnInit {
       return false;
     }
 
-    if (this.editForm.components.length === 0) {
+    if (this.formComponents.length === 0) {
       this.messageService.showError('Debe agregar al menos un componente');
       return false;
     }
 
-    const invalidComponents = this.editForm.components.some(
+    const invalidComponents = this.formComponents.some(
       c => c.productId === 0 || c.quantity <= 0
     );
     if (invalidComponents) {
