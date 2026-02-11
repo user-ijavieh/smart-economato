@@ -45,6 +45,7 @@ export class RecipeEditModalComponent implements OnInit {
   productSearchResults: Product[] = [];
   showProductDropdown: { [key: number]: boolean } = {};
   activeComponentIndex: number | null = null;
+  productNamesMap: { [key: number]: string } = {};
 
   ngOnInit(): void {
     this.initializeForm();
@@ -62,6 +63,11 @@ export class RecipeEditModalComponent implements OnInit {
       })),
       allergenIds: this.recipe.allergens?.map(a => a.id) || []
     };
+    
+    // Crear mapa de nombres de productos para mostrar inmediatamente
+    this.recipe.components.forEach(c => {
+      this.productNamesMap[c.productId] = c.productName;
+    });
   }
 
   private loadFormData(): void {
@@ -178,6 +184,13 @@ export class RecipeEditModalComponent implements OnInit {
 
   selectProduct(productId: number, index: number): void {
     this.editForm.components[index].productId = productId;
+    
+    // Actualizar el mapa de nombres con el nuevo producto
+    const selectedProduct = this.availableProducts.find(p => p.id === productId);
+    if (selectedProduct) {
+      this.productNamesMap[productId] = selectedProduct.name;
+    }
+    
     this.showProductDropdown[index] = false;
     this.activeComponentIndex = null;
     this.productSearchQuery = '';
@@ -189,6 +202,13 @@ export class RecipeEditModalComponent implements OnInit {
     if (productId === 0) {
       return '';
     }
+    
+    // Usar el mapa de nombres primero (inmediato)
+    if (this.productNamesMap[productId]) {
+      return this.productNamesMap[productId];
+    }
+    
+    // Fallback a availableProducts
     const product = this.availableProducts.find(p => p.id === productId);
     return product ? product.name : '';
   }
