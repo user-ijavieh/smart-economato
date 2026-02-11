@@ -22,7 +22,7 @@
           </div>
         } @else {
           <div class="orders-container">
-            @for (order of ordersByStatus.PENDING; track order.id) {
+            @for (order of getDisplayedOrders('PENDING'); track order.id) {
               <div class="order-card" [style.border-left-color]="getStatusColor('PENDING')">
                 <div class="order-header" [style.background]="getStatusColor('PENDING')">
                   <div class="order-title">
@@ -78,6 +78,13 @@
               </div>
             }
           </div>
+          @if (hasMore('PENDING')) {
+            <div class="load-more-container">
+              <button class="btn-load-more" (click)="loadMoreOrders('PENDING')">
+                Cargar más antiguas ({{ getRemainingCount('PENDING') }} restantes)
+              </button>
+            </div>
+          }
         }
       </section>
 
@@ -92,7 +99,7 @@
           </div>
         } @else {
           <div class="orders-container">
-            @for (order of ordersByStatus.REVIEW; track order.id) {
+            @for (order of getDisplayedOrders('REVIEW'); track order.id) {
               <div class="order-card" [style.border-left-color]="getStatusColor('REVIEW')">
                 <div class="order-header" [style.background]="getStatusColor('REVIEW')">
                   <div class="order-title">
@@ -148,6 +155,13 @@
               </div>
             }
           </div>
+          @if (hasMore('REVIEW')) {
+            <div class="load-more-container">
+              <button class="btn-load-more" (click)="loadMoreOrders('REVIEW')">
+                Cargar más antiguas ({{ getRemainingCount('REVIEW') }} restantes)
+              </button>
+            </div>
+          }
         }
       </section>
 
@@ -162,7 +176,7 @@
           </div>
         } @else {
           <div class="orders-container">
-            @for (order of ordersByStatus.CONFIRMED; track order.id) {
+            @for (order of getDisplayedOrders('CONFIRMED'); track order.id) {
               <div class="order-card completed" [style.border-left-color]="getStatusColor('CONFIRMED')">
                 <div class="order-header" [style.background]="getStatusColor('CONFIRMED')">
                   <div class="order-title">
@@ -212,6 +226,13 @@
               </div>
             }
           </div>
+          @if (hasMore('CONFIRMED')) {
+            <div class="load-more-container">
+              <button class="btn-load-more" (click)="loadMoreOrders('CONFIRMED')">
+                Cargar más antiguas ({{ getRemainingCount('CONFIRMED') }} restantes)
+              </button>
+            </div>
+          }
         }
       </section>
 
@@ -226,7 +247,7 @@
           </div>
         } @else {
           <div class="orders-container">
-            @for (order of ordersByStatus.INCOMPLETE; track order.id) {
+            @for (order of getDisplayedOrders('INCOMPLETE'); track order.id) {
               <div class="order-card incomplete" [style.border-left-color]="getStatusColor('INCOMPLETE')">
                 <div class="order-header" [style.background]="getStatusColor('INCOMPLETE')">
                   <div class="order-title">
@@ -279,6 +300,13 @@
               </div>
             }
           </div>
+          @if (hasMore('INCOMPLETE')) {
+            <div class="load-more-container">
+              <button class="btn-load-more" (click)="loadMoreOrders('INCOMPLETE')">
+                Cargar más antiguas ({{ getRemainingCount('INCOMPLETE') }} restantes)
+              </button>
+            </div>
+          }
         }
       </section>
 
@@ -293,7 +321,7 @@
           </div>
         } @else {
           <div class="orders-container">
-            @for (order of ordersByStatus.CANCELLED; track order.id) {
+            @for (order of getDisplayedOrders('CANCELLED'); track order.id) {
               <div class="order-card cancelled" [style.border-left-color]="getStatusColor('CANCELLED')">
                 <div class="order-header" [style.background]="getStatusColor('CANCELLED')">
                   <div class="order-title">
@@ -346,6 +374,13 @@
               </div>
             }
           </div>
+          @if (hasMore('CANCELLED')) {
+            <div class="load-more-container">
+              <button class="btn-load-more" (click)="loadMoreOrders('CANCELLED')">
+                Cargar más antiguas ({{ getRemainingCount('CANCELLED') }} restantes)
+              </button>
+            </div>
+          }
         }
       </section>
     }
