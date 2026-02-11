@@ -22,23 +22,7 @@ export class ProductService {
         const rawContent = response.content || (Array.isArray(response) ? response : []);
         
           // 2. Map items to ensure valid Product models
-        const mappedContent: Product[] = rawContent.map((item: any) => ({
-          ...item,
-          id: item.id,
-          // Fallback strategies for English/Spanish properties
-          name: item.name || item.nombre || 'Sin nombre',
-          productCode: item.productCode || item.codigo || '',
-          type: item.type || item.tipo || '',
-          price: Number(item.unitPrice ?? item.price ?? item.precio ?? 0),
-          stock: Number(item.currentStock ?? item.stock ?? 0),
-          minStock: Number(item.minStock ?? item.stockMinimo ?? 0),
-          unit: item.unit || item.unidad || 'Ud',
-          supplier: item.supplier ? {
-            id: item.supplier.id,
-            name: item.supplier.name || item.supplier.nombre,
-            contact: item.supplier.contact || item.supplier.contacto
-          } : undefined
-        }));
+        const mappedContent: Product[] = rawContent.map((item: any) => this.mapToProduct(item));
 
         // 3. Return valid Page object
         return {
@@ -61,6 +45,39 @@ export class ProductService {
 
   getByBarcode(barcode: string): Observable<Product> {
     return this.http.get<Product>(`${this.url}/barcode/${barcode}`);
+  }
+
+  searchByName(name: string): Observable<Product[]> {
+    return this.http.get<any>(`${this.url}/search?name=${name}`).pipe(
+      map(response => {
+        // Handle both direct array and paginated response (where items are in 'content')
+        const rawContent = response.content || (Array.isArray(response) ? response : []);
+        return rawContent.map((item: any) => this.mapToProduct(item));
+      })
+    );
+  }
+
+  private mapToProduct(item: any): Product {
+    return {
+      ...item,
+      id: item.id,
+      // Fallback strategies for English/Spanish properties
+      name: item.name || item.nombre || 'Sin nombre',
+      productCode: item.productCode || item.codigo || '',
+      type: item.type || item.tipo || '',
+      // Ensure numeric values
+      unitPrice: Number(item.unitPrice ?? item.price ?? item.precio ?? 0),
+      // Map both stock properties to ensure compatibility
+      currentStock: Number(item.currentStock ?? item.stock ?? 0),
+      stock: Number(item.currentStock ?? item.stock ?? 0), // legacy support
+      minStock: Number(item.minStock ?? item.stockMinimo ?? 0),
+      unit: item.unit || item.unidad || 'Ud',
+      supplier: item.supplier ? {
+        id: item.supplier.id,
+        name: item.supplier.name || item.supplier.nombre,
+        contact: item.supplier.contact || item.supplier.contacto
+      } : undefined
+    };
   }
 
   create(product: ProductRequest): Observable<Product> {

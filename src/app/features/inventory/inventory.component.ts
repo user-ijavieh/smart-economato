@@ -98,18 +98,31 @@ export class InventoryComponent implements OnInit {
   }
 
   onSearch(): void {
-     if (!this.searchTerm) {
+    if (!this.searchTerm) {
       this.loadProducts();
       return;
-     }
-     this.loadProducts();
+    }
+    
+    this.loading = true;
+    this.productService.searchByName(this.searchTerm).subscribe({
+      next: (products) => {
+        this.products = products;
+        this.totalElements = products.length;
+        this.totalPages = 1;
+        this.page = 0;
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error searching products:', err);
+        this.messageService.showError('Error al buscar productos');
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
-  showAll(): void {
-    this.searchTerm = '';
-    this.page = 0;
-    this.loadProducts();
-  }
+
 
 
 
