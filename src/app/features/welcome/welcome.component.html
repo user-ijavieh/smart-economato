@@ -24,7 +24,7 @@
     <h2 class="welcome-title">¡Bienvenido a Smart Economato!</h2>
 
     <div class="buttonsContainer">
-      @for (card of navCards; track card.route) {
+      @for (card of filteredNavCards; track card.route) {
         <a [routerLink]="card.route" class="btn-card">
           <div class="btn-card-icon">
             <img [src]="card.icon" [alt]="card.label">

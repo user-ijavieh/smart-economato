@@ -85,6 +85,21 @@ button:active {
   transform: translateY(0);
 }
 
+button {
+  animation: buttonFadeIn 0.3s ease;
+}
+
+@keyframes buttonFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 #btnAgregarProducto {
   background: #4caf50;
 }
@@ -129,6 +144,31 @@ th {
 
 td {
   color: #333;
+  transition: all 0.3s ease;
+}
+
+tbody {
+  transition: opacity 0.3s ease;
+}
+
+tbody.loading {
+  opacity: 0.6;
+}
+
+tr {
+  transition: all 0.3s ease;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 tr:hover {

@@ -4,9 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../core/services/product.service';
 import { MessageService } from '../../core/services/message.service';
 import { SupplierService } from '../../core/services/supplier.service';
+import { AuthService } from '../../core/services/auth.service';
 import { Product, ProductRequest } from '../../shared/models/product.model';
 import { Supplier } from '../../shared/models/supplier.model';
-import { ProductFormComponent } from './components/product-form/product-form.component';
+import { ProductFormComponent } from './product-form/product-form.component';
 
 @Component({
   selector: 'app-inventory',
@@ -19,6 +20,7 @@ export class InventoryComponent implements OnInit {
   private productService = inject(ProductService);
   private supplierService = inject(SupplierService);
   private messageService = inject(MessageService);
+  private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
 
   // Listas de datos
@@ -27,6 +29,7 @@ export class InventoryComponent implements OnInit {
 
   // Estado de la vista
   loading = false;
+  initialLoad = true;
   searchTerm = '';
   showForm = false;
   selectedProduct: Product | null = null;
@@ -40,10 +43,14 @@ export class InventoryComponent implements OnInit {
   // Sorting
   sortColumn = 'id';
   sortDir: 'asc' | 'desc' = 'asc';
+  sortInteracted = false;
 
   ngOnInit(): void {
     this.loadProducts();
-    this.loadSuppliers();
+    // Solo cargar proveedores si el usuario puede editar productos
+    if (this.isAdmin || this.authService.getRole() === 'CHEF') {
+      this.loadSuppliers();
+    }
   }
 
   loadProducts(): void {
@@ -56,12 +63,14 @@ export class InventoryComponent implements OnInit {
         this.totalElements = page.totalElements;
         this.totalPages = page.totalPages;
         this.loading = false;
+        this.initialLoad = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('❌ Error loading products:', err);
         this.messageService.showError('Error al cargar productos');
         this.loading = false;
+        this.initialLoad = false;
         this.cdr.detectChanges();
       }
     });
@@ -79,6 +88,7 @@ export class InventoryComponent implements OnInit {
   }
 
   onSortChange(column: string): void {
+    this.sortInteracted = true;
     if (this.sortColumn === column) {
       this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
     } else {
@@ -93,22 +103,58 @@ export class InventoryComponent implements OnInit {
       next: (page) => {
         this.suppliers = page.content;
       },
-      error: () => console.error('Error cargando proveedores')
+      error: (err) => {
+        console.error('Error cargando proveedores:', err);
+        // No mostrar mensaje de error al usuario, no es crítico
+        this.suppliers = [];
+      }
     });
   }
 
   onSearch(): void {
-     if (!this.searchTerm) {
+    if (!this.searchTerm || this.searchTerm.trim() === '') {
       this.loadProducts();
       return;
-     }
-     this.loadProducts();
+    }
+    
+    this.loading = true;
+    const sortParam = `${this.sortColumn},${this.sortDir}`;
+    
+    this.productService.searchByName(this.searchTerm.trim(), this.page, this.size, sortParam).subscribe({
+      next: (page) => {
+        this.products = page.content;
+        this.totalElements = page.totalElements;
+        this.totalPages = page.totalPages;
+        this.loading = false;
+        this.initialLoad = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('❌ Error searching products:', err);
+        this.messageService.showError('Error al buscar productos');
+        this.loading = false;
+        this.initialLoad = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   showAll(): void {
     this.searchTerm = '';
     this.page = 0;
     this.loadProducts();
+  }
+
+  clearFilters(): void {
+    this.sortColumn = 'id';
+    this.sortDir = 'asc';
+    this.sortInteracted = false;
+    this.page = 0;
+    this.loadProducts();
+  }
+
+  hasActiveFilters(): boolean {
+    return this.sortColumn !== 'id' || this.sortDir !== 'asc';
   }
 
 
@@ -238,6 +284,7 @@ export class InventoryComponent implements OnInit {
   // --- UTILIDADES ---
 
   getSortDir(column: string): string {
+    if (!this.sortInteracted) return 'none';
     return this.sortColumn === column ? this.sortDir : 'none';
   }
 
@@ -251,5 +298,9 @@ export class InventoryComponent implements OnInit {
 
   isLowStock(product: Product): boolean {
     return product.currentStock <= (product.minStock || 0);
+  }
+
+  get isAdmin(): boolean {
+    return this.authService.getRole() === 'ADMIN';
   }
 }

@@ -30,6 +30,16 @@ export class WelcomeComponent implements OnInit, OnDestroy {
     { label: 'Perfil', route: '/profile', icon: '/assets/img/icons/profile.svg' },
   ];
 
+  get filteredNavCards() {
+    const userRole = this.authService.getRole();
+    if (userRole === 'USER') {
+      return this.navCards.filter(card => 
+        card.label !== 'Pedidos' && card.label !== 'Recepción'
+      );
+    }
+    return this.navCards;
+  }
+
   ngOnInit(): void {
     this.intervalId = setInterval(() => {
       this.currentSlide = (this.currentSlide + 1) % this.slides.length;

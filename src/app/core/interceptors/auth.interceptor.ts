@@ -18,9 +18,22 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
+      // Solo eliminar token y redirigir si es un error de autenticación en endpoints críticos
+      // o si el mensaje del error indica que el token es inválido
       if (error.status === 401) {
-        localStorage.removeItem('auth_token');
-        router.navigate(['/login']);
+        const isAuthEndpoint = req.url.includes('/api/auth/');
+        const errorMessage = error.error?.message || '';
+        const isTokenInvalid = errorMessage.toLowerCase().includes('token') || 
+                               errorMessage.toLowerCase().includes('expired') ||
+                               errorMessage.toLowerCase().includes('invalid');
+        
+        // Solo limpiar sesión si es realmente un problema de token inválido
+        if (isAuthEndpoint || isTokenInvalid) {
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('user_role');
+          localStorage.removeItem('user_name');
+          router.navigate(['/login']);
+        }
       }
       return throwError(() => error);
     })
