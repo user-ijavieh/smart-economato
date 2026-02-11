@@ -8,13 +8,17 @@
       type="text"
       [(ngModel)]="searchTerm"
       placeholder="Buscar producto..."
-      (keyup.enter)="onSearch()"
+      (keydown)="onSearch()"
     />
-    <button (click)="onSearch()">Buscar</button>
-    <button id="btnAgregarProducto" (click)="toggleForm()">
-      {{ showForm ? 'Cerrar Formulario' : 'Agregar Producto' }}
-    </button>
+    @if (isAdmin) {
+      <button id="btnAgregarProducto" (click)="openCreateModal()">
+        Agregar Producto
+      </button>
+    }
     <button (click)="showAll()">Mostrar Todos</button>
+    @if (hasActiveFilters()) {
+      <button (click)="clearFilters()">Limpiar Filtros</button>
+    }
   </div>
 
   @if (showForm) {
@@ -70,11 +74,13 @@
           >
             Proveedor
           </th>
-          <th>Acciones</th>
+          @if (isAdmin) {
+            <th>Acciones</th>
+          }
         </tr>
       </thead>
-      <tbody>
-        @if (loading) {
+      <tbody [class.loading]="loading && !initialLoad">
+        @if (loading && initialLoad) {
           @for (i of [1, 2, 3, 4, 5]; track i) {
             <tr class="skeleton-row">
               <td><span class="skeleton skeleton-text"></span></td>
@@ -91,8 +97,10 @@
               <!-- Unit -->
               <td><span class="skeleton skeleton-text" style="width: 100px"></span></td>
               <!-- Supplier -->
-              <td><span class="skeleton skeleton-text" style="width: 30px"></span></td>
-              <!-- Actions -->
+              @if (isAdmin) {
+                <td><span class="skeleton skeleton-text" style="width: 30px"></span></td>
+                <!-- Actions -->
+              }
             </tr>
           }
         } @else {
@@ -105,15 +113,17 @@
               <td>{{ product.currentStock }}</td>
               <td>{{ product.unit }}</td>
               <td>{{ product.supplier?.name || '—' }}</td>
-              <td>
-                <button class="btn-editar" (click)="editProduct(product)" title="Editar">✏️</button>
-              </td>
+              @if (isAdmin) {
+                <td>
+                  <button class="btn-editar" (click)="editProduct(product)" title="Editar">✏️</button>
+                </td>
+              }
             </tr>
           }
         }
-        @if (products.length === 0 && !loading) {
+        @if (products.length === 0 && !loading && !initialLoad) {
           <tr>
-            <td colspan="8" style="text-align: center; padding: 2rem">
+            <td [attr.colspan]="isAdmin ? 8 : 7" style="text-align: center; padding: 2rem">
               No se encontraron productos
             </td>
           </tr>
@@ -155,3 +165,35 @@
     </table>
   </div>
 </div>
+
+<!-- Modal de creación -->
+@if (showCreateModal) {
+  <app-product-create-modal
+    [suppliers]="suppliers"
+    (save)="onSaveProduct($event)"
+    (close)="onCloseCreateModal()"
+  ></app-product-create-modal>
+}
+
+<!-- Modal de edición -->
+@if (showEditModal && selectedProduct) {
+  <app-product-edit-modal
+    [product]="selectedProduct"
+    [suppliers]="suppliers"
+    (save)="onSaveEditedProduct($event)"
+    (delete)="onDeleteProductFromModal()"
+    (close)="onCloseEditModal()"
+  ></app-product-edit-modal>
+}
+
+<!-- Confirm Dialog -->
+<app-confirm-dialog></app-confirm-dialog>
+
+<!-- Toast Notifications -->
+<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
+
+<!-- Confirm Dialog -->
+<app-confirm-dialog></app-confirm-dialog>
+
+<!-- Toast Notifications -->
+<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
