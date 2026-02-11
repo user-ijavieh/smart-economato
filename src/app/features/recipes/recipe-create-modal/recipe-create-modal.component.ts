@@ -44,6 +44,7 @@ export class RecipeCreateModalComponent implements OnInit {
   productSearchResults: Product[] = [];
   showProductDropdown: { [key: number]: boolean } = {};
   activeComponentIndex: number | null = null;
+  private searchTimeout: any = null;
 
   ngOnInit(): void {
     this.loadFormData();
@@ -61,12 +62,12 @@ export class RecipeCreateModalComponent implements OnInit {
       this.loadingProducts = true;
     }
 
-    this.productService.getAll(page, 20).subscribe({
+    this.productService.getAll(page, 50).subscribe({
       next: (response) => {
         if (append) {
           this.availableProducts = [...this.availableProducts, ...response.content];
           if (this.productSearchQuery) {
-            const newResults = response.content.filter(p => 
+            const newResults = response.content.filter(p =>
               p.name.toLowerCase().includes(this.productSearchQuery.toLowerCase())
             );
             this.productSearchResults = [...this.productSearchResults, ...newResults];
@@ -139,15 +140,15 @@ export class RecipeCreateModalComponent implements OnInit {
         this.showProductDropdown[Number(key)] = false;
       }
     });
-    
+
     this.showProductDropdown[index] = !this.showProductDropdown[index];
     this.activeComponentIndex = this.showProductDropdown[index] ? index : null;
-    
+
     if (this.showProductDropdown[index]) {
       this.productSearchQuery = '';
       this.productSearchResults = this.availableProducts;
     }
-    
+
     this.cdr.markForCheck();
   }
 
@@ -162,23 +163,41 @@ export class RecipeCreateModalComponent implements OnInit {
 
   onProductSearch(query: string, index: number): void {
     this.productSearchQuery = query;
-    
+    this.showProductDropdown[index] = true;
+    this.activeComponentIndex = index;
+
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
+
     if (!query.trim()) {
       this.productSearchResults = this.availableProducts;
-    } else {
-      this.productSearchResults = this.availableProducts.filter(p =>
-        p.name.toLowerCase().includes(query.toLowerCase())
-      );
+      this.cdr.markForCheck();
+      return;
     }
-    
-    this.cdr.markForCheck();
+
+    this.searchTimeout = setTimeout(() => {
+      this.productService.searchByName(query.trim(), 0, 50).subscribe({
+        next: (response) => {
+          this.productSearchResults = response.content;
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          // Fallback a filtro local
+          this.productSearchResults = this.availableProducts.filter(p =>
+            p.name.toLowerCase().includes(query.toLowerCase())
+          );
+          this.cdr.markForCheck();
+        }
+      });
+    }, 400);
   }
 
   onProductDropdownScroll(event: Event, index: number): void {
     const element = event.target as HTMLElement;
     const { scrollTop, scrollHeight, clientHeight } = element;
     const scrollPosition = scrollTop + clientHeight;
-    
+
     if (scrollHeight - scrollPosition < 100 && !this.loadingMoreProducts) {
       if (this.currentProductPage < this.totalProductPages - 1) {
         this.loadingMoreProducts = true;
