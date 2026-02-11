@@ -26,14 +26,14 @@
 
 .modal-dialog {
   background: white;
-  border-radius: 12px;
+  border-radius: 16px; 
   width: 100%;
   max-width: 800px;
-  max-height: 90vh;
-  display: flex;
+  max-height: 85vh;   
+  display: flex; 
   flex-direction: column;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  animation: scaleIn 0.3s ease;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); 
+  animation: slideUp 0.3s ease; 
   overflow: hidden;
 }
 
@@ -49,45 +49,64 @@
 }
 
 .modal-header {
-  padding: 20px 30px;
-  border-bottom: 1px solid #e0e0e0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(135deg, rgba(184, 75, 68, 0.95) 0%, rgba(160, 61, 55, 0.95) 100%);
+  padding: 24px 30px; 
+  background: linear-gradient(135deg, #b84b44 0%, #a03d37 100%);
+  border-radius: 16px 16px 0 0; 
+  color: white;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .modal-header h2 {
   margin: 0;
-  font-size: 1.5rem;
-  color: white;
+  font-family: var(--font-heading); 
+  font-size: 1.6rem; 
+  font-weight: 600;
+  text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 .btn-close {
-  background: none;
+  width: 34px;
+  height: 34px;
   border: none;
-  font-size: 2rem;
-  color: white;
+  background: rgba(255, 255, 255, 0.25); 
+  border-radius: 8px ; 
+  color: #ffffff ; 
   cursor: pointer;
-  padding: 0;
-  width: 40px;
-  height: 40px;
-  display: flex;
+  display: flex ;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  transition: background 0.3s ease;
+  padding: 0;
+  font-family: Arial, sans-serif ; 
+  font-size: 22px ; 
+  line-height: 1 ;
+  
+  transition: all 0.2s ease;
 }
 
 .btn-close:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(1.1);
 }
 
 .modal-body {
   padding: 30px;
   overflow-y: auto;
   flex: 1;
+}
+
+.user-selection-section h3,
+.product-search-section h3,
+.order-items-section h3 {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #b84b44; 
 }
 
 .user-selection-section {
@@ -409,21 +428,21 @@
   color: #333;
 }
 
-.items-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
 .order-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
-  background: #f8f8f8;
+  padding: 15px 20px;
+  background: #f9fafb; 
+  border-radius: 0;    
+  border-bottom: 1px solid #e5e7eb; 
+  transition: background 0.2s;
+}
+
+.items-list {
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
-  transition: background 0.2s ease;
+  overflow: hidden; 
 }
 
 .order-item:hover {
@@ -461,7 +480,7 @@
   background: #dc3545;
   color: white;
   border: none;
-  border-radius: 50%;
+  border-radius: 8px;
   width: 32px;
   height: 32px;
   font-size: 1.5rem;
@@ -480,8 +499,11 @@
 }
 
 .order-summary {
-  border-top: 2px solid #e0e0e0;
-  padding-top: 15px;
+  margin-top: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(184, 75, 68, 0.95) 0%, rgba(160, 61, 55, 0.95) 100%);
+  border-radius: 8px;
+  border-top: none; /* Quitar el borde gris anterior */
 }
 
 .summary-row {
@@ -490,16 +512,8 @@
   align-items: center;
 }
 
-.summary-label {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #333;
-}
-
-.summary-value {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: var(--primary-color);
+.summary-label, .summary-value {
+  color: white; 
 }
 
 .empty-order {
@@ -513,11 +527,12 @@
 
 .modal-footer {
   padding: 20px 30px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+  border-radius: 0 0 16px 16px;
   display: flex;
-  gap: 12px;
   justify-content: flex-end;
-  background: #f9f9f9;
+  gap: 12px;
 }
 
 .btn-cancel,
@@ -533,8 +548,10 @@
 }
 
 .btn-cancel {
-  background: #6c757d;
+  background: #6b7280; /* Gris de detalles */
   color: white;
+  padding: 10px 28px;
+  border-radius: 8px;
 }
 
 .btn-cancel:hover {
@@ -558,3 +575,154 @@
   cursor: not-allowed;
   box-shadow: none;
 }
+
+
+/** ===== RESPONSIVE TABLET (max-width: 1024px) ===== */
+@media (max-width: 1024px) {
+  .modal-dialog {
+    max-width: 90%; 
+    margin: 20px;
+  }
+
+  .form-row {
+    flex-wrap: wrap; 
+  }
+
+  .form-group.flex-2 {
+    flex: 1 1 100%; 
+  }
+
+  .btn-add-item {
+    width: 100%; 
+    margin-top: 10px;
+  }
+}
+
+/** ===== RESPONSIVE MÓVIL (UNIFICADO CON DETALLES) ===== */
+@media (max-width: 768px) {
+.modal-header {
+    padding: 18px 20px; 
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .modal-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .btn-close {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+  }
+}
+
+  /* 2. Cuerpo del Modal */
+  .modal-body {
+    padding: 15px;
+  }
+
+  .user-selection-section h3,
+  .product-search-section h3,
+  .order-items-section h3 {
+    font-size: 0.9rem; 
+    text-transform: uppercase;
+    padding-bottom: 8px;
+  }
+
+  .items-list {
+    gap: 12px;
+    border: none;
+    background: transparent;
+  }
+
+  .order-item {
+    background: white;
+    border: 1px solid #e5e7eb; 
+    border-radius: 12px;
+    padding: 15px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+
+  .item-info {
+    width: 100%;
+  }
+
+  .item-name {
+    font-size: 0.9rem;
+    color: #b84b44; 
+    text-transform: uppercase;
+  }
+
+  .item-details {
+    font-size: 0.8rem;
+    color: #666;
+  }
+
+  /* 4. Acciones y Botón de Borrar */
+  .item-actions {
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px dashed #eee;
+    padding-top: 10px;
+    margin-top: 5px;
+  }
+
+  .btn-remove {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+  }
+
+  /* 5. Resumen de Total (Estilo Rojo Detalles) */
+  .order-summary {
+    background: linear-gradient(135deg, #b84b44 0%, #a03d37 100%); 
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 20px;
+    border: none;
+  }
+
+  .summary-label {
+    color: white;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+  }
+
+  .summary-value {
+    color: white;
+    font-size: 1.3rem;
+  }
+
+  /* 6. Footer con botones apilados */
+  .modal-footer {
+    flex-direction: column;
+    padding: 15px;
+    gap: 10px;
+  }
+
+  .btn-cancel, .btn-submit {
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+
+  .btn-submit {
+    order: 0; 
+  }
+
+  /* Ajuste de formulario de búsqueda */
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
