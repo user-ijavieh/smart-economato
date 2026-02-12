@@ -1,11 +1,13 @@
 import { Component, signal, inject, ChangeDetectorRef, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { ToastComponent } from './shared/components/layout/toast/toast.component';
+import { ConfirmDialogComponent } from './shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { MessageService, Toast } from './core/services/message.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ToastComponent],
+  imports: [CommonModule, RouterOutlet, ToastComponent, ConfirmDialogComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

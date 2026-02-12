@@ -145,10 +145,16 @@ export class ReceptionComponent implements OnInit {
   }
 
   // Action handlers
-  reviewOrder(order: Order): void {
-    if (!confirm(`¿Mover la orden #${order.id} a revisión?`)) {
+  async reviewOrder(order: Order): Promise<void> {
+    const confirmed = await this.messageService.confirm(
+      'Mover a revisión',
+      `¿Mover la orden #${order.id} a revisión?`
+    );
+
+    if (!confirmed) {
       return;
     }
+    
     this.messageService.showInfo(`Revisando orden #${order.id}`);
     // Change status from PENDING to REVIEW
     this.orderService.updateStatus(order.id, 'REVIEW').subscribe({
@@ -162,8 +168,13 @@ export class ReceptionComponent implements OnInit {
     });
   }
 
-  confirmOrder(order: Order): void {
-    if (!confirm(`¿Confirmar la orden #${order.id}? Esto guardará el stock en el sistema.`)) {
+  async confirmOrder(order: Order): Promise<void> {
+    const confirmed = await this.messageService.confirm(
+      'Confirmar orden',
+      `¿Confirmar la orden #${order.id}? Esto guardará el stock en el sistema.`
+    );
+
+    if (!confirmed) {
       return;
     }
 
@@ -188,10 +199,16 @@ export class ReceptionComponent implements OnInit {
     });
   }
 
-  markIncomplete(order: Order): void {
-    if (!confirm(`¿Marcar la orden #${order.id} como incompleta?`)) {
+  async markIncomplete(order: Order): Promise<void> {
+    const confirmed = await this.messageService.confirm(
+      'Marcar como incompleta',
+      `¿Marcar la orden #${order.id} como incompleta?`
+    );
+
+    if (!confirmed) {
       return;
     }
+    
     this.orderService.updateStatus(order.id, 'INCOMPLETE').subscribe({
       next: () => {
         this.messageService.showWarning('Orden marcada como incompleta');
@@ -203,10 +220,16 @@ export class ReceptionComponent implements OnInit {
     });
   }
 
-  cancelOrder(order: Order): void {
-    if (!confirm(`¿Cancelar la orden #${order.id}? Esta acción no se puede deshacer.`)) {
+  async cancelOrder(order: Order): Promise<void> {
+    const confirmed = await this.messageService.confirm(
+      'Cancelar orden',
+      `¿Cancelar la orden #${order.id}? Esta acción no se puede deshacer.`
+    );
+
+    if (!confirmed) {
       return;
     }
+    
     this.orderService.updateStatus(order.id, 'CANCELLED').subscribe({
       next: () => {
         this.messageService.showWarning('Orden cancelada');
@@ -218,10 +241,16 @@ export class ReceptionComponent implements OnInit {
     });
   }
 
-  deleteOrder(order: Order): void {
-    if (!confirm(`¿Eliminar permanentemente la orden #${order.id}? Esta acción no se puede deshacer.`)) {
+  async deleteOrder(order: Order): Promise<void> {
+    const confirmed = await this.messageService.confirm(
+      'Eliminar orden',
+      `¿Eliminar permanentemente la orden #${order.id}? Esta acción no se puede deshacer.`
+    );
+
+    if (!confirmed) {
       return;
     }
+    
     this.orderService.delete(order.id).subscribe({
       next: () => {
         this.messageService.showSuccess('Orden eliminada correctamente');
