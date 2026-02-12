@@ -221,7 +221,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
     this.closeModal.emit();
   }
 
-  submitOrder(): void {
+  async submitOrder(): Promise<void> {
     if (this.orderItems.length === 0) {
       this.messageService.showError('Agrega al menos un producto al pedido');
       return;
@@ -229,6 +229,20 @@ export class OrderModalComponent implements OnInit, OnDestroy {
 
     if (!this.selectedUserId) {
       this.messageService.showError('Selecciona un usuario para el pedido');
+      return;
+    }
+
+    // Obtener el nombre del usuario seleccionado para el mensaje de confirmación
+    const selectedUser = this.users.find(u => u.id === this.selectedUserId);
+    const userName = selectedUser ? selectedUser.name : 'usuario seleccionado';
+    
+    const totalItems = this.orderItems.length;
+    const confirmed = await this.messageService.confirm(
+      'Confirmar pedido',
+      `¿Crear pedido de ${totalItems} producto${totalItems > 1 ? 's' : ''} para ${userName}?`
+    );
+
+    if (!confirmed) {
       return;
     }
 
