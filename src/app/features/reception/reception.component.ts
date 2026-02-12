@@ -56,12 +56,14 @@ export class ReceptionComponent implements OnInit {
     // Load all orders except CREATED (which are shown in Pedidos)
     this.orderService.getAll(0, 200).subscribe({
       next: (orders) => {
+        // Ordenar las órdenes de más reciente a más antigua
+        const sortedOrders = orders.sort((a, b) => b.id - a.id);
         this.ordersByStatus = {
-          PENDING: orders.filter(o => o.status === 'PENDING'),
-          REVIEW: orders.filter(o => o.status === 'REVIEW'),
-          CONFIRMED: orders.filter(o => o.status === 'CONFIRMED'),
-          CANCELLED: orders.filter(o => o.status === 'CANCELLED'),
-          INCOMPLETE: orders.filter(o => o.status === 'INCOMPLETE')
+          PENDING: sortedOrders.filter(o => o.status === 'PENDING'),
+          REVIEW: sortedOrders.filter(o => o.status === 'REVIEW'),
+          CONFIRMED: sortedOrders.filter(o => o.status === 'CONFIRMED'),
+          CANCELLED: sortedOrders.filter(o => o.status === 'CANCELLED'),
+          INCOMPLETE: sortedOrders.filter(o => o.status === 'INCOMPLETE')
         };
         this.resetDisplayCounts();
         this.loading = false;
