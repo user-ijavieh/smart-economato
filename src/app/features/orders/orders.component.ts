@@ -93,8 +93,13 @@ export class OrdersComponent implements OnInit {
     });
   }
 
-  confirmOrder(order: Order): void {
-    if (!confirm(`¿Confirmar y enviar el pedido #${order.id} a recepción?`)) {
+  async confirmOrder(order: Order): Promise<void> {
+    const confirmed = await this.messageService.confirm(
+      'Confirmar pedido',
+      `¿Confirmar y enviar el pedido #${order.id} a recepción?`
+    );
+
+    if (!confirmed) {
       return;
     }
 
