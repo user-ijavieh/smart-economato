@@ -27,7 +27,6 @@ export class WelcomeComponent implements OnInit, OnDestroy {
     { label: 'Pedidos', route: '/orders', icon: '/assets/img/icons/order.svg' },
     { label: 'Recepción', route: '/reception', icon: '/assets/img/icons/reception.svg' },
     { label: 'Recetas', route: '/recipes', icon: '/assets/img/icons/recipes.svg' },
-    { label: 'Perfil', route: '/profile', icon: '/assets/img/icons/profile.svg' },
   ];
 
   get filteredNavCards() {
