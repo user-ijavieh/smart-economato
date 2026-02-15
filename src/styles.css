@@ -99,17 +99,20 @@ body {
   min-height: 100dvh;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Default (rojo) */
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--primary-color);
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #a03d37;
 }
