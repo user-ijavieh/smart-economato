@@ -91,10 +91,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; 
+  justify-content: flex-start;
   flex: 1;
   z-index: 5;
-  padding: 40px 20px; 
+  padding: 40px 20px;
   overflow-y: auto;
 }
 
@@ -105,10 +105,10 @@
   color: white;
   text-align: center;
   letter-spacing: 3px;
-  margin-bottom: 40px; 
+  margin-bottom: 40px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   background: rgba(0, 0, 0, 0.6);
-  padding: 0.5em 1em; 
+  padding: 0.5em 1em;
   border-radius: 15px;
   display: table;
   margin-left: auto;
@@ -190,6 +190,17 @@
 .btn-logout:hover {
   background: rgba(220, 100, 100, 0.35);
   border: 2px solid rgba(220, 100, 100, 1);
+}
+
+/** Botón admin */
+.btn-admin {
+  background: rgba(60, 80, 160, 0.55);
+  border: 2px solid rgba(100, 140, 255, 0.6);
+}
+
+.btn-admin:hover {
+  background: rgba(60, 80, 160, 0.35);
+  border: 2px solid rgba(100, 140, 255, 1);
 }
 
 /** ===== SCROLL BAR ===== */
@@ -333,9 +344,9 @@
 
   .welcome-title {
     font-size: 1.2rem;
-    padding: 0.8em 1.2em; 
+    padding: 0.8em 1.2em;
     margin-bottom: 20px;
-    width: 90%; 
+    width: 90%;
   }
 
   .buttonsContainer {

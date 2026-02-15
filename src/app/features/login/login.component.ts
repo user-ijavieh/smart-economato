@@ -37,7 +37,12 @@ export class LoginComponent {
     this.authService.login(name!, password!).subscribe({
       next: () => {
         this.messageService.showSuccess('Sesión iniciada correctamente');
-        this.router.navigate(['/welcome']);
+        const role = this.authService.getRole();
+        if (role === 'ADMIN') {
+          this.router.navigate(['/admin-panel']);
+        } else {
+          this.router.navigate(['/welcome']);
+        }
       },
       error: () => {
         this.loading = false;

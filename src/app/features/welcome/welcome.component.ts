@@ -32,11 +32,15 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   get filteredNavCards() {
     const userRole = this.authService.getRole();
     if (userRole === 'USER') {
-      return this.navCards.filter(card => 
+      return this.navCards.filter(card =>
         card.label !== 'Pedidos' && card.label !== 'Recepción'
       );
     }
     return this.navCards;
+  }
+
+  get isAdmin(): boolean {
+    return this.authService.getRole() === 'ADMIN';
   }
 
   ngOnInit(): void {
