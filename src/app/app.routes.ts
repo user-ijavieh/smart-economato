@@ -14,17 +14,16 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'admin-panel',
-    loadComponent: () =>
-      import('./features/admin-panel/admin-panel.component').then(m => m.AdminPanelComponent),
-    canActivate: [authGuard]
-  },
-  {
     path: '',
     loadComponent: () =>
       import('./shared/components/layout/layout.component').then(m => m.LayoutComponent),
     canActivate: [authGuard],
     children: [
+      {
+        path: 'admin-panel',
+        loadComponent: () =>
+          import('./features/admin-panel/admin-panel.component').then(m => m.AdminPanelComponent)
+      },
       {
         path: 'inventario',
         loadComponent: () =>
