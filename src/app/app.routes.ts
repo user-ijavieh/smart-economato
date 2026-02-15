@@ -25,6 +25,11 @@ export const routes: Routes = [
           import('./features/admin-panel/admin-panel.component').then(m => m.AdminPanelComponent)
       },
       {
+        path: 'admin-panel/users',
+        loadComponent: () =>
+          import('./features/users-management/users-management.component').then(m => m.UsersManagementComponent)
+      },
+      {
         path: 'inventario',
         loadComponent: () =>
           import('./features/inventory/inventory.component').then(m => m.InventoryComponent)
