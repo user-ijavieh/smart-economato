@@ -16,8 +16,4 @@ export class AdminPanelComponent {
     get userName(): string {
         return this.authService.getName() || 'Administrador';
     }
-
-    logout(): void {
-        this.authService.logout();
-    }
 }
