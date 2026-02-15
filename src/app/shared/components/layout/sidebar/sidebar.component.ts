@@ -41,6 +41,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   // Items para la vista admin
   private adminNavItems: NavItem[] = [
     { label: 'Vista General', route: '/welcome', icon: 'home' },
+    { label: 'Usuarios', route: '/admin-panel/users', icon: 'people' },
   ];
 
   ngOnInit(): void {

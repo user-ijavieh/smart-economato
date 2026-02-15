@@ -1,0 +1,72 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>{{ title }}</h2>
+            <button class="btn-close" (click)="onClose()" aria-label="Cerrar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path
+                        d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                </svg>
+            </button>
+        </div>
+
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <label for="name">Nombre</label>
+                <input id="name" type="text" formControlName="name" placeholder="Nombre del usuario"
+                    [class.input-error]="userForm.get('name')?.invalid && userForm.get('name')?.touched" />
+                @if (userForm.get('name')?.hasError('required') && userForm.get('name')?.touched) {
+                <p class="field-error">El nombre es requerido</p>
+                }
+                @if (userForm.get('name')?.hasError('minlength') && userForm.get('name')?.touched) {
+                <p class="field-error">El nombre debe tener al menos 3 caracteres</p>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input id="email" type="email" formControlName="email" placeholder="email@ejemplo.com"
+                    [class.input-error]="userForm.get('email')?.invalid && userForm.get('email')?.touched" />
+                @if (userForm.get('email')?.hasError('required') && userForm.get('email')?.touched) {
+                <p class="field-error">El email es requerido</p>
+                }
+                @if (userForm.get('email')?.hasError('email') && userForm.get('email')?.touched) {
+                <p class="field-error">Introduce un email válido</p>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="password">
+                    Contraseña
+                    @if (isEditMode) {
+                    <span class="optional-label">(dejar vacío para no cambiar)</span>
+                    }
+                </label>
+                <input id="password" type="password" formControlName="password" placeholder="********"
+                    [class.input-error]="userForm.get('password')?.invalid && userForm.get('password')?.touched" />
+                @if (userForm.get('password')?.hasError('required') && userForm.get('password')?.touched) {
+                <p class="field-error">La contraseña es requerida</p>
+                }
+                @if (userForm.get('password')?.hasError('minlength') && userForm.get('password')?.touched) {
+                <p class="field-error">La contraseña debe tener al menos 4 caracteres</p>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="role">Rol</label>
+                <select id="role" formControlName="role">
+                    @for (role of roles; track role) {
+                    <option [value]="role">{{ role }}</option>
+                    }
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" (click)="onClose()">Cancelar</button>
+                <button type="submit" class="btn-save" [disabled]="userForm.invalid">
+                    {{ isEditMode ? 'Guardar Cambios' : 'Crear Usuario' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
