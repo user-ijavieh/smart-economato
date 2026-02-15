@@ -18,7 +18,7 @@ interface NavItem {
 })
 export class SidebarComponent {
   private authService = inject(AuthService);
-  
+
   isOpen = false;
 
   @Output() sidebarToggled = new EventEmitter<boolean>();
@@ -36,7 +36,7 @@ export class SidebarComponent {
   get filteredNavItems(): NavItem[] {
     const userRole = this.getUserRole();
     if (userRole === 'USER') {
-      return this.navItems.filter(item => 
+      return this.navItems.filter(item =>
         item.label !== 'Recepción' && item.label !== 'Pedidos'
       );
     }
@@ -72,5 +72,9 @@ export class SidebarComponent {
     const role = this.getUserRole();
     if (!role) return 'U';
     return role.charAt(0).toUpperCase();
+  }
+
+  isAdmin(): boolean {
+    return this.getUserRole() === 'ADMIN';
   }
 }
