@@ -45,6 +45,66 @@
     font-weight: var(--font-heading-weight);
 }
 
+/** ===== TAB BAR ===== */
+
+.tab-bar {
+    display: flex;
+    background: white;
+    padding: 0 40px;
+    border-bottom: 2px solid #e8e8e8;
+    position: sticky;
+    top: 68px;
+    z-index: 99;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 24px;
+    border: none;
+    background: transparent;
+    color: #888;
+    font-size: 0.95rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.tab-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: transparent;
+    border-radius: 3px 3px 0 0;
+    transition: background 0.3s ease;
+}
+
+.tab-btn:hover {
+    color: rgba(30, 40, 80, 0.8);
+    background: rgba(30, 40, 80, 0.03);
+    transform: none;
+    box-shadow: none;
+}
+
+.tab-btn.active {
+    color: rgba(30, 40, 80, 0.95);
+    background: transparent;
+    box-shadow: none;
+}
+
+.tab-btn.active::after {
+    background: linear-gradient(135deg, rgba(30, 40, 80, 0.95), rgba(50, 60, 120, 0.95));
+}
+
 /** ===== CONTENEDOR PRINCIPAL ===== */
 
 .contenedor-principal {
@@ -84,6 +144,63 @@
     outline: none;
     border-color: rgba(30, 40, 80, 0.6);
     box-shadow: 0 0 0 3px rgba(30, 40, 80, 0.1);
+}
+
+.action-select {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+    font-size: 0.9rem;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.action-select:focus {
+    outline: none;
+    border-color: rgba(30, 40, 80, 0.6);
+    box-shadow: 0 0 0 3px rgba(30, 40, 80, 0.1);
+}
+
+.date-range-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.date-input {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+    font-size: 0.85rem;
+    font-family: var(--font-body);
+    transition: all 0.3s ease;
+    color: #333;
+}
+
+.date-input:focus {
+    outline: none;
+    border-color: rgba(30, 40, 80, 0.6);
+    box-shadow: 0 0 0 3px rgba(30, 40, 80, 0.1);
+}
+
+.date-separator {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.btn-date-filter {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    font-size: 0.85rem;
+}
+
+.btn-date-filter:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
 }
 
 button {
@@ -155,16 +272,23 @@ button:active {
     transform: translateY(-2px);
 }
 
-.stat-card.stat-allergens {
+.stat-card.stat-allergens,
+.stat-card.badge-delete {
     border-left-color: #e53935;
 }
 
-.stat-card.stat-safe {
+.stat-card.stat-safe,
+.stat-card.badge-create {
     border-left-color: #4caf50;
 }
 
-.stat-card.stat-cost {
+.stat-card.stat-cost,
+.stat-card.badge-update {
     border-left-color: #f59e0b;
+}
+
+.stat-card.badge-default {
+    border-left-color: rgba(30, 40, 80, 0.5);
 }
 
 .stat-number {
@@ -309,6 +433,76 @@ tr:hover {
     color: #2e7d32;
 }
 
+/** ===== AUDIT BADGES ===== */
+
+.action-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+.action-badge.badge-create {
+    background: rgba(76, 175, 80, 0.12);
+    color: #2e7d32;
+}
+
+.action-badge.badge-update {
+    background: rgba(245, 158, 11, 0.12);
+    color: #b45309;
+}
+
+.action-badge.badge-delete {
+    background: rgba(229, 57, 53, 0.12);
+    color: #c62828;
+}
+
+.action-badge.badge-default {
+    background: rgba(30, 40, 80, 0.08);
+    color: rgba(30, 40, 80, 0.8);
+}
+
+.id-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: rgba(30, 40, 80, 0.06);
+    color: rgba(30, 40, 80, 0.7);
+    font-family: monospace;
+}
+
+.date-cell-inner {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: 0.9rem;
+}
+
+.user-name {
+    font-weight: 500;
+    color: #444;
+}
+
+.date-icon {
+    color: rgba(30, 40, 80, 0.5);
+    flex-shrink: 0;
+}
+
+.details-cell {
+    max-width: 350px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #666;
+    font-size: 0.9rem;
+}
+
 /** ===== ACTIONS ===== */
 
 .actions-cell {
@@ -417,6 +611,10 @@ tr:hover {
         font-size: 1.5rem;
     }
 
+    .tab-bar {
+        padding: 0 20px;
+    }
+
     .contenedor-principal {
         padding: 20px;
     }
@@ -443,6 +641,15 @@ tr:hover {
         letter-spacing: 1px;
     }
 
+    .tab-bar {
+        padding: 0 15px;
+    }
+
+    .tab-btn {
+        padding: 12px 16px;
+        font-size: 0.85rem;
+    }
+
     .contenedor-principal {
         padding: 15px;
     }
@@ -455,6 +662,20 @@ tr:hover {
     .controles input[type='text'] {
         min-width: 150px;
         width: 100%;
+    }
+
+    .action-select {
+        width: 100%;
+    }
+
+    .date-range-group {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .date-input {
+        flex: 1;
+        min-width: 120px;
     }
 
     button {
@@ -476,6 +697,10 @@ tr:hover {
     .stats-row {
         grid-template-columns: repeat(2, 1fr);
     }
+
+    .details-cell {
+        max-width: 180px;
+    }
 }
 
 @media (max-width: 640px) {
@@ -485,6 +710,16 @@ tr:hover {
 
     .header-recetas h1 {
         font-size: 1.1rem;
+    }
+
+    .tab-bar {
+        padding: 0 10px;
+    }
+
+    .tab-btn {
+        padding: 10px 12px;
+        font-size: 0.8rem;
+        gap: 6px;
     }
 
     .contenedor-principal {
@@ -501,10 +736,15 @@ tr:hover {
         padding: 10px;
     }
 
+    .tab-btn {
+        width: auto;
+    }
+
     .btn-ver,
     .btn-pdf,
     .btn-editar,
-    .btn-eliminar {
+    .btn-eliminar,
+    .btn-date-filter {
         width: auto;
         padding: 8px;
     }
@@ -530,5 +770,9 @@ tr:hover {
 
     .stat-number {
         font-size: 1.4rem;
+    }
+
+    .details-cell {
+        max-width: 120px;
     }
 }

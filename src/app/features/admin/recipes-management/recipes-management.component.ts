@@ -2,8 +2,11 @@ import { Component, OnInit, inject, ChangeDetectorRef, ChangeDetectionStrategy }
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RecipeService } from '../../../core/services/recipe.service';
+import { RecipeAuditService } from '../../../core/services/recipe-audit.service';
+import { UserService } from '../../../core/services/user.service';
 import { MessageService } from '../../../core/services/message.service';
 import { Recipe, RecipeRequest } from '../../../shared/models/recipe.model';
+import { RecipeAudit } from '../../../shared/models/recipe-audit.model';
 import { RecipeCreateModalComponent } from '../../general/recipes/recipe-create-modal/recipe-create-modal.component';
 import { RecipeEditModalComponent } from '../../general/recipes/recipe-edit-modal/recipe-edit-modal.component';
 import { RecipeDetailModalComponent } from '../../general/recipes/recipe-detail-modal/recipe-detail-modal.component';
@@ -29,9 +32,15 @@ import { finalize } from 'rxjs';
 })
 export class RecipesManagementComponent implements OnInit {
     private recipeService = inject(RecipeService);
+    private recipeAuditService = inject(RecipeAuditService);
+    private userService = inject(UserService);
     private cdr = inject(ChangeDetectorRef);
     messageService = inject(MessageService);
 
+    // ── Tab state ──
+    activeTab: 'recipes' | 'audits' = 'recipes';
+
+    // ── Recipes state ──
     recipes: Recipe[] = [];
     filteredRecipes: Recipe[] = [];
     loading = true;
@@ -53,9 +62,44 @@ export class RecipesManagementComponent implements OnInit {
         return total / this.filteredRecipes.length;
     }
 
+    // ── Audits state ──
+    audits: RecipeAudit[] = [];
+    filteredAudits: RecipeAudit[] = [];
+    loadingAudits = false;
+    auditsLoaded = false;
+    auditSearchTerm = '';
+    auditActionFilter = '';
+    auditStartDate = '';
+    auditEndDate = '';
+    userMap: { [id: number]: string } = {};
+
+    get totalAudits(): number { return this.filteredAudits.length; }
+    get auditsByAction(): { [key: string]: number } {
+        const counts: { [key: string]: number } = {};
+        this.filteredAudits.forEach(a => {
+            counts[a.action] = (counts[a.action] || 0) + 1;
+        });
+        return counts;
+    }
+    get uniqueActions(): string[] {
+        return [...new Set(this.audits.map(a => a.action))].sort();
+    }
+
     ngOnInit(): void {
         this.loadRecipes();
     }
+
+    // ── Tab switching ──
+
+    switchTab(tab: 'recipes' | 'audits'): void {
+        this.activeTab = tab;
+        if (tab === 'audits' && !this.auditsLoaded) {
+            this.loadAudits();
+        }
+        this.cdr.markForCheck();
+    }
+
+    // ── Recipes ──
 
     loadRecipes(): void {
         this.loading = true;
@@ -101,6 +145,123 @@ export class RecipesManagementComponent implements OnInit {
 
     hasActiveFilters(): boolean {
         return this.searchTerm.trim().length > 0;
+    }
+
+    // ── Audits ──
+
+    loadAudits(): void {
+        this.loadingAudits = true;
+        this.cdr.markForCheck();
+
+        const source$ = (this.auditStartDate && this.auditEndDate)
+            ? this.recipeAuditService.getByDateRange(this.auditStartDate, this.auditEndDate)
+            : this.recipeAuditService.getAll();
+
+        source$.pipe(
+            finalize(() => {
+                this.loadingAudits = false;
+                this.auditsLoaded = true;
+                this.cdr.markForCheck();
+            })
+        ).subscribe({
+            next: (audits) => {
+                this.audits = audits;
+                this.applyAuditFilters();
+                this.loadUsersForAudits();
+                this.cdr.markForCheck();
+            },
+            error: () => {
+                this.messageService.showError('Error al cargar las auditorías');
+            }
+        });
+    }
+
+    applyAuditFilters(): void {
+        let result = [...this.audits];
+
+        if (this.auditSearchTerm.trim()) {
+            const term = this.auditSearchTerm.toLowerCase();
+            result = result.filter(a =>
+                a.details.toLowerCase().includes(term) ||
+                a.action.toLowerCase().includes(term) ||
+                a.id_recipe.toString().includes(term) ||
+                a.id_user.toString().includes(term)
+            );
+        }
+
+        if (this.auditActionFilter) {
+            result = result.filter(a => a.action === this.auditActionFilter);
+        }
+
+        this.filteredAudits = result;
+        this.cdr.markForCheck();
+    }
+
+    onAuditSearch(): void {
+        this.applyAuditFilters();
+    }
+
+    onAuditActionFilterChange(): void {
+        this.applyAuditFilters();
+    }
+
+    onDateRangeFilter(): void {
+        if (this.auditStartDate && this.auditEndDate) {
+            this.loadAudits();
+        }
+    }
+
+    clearAuditFilters(): void {
+        this.auditSearchTerm = '';
+        this.auditActionFilter = '';
+        this.auditStartDate = '';
+        this.auditEndDate = '';
+        this.loadAudits();
+    }
+
+    hasActiveAuditFilters(): boolean {
+        return this.auditSearchTerm.trim().length > 0
+            || this.auditActionFilter.length > 0
+            || (this.auditStartDate.length > 0 && this.auditEndDate.length > 0);
+    }
+
+    getActionBadgeClass(action: string): string {
+        const u = action.toUpperCase();
+        if (u.includes('CREA') || u === 'CREATE_RECIPE') return 'badge-create';
+        if (u.includes('MODIFIC') || u === 'UPDATE_RECIPE') return 'badge-update';
+        if (u.includes('ELIMIN') || u === 'DELETE_RECIPE') return 'badge-delete';
+        return 'badge-default';
+    }
+
+    translateAction(action: string): string {
+        const u = action.toUpperCase();
+        if (u.includes('CREA') || u === 'CREATE_RECIPE') return 'Crear';
+        if (u.includes('MODIFIC') || u === 'UPDATE_RECIPE') return 'Actualizar';
+        if (u.includes('ELIMIN') || u === 'DELETE_RECIPE') return 'Eliminar';
+        return action;
+    }
+
+    loadUsersForAudits(): void {
+        this.userService.getAll(0, 1000).subscribe({
+            next: (users) => {
+                this.userMap = {};
+                users.forEach(u => this.userMap[u.id] = u.name);
+                this.cdr.markForCheck();
+            },
+            error: () => { /* silently fail, will show ID fallback */ }
+        });
+    }
+
+    getUserName(userId: number): string {
+        return this.userMap[userId] || `Usuario #${userId}`;
+    }
+
+    formatDate(dateStr: string): string {
+        const d = new Date(dateStr);
+        return d.toLocaleString('es-ES', {
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
     }
 
     // ── Detail ──

@@ -264,7 +264,7 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.createForm.components.length === 0) {
+    if (this.formComponents.length === 0) {
       this.messageService.showError('Debe agregar al menos un componente');
       return;
     }
