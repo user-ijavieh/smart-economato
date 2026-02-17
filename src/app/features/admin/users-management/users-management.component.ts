@@ -182,4 +182,8 @@ export class UsersManagementComponent implements OnInit {
     countByRole(role: string): number {
         return this.filteredUsers.filter(u => u.role === role).length;
     }
+
+    getExistingEmails(): string[] {
+        return this.users.map(u => u.email);
+    }
 }

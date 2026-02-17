@@ -250,3 +250,155 @@ form {
         text-align: center;
     }
 }
+
+/** ===== AUTO-GENERATION INFO ===== */
+
+.auto-gen-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #eef2ff 0%, #e8ecf8 100%);
+    border: 1px solid rgba(30, 40, 80, 0.15);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    color: #374151;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.auto-gen-info svg {
+    flex-shrink: 0;
+    color: rgba(30, 40, 80, 0.7);
+}
+
+/** ===== CREDENTIALS RESULT ===== */
+
+.credentials-result {
+    padding: 32px 28px;
+    text-align: center;
+}
+
+.credentials-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    color: #059669;
+}
+
+.credentials-result h3 {
+    margin: 0 0 8px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    font-family: var(--font-heading);
+}
+
+.credentials-note {
+    margin: 0 0 24px;
+    font-size: 0.85rem;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+.credentials-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+.credential-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.credential-row:first-child {
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.credential-label {
+    font-size: 0.8rem;
+    color: #6b7280;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.credential-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1e293b;
+    font-family: 'Courier New', monospace;
+}
+
+.credential-password {
+    color: #059669;
+}
+
+.credentials-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-copy {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 20px;
+    border: 2px solid rgba(30, 40, 80, 0.2);
+    background: white;
+    color: rgba(30, 40, 80, 0.8);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--font-body);
+}
+
+.btn-copy:hover {
+    border-color: rgba(30, 40, 80, 0.4);
+    background: #f8fafc;
+}
+
+.btn-done {
+    flex: 1;
+    padding: 11px 20px;
+    border: none;
+    background: linear-gradient(135deg, rgba(30, 40, 80, 0.95), rgba(50, 60, 120, 0.95));
+    color: white;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(30, 40, 80, 0.3);
+    font-family: var(--font-body);
+}
+
+.btn-done:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(30, 40, 80, 0.4);
+}
+
+@media (max-width: 480px) {
+    .credentials-result {
+        padding: 24px 18px;
+    }
+
+    .credentials-actions {
+        flex-direction: column;
+    }
+}
