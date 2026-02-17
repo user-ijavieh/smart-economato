@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, ChangeDetectionStrategy, OnInit, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnInit, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RecipeRequest } from '../../../../shared/models/recipe.model';
@@ -31,6 +31,7 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
 
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<RecipeRequest>();
+  @Input() isAdmin = false;
 
   createForm: RecipeRequest = {
     name: '',

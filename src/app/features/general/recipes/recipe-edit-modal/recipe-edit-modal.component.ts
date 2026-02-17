@@ -32,6 +32,7 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
   @Input({ required: true }) recipe!: Recipe;
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<RecipeRequest>();
+  @Input() isAdmin = false;
 
   editForm: RecipeRequest = {
     name: '',

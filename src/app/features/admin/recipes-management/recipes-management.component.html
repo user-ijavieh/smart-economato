@@ -283,19 +283,20 @@
 
 <!-- Modal de detalle -->
 @if (showDetailModal && selectedRecipe) {
-<app-recipe-detail-modal [recipe]="selectedRecipe" [canEdit]="true" (close)="closeDetailModal()"
+<app-recipe-detail-modal [recipe]="selectedRecipe" [canEdit]="true" [isAdmin]="true" (close)="closeDetailModal()"
     (print)="downloadPdf(selectedRecipe)" (edit)="closeDetailModal(); openEditModal(selectedRecipe)"
     (cook)="onCookRecipe($event)" />
 }
 
 <!-- Modal de Edición -->
 @if (showEditModal && selectedRecipe) {
-<app-recipe-edit-modal [recipe]="selectedRecipe" (close)="closeEditModal()" (save)="onSaveRecipe($event)" />
+<app-recipe-edit-modal [recipe]="selectedRecipe" [isAdmin]="true" (close)="closeEditModal()"
+    (save)="onSaveRecipe($event)" />
 }
 
 <!-- Modal de Creación -->
 @if (showCreateModal) {
-<app-recipe-create-modal (close)="closeCreateModal()" (save)="onCreateRecipe($event)" />
+<app-recipe-create-modal [isAdmin]="true" (close)="closeCreateModal()" (save)="onCreateRecipe($event)" />
 }
 
 <!-- Audit Detail Modal -->
