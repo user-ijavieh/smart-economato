@@ -5,12 +5,12 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () =>
-      import('./features/login/login.component').then(m => m.LoginComponent)
+      import('./features/general/login/login.component').then(m => m.LoginComponent)
   },
   {
     path: 'welcome',
     loadComponent: () =>
-      import('./features/welcome/welcome.component').then(m => m.WelcomeComponent),
+      import('./features/general/welcome/welcome.component').then(m => m.WelcomeComponent),
     canActivate: [authGuard]
   },
   {
@@ -22,37 +22,37 @@ export const routes: Routes = [
       {
         path: 'admin-panel',
         loadComponent: () =>
-          import('./features/admin-panel/admin-panel.component').then(m => m.AdminPanelComponent)
+          import('./features/admin/admin-panel/admin-panel.component').then(m => m.AdminPanelComponent)
       },
       {
         path: 'admin-panel/users',
         loadComponent: () =>
-          import('./features/users-management/users-management.component').then(m => m.UsersManagementComponent)
+          import('./features/admin/users-management/users-management.component').then(m => m.UsersManagementComponent)
       },
       {
         path: 'inventario',
         loadComponent: () =>
-          import('./features/inventory/inventory.component').then(m => m.InventoryComponent)
+          import('./features/general/inventory/inventory.component').then(m => m.InventoryComponent)
       },
       {
         path: 'orders',
         loadComponent: () =>
-          import('./features/orders/orders.component').then(m => m.OrdersComponent)
+          import('./features/general/orders/orders.component').then(m => m.OrdersComponent)
       },
       {
         path: 'reception',
         loadComponent: () =>
-          import('./features/reception/reception.component').then(m => m.ReceptionComponent)
+          import('./features/general/reception/reception.component').then(m => m.ReceptionComponent)
       },
       {
         path: 'recipes',
         loadComponent: () =>
-          import('./features/recipes/recipes.component').then(m => m.RecipesComponent)
+          import('./features/general/recipes/recipes.component').then(m => m.RecipesComponent)
       },
       {
         path: 'profile',
         loadComponent: () =>
-          import('./features/profile/profile.component').then(m => m.ProfileComponent)
+          import('./features/general/profile/profile.component').then(m => m.ProfileComponent)
       },
       {
         path: '',
