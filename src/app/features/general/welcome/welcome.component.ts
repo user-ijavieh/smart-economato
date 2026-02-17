@@ -56,7 +56,24 @@ export class WelcomeComponent implements OnInit, OnDestroy {
     }
   }
 
+  showLogoutModal = false;
+
   logout(): void {
+    this.showLogoutModal = true;
+  }
+
+  confirmLogout(): void {
+    this.showLogoutModal = false;
     this.authService.logout();
+  }
+
+  cancelLogout(): void {
+    this.showLogoutModal = false;
+  }
+
+  onLogoutOverlayClick(event: MouseEvent): void {
+    if ((event.target as HTMLElement).classList.contains('logout-modal-overlay')) {
+      this.cancelLogout();
+    }
   }
 }
