@@ -242,7 +242,7 @@
                 }
                 } @else {
                 @for (audit of filteredAudits; track $index) {
-                <tr>
+                <tr class="audit-row" (click)="openAuditDetail(audit)">
                     <td>
                         <span class="date-cell-inner">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
@@ -296,6 +296,60 @@
 <!-- Modal de Creación -->
 @if (showCreateModal) {
 <app-recipe-create-modal (close)="closeCreateModal()" (save)="onCreateRecipe($event)" />
+}
+
+<!-- Audit Detail Modal -->
+@if (showAuditDetailModal && selectedAudit) {
+<div class="audit-modal-overlay" (click)="onAuditOverlayClick($event)">
+    <div class="audit-modal">
+        <div class="audit-modal-header">
+            <h2>Detalle de Auditoría</h2>
+            <button class="audit-modal-close" (click)="closeAuditDetail()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+        </div>
+        <div class="audit-modal-body">
+            <div class="audit-field">
+                <span class="audit-field-label">Fecha</span>
+                <span class="audit-field-value">{{ formatDate(selectedAudit.auditDate) }}</span>
+            </div>
+            <div class="audit-field">
+                <span class="audit-field-label">Acción</span>
+                <span class="action-badge" [ngClass]="getActionBadgeClass(selectedAudit.action)">
+                    {{ translateAction(selectedAudit.action) }}
+                </span>
+            </div>
+            <div class="audit-field">
+                <span class="audit-field-label">Receta</span>
+                <span class="audit-field-value">{{ getRecipeName(selectedAudit.id_recipe) }}</span>
+            </div>
+            <div class="audit-field">
+                <span class="audit-field-label">ID Receta</span>
+                <span class="audit-field-value">
+                    <span class="id-badge">#{{ selectedAudit.id_recipe }}</span>
+                </span>
+            </div>
+            <div class="audit-field">
+                <span class="audit-field-label">Usuario</span>
+                <span class="audit-field-value">{{ getUserName(selectedAudit.id_user) }}</span>
+            </div>
+            <div class="audit-field">
+                <span class="audit-field-label">ID Usuario</span>
+                <span class="audit-field-value">
+                    <span class="id-badge">#{{ selectedAudit.id_user }}</span>
+                </span>
+            </div>
+            <div class="audit-field audit-field-full">
+                <span class="audit-field-label">Detalles</span>
+                <p class="audit-details-text">{{ selectedAudit.details }}</p>
+            </div>
+        </div>
+    </div>
+</div>
 }
 
 <!-- Confirm Dialog -->

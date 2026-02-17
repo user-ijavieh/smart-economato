@@ -72,6 +72,8 @@ export class RecipesManagementComponent implements OnInit {
     auditStartDate = '';
     auditEndDate = '';
     userMap: { [id: number]: string } = {};
+    selectedAudit: RecipeAudit | null = null;
+    showAuditDetailModal = false;
 
     get totalAudits(): number { return this.filteredAudits.length; }
     get auditsByAction(): { [key: string]: number } {
@@ -93,10 +95,10 @@ export class RecipesManagementComponent implements OnInit {
 
     switchTab(tab: 'recipes' | 'audits'): void {
         this.activeTab = tab;
-        if (tab === 'audits' && !this.auditsLoaded) {
+        if (tab === 'audits') {
             this.loadAudits();
         }
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
     }
 
     // ── Recipes ──
@@ -151,7 +153,7 @@ export class RecipesManagementComponent implements OnInit {
 
     loadAudits(): void {
         this.loadingAudits = true;
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
 
         const source$ = (this.auditStartDate && this.auditEndDate)
             ? this.recipeAuditService.getByDateRange(this.auditStartDate, this.auditEndDate)
@@ -161,14 +163,14 @@ export class RecipesManagementComponent implements OnInit {
             finalize(() => {
                 this.loadingAudits = false;
                 this.auditsLoaded = true;
-                this.cdr.markForCheck();
+                this.cdr.detectChanges();
             })
         ).subscribe({
             next: (audits) => {
                 this.audits = audits;
                 this.applyAuditFilters();
                 this.loadUsersForAudits();
-                this.cdr.markForCheck();
+                this.cdr.detectChanges();
             },
             error: () => {
                 this.messageService.showError('Error al cargar las auditorías');
@@ -254,6 +256,29 @@ export class RecipesManagementComponent implements OnInit {
 
     getUserName(userId: number): string {
         return this.userMap[userId] || `Usuario #${userId}`;
+    }
+
+    getRecipeName(recipeId: number): string {
+        const recipe = this.recipes.find(r => r.id === recipeId);
+        return recipe ? recipe.name : `Receta #${recipeId}`;
+    }
+
+    openAuditDetail(audit: RecipeAudit): void {
+        this.selectedAudit = audit;
+        this.showAuditDetailModal = true;
+        this.cdr.markForCheck();
+    }
+
+    closeAuditDetail(): void {
+        this.showAuditDetailModal = false;
+        this.selectedAudit = null;
+        this.cdr.markForCheck();
+    }
+
+    onAuditOverlayClick(event: MouseEvent): void {
+        if ((event.target as HTMLElement).classList.contains('audit-modal-overlay')) {
+            this.closeAuditDetail();
+        }
     }
 
     formatDate(dateStr: string): string {
