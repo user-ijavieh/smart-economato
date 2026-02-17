@@ -1,0 +1,432 @@
+import { Component, OnInit, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RecipeService } from '../../../core/services/recipe.service';
+import { RecipeAuditService } from '../../../core/services/recipe-audit.service';
+import { UserService } from '../../../core/services/user.service';
+import { MessageService } from '../../../core/services/message.service';
+import { Recipe, RecipeRequest } from '../../../shared/models/recipe.model';
+import { RecipeAudit } from '../../../shared/models/recipe-audit.model';
+import { RecipeCreateModalComponent } from '../../general/recipes/recipe-create-modal/recipe-create-modal.component';
+import { RecipeEditModalComponent } from '../../general/recipes/recipe-edit-modal/recipe-edit-modal.component';
+import { RecipeDetailModalComponent } from '../../general/recipes/recipe-detail-modal/recipe-detail-modal.component';
+import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
+import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
+import { finalize } from 'rxjs';
+
+@Component({
+    selector: 'app-recipes-management',
+    standalone: true,
+    imports: [
+        CommonModule,
+        FormsModule,
+        RecipeCreateModalComponent,
+        RecipeEditModalComponent,
+        RecipeDetailModalComponent,
+        ConfirmDialogComponent,
+        ToastComponent
+    ],
+    templateUrl: './recipes-management.component.html',
+    styleUrl: './recipes-management.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class RecipesManagementComponent implements OnInit {
+    private recipeService = inject(RecipeService);
+    private recipeAuditService = inject(RecipeAuditService);
+    private userService = inject(UserService);
+    private cdr = inject(ChangeDetectorRef);
+    messageService = inject(MessageService);
+
+    // ── Tab state ──
+    activeTab: 'recipes' | 'audits' = 'recipes';
+
+    // ── Recipes state ──
+    recipes: Recipe[] = [];
+    filteredRecipes: Recipe[] = [];
+    loading = true;
+    searchTerm = '';
+
+    // Modal state
+    showCreateModal = false;
+    showEditModal = false;
+    showDetailModal = false;
+    selectedRecipe: Recipe | null = null;
+
+    // Stats
+    get totalRecipes(): number { return this.filteredRecipes.length; }
+    get recipesWithAllergens(): number { return this.filteredRecipes.filter(r => r.allergens?.length > 0).length; }
+    get recipesWithoutAllergens(): number { return this.filteredRecipes.filter(r => !r.allergens || r.allergens.length === 0).length; }
+    get averageCost(): number {
+        if (this.filteredRecipes.length === 0) return 0;
+        const total = this.filteredRecipes.reduce((sum, r) => sum + r.totalCost, 0);
+        return total / this.filteredRecipes.length;
+    }
+
+    // ── Audits state ──
+    audits: RecipeAudit[] = [];
+    filteredAudits: RecipeAudit[] = [];
+    loadingAudits = false;
+    auditsLoaded = false;
+    auditSearchTerm = '';
+    auditActionFilter = '';
+    auditStartDate = '';
+    auditEndDate = '';
+    userMap: { [id: number]: string } = {};
+    selectedAudit: RecipeAudit | null = null;
+    showAuditDetailModal = false;
+
+    get totalAudits(): number { return this.filteredAudits.length; }
+    get auditsByAction(): { [key: string]: number } {
+        const counts: { [key: string]: number } = {};
+        this.filteredAudits.forEach(a => {
+            counts[a.action] = (counts[a.action] || 0) + 1;
+        });
+        return counts;
+    }
+    get uniqueActions(): string[] {
+        return [...new Set(this.audits.map(a => a.action))].sort();
+    }
+
+    ngOnInit(): void {
+        this.loadRecipes();
+    }
+
+    // ── Tab switching ──
+
+    switchTab(tab: 'recipes' | 'audits'): void {
+        this.activeTab = tab;
+        if (tab === 'audits') {
+            this.loadAudits();
+        }
+        this.cdr.detectChanges();
+    }
+
+    // ── Recipes ──
+
+    loadRecipes(): void {
+        this.loading = true;
+        this.cdr.markForCheck();
+
+        this.recipeService.getAll(0, 1000, 'name,asc').pipe(
+            finalize(() => {
+                this.loading = false;
+                this.cdr.markForCheck();
+            })
+        ).subscribe({
+            next: (page) => {
+                this.recipes = page.content;
+                this.applySearchFilter();
+                this.cdr.markForCheck();
+            },
+            error: () => {
+                this.messageService.showError('Error al cargar las recetas');
+            }
+        });
+    }
+
+    applySearchFilter(): void {
+        if (!this.searchTerm.trim()) {
+            this.filteredRecipes = [...this.recipes];
+        } else {
+            const term = this.searchTerm.toLowerCase();
+            this.filteredRecipes = this.recipes.filter(r =>
+                r.name.toLowerCase().includes(term)
+            );
+        }
+        this.cdr.markForCheck();
+    }
+
+    onSearch(): void {
+        this.applySearchFilter();
+    }
+
+    clearFilters(): void {
+        this.searchTerm = '';
+        this.applySearchFilter();
+    }
+
+    hasActiveFilters(): boolean {
+        return this.searchTerm.trim().length > 0;
+    }
+
+    // ── Audits ──
+
+    loadAudits(): void {
+        this.loadingAudits = true;
+        this.cdr.detectChanges();
+
+        const source$ = (this.auditStartDate && this.auditEndDate)
+            ? this.recipeAuditService.getByDateRange(this.auditStartDate, this.auditEndDate)
+            : this.recipeAuditService.getAll();
+
+        source$.pipe(
+            finalize(() => {
+                this.loadingAudits = false;
+                this.auditsLoaded = true;
+                this.cdr.detectChanges();
+            })
+        ).subscribe({
+            next: (audits) => {
+                this.audits = audits;
+                this.applyAuditFilters();
+                this.loadUsersForAudits();
+                this.cdr.detectChanges();
+            },
+            error: () => {
+                this.messageService.showError('Error al cargar las auditorías');
+            }
+        });
+    }
+
+    applyAuditFilters(): void {
+        let result = [...this.audits];
+
+        if (this.auditSearchTerm.trim()) {
+            const term = this.auditSearchTerm.toLowerCase();
+            result = result.filter(a =>
+                a.details.toLowerCase().includes(term) ||
+                a.action.toLowerCase().includes(term) ||
+                a.id_recipe.toString().includes(term) ||
+                a.id_user.toString().includes(term)
+            );
+        }
+
+        if (this.auditActionFilter) {
+            result = result.filter(a => a.action === this.auditActionFilter);
+        }
+
+        this.filteredAudits = result;
+        this.cdr.markForCheck();
+    }
+
+    onAuditSearch(): void {
+        this.applyAuditFilters();
+    }
+
+    onAuditActionFilterChange(): void {
+        this.applyAuditFilters();
+    }
+
+    onDateRangeFilter(): void {
+        if (this.auditStartDate && this.auditEndDate) {
+            this.loadAudits();
+        }
+    }
+
+    clearAuditFilters(): void {
+        this.auditSearchTerm = '';
+        this.auditActionFilter = '';
+        this.auditStartDate = '';
+        this.auditEndDate = '';
+        this.loadAudits();
+    }
+
+    hasActiveAuditFilters(): boolean {
+        return this.auditSearchTerm.trim().length > 0
+            || this.auditActionFilter.length > 0
+            || (this.auditStartDate.length > 0 && this.auditEndDate.length > 0);
+    }
+
+    getActionBadgeClass(action: string): string {
+        const u = action.toUpperCase();
+        if (u.includes('CREA') || u === 'CREATE_RECIPE') return 'badge-create';
+        if (u.includes('MODIFIC') || u === 'UPDATE_RECIPE') return 'badge-update';
+        if (u.includes('ELIMIN') || u === 'DELETE_RECIPE') return 'badge-delete';
+        return 'badge-default';
+    }
+
+    translateAction(action: string): string {
+        const u = action.toUpperCase();
+        if (u.includes('CREA') || u === 'CREATE_RECIPE') return 'Crear';
+        if (u.includes('MODIFIC') || u === 'UPDATE_RECIPE') return 'Actualizar';
+        if (u.includes('ELIMIN') || u === 'DELETE_RECIPE') return 'Eliminar';
+        return action;
+    }
+
+    loadUsersForAudits(): void {
+        this.userService.getAll(0, 1000).subscribe({
+            next: (users) => {
+                this.userMap = {};
+                users.forEach(u => this.userMap[u.id] = u.name);
+                this.cdr.markForCheck();
+            },
+            error: () => { /* silently fail, will show ID fallback */ }
+        });
+    }
+
+    getUserName(userId: number): string {
+        return this.userMap[userId] || `Usuario #${userId}`;
+    }
+
+    getRecipeName(recipeId: number): string {
+        const recipe = this.recipes.find(r => r.id === recipeId);
+        return recipe ? recipe.name : `Receta #${recipeId}`;
+    }
+
+    openAuditDetail(audit: RecipeAudit): void {
+        this.selectedAudit = audit;
+        this.showAuditDetailModal = true;
+        this.cdr.markForCheck();
+    }
+
+    closeAuditDetail(): void {
+        this.showAuditDetailModal = false;
+        this.selectedAudit = null;
+        this.cdr.markForCheck();
+    }
+
+    onAuditOverlayClick(event: MouseEvent): void {
+        if ((event.target as HTMLElement).classList.contains('audit-modal-overlay')) {
+            this.closeAuditDetail();
+        }
+    }
+
+    formatDate(dateStr: string): string {
+        const d = new Date(dateStr);
+        return d.toLocaleString('es-ES', {
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+    }
+
+    // ── Detail ──
+
+    openDetailModal(recipe: Recipe): void {
+        this.selectedRecipe = recipe;
+        this.showDetailModal = true;
+        this.cdr.markForCheck();
+    }
+
+    closeDetailModal(): void {
+        this.showDetailModal = false;
+        this.selectedRecipe = null;
+        this.cdr.markForCheck();
+    }
+
+    // ── Create ──
+
+    openCreateModal(): void {
+        this.showCreateModal = true;
+        this.cdr.markForCheck();
+    }
+
+    closeCreateModal(): void {
+        this.showCreateModal = false;
+        this.cdr.markForCheck();
+    }
+
+    onCreateRecipe(recipeRequest: RecipeRequest): void {
+        this.recipeService.create(recipeRequest).subscribe({
+            next: (recipe) => {
+                this.messageService.showSuccess(`Receta "${recipe.name}" creada con éxito`);
+                this.closeCreateModal();
+                this.loadRecipes();
+            },
+            error: (err) => {
+                const msg = err.error?.message || err.error || 'Error al crear la receta';
+                this.messageService.showError(msg);
+            }
+        });
+    }
+
+    // ── Edit ──
+
+    openEditModal(recipe: Recipe): void {
+        this.selectedRecipe = recipe;
+        this.showEditModal = true;
+        this.cdr.markForCheck();
+    }
+
+    closeEditModal(): void {
+        this.showEditModal = false;
+        this.selectedRecipe = null;
+        this.cdr.markForCheck();
+    }
+
+    onSaveRecipe(recipeRequest: RecipeRequest): void {
+        if (!this.selectedRecipe) return;
+
+        this.recipeService.update(this.selectedRecipe.id, recipeRequest).subscribe({
+            next: (recipe) => {
+                this.messageService.showSuccess(`Receta "${recipe.name}" actualizada con éxito`);
+                this.closeEditModal();
+                this.loadRecipes();
+            },
+            error: (err) => {
+                const msg = err.error?.message || err.error || 'Error al actualizar la receta';
+                this.messageService.showError(msg);
+            }
+        });
+    }
+
+    // ── Delete ──
+
+    async deleteRecipe(recipe: Recipe): Promise<void> {
+        const confirmed = await this.messageService.confirm(
+            '¿Eliminar receta?',
+            `¿Estás seguro de que quieres eliminar "${recipe.name}"? Esta acción no se puede deshacer.`
+        );
+
+        if (!confirmed) return;
+
+        this.recipeService.delete(recipe.id).subscribe({
+            next: () => {
+                this.messageService.showSuccess(`Receta "${recipe.name}" eliminada correctamente`);
+                this.loadRecipes();
+            },
+            error: (err) => {
+                const msg = err.error?.message || err.error || 'Error al eliminar la receta';
+                this.messageService.showError(msg);
+            }
+        });
+    }
+
+    // ── Cook ──
+
+    onCookRecipe(event: { quantity: number; details: string }): void {
+        if (!this.selectedRecipe) return;
+
+        this.recipeService.cook({
+            recipeId: this.selectedRecipe.id,
+            quantity: event.quantity,
+            details: event.details
+        }).subscribe({
+            next: (recipe) => {
+                this.messageService.showSuccess(`¡"${recipe.name}" cocinada con éxito!`);
+                this.closeDetailModal();
+                this.loadRecipes();
+            },
+            error: (err) => {
+                const msg = err.error?.message || err.error || 'Error al cocinar la receta';
+                this.messageService.showError(msg);
+            }
+        });
+    }
+
+    // ── PDF ──
+
+    downloadPdf(recipe: Recipe): void {
+        this.recipeService.getPdf(recipe.id).subscribe({
+            next: (blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `receta-${recipe.name.replace(/\s+/g, '-').toLowerCase()}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+                this.messageService.showSuccess('PDF descargado correctamente');
+            },
+            error: () => {
+                this.messageService.showError('Error al generar el PDF');
+            }
+        });
+    }
+
+    // ── Helpers ──
+
+    hasAllergens(recipe: Recipe): boolean {
+        return recipe.allergens && recipe.allergens.length > 0;
+    }
+}
