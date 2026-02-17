@@ -14,7 +14,8 @@ import { Recipe } from '../../../../shared/models/recipe.model';
 export class RecipeDetailModalComponent {
   @Input({ required: true }) recipe!: Recipe;
   @Input() canEdit = false;
-  
+  @Input() isAdmin = false;
+
   @Output() close = new EventEmitter<void>();
   @Output() print = new EventEmitter<void>();
   @Output() edit = new EventEmitter<void>();

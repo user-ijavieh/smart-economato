@@ -1,4 +1,4 @@
-<div class="modal-overlay" (click)="onOverlayClick($event)">
+<div class="modal-overlay" [class.admin-theme]="isAdmin" (click)="onOverlayClick($event)">
   <div class="modal-container modal-create" (click)="closeAllDropdowns()">
     <div class="modal-header">
       <h2>Crear Nueva Receta</h2>
@@ -10,144 +10,107 @@
         <!-- Nombre -->
         <div class="form-group">
           <label for="recipe-name">Nombre <span class="required">*</span></label>
-          <input
-            id="recipe-name"
-            type="text"
-            [(ngModel)]="createForm.name"
-            name="name"
-            placeholder="Nombre de la receta"
-            required
-          />
+          <input id="recipe-name" type="text" [(ngModel)]="createForm.name" name="name"
+            placeholder="Nombre de la receta" required />
         </div>
 
         <!-- Elaboración -->
         <div class="form-group">
           <label for="recipe-elaboration">Elaboración</label>
-          <textarea
-            id="recipe-elaboration"
-            [(ngModel)]="createForm.elaboration"
-            name="elaboration"
-            rows="5"
-            placeholder="Escribe los pasos de elaboración (uno por línea)"
-          ></textarea>
+          <textarea id="recipe-elaboration" [(ngModel)]="createForm.elaboration" name="elaboration" rows="5"
+            placeholder="Escribe los pasos de elaboración (uno por línea)"></textarea>
           <small>Cada línea será un paso de elaboración</small>
         </div>
 
         <!-- Presentación -->
         <div class="form-group">
           <label for="recipe-presentation">Presentación</label>
-          <textarea
-            id="recipe-presentation"
-            [(ngModel)]="createForm.presentation"
-            name="presentation"
-            rows="3"
-            placeholder="Describe cómo presentar el plato"
-          ></textarea>
+          <textarea id="recipe-presentation" [(ngModel)]="createForm.presentation" name="presentation" rows="3"
+            placeholder="Describe cómo presentar el plato"></textarea>
         </div>
 
         <!-- Componentes -->
         <div class="form-group">
           <label>Componentes <span class="required">*</span></label>
-          
+
           @if (loadingProducts) {
-            <p class="loading-text">Cargando productos...</p>
+          <p class="loading-text">Cargando productos...</p>
           }
 
           @if (!loadingProducts) {
-            <div class="components-list">
-              @for (component of formComponents; track $index; let i = $index) {
-                <div class="component-row">
-                  <div class="product-select-wrapper" (click)="$event.stopPropagation()">
-                    <input
-                      type="text"
-                      [(ngModel)]="component.searchText"
-                      (focus)="toggleProductDropdown(i)"
-                      (ngModelChange)="onProductSearch($event, i)"
-                      [name]="'product-search-' + i"
-                      class="product-select"
-                      placeholder="Buscar producto..."
-                      autocomplete="off"
-                    />
-                    
-                    @if (showProductDropdown[i]) {
-                      <div class="product-dropdown" (scroll)="onProductDropdownScroll($event, i)">
-                        @if (productSearchResults.length > 0) {
-                          @for (product of productSearchResults; track product.id) {
-                            <div 
-                              class="product-option"
-                              [class.selected]="component.productId === product.id"
-                              (click)="selectProduct(product.id, i)"
-                            >
-                              {{ product.name }}
-                            </div>
-                          }
-                        } @else {
-                          <div class="product-option disabled">No se encontraron productos</div>
-                        }
-                        
-                        @if (loadingMoreProducts) {
-                          <div class="product-option loading">
-                            <span>Cargando más productos...</span>
-                          </div>
-                        }
-                      </div>
-                    }
+          <div class="components-list">
+            @for (component of formComponents; track $index; let i = $index) {
+            <div class="component-row">
+              <div class="product-select-wrapper" (click)="$event.stopPropagation()">
+                <input type="text" [(ngModel)]="component.searchText" (focus)="toggleProductDropdown(i)"
+                  (ngModelChange)="onProductSearch($event, i)" [name]="'product-search-' + i" class="product-select"
+                  placeholder="Buscar producto..." autocomplete="off" />
+
+                @if (showProductDropdown[i]) {
+                <div class="product-dropdown" (scroll)="onProductDropdownScroll($event, i)">
+                  @if (productSearchResults.length > 0) {
+                  @for (product of productSearchResults; track product.id) {
+                  <div class="product-option" [class.selected]="component.productId === product.id"
+                    (click)="selectProduct(product.id, i)">
+                    {{ product.name }}
                   </div>
+                  }
+                  } @else {
+                  <div class="product-option disabled">No se encontraron productos</div>
+                  }
 
-                  <input
-                    type="number"
-                    [(ngModel)]="component.quantity"
-                    [name]="'quantity-' + i"
-                    placeholder="Cantidad"
-                    min="0"
-                    step="0.01"
-                    class="quantity-input"
-                  />
-
-                  <button
-                    type="button"
-                    class="btn-remove"
-                    (click)="removeComponent(i)"
-                    title="Eliminar componente"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                  </button>
+                  @if (loadingMoreProducts) {
+                  <div class="product-option loading">
+                    <span>Cargando más productos...</span>
+                  </div>
+                  }
                 </div>
-              }
-            </div>
+                }
+              </div>
 
-            <button
-              type="button"
-              class="btn-add-component"
-              (click)="addComponent()"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Agregar Componente
-            </button>
+              <input type="number" [(ngModel)]="component.quantity" [name]="'quantity-' + i" placeholder="Cantidad"
+                min="0" step="0.01" class="quantity-input" />
+
+              <button type="button" class="btn-remove" (click)="removeComponent(i)" title="Eliminar componente">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+            }
+          </div>
+
+          <button type="button" class="btn-add-component" (click)="addComponent()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Agregar Componente
+          </button>
           }
         </div>
 
         <!-- Alérgenos -->
         <div class="form-group">
           <label>Alérgenos</label>
-          
+
           @if (loadingAllergens) {
-            <p class="loading-text">Cargando alérgenos...</p>
+          <p class="loading-text">Cargando alérgenos...</p>
           }
 
           @if (!loadingAllergens) {
-            <div class="allergens-grid">
-              @for (allergen of availableAllergens; track allergen.id) {
-                <label class="allergen-checkbox">
-                  <input
-                    type="checkbox"
-                    [checked]="isAllergenSelected(allergen.id)"
-                    (change)="toggleAllergen(allergen.id)"
-                  />
-                  <span>{{ allergen.name }}</span>
-                </label>
-              }
-            </div>
+          <div class="allergens-grid">
+            @for (allergen of availableAllergens; track allergen.id) {
+            <label class="allergen-checkbox">
+              <input type="checkbox" [checked]="isAllergenSelected(allergen.id)"
+                (change)="toggleAllergen(allergen.id)" />
+              <span>{{ allergen.name }}</span>
+            </label>
+            }
+          </div>
           }
         </div>
       </form>

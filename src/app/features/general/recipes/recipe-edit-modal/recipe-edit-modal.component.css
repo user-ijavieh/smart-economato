@@ -191,6 +191,7 @@
     opacity: 0;
     transform: translateY(-8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -405,6 +406,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -415,6 +417,7 @@
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -466,4 +469,45 @@
   .product-search-input {
     font-size: 14px;
   }
+}
+
+/** ===== ADMIN THEME OVERRIDES ===== */
+
+.admin-theme .modal-header {
+  background: linear-gradient(135deg, rgba(30, 40, 80, 0.95) 0%, rgba(50, 60, 120, 0.95) 100%);
+}
+
+.admin-theme .form-group input[type="text"]:focus,
+.admin-theme .form-group textarea:focus {
+  border-color: rgba(30, 40, 80, 0.6);
+}
+
+.admin-theme .product-select:focus {
+  border-color: rgba(30, 40, 80, 0.6);
+  box-shadow: 0 0 0 3px rgba(30, 40, 80, 0.1);
+}
+
+.admin-theme .product-option.selected {
+  background: rgba(30, 40, 80, 0.06);
+  color: rgba(30, 40, 80, 0.9);
+}
+
+.admin-theme .product-option.loading::before {
+  border-top-color: rgba(30, 40, 80, 0.8);
+}
+
+.admin-theme .btn-add-component:hover {
+  border-color: rgba(30, 40, 80, 0.6);
+  color: rgba(30, 40, 80, 0.8);
+  background: rgba(30, 40, 80, 0.04);
+}
+
+.admin-theme .btn-save {
+  background: rgba(30, 40, 80, 0.95);
+  box-shadow: 0 2px 8px rgba(30, 40, 80, 0.3);
+}
+
+.admin-theme .btn-save:hover {
+  background: rgba(50, 60, 120, 0.95);
+  box-shadow: 0 4px 12px rgba(30, 40, 80, 0.4);
 }
