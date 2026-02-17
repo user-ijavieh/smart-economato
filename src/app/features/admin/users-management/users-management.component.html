@@ -114,7 +114,8 @@
 
 <!-- Modal de creación/edición -->
 @if (showFormModal) {
-<app-user-form-modal [user]="selectedUser" (save)="onSaveUser($event)" (close)="closeFormModal()"></app-user-form-modal>
+<app-user-form-modal [user]="selectedUser" [existingEmails]="getExistingEmails()" (save)="onSaveUser($event)"
+    (close)="closeFormModal()"></app-user-form-modal>
 }
 
 <!-- Confirm Dialog -->
