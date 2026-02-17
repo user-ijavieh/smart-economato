@@ -1,0 +1,513 @@
+/** ===== MODAL OVERLAY ===== */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-create {
+  max-width: 800px;
+  width: 90%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+/** ===== MODAL HEADER ===== */
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 30px;
+  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #b84b44 0%, #a03d37 100%);
+  border-radius: 16px 16px 0 0;
+  flex-shrink: 0;
+}
+
+.modal-header h2 {
+  font-size: 1.5rem;
+  color: white;
+  margin: 0;
+  font-weight: 700;
+}
+
+.close-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  line-height: 1;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+/** ===== MODAL BODY ===== */
+
+.modal-body {
+  padding: 30px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.create-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.form-group .required {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+  padding: 10px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #b84b44;
+}
+
+.form-group small {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.loading-text {
+  color: #6b7280;
+  font-style: italic;
+}
+
+/** ===== COMPONENTES ===== */
+
+.components-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.component-row {
+  display: grid;
+  grid-template-columns: 1fr auto 40px;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.product-select-wrapper {
+  position: relative;
+  min-width: 0;
+}
+
+.product-select,
+.quantity-input {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.product-select {
+  cursor: pointer;
+  background: white;
+}
+
+.product-select:focus {
+  outline: none;
+  border-color: #b84b44;
+  box-shadow: 0 0 0 3px rgba(184, 75, 68, 0.1);
+}
+
+.product-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 240px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: dropdownFadeIn 0.2s ease;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.product-dropdown::-webkit-scrollbar {
+  width: 8px;
+}
+
+.product-dropdown::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.product-dropdown::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+.product-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.product-option {
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #374151;
+  transition: background-color 0.15s;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.product-option:last-child {
+  border-bottom: none;
+}
+
+.product-option:hover:not(.disabled):not(.loading) {
+  background: #f9fafb;
+}
+
+.product-option.selected {
+  background: #fef2f2;
+  color: #b84b44;
+  font-weight: 600;
+}
+
+.product-option.disabled {
+  color: #9ca3af;
+  cursor: default;
+  font-style: italic;
+  text-align: center;
+}
+
+.product-option.loading {
+  color: #6b7280;
+  cursor: default;
+  text-align: center;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.product-option.loading::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border: 2px solid #e5e7eb;
+  border-top-color: #b84b44;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.quantity-input {
+  width: 120px;
+}
+
+.btn-remove {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-remove:hover {
+  background: #fecaca;
+  transform: scale(1.05);
+}
+
+.btn-add-component {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: 2px dashed #d1d5db;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-add-component:hover {
+  border-color: #b84b44;
+  color: #b84b44;
+  background: #fef2f2;
+}
+
+/** ===== ALÉRGENOS ===== */
+
+.allergens-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.allergen-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.allergen-checkbox:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.allergen-checkbox input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.allergen-checkbox span {
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+/** ===== MODAL FOOTER ===== */
+
+.modal-footer {
+  padding: 20px 30px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+  border-radius: 0 0 16px 16px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.btn-cancel {
+  padding: 10px 24px;
+  border: 2px solid #d1d5db;
+  background: white;
+  color: #6b7280;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  border-color: #9ca3af;
+  color: #374151;
+  background: #f9fafb;
+}
+
+.btn-save {
+  padding: 10px 24px;
+  border: none;
+  background: #b84b44;
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(184, 75, 68, 0.3);
+}
+
+.btn-save:hover {
+  background: #a03d37;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(184, 75, 68, 0.4);
+}
+
+/** ===== ANIMATIONS ===== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/** ===== RESPONSIVE ===== */
+
+@media (max-width: 768px) {
+  .modal-create {
+    width: 95%;
+  }
+
+  .modal-header {
+    padding: 18px 20px;
+  }
+
+  .modal-body {
+    padding: 20px;
+  }
+
+  .modal-footer {
+    padding: 14px 20px;
+  }
+
+  .component-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .quantity-input {
+    width: 100%;
+  }
+
+  .allergens-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Product dropdown adjustments for mobile */
+  .product-dropdown {
+    max-height: 200px;
+  }
+
+  .product-option {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  .product-search-input {
+    font-size: 14px;
+  }
+}
+
+/** ===== ADMIN THEME OVERRIDES ===== */
+
+.admin-theme .modal-header {
+  background: linear-gradient(135deg, rgba(30, 40, 80, 0.95) 0%, rgba(50, 60, 120, 0.95) 100%);
+}
+
+.admin-theme .form-group input[type="text"]:focus,
+.admin-theme .form-group textarea:focus {
+  border-color: rgba(30, 40, 80, 0.6);
+}
+
+.admin-theme .product-select:focus {
+  border-color: rgba(30, 40, 80, 0.6);
+  box-shadow: 0 0 0 3px rgba(30, 40, 80, 0.1);
+}
+
+.admin-theme .product-option.selected {
+  background: rgba(30, 40, 80, 0.06);
+  color: rgba(30, 40, 80, 0.9);
+}
+
+.admin-theme .product-option.loading::before {
+  border-top-color: rgba(30, 40, 80, 0.8);
+}
+
+.admin-theme .btn-add-component:hover {
+  border-color: rgba(30, 40, 80, 0.6);
+  color: rgba(30, 40, 80, 0.8);
+  background: rgba(30, 40, 80, 0.04);
+}
+
+.admin-theme .btn-save {
+  background: rgba(30, 40, 80, 0.95);
+  box-shadow: 0 2px 8px rgba(30, 40, 80, 0.3);
+}
+
+.admin-theme .btn-save:hover {
+  background: rgba(50, 60, 120, 0.95);
+  box-shadow: 0 4px 12px rgba(30, 40, 80, 0.4);
+}

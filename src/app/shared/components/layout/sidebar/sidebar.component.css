@@ -17,6 +17,17 @@
   white-space: nowrap;
 }
 
+/** ===== MODO ADMIN ===== */
+
+#sidebar.admin-mode {
+  background: linear-gradient(180deg, rgba(30, 40, 80, 0.95) 0%, rgba(20, 30, 60, 0.95) 100%);
+}
+
+#sidebar.admin-mode .user-avatar {
+  background: linear-gradient(135deg, rgba(100, 140, 255, 0.4), rgba(80, 120, 200, 0.4));
+  border-color: rgba(100, 140, 255, 0.5);
+}
+
 #sidebar.close {
   padding: 5px;
   width: 60px;
@@ -96,6 +107,12 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.user-role {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
 }
 
 #sidebar.close .user-details {
@@ -188,6 +205,7 @@
 /** ===== RESPONSIVE ===== */
 
 @media (max-width: 800px) {
+
   #sidebar,
   #sidebar.close {
     height: 60px;
@@ -200,7 +218,7 @@
     bottom: 0;
   }
 
-  #sidebar > ul {
+  #sidebar>ul {
     padding: 0;
     display: grid;
     grid-auto-columns: 60px;
