@@ -25,7 +25,7 @@
             <div class="credentials-box">
                 <div class="credential-row">
                     <span class="credential-label">Usuario</span>
-                    <span class="credential-value">{{ generatedEmail }}</span>
+                    <span class="credential-value">{{ generatedUser }}</span>
                 </div>
                 <div class="credential-row">
                     <span class="credential-label">Contraseña</span>
@@ -67,17 +67,17 @@
                 }
             </div>
 
-            <!-- Email and password only in edit mode -->
+            <!-- User and password only in edit mode -->
             @if (isEditMode) {
             <div class="form-group">
-                <label for="email">Email</label>
-                <input id="email" type="email" formControlName="email" placeholder="email@ejemplo.com"
-                    [class.input-error]="userForm.get('email')?.invalid && userForm.get('email')?.touched" />
-                @if (userForm.get('email')?.hasError('required') && userForm.get('email')?.touched) {
-                <p class="field-error">El email es requerido</p>
+                <label for="user">Usuario</label>
+                <input id="user" type="text" formControlName="user" placeholder="nombre_usuario"
+                    [class.input-error]="userForm.get('user')?.invalid && userForm.get('user')?.touched" />
+                @if (userForm.get('user')?.hasError('required') && userForm.get('user')?.touched) {
+                <p class="field-error">El usuario es requerido</p>
                 }
-                @if (userForm.get('email')?.hasError('email') && userForm.get('email')?.touched) {
-                <p class="field-error">Introduce un email válido</p>
+                @if (userForm.get('user')?.hasError('minlength') && userForm.get('user')?.touched) {
+                <p class="field-error">El usuario debe tener al menos 3 caracteres</p>
                 }
             </div>
 

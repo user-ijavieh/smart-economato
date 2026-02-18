@@ -68,7 +68,7 @@ export class UsersManagementComponent implements OnInit {
             const term = this.searchTerm.toLowerCase();
             this.filteredUsers = this.users.filter(u =>
                 u.name.toLowerCase().includes(term) ||
-                u.email.toLowerCase().includes(term)
+                u.user.toLowerCase().includes(term)
             );
         }
     }
@@ -113,7 +113,7 @@ export class UsersManagementComponent implements OnInit {
             // Edit mode
             const request: UserRequest = {
                 name: data.name,
-                email: data.email,
+                user: data.user,
                 password: data.password || '',
                 role: data.role
             };
@@ -132,14 +132,13 @@ export class UsersManagementComponent implements OnInit {
             // Create mode
             const request: UserRequest = {
                 name: data.name,
-                email: data.email,
+                user: data.user,
                 password: data.password,
                 role: data.role
             };
             this.userService.create(request).subscribe({
                 next: () => {
                     this.messageService.showSuccess('Usuario creado correctamente');
-                    this.closeFormModal();
                     this.loadUsers();
                 },
                 error: (err) => {
@@ -183,7 +182,7 @@ export class UsersManagementComponent implements OnInit {
         return this.filteredUsers.filter(u => u.role === role).length;
     }
 
-    getExistingEmails(): string[] {
-        return this.users.map(u => u.email);
+    getExistingUsers(): string[] {
+        return this.users.map(u => u.user);
     }
 }
