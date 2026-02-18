@@ -13,7 +13,7 @@ import { generateUsername, generatePassword } from '../../../../core/utils/crede
 })
 export class UserFormModalComponent implements OnInit {
     @Input() user: User | null = null;
-    @Input() existingEmails: string[] = [];
+    @Input() existingUsers: string[] = [];
     @Output() save = new EventEmitter<any>();
     @Output() close = new EventEmitter<void>();
 
@@ -21,7 +21,7 @@ export class UserFormModalComponent implements OnInit {
     roles = ['ADMIN', 'CHEF', 'USER'];
 
     // Auto-generated credentials (create mode only)
-    generatedEmail = '';
+    generatedUser = '';
     generatedPassword = '';
     showCredentials = false;
     credentialsCopied = false;
@@ -38,7 +38,7 @@ export class UserFormModalComponent implements OnInit {
         if (this.isEditMode) {
             this.userForm = new FormGroup({
                 name: new FormControl(this.user?.name || '', [Validators.required, Validators.minLength(3)]),
-                email: new FormControl(this.user?.email || '', [Validators.required, Validators.email]),
+                user: new FormControl(this.user?.user || '', [Validators.required, Validators.minLength(3)]),
                 password: new FormControl(''),
                 role: new FormControl(this.user?.role || 'USER', [Validators.required])
             });
@@ -64,13 +64,13 @@ export class UserFormModalComponent implements OnInit {
             }
         } else {
             // Generate unique credentials
-            this.generatedEmail = this.generateUniqueEmail();
+            this.generatedUser = this.generateUniqueUser();
             this.generatedPassword = generatePassword();
 
             const formValue = this.userForm.value;
             this.save.emit({
                 name: formValue.name,
-                email: this.generatedEmail,
+                user: this.generatedUser,
                 password: this.generatedPassword,
                 role: formValue.role
             });
@@ -79,20 +79,20 @@ export class UserFormModalComponent implements OnInit {
         }
     }
 
-    private generateUniqueEmail(): string {
-        let email: string;
+    private generateUniqueUser(): string {
+        let username: string;
         let attempts = 0;
 
         do {
-            email = generateUsername();
+            username = generateUsername();
             attempts++;
-        } while (this.existingEmails.includes(email) && attempts < 100);
+        } while (this.existingUsers.includes(username) && attempts < 100);
 
-        return email;
+        return username;
     }
 
     copyCredentials(): void {
-        const text = `Usuario: ${this.generatedEmail}\nContraseña: ${this.generatedPassword}`;
+        const text = `Usuario: ${this.generatedUser}\nContraseña: ${this.generatedPassword}`;
         navigator.clipboard.writeText(text).then(() => {
             this.credentialsCopied = true;
             setTimeout(() => this.credentialsCopied = false, 2000);
