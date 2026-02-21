@@ -1,7 +1,8 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { User } from '../../../../shared/models/user.model';
+import { generateUsername, generatePassword } from '../../../../core/utils/credentials-generator';
 
 @Component({
     selector: 'app-user-form-modal',
@@ -10,13 +11,20 @@ import { User } from '../../../../shared/models/user.model';
     templateUrl: './user-form-modal.component.html',
     styleUrl: './user-form-modal.component.css'
 })
-export class UserFormModalComponent {
+export class UserFormModalComponent implements OnInit {
     @Input() user: User | null = null;
+    @Input() existingUsers: string[] = [];
     @Output() save = new EventEmitter<any>();
     @Output() close = new EventEmitter<void>();
 
     userForm!: FormGroup;
     roles = ['ADMIN', 'CHEF', 'USER'];
+
+    // Auto-generated credentials (create mode only)
+    generatedUser = '';
+    generatedPassword = '';
+    showCredentials = false;
+    credentialsCopied = false;
 
     get isEditMode(): boolean {
         return this.user !== null;
@@ -27,25 +35,68 @@ export class UserFormModalComponent {
     }
 
     ngOnInit(): void {
-        this.userForm = new FormGroup({
-            name: new FormControl(this.user?.name || '', [Validators.required, Validators.minLength(3)]),
-            email: new FormControl(this.user?.email || '', [Validators.required, Validators.email]),
-            password: new FormControl('', this.isEditMode ? [] : [Validators.required, Validators.minLength(4)]),
-            role: new FormControl(this.user?.role || 'USER', [Validators.required])
-        });
+        if (this.isEditMode) {
+            this.userForm = new FormGroup({
+                name: new FormControl(this.user?.name || '', [Validators.required, Validators.minLength(3)]),
+                user: new FormControl(this.user?.user || '', [Validators.required, Validators.minLength(3)]),
+                password: new FormControl(''),
+                role: new FormControl(this.user?.role || 'USER', [Validators.required])
+            });
+        } else {
+            // Create mode: only name and role
+            this.userForm = new FormGroup({
+                name: new FormControl('', [Validators.required, Validators.minLength(3)]),
+                role: new FormControl('USER', [Validators.required])
+            });
+        }
     }
 
     onSubmit(): void {
         if (this.userForm.invalid) return;
 
-        const formValue = this.userForm.value;
-
-        if (this.isEditMode && !formValue.password) {
-            const { password, ...dataWithoutPassword } = formValue;
-            this.save.emit(dataWithoutPassword);
+        if (this.isEditMode) {
+            const formValue = this.userForm.value;
+            if (!formValue.password) {
+                const { password, ...dataWithoutPassword } = formValue;
+                this.save.emit(dataWithoutPassword);
+            } else {
+                this.save.emit(formValue);
+            }
         } else {
-            this.save.emit(formValue);
+            // Generate unique credentials
+            this.generatedUser = this.generateUniqueUser();
+            this.generatedPassword = generatePassword();
+
+            const formValue = this.userForm.value;
+            this.save.emit({
+                name: formValue.name,
+                user: this.generatedUser,
+                password: this.generatedPassword,
+                role: formValue.role
+            });
+
+            this.showCredentials = true;
         }
+    }
+
+    private generateUniqueUser(): string {
+        let username: string;
+        let attempts = 0;
+
+        do {
+            username = generateUsername();
+            attempts++;
+        } while (this.existingUsers.includes(username) && attempts < 100);
+
+        return username;
+    }
+
+    copyCredentials(): void {
+        const text = `Usuario: ${this.generatedUser}\nContraseña: ${this.generatedPassword}`;
+        navigator.clipboard.writeText(text).then(() => {
+            this.credentialsCopied = true;
+            setTimeout(() => this.credentialsCopied = false, 2000);
+        });
     }
 
     onClose(): void {

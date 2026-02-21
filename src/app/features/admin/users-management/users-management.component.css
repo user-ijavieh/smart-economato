@@ -213,6 +213,7 @@ table {
     border-collapse: collapse;
     font-family: var(--font-body);
     font-weight: var(--font-body-weight);
+    table-layout: fixed;
 }
 
 th,
@@ -221,6 +222,27 @@ td {
     padding: 16px;
     text-align: left;
     font-size: 0.95rem;
+    vertical-align: middle;
+}
+
+th:nth-child(1),
+td:nth-child(1) {
+    width: 30%;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+    width: 30%;
+}
+
+th:nth-child(3),
+td:nth-child(3) {
+    width: 20%;
+}
+
+th:nth-child(4),
+td:nth-child(4) {
+    width: 20%;
 }
 
 th {

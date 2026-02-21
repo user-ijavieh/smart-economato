@@ -4,7 +4,7 @@
 
 <div class="contenedor-principal">
     <div class="controles">
-        <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por nombre o email..."
+        <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por nombre o usuario..."
             (ngModelChange)="onSearch()" />
         <select [(ngModel)]="roleFilter" (ngModelChange)="onRoleFilterChange()" class="role-select">
             <option value="">Todos los roles</option>
@@ -49,7 +49,7 @@
             <thead>
                 <tr>
                     <th>Nombre</th>
-                    <th>Email</th>
+                    <th>Usuario</th>
                     <th>Rol</th>
                     <th>Acciones</th>
                 </tr>
@@ -71,7 +71,7 @@
                         <div class="user-avatar-small">{{ user.name.charAt(0).toUpperCase() }}</div>
                         {{ user.name }}
                     </td>
-                    <td>{{ user.email }}</td>
+                    <td>{{ user.user }}</td>
                     <td>
                         <span class="role-badge" [ngClass]="getRoleBadgeClass(user.role)">
                             {{ user.role }}
@@ -114,7 +114,8 @@
 
 <!-- Modal de creación/edición -->
 @if (showFormModal) {
-<app-user-form-modal [user]="selectedUser" (save)="onSaveUser($event)" (close)="closeFormModal()"></app-user-form-modal>
+<app-user-form-modal [user]="selectedUser" [existingUsers]="getExistingUsers()" (save)="onSaveUser($event)"
+    (close)="closeFormModal()"></app-user-form-modal>
 }
 
 <!-- Confirm Dialog -->
