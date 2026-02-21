@@ -1,13 +1,13 @@
 export interface User {
   id: number;
   name: string;
-  email: string;
+  user: string;
   role: 'ADMIN' | 'CHEF' | 'USER';
 }
 
 export interface UserRequest {
   name: string;
   password: string;
-  email: string;
+  user: string;
   role: string;
 }
