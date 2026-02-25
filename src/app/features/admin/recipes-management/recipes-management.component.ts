@@ -439,4 +439,117 @@ export class RecipesManagementComponent implements OnInit {
     hasAllergens(recipe: Recipe): boolean {
         return recipe.allergens && recipe.allergens.length > 0;
     }
+
+    // ── Diff Helpers ──
+
+    get parsedPreviousState(): any | null {
+        if (!this.selectedAudit?.previousState) return null;
+        try { return JSON.parse(this.selectedAudit.previousState); }
+        catch { return null; }
+    }
+
+    get parsedNewState(): any | null {
+        if (!this.selectedAudit?.newState) return null;
+        try { return JSON.parse(this.selectedAudit.newState); }
+        catch { return null; }
+    }
+
+    get hasDiffData(): boolean {
+        return this.parsedPreviousState !== null && this.parsedNewState !== null;
+    }
+
+    getDiffFields(): { label: string; prev: string; next: string; changed: boolean }[] {
+        const prev = this.parsedPreviousState;
+        const next = this.parsedNewState;
+        if (!prev || !next) return [];
+
+        const fields: { label: string; prev: string; next: string; changed: boolean }[] = [];
+
+        // Nombre
+        fields.push({
+            label: 'Nombre',
+            prev: prev.nombre ?? '',
+            next: next.nombre ?? '',
+            changed: prev.nombre !== next.nombre
+        });
+
+        // Elaboración
+        fields.push({
+            label: 'Elaboración',
+            prev: prev.elaboracion ?? '',
+            next: next.elaboracion ?? '',
+            changed: prev.elaboracion !== next.elaboracion
+        });
+
+        // Presentación
+        fields.push({
+            label: 'Presentación',
+            prev: prev.presentacion ?? '',
+            next: next.presentacion ?? '',
+            changed: prev.presentacion !== next.presentacion
+        });
+
+        // Coste Total
+        const prevCost = prev.costeTotal?.toFixed(2) ?? '0.00';
+        const nextCost = next.costeTotal?.toFixed(2) ?? '0.00';
+        fields.push({
+            label: 'Coste Total',
+            prev: prevCost + ' €',
+            next: nextCost + ' €',
+            changed: prevCost !== nextCost
+        });
+
+        // Alérgenos
+        const prevAllergens = (prev.alergenos ?? []).join(', ') || 'Ninguno';
+        const nextAllergens = (next.alergenos ?? []).join(', ') || 'Ninguno';
+        fields.push({
+            label: 'Alérgenos',
+            prev: prevAllergens,
+            next: nextAllergens,
+            changed: prevAllergens !== nextAllergens
+        });
+
+        return fields;
+    }
+
+    getComponentDiffs(): { nombre: string; prevCantidad: string; nextCantidad: string; status: 'added' | 'removed' | 'changed' | 'unchanged' }[] {
+        const prev = this.parsedPreviousState;
+        const next = this.parsedNewState;
+        if (!prev || !next) return [];
+
+        const prevComps: any[] = prev.componentes ?? [];
+        const nextComps: any[] = next.componentes ?? [];
+        const result: any[] = [];
+
+        // Map by productoId
+        const prevMap = new Map<number, any>();
+        const nextMap = new Map<number, any>();
+        prevComps.forEach(c => prevMap.set(c.productoId, c));
+        nextComps.forEach(c => nextMap.set(c.productoId, c));
+
+        // All product IDs
+        const allIds = new Set([...prevMap.keys(), ...nextMap.keys()]);
+
+        allIds.forEach(id => {
+            const p = prevMap.get(id);
+            const n = nextMap.get(id);
+            const name = n?.productoNombre ?? p?.productoNombre ?? `Producto #${id}`;
+
+            if (p && !n) {
+                result.push({ nombre: name, prevCantidad: p.cantidad.toString(), nextCantidad: '—', status: 'removed' });
+            } else if (!p && n) {
+                result.push({ nombre: name, prevCantidad: '—', nextCantidad: n.cantidad.toString(), status: 'added' });
+            } else if (p && n) {
+                const changed = p.cantidad !== n.cantidad;
+                result.push({
+                    nombre: name,
+                    prevCantidad: p.cantidad.toString(),
+                    nextCantidad: n.cantidad.toString(),
+                    status: changed ? 'changed' : 'unchanged'
+                });
+            }
+        });
+
+        return result;
+    }
 }
