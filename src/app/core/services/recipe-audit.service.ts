@@ -27,8 +27,8 @@ export class RecipeAuditService {
 
     getByDateRange(startDate: string, endDate: string): Observable<RecipeAudit[]> {
         const params = new HttpParams()
-            .set('startDate', startDate)
-            .set('endDate', endDate);
+            .set('start', startDate)
+            .set('end', endDate);
         return this.http.get<RecipeAudit[]>(`${this.url}/by-date-range`, { params });
     }
 }

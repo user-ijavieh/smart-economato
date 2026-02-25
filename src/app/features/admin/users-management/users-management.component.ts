@@ -32,63 +32,135 @@ export class UsersManagementComponent implements OnInit {
     searchTerm = '';
     roleFilter = '';
 
+    // Pagination state
+    currentPage = 0;
+    pageSize = 20;
+    totalPages = 0;
+    totalElements = 0;
+
     // Modal state
     showFormModal = false;
     selectedUser: User | null = null;
+
+    // View state
+    showingHidden = false;
 
     ngOnInit(): void {
         this.loadUsers();
     }
 
-    loadUsers(): void {
+    loadUsers(page: number = 0): void {
         this.loading = true;
-        const source$ = this.roleFilter
-            ? this.userService.getByRole(this.roleFilter)
-            : this.userService.getAll();
+        this.currentPage = page;
 
-        source$.subscribe({
-            next: (users) => {
-                this.users = users;
-                this.applySearchFilter();
-                this.loading = false;
-                this.cdr.detectChanges();
-            },
-            error: (err) => {
-                console.error('Error loading users:', err);
-                this.messageService.showError('Error al cargar los usuarios');
-                this.loading = false;
-            }
-        });
+        if (this.showingHidden) {
+            // Load hidden users
+            this.userService.getHidden(this.currentPage, this.pageSize).subscribe({
+                next: (pageData) => {
+                    this.users = pageData.content;
+                    this.totalElements = pageData.totalElements;
+                    this.totalPages = pageData.totalPages;
+                    this.applySearchFilter(true);
+                    this.loading = false;
+                    this.cdr.detectChanges();
+                },
+                error: (err) => {
+                    console.error('Error loading hidden users:', err);
+                    this.messageService.showError('Error al cargar los usuarios ocultos');
+                    this.loading = false;
+                }
+            });
+        } else if (this.roleFilter) {
+            // Role endpoint returns User[], we must do frontend pagination
+            this.userService.getByRole(this.roleFilter).subscribe({
+                next: (users) => {
+                    this.users = users;
+                    this.applySearchFilter();
+                    this.loading = false;
+                    this.cdr.detectChanges();
+                },
+                error: (err) => {
+                    console.error('Error loading users:', err);
+                    this.messageService.showError('Error al cargar los usuarios');
+                    this.loading = false;
+                }
+            });
+        } else {
+            // Normal getAll returns Page<User>
+            this.userService.getAll(this.currentPage, this.pageSize).subscribe({
+                next: (pageData) => {
+                    this.users = pageData.content;
+                    this.totalElements = pageData.totalElements;
+                    this.totalPages = pageData.totalPages;
+                    this.applySearchFilter(true); // Is pre-paginated
+                    this.loading = false;
+                    this.cdr.detectChanges();
+                },
+                error: (err) => {
+                    console.error('Error loading users:', err);
+                    this.messageService.showError('Error al cargar los usuarios');
+                    this.loading = false;
+                }
+            });
+        }
     }
 
-    applySearchFilter(): void {
-        if (!this.searchTerm.trim()) {
-            this.filteredUsers = [...this.users];
-        } else {
+    applySearchFilter(isPrePaginated: boolean = false): void {
+        let result = this.users;
+
+        // Apply search if present
+        if (this.searchTerm.trim()) {
             const term = this.searchTerm.toLowerCase();
-            this.filteredUsers = this.users.filter(u =>
+            result = result.filter(u =>
                 u.name.toLowerCase().includes(term) ||
                 u.user.toLowerCase().includes(term)
             );
         }
+
+        // Apply frontend pagination only if we have all records (roleFilter active)
+        if (!isPrePaginated && this.roleFilter) {
+            this.totalElements = result.length;
+            this.totalPages = Math.ceil(this.totalElements / this.pageSize);
+
+            const start = this.currentPage * this.pageSize;
+            const end = Math.min(start + this.pageSize, this.totalElements);
+            this.filteredUsers = result.slice(start, end);
+        } else {
+            this.filteredUsers = result;
+            // If we are searching pre-paginated list, elements might be less
+            if (this.searchTerm.trim()) {
+                this.totalElements = result.length;
+                this.totalPages = Math.ceil(this.totalElements / this.pageSize);
+            }
+        }
     }
 
     onSearch(): void {
-        this.applySearchFilter();
+        this.currentPage = 0;
+        this.loadUsers();
     }
 
     onRoleFilterChange(): void {
+        this.currentPage = 0;
         this.loadUsers();
     }
 
     clearFilters(): void {
         this.searchTerm = '';
         this.roleFilter = '';
+        this.currentPage = 0;
         this.loadUsers();
     }
 
     hasActiveFilters(): boolean {
         return this.searchTerm.trim().length > 0 || this.roleFilter.length > 0;
+    }
+
+    changePage(delta: number): void {
+        const newPage = this.currentPage + delta;
+        if (newPage >= 0 && newPage < this.totalPages) {
+            this.loadUsers(newPage);
+        }
     }
 
     // ── Modal operations ──
@@ -149,22 +221,29 @@ export class UsersManagementComponent implements OnInit {
         }
     }
 
-    async deleteUser(user: User): Promise<void> {
+    toggleView(): void {
+        this.showingHidden = !this.showingHidden;
+        this.clearFilters(); // This will reset page to 0 and call loadUsers()
+    }
+
+    async toggleUserVisibility(user: User): Promise<void> {
+        const actionText = this.showingHidden ? 'mostrar' : 'ocultar';
         const confirmed = await this.messageService.confirm(
-            '¿Eliminar usuario?',
-            `¿Estás seguro de que quieres eliminar a "${user.name}"? Esta acción no se puede deshacer.`
+            this.showingHidden ? '¿Mostrar usuario?' : '¿Ocultar usuario?',
+            `¿Estás seguro de que quieres ${actionText} a "${user.name}"?`
         );
 
         if (!confirmed) return;
 
-        this.userService.delete(user.id).subscribe({
+        this.userService.toggleHidden(user.id, !this.showingHidden).subscribe({
             next: () => {
-                this.messageService.showSuccess('Usuario eliminado correctamente');
-                this.loadUsers();
+                this.messageService.showSuccess(`Usuario ${this.showingHidden ? 'mostrado' : 'ocultado'} correctamente`);
+                this.loadUsers(this.currentPage);
             },
             error: (err) => {
-                console.error('Error deleting user:', err);
-                this.messageService.showError('Error al eliminar el usuario');
+                console.error(`Error ${actionText} usuario:`, err);
+                const errorMessage = err.error?.message || `Error al ${actionText} el usuario`;
+                this.messageService.showError(errorMessage);
             }
         });
     }

@@ -90,7 +90,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   }
 
   loadUsers(): void {
-    this.userService.getAll().subscribe({
+    this.userService.getAllUnpaged().subscribe({
       next: (users) => {
         this.users = users;
         this.cdr.markForCheck();
@@ -235,7 +235,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
     // Obtener el nombre del usuario seleccionado para el mensaje de confirmación
     const selectedUser = this.users.find(u => u.id === this.selectedUserId);
     const userName = selectedUser ? selectedUser.name : 'usuario seleccionado';
-    
+
     const totalItems = this.orderItems.length;
     const confirmed = await this.messageService.confirm(
       'Confirmar pedido',
