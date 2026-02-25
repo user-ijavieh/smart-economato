@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { firstLoginGuard } from './core/guards/first-login.guard';
 
 export const routes: Routes = [
   {
@@ -8,16 +9,22 @@ export const routes: Routes = [
       import('./features/general/login/login.component').then(m => m.LoginComponent)
   },
   {
+    path: 'change-password',
+    loadComponent: () =>
+      import('./features/general/change-password/change-password.component').then(m => m.ChangePasswordComponent),
+    canActivate: [authGuard, firstLoginGuard]
+  },
+  {
     path: 'welcome',
     loadComponent: () =>
       import('./features/general/welcome/welcome.component').then(m => m.WelcomeComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard, firstLoginGuard]
   },
   {
     path: '',
     loadComponent: () =>
       import('./shared/components/layout/layout.component').then(m => m.LayoutComponent),
-    canActivate: [authGuard],
+    canActivate: [authGuard, firstLoginGuard],
     children: [
       {
         path: 'admin-panel',
