@@ -82,6 +82,145 @@
   letter-spacing: 1px;
 }
 
+/** ===== DATOS MAESTROS ===== */
+
+.master-data-section {
+  width: 100%;
+  max-width: 620px;
+  animation: fadeInUp 0.7s ease-out;
+}
+
+.master-data-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  font-size: 0.78rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(30, 40, 80, 0.5);
+  margin-bottom: 14px;
+  padding: 0 4px;
+}
+
+.master-data-header svg {
+  color: rgba(30, 40, 80, 0.4);
+}
+
+.master-data-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.master-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: rgba(30, 40, 80, 0.55);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(100, 140, 255, 0.15);
+  border-radius: 16px;
+  padding: 20px 22px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  color: inherit;
+}
+
+a.master-card:hover {
+  background: rgba(30, 40, 80, 0.7);
+  border-color: rgba(100, 140, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+}
+
+.master-card--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: rgba(30, 40, 80, 0.3) !important;
+  border-color: rgba(100, 140, 255, 0.08) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.master-card--disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.master-card-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: white;
+}
+
+.master-card-icon--allergen {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.7), rgba(56, 142, 60, 0.8));
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.25);
+}
+
+.master-card-icon--audit {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.6), rgba(217, 119, 6, 0.7));
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+}
+
+.master-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.master-card-title {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  font-size: 1rem;
+  color: white;
+  letter-spacing: 0.3px;
+}
+
+.master-card-desc {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.master-card-arrow {
+  color: rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+a.master-card:hover .master-card-arrow {
+  color: rgba(255, 255, 255, 0.7);
+  transform: translateX(3px);
+}
+
+.master-card-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(245, 158, 11, 0.2);
+  color: rgba(245, 158, 11, 0.8);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  flex-shrink: 0;
+}
+
 /** ===== SCROLLBAR PERSONALIZADO ===== */
 
 ::-webkit-scrollbar {
@@ -127,6 +266,16 @@
 
   .welcome-subtitle {
     font-size: 0.95rem;
+  }
+
+  .master-data-section {
+    max-width: 100%;
+  }
+
+  .master-card-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
   }
 }
 
