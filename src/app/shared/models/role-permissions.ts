@@ -40,13 +40,14 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "POST /api/orders",
     "PUT /api/orders/{id}",
     "POST /api/orders/reception",
-    "GET /api/orders/reception/pending"
+    "GET /api/orders/reception/pending",
+    "PATCH /api/users/{id}/password"
   ],
   ADMIN: [
     "GET /api/products",
     "GET /api/products/{id}",
     "GET /api/products/search",
-    "GET /api/products/codebar/{codebar}",    "GET /api/allergens",
+    "GET /api/products/codebar/{codebar}", "GET /api/allergens",
     "GET /api/suppliers",
     "GET /api/suppliers/{id}",
     "GET /api/recipes",
@@ -62,7 +63,7 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "GET /api/recipe-allergens/allergen/{allergenId}",
     "GET /api/orders",
     "GET /api/orders/{id}",
-    "GET /api/orders/reception/pending",    "GET /api/allergens",
+    "GET /api/orders/reception/pending", "GET /api/allergens",
     "GET /api/suppliers",
     "GET /api/suppliers/{id}",
     "POST /api/allergens",
@@ -92,7 +93,8 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "DELETE /api/suppliers/{id}",
     "POST /api/users",
     "PUT /api/users/{id}",
-    "DELETE /api/users/{id}"
+    "DELETE /api/users/{id}",
+    "PATCH /api/users/{id}/password"
   ],
   USER: [
     "GET /api/products",
@@ -117,7 +119,8 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "GET /api/allergens",
     "GET /api/suppliers",
     "GET /api/orders",
-    "GET /api/orders/{id}"
+    "GET /api/orders/{id}",
+    "PATCH /api/users/{id}/password"
   ]
 };
 
@@ -128,12 +131,12 @@ export function hasPermission(userRole: Role, method: string, url: string): bool
 
   // Construir el patrón de permiso para verificar
   const permissionPattern = `${method} ${url}`;
-  
+
   // Verificar si tiene el permiso exacto o si coincide con un patrón
   return permissions.some(permission => {
     // Verificación exacta
     if (permission === permissionPattern) return true;
-    
+
     // Verificación con parámetros dinámicos (ej: {id})
     const regex = new RegExp(
       '^' + permission.replace(/\{[^}]+\}/g, '[^/]+') + '$'
