@@ -146,6 +146,8 @@ export function hasPermission(userRole: Role, method: string, url: string): bool
 }
 
 export function getUrlPattern(url: string): string {
+  // Quitar query parameters antes de hacer pattern matching
+  const urlWithoutParams = url.split('?')[0];
   // Convierte URLs con IDs numéricos a patrones con {id}
-  return url.replace(/\/\d+/g, '/{id}');
+  return urlWithoutParams.replace(/\/\d+/g, '/{id}');
 }
