@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-import { firstLoginGuard } from './core/guards/first-login.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   {
@@ -12,34 +12,37 @@ export const routes: Routes = [
     path: 'change-password',
     loadComponent: () =>
       import('./features/general/change-password/change-password.component').then(m => m.ChangePasswordComponent),
-    canActivate: [authGuard, firstLoginGuard]
+    canActivate: [authGuard, roleGuard()]
   },
   {
     path: 'welcome',
     loadComponent: () =>
       import('./features/general/welcome/welcome.component').then(m => m.WelcomeComponent),
-    canActivate: [authGuard, firstLoginGuard]
+    canActivate: [authGuard, roleGuard()]
   },
   {
     path: '',
     loadComponent: () =>
       import('./shared/components/layout/layout.component').then(m => m.LayoutComponent),
-    canActivate: [authGuard, firstLoginGuard],
+    canActivate: [authGuard, roleGuard()],
     children: [
       {
         path: 'admin-panel',
         loadComponent: () =>
-          import('./features/admin/admin-panel/admin-panel.component').then(m => m.AdminPanelComponent)
+          import('./features/admin/admin-panel/admin-panel.component').then(m => m.AdminPanelComponent),
+        canActivate: [roleGuard('ADMIN')]
       },
       {
         path: 'admin-panel/users',
         loadComponent: () =>
-          import('./features/admin/users-management/users-management.component').then(m => m.UsersManagementComponent)
+          import('./features/admin/users-management/users-management.component').then(m => m.UsersManagementComponent),
+        canActivate: [roleGuard('ADMIN')]
       },
       {
         path: 'admin-panel/recipes',
         loadComponent: () =>
-          import('./features/admin/recipes-management/recipes-management.component').then(m => m.RecipesManagementComponent)
+          import('./features/admin/recipes-management/recipes-management.component').then(m => m.RecipesManagementComponent),
+        canActivate: [roleGuard('ADMIN')]
       },
       {
         path: 'inventario',
@@ -49,12 +52,14 @@ export const routes: Routes = [
       {
         path: 'orders',
         loadComponent: () =>
-          import('./features/general/orders/orders.component').then(m => m.OrdersComponent)
+          import('./features/general/orders/orders.component').then(m => m.OrdersComponent),
+        canActivate: [roleGuard('ADMIN', 'CHEF')]
       },
       {
         path: 'reception',
         loadComponent: () =>
-          import('./features/general/reception/reception.component').then(m => m.ReceptionComponent)
+          import('./features/general/reception/reception.component').then(m => m.ReceptionComponent),
+        canActivate: [roleGuard('ADMIN', 'CHEF')]
       },
       {
         path: 'recipes',
