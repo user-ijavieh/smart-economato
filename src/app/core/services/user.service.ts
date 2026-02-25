@@ -62,7 +62,46 @@ export class UserService {
     return this.http.delete<void>(`${this.url}/${id}`);
   }
 
-  /** Devuelve todos los usuarios sin paginar (para dropdowns, mapas de nombres, etc.) */
+  getHidden(page = 0, size = 20): Observable<Page<User>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<any>(`${this.url}/hidden`, { params }).pipe(
+      map(response => {
+        const isPage = response && response.hasOwnProperty('content');
+        const rawContent = isPage ? response.content : (Array.isArray(response) ? response : []);
+
+        let content = rawContent;
+        let totalElements = response.totalElements ?? rawContent.length;
+        let totalPages = response.totalPages ?? 1;
+
+        if (!isPage || rawContent.length > size) {
+          totalElements = rawContent.length;
+          totalPages = Math.ceil(totalElements / size);
+          const start = page * size;
+          const end = Math.min(start + size, totalElements);
+          content = rawContent.slice(start, end);
+        }
+
+        return {
+          content,
+          totalElements,
+          totalPages,
+          size,
+          number: page,
+          first: page === 0,
+          last: page === totalPages - 1,
+          empty: content.length === 0
+        };
+      })
+    );
+  }
+
+  toggleHidden(id: number, hidden: boolean): Observable<User> {
+    return this.http.patch<User>(`${this.url}/${id}/hidden`, hidden);
+  }
+
   getAllUnpaged(): Observable<User[]> {
     return this.getAll(0, 10000).pipe(map(page => page.content));
   }
