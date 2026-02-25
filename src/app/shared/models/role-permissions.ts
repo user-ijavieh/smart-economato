@@ -97,11 +97,14 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "PUT /api/users/{id}",
     "DELETE /api/users/{id}",
     "PATCH /api/users/{id}/password",
+    "GET /api/users/hidden",
+    "PATCH /api/users/{id}/hidden",
     "GET /api/recipe-audits",
     "GET /api/recipe-audits/{id}",
     "GET /api/recipe-audits/by-user/{id}",
     "GET /api/recipe-audits/by-recipe/{id}",
-    "GET /api/recipe-audits/by-date-range"
+    "GET /api/recipe-audits/by-date-range",
+    "PATCH /api/users/{id}/password"
   ],
   USER: [
     "GET /api/products",
