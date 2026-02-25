@@ -46,6 +46,12 @@ export class RecipesManagementComponent implements OnInit {
     loading = true;
     searchTerm = '';
 
+    // Pagination state (Recipes)
+    currentPage = 0;
+    pageSize = 20;
+    totalPages = 0;
+    totalElements = 0;
+
     // Modal state
     showCreateModal = false;
     showEditModal = false;
@@ -53,7 +59,7 @@ export class RecipesManagementComponent implements OnInit {
     selectedRecipe: Recipe | null = null;
 
     // Stats
-    get totalRecipes(): number { return this.filteredRecipes.length; }
+    get totalRecipes(): number { return this.totalElements; }
     get recipesWithAllergens(): number { return this.filteredRecipes.filter(r => r.allergens?.length > 0).length; }
     get recipesWithoutAllergens(): number { return this.filteredRecipes.filter(r => !r.allergens || r.allergens.length === 0).length; }
     get averageCost(): number {
@@ -103,19 +109,26 @@ export class RecipesManagementComponent implements OnInit {
 
     // ── Recipes ──
 
-    loadRecipes(): void {
+    loadRecipes(page: number = 0): void {
         this.loading = true;
+        this.currentPage = page;
         this.cdr.markForCheck();
 
-        this.recipeService.getAll(0, 1000, 'name,asc').pipe(
+        const source$ = this.searchTerm.trim()
+            ? this.recipeService.searchByName(this.searchTerm.trim(), this.currentPage, this.pageSize, 'name,asc')
+            : this.recipeService.getAll(this.currentPage, this.pageSize, 'name,asc');
+
+        source$.pipe(
             finalize(() => {
                 this.loading = false;
                 this.cdr.markForCheck();
             })
         ).subscribe({
-            next: (page) => {
-                this.recipes = page.content;
-                this.applySearchFilter();
+            next: (pageData) => {
+                this.recipes = pageData.content;
+                this.filteredRecipes = pageData.content;
+                this.totalElements = pageData.totalElements;
+                this.totalPages = pageData.totalPages;
                 this.cdr.markForCheck();
             },
             error: () => {
@@ -124,25 +137,22 @@ export class RecipesManagementComponent implements OnInit {
         });
     }
 
-    applySearchFilter(): void {
-        if (!this.searchTerm.trim()) {
-            this.filteredRecipes = [...this.recipes];
-        } else {
-            const term = this.searchTerm.toLowerCase();
-            this.filteredRecipes = this.recipes.filter(r =>
-                r.name.toLowerCase().includes(term)
-            );
-        }
-        this.cdr.markForCheck();
-    }
-
     onSearch(): void {
-        this.applySearchFilter();
+        this.currentPage = 0;
+        this.loadRecipes();
     }
 
     clearFilters(): void {
         this.searchTerm = '';
-        this.applySearchFilter();
+        this.currentPage = 0;
+        this.loadRecipes();
+    }
+
+    changePage(delta: number): void {
+        const newPage = this.currentPage + delta;
+        if (newPage >= 0 && newPage < this.totalPages) {
+            this.loadRecipes(newPage);
+        }
     }
 
     hasActiveFilters(): boolean {
@@ -244,13 +254,13 @@ export class RecipesManagementComponent implements OnInit {
     }
 
     loadUsersForAudits(): void {
-        this.userService.getAll(0, 1000).subscribe({
+        this.userService.getAllUnpaged().subscribe({
             next: (users) => {
                 this.userMap = {};
                 users.forEach(u => this.userMap[u.id] = u.name);
                 this.cdr.markForCheck();
             },
-            error: () => { /* silently fail, will show ID fallback */ }
+            error: () => { }
         });
     }
 
