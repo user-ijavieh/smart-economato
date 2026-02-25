@@ -451,8 +451,8 @@ tr:hover {
 }
 
 .action-badge.badge-update {
-    background: rgba(245, 158, 11, 0.12);
-    color: #b45309;
+    background: #ff8c00;
+    color: #fff;
 }
 
 .action-badge.badge-delete {
@@ -642,9 +642,12 @@ tr:hover {
     border-radius: 16px;
     width: 90%;
     max-width: 560px;
+    max-height: 85vh;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
     animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 @keyframes slideUp {
@@ -962,4 +965,181 @@ tr:hover {
     font-family: var(--font-body);
     font-weight: 500;
     color: #555;
+}
+
+/** ===== AUDIT DIFF MODAL ===== */
+
+.audit-modal-wide {
+    max-width: 900px !important;
+    width: 95vw !important;
+}
+
+.audit-modal-header-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.audit-header-date,
+.audit-header-user {
+    font-size: 0.9rem;
+    color: #fff;
+    font-family: var(--font-body);
+    font-weight: 500;
+}
+
+.audit-header-user::before {
+    content: '•';
+    margin-right: 0;
+    display: inline-block;
+    padding-right: 12px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.diff-container {
+    padding: 0;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+.diff-section-title {
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight);
+    font-size: 1rem;
+    color: #333;
+    margin: 24px 0 12px;
+    padding: 0 20px 8px;
+    border-bottom: 2px solid rgba(30, 40, 80, 0.15);
+}
+
+.diff-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    table-layout: fixed;
+}
+
+.diff-table thead th {
+    background: #f0f1f4;
+    color: #555;
+    font-weight: 600;
+    padding: 10px 20px;
+    text-align: left;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid rgba(30, 40, 80, 0.12);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.diff-label-col {
+    width: 25%;
+}
+
+.diff-prev-col {
+    width: 37.5%;
+}
+
+.diff-next-col {
+    width: 37.5%;
+}
+
+.diff-table tbody td {
+    padding: 10px 20px;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+    word-wrap: break-word;
+}
+
+.diff-label {
+    font-weight: 600;
+    color: #444;
+}
+
+.diff-prev,
+.diff-next {
+    color: #555;
+}
+
+.diff-highlight-old {
+    background: rgba(229, 57, 53, 0.08);
+    color: #c62828;
+    border-left: 3px solid #e53935;
+    padding-left: 11px !important;
+}
+
+.diff-highlight-new {
+    background: rgba(76, 175, 80, 0.08);
+    color: #2e7d32;
+    border-left: 3px solid #4caf50;
+    padding-left: 11px !important;
+}
+
+.diff-changed {
+    background: rgba(255, 243, 224, 0.5);
+}
+
+.diff-row-added {
+    background: rgba(76, 175, 80, 0.04);
+}
+
+.diff-row-removed {
+    background: rgba(229, 57, 53, 0.04);
+}
+
+.diff-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    vertical-align: middle;
+}
+
+.tag-added {
+    background: rgba(76, 175, 80, 0.15);
+    color: #2e7d32;
+}
+
+.tag-removed {
+    background: rgba(229, 57, 53, 0.15);
+    color: #c62828;
+}
+
+@media (max-width: 768px) {
+    .audit-modal-wide {
+        max-width: 100vw !important;
+        width: 100vw !important;
+        border-radius: 0;
+    }
+
+    .diff-table {
+        font-size: 0.8rem;
+    }
+
+    .diff-table thead th,
+    .diff-table tbody td {
+        padding: 8px 10px;
+    }
+
+    .diff-label-col {
+        width: 30%;
+    }
+
+    .diff-prev-col {
+        width: 35%;
+    }
+
+    .diff-next-col {
+        width: 35%;
+    }
 }
