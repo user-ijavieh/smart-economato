@@ -172,6 +172,26 @@
             </tbody>
         </table>
     </div>
+
+    @if (totalPages > 1) {
+    <div class="pagination-controls">
+        <button class="btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                    d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+            </svg>
+            Anterior
+        </button>
+        <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }}</span>
+        <button class="btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
+            Siguiente
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                    d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+            </svg>
+        </button>
+    </div>
+    }
 </div>
 }
 
@@ -299,12 +319,19 @@
 <app-recipe-create-modal [isAdmin]="true" (close)="closeCreateModal()" (save)="onCreateRecipe($event)" />
 }
 
-<!-- Audit Detail Modal -->
+<!-- Audit Detail / Diff Modal -->
 @if (showAuditDetailModal && selectedAudit) {
 <div class="audit-modal-overlay" (click)="onAuditOverlayClick($event)">
-    <div class="audit-modal">
+    <div class="audit-modal" [class.audit-modal-wide]="hasDiffData">
         <div class="audit-modal-header">
             <h2>Detalle de Auditoría</h2>
+            <div class="audit-modal-header-info">
+                <span class="action-badge" [ngClass]="getActionBadgeClass(selectedAudit.action)">
+                    {{ translateAction(selectedAudit.action) }}
+                </span>
+                <span class="audit-header-date">{{ formatDate(selectedAudit.auditDate) }}</span>
+                <span class="audit-header-user">{{ getUserName(selectedAudit.id_user) }}</span>
+            </div>
             <button class="audit-modal-close" (click)="closeAuditDetail()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
@@ -313,35 +340,70 @@
                 </svg>
             </button>
         </div>
+
+        @if (hasDiffData) {
+        <!-- Side-by-side diff view -->
+        <div class="diff-container">
+            <!-- Field diffs -->
+            <table class="diff-table">
+                <thead>
+                    <tr>
+                        <th class="diff-label-col">Campo</th>
+                        <th class="diff-prev-col">Estado Anterior</th>
+                        <th class="diff-next-col">Estado Nuevo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (field of getDiffFields(); track field.label) {
+                    <tr [class.diff-changed]="field.changed">
+                        <td class="diff-label">{{ field.label }}</td>
+                        <td class="diff-prev" [class.diff-highlight-old]="field.changed">{{ field.prev }}</td>
+                        <td class="diff-next" [class.diff-highlight-new]="field.changed">{{ field.next }}</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+            <!-- Component diffs -->
+            <h3 class="diff-section-title">Componentes</h3>
+            <table class="diff-table">
+                <thead>
+                    <tr>
+                        <th class="diff-label-col">Ingrediente</th>
+                        <th class="diff-prev-col">Cantidad Anterior</th>
+                        <th class="diff-next-col">Cantidad Nueva</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (comp of getComponentDiffs(); track comp.nombre) {
+                    <tr [class.diff-row-added]="comp.status === 'added'"
+                        [class.diff-row-removed]="comp.status === 'removed'"
+                        [class.diff-changed]="comp.status === 'changed'">
+                        <td class="diff-label">
+                            {{ comp.nombre }}
+                            @if (comp.status === 'added') { <span class="diff-tag tag-added">Nuevo</span> }
+                            @if (comp.status === 'removed') { <span class="diff-tag tag-removed">Eliminado</span> }
+                        </td>
+                        <td class="diff-prev"
+                            [class.diff-highlight-old]="comp.status === 'changed' || comp.status === 'removed'">
+                            {{ comp.prevCantidad }}
+                        </td>
+                        <td class="diff-next"
+                            [class.diff-highlight-new]="comp.status === 'changed' || comp.status === 'added'">
+                            {{ comp.nextCantidad }}
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        } @else {
+        <!-- Fallback: simple detail view (CREATE / DELETE without prev/next) -->
         <div class="audit-modal-body">
             <div class="audit-field">
-                <span class="audit-field-label">Fecha</span>
-                <span class="audit-field-value">{{ formatDate(selectedAudit.auditDate) }}</span>
-            </div>
-            <div class="audit-field">
-                <span class="audit-field-label">Acción</span>
-                <span class="action-badge" [ngClass]="getActionBadgeClass(selectedAudit.action)">
-                    {{ translateAction(selectedAudit.action) }}
-                </span>
-            </div>
-            <div class="audit-field">
                 <span class="audit-field-label">Receta</span>
-                <span class="audit-field-value">{{ getRecipeName(selectedAudit.id_recipe) }}</span>
-            </div>
-            <div class="audit-field">
-                <span class="audit-field-label">ID Receta</span>
-                <span class="audit-field-value">
+                <span class="audit-field-value">{{ getRecipeName(selectedAudit.id_recipe) }}
                     <span class="id-badge">#{{ selectedAudit.id_recipe }}</span>
-                </span>
-            </div>
-            <div class="audit-field">
-                <span class="audit-field-label">Usuario</span>
-                <span class="audit-field-value">{{ getUserName(selectedAudit.id_user) }}</span>
-            </div>
-            <div class="audit-field">
-                <span class="audit-field-label">ID Usuario</span>
-                <span class="audit-field-value">
-                    <span class="id-badge">#{{ selectedAudit.id_user }}</span>
                 </span>
             </div>
             <div class="audit-field audit-field-full">
@@ -349,6 +411,7 @@
                 <p class="audit-details-text">{{ selectedAudit.details }}</p>
             </div>
         </div>
+        }
     </div>
 </div>
 }

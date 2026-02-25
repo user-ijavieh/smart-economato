@@ -46,6 +46,12 @@ export class RecipesManagementComponent implements OnInit {
     loading = true;
     searchTerm = '';
 
+    // Pagination state (Recipes)
+    currentPage = 0;
+    pageSize = 20;
+    totalPages = 0;
+    totalElements = 0;
+
     // Modal state
     showCreateModal = false;
     showEditModal = false;
@@ -53,7 +59,7 @@ export class RecipesManagementComponent implements OnInit {
     selectedRecipe: Recipe | null = null;
 
     // Stats
-    get totalRecipes(): number { return this.filteredRecipes.length; }
+    get totalRecipes(): number { return this.totalElements; }
     get recipesWithAllergens(): number { return this.filteredRecipes.filter(r => r.allergens?.length > 0).length; }
     get recipesWithoutAllergens(): number { return this.filteredRecipes.filter(r => !r.allergens || r.allergens.length === 0).length; }
     get averageCost(): number {
@@ -103,19 +109,26 @@ export class RecipesManagementComponent implements OnInit {
 
     // ── Recipes ──
 
-    loadRecipes(): void {
+    loadRecipes(page: number = 0): void {
         this.loading = true;
+        this.currentPage = page;
         this.cdr.markForCheck();
 
-        this.recipeService.getAll(0, 1000, 'name,asc').pipe(
+        const source$ = this.searchTerm.trim()
+            ? this.recipeService.searchByName(this.searchTerm.trim(), this.currentPage, this.pageSize, 'name,asc')
+            : this.recipeService.getAll(this.currentPage, this.pageSize, 'name,asc');
+
+        source$.pipe(
             finalize(() => {
                 this.loading = false;
                 this.cdr.markForCheck();
             })
         ).subscribe({
-            next: (page) => {
-                this.recipes = page.content;
-                this.applySearchFilter();
+            next: (pageData) => {
+                this.recipes = pageData.content;
+                this.filteredRecipes = pageData.content;
+                this.totalElements = pageData.totalElements;
+                this.totalPages = pageData.totalPages;
                 this.cdr.markForCheck();
             },
             error: () => {
@@ -124,25 +137,22 @@ export class RecipesManagementComponent implements OnInit {
         });
     }
 
-    applySearchFilter(): void {
-        if (!this.searchTerm.trim()) {
-            this.filteredRecipes = [...this.recipes];
-        } else {
-            const term = this.searchTerm.toLowerCase();
-            this.filteredRecipes = this.recipes.filter(r =>
-                r.name.toLowerCase().includes(term)
-            );
-        }
-        this.cdr.markForCheck();
-    }
-
     onSearch(): void {
-        this.applySearchFilter();
+        this.currentPage = 0;
+        this.loadRecipes();
     }
 
     clearFilters(): void {
         this.searchTerm = '';
-        this.applySearchFilter();
+        this.currentPage = 0;
+        this.loadRecipes();
+    }
+
+    changePage(delta: number): void {
+        const newPage = this.currentPage + delta;
+        if (newPage >= 0 && newPage < this.totalPages) {
+            this.loadRecipes(newPage);
+        }
     }
 
     hasActiveFilters(): boolean {
@@ -244,13 +254,13 @@ export class RecipesManagementComponent implements OnInit {
     }
 
     loadUsersForAudits(): void {
-        this.userService.getAll(0, 1000).subscribe({
+        this.userService.getAllUnpaged().subscribe({
             next: (users) => {
                 this.userMap = {};
                 users.forEach(u => this.userMap[u.id] = u.name);
                 this.cdr.markForCheck();
             },
-            error: () => { /* silently fail, will show ID fallback */ }
+            error: () => { }
         });
     }
 
@@ -428,5 +438,118 @@ export class RecipesManagementComponent implements OnInit {
 
     hasAllergens(recipe: Recipe): boolean {
         return recipe.allergens && recipe.allergens.length > 0;
+    }
+
+    // ── Diff Helpers ──
+
+    get parsedPreviousState(): any | null {
+        if (!this.selectedAudit?.previousState) return null;
+        try { return JSON.parse(this.selectedAudit.previousState); }
+        catch { return null; }
+    }
+
+    get parsedNewState(): any | null {
+        if (!this.selectedAudit?.newState) return null;
+        try { return JSON.parse(this.selectedAudit.newState); }
+        catch { return null; }
+    }
+
+    get hasDiffData(): boolean {
+        return this.parsedPreviousState !== null && this.parsedNewState !== null;
+    }
+
+    getDiffFields(): { label: string; prev: string; next: string; changed: boolean }[] {
+        const prev = this.parsedPreviousState;
+        const next = this.parsedNewState;
+        if (!prev || !next) return [];
+
+        const fields: { label: string; prev: string; next: string; changed: boolean }[] = [];
+
+        // Nombre
+        fields.push({
+            label: 'Nombre',
+            prev: prev.nombre ?? '',
+            next: next.nombre ?? '',
+            changed: prev.nombre !== next.nombre
+        });
+
+        // Elaboración
+        fields.push({
+            label: 'Elaboración',
+            prev: prev.elaboracion ?? '',
+            next: next.elaboracion ?? '',
+            changed: prev.elaboracion !== next.elaboracion
+        });
+
+        // Presentación
+        fields.push({
+            label: 'Presentación',
+            prev: prev.presentacion ?? '',
+            next: next.presentacion ?? '',
+            changed: prev.presentacion !== next.presentacion
+        });
+
+        // Coste Total
+        const prevCost = prev.costeTotal?.toFixed(2) ?? '0.00';
+        const nextCost = next.costeTotal?.toFixed(2) ?? '0.00';
+        fields.push({
+            label: 'Coste Total',
+            prev: prevCost + ' €',
+            next: nextCost + ' €',
+            changed: prevCost !== nextCost
+        });
+
+        // Alérgenos
+        const prevAllergens = (prev.alergenos ?? []).join(', ') || 'Ninguno';
+        const nextAllergens = (next.alergenos ?? []).join(', ') || 'Ninguno';
+        fields.push({
+            label: 'Alérgenos',
+            prev: prevAllergens,
+            next: nextAllergens,
+            changed: prevAllergens !== nextAllergens
+        });
+
+        return fields;
+    }
+
+    getComponentDiffs(): { nombre: string; prevCantidad: string; nextCantidad: string; status: 'added' | 'removed' | 'changed' | 'unchanged' }[] {
+        const prev = this.parsedPreviousState;
+        const next = this.parsedNewState;
+        if (!prev || !next) return [];
+
+        const prevComps: any[] = prev.componentes ?? [];
+        const nextComps: any[] = next.componentes ?? [];
+        const result: any[] = [];
+
+        // Map by productoId
+        const prevMap = new Map<number, any>();
+        const nextMap = new Map<number, any>();
+        prevComps.forEach(c => prevMap.set(c.productoId, c));
+        nextComps.forEach(c => nextMap.set(c.productoId, c));
+
+        // All product IDs
+        const allIds = new Set([...prevMap.keys(), ...nextMap.keys()]);
+
+        allIds.forEach(id => {
+            const p = prevMap.get(id);
+            const n = nextMap.get(id);
+            const name = n?.productoNombre ?? p?.productoNombre ?? `Producto #${id}`;
+
+            if (p && !n) {
+                result.push({ nombre: name, prevCantidad: p.cantidad.toString(), nextCantidad: '—', status: 'removed' });
+            } else if (!p && n) {
+                result.push({ nombre: name, prevCantidad: '—', nextCantidad: n.cantidad.toString(), status: 'added' });
+            } else if (p && n) {
+                const changed = p.cantidad !== n.cantidad;
+                result.push({
+                    nombre: name,
+                    prevCantidad: p.cantidad.toString(),
+                    nextCantidad: n.cantidad.toString(),
+                    status: changed ? 'changed' : 'unchanged'
+                });
+            }
+        });
+
+        return result;
     }
 }
