@@ -9,10 +9,17 @@ export class RecipeAuditService {
     private http = inject(HttpClient);
     private url = `${environment.apiUrl}/api/recipe-audits`;
 
-    getAll(page = 0, size = 20): Observable<RecipeAudit[]> {
+    getAll(page = 0, size = 20, sort?: string[]): Observable<RecipeAudit[]> {
         let params = new HttpParams()
             .set('page', page.toString())
             .set('size', size.toString());
+            
+        // Agregar ordenamiento si se proporciona
+        if (sort && sort.length > 0) {
+            sort.forEach(sortParam => {
+                params = params.append('sort', sortParam);
+            });
+        }
         
         return this.http.get<RecipeAudit[]>(this.url, { params });
     }
@@ -29,10 +36,20 @@ export class RecipeAuditService {
         return this.http.get<RecipeAudit[]>(`${this.url}/by-recipe/${recipeId}`);
     }
 
-    getByDateRange(startDate: string, endDate: string): Observable<RecipeAudit[]> {
-        const params = new HttpParams()
+    getByDateRange(startDate: string, endDate: string, page = 0, size = 20, sort?: string[]): Observable<RecipeAudit[]> {
+        let params = new HttpParams()
             .set('start', startDate)
-            .set('end', endDate);
+            .set('end', endDate)
+            .set('page', page.toString())
+            .set('size', size.toString());
+            
+        // Agregar ordenamiento si se proporciona
+        if (sort && sort.length > 0) {
+            sort.forEach(sortParam => {
+                params = params.append('sort', sortParam);
+            });
+        }
+            
         return this.http.get<RecipeAudit[]>(`${this.url}/by-date-range`, { params });
     }
 }

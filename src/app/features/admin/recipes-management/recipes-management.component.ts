@@ -174,7 +174,13 @@ export class RecipesManagementComponent implements OnInit {
 
         // Verificar si tenemos datos en caché
         if (this.auditCache.has(cacheKey)) {
-            this.audits = this.auditCache.get(cacheKey) || [];
+            const cachedAudits = this.auditCache.get(cacheKey) || [];
+            // Asegurar ordenamiento (más nuevas primero)
+            this.audits = [...cachedAudits].sort((a, b) => {
+                const dateA = new Date(a.auditDate || 0).getTime();
+                const dateB = new Date(b.auditDate || 0).getTime();
+                return dateB - dateA;
+            });
             this.applyAuditFilters();
             this.loadUsersForAudits();
             this.auditsLoaded = true;
@@ -187,8 +193,8 @@ export class RecipesManagementComponent implements OnInit {
         this.cdr.detectChanges();
 
         const source$ = (this.auditStartDate && this.auditEndDate)
-            ? this.recipeAuditService.getByDateRange(this.auditStartDate, this.auditEndDate)
-            : this.recipeAuditService.getAll();
+            ? this.recipeAuditService.getByDateRange(this.auditStartDate, this.auditEndDate, 0, 20, ['auditDate,desc'])
+            : this.recipeAuditService.getAll(0, 20, ['auditDate,desc']);
 
         source$.pipe(
             finalize(() => {
@@ -213,7 +219,14 @@ export class RecipesManagementComponent implements OnInit {
                 // Guardar en caché
                 this.auditCache.set(cacheKey, auditsArray);
                 
-                this.audits = auditsArray;
+                // Ordenar las auditorías por fecha de creación (más nuevas primero)
+                const sortedAudits = [...auditsArray].sort((a, b) => {
+                    const dateA = new Date(a.auditDate || 0).getTime();
+                    const dateB = new Date(b.auditDate || 0).getTime();
+                    return dateB - dateA; // Orden descendente (más nuevas primero)
+                });
+                
+                this.audits = sortedAudits;
                 this.applyAuditFilters();
                 this.loadUsersForAudits();
                 this.cdr.detectChanges();
