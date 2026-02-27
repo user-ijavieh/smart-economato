@@ -36,8 +36,16 @@ export class OrdersComponent implements OnInit {
     this.loading = true;
     // Load only CREATED orders
     this.orderService.getByStatus('CREATED').subscribe({
-      next: (orders) => {
-        this.orders = orders.sort((a, b) => b.id - a.id);
+      next: (response) => {
+        let ordersArray: Order[] = [];
+        
+        if (Array.isArray(response)) {
+          ordersArray = response;
+        } else if (response && Array.isArray((response as any).content)) {
+          ordersArray = (response as any).content;
+        }
+        
+        this.orders = [...ordersArray].sort((a, b) => b.id - a.id);
         this.displayCount = 1;
         this.loading = false;
         this.cdr.markForCheck();
