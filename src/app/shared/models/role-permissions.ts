@@ -251,8 +251,5 @@ export function hasPermission(userRole: Role, method: string, url: string): bool
 }
 
 export function getUrlPattern(url: string): string {
-  // Al usar un Trie, ya NO es necesario reemplazar strings arbitrarios (ej: usar RegExp /\d+/g a /{id}/).
-  // El propio árbol sabe resolver por si solo TODOS LOS PARÁMETROS, numéricos y strings pasándolo a su nodo hijo comodín dinámicamente en tiempo de ejecución.
-  // Solo devolvemos la URL limpia descartando los posibles query params de paginación o búsqueda
   return url.split('?')[0];
 }
