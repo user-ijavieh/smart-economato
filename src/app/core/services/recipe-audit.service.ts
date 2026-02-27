@@ -9,8 +9,12 @@ export class RecipeAuditService {
     private http = inject(HttpClient);
     private url = `${environment.apiUrl}/api/recipe-audits`;
 
-    getAll(): Observable<RecipeAudit[]> {
-        return this.http.get<RecipeAudit[]>(this.url);
+    getAll(page = 0, size = 20): Observable<RecipeAudit[]> {
+        let params = new HttpParams()
+            .set('page', page.toString())
+            .set('size', size.toString());
+        
+        return this.http.get<RecipeAudit[]>(this.url, { params });
     }
 
     getById(id: number): Observable<RecipeAudit> {
