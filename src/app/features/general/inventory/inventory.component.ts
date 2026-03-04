@@ -14,12 +14,13 @@ import { ToastComponent } from '../../../shared/components/layout/toast/toast.co
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { StockUpdateModalComponent } from './stock-update-modal/stock-update-modal.component';
 import { ProductDetailModalComponent } from './product-detail-modal/product-detail-modal.component';
+import { BarcodeScannerComponent } from '../barcode-scanner/barcode-scanner.component';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductFormComponent, ProductEditModalComponent, ProductCreateModalComponent, StockUpdateModalComponent, ProductDetailModalComponent, ToastComponent, ConfirmDialogComponent],
+  imports: [CommonModule, FormsModule, ProductFormComponent, ProductEditModalComponent, ProductCreateModalComponent, StockUpdateModalComponent, ProductDetailModalComponent, BarcodeScannerComponent, ToastComponent, ConfirmDialogComponent],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.css'
 })
@@ -45,6 +46,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   showCreateModal = false;
   showStockModal = false;
   showDetailModal = false;
+  showScannerModal = false;
   selectedProduct: Product | null = null;
 
   // Pagination State
@@ -409,6 +411,21 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.showForm = false;
     this.selectedProduct = null;
     this.loadProducts();
+  }
+
+  // --- LOGICA DEL ESCÁNER DE CÓDIGO DE BARRAS ---
+
+  openBarcodeScanner(): void {
+    this.showScannerModal = true;
+  }
+
+  closeBarcodeScanner(): void {
+    this.showScannerModal = false;
+  }
+
+  onProductFound(product: Product): void {
+    this.closeBarcodeScanner();
+    this.openDetailModal(product);
   }
 
   // --- UTILIDADES ---
