@@ -45,7 +45,12 @@ export const routes: Routes = [
         canActivate: [roleGuard('ADMIN')]
       },
       {
-        path: 'admin-panel/kitchen',
+        path: 'admin-panel/master-data/allergens',
+        loadComponent: () =>
+          import('./features/admin/allergens-management/allergens-management.component').then(m => m.AllergensManagementComponent),
+        path: 'admin-panel/kitchen'
+      },
+      {
         loadComponent: () =>
           import('./features/admin/kitchen-management/kitchen-management.component').then(m => m.KitchenManagementComponent),
         canActivate: [roleGuard('ADMIN')]

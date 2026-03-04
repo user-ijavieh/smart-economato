@@ -1,0 +1,185 @@
+<div class="header-recetas">
+    <h1>Gestión de Alérgenos</h1>
+</div>
+
+<!-- Tab bar -->
+<div class="tab-bar">
+    <button class="tab-btn active">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H7l5-8v4h4l-5 8z" />
+        </svg>
+        Alérgenos
+    </button>
+    <button class="tab-btn tab-btn--disabled" disabled title="Próximamente">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path
+                d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+        </svg>
+        Auditoría
+        <span class="tab-soon-badge">Próximamente</span>
+    </button>
+</div>
+
+<div class="contenedor-principal">
+    <div class="controles">
+        <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por nombre..." (ngModelChange)="onSearch()" />
+        <button id="btnAgregarAlergeno" (click)="openCreateModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path
+                    d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+            </svg>
+            Agregar Alérgeno
+        </button>
+        @if (hasActiveFilters()) {
+        <button class="btn-clear" (click)="clearFilters()">Limpiar Filtros</button>
+        }
+    </div>
+
+    <!-- Stats cards -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <span class="stat-number">{{ totalAllergens }}</span>
+            <span class="stat-label">Total Alérgenos</span>
+        </div>
+        <div class="stat-card stat-visible">
+            <span class="stat-number">{{ filteredAllergens.length }}</span>
+            <span class="stat-label">Mostrando</span>
+        </div>
+    </div>
+
+    <div class="tabla-contenedor">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 60px">#</th>
+                    <th>Nombre</th>
+                    <th style="width: 130px">Acciones</th>
+                </tr>
+            </thead>
+            <tbody [class.loading]="loading">
+                @if (loading) {
+                @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+                <tr class="skeleton-row">
+                    <td><span class="skeleton skeleton-text" style="width: 30px"></span></td>
+                    <td><span class="skeleton skeleton-text" style="width: 180px"></span></td>
+                    <td><span class="skeleton skeleton-text" style="width: 90px"></span></td>
+                </tr>
+                }
+                } @else {
+                @for (allergen of filteredAllergens; track allergen.id) {
+                <tr>
+                    <td>
+                        <span class="id-badge">#{{ allergen.id }}</span>
+                    </td>
+                    <td class="allergen-name-cell">
+                        <div class="allergen-name-cell-inner">
+                            <div class="allergen-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="currentColor">
+                                    <path
+                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H7l5-8v4h4l-5 8z" />
+                                </svg>
+                            </div>
+                            {{ allergen.name }}
+                        </div>
+                    </td>
+                    <td class="actions-cell">
+                        <button class="btn-editar" (click)="openEditModal(allergen)" title="Editar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                viewBox="0 0 16 16">
+                                <path
+                                    d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                <path fill-rule="evenodd"
+                                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                            </svg>
+                        </button>
+                        <button class="btn-eliminar" (click)="deleteAllergen(allergen)" title="Eliminar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                viewBox="0 0 16 16">
+                                <path
+                                    d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z" />
+                                <path
+                                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z" />
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+                }
+                @if (filteredAllergens.length === 0 && !loading) {
+                <tr>
+                    <td colspan="3" style="text-align: center; padding: 2rem; color: #999">
+                        No se encontraron alérgenos
+                    </td>
+                </tr>
+                }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (totalPages > 1) {
+    <div class="pagination-controls">
+        <button class="btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                    d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+            </svg>
+            Anterior
+        </button>
+        <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }}</span>
+        <button class="btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
+            Siguiente
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                    d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+            </svg>
+        </button>
+    </div>
+    }
+</div>
+
+<!-- ===== CREATE / EDIT MODAL ===== -->
+@if (showModal) {
+<div class="allergen-modal-overlay" (click)="onModalOverlayClick($event)">
+    <div class="allergen-modal">
+        <div class="allergen-modal-header">
+            <h2>{{ modalMode === 'create' ? 'Nuevo Alérgeno' : 'Editar Alérgeno' }}</h2>
+            <button class="allergen-modal-close" (click)="closeModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+        </div>
+        <div class="allergen-modal-body">
+            <div class="form-group">
+                <label for="allergenName" class="form-label">Nombre del alérgeno</label>
+                <input id="allergenName" type="text" class="form-input" [(ngModel)]="modalName"
+                    placeholder="Ej: Gluten, Lactosa, Cacahuetes..." (keyup.enter)="saveModal()" autofocus />
+            </div>
+        </div>
+        <div class="allergen-modal-footer">
+            <button class="btn-cancel" (click)="closeModal()" [disabled]="modalSaving">Cancelar</button>
+            <button class="btn-save" (click)="saveModal()" [disabled]="modalSaving || !modalName.trim()">
+                @if (modalSaving) {
+                <span class="saving-spinner"></span>
+                Guardando...
+                } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path
+                        d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
+                </svg>
+                {{ modalMode === 'create' ? 'Crear' : 'Guardar' }}
+                }
+            </button>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Confirm Dialog -->
+<app-confirm-dialog></app-confirm-dialog>
+
+<!-- Toasts -->
+<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
