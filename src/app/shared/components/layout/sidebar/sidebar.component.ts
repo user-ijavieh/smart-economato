@@ -43,6 +43,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     { label: 'Vista General', route: '/welcome', icon: 'home' },
     { label: 'Usuarios', route: '/admin-panel/users', icon: 'people' },
     { label: 'Recetas', route: '/admin-panel/recipes', icon: 'menu_book' },
+    { label: 'Cocina', route: '/admin-panel/kitchen', icon: 'kitchen' }
   ];
 
   ngOnInit(): void {

@@ -1,0 +1,258 @@
+<div class="header-recetas">
+  <h1>Gestión de Cocina</h1>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn" [class.active]="activeTab === 'history'" (click)="switchTab('history')">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path
+        d="M13 3a9 9 0 1 0 9 9h-2a7 7 0 1 1-7-7V3Zm1 0v8h8A8 8 0 0 0 14 3Zm-1 5h-2v5l4.3 2.6 1-1.6-3.3-2V8Z" />
+    </svg>
+    Historial
+  </button>
+  <button class="tab-btn" [class.active]="activeTab === 'reports'" (click)="switchTab('reports')">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path
+        d="M3 3h18v2H3V3Zm0 4h18v14H3V7Zm4 3v8h2v-8H7Zm4 3v5h2v-5h-2Zm4-2v7h2v-7h-2Z" />
+    </svg>
+    Informes
+  </button>
+</div>
+
+@if (activeTab === 'history') {
+<div class="contenedor-principal">
+  <div class="controles">
+    <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar en historial..." (ngModelChange)="applySearchFilter()" />
+    <input type="number" [(ngModel)]="recipeIdFilter" placeholder="ID Receta" min="1" class="id-input" />
+    <input type="number" [(ngModel)]="userIdFilter" placeholder="ID Usuario" min="1" class="id-input" />
+    <div class="date-range-group">
+      <input type="date" [(ngModel)]="startDate" class="date-input" />
+      <span class="date-separator">—</span>
+      <input type="date" [(ngModel)]="endDate" class="date-input" />
+    </div>
+    <button class="btn-filter" (click)="applyServerFilters()">Aplicar Filtros</button>
+    @if (hasActiveHistoryFilters()) {
+    <button class="btn-clear" (click)="clearHistoryFilters()">Limpiar Filtros</button>
+    }
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="stat-number">{{ totalElements }}</span>
+      <span class="stat-label">Total Registros</span>
+    </div>
+    <div class="stat-card stat-session">
+      <span class="stat-number">{{ filteredAudits.length }}</span>
+      <span class="stat-label">Mostrados</span>
+    </div>
+  </div>
+
+  <div class="tabla-contenedor">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Receta</th>
+          <th>Usuario</th>
+          <th>Cantidad</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loadingHistory) {
+        @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+        <tr class="skeleton-row">
+          <td><span class="skeleton skeleton-text" style="width: 130px"></span></td>
+          <td><span class="skeleton skeleton-text" style="width: 140px"></span></td>
+          <td><span class="skeleton skeleton-text" style="width: 120px"></span></td>
+          <td><span class="skeleton skeleton-text" style="width: 90px"></span></td>
+          <td><span class="skeleton skeleton-text" style="width: 140px"></span></td>
+        </tr>
+        }
+        } @else {
+        @for (audit of filteredAudits; track audit.id) {
+        <tr>
+          <td>{{ formatDate(audit.cookingDate) }}</td>
+          <td>
+            <span class="name-cell">{{ audit.recipeName }}</span>
+            <span class="id-badge">#{{ audit.recipeId }}</span>
+          </td>
+          <td>
+            <span class="name-cell">{{ audit.userName }}</span>
+            <span class="id-badge">#{{ audit.userId }}</span>
+          </td>
+          <td>{{ audit.quantityCooked | number:'1.2-2' }}</td>
+          <td class="actions-cell">
+            <button class="btn-revert" (click)="revertAudit(audit)">Revertir</button>
+          </td>
+        </tr>
+        }
+        @if (filteredAudits.length === 0) {
+        <tr>
+          <td colspan="5" class="empty-row">No hay registros de cocina para los filtros aplicados</td>
+        </tr>
+        }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (totalPages > 1) {
+  <div class="pagination-controls">
+    <button class="btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">Anterior</button>
+    <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }}</span>
+    <button class="btn-page" [disabled]="currentPage >= totalPages - 1" (click)="changePage(1)">Siguiente</button>
+  </div>
+  }
+</div>
+}
+
+@if (activeTab === 'reports') {
+<div class="contenedor-principal">
+  <div class="controles">
+    <select [(ngModel)]="reportRange" class="action-select">
+      @for (range of reportRanges; track range) {
+      <option [value]="range">{{ translateRange(range) }}</option>
+      }
+    </select>
+
+    @if (reportRange === 'CUSTOM') {
+    <div class="date-range-group">
+      <input type="date" [(ngModel)]="reportStartDate" class="date-input" />
+      <span class="date-separator">—</span>
+      <input type="date" [(ngModel)]="reportEndDate" class="date-input" />
+    </div>
+    }
+
+    <button (click)="loadReport()">Generar Informe</button>
+    <button class="btn-pdf" (click)="downloadReportPdf()">Descargar PDF</button>
+  </div>
+
+  @if (loadingReport) {
+  <div class="loading-report">Generando informe...</div>
+  } @else if (report) {
+  
+  <div class="report-header">
+    <h2>Reporte de Cocina</h2>
+    <p class="report-period">Periodo: {{ report.reportPeriod || formatReportPeriod() }}</p>
+  </div>
+
+  <div class="info-general-section">
+    <h3 class="section-title">Información General</h3>
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="info-label">ELABORACIONES REGISTRADAS:</span>
+        <span class="info-value">{{ report.totalCookingSessions }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">PORCIONES PREPARADAS:</span>
+        <span class="info-value">{{ report.totalPortionsCooked | number:'1.2-2' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">DIVERSIDAD DE RECETAS:</span>
+        <span class="info-value">{{ report.distinctRecipesCooked }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">DIVERSIDAD DE PRODUCTOS:</span>
+        <span class="info-value">{{ report.distinctProductsUsed }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">USUARIOS PARTICIPANTES:</span>
+        <span class="info-value">{{ report.distinctUsersCooking }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">FECHA DE EMISIÓN:</span>
+        <span class="info-value">{{ getCurrentDate() }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-tables">
+    <div class="tabla-contenedor">
+      <h3 class="table-title">Recetas Más Elaboradas</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>RECETA</th>
+            <th>VECES PREPARADA</th>
+            <th>PORCIONES TOTALES</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (report.topRecipes && report.topRecipes.length > 0) {
+            @for (item of report.topRecipes; track item.recipeId) {
+            <tr>
+              <td>{{ item.recipeName }}</td>
+              <td>{{ item.timesCooked }}</td>
+              <td>{{ item.totalQuantityCooked | number:'1.2-2' }}</td>
+            </tr>
+            }
+          } @else {
+          <tr>
+            <td colspan="3" class="empty-row">Sin datos</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tabla-contenedor">
+      <h3 class="table-title">Usuarios con Mayor Actividad</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>USUARIO</th>
+            <th>NUMERO DE ELABORACIONES</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (report.topUsers && report.topUsers.length > 0) {
+            @for (item of report.topUsers; track item.userId) {
+            <tr>
+              <td>{{ item.userName }}</td>
+              <td>{{ item.timesCooked }}</td>
+            </tr>
+            }
+          } @else {
+          <tr>
+            <td colspan="2" class="empty-row">Sin datos</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tabla-contenedor">
+      <h3 class="table-title">Análisis de Consumo de Inventario</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>PRODUCTO</th>
+            <th>CANTIDAD CONSUMIDA</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (report.topProducts && report.topProducts.length > 0) {
+            @for (item of report.topProducts; track item.productId) {
+            <tr>
+              <td>{{ item.productName }}</td>
+              <td>{{ item.totalQuantityUsed | number:'1.2-2' }}@if (item.unit) { {{ item.unit }}}</td>
+            </tr>
+            }
+          } @else {
+          <tr>
+            <td colspan="2" class="empty-row">Sin datos</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  } @else {
+  <div class="empty-state">Genera un informe para visualizar los datos.</div>
+  }
+</div>
+}
+
+<app-confirm-dialog></app-confirm-dialog>
+<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
