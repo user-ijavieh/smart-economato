@@ -1,9 +1,9 @@
-import { Component, signal, inject, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ToastComponent } from './shared/components/layout/toast/toast.component';
 import { ConfirmDialogComponent } from './shared/components/layout/confirm-dialog/confirm-dialog.component';
-import { MessageService, Toast } from './core/services/message.service';
+import { MessageService } from './core/services/message.service';
 import { filter } from 'rxjs';
 
 @Component({
@@ -16,15 +16,9 @@ export class App implements OnInit {
   protected readonly title = signal('smart-economato');
   private messageService = inject(MessageService);
   private router = inject(Router);
-  private cdr = inject(ChangeDetectorRef);
-  toasts: Toast[] = [];
+  readonly toasts$ = this.messageService.toasts;
 
   ngOnInit(): void {
-    this.messageService.toasts.subscribe(toasts => {
-      this.toasts = toasts;
-      this.cdr.markForCheck();
-    });
-
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {

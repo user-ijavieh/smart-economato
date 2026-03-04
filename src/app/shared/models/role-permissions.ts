@@ -124,7 +124,20 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "GET /api/recipe-audits/{id}",
     "GET /api/recipe-audits/by-user/{id}",
     "GET /api/recipe-audits/by-recipe/{id}",
-    "GET /api/recipe-audits/by-date-range"
+    "GET /api/recipe-audits/by-date-range",
+    "GET /api/recipe-cooking-audits",
+    "GET /api/recipe-cooking-audits/recipe/{id}",
+    "GET /api/recipe-cooking-audits/user/{id}",
+    "GET /api/recipe-cooking-audits/date-range",
+    "GET /api/recipe-cooking-audits/search",
+    "GET /api/recipe-cooking-audit",
+    "GET /api/recipe-cooking-audit/recipe/{id}",
+    "GET /api/recipe-cooking-audit/user/{id}",
+    "GET /api/recipe-cooking-audit/date-range",
+    "GET /api/recipe-cooking-audit/search",
+    "POST /api/stock-ledger/batch",
+    "GET /api/kitchen-reports",
+    "GET /api/kitchen-reports/export/pdf"
   ],
   USER: [
     "GET /api/products",
