@@ -60,8 +60,11 @@ export class MessageService {
 
   private addToast(message: string, type: Toast['type'], duration = 4000): void {
     const toast: Toast = { id: this.nextId++, message, type, duration };
-    this.toasts$.next([...this.toasts$.value, toast]);
-    setTimeout(() => this.removeToast(toast.id), duration);
+
+    setTimeout(() => {
+      this.toasts$.next([...this.toasts$.value, toast]);
+      setTimeout(() => this.removeToast(toast.id), duration);
+    }, 0);
   }
 
   removeToast(id: number): void {
