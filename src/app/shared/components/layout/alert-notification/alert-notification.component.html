@@ -1,0 +1,26 @@
+<div class="alert-stack" aria-live="assertive" aria-atomic="false">
+  @for (alert of getFailureList(); track alert.id) {
+    <section [class]="'alert-card ' + getFailureClass(alert)" role="alert">
+      <div class="alert-content">
+        <p class="alert-title">{{ alert.title }}</p>
+        @if (alert.services && alert.services.length > 0) {
+          <ul class="alert-services-list">
+            @for (service of alert.services; track service) {
+              <li>{{ service }}</li>
+            }
+          </ul>
+        }
+        <p class="alert-time">{{ alert.timestamp | date: 'dd/MM/yyyy HH:mm:ss' }}</p>
+      </div>
+    </section>
+  }
+
+  @for (alert of getRecoveryList(); track alert.id) {
+    <section class="alert-card alert-recovered" role="status">
+      <div class="alert-content">
+        <p class="alert-title">{{ alert.title }}</p>
+        <p class="alert-time">{{ alert.timestamp | date: 'dd/MM/yyyy HH:mm:ss' }}</p>
+      </div>
+    </section>
+  }
+</div>

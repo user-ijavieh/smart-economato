@@ -4,9 +4,11 @@ import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { Role, hasPermission, getUrlPattern } from '../../shared/models/role-permissions';
 import { environment } from '../../../environments/environment';
+import { WebSocketService } from '../services/websocket.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
+  const webSocketService = inject(WebSocketService);
   const token = localStorage.getItem('auth_token');
   const userRole = localStorage.getItem('user_role') as Role;
 
@@ -48,6 +50,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           errorMessage.toLowerCase().includes('invalid');
 
         if (isAuthEndpoint || isTokenInvalid) {
+          webSocketService.disconnect();
           localStorage.removeItem('auth_token');
           localStorage.removeItem('user_role');
           localStorage.removeItem('user_name');
