@@ -1,7 +1,7 @@
 // 1. Definición de tipos para mayor seguridad
 export type Role = 'ADMIN' | 'CHEF' | 'USER';
 
-// 2. Estructura de permisos centralizada
+// 2. Estructura de permisos centralizada (by GPT)
 export const ROLE_PERMISSIONS: Record<Role, string[]> = {
   CHEF: [
     "GET /api/products",

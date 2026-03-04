@@ -4,12 +4,27 @@
 
 <div class="contenedor-principal">
   <div class="controles">
-    <input
-      type="text"
-      [(ngModel)]="searchTerm"
-      placeholder="Buscar producto..."
-      (ngModelChange)="onSearch()"
-    />
+    <div class="search-group">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        placeholder="Buscar producto..."
+        (ngModelChange)="onSearch()"
+      />
+      <button class="btn-scan" (click)="openBarcodeScanner()" title="Escanear código de barras">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="20px"
+          viewBox="0 -960 960 960"
+          width="20px"
+          fill="currentColor"
+        >
+          <path
+            d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z"
+          />
+        </svg>
+      </button>
+    </div>
     <button (click)="onSearch()">Buscar</button>
     @if (isAdmin) {
       <button id="btnAgregarProducto" (click)="openCreateModal()">Agregar Producto</button>
@@ -18,9 +33,19 @@
       <button (click)="clearFilters()">Limpiar Filtros</button>
     }
     <button class="btn-excel" (click)="exportToExcel()" title="Descargar Excel">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-        <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
-        <path d="M5.75 6.75a.5.5 0 0 1 .71 0L8 8.29l1.54-1.54a.5.5 0 1 1 .71.71L8.71 9l1.54 1.54a.5.5 0 0 1-.71.71L8 9.71l-1.54 1.54a.5.5 0 0 1-.71-.71L7.29 9 5.75 7.46a.5.5 0 0 1 0-.71z"/>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        fill="currentColor"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"
+        />
+        <path
+          d="M5.75 6.75a.5.5 0 0 1 .71 0L8 8.29l1.54-1.54a.5.5 0 1 1 .71.71L8.71 9l1.54 1.54a.5.5 0 0 1-.71.71L8 9.71l-1.54 1.54a.5.5 0 0 1-.71-.71L7.29 9 5.75 7.46a.5.5 0 0 1 0-.71z"
+        />
       </svg>
       Exportar a Excel
     </button>
@@ -285,4 +310,31 @@
     (edit)="onEditFromDetail($event)"
     (adjustStock)="onAdjustStockFromDetail($event)"
   ></app-product-detail-modal>
+}
+
+<!-- Modal de escáner de código de barras -->
+@if (showScannerModal) {
+  <div class="scanner-modal-overlay" (click)="closeBarcodeScanner()">
+    <div class="scanner-modal" (click)="$event.stopPropagation()">
+      <div class="scanner-modal-header">
+        <h2>Escanear Código de Barras</h2>
+        <button class="scanner-close-btn" (click)="closeBarcodeScanner()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="currentColor"
+          >
+            <path
+              d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"
+            />
+          </svg>
+        </button>
+      </div>
+      <div class="scanner-modal-body">
+        <app-barcode-scanner (productFound)="onProductFound($event)"></app-barcode-scanner>
+      </div>
+    </div>
+  </div>
 }
