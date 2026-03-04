@@ -1,0 +1,703 @@
+.header-recetas {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 40px;
+  background: linear-gradient(135deg, rgba(30, 40, 80, 0.95) 0%, rgba(20, 30, 60, 0.95) 100%);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-recetas h1 {
+  font-size: 1.8rem;
+  color: white;
+  letter-spacing: 2px;
+  flex: 1;
+  text-align: center;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+}
+
+.tab-bar {
+  display: flex;
+  background: white;
+  padding: 0 40px;
+  border-bottom: 2px solid #e8e8e8;
+  position: sticky;
+  top: 68px;
+  z-index: 99;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border: none;
+  background: transparent;
+  color: #888;
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  box-shadow: none;
+}
+
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  border-radius: 3px 3px 0 0;
+  transition: background 0.3s ease;
+}
+
+.tab-btn:hover {
+  color: rgba(30, 40, 80, 0.8);
+  background: rgba(30, 40, 80, 0.03);
+  transform: none;
+}
+
+.tab-btn.active {
+  color: rgba(30, 40, 80, 0.95);
+}
+
+.tab-btn.active::after {
+  background: linear-gradient(135deg, rgba(30, 40, 80, 0.95), rgba(50, 60, 120, 0.95));
+}
+
+.contenedor-principal {
+  flex: 1;
+  overflow-y: auto;
+  padding: 40px;
+  max-width: 100%;
+}
+
+.controles {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.controles input,
+.action-select {
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  transition: all 0.3s ease;
+}
+
+.controles input:focus,
+.action-select:focus {
+  outline: none;
+  border-color: rgba(30, 40, 80, 0.6);
+  box-shadow: 0 0 0 3px rgba(30, 40, 80, 0.1);
+}
+
+.controles input[type='text'] {
+  min-width: 220px;
+}
+
+.id-input {
+  width: 120px;
+}
+
+.date-range-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-separator {
+  color: #999;
+}
+
+button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
+  background: linear-gradient(135deg, rgba(30, 40, 80, 0.95), rgba(50, 60, 120, 0.95));
+  color: white;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(30, 40, 80, 0.3);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-clear {
+  background: #757575;
+}
+
+.btn-filter {
+  background: #4c63b6;
+}
+
+.btn-pdf {
+  background: #e53935;
+}
+
+.btn-revert {
+  background: #f59e0b;
+  color: #fff;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: clamp(12px, 3vw, 16px);
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid rgba(30, 40, 80, 0.6);
+}
+
+.stat-card.stat-session {
+  border-left-color: #4c63b6;
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #333;
+  font-family: var(--font-heading);
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 4px;
+  font-family: var(--font-body);
+}
+
+/* ===== REPORT SECTION STYLES ===== */
+
+.report-header {
+  background: white;
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.report-header h2 {
+  font-size: 1.8rem;
+  color: rgba(30, 40, 80, 0.95);
+  margin: 0 0 8px 0;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+}
+
+.report-period {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 0;
+}
+
+.info-general-section {
+  background: white;
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 1.2rem;
+  color: rgba(30, 40, 80, 0.95);
+  margin: 0 0 20px 0;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  text-align: center;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: clamp(8px, 2.5vw, 16px);
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 3px solid rgba(30, 40, 80, 0.6);
+}
+
+.info-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.info-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: rgba(30, 40, 80, 0.95);
+  font-family: var(--font-heading);
+}
+
+.report-tables {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(10px, 2.5vw, 18px);
+  margin-bottom: 12px;
+}
+
+.tabla-contenedor {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+h3 {
+  margin: 16px 18px 6px;
+  font-size: 1rem;
+  color: rgba(30, 40, 80, 0.9);
+  font-family: var(--font-heading);
+}
+
+.table-title {
+  margin: 16px 18px 6px;
+  font-size: 1rem;
+  color: rgba(30, 40, 80, 0.9);
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: rgba(30, 40, 80, 0.95);
+}
+
+th {
+  color: white;
+  font-weight: 600;
+  text-align: left;
+  padding: 18px 24px;
+  font-size: 0.85rem;
+  letter-spacing: 0.2px;
+}
+
+td {
+  padding: 18px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.88rem;
+  color: #2f2f2f;
+}
+
+tbody tr:hover {
+  background: rgba(30, 40, 80, 0.03);
+}
+
+/* Estilos específicos para tablas de informes */
+.report-tables th:not(:first-child),
+.report-tables td:not(:first-child) {
+  text-align: right;
+  width: 160px;
+}
+
+.report-tables th:first-child,
+.report-tables td:first-child {
+  text-align: left;
+}
+
+.name-cell {
+  display: inline-block;
+  margin-right: 8px;
+  font-weight: 600;
+}
+
+.id-badge {
+  color: #666;
+}
+
+.actions-cell {
+  width: 130px;
+}
+
+.empty-row {
+  text-align: center;
+  color: #777;
+  padding: 1.8rem;
+}
+
+.skeleton {
+  display: inline-block;
+  height: 14px;
+  border-radius: 8px;
+  background: #ececec;
+}
+
+.skeleton-text {
+  width: 100%;
+}
+
+.pagination-controls {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.btn-page {
+  padding: 8px 14px;
+}
+
+.loading-report,
+.empty-state {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  color: #666;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablets and smaller laptops */
+@media (max-width: 1200px) {
+  .report-tables {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stats-row {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  }
+
+  .info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablets portrait */
+@media (max-width: 992px) {
+  .header-recetas {
+    padding: 16px 24px;
+  }
+
+  .header-recetas h1 {
+    font-size: 1.5rem;
+  }
+
+  .tab-bar {
+    padding: 0 24px;
+  }
+
+  .contenedor-principal {
+    padding: 24px;
+  }
+
+  .controles {
+    padding: 20px;
+  }
+
+  .report-tables {
+    grid-template-columns: 1fr;
+    gap: clamp(6px, 2vw, 12px);
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: clamp(6px, 2vw, 12px);
+  }
+
+  .tabla-contenedor {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 100%;
+  }
+}
+
+/* Mobile landscape and larger phones */
+@media (max-width: 768px) {
+  .header-recetas {
+    padding: 14px 16px;
+  }
+
+  .header-recetas h1 {
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+  }
+
+  .tab-bar {
+    padding: 0 16px;
+  }
+
+  .tab-btn {
+    padding: 12px 16px;
+    font-size: 0.88rem;
+  }
+
+  .contenedor-principal {
+    padding: 16px;
+  }
+
+  .controles {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+  }
+
+  .controles input,
+  .action-select,
+  .controles button {
+    width: 100%;
+  }
+
+  .id-input {
+    width: 100%;
+  }
+
+  .date-range-group {
+    width: 100%;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .date-separator {
+    display: none;
+  }
+
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(8px, 2vw, 12px);
+  }
+
+  .stat-card {
+    padding: 16px;
+  }
+
+  .stat-number {
+    font-size: 1.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+  }
+
+  .report-header {
+    padding: 20px;
+  }
+
+  .report-header h2 {
+    font-size: 1.4rem;
+  }
+
+  .report-period {
+    font-size: 0.88rem;
+  }
+
+  .info-general-section {
+    padding: 20px;
+  }
+
+  .section-title {
+    font-size: 1.1rem;
+  }
+
+  .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .info-label {
+    font-size: 0.78rem;
+  }
+
+  .info-value {
+    font-size: 1rem;
+  }
+
+  .table-title {
+    font-size: 0.95rem;
+  }
+
+  th,
+  td {
+    padding: 14px 12px;
+    font-size: 0.82rem;
+  }
+
+  .report-tables th:not(:first-child),
+  .report-tables td:not(:first-child) {
+    width: 100px;
+  }
+
+  button {
+    padding: 10px 16px;
+    font-size: 0.88rem;
+  }
+
+  .btn-revert {
+    padding: 8px 12px;
+    font-size: 0.82rem;
+  }
+}
+
+/* Mobile portrait */
+@media (max-width: 576px) {
+  .header-recetas h1 {
+    font-size: 1.1rem;
+  }
+
+  .tab-btn {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    gap: 6px;
+  }
+
+  .tab-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .contenedor-principal {
+    padding: 12px;
+  }
+
+  .controles {
+    padding: 14px;
+  }
+
+  .stats-row {
+    grid-template-columns: 1fr;
+    gap: clamp(6px, 2vw, 10px);
+  }
+
+  .report-header {
+    padding: 16px;
+  }
+
+  .report-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .report-period {
+    font-size: 0.82rem;
+  }
+
+  .info-general-section {
+    padding: 16px;
+  }
+
+  .section-title {
+    font-size: 1rem;
+    margin-bottom: 16px;
+  }
+
+  .info-label {
+    font-size: 0.72rem;
+  }
+
+  .info-value {
+    font-size: 0.95rem;
+  }
+
+  .table-title {
+    font-size: 0.9rem;
+    margin: 12px 14px 4px;
+  }
+
+  h3 {
+    font-size: 0.95rem;
+    margin: 12px 14px 4px;
+  }
+
+  th {
+    font-size: 0.75rem;
+    padding: 12px 10px;
+  }
+
+  td {
+    font-size: 0.75rem;
+    padding: 12px 10px;
+  }
+
+  .report-tables th:not(:first-child),
+  .report-tables td:not(:first-child) {
+    width: 80px;
+    font-size: 0.72rem;
+  }
+
+  .name-cell {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 0.75rem;
+  }
+
+  .id-badge {
+    font-size: 0.68rem;
+  }
+
+  .actions-cell {
+    width: 75px;
+  }
+
+  .btn-revert {
+    padding: 6px 8px;
+    font-size: 0.72rem;
+  }
+
+  .pagination-controls {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-page {
+    width: 100%;
+  }
+
+  .page-info {
+    order: -1;
+  }
+}
