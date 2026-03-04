@@ -4,6 +4,8 @@ export interface RecipeAudit {
     action: string;
     details: string;
     auditDate: string;
+    previousState?: string;
+    newState?: string;
 }
 
 export interface RecipeCookingAudit {

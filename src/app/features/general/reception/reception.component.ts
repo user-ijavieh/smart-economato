@@ -154,7 +154,7 @@ export class ReceptionComponent implements OnInit {
     if (!confirmed) {
       return;
     }
-    
+
     this.messageService.showInfo(`Revisando orden #${order.id}`);
     // Change status from PENDING to REVIEW
     this.orderService.updateStatus(order.id, 'REVIEW').subscribe({
@@ -208,7 +208,7 @@ export class ReceptionComponent implements OnInit {
     if (!confirmed) {
       return;
     }
-    
+
     this.orderService.updateStatus(order.id, 'INCOMPLETE').subscribe({
       next: () => {
         this.messageService.showWarning('Orden marcada como incompleta');
@@ -229,7 +229,7 @@ export class ReceptionComponent implements OnInit {
     if (!confirmed) {
       return;
     }
-    
+
     this.orderService.updateStatus(order.id, 'CANCELLED').subscribe({
       next: () => {
         this.messageService.showWarning('Orden cancelada');
@@ -250,7 +250,7 @@ export class ReceptionComponent implements OnInit {
     if (!confirmed) {
       return;
     }
-    
+
     this.orderService.delete(order.id).subscribe({
       next: () => {
         this.messageService.showSuccess('Orden eliminada correctamente');
