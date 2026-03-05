@@ -12,7 +12,8 @@ export interface AlertMessage {
 @Injectable({ providedIn: 'root' })
 export class WebSocketService {
   private client?: Client;
-  private subscription?: StompSubscription;
+  private broadcastSubscription?: StompSubscription;
+  private personalSubscription?: StompSubscription;
   private connectedToken?: string;
   private readonly alertSubject = new Subject<AlertMessage>();
   private readonly brokerUrl = this.getBrokerUrl();
@@ -42,8 +43,16 @@ export class WebSocketService {
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,
       onConnect: () => {
-        this.subscription?.unsubscribe();
-        this.subscription = this.client?.subscribe('/topic/alerts', (message: IMessage) => {
+        this.broadcastSubscription?.unsubscribe();
+        this.personalSubscription?.unsubscribe();
+        
+        // Suscripción a alertas broadcast (cambios en tiempo real)
+        this.broadcastSubscription = this.client?.subscribe('/topic/alerts', (message: IMessage) => {
+          this.handleAlertMessage(message);
+        });
+        
+        // Suscripción a alertas personales (estado inicial al conectarse)
+        this.personalSubscription = this.client?.subscribe('/user/queue/alerts', (message: IMessage) => {
           this.handleAlertMessage(message);
         });
       },
@@ -56,8 +65,10 @@ export class WebSocketService {
   }
 
   disconnect(): void {
-    this.subscription?.unsubscribe();
-    this.subscription = undefined;
+    this.broadcastSubscription?.unsubscribe();
+    this.personalSubscription?.unsubscribe();
+    this.broadcastSubscription = undefined;
+    this.personalSubscription = undefined;
     this.connectedToken = undefined;
 
     if (this.client) {
