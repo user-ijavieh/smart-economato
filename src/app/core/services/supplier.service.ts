@@ -21,13 +21,8 @@ export class SupplierService {
         const rawContent = response.content || (Array.isArray(response) ? response : []);
         
         const mappedContent: Supplier[] = rawContent.map((item: any) => ({
-          ...item,
           id: item.id,
-          name: item.name || item.nombre || 'Sin nombre',
-          contactPerson: item.contactPerson || item.contacto || item.contact || '',
-          phone: item.phone || item.telefono || '',
-          email: item.email || item.correo || '',
-          address: item.address || item.direccion || ''
+          name: item.name || item.nombre || 'Sin nombre'
         }));
 
         return {
