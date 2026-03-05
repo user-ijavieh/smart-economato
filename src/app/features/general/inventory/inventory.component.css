@@ -602,16 +602,13 @@ th.sortable[data-sort-dir='desc']::after {
 .search-group {
   display: flex;
   align-items: center;
-  gap: 0;
+  gap: 12px;
   flex: 1;
   min-width: 200px;
   max-width: 400px;
 }
 
 .search-group input[type='text'] {
-  border-top-right-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
-  border-right: none !important;
   flex: 1;
 }
 
@@ -619,26 +616,20 @@ th.sortable[data-sort-dir='desc']::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 14px !important;
-  border-top-left-radius: 0 !important;
-  border-bottom-left-radius: 0 !important;
-  border-top-right-radius: 8px !important;
-  border-bottom-right-radius: 8px !important;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
-  border: 2px solid #6366f1 !important;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--primary-color);
+  border: none;
   color: white;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: none !important;
-  min-width: unset !important;
-  width: auto !important;
+  box-shadow: 0 2px 8px rgba(184, 75, 68, 0.3);
 }
 
 .btn-scan:hover {
-  background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
-  border-color: #4f46e5 !important;
+  background: #a03d37;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(184, 75, 68, 0.4);
 }
 
 .btn-scan svg {
@@ -752,6 +743,6 @@ th.sortable[data-sort-dir='desc']::after {
   }
 
   .btn-scan {
-    padding: 10px 12px !important;
+    padding: 10px 12px;
   }
 }
