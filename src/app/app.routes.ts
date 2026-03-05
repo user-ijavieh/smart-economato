@@ -51,6 +51,18 @@ export const routes: Routes = [
         canActivate: [roleGuard('ADMIN')]
       },
       {
+        path: 'admin-panel/stock-alerts',
+        loadComponent: () =>
+          import('./features/admin/stock-alerts-dashboard/stock-alerts-dashboard.component').then(m => m.StockAlertsDashboardComponent),
+        canActivate: [roleGuard('ADMIN')]
+      },
+      {
+        path: 'admin-panel/stock-predictions',
+        loadComponent: () =>
+          import('./features/admin/stock-predictions/stock-predictions.component').then(m => m.StockPredictionsComponent),
+        canActivate: [roleGuard('ADMIN')]
+      },
+      {
         path: 'inventario',
         loadComponent: () =>
           import('./features/general/inventory/inventory.component').then(m => m.InventoryComponent)

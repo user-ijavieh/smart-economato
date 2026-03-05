@@ -24,6 +24,11 @@
 
     <!-- Nav items dinámicos -->
     @for (item of filteredNavItems; track item.route) {
+    @if (item.section) {
+    <li class="nav-section-label">
+      <span>{{ item.section }}</span>
+    </li>
+    }
     <li>
       <a [routerLink]="item.route" routerLinkActive="active"
         [routerLinkActiveOptions]="{exact: item.route === '/welcome'}">
@@ -88,6 +93,20 @@
         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
           <path
             d="M160-80v-520h80v520h-80Zm560 0v-520h80v520h-80ZM320-80v-320q0-33 23.5-56.5T400-480h160q33 0 56.5 23.5T640-400v320h-80v-160H400v160h-80Zm80-560v-240h80v240h-80Zm160 0v-240h80v240h-80ZM320-560v-80h320v80H320Z" />
+        </svg>
+        }
+        <!-- Alertas Stock -->
+        @if (item.icon === 'alert') {
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+          <path
+            d="M480-120q-33 0-56.5-23.5T400-200h160q0 33-23.5 56.5T480-120ZM160-240v-80h80v-280q0-83 50-149.5T420-830v-50q0-25 17.5-42.5T480-940q25 0 42.5 17.5T540-880v50q80 16 130 82.5T720-600v280h80v80H160Zm320-80Zm0-360q-33 0-56.5 23.5T400-600v280h160v-280q0-33-23.5-56.5T480-680Z"/>
+        </svg>
+        }
+        <!-- Predicciones -->
+        @if (item.icon === 'chart') {
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+          <path
+            d="M120-120v-80l80-80v160h-80Zm160 0v-240l80-80v320h-80Zm160 0v-320l80 81v239h-80Zm160 0v-239l80-80v319h-80Zm160 0v-400l80-80v480h-80ZM120-327v-113l280-280 160 160 280-280v113L560-447 400-607 120-327Z"/>
         </svg>
         }
         <span>{{ item.label }}</span>
