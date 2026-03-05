@@ -1,0 +1,216 @@
+<div class="scanner-page">
+  <!-- Header -->
+  <div class="scanner-header">
+    <div class="header-icon">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        height="32px"
+        viewBox="0 -960 960 960"
+        width="32px"
+        fill="currentColor"
+      >
+        <path
+          d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z"
+        />
+      </svg>
+    </div>
+    <h1>Escáner de Código de Barras</h1>
+    <p class="subtitle">Escanea un código de barras para buscar el producto</p>
+  </div>
+
+  <!-- Scanner viewport -->
+  <div class="scanner-container" *ngIf="scannerEnabled">
+    <div class="scanner-viewport">
+      <zxing-scanner
+        #scanner
+        [device]="selectedDevice"
+        [enable]="scannerEnabled"
+        [formats]="allowedFormats"
+        (camerasFound)="onCamerasFound($event)"
+        (camerasNotFound)="onCamerasNotFound()"
+        (permissionResponse)="onPermissionResponse($event)"
+        (scanSuccess)="onScanSuccess($event)"
+        (scanError)="onScanError($event)"
+      ></zxing-scanner>
+      <!-- Scan overlay lines -->
+      <div class="scan-overlay">
+        <div class="scan-frame">
+          <div class="corner top-left"></div>
+          <div class="corner top-right"></div>
+          <div class="corner bottom-left"></div>
+          <div class="corner bottom-right"></div>
+          <div class="scan-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Camera selector -->
+    <div class="camera-selector" *ngIf="availableDevices.length > 1">
+      <label>Cámara:</label>
+      <div class="camera-buttons">
+        @for (device of availableDevices; track device.deviceId) {
+          <button
+            class="camera-btn"
+            [class.active]="selectedDevice?.deviceId === device.deviceId"
+            (click)="selectCamera(device)"
+          >
+            {{ device.label || 'Cámara ' + ($index + 1) }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div class="result-container" *ngIf="loading">
+    <div class="loading-card">
+      <div class="spinner"></div>
+      <p>Buscando producto...</p>
+      <span class="scanned-code">Código: {{ scannedCode }}</span>
+    </div>
+  </div>
+
+  <!-- Error state -->
+  <div class="result-container" *ngIf="error && !loading">
+    <div class="error-card">
+      <div class="error-icon">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="48px"
+          viewBox="0 -960 960 960"
+          width="48px"
+          fill="currentColor"
+        >
+          <path
+            d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
+          />
+        </svg>
+      </div>
+      <h3>Producto no encontrado</h3>
+      <p>{{ error }}</p>
+      <button class="btn-scan-again" (click)="scanAgain()">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="20px"
+          viewBox="0 -960 960 960"
+          width="20px"
+          fill="currentColor"
+        >
+          <path
+            d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-692v-108h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"
+          />
+        </svg>
+        Escanear de nuevo
+      </button>
+    </div>
+  </div>
+
+  <!-- Product result -->
+  <div class="result-container" *ngIf="product && !loading">
+    <div class="product-card">
+      <div class="product-card-header">
+        <div class="success-badge">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="20px"
+            viewBox="0 -960 960 960"
+            width="20px"
+            fill="currentColor"
+          >
+            <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
+          </svg>
+          Producto encontrado
+        </div>
+        <span class="barcode-badge">{{ scannedCode }}</span>
+      </div>
+
+      <div class="product-info">
+        <h2 class="product-name">{{ product.name }}</h2>
+
+        <div class="info-grid">
+          <div class="info-item" *ngIf="product.productCode">
+            <span class="info-label">Código</span>
+            <span class="info-value">{{ product.productCode }}</span>
+          </div>
+          <div class="info-item" *ngIf="product.brand">
+            <span class="info-label">Marca</span>
+            <span class="info-value">{{ product.brand }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Precio unitario</span>
+            <span class="info-value price">{{ product.unitPrice | number: '1.2-2' }} €</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Stock actual</span>
+            <span
+              class="info-value"
+              [class.low-stock]="product.currentStock <= (product.minStock || 0)"
+            >
+              {{ product.currentStock }} {{ product.unit }}
+            </span>
+          </div>
+          <div
+            class="info-item"
+            *ngIf="product.minStock !== undefined && product.minStock !== null"
+          >
+            <span class="info-label">Stock mínimo</span>
+            <span class="info-value">{{ product.minStock }} {{ product.unit }}</span>
+          </div>
+          <div class="info-item" *ngIf="product.type">
+            <span class="info-label">Tipo</span>
+            <span class="info-value">{{ product.type }}</span>
+          </div>
+          <div class="info-item" *ngIf="product.supplier?.name">
+            <span class="info-label">Proveedor</span>
+            <span class="info-value">{{ product.supplier?.name }}</span>
+          </div>
+          <div class="info-item" *ngIf="product.expirationDate">
+            <span class="info-label">Caducidad</span>
+            <span class="info-value">{{ product.expirationDate }}</span>
+          </div>
+        </div>
+
+        <div class="product-description" *ngIf="product.description">
+          <span class="info-label">Descripción</span>
+          <p>{{ product.description }}</p>
+        </div>
+      </div>
+
+      <button class="btn-scan-again" (click)="scanAgain()">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="20px"
+          viewBox="0 -960 960 960"
+          width="20px"
+          fill="currentColor"
+        >
+          <path
+            d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-692v-108h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"
+          />
+        </svg>
+        Escanear otro producto
+      </button>
+    </div>
+  </div>
+
+  <!-- Permission denied state -->
+  <div class="result-container" *ngIf="permissionDenied && !scannerEnabled && !product && !loading">
+    <div class="error-card">
+      <div class="error-icon permission">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="48px"
+          viewBox="0 -960 960 960"
+          width="48px"
+          fill="currentColor"
+        >
+          <path
+            d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Z"
+          />
+        </svg>
+      </div>
+      <h3>Permisos de cámara requeridos</h3>
+      <p>Permite el acceso a la cámara para poder escanear códigos de barras.</p>
+    </div>
+  </div>
+</div>
