@@ -175,6 +175,11 @@ a.master-card:hover {
   box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
 }
 
+.master-card-icon--supplier {
+  background: linear-gradient(135deg, rgba(160, 61, 55, 0.7), rgba(184, 75, 68, 0.8));
+  box-shadow: 0 4px 12px rgba(184, 75, 68, 0.25);
+}
+
 .master-card-content {
   flex: 1;
   display: flex;
