@@ -44,7 +44,7 @@ export class ProductService {
   }
 
   getByBarcode(barcode: string): Observable<Product> {
-    return this.http.get<Product>(`${this.url}/barcode/${barcode}`);
+    return this.http.get<Product>(`${this.url}/codebar/${barcode}`);
   }
 
   searchByName(name: string, page = 0, size = 10, sort = 'name,asc'): Observable<Page<Product>> {
