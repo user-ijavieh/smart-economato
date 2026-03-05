@@ -32,7 +32,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private defaultNavItems: NavItem[] = [
     { label: 'Inicio', route: '/welcome', icon: 'home' },
     { label: 'Inventario', route: '/inventario', icon: 'inventory' },
-    { label: 'Proveedores', route: '/suppliers', icon: 'supplier' },
+
     { label: 'Recetas', route: '/recipes', icon: 'book' },
     { label: 'Recepción', route: '/reception', icon: 'truck' },
     { label: 'Pedidos', route: '/orders', icon: 'cart' },
@@ -78,12 +78,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     const userRole = this.getUserRole();
     if (userRole === 'USER') {
       return this.defaultNavItems.filter(item =>
-        item.label !== 'Recepción' && item.label !== 'Pedidos' && item.label !== 'Proveedores'
-      );
-    }
-    if (userRole === 'CHEF') {
-      return this.defaultNavItems.filter(item =>
-        item.label !== 'Proveedores'
+        item.label !== 'Recepción' && item.label !== 'Pedidos'
       );
     }
     return this.defaultNavItems;
