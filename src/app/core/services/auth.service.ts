@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Observable, tap, BehaviorSubject, switchMap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Role, hasPermission } from '../../shared/models/role-permissions';
+import { WebSocketService } from './websocket.service';
 
 interface LoginRequest {
   name: string;
@@ -35,6 +36,7 @@ interface TokenValidation {
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private webSocketService = inject(WebSocketService);
   private apiUrl = environment.apiUrl;
   private TOKEN_KEY = 'auth_token';
   private ROLE_KEY = 'user_role';
@@ -44,6 +46,13 @@ export class AuthService {
 
   private isLoggedIn$ = new BehaviorSubject<boolean>(this.hasToken());
 
+  constructor() {
+    const token = this.getToken();
+    if (token) {
+      this.webSocketService.connect(token);
+    }
+  }
+
   login(name: string, password: string): Observable<UserProfileResponse> {
     return this.http.post<LoginResponse>(
       `${this.apiUrl}/api/auth/login`,
@@ -51,6 +60,7 @@ export class AuthService {
     ).pipe(
       tap(response => {
         localStorage.setItem(this.TOKEN_KEY, response.token);
+        this.webSocketService.connect(response.token);
       }),
       switchMap(() => this.http.get<UserProfileResponse>(`${this.apiUrl}/api/users/me`)),
       tap(profile => {
@@ -84,6 +94,7 @@ export class AuthService {
   }
 
   logout(): void {
+    this.webSocketService.disconnect();
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.ROLE_KEY);
     localStorage.removeItem(this.NAME_KEY);

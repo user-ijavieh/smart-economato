@@ -1,0 +1,66 @@
+.alert-stack {
+  position: fixed;
+  top: 0.5rem;
+  right: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: min(82vw, 320px);
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.alert-card {
+  border-radius: 0.55rem;
+  border: 1px solid;
+  padding: 0.7rem 0.85rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(4px);
+}
+
+.alert-failure-critical {
+  background: color-mix(in srgb, var(--toast-error-bg) 82%, white 18%);
+  border-color: var(--toast-error-border);
+  color: white;
+}
+
+.alert-failure-partial {
+  background: color-mix(in srgb, var(--toast-warning-bg) 86%, white 14%);
+  border-color: var(--toast-warning-border);
+  color: white;
+}
+
+.alert-recovered {
+  background: color-mix(in srgb, var(--toast-success-bg) 82%, white 18%);
+  border-color: var(--toast-success-border);
+  color: white;
+}
+
+.alert-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.alert-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+  font-family: var(--font-body);
+}
+
+.alert-time {
+  margin: 0;
+  font-size: 0.8rem;
+  opacity: 0.92;
+  font-family: var(--font-body);
+}
+
+.alert-services-list {
+  margin: 0.3rem 0 0 0;
+  padding-left: 1.2rem;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  opacity: 0.95;
+}
