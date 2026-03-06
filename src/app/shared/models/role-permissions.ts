@@ -137,7 +137,11 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "GET /api/recipe-cooking-audit/search",
     "POST /api/stock-ledger/batch",
     "GET /api/kitchen-reports",
-    "GET /api/kitchen-reports/export/pdf"
+    "GET /api/kitchen-reports/export/pdf",
+    "GET /api/stock-alerts",
+    "GET /api/stock-alerts/{productId}",
+    "POST /api/stock-alerts/batch",
+    "GET /api/stock-alerts/predictions"
   ],
   USER: [
     "GET /api/products",

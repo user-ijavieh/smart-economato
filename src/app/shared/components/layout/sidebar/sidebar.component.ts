@@ -8,6 +8,7 @@ interface NavItem {
   label: string;
   route: string;
   icon: string;
+  section?: string; // optional section header to render before this item
 }
 
 @Component({
@@ -43,11 +44,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
   // Items para la vista admin
   private adminNavItems: NavItem[] = [
     { label: 'Vista General', route: '/welcome', icon: 'home' },
-    { label: 'Usuarios', route: '/admin-panel/users', icon: 'people' },
+    { label: 'Usuarios', route: '/admin-panel/users', icon: 'people', section: 'Gestión' },
     { label: 'Recetas', route: '/admin-panel/recipes', icon: 'menu_book' },
     { label: 'Proveedores', route: '/admin-panel/suppliers', icon: 'local_shipping' },
     { label: 'Datos Maestros', route: '/admin-panel/master-data/allergens', icon: 'database' },
-    { label: 'Cocina', route: '/admin-panel/kitchen', icon: 'kitchen' }
+    { label: 'Cocina', route: '/admin-panel/kitchen', icon: 'kitchen' },
+    { label: 'Stock', route: '/admin-panel/stock', icon: 'alert' }
 
   ];
 
