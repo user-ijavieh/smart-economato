@@ -1,6 +1,6 @@
-<div class="modal-overlay" [class.admin-theme]="isAdmin" (click)="onOverlayClick($event)">
-  <div class="modal-container modal-create" (click)="closeAllDropdowns()">
-    <div class="modal-header">
+<div class="modal-overlay modal-overlay-base" [class.admin-theme]="isAdmin" (click)="onOverlayClick($event)">
+  <div class="modal-dialog-base modal-create" (click)="closeAllDropdowns()">
+    <div class="modal-header-base">
       <h2>Crear Nueva Receta</h2>
       <button class="close-btn" (click)="closeModal()">×</button>
     </div>

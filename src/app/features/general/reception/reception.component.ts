@@ -53,11 +53,19 @@ export class ReceptionComponent implements OnInit {
 
   loadOrders(): void {
     this.loading = true;
-    // Load all orders except CREATED (which are shown in Pedidos)
-    this.orderService.getAll(0, 200).subscribe({
-      next: (orders) => {
-        // Ordenar las órdenes de más reciente a más antigua
-        const sortedOrders = orders.sort((a, b) => b.id - a.id);
+    this.orderService.getAll().subscribe({
+      next: (response) => {
+        // Verificar si la respuesta es un array directo o un objeto paginado
+        let ordersArray: Order[] = [];
+        if (Array.isArray(response)) {
+          ordersArray = response;
+        } else if (response && Array.isArray((response as any).content)) {
+          // Respuesta paginada con estructura {content: [], ...}
+          ordersArray = (response as any).content;
+        }
+        
+        // Ordenar las órdenes de más reciente a más antigua (creando una copia)
+        const sortedOrders = [...ordersArray].sort((a, b) => b.id - a.id);
         this.ordersByStatus = {
           PENDING: sortedOrders.filter(o => o.status === 'PENDING'),
           REVIEW: sortedOrders.filter(o => o.status === 'REVIEW'),

@@ -35,8 +35,7 @@ import { Component } from '@angular/core';
     .empty-message {
       color: #4b5563;
       font-size: 1.1rem;
-      font-family: 'Deserta', sans-serif;
     }
   `]
 })
-export class ProfileComponent {}
+export class ProfileComponent { }

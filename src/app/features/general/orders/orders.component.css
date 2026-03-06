@@ -317,7 +317,6 @@
   border-radius: 8px;
   border: none;
   font-size: 1rem;
-  font-family: 'Deserta', sans-serif;
   font-weight: bold;
   background: #16a34a;
   color: white;
@@ -390,7 +389,6 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-family: 'Deserta', sans-serif;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
@@ -439,7 +437,6 @@
   padding: 60px 20px;
   color: #6b7280;
   font-size: 1.1rem;
-  font-family: 'Deserta', sans-serif;
 }
 
 /** ===== LOAD MORE ===== */
@@ -460,7 +457,6 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-family: 'Deserta', sans-serif;
 }
 
 .btn-load-more:hover {
