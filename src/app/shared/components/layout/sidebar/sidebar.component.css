@@ -20,7 +20,7 @@
 /** ===== MODO ADMIN ===== */
 
 #sidebar.admin-mode {
-  background: linear-gradient(180deg, rgba(30, 40, 80, 0.95) 0%, rgba(20, 30, 60, 0.95) 100%);
+  background: var(--admin-gradient);
 }
 
 #sidebar.admin-mode .user-avatar {

@@ -50,14 +50,17 @@
   --font-subheading-weight: 300;
   --font-body: 'Sora', sans-serif;
   --font-body-weight: 400;
-}
 
-/* Fuente personalizada */
-@font-face {
-  font-family: 'arial';
-  src: url('assets/fonts/Deserta.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
+  /* Admin theme */
+  --admin-rgb: 30, 40, 80;
+  --admin-secondary-rgb: 50, 60, 120;
+  --admin-primary: rgba(var(--admin-rgb), 0.95);
+  --admin-primary-light: rgba(var(--admin-rgb), 0.6);
+  --admin-primary-hover: rgba(var(--admin-rgb), 0.8);
+  --admin-gradient: linear-gradient(135deg, rgba(var(--admin-rgb), 0.95) 0%, rgba(var(--admin-secondary-rgb), 0.95) 100%);
+  --admin-scrollbar-track: rgba(var(--admin-rgb), 0.05);
+  --admin-scrollbar-thumb: linear-gradient(135deg, rgba(var(--admin-rgb), 0.6), rgba(var(--admin-secondary-rgb), 0.6));
+  --admin-scrollbar-thumb-hover: linear-gradient(135deg, rgba(var(--admin-rgb), 0.8), rgba(var(--admin-secondary-rgb), 0.8));
 }
 
 /* Fuentes Sora */
@@ -90,7 +93,8 @@
 }
 
 html {
-  font-family: arial, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
   line-height: 1.5rem;
 }
 
@@ -115,4 +119,89 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #a03d37;
+}
+
+/* Custom scrollbar - Admin Theme */
+.admin-theme ::-webkit-scrollbar-track {
+  background: var(--admin-scrollbar-track);
+}
+
+.admin-theme ::-webkit-scrollbar-thumb {
+  background: var(--admin-scrollbar-thumb);
+}
+
+.admin-theme ::-webkit-scrollbar-thumb:hover {
+  background: var(--admin-scrollbar-thumb-hover);
+}
+
+/* ===== MODAL BASE ===== */
+.modal-overlay-base {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-dialog-base {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-header-base {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 30px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #a03d37 100%);
+  border-radius: 16px 16px 0 0;
+  color: white;
+  flex-shrink: 0;
+}
+
+/* ===== ANIMACIONES COMUNES ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes logoutFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }

@@ -1,11 +1,12 @@
-<div class="modal-overlay" (click)="onOverlayClick($event)">
-  <form #createForm="ngForm" (ngSubmit)="onSubmit()" class="modal-content">
-    <div class="modal-header">
+<div class="modal-overlay modal-overlay-base" (click)="onOverlayClick($event)">
+  <form #createForm="ngForm" (ngSubmit)="onSubmit()" class="modal-dialog-base modal-content">
+    <div class="modal-header-base">
       <h2>Crear Nuevo Producto</h2>
       <button type="button" class="modal-close" (click)="onClose()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6" y1="6" x2="18" y2="18"/>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
       </button>
     </div>
@@ -14,33 +15,21 @@
       <div class="form-grid">
         <div class="form-group">
           <label for="name">Nombre *</label>
-          <input
-            type="text"
-            id="name"
-            [(ngModel)]="formData.name"
-            name="name"
-            required
-            placeholder="Nombre del producto"
-          />
+          <input type="text" id="name" [(ngModel)]="formData.name" name="name" required
+            placeholder="Nombre del producto" />
         </div>
 
         <div class="form-group">
           <label for="productCode">Código de Producto *</label>
-          <input
-            type="text"
-            id="productCode"
-            [(ngModel)]="formData.productCode"
-            name="productCode"
-            required
-            placeholder="Ej: HAR002"
-          />
+          <input type="text" id="productCode" [(ngModel)]="formData.productCode" name="productCode" required
+            placeholder="Ej: HAR002" />
         </div>
 
         <div class="form-group">
           <label for="type">Tipo *</label>
           <select id="type" [(ngModel)]="formData.type" name="type" required>
             @for (type of productTypes; track type) {
-              <option [value]="type">{{ type }}</option>
+            <option [value]="type">{{ type }}</option>
             }
           </select>
         </div>
@@ -49,37 +38,21 @@
           <label for="unit">Unidad *</label>
           <select id="unit" [(ngModel)]="formData.unit" name="unit" required>
             @for (unit of allowedUnits; track unit) {
-              <option [value]="unit">{{ unit }}</option>
+            <option [value]="unit">{{ unit }}</option>
             }
           </select>
         </div>
 
         <div class="form-group">
           <label for="unitPrice">Precio Unitario (€) *</label>
-          <input
-            type="number"
-            id="unitPrice"
-            [(ngModel)]="formData.unitPrice"
-            name="unitPrice"
-            required
-            min="0"
-            step="0.01"
-            placeholder="0.00"
-          />
+          <input type="number" id="unitPrice" [(ngModel)]="formData.unitPrice" name="unitPrice" required min="0"
+            step="0.01" placeholder="0.00" />
         </div>
 
         <div class="form-group">
           <label for="currentStock">Stock Inicial *</label>
-          <input
-            type="number"
-            id="currentStock"
-            [(ngModel)]="formData.currentStock"
-            name="currentStock"
-            required
-            min="0"
-            step="0.01"
-            placeholder="0"
-          />
+          <input type="number" id="currentStock" [(ngModel)]="formData.currentStock" name="currentStock" required
+            min="0" step="0.01" placeholder="0" />
         </div>
 
         <div class="form-group full-width">
@@ -87,7 +60,7 @@
           <select id="supplierId" [(ngModel)]="formData.supplierId" name="supplierId">
             <option [value]="undefined">Sin proveedor</option>
             @for (supplier of suppliers; track supplier.id) {
-              <option [value]="supplier.id">{{ supplier.name }}</option>
+            <option [value]="supplier.id">{{ supplier.name }}</option>
             }
           </select>
         </div>
