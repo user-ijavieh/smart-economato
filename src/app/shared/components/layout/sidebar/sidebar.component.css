@@ -250,6 +250,11 @@
     align-items: center;
     overflow-x: scroll;
     height: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  #sidebar>ul::-webkit-scrollbar {
+    display: none;
   }
 
   #sidebar ul li {

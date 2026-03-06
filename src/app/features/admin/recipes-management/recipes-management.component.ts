@@ -80,13 +80,17 @@ export class RecipesManagementComponent implements OnInit {
     auditEndDate = '';
     userMap: { [id: number]: string } = {};
     loadingUsers = false;
+    currentAuditPage = 0;
+    totalAuditsCount = 0;
+    totalAuditPages = 0;
+    auditPageSize = 20;
     selectedAudit: RecipeAudit | null = null;
     showAuditDetailModal = false;
 
     // ── Caché de auditorías ──
-    private auditCache: Map<string, RecipeAudit[]> = new Map();
+    private auditCache: Map<string, any> = new Map();
 
-    get totalAudits(): number { return this.filteredAudits.length; }
+    get totalAudits(): number { return this.totalAuditsCount; }
     get auditsByAction(): { [key: string]: number } {
         const counts: { [key: string]: number } = {};
         this.filteredAudits.forEach(a => {
@@ -166,21 +170,19 @@ export class RecipesManagementComponent implements OnInit {
 
     // ── Audits ──
 
-    loadAudits(): void {
-        // Generar clave de caché basada en filtros de fecha
+    loadAudits(page: number = 0): void {
+        this.currentAuditPage = page;
+        // Generar clave de caché basada en filtros de fecha y página
         const cacheKey = this.auditStartDate && this.auditEndDate 
-            ? `date:${this.auditStartDate}-${this.auditEndDate}`
-            : 'all';
+            ? `date:${this.auditStartDate}-${this.auditEndDate}-page:${page}`
+            : `all-page:${page}`;
 
         // Verificar si tenemos datos en caché
         if (this.auditCache.has(cacheKey)) {
-            const cachedAudits = this.auditCache.get(cacheKey) || [];
-            // Asegurar ordenamiento (más nuevas primero)
-            this.audits = [...cachedAudits].sort((a, b) => {
-                const dateA = new Date(a.auditDate || 0).getTime();
-                const dateB = new Date(b.auditDate || 0).getTime();
-                return dateB - dateA;
-            });
+            const cachedData = this.auditCache.get(cacheKey);
+            this.audits = cachedData.content;
+            this.totalAuditsCount = cachedData.totalElements;
+            this.totalAuditPages = cachedData.totalPages;
             this.applyAuditFilters();
             this.loadUsersForAudits();
             this.auditsLoaded = true;
@@ -188,13 +190,12 @@ export class RecipesManagementComponent implements OnInit {
             return;
         }
 
-        // Si no hay caché válido, hacer petición
         this.loadingAudits = true;
         this.cdr.detectChanges();
 
         const source$ = (this.auditStartDate && this.auditEndDate)
-            ? this.recipeAuditService.getByDateRange(this.auditStartDate, this.auditEndDate, 0, 20, ['auditDate,desc'])
-            : this.recipeAuditService.getAll(0, 20, ['auditDate,desc']);
+            ? this.recipeAuditService.getByDateRange(this.auditStartDate, this.auditEndDate, this.currentAuditPage, this.auditPageSize, ['auditDate,desc'])
+            : this.recipeAuditService.getAll(this.currentAuditPage, this.auditPageSize, ['auditDate,desc']);
 
         source$.pipe(
             finalize(() => {
@@ -204,29 +205,29 @@ export class RecipesManagementComponent implements OnInit {
             })
         ).subscribe({
             next: (response) => {
-                // Verificar si la respuesta es un array directo o un objeto paginado
                 let auditsArray: any[] = [];
-                
                 if (Array.isArray(response)) {
                     auditsArray = response;
+                    this.totalAuditsCount = auditsArray.length;
+                    this.totalAuditPages = 1;
                 } else if (response && Array.isArray((response as any).content)) {
                     // Respuesta paginada con estructura {content: [], ...}
                     auditsArray = (response as any).content;
+                    this.totalAuditsCount = (response as any).totalElements;
+                    this.totalAuditPages = (response as any).totalPages;
                 } else {
                     console.warn('Respuesta inesperada del servicio de auditorías:', response);
                 }
                 
-                // Guardar en caché
-                this.auditCache.set(cacheKey, auditsArray);
+                this.audits = auditsArray;
                 
-                // Ordenar las auditorías por fecha de creación (más nuevas primero)
-                const sortedAudits = [...auditsArray].sort((a, b) => {
-                    const dateA = new Date(a.auditDate || 0).getTime();
-                    const dateB = new Date(b.auditDate || 0).getTime();
-                    return dateB - dateA; // Orden descendente (más nuevas primero)
+                // Guardar en caché el objeto paginado para poder restaurarlo
+                this.auditCache.set(cacheKey, {
+                    content: this.audits,
+                    totalElements: this.totalAuditsCount,
+                    totalPages: this.totalAuditPages
                 });
                 
-                this.audits = sortedAudits;
                 this.applyAuditFilters();
                 this.loadUsersForAudits();
                 this.cdr.detectChanges();
@@ -277,7 +278,14 @@ export class RecipesManagementComponent implements OnInit {
         this.auditActionFilter = '';
         this.auditStartDate = '';
         this.auditEndDate = '';
-        this.loadAudits();
+        this.loadAudits(0);
+    }
+    
+    changeAuditPage(delta: number): void {
+        const newPage = this.currentAuditPage + delta;
+        if (newPage >= 0 && newPage < this.totalAuditPages) {
+            this.loadAudits(newPage);
+        }
     }
 
     // ── Métodos de caché ──
@@ -401,25 +409,25 @@ export class RecipesManagementComponent implements OnInit {
     openDetailModal(recipe: Recipe): void {
         this.selectedRecipe = recipe;
         this.showDetailModal = true;
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
     }
 
     closeDetailModal(): void {
         this.showDetailModal = false;
         this.selectedRecipe = null;
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
     }
 
     // ── Create ──
 
     openCreateModal(): void {
         this.showCreateModal = true;
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
     }
 
     closeCreateModal(): void {
         this.showCreateModal = false;
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
     }
 
     onCreateRecipe(recipeRequest: RecipeRequest): void {
@@ -441,13 +449,13 @@ export class RecipesManagementComponent implements OnInit {
     openEditModal(recipe: Recipe): void {
         this.selectedRecipe = recipe;
         this.showEditModal = true;
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
     }
 
     closeEditModal(): void {
         this.showEditModal = false;
         this.selectedRecipe = null;
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
     }
 
     onSaveRecipe(recipeRequest: RecipeRequest): void {

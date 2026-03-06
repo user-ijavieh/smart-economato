@@ -15,6 +15,7 @@ export class RecipeDetailModalComponent {
   @Input({ required: true }) recipe!: Recipe;
   @Input() canEdit = false;
   @Input() isAdmin = false;
+  @Input() canCook = true;
 
   @Output() close = new EventEmitter<void>();
   @Output() print = new EventEmitter<void>();

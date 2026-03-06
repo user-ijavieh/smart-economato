@@ -10,10 +10,14 @@ export class UserService {
   private http = inject(HttpClient);
   private url = `${environment.apiUrl}/api/users`;
 
-  getAll(page = 0, size = 20): Observable<Page<User>> {
-    const params = new HttpParams()
+  getAll(page = 0, size = 20, sort?: string): Observable<Page<User>> {
+    let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
+
+    if (sort) {
+      params = params.set('sort', sort);
+    }
 
     return this.http.get<any>(this.url, { params }).pipe(
       map(response => {
@@ -62,10 +66,14 @@ export class UserService {
     return this.http.delete<void>(`${this.url}/${id}`);
   }
 
-  getHidden(page = 0, size = 20): Observable<Page<User>> {
-    const params = new HttpParams()
+  getHidden(page = 0, size = 20, sort?: string): Observable<Page<User>> {
+    let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
+
+    if (sort) {
+      params = params.set('sort', sort);
+    }
 
     return this.http.get<any>(`${this.url}/hidden`, { params }).pipe(
       map(response => {

@@ -45,12 +45,21 @@ export class KitchenManagementComponent implements OnInit {
   startDate = '';
   endDate = '';
 
+  // Sorting state for History table
+  sortColumnHistory = 'cookingDate';
+  sortDirHistory: 'asc' | 'desc' = 'desc';
+  sortInteractedHistory = false;
+
   readonly reportRanges: ReportRange[] = ['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY', 'ALL_TIME', 'CUSTOM'];
   reportRange: ReportRange = 'MONTHLY';
   reportStartDate = '';
   reportEndDate = '';
   report: KitchenReport | null = null;
   loadingReport = false;
+
+  // Mobile detail modal state for History
+  showMobileModal = false;
+  selectedAuditForMobile: RecipeCookingAudit | null = null;
 
   ngOnInit(): void {
     this.loadHistory();
@@ -79,7 +88,14 @@ export class KitchenManagementComponent implements OnInit {
     this.currentPage = page;
     this.cdr.markForCheck();
 
-    this.kitchenService.getCookingAudits(this.currentPage, this.pageSize, 'cookingDate,desc')
+    const backendCols: Record<string, string> = {
+      'recipeName': 'recipe.name',
+      'userName': 'user.name'
+    };
+    const backendSortCol = backendCols[this.sortColumnHistory] || this.sortColumnHistory;
+    const sortParam = `${backendSortCol},${this.sortDirHistory}`;
+
+    this.kitchenService.getCookingAudits(this.currentPage, this.pageSize, sortParam)
       .pipe(finalize(() => {
         this.loadingHistory = false;
         this.cdr.markForCheck();
@@ -87,10 +103,10 @@ export class KitchenManagementComponent implements OnInit {
       .subscribe({
         next: (pageData) => {
           this.audits = pageData.content;
-          this.filteredAudits = pageData.content;
+          this.filteredAudits = [...pageData.content];
           this.totalElements = pageData.totalElements;
           this.totalPages = pageData.totalPages;
-          this.applySearchFilter();
+          this.applyHistorySorting();
           this.cdr.markForCheck();
         },
         error: () => {
@@ -238,12 +254,75 @@ export class KitchenManagementComponent implements OnInit {
     }
   }
 
+  // Mobile detail modal operations
+  openMobileModal(audit: RecipeCookingAudit): void {
+    this.selectedAuditForMobile = audit;
+    this.showMobileModal = true;
+  }
+
+  closeMobileModal(): void {
+    this.showMobileModal = false;
+    this.selectedAuditForMobile = null;
+  }
+
   hasActiveHistoryFilters(): boolean {
     return this.searchTerm.trim().length > 0
       || String(this.recipeIdFilter).trim().length > 0
       || String(this.userIdFilter).trim().length > 0
       || this.startDate.length > 0
       || this.endDate.length > 0;
+  }
+
+  onSortHistoryChange(column: string): void {
+    this.sortInteractedHistory = true;
+    if (this.sortColumnHistory === column) {
+      this.sortDirHistory = this.sortDirHistory === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumnHistory = column;
+      this.sortDirHistory = column === 'cookingDate' || column === 'quantityCooked' ? 'desc' : 'asc';
+    }
+    if (this.hasActiveHistoryFilters()) {
+      this.applyHistorySorting();
+    } else {
+      this.loadHistory(0);
+    }
+  }
+
+  getSortHistoryDir(column: string): string {
+    if (!this.sortInteractedHistory && this.sortColumnHistory !== column) return 'none';
+    return this.sortColumnHistory === column ? this.sortDirHistory : 'none';
+  }
+
+  private applyHistorySorting(): void {
+    if (!this.filteredAudits || this.filteredAudits.length === 0) return;
+    
+    const factor = this.sortDirHistory === 'asc' ? 1 : -1;
+    this.filteredAudits.sort((a, b) => {
+      let valA: any;
+      let valB: any;
+
+      switch (this.sortColumnHistory) {
+        case 'cookingDate':
+          valA = new Date(a.cookingDate).getTime();
+          valB = new Date(b.cookingDate).getTime();
+          return (valA - valB) * factor;
+        case 'recipeName':
+          valA = a.recipeName?.toLowerCase() || '';
+          valB = b.recipeName?.toLowerCase() || '';
+          return valA.localeCompare(valB) * factor;
+        case 'userName':
+          valA = a.userName?.toLowerCase() || '';
+          valB = b.userName?.toLowerCase() || '';
+          return valA.localeCompare(valB) * factor;
+        case 'quantityCooked':
+          valA = a.quantityCooked || 0;
+          valB = b.quantityCooked || 0;
+          return (valA - valB) * factor;
+        default:
+          return 0;
+      }
+    });
+    this.cdr.detectChanges();
   }
 
   async revertAudit(audit: RecipeCookingAudit): Promise<void> {
@@ -283,14 +362,17 @@ export class KitchenManagementComponent implements OnInit {
             } else {
               this.messageService.showError(response.errorDetail || 'La reversión no pudo completarse');
             }
+            this.cdr.detectChanges();
           },
           error: () => {
             this.messageService.showError('Error al revertir el cocinado');
+            this.cdr.detectChanges();
           }
         });
       },
       error: () => {
         this.messageService.showError('No se pudo cargar la receta para la reversión');
+        this.cdr.detectChanges();
       }
     });
   }
@@ -402,18 +484,14 @@ export class KitchenManagementComponent implements OnInit {
   }
 
   private setFilteredHistory(audits: RecipeCookingAudit[]): void {
-    const ordered = [...audits].sort((a, b) => {
-      const left = new Date(a.cookingDate).getTime();
-      const right = new Date(b.cookingDate).getTime();
-      return right - left;
-    });
-
-    this.audits = ordered;
-    this.filteredAudits = ordered;
-    this.totalElements = ordered.length;
+    this.audits = [...audits];
+    this.filteredAudits = [...audits];
+    this.totalElements = audits.length;
     this.totalPages = 1;
     this.currentPage = 0;
+    
+    // Sort before applying filter and rendering
+    this.applyHistorySorting();
     this.applySearchFilter();
-    this.cdr.markForCheck();
   }
 }

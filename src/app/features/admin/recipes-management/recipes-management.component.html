@@ -62,27 +62,30 @@
             <thead>
                 <tr>
                     <th>Nombre</th>
-                    <th>Componentes</th>
+                    <th class="hide-on-mobile">Componentes</th>
                     <th>Costo Total</th>
-                    <th>Alérgenos</th>
-                    <th>Acciones</th>
+                    <th class="hide-on-mobile">Alérgenos</th>
+                    <th class="hide-on-mobile">Acciones</th>
+                    <th class="show-on-mobile-only mobile-icon-col"></th>
                 </tr>
             </thead>
             <tbody [class.loading]="loading">
-                @if (loading) {
+                <!-- Skeleton Loader -->
+                @if (loading && recipes.length === 0) {
                 @for (i of [1, 2, 3, 4, 5, 6]; track i) {
                 <tr class="skeleton-row">
                     <td><span class="skeleton skeleton-text" style="width: 160px"></span></td>
-                    <td><span class="skeleton skeleton-text" style="width: 50px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 50px"></span></td>
                     <td><span class="skeleton skeleton-text" style="width: 80px"></span></td>
-                    <td><span class="skeleton skeleton-text" style="width: 100px"></span></td>
-                    <td><span class="skeleton skeleton-text" style="width: 120px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 100px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 120px"></span></td>
+                    <td class="show-on-mobile-only mobile-icon-col"></td>
                 </tr>
                 }
                 } @else {
                 @for (recipe of filteredRecipes; track recipe.id) {
-                <tr>
-                    <td class="recipe-name-cell">
+                <tr class="clickable-row mobile-clickable-row">
+                    <td class="recipe-name-cell" (click)="openDetailModal(recipe)">
                         <div class="recipe-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 viewBox="0 0 24 24">
@@ -92,13 +95,13 @@
                         </div>
                         {{ recipe.name }}
                     </td>
-                    <td>
+                    <td class="hide-on-mobile">
                         <span class="component-count">{{ recipe.components.length }}</span>
                     </td>
-                    <td>
+                    <td (click)="openDetailModal(recipe)">
                         <span class="cost-value">{{ recipe.totalCost | number:'1.2-2' }} €</span>
                     </td>
-                    <td>
+                    <td class="hide-on-mobile">
                         @if (hasAllergens(recipe)) {
                         <span class="allergen-badge has-allergens">
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
@@ -121,7 +124,7 @@
                         </span>
                         }
                     </td>
-                    <td class="actions-cell">
+                    <td class="actions-cell hide-on-mobile" (click)="$event.stopPropagation()">
                         <button class="btn-ver" (click)="openDetailModal(recipe)" title="Ver detalle">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 viewBox="0 0 16 16">
@@ -159,11 +162,16 @@
                             </svg>
                         </button>
                     </td>
+                    <td class="show-on-mobile-only mobile-icon-col" (click)="openDetailModal(recipe)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+                        </svg>
+                    </td>
                 </tr>
                 }
                 @if (filteredRecipes.length === 0 && !loading) {
                 <tr>
-                    <td colspan="5" style="text-align: center; padding: 2rem; color: #999">
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: #999">
                         No se encontraron recetas
                     </td>
                 </tr>
@@ -176,19 +184,13 @@
     @if (totalPages > 1) {
     <div class="pagination-controls">
         <button class="btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path fill-rule="evenodd"
-                    d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
             Anterior
         </button>
-        <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }}</span>
+        <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }} <span class="total-info">({{ totalElements }} recetas)</span></span>
         <button class="btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
             Siguiente
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path fill-rule="evenodd"
-                    d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
         </button>
     </div>
     }
@@ -224,45 +226,33 @@
         }
     </div>
 
-    <!-- Audit stats -->
-    <div class="stats-row">
-        <div class="stat-card">
-            <span class="stat-number">{{ totalAudits }}</span>
-            <span class="stat-label">Total Auditorías</span>
-        </div>
-        @for (entry of auditsByAction | keyvalue; track entry.key) {
-        <div class="stat-card" [ngClass]="getActionBadgeClass(entry.key)">
-            <span class="stat-number">{{ entry.value }}</span>
-            <span class="stat-label">{{ translateAction(entry.key) }}</span>
-        </div>
-        }
-    </div>
-
     <div class="tabla-contenedor">
         <table>
             <thead>
                 <tr>
                     <th>Fecha</th>
                     <th>Acción</th>
-                    <th>ID Receta</th>
-                    <th>Usuario</th>
-                    <th>Detalles</th>
+                    <th class="hide-on-mobile">ID Receta</th>
+                    <th class="hide-on-mobile">Usuario</th>
+                    <th class="hide-on-mobile">Detalles</th>
+                    <th class="show-on-mobile-only mobile-icon-col"></th>
                 </tr>
             </thead>
-            <tbody [class.loading]="loadingAudits">
-                @if (loadingAudits) {
-                @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+            <tbody>
+                @if (loadingAudits && filteredAudits.length === 0) {
+                @for (i of [1, 2, 3, 4, 5]; track i) {
                 <tr class="skeleton-row">
                     <td><span class="skeleton skeleton-text" style="width: 130px"></span></td>
                     <td><span class="skeleton skeleton-text" style="width: 100px"></span></td>
-                    <td><span class="skeleton skeleton-text" style="width: 50px"></span></td>
-                    <td><span class="skeleton skeleton-text" style="width: 50px"></span></td>
-                    <td><span class="skeleton skeleton-text" style="width: 200px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 50px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 50px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 200px"></span></td>
+                    <td class="show-on-mobile-only mobile-icon-col"></td>
                 </tr>
                 }
                 } @else {
                 @for (audit of filteredAudits; track $index) {
-                <tr class="audit-row" (click)="openAuditDetail(audit)">
+                <tr class="audit-row clickable-row mobile-clickable-row" (click)="openAuditDetail(audit)">
                     <td>
                         <span class="date-cell-inner">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
@@ -278,18 +268,23 @@
                             {{ translateAction(audit.action) }}
                         </span>
                     </td>
-                    <td>
+                    <td class="hide-on-mobile">
                         <span class="id-badge">#{{ audit.id_recipe }}</span>
                     </td>
-                    <td>
+                    <td class="hide-on-mobile">
                         <span class="user-name">{{ getUserName(audit.id_user) }}</span>
                     </td>
-                    <td class="details-cell">{{ audit.details }}</td>
+                    <td class="details-cell hide-on-mobile">{{ audit.details }}</td>
+                    <td class="show-on-mobile-only mobile-icon-col">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+                        </svg>
+                    </td>
                 </tr>
                 }
                 @if (filteredAudits.length === 0 && !loadingAudits) {
                 <tr>
-                    <td colspan="5" style="text-align: center; padding: 2rem; color: #999">
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: #999">
                         No se encontraron auditorías
                     </td>
                 </tr>
@@ -298,13 +293,27 @@
             </tbody>
         </table>
     </div>
+
+    @if (totalAuditPages > 1) {
+    <div class="pagination-controls">
+        <button class="btn-page" [disabled]="currentAuditPage === 0" (click)="changeAuditPage(-1)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
+            Anterior
+        </button>
+        <span class="page-info">Página {{ currentAuditPage + 1 }} de {{ totalAuditPages }} <span class="total-info">({{ totalAuditsCount }} auditorías)</span></span>
+        <button class="btn-page" [disabled]="currentAuditPage === totalAuditPages - 1" (click)="changeAuditPage(1)">
+            Siguiente
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6-6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
+        </button>
+    </div>
+    }
 </div>
 }
 
 <!-- Modal de detalle -->
 @if (showDetailModal && selectedRecipe) {
-<app-recipe-detail-modal [recipe]="selectedRecipe" [canEdit]="true" [isAdmin]="true" (close)="closeDetailModal()"
-    (print)="downloadPdf(selectedRecipe)" (edit)="closeDetailModal(); openEditModal(selectedRecipe)"
+<app-recipe-detail-modal [recipe]="selectedRecipe" [canEdit]="true" [isAdmin]="true" [canCook]="false" (close)="closeDetailModal()"
+    (print)="downloadPdf(selectedRecipe)" (edit)="showDetailModal = false; openEditModal(selectedRecipe)"
     (cook)="onCookRecipe($event)" />
 }
 
@@ -324,13 +333,15 @@
 <div class="audit-modal-overlay" (click)="onAuditOverlayClick($event)">
     <div class="audit-modal" [class.audit-modal-wide]="hasDiffData">
         <div class="audit-modal-header">
-            <h2>Detalle de Auditoría</h2>
-            <div class="audit-modal-header-info">
-                <span class="action-badge" [ngClass]="getActionBadgeClass(selectedAudit.action)">
-                    {{ translateAction(selectedAudit.action) }}
-                </span>
-                <span class="audit-header-date">{{ formatDate(selectedAudit.auditDate) }}</span>
-                <span class="audit-header-user">{{ getUserName(selectedAudit.id_user) }}</span>
+            <div class="audit-header-content">
+                <h2>Detalle de Auditoría</h2>
+                <div class="audit-modal-header-info">
+                    <span class="action-badge" [ngClass]="getActionBadgeClass(selectedAudit.action)">
+                        {{ translateAction(selectedAudit.action) }}
+                    </span>
+                    <span class="audit-header-date">{{ formatDate(selectedAudit.auditDate) }}</span>
+                    <span class="audit-header-user">{{ getUserName(selectedAudit.id_user) }}</span>
+                </div>
             </div>
             <button class="audit-modal-close" (click)="closeAuditDetail()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"

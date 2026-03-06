@@ -1,25 +1,24 @@
 <div class="header-recetas">
-    <h1>Gestión de Alérgenos</h1>
+    <h1>Gestión de Datos Maestros</h1>
 </div>
 
 <!-- Tab bar -->
 <div class="tab-bar">
-    <button class="tab-btn active">
+    <button class="tab-btn" [class.active]="activeTab === 'allergens'" (click)="switchTab('allergens')">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H7l5-8v4h4l-5 8z" />
         </svg>
         Alérgenos
     </button>
-    <button class="tab-btn tab-btn--disabled" disabled title="Próximamente">
+    <button class="tab-btn" [class.active]="activeTab === 'suppliers'" (click)="switchTab('suppliers')">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-            <path
-                d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+            <path d="M16 4H8v4H4v12h16V8h-4V4zm-6 2h4v2h-4V6zM6 10h12v8H6v-8zm2 2v4h8v-4H8z" />
         </svg>
-        Auditoría
-        <span class="tab-soon-badge">Próximamente</span>
+        Proveedores
     </button>
 </div>
 
+@if (activeTab === 'allergens') {
 <div class="contenedor-principal">
     <div class="controles">
         <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por nombre..." (ngModelChange)="onSearch()" />
@@ -35,18 +34,6 @@
         }
     </div>
 
-    <!-- Stats cards -->
-    <div class="stats-row">
-        <div class="stat-card">
-            <span class="stat-number">{{ totalAllergens }}</span>
-            <span class="stat-label">Total Alérgenos</span>
-        </div>
-        <div class="stat-card stat-visible">
-            <span class="stat-number">{{ filteredAllergens.length }}</span>
-            <span class="stat-label">Mostrando</span>
-        </div>
-    </div>
-
     <div class="tabla-contenedor">
         <table>
             <thead>
@@ -57,7 +44,8 @@
                 </tr>
             </thead>
             <tbody [class.loading]="loading">
-                @if (loading) {
+                <!-- Skeleton Loader -->
+                @if (loading && allergens.length === 0) {
                 @for (i of [1, 2, 3, 4, 5, 6]; track i) {
                 <tr class="skeleton-row">
                     <td><span class="skeleton skeleton-text" style="width: 30px"></span></td>
@@ -120,19 +108,13 @@
     @if (totalPages > 1) {
     <div class="pagination-controls">
         <button class="btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path fill-rule="evenodd"
-                    d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
             Anterior
         </button>
-        <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }}</span>
+        <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }} <span class="total-info">({{ totalElements }} alérgenos)</span></span>
         <button class="btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
             Siguiente
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path fill-rule="evenodd"
-                    d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
         </button>
     </div>
     }
@@ -183,3 +165,10 @@
 
 <!-- Toasts -->
 <app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
+}
+
+@if (activeTab === 'suppliers') {
+<div class="contenedor-secundario" style="margin-top: 15px;">
+    <app-suppliers-management></app-suppliers-management>
+</div>
+}

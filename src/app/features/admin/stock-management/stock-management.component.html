@@ -22,25 +22,12 @@
 @if (activeTab === 'alerts') {
 <div class="contenedor-principal">
   <!-- Controls -->
-  <div class="controles">
-    <select [(ngModel)]="severityFilter" (ngModelChange)="onSeverityChange()" class="severity-select">
-      <option value="">Todas las severidades</option>
-      <option value="CRITICAL">Crítico</option>
-      <option value="HIGH">Alto</option>
-      <option value="MEDIUM">Medio</option>
-      <option value="LOW">Bajo</option>
-    </select>
-    <button type="button" class="btn-refresh" (click)="loadAlerts()">
-      <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="currentColor">
-        <path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 118-119 193t-191 75Z"/>
-      </svg>
-      Actualizar
-    </button>
+  <div class="controles" style="justify-content: flex-end;">
     <button type="button" class="btn-crear-orden" (click)="openOrderModal()" [disabled]="loadingOrderData">
-      <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
         <path d="M160-160v-516L82-846l72-34 94 202h464l94-202 72 34-78 170v516H160Zm240-280h160q17 0 28.5-11.5T600-480q0-17-11.5-28.5T560-520H400q-17 0-28.5 11.5T360-480q0 17 11.5 28.5T400-440ZM240-240h480v-358H240v358Z"/>
       </svg>
-      {{ loadingOrderData ? 'Cargando...' : 'Crear Orden' }}
+      {{ loadingOrderData ? 'Cargando...' : 'Nueva Orden de Reposición' }}
     </button>
   </div>
 
@@ -58,32 +45,58 @@
     <table>
       <thead>
         <tr>
-          <th>Producto</th>
-          <th>Estado del Stock</th>
-          <th>Días Rest.</th>
-          <th>Estado</th>
+          <th
+            class="sortable"
+            (click)="onSortChange('productName')"
+            [attr.data-sort-dir]="getSortDir('productName')"
+          >
+            Producto
+          </th>
+          <th
+            class="sortable hide-on-mobile"
+            (click)="onSortChange('effectiveGap')"
+            [attr.data-sort-dir]="getSortDir('effectiveGap')"
+          >
+            Estado del Stock
+          </th>
+          <th
+            class="sortable hide-on-mobile"
+            (click)="onSortChange('estimatedDaysRemaining')"
+            [attr.data-sort-dir]="getSortDir('estimatedDaysRemaining')"
+          >
+            Días Rest.
+          </th>
+          <th
+            class="sortable"
+            (click)="onSortChange('severity')"
+            [attr.data-sort-dir]="getSortDir('severity')"
+          >
+            Estado
+          </th>
+          <th class="show-on-mobile-only mobile-icon-col"></th>
         </tr>
       </thead>
       <tbody [class.loading]="loadingAlerts">
-        @if (loadingAlerts) {
-          @for (i of [1,2,3,4,5]; track i) {
+        @if (loadingAlerts && alerts.length === 0) {
+        @for (i of [1, 2, 3, 4, 5, 6]; track i) {
           <tr class="skeleton-row">
             <td><span class="skeleton" style="width:160px"></span></td>
-            <td>
+            <td class="hide-on-mobile">
               <span class="skeleton" style="width:80px; margin-bottom: 4px;"></span>
               <span class="skeleton" style="width:80px; margin-bottom: 4px;"></span>
               <span class="skeleton" style="width:80px"></span>
             </td>
-            <td><span class="skeleton" style="width:50px"></span></td>
+            <td class="hide-on-mobile"><span class="skeleton" style="width:50px"></span></td>
             <td>
               <span class="skeleton" style="width:80px; margin-bottom: 6px;"></span>
               <span class="skeleton" style="width:80px"></span>
             </td>
+            <td class="show-on-mobile-only mobile-icon-col"></td>
           </tr>
           }
         } @else {
           @for (alert of alerts; track alert.productId) {
-          <tr>
+          <tr class="clickable-row mobile-clickable-row" (click)="openMobileModal(alert)">
             <td>
               <div class="product-cell">
                 <strong>{{ alert.productName }}</strong>
@@ -95,19 +108,24 @@
                 }
               </div>
             </td>
-            <td>
+            <td class="hide-on-mobile">
               <div class="stock-info-cell">
                 <div class="stock-line"><span>Actual:</span> <strong>{{ alert.currentStock | number:'1.0-2' }}</strong></div>
                 <div class="stock-line"><span>Consumido:</span>&nbsp;<strong>{{ alert.projectedConsumption | number:'1.0-2' }}</strong></div>
                 <div class="stock-line" [class.gap-negative]="alert.effectiveGap < 0"><span>Déficit:</span> <strong>{{ alert.effectiveGap | number:'1.0-2' }}</strong></div>
               </div>
             </td>
-            <td class="days-cell" [class.days-critical]="alert.estimatedDaysRemaining <= 3"><strong>{{ alert.estimatedDaysRemaining }} Días</strong></td>
+            <td class="days-cell hide-on-mobile" [class.days-critical]="alert.estimatedDaysRemaining <= 3"><strong>{{ alert.estimatedDaysRemaining }} Días</strong></td>
             <td>
               <div class="status-cell">
                 <span class="severity-badge" [ngClass]="getSeverityClass(alert.severity)">{{ getSeverityLabel(alert.severity) }}</span>
-                <span class="resolution-badge" [ngClass]="getResolutionClass(alert.resolution)" [title]="getResolutionLabel(alert.resolution)">{{ getResolutionLabel(alert.resolution) }}</span>
+                <span class="resolution-badge hide-on-mobile" [ngClass]="getResolutionClass(alert.resolution)" [title]="getResolutionLabel(alert.resolution)">{{ getResolutionLabel(alert.resolution) }}</span>
               </div>
+            </td>
+            <td class="show-on-mobile-only mobile-icon-col">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+              </svg>
             </td>
           </tr>
           }
@@ -121,6 +139,49 @@
       </tbody>
     </table>
   </div>
+
+  <!-- Mobile Detail Modal para Alertas -->
+  @if (showMobileModal && selectedAlertForMobile) {
+  <div class="mobile-detail-modal-overlay" (click)="closeMobileModal()">
+      <div class="mobile-detail-modal" (click)="$event.stopPropagation()">
+          <div class="mobile-detail-modal-header">
+              <div class="title-cell">
+                  <h2>{{ selectedAlertForMobile.productName }}</h2>
+              </div>
+              <button class="modal-close-btn" (click)="closeMobileModal()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                  </svg>
+              </button>
+          </div>
+          <div class="mobile-detail-modal-body">
+              <div class="detail-field">
+                  <span class="detail-label">Estado de Alerta</span>
+                  <span class="detail-value">
+                      <span class="severity-badge" [ngClass]="getSeverityClass(selectedAlertForMobile.severity)">{{ getSeverityLabel(selectedAlertForMobile.severity) }}</span>
+                      <span class="resolution-badge" [ngClass]="getResolutionClass(selectedAlertForMobile.resolution)" style="margin-left: 8px;">{{ getResolutionLabel(selectedAlertForMobile.resolution) }}</span>
+                  </span>
+              </div>
+              <div class="detail-field">
+                  <span class="detail-label">Stock Actual</span>
+                  <span class="detail-value">{{ selectedAlertForMobile.currentStock | number:'1.0-2' }} {{ selectedAlertForMobile.unit }}</span>
+              </div>
+              <div class="detail-field">
+                  <span class="detail-label">Consumo (14d)</span>
+                  <span class="detail-value">{{ selectedAlertForMobile.projectedConsumption | number:'1.0-2' }}</span>
+              </div>
+              <div class="detail-field">
+                  <span class="detail-label" [class.gap-negative]="selectedAlertForMobile.effectiveGap < 0">Déficit</span>
+                  <span class="detail-value" [class.gap-negative]="selectedAlertForMobile.effectiveGap < 0">{{ selectedAlertForMobile.effectiveGap | number:'1.0-2' }}</span>
+              </div>
+              <div class="detail-field">
+                  <span class="detail-label">Días Restantes</span>
+                  <span class="detail-value" [class.days-critical]="selectedAlertForMobile.estimatedDaysRemaining <= 3">{{ selectedAlertForMobile.estimatedDaysRemaining }} Días</span>
+              </div>
+          </div>
+      </div>
+  </div>
+  }
 </div>
 }
 
@@ -136,15 +197,34 @@
     <table>
       <thead>
         <tr>
-          <th>#</th>
-          <th>Producto</th>
-          <th>Consumo Proyectado</th>
-          <th>Última Actualización</th>
+          <th class="hide-on-mobile">#</th>
+          <th
+            class="sortable"
+            (click)="onSortPredictionsChange('productName')"
+            [attr.data-sort-dir]="getSortPredictionsDir('productName')"
+          >
+            Producto
+          </th>
+          <th
+            class="sortable"
+            (click)="onSortPredictionsChange('projectedConsumption')"
+            [attr.data-sort-dir]="getSortPredictionsDir('projectedConsumption')"
+          >
+            Consumo Proyectado
+          </th>
+          <th
+            class="sortable hide-on-mobile"
+            (click)="onSortPredictionsChange('updatedAt')"
+            [attr.data-sort-dir]="getSortPredictionsDir('updatedAt')"
+          >
+            Última Actualización
+          </th>
+          <th class="show-on-mobile-only mobile-icon-col"></th>
         </tr>
       </thead>
       <tbody [class.loading]="loadingPredictions">
-        @if (loadingPredictions) {
-          @for (i of [1,2,3,4,5,6,7,8,9,10]; track i) {
+        @if (loadingPredictions && predictions.length === 0) {
+        @for (i of [1, 2, 3, 4, 5, 6]; track i) {
           <tr class="skeleton-row">
             <td><span class="skeleton" style="width:30px"></span></td>
             <td><span class="skeleton" style="width:160px"></span></td>
@@ -154,11 +234,16 @@
           }
         } @else {
           @for (pred of predictions; track pred.productId; let idx = $index) {
-          <tr>
-            <td class="idx-cell">{{ currentPage * pageSize + idx + 1 }}</td>
+          <tr class="clickable-row mobile-clickable-row" (click)="openPredictionMobileModal(pred)">
+            <td class="idx-cell hide-on-mobile">{{ currentPage * pageSize + idx + 1 }}</td>
             <td><strong>{{ pred.productName }}</strong></td>
             <td class="num-cell"><span class="consumption-value">{{ pred.projectedConsumption | number:'1.0-2' }}&nbsp;{{ pred.projectedConsumptionUnit }}</span></td>
-            <td class="date-cell">{{ formatDate(pred.updatedAt) }}</td>
+            <td class="date-cell hide-on-mobile">{{ formatDate(pred.updatedAt) }}</td>
+            <td class="show-on-mobile-only mobile-icon-col">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+              </svg>
+            </td>
           </tr>
           }
           @if (!predictions.length) {
@@ -183,6 +268,34 @@
       Siguiente
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
     </button>
+  </div>
+  }
+
+  <!-- Mobile Detail Modal para Predictions -->
+  @if (showPredictionMobileModal && selectedPredictionForMobile) {
+  <div class="mobile-detail-modal-overlay" (click)="closePredictionMobileModal()">
+      <div class="mobile-detail-modal" (click)="$event.stopPropagation()">
+          <div class="mobile-detail-modal-header">
+              <div class="title-cell">
+                  <h2>{{ selectedPredictionForMobile.productName }}</h2>
+              </div>
+              <button class="modal-close-btn" (click)="closePredictionMobileModal()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                  </svg>
+              </button>
+          </div>
+          <div class="mobile-detail-modal-body">
+              <div class="detail-field">
+                  <span class="detail-label">Consumo Proyectado (14D)</span>
+                  <span class="detail-value">{{ selectedPredictionForMobile.projectedConsumption | number:'1.0-2' }} {{ selectedPredictionForMobile.projectedConsumptionUnit }}</span>
+              </div>
+              <div class="detail-field">
+                  <span class="detail-label">Última Actualización</span>
+                  <span class="detail-value">{{ formatDate(selectedPredictionForMobile.updatedAt) }}</span>
+              </div>
+          </div>
+      </div>
   </div>
   }
 </div>
