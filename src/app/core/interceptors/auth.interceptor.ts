@@ -32,6 +32,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const urlPattern = getUrlPattern(apiPath);
 
     if (!hasPermission(userRole, method, urlPattern)) {
+      console.error('[AUTH INTERCEPTOR] FORBIDDEN:', { method, url: req.url, pattern: urlPattern, role: userRole });
       return throwError(() => new HttpErrorResponse({
         error: { message: `No tienes permisos para realizar esta acción. Rol: ${userRole}` },
         status: 403,
