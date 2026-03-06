@@ -53,14 +53,14 @@ export class App implements OnInit {
           width: 8px;
         }
         ::-webkit-scrollbar-track {
-          background: rgba(30, 40, 80, 0.05);
+          background: var(--admin-scrollbar-track);
         }
         ::-webkit-scrollbar-thumb {
-          background: linear-gradient(135deg, rgba(30, 40, 80, 0.7), rgba(50, 60, 120, 0.7));
+          background: var(--admin-gradient));
           border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(135deg, rgba(30, 40, 80, 0.9), rgba(50, 60, 120, 0.9));
+          background: var(--admin-gradient));
         }
       `;
       document.head.appendChild(style);
