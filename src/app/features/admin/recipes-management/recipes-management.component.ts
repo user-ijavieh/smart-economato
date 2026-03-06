@@ -12,7 +12,8 @@ import { RecipeEditModalComponent } from '../../general/recipes/recipe-edit-moda
 import { RecipeDetailModalComponent } from '../../general/recipes/recipe-detail-modal/recipe-detail-modal.component';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
-import { finalize } from 'rxjs';
+import { finalize, catchError, forkJoin } from 'rxjs';
+import { of } from 'rxjs';
 
 @Component({
     selector: 'app-recipes-management',
@@ -78,8 +79,12 @@ export class RecipesManagementComponent implements OnInit {
     auditStartDate = '';
     auditEndDate = '';
     userMap: { [id: number]: string } = {};
+    loadingUsers = false;
     selectedAudit: RecipeAudit | null = null;
     showAuditDetailModal = false;
+
+    // ── Caché de auditorías ──
+    private auditCache: Map<string, RecipeAudit[]> = new Map();
 
     get totalAudits(): number { return this.filteredAudits.length; }
     get auditsByAction(): { [key: string]: number } {
@@ -162,12 +167,34 @@ export class RecipesManagementComponent implements OnInit {
     // ── Audits ──
 
     loadAudits(): void {
+        // Generar clave de caché basada en filtros de fecha
+        const cacheKey = this.auditStartDate && this.auditEndDate 
+            ? `date:${this.auditStartDate}-${this.auditEndDate}`
+            : 'all';
+
+        // Verificar si tenemos datos en caché
+        if (this.auditCache.has(cacheKey)) {
+            const cachedAudits = this.auditCache.get(cacheKey) || [];
+            // Asegurar ordenamiento (más nuevas primero)
+            this.audits = [...cachedAudits].sort((a, b) => {
+                const dateA = new Date(a.auditDate || 0).getTime();
+                const dateB = new Date(b.auditDate || 0).getTime();
+                return dateB - dateA;
+            });
+            this.applyAuditFilters();
+            this.loadUsersForAudits();
+            this.auditsLoaded = true;
+            this.cdr.detectChanges();
+            return;
+        }
+
+        // Si no hay caché válido, hacer petición
         this.loadingAudits = true;
         this.cdr.detectChanges();
 
         const source$ = (this.auditStartDate && this.auditEndDate)
-            ? this.recipeAuditService.getByDateRange(this.auditStartDate, this.auditEndDate)
-            : this.recipeAuditService.getAll();
+            ? this.recipeAuditService.getByDateRange(this.auditStartDate, this.auditEndDate, 0, 20, ['auditDate,desc'])
+            : this.recipeAuditService.getAll(0, 20, ['auditDate,desc']);
 
         source$.pipe(
             finalize(() => {
@@ -176,8 +203,30 @@ export class RecipesManagementComponent implements OnInit {
                 this.cdr.detectChanges();
             })
         ).subscribe({
-            next: (audits) => {
-                this.audits = audits;
+            next: (response) => {
+                // Verificar si la respuesta es un array directo o un objeto paginado
+                let auditsArray: any[] = [];
+                
+                if (Array.isArray(response)) {
+                    auditsArray = response;
+                } else if (response && Array.isArray((response as any).content)) {
+                    // Respuesta paginada con estructura {content: [], ...}
+                    auditsArray = (response as any).content;
+                } else {
+                    console.warn('Respuesta inesperada del servicio de auditorías:', response);
+                }
+                
+                // Guardar en caché
+                this.auditCache.set(cacheKey, auditsArray);
+                
+                // Ordenar las auditorías por fecha de creación (más nuevas primero)
+                const sortedAudits = [...auditsArray].sort((a, b) => {
+                    const dateA = new Date(a.auditDate || 0).getTime();
+                    const dateB = new Date(b.auditDate || 0).getTime();
+                    return dateB - dateA; // Orden descendente (más nuevas primero)
+                });
+                
+                this.audits = sortedAudits;
                 this.applyAuditFilters();
                 this.loadUsersForAudits();
                 this.cdr.detectChanges();
@@ -231,10 +280,17 @@ export class RecipesManagementComponent implements OnInit {
         this.loadAudits();
     }
 
+    // ── Métodos de caché ──
+
     hasActiveAuditFilters(): boolean {
         return this.auditSearchTerm.trim().length > 0
             || this.auditActionFilter.length > 0
             || (this.auditStartDate.length > 0 && this.auditEndDate.length > 0);
+    }
+
+    refreshAudits(): void {
+        this.auditCache.clear();
+        this.loadAudits();
     }
 
     getActionBadgeClass(action: string): string {
@@ -254,13 +310,54 @@ export class RecipesManagementComponent implements OnInit {
     }
 
     loadUsersForAudits(): void {
-        this.userService.getAllUnpaged().subscribe({
+        // Obtener IDs únicos de usuarios que realmente aparecen en las auditorías
+        const userIds = [...new Set(this.audits.map(a => a.id_user))];
+        
+        // Filtrar solo los usuarios que no tenemos en caché
+        const missingUserIds = userIds.filter(id => !this.userMap[id]);
+        
+        // Si ya tenemos todos los usuarios, no hacer petición
+        if (missingUserIds.length === 0) {
+            this.cdr.markForCheck();
+            return;
+        }
+
+        this.loadingUsers = true;
+        this.cdr.markForCheck();
+
+        // Cargar solo los usuarios que faltan
+        this.loadUsersByIds(missingUserIds);
+    }
+
+    private loadUsersByIds(userIds: number[]): void {
+        // Hacer múltiples peticiones en paralelo para usuarios específicos
+        const userRequests = userIds.map(id => 
+            this.userService.getById(id).pipe(
+                // Si falla una petición, usar un fallback
+                catchError(() => of({ id, name: `Usuario #${id}` }))
+            )
+        );
+
+        forkJoin(userRequests).pipe(
+            finalize(() => {
+                this.loadingUsers = false;
+                this.cdr.markForCheck();
+            })
+        ).subscribe({
             next: (users) => {
-                this.userMap = {};
-                users.forEach(u => this.userMap[u.id] = u.name);
+                // Actualizar caché solo con los nuevos usuarios
+                users.forEach(user => {
+                    this.userMap[user.id] = user.name;
+                });
                 this.cdr.markForCheck();
             },
-            error: () => { }
+            error: () => {
+                // En caso de error total, usar fallbacks para todos
+                userIds.forEach(id => {
+                    this.userMap[id] = `Usuario #${id}`;
+                });
+                this.cdr.markForCheck();
+            }
         });
     }
 

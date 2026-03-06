@@ -1,24 +1,5 @@
 /** ===== SCROLLBAR PERSONALIZADO ===== */
 
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: rgba(30, 40, 80, 0.05);
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, rgba(30, 40, 80, 0.6), rgba(50, 60, 120, 0.6));
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, rgba(30, 40, 80, 0.8), rgba(50, 60, 120, 0.8));
-}
-
 /** ===== MODAL BACKDROP ===== */
 
 .modal-backdrop {
@@ -78,7 +59,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 20px 25px;
-    background: linear-gradient(135deg, rgba(30, 40, 80, 0.95) 0%, rgba(20, 30, 60, 0.95) 100%);
+    background: var(--admin-gradient);
     border-radius: 16px 16px 0 0;
 }
 
@@ -149,8 +130,8 @@ form {
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
-    border-color: rgba(30, 40, 80, 0.6);
-    box-shadow: 0 0 0 3px rgba(30, 40, 80, 0.1);
+    border-color: var(--admin-primary-light);
+    box-shadow: 0 0 0 3px rgba(var(--admin-rgb), 0.1);
 }
 
 .form-group input.input-error {
@@ -202,19 +183,19 @@ form {
     padding: 10px 24px;
     border-radius: 8px;
     border: none;
-    background: linear-gradient(135deg, rgba(30, 40, 80, 0.95), rgba(50, 60, 120, 0.95));
+    background: var(--admin-gradient);
     color: white;
     cursor: pointer;
     font-family: var(--font-body);
     font-size: 0.9rem;
     font-weight: 600;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(30, 40, 80, 0.3);
+    box-shadow: 0 2px 8px rgba(var(--admin-rgb), 0.3);
 }
 
 .btn-save:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(30, 40, 80, 0.4);
+    box-shadow: 0 4px 12px rgba(var(--admin-rgb), 0.4);
 }
 
 .btn-save:disabled {
@@ -259,7 +240,7 @@ form {
     gap: 10px;
     padding: 12px 16px;
     background: linear-gradient(135deg, #eef2ff 0%, #e8ecf8 100%);
-    border: 1px solid rgba(30, 40, 80, 0.15);
+    border: 1px solid rgba(var(--admin-rgb), 0.15);
     border-radius: 10px;
     margin-bottom: 20px;
     color: #374151;
@@ -269,7 +250,7 @@ form {
 
 .auto-gen-info svg {
     flex-shrink: 0;
-    color: rgba(30, 40, 80, 0.7);
+    color: rgba(var(--admin-rgb), 0.7);
 }
 
 /** ===== CREDENTIALS RESULT ===== */
@@ -357,9 +338,9 @@ form {
     justify-content: center;
     gap: 8px;
     padding: 11px 20px;
-    border: 2px solid rgba(30, 40, 80, 0.2);
+    border: 2px solid rgba(var(--admin-rgb), 0.2);
     background: white;
-    color: rgba(30, 40, 80, 0.8);
+    color: var(--admin-primary-hover);
     border-radius: 10px;
     font-size: 0.9rem;
     font-weight: 600;
@@ -369,7 +350,7 @@ form {
 }
 
 .btn-copy:hover {
-    border-color: rgba(30, 40, 80, 0.4);
+    border-color: rgba(var(--admin-rgb), 0.4);
     background: #f8fafc;
 }
 
@@ -377,20 +358,20 @@ form {
     flex: 1;
     padding: 11px 20px;
     border: none;
-    background: linear-gradient(135deg, rgba(30, 40, 80, 0.95), rgba(50, 60, 120, 0.95));
+    background: var(--admin-gradient);
     color: white;
     border-radius: 10px;
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(30, 40, 80, 0.3);
+    box-shadow: 0 2px 8px rgba(var(--admin-rgb), 0.3);
     font-family: var(--font-body);
 }
 
 .btn-done:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(30, 40, 80, 0.4);
+    box-shadow: 0 4px 12px rgba(var(--admin-rgb), 0.4);
 }
 
 @media (max-width: 480px) {

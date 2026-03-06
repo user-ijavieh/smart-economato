@@ -1,25 +1,5 @@
 /** ===== SCROLLBAR PERSONALIZADO ===== */
 
-::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-}
-
-::-webkit-scrollbar-track {
-    background: rgba(30, 40, 80, 0.05);
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, rgba(30, 40, 80, 0.6), rgba(50, 60, 120, 0.6));
-    border-radius: 10px;
-    transition: background 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, rgba(30, 40, 80, 0.8), rgba(50, 60, 120, 0.8));
-}
-
 /** ===== HEADER ===== */
 
 .header-recetas {
@@ -27,7 +7,7 @@
     align-items: center;
     gap: 20px;
     padding: 20px 40px;
-    background: linear-gradient(135deg, rgba(30, 40, 80, 0.95) 0%, rgba(20, 30, 60, 0.95) 100%);
+    background: var(--admin-gradient);
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     position: sticky;
@@ -89,20 +69,20 @@
 }
 
 .tab-btn:hover {
-    color: rgba(30, 40, 80, 0.8);
-    background: rgba(30, 40, 80, 0.03);
+    color: var(--admin-primary-hover);
+    background: var(--admin-scrollbar-track);
     transform: none;
     box-shadow: none;
 }
 
 .tab-btn.active {
-    color: rgba(30, 40, 80, 0.95);
+    color: var(--admin-primary);
     background: transparent;
     box-shadow: none;
 }
 
 .tab-btn.active::after {
-    background: linear-gradient(135deg, rgba(30, 40, 80, 0.95), rgba(50, 60, 120, 0.95));
+    background: var(--admin-gradient);
 }
 
 /** ===== CONTENEDOR PRINCIPAL ===== */
@@ -142,8 +122,8 @@
 
 .controles input[type='text']:focus {
     outline: none;
-    border-color: rgba(30, 40, 80, 0.6);
-    box-shadow: 0 0 0 3px rgba(30, 40, 80, 0.1);
+    border-color: var(--admin-primary-light);
+    box-shadow: 0 0 0 3px rgba(var(--admin-rgb), 0.1);
 }
 
 .action-select {
@@ -158,8 +138,8 @@
 
 .action-select:focus {
     outline: none;
-    border-color: rgba(30, 40, 80, 0.6);
-    box-shadow: 0 0 0 3px rgba(30, 40, 80, 0.1);
+    border-color: var(--admin-primary-light);
+    box-shadow: 0 0 0 3px rgba(var(--admin-rgb), 0.1);
 }
 
 .date-range-group {
@@ -180,8 +160,8 @@
 
 .date-input:focus {
     outline: none;
-    border-color: rgba(30, 40, 80, 0.6);
-    box-shadow: 0 0 0 3px rgba(30, 40, 80, 0.1);
+    border-color: var(--admin-primary-light);
+    box-shadow: 0 0 0 3px rgba(var(--admin-rgb), 0.1);
 }
 
 .date-separator {
@@ -210,16 +190,16 @@ button {
     font-size: 0.9rem;
     font-family: var(--font-body);
     font-weight: var(--font-body-weight);
-    background: linear-gradient(135deg, rgba(30, 40, 80, 0.95), rgba(50, 60, 120, 0.95));
+    background: var(--admin-gradient);
     color: white;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 8px rgba(30, 40, 80, 0.3);
+    box-shadow: 0 2px 8px rgba(var(--admin-rgb), 0.3);
 }
 
 button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(30, 40, 80, 0.4);
+    box-shadow: 0 4px 12px rgba(var(--admin-rgb), 0.4);
 }
 
 button:active {
@@ -264,7 +244,7 @@ button:active {
     padding: 20px;
     text-align: center;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    border-left: 4px solid rgba(30, 40, 80, 0.6);
+    border-left: 4px solid var(--admin-primary-light);
     transition: transform 0.2s ease;
 }
 
@@ -288,7 +268,7 @@ button:active {
 }
 
 .stat-card.badge-default {
-    border-left-color: rgba(30, 40, 80, 0.5);
+    border-left-color: rgba(var(--admin-rgb), 0.5);
 }
 
 .stat-number {
@@ -332,7 +312,7 @@ td {
 }
 
 th {
-    background: linear-gradient(135deg, rgba(30, 40, 80, 0.95) 0%, rgba(50, 60, 120, 0.95) 100%);
+    background: var(--admin-gradient);
     color: white;
     font-weight: var(--font-heading-weight);
     letter-spacing: 0.5px;
@@ -372,7 +352,7 @@ tr {
 }
 
 tr:hover {
-    background: rgba(30, 40, 80, 0.04);
+    background: var(--admin-scrollbar-track);
 }
 
 /** ===== RECIPE NAME CELL ===== */
@@ -388,7 +368,7 @@ tr:hover {
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(30, 40, 80, 0.8), rgba(50, 60, 120, 0.8));
+    background: var(--admin-scrollbar-thumb-hover));
     color: white;
     display: flex;
     align-items: center;
@@ -404,8 +384,8 @@ tr:hover {
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: 600;
-    background: rgba(30, 40, 80, 0.08);
-    color: rgba(30, 40, 80, 0.8);
+    background: rgba(var(--admin-rgb), 0.08);
+    color: var(--admin-primary-hover);
 }
 
 .cost-value {
@@ -461,8 +441,8 @@ tr:hover {
 }
 
 .action-badge.badge-default {
-    background: rgba(30, 40, 80, 0.08);
-    color: rgba(30, 40, 80, 0.8);
+    background: rgba(var(--admin-rgb), 0.08);
+    color: var(--admin-primary-hover);
 }
 
 .id-badge {
@@ -471,8 +451,8 @@ tr:hover {
     border-radius: 6px;
     font-size: 0.85rem;
     font-weight: 600;
-    background: rgba(30, 40, 80, 0.06);
-    color: rgba(30, 40, 80, 0.7);
+    background: var(--admin-scrollbar-track);
+    color: rgba(var(--admin-rgb), 0.7);
     font-family: monospace;
 }
 
@@ -490,7 +470,7 @@ tr:hover {
 }
 
 .date-icon {
-    color: rgba(30, 40, 80, 0.5);
+    color: rgba(var(--admin-rgb), 0.5);
     flex-shrink: 0;
 }
 
@@ -541,8 +521,8 @@ tr:hover {
 }
 
 .btn-editar {
-    background: rgba(30, 40, 80, 0.1);
-    color: rgba(30, 40, 80, 0.8);
+    background: rgba(var(--admin-rgb), 0.1);
+    color: var(--admin-primary-hover);
     padding: 8px;
     box-shadow: none;
     display: flex;
@@ -551,7 +531,7 @@ tr:hover {
 }
 
 .btn-editar:hover {
-    background: rgba(30, 40, 80, 0.2);
+    background: rgba(var(--admin-rgb), 0.2);
     box-shadow: none;
 }
 
@@ -607,7 +587,7 @@ tr:hover {
 }
 
 .audit-row:hover {
-    background: rgba(30, 40, 80, 0.06) !important;
+    background: var(--admin-scrollbar-track) !important;
 }
 
 /** ===== AUDIT DETAIL MODAL ===== */
@@ -667,7 +647,7 @@ tr:hover {
     align-items: center;
     justify-content: space-between;
     padding: 20px 28px;
-    background: linear-gradient(135deg, rgba(30, 40, 80, 0.95) 0%, rgba(50, 60, 120, 0.95) 100%);
+    background: var(--admin-gradient);
     color: white;
 }
 
@@ -739,10 +719,10 @@ tr:hover {
     font-size: 0.9rem;
     color: #555;
     line-height: 1.6;
-    background: rgba(30, 40, 80, 0.03);
+    background: var(--admin-scrollbar-track);
     padding: 14px 16px;
     border-radius: 8px;
-    border-left: 3px solid rgba(30, 40, 80, 0.3);
+    border-left: 3px solid rgba(var(--admin-rgb), 0.3);
     word-break: break-word;
     font-family: var(--font-body);
 }
@@ -940,15 +920,15 @@ tr:hover {
     align-items: center;
     gap: 8px;
     background: white;
-    color: rgba(30, 40, 80, 0.9);
-    border: 1px solid rgba(30, 40, 80, 0.2);
+    color: var(--admin-primary);
+    border: 1px solid rgba(var(--admin-rgb), 0.2);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     font-weight: 500;
 }
 
 .btn-page:hover:not(:disabled) {
-    background: rgba(30, 40, 80, 0.05);
-    color: rgba(30, 40, 80, 1);
+    background: var(--admin-scrollbar-track);
+    color: rgba(var(--admin-rgb), 1);
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
@@ -1011,7 +991,7 @@ tr:hover {
     color: #333;
     margin: 24px 0 12px;
     padding: 0 20px 8px;
-    border-bottom: 2px solid rgba(30, 40, 80, 0.15);
+    border-bottom: 2px solid rgba(var(--admin-rgb), 0.15);
 }
 
 .diff-table {
@@ -1031,7 +1011,7 @@ tr:hover {
     font-size: 0.82rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border-bottom: 2px solid rgba(30, 40, 80, 0.12);
+    border-bottom: 2px solid rgba(var(--admin-rgb), 0.12);
     position: sticky;
     top: 0;
     z-index: 2;

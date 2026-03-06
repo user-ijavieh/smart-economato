@@ -98,7 +98,6 @@
   overflow-y: auto;
 }
 
-
 .welcome-title {
   font-family: var(--font-heading);
   font-size: 2.5rem;
@@ -204,23 +203,6 @@
 }
 
 /** ===== SCROLL BAR ===== */
-
-.mainContent::-webkit-scrollbar {
-  width: 8px;
-}
-
-.mainContent::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.mainContent::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
-}
-
-.mainContent::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
-}
 
 /** ===== RESPONSIVE ===== */
 
@@ -373,32 +355,6 @@
 }
 
 /** ===== LOGOUT CONFIRMATION MODAL ===== */
-
-.logout-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(6px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-  padding: 20px;
-  animation: logoutFadeIn 0.2s ease;
-}
-
-@keyframes logoutFadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
 
 .logout-modal {
   background: white;
