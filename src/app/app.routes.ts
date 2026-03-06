@@ -45,21 +45,21 @@ export const routes: Routes = [
         canActivate: [roleGuard('ADMIN')]
       },
       {
+        path: 'admin-panel/master-data/allergens',
+        loadComponent: () =>
+          import('./features/admin/allergens-management/allergens-management.component').then(m => m.AllergensManagementComponent),
+        canActivate: [roleGuard('ADMIN')]
+      },
+      {
         path: 'admin-panel/kitchen',
         loadComponent: () =>
           import('./features/admin/kitchen-management/kitchen-management.component').then(m => m.KitchenManagementComponent),
         canActivate: [roleGuard('ADMIN')]
       },
       {
-        path: 'admin-panel/stock-alerts',
+        path: 'admin-panel/stock',
         loadComponent: () =>
-          import('./features/admin/stock-alerts-dashboard/stock-alerts-dashboard.component').then(m => m.StockAlertsDashboardComponent),
-        canActivate: [roleGuard('ADMIN')]
-      },
-      {
-        path: 'admin-panel/stock-predictions',
-        loadComponent: () =>
-          import('./features/admin/stock-predictions/stock-predictions.component').then(m => m.StockPredictionsComponent),
+          import('./features/admin/stock-management/stock-management.component').then(m => m.StockManagementComponent),
         canActivate: [roleGuard('ADMIN')]
       },
       {

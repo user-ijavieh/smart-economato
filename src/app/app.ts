@@ -3,12 +3,13 @@ import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ToastComponent } from './shared/components/layout/toast/toast.component';
 import { ConfirmDialogComponent } from './shared/components/layout/confirm-dialog/confirm-dialog.component';
+import { AlertNotificationComponent } from './shared/components/layout/alert-notification/alert-notification.component';
 import { MessageService } from './core/services/message.service';
 import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, RouterOutlet, ToastComponent, ConfirmDialogComponent],
+  imports: [CommonModule, RouterOutlet, ToastComponent, ConfirmDialogComponent, AlertNotificationComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

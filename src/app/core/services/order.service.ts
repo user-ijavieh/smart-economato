@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Order, OrderRequest, OrderReceptionRequest } from '../../shared/models/order.model';
 
@@ -13,7 +14,9 @@ export class OrderService {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
-    return this.http.get<Order[]>(this.url, { params });
+    return this.http.get<any>(this.url, { params }).pipe(
+      map(response => response.content || [])
+    );
   }
 
   getById(id: number): Observable<Order> {
