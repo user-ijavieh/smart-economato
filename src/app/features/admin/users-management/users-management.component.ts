@@ -38,9 +38,17 @@ export class UsersManagementComponent implements OnInit {
     totalPages = 0;
     totalElements = 0;
 
+    serverCurrentPage = 0;
+    serverTotalPages = 0;
+    serverTotalElements = 0;
+
     // Modal state
     showFormModal = false;
     selectedUser: User | null = null;
+
+    // Mobile detail modal state
+    showMobileModal = false;
+    selectedUserForMobile: User | null = null;
 
     // View state
     showingHidden = false;
@@ -52,14 +60,15 @@ export class UsersManagementComponent implements OnInit {
     loadUsers(page: number = 0): void {
         this.loading = true;
         this.currentPage = page;
+        this.serverCurrentPage = page;
 
         if (this.showingHidden) {
             // Load hidden users
             this.userService.getHidden(this.currentPage, this.pageSize).subscribe({
                 next: (pageData) => {
                     this.users = pageData.content;
-                    this.totalElements = pageData.totalElements;
-                    this.totalPages = pageData.totalPages;
+                    this.serverTotalElements = pageData.totalElements;
+                    this.serverTotalPages = pageData.totalPages;
                     this.applySearchFilter(true);
                     this.loading = false;
                     this.cdr.detectChanges();
@@ -90,8 +99,8 @@ export class UsersManagementComponent implements OnInit {
             this.userService.getAll(this.currentPage, this.pageSize).subscribe({
                 next: (pageData) => {
                     this.users = pageData.content;
-                    this.totalElements = pageData.totalElements;
-                    this.totalPages = pageData.totalPages;
+                    this.serverTotalElements = pageData.totalElements;
+                    this.serverTotalPages = pageData.totalPages;
                     this.applySearchFilter(true); // Is pre-paginated
                     this.loading = false;
                     this.cdr.detectChanges();
@@ -130,7 +139,12 @@ export class UsersManagementComponent implements OnInit {
             // If we are searching pre-paginated list, elements might be less
             if (this.searchTerm.trim()) {
                 this.totalElements = result.length;
-                this.totalPages = Math.ceil(this.totalElements / this.pageSize);
+                this.totalPages = 1;
+                this.currentPage = 0;
+            } else {
+                this.totalPages = this.serverTotalPages;
+                this.currentPage = this.serverCurrentPage;
+                this.totalElements = this.serverTotalElements;
             }
         }
     }
@@ -178,6 +192,16 @@ export class UsersManagementComponent implements OnInit {
     closeFormModal(): void {
         this.showFormModal = false;
         this.selectedUser = null;
+    }
+
+    openMobileModal(user: User): void {
+        this.selectedUserForMobile = user;
+        this.showMobileModal = true;
+    }
+
+    closeMobileModal(): void {
+        this.showMobileModal = false;
+        this.selectedUserForMobile = null;
     }
 
     onSaveUser(data: any): void {
@@ -239,11 +263,13 @@ export class UsersManagementComponent implements OnInit {
             next: () => {
                 this.messageService.showSuccess(`Usuario ${this.showingHidden ? 'mostrado' : 'ocultado'} correctamente`);
                 this.loadUsers(this.currentPage);
+                this.cdr.detectChanges();
             },
             error: (err) => {
                 console.error(`Error ${actionText} usuario:`, err);
                 const errorMessage = err.error?.message || `Error al ${actionText} el usuario`;
                 this.messageService.showError(errorMessage);
+                this.cdr.detectChanges();
             }
         });
     }

@@ -1,6 +1,3 @@
-<div class="header-proveedores">
-    <h1>Gestión de Proveedores</h1>
-</div>
 
 <div class="contenedor-principal">
     <div class="controles">
@@ -18,46 +15,41 @@
         }
     </div>
 
-    <!-- Stats -->
-    <div class="stats-row">
-        <div class="stat-card">
-            <span class="stat-number">{{ filteredSuppliers.length }}</span>
-            <span class="stat-label">Total Proveedores</span>
-        </div>
-    </div>
-
     <div class="tabla-contenedor">
         <table>
             <thead>
                 <tr>
                     <th>Nombre</th>
-                    <th>Email</th>
-                    <th>Teléfono</th>
-                    <th>Acciones</th>
+                    <th class="hide-on-mobile">Email</th>
+                    <th class="hide-on-mobile">Teléfono</th>
+                    <th class="hide-on-mobile">Acciones</th>
+                    <th class="show-on-mobile-only mobile-icon-col"></th>
                 </tr>
             </thead>
             <tbody [class.loading]="loading">
-                @if (loading) {
-                @for (i of [1, 2, 3, 4, 5]; track i) {
+                <!-- Skeleton Loader -->
+                @if (loading && suppliers.length === 0) {
+                @for (i of [1,2,3,4,5,6]; track i) {
                 <tr class="skeleton-row">
                     <td><span class="skeleton skeleton-text" style="width: 160px"></span></td>
-                    <td><span class="skeleton skeleton-text" style="width: 200px"></span></td>
-                    <td><span class="skeleton skeleton-text" style="width: 120px"></span></td>
-                    <td><span class="skeleton skeleton-text" style="width: 100px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 200px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 120px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 100px"></span></td>
+                    <td class="show-on-mobile-only mobile-icon-col"></td>
                 </tr>
                 }
                 } @else {
                 @for (supplier of filteredSuppliers; track supplier.id) {
-                <tr>
+                <tr class="clickable-row mobile-clickable-row" (click)="openMobileModal(supplier)">
                     <td>
                         <div class="supplier-name-cell">
                             <div class="supplier-avatar-small">{{ supplier.name.charAt(0).toUpperCase() }}</div>
                             {{ supplier.name }}
                         </div>
                     </td>
-                    <td>{{ supplier.email || '—' }}</td>
-                    <td>{{ supplier.phone || '—' }}</td>
-                    <td>
+                    <td class="hide-on-mobile">{{ supplier.email || '—' }}</td>
+                    <td class="hide-on-mobile">{{ supplier.phone || '—' }}</td>
+                    <td class="hide-on-mobile" (click)="$event.stopPropagation()">
                         <div class="actions-cell">
                             <button class="btn-editar" (click)="openEditModal(supplier)" title="Editar">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -79,11 +71,16 @@
                             </button>
                         </div>
                     </td>
+                    <td class="show-on-mobile-only mobile-icon-col">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+                        </svg>
+                    </td>
                 </tr>
                 }
                 @if (filteredSuppliers.length === 0 && !loading) {
                 <tr>
-                    <td colspan="4" style="text-align: center; padding: 2rem; color: #999">
+                    <td colspan="5" style="text-align: center; padding: 2rem; color: #999">
                         No se encontraron proveedores
                     </td>
                 </tr>
@@ -96,19 +93,13 @@
     @if (totalPages > 1) {
     <div class="pagination-controls">
         <button class="btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path fill-rule="evenodd"
-                    d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
             Anterior
         </button>
-        <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }}</span>
+        <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }} <span class="total-info">({{ totalElements }} proveedores)</span></span>
         <button class="btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
             Siguiente
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path fill-rule="evenodd"
-                    d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
         </button>
     </div>
     }
@@ -125,3 +116,40 @@
 
 <!-- Toasts -->
 <app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
+
+<!-- Mobile Detail Modal -->
+@if (showMobileModal && selectedSupplierForMobile) {
+<div class="mobile-detail-modal-overlay" (click)="closeMobileModal()">
+    <div class="mobile-detail-modal" (click)="$event.stopPropagation()">
+        <div class="mobile-detail-modal-header">
+            <div class="supplier-name-cell">
+                <div class="supplier-avatar-small">{{ selectedSupplierForMobile.name.charAt(0).toUpperCase() }}</div>
+                <h2>{{ selectedSupplierForMobile.name }}</h2>
+            </div>
+            <button class="modal-close-btn" (click)="closeMobileModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                </svg>
+            </button>
+        </div>
+        <div class="mobile-detail-modal-body">
+            <div class="detail-field">
+                <span class="detail-label">Email</span>
+                <span class="detail-value">{{ selectedSupplierForMobile.email || '—' }}</span>
+            </div>
+            <div class="detail-field">
+                <span class="detail-label">Teléfono</span>
+                <span class="detail-value">{{ selectedSupplierForMobile.phone || '—' }}</span>
+            </div>
+            <div class="detail-actions">
+                <button class="btn-editar btn-full" (click)="showMobileModal = false; openEditModal(selectedSupplierForMobile)">
+                    Editar Proveedor
+                </button>
+                <button class="btn-eliminar btn-full" (click)="deleteSupplier(selectedSupplierForMobile); closeMobileModal()">
+                    Eliminar Proveedor
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+}

@@ -39,8 +39,9 @@ export class App implements OnInit {
       existingStyle.remove();
     }
 
-    // Si es una ruta de administrador, agrega el estilo de la barra de desplazamiento
+    // Si es una ruta de administrador, agrega el estilo de la barra de desplazamiento y la clase de tema
     if (isAdminRoute) {
+      document.body.classList.add('admin-theme');
       const style = document.createElement('style');
       style.id = 'admin-scrollbar-style';
       style.textContent = `
@@ -51,14 +52,16 @@ export class App implements OnInit {
           background: var(--admin-scrollbar-track);
         }
         ::-webkit-scrollbar-thumb {
-          background: var(--admin-gradient));
+          background: var(--admin-scrollbar-thumb);
           border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-          background: var(--admin-gradient));
+          background: var(--admin-scrollbar-thumb-hover);
         }
       `;
       document.head.appendChild(style);
+    } else {
+      document.body.classList.remove('admin-theme');
     }
   }
 }

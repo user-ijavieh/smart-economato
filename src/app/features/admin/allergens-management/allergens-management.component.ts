@@ -6,6 +6,7 @@ import { MessageService } from '../../../core/services/message.service';
 import { Allergen, AllergenRequest } from '../../../shared/models/allergen.model';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
+import { SuppliersManagementComponent } from '../suppliers-management/suppliers-management.component';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -15,7 +16,8 @@ import { finalize } from 'rxjs';
         CommonModule,
         FormsModule,
         ConfirmDialogComponent,
-        ToastComponent
+        ToastComponent,
+        SuppliersManagementComponent
     ],
     templateUrl: './allergens-management.component.html',
     styleUrl: './allergens-management.component.css',
@@ -38,6 +40,17 @@ export class AllergensManagementComponent implements OnInit {
     totalPages = 0;
     totalElements = 0;
 
+    serverCurrentPage = 0;
+    serverTotalPages = 0;
+    serverTotalElements = 0;
+
+    activeTab: 'allergens' | 'suppliers' = 'allergens';
+
+    switchTab(tab: 'allergens' | 'suppliers'): void {
+        this.activeTab = tab;
+        this.cdr.markForCheck();
+    }
+
     // ── Modal state ──
     showModal = false;
     modalMode: 'create' | 'edit' = 'create';
@@ -56,6 +69,7 @@ export class AllergensManagementComponent implements OnInit {
     loadAllergens(page: number = 0): void {
         this.loading = true;
         this.currentPage = page;
+        this.serverCurrentPage = page;
         this.cdr.markForCheck();
 
         this.allergenService.getAll(this.currentPage, this.pageSize).pipe(
@@ -66,9 +80,9 @@ export class AllergensManagementComponent implements OnInit {
         ).subscribe({
             next: (pageData) => {
                 this.allergens = pageData.content;
+                this.serverTotalElements = pageData.totalElements;
+                this.serverTotalPages = pageData.totalPages;
                 this.applyFilter();
-                this.totalElements = pageData.totalElements;
-                this.totalPages = pageData.totalPages;
                 this.cdr.markForCheck();
             },
             error: () => {
@@ -83,6 +97,17 @@ export class AllergensManagementComponent implements OnInit {
             ? this.allergens.filter(a => a.name.toLowerCase().includes(term))
             : [...this.allergens];
         this.filteredAllergens = base.sort((a, b) => a.id - b.id);
+        
+        if (term) {
+            this.totalPages = 1;
+            this.currentPage = 0;
+            this.totalElements = this.filteredAllergens.length;
+        } else {
+            this.totalPages = this.serverTotalPages;
+            this.currentPage = this.serverCurrentPage;
+            this.totalElements = this.serverTotalElements;
+        }
+
         this.cdr.markForCheck();
     }
 

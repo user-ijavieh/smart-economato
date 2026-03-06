@@ -40,6 +40,15 @@ export class StockManagementComponent implements OnInit {
     severityFilter: AlertSeverity | '' = '';
     expandedMessages = new Set<number>();
 
+    // ── Mobile modal state ──
+    showMobileModal = false;
+    selectedAlertForMobile: StockAlertDTO | null = null;
+
+    // ── Sorting state ──
+    sortColumn = 'severity';
+    sortDir: 'asc' | 'desc' = 'desc';
+    sortInteracted = false;
+
     // ── Order modal ──
     showOrderModal = false;
     daysAhead = 14;
@@ -52,6 +61,15 @@ export class StockManagementComponent implements OnInit {
     pageSize = 10;
     totalPages = 0;
     totalElements = 0;
+
+    // ── Sorting state for Predictions ──
+    sortColumnPredictions = 'projectedConsumption';
+    sortDirPredictions: 'asc' | 'desc' = 'desc';
+    sortInteractedPredictions = false;
+
+    // ── Mobile modal state for Predictions ──
+    showPredictionMobileModal = false;
+    selectedPredictionForMobile: StockPredictionResponseDTO | null = null;
 
     ngOnInit(): void {
         this.loadAlerts();
@@ -77,6 +95,7 @@ export class StockManagementComponent implements OnInit {
         this.stockAlertService.getActiveAlerts(severity as AlertSeverity | undefined).subscribe({
             next: (data: StockAlertDTO[]) => {
                 this.alerts = data;
+                this.applySorting(); // Apply sorting immediately
                 setTimeout(() => { this.loadingAlerts = false; this.cdr.markForCheck(); });
             },
             error: () => {
@@ -92,6 +111,16 @@ export class StockManagementComponent implements OnInit {
         this.expandedMessages.has(id) ? this.expandedMessages.delete(id) : this.expandedMessages.add(id);
     }
     isExpanded(id: number): boolean { return this.expandedMessages.has(id); }
+
+    openMobileModal(alert: StockAlertDTO): void {
+        this.selectedAlertForMobile = alert;
+        this.showMobileModal = true;
+    }
+
+    closeMobileModal(): void {
+        this.showMobileModal = false;
+        this.selectedAlertForMobile = null;
+    }
 
     getSeverityClass(s: AlertSeverity): string {
         return { CRITICAL: 'severity-critical', HIGH: 'severity-high', MEDIUM: 'severity-medium', LOW: 'severity-low', OK: 'severity-ok' }[s] ?? '';
@@ -120,6 +149,53 @@ export class StockManagementComponent implements OnInit {
         return msg.split('.')
             .map(token => token.trim())
             .filter(Boolean);
+    }
+
+    onSortChange(column: string): void {
+        this.sortInteracted = true;
+        if (this.sortColumn === column) {
+            this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortColumn = column;
+            this.sortDir = 'desc'; // Default to desc for most important items first
+        }
+        this.applySorting();
+    }
+
+    getSortDir(column: string): string {
+        if (!this.sortInteracted && this.sortColumn !== column) return 'none';
+        return this.sortColumn === column ? this.sortDir : 'none';
+    }
+
+    private applySorting(): void {
+        const factor = this.sortDir === 'asc' ? 1 : -1;
+        this.alerts.sort((a, b) => {
+            let valA: any;
+            let valB: any;
+
+            switch (this.sortColumn) {
+                case 'productName':
+                    valA = a.productName?.toLowerCase() || '';
+                    valB = b.productName?.toLowerCase() || '';
+                    return valA.localeCompare(valB) * factor;
+                case 'effectiveGap':
+                    valA = a.effectiveGap || 0;
+                    valB = b.effectiveGap || 0;
+                    return (valA - valB) * factor;
+                case 'estimatedDaysRemaining':
+                    valA = a.estimatedDaysRemaining || 0;
+                    valB = b.estimatedDaysRemaining || 0;
+                    return (valA - valB) * factor;
+                case 'severity':
+                    const severityOrder: Record<string, number> = { 'CRITICAL': 4, 'HIGH': 3, 'MEDIUM': 2, 'LOW': 1, 'OK': 0 };
+                    valA = severityOrder[a.severity] ?? 0;
+                    valB = severityOrder[b.severity] ?? 0;
+                    return (valA - valB) * factor;
+                default:
+                    return 0;
+            }
+        });
+        this.cdr.detectChanges();
     }
 
     openOrderModal(): void {
@@ -181,7 +257,14 @@ export class StockManagementComponent implements OnInit {
         this.loadingPredictions = true;
         this.currentPage = page;
         this.cdr.detectChanges();
-        this.stockAlertService.getPredictions(page, this.pageSize).subscribe({
+        
+        const backendCols: Record<string, string> = {
+            'productName': 'product.name'
+        };
+        const backendCol = backendCols[this.sortColumnPredictions] || this.sortColumnPredictions;
+        const sortParam = `${backendCol},${this.sortDirPredictions}`;
+
+        this.stockAlertService.getPredictions(page, this.pageSize, sortParam).subscribe({
             next: (data) => {
                 this.predictions = data.content;
                 this.totalPages = data.totalPages;
@@ -198,9 +281,37 @@ export class StockManagementComponent implements OnInit {
         });
     }
 
+    onSortPredictionsChange(column: string): void {
+        this.sortInteractedPredictions = true;
+        if (this.sortColumnPredictions === column) {
+            this.sortDirPredictions = this.sortDirPredictions === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortColumnPredictions = column;
+            this.sortDirPredictions = column === 'projectedConsumption' ? 'desc' : 'asc';
+        }
+        this.loadPredictions(0);
+    }
+
+    getSortPredictionsDir(column: string): string {
+        if (!this.sortInteractedPredictions && this.sortColumnPredictions !== column) return 'none';
+        return this.sortColumnPredictions === column ? this.sortDirPredictions : 'none';
+    }
+
+    // The applyPredictionsSorting frontend logic has been removed as the API handles sorting natively for predictions.
+
     changePage(delta: number): void {
         const next = this.currentPage + delta;
         if (next >= 0 && next < this.totalPages) this.loadPredictions(next);
+    }
+
+    openPredictionMobileModal(prediction: StockPredictionResponseDTO): void {
+        this.selectedPredictionForMobile = prediction;
+        this.showPredictionMobileModal = true;
+    }
+
+    closePredictionMobileModal(): void {
+        this.showPredictionMobileModal = false;
+        this.selectedPredictionForMobile = null;
     }
 
     formatDate(dateStr: string): string {
