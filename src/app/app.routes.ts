@@ -45,7 +45,7 @@ export const routes: Routes = [
         canActivate: [roleGuard('ADMIN')]
       },
       {
-        path: 'admin-panel/master-data/allergens',
+        path: 'admin-panel/master-data',
         loadComponent: () =>
           import('./features/admin/allergens-management/allergens-management.component').then(m => m.AllergensManagementComponent),
         canActivate: [roleGuard('ADMIN')]
@@ -60,12 +60,6 @@ export const routes: Routes = [
         path: 'admin-panel/stock',
         loadComponent: () =>
           import('./features/admin/stock-management/stock-management.component').then(m => m.StockManagementComponent),
-        canActivate: [roleGuard('ADMIN')]
-      },
-      {
-        path: 'admin-panel/suppliers',
-        loadComponent: () =>
-          import('./features/admin/suppliers-management/suppliers-management.component').then(m => m.SuppliersManagementComponent),
         canActivate: [roleGuard('ADMIN')]
       },
 

@@ -33,13 +33,21 @@ export class SuppliersManagementComponent implements OnInit {
 
     // Pagination
     currentPage = 0;
-    pageSize = 20;
+    pageSize = 50;
     totalPages = 0;
     totalElements = 0;
+
+    serverCurrentPage = 0;
+    serverTotalPages = 0;
+    serverTotalElements = 0;
 
     // Modal state
     showFormModal = false;
     selectedSupplier: Supplier | null = null;
+
+    // Mobile detail modal state
+    showMobileModal = false;
+    selectedSupplierForMobile: Supplier | null = null;
 
     ngOnInit(): void {
         this.loadSuppliers();
@@ -48,15 +56,17 @@ export class SuppliersManagementComponent implements OnInit {
     loadSuppliers(page: number = 0): void {
         this.loading = true;
         this.currentPage = page;
+        this.serverCurrentPage = page;
+        this.cdr.markForCheck();
 
         this.supplierService.getAll(this.currentPage, this.pageSize).subscribe({
             next: (pageData) => {
                 this.suppliers = pageData.content;
-                this.totalElements = pageData.totalElements;
-                this.totalPages = pageData.totalPages;
-                this.applySearchFilter(true);
+                this.serverTotalElements = pageData.totalElements;
+                this.serverTotalPages = pageData.totalPages;
+                this.applyFilter();
                 this.loading = false;
-                this.cdr.detectChanges();
+                this.cdr.markForCheck();
             },
             error: (err) => {
                 console.error('Error loading suppliers:', err);
@@ -66,29 +76,31 @@ export class SuppliersManagementComponent implements OnInit {
         });
     }
 
-    applySearchFilter(isPrePaginated: boolean = false): void {
-        let result = this.suppliers;
-
-        if (this.searchTerm.trim()) {
-            const term = this.searchTerm.toLowerCase();
-            result = result.filter(s =>
-                s.name.toLowerCase().includes(term) ||
-                (s.email && s.email.toLowerCase().includes(term)) ||
-                (s.phone && s.phone.toLowerCase().includes(term))
-            );
+    applyFilter(): void {
+        const term = this.searchTerm.trim().toLowerCase();
+        const base = term
+            ? this.suppliers.filter(s => s.name.toLowerCase().includes(term) || s.email?.toLowerCase().includes(term))
+            : [...this.suppliers];
+        
+        // Sort explicitly by active properties if available
+        this.filteredSuppliers = base.sort((a, b) => a.id - b.id);
+        
+        if (term) {
+            this.totalPages = 1;
+            this.currentPage = 0;
+            this.totalElements = this.filteredSuppliers.length;
+        } else {
+            this.totalPages = this.serverTotalPages;
+            this.currentPage = this.serverCurrentPage;
+            this.totalElements = this.serverTotalElements;
         }
 
-        this.filteredSuppliers = result;
-
-        if (this.searchTerm.trim()) {
-            this.totalElements = result.length;
-            this.totalPages = Math.ceil(this.totalElements / this.pageSize);
-        }
+        this.cdr.markForCheck();
     }
 
     onSearch(): void {
         this.currentPage = 0;
-        this.applySearchFilter(true);
+        this.applyFilter();
     }
 
     clearFilters(): void {
@@ -123,6 +135,16 @@ export class SuppliersManagementComponent implements OnInit {
     closeFormModal(): void {
         this.showFormModal = false;
         this.selectedSupplier = null;
+    }
+
+    openMobileModal(supplier: Supplier): void {
+        this.selectedSupplierForMobile = supplier;
+        this.showMobileModal = true;
+    }
+
+    closeMobileModal(): void {
+        this.showMobileModal = false;
+        this.selectedSupplierForMobile = null;
     }
 
     onSaveSupplier(data: any): void {

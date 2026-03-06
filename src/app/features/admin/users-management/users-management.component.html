@@ -66,37 +66,40 @@
             <thead>
                 <tr>
                     <th>Nombre</th>
-                    <th>Usuario</th>
+                    <th class="hide-on-mobile">Usuario</th>
                     <th>Rol</th>
-                    <th>Acciones</th>
+                    <th class="hide-on-mobile">Acciones</th>
+                    <th class="show-on-mobile-only mobile-icon-col"></th>
                 </tr>
             </thead>
             <tbody [class.loading]="loading">
-                @if (loading) {
-                @for (i of [1, 2, 3, 4, 5]; track i) {
+                <!-- Skeleton Loader -->
+                @if (loading && users.length === 0) {
+                @for (i of [1, 2, 3, 4, 5, 6]; track i) {
                 <tr class="skeleton-row">
                     <td><span class="skeleton skeleton-text" style="width: 140px"></span></td>
-                    <td><span class="skeleton skeleton-text" style="width: 180px"></span></td>
-                    <td><span class="skeleton skeleton-text" style="width: 70px"></span></td>
-                    <td><span class="skeleton skeleton-text" style="width: 100px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 180px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 70px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 100px"></span></td>
+                    <td class="show-on-mobile-only mobile-icon-col"></td>
                 </tr>
                 }
                 } @else {
                 @for (user of filteredUsers; track user.id) {
-                <tr [class.row-hidden]="showingHidden">
-                    <td>
+                <tr [class.row-hidden]="showingHidden" class="clickable-row">
+                    <td (click)="openMobileModal(user)">
                         <div class="user-name-cell">
                             <div class="user-avatar-small">{{ user.name.charAt(0).toUpperCase() }}</div>
                             {{ user.name }}
                         </div>
                     </td>
-                    <td>{{ user.user }}</td>
+                    <td class="hide-on-mobile">{{ user.user }}</td>
                     <td>
                         <span class="role-badge" [ngClass]="getRoleBadgeClass(user.role)">
                             {{ user.role }}
                         </span>
                     </td>
-                    <td>
+                    <td class="hide-on-mobile" (click)="$event.stopPropagation()">
                         <div class="actions-cell">
                             <button *ngIf="!showingHidden" class="btn-editar" (click)="openEditModal(user)"
                                 title="Editar">
@@ -131,11 +134,16 @@
                             </button>
                         </div>
                     </td>
+                    <td class="show-on-mobile-only mobile-icon-col" (click)="openMobileModal(user)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+                        </svg>
+                    </td>
                 </tr>
                 }
                 @if (filteredUsers.length === 0 && !loading) {
                 <tr>
-                    <td colspan="4" style="text-align: center; padding: 2rem; color: #999">
+                    <td colspan="5" style="text-align: center; padding: 2rem; color: #999">
                         No se encontraron usuarios
                     </td>
                 </tr>
@@ -148,19 +156,13 @@
     @if (totalPages > 1) {
     <div class="pagination-controls">
         <button class="btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path fill-rule="evenodd"
-                    d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
             Anterior
         </button>
-        <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }}</span>
+        <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }} <span class="total-info">({{ totalElements }} usuarios)</span></span>
         <button class="btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
             Siguiente
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path fill-rule="evenodd"
-                    d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
         </button>
     </div>
     }
@@ -177,3 +179,51 @@
 
 <!-- Toasts -->
 <app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
+
+<!-- Mobile Detail Modal -->
+@if (showMobileModal && selectedUserForMobile) {
+<div class="mobile-detail-modal-overlay" (click)="closeMobileModal()">
+    <div class="mobile-detail-modal" (click)="$event.stopPropagation()">
+        <div class="mobile-detail-modal-header">
+            <div class="user-name-cell">
+                <div class="user-avatar-small">{{ selectedUserForMobile.name.charAt(0).toUpperCase() }}</div>
+                <h2>{{ selectedUserForMobile.name }}</h2>
+            </div>
+            <button class="modal-close-btn" (click)="closeMobileModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                </svg>
+            </button>
+        </div>
+        <div class="mobile-detail-modal-body">
+            <div class="detail-field">
+                <span class="detail-label">Usuario</span>
+                <span class="detail-value">{{ selectedUserForMobile.user }}</span>
+            </div>
+            <div class="detail-field">
+                <span class="detail-label">Rol</span>
+                <span class="detail-value">
+                    <span class="role-badge" [ngClass]="getRoleBadgeClass(selectedUserForMobile.role)">
+                        {{ selectedUserForMobile.role }}
+                    </span>
+                </span>
+            </div>
+            <div class="detail-field">
+                <span class="detail-label">Estado</span>
+                <span class="detail-value">{{ showingHidden ? 'Oculto' : 'Activo' }}</span>
+            </div>
+            <div class="detail-actions">
+                <button *ngIf="!showingHidden" class="btn-editar btn-full" (click)="showMobileModal = false; openEditModal(selectedUserForMobile)">
+                    Editar Usuario
+                </button>
+                <button *ngIf="!showingHidden" class="btn-ocultar btn-full" (click)="toggleUserVisibility(selectedUserForMobile); closeMobileModal()">
+                    Ocultar Usuario
+                </button>
+                <button *ngIf="showingHidden" class="btn-mostrar btn-full" (click)="toggleUserVisibility(selectedUserForMobile); closeMobileModal()">
+                    Restaurar Usuario
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+}
