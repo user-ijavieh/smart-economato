@@ -30,10 +30,14 @@ export class StockAlertService {
         return this.http.post<StockAlertDTO[]>(`${this.url}/batch`, productIds);
     }
 
-    getPredictions(page: number, size: number): Observable<Page<StockPredictionResponseDTO>> {
-        const params = new HttpParams()
+    getPredictions(page: number, size: number, sort?: string): Observable<Page<StockPredictionResponseDTO>> {
+        let params = new HttpParams()
             .set('page', page.toString())
             .set('size', size.toString());
+        
+        if (sort) {
+            params = params.set('sort', sort);
+        }
         return this.http.get<any>(`${this.url}/predictions`, { params }).pipe(
             map(response => ({
                 content: response.content ?? [],

@@ -10,10 +10,14 @@ export class SupplierService {
   private http = inject(HttpClient);
   private url = `${environment.apiUrl}/api/suppliers`;
 
-  getAll(page = 0, size = 50): Observable<Page<Supplier>> {
-    const params = new HttpParams()
+  getAll(page = 0, size = 50, sort?: string): Observable<Page<Supplier>> {
+    let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
+
+    if (sort) {
+      params = params.set('sort', sort);
+    }
 
     return this.http.get<any>(this.url, { params }).pipe(
       map(response => {
