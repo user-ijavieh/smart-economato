@@ -63,6 +63,13 @@ export const routes: Routes = [
         canActivate: [roleGuard('ADMIN')]
       },
       {
+        path: 'admin-panel/suppliers',
+        loadComponent: () =>
+          import('./features/admin/suppliers-management/suppliers-management.component').then(m => m.SuppliersManagementComponent),
+        canActivate: [roleGuard('ADMIN')]
+      },
+
+      {
         path: 'inventario',
         loadComponent: () =>
           import('./features/general/inventory/inventory.component').then(m => m.InventoryComponent)
@@ -79,6 +86,8 @@ export const routes: Routes = [
           import('./features/general/reception/reception.component').then(m => m.ReceptionComponent),
         canActivate: [roleGuard('ADMIN', 'CHEF')]
       },
+
+
       {
         path: 'recipes',
         loadComponent: () =>
