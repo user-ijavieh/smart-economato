@@ -340,7 +340,7 @@
                   Cargando...
                 </div>
               }
-              @if ((ledgerProducts?.length || 0) === 0 && !loadingLedgerProducts) {
+              @if (ledgerProducts.length === 0 && !loadingLedgerProducts) {
                 <div class="dropdown-no-results">No se encontraron productos</div>
               }
             </div>
