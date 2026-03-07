@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { forkJoin, Subject } from 'rxjs';
@@ -30,6 +30,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     private productService = inject(ProductService);
     private orderService = inject(OrderService);
     private cdr = inject(ChangeDetectorRef);
+    private ngZone = inject(NgZone);
     private authService = inject(AuthService);
     private stockLedgerService = inject(StockLedgerService);
     messageService = inject(MessageService);
@@ -95,11 +96,9 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     ledgerSortColumn = 'transactionTimestamp';
     ledgerSortDir: 'asc' | 'desc' = 'desc';
 
-    // ── Batch movement modal ──
-    showBatchModal = false;
-    batchReason = '';
-    batchMovements: { productId: number; productName: string; quantityDelta: number; movementType: string; description: string }[] = [];
-    processingBatch = false;
+    // ── Mobile modal for Ledger transactions ──
+    showLedgerMobileModal = false;
+    selectedLedgerTx: StockLedgerResponseDTO | null = null;
 
     // ── Custom Selector Ledger (Infinite Scroll) ──
     showLedgerDropdown = false;
@@ -313,10 +312,12 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     // ================================================================
 
     loadPredictions(page = 0): void {
-        this.loadingPredictions = true;
-        this.currentPage = page;
-        this.predictions = [];
-        this.cdr.detectChanges();
+        this.ngZone.run(() => {
+            this.loadingPredictions = true;
+            this.currentPage = page;
+            this.predictions = [];
+            this.cdr.markForCheck();
+        });
         
         const backendCols: Record<string, string> = {
             'productName': 'product.name'
@@ -326,30 +327,36 @@ export class StockManagementComponent implements OnInit, OnDestroy {
 
         this.stockAlertService.getPredictions(page, this.pageSize, sortParam).subscribe({
             next: (data) => {
-                this.predictions = data.content;
-                this.totalPages = data.totalPages;
-                this.totalElements = data.totalElements;
-                this.currentPage = page;
-                this.loadingPredictions = false;
-                this.cdr.detectChanges();
+                this.ngZone.run(() => {
+                    this.predictions = data.content;
+                    this.totalPages = data.totalPages;
+                    this.totalElements = data.totalElements;
+                    this.currentPage = page;
+                    this.loadingPredictions = false;
+                    this.cdr.markForCheck();
+                });
             },
             error: () => {
-                this.messageService.showError('Error al cargar predicciones');
-                this.loadingPredictions = false;
-                this.cdr.detectChanges();
+                this.ngZone.run(() => {
+                    this.messageService.showError('Error al cargar predicciones');
+                    this.loadingPredictions = false;
+                    this.cdr.markForCheck();
+                });
             }
         });
     }
 
     onSortPredictionsChange(column: string): void {
-        this.sortInteractedPredictions = true;
-        if (this.sortColumnPredictions === column) {
-            this.sortDirPredictions = this.sortDirPredictions === 'asc' ? 'desc' : 'asc';
-        } else {
-            this.sortColumnPredictions = column;
-            this.sortDirPredictions = column === 'projectedConsumption' ? 'desc' : 'asc';
-        }
-        this.loadPredictions(0);
+        this.ngZone.run(() => {
+            this.sortInteractedPredictions = true;
+            if (this.sortColumnPredictions === column) {
+                this.sortDirPredictions = this.sortDirPredictions === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.sortColumnPredictions = column;
+                this.sortDirPredictions = column === 'projectedConsumption' ? 'desc' : 'asc';
+            }
+            this.loadPredictions(0);
+        });
     }
 
     getSortPredictionsDir(column: string): string {
@@ -360,11 +367,13 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     // The applyPredictionsSorting frontend logic has been removed as the API handles sorting natively for predictions.
 
     changePage(delta: number): void {
-        const next = this.currentPage + delta;
-        if (next >= 0 && next < this.totalPages) {
-            this.scrollToTop();
-            this.loadPredictions(next);
-        }
+        this.ngZone.run(() => {
+            const next = this.currentPage + delta;
+            if (next >= 0 && next < this.totalPages) {
+                this.scrollToTop();
+                this.loadPredictions(next);
+            }
+        });
     }
 
     private scrollToTop(): void {
@@ -388,6 +397,26 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     formatDate(dateStr: string): string {
         if (!dateStr) return '—';
         return new Date(dateStr).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    openLedgerMobileModal(tx: StockLedgerResponseDTO): void {
+        this.ngZone.run(() => {
+            this.selectedLedgerTx = tx;
+            this.showLedgerMobileModal = true;
+        });
+    }
+
+    closeLedgerMobileModal(): void {
+        this.ngZone.run(() => {
+            this.showLedgerMobileModal = false;
+            this.selectedLedgerTx = null;
+        });
+    }
+
+    closeLedgerDropdown(): void {
+        this.ngZone.run(() => {
+            this.showLedgerDropdown = false;
+        });
     }
 
     // ================================================================
@@ -444,17 +473,18 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     }
 
     onProductSelect(id: number | null): void {
-        this.selectedProductId = id;
-        this.showLedgerDropdown = false;
-        this.ledgerPage = 0;
-        if (id) {
-            this.loadLedgerHistory(id);
-            this.loadLedgerSnapshot(id);
-        } else {
-            this.ledgerHistory = [];
-            this.ledgerSnapshot = null;
-        }
-        this.cdr.detectChanges();
+        this.ngZone.run(() => {
+            this.selectedProductId = id;
+            this.showLedgerDropdown = false;
+            this.ledgerPage = 0;
+            if (id) {
+                this.loadLedgerHistory(id);
+                this.loadLedgerSnapshot(id);
+            } else {
+                this.ledgerHistory = [];
+                this.ledgerSnapshot = null;
+            }
+        });
     }
 
     get selectedProductName(): string {
@@ -639,77 +669,6 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         });
     }
 
-    // --- Batch ---
-    openBatchModal(): void {
-        this.batchReason = '';
-        this.batchMovements = [{ productId: 0, productName: '', quantityDelta: 0, movementType: 'AJUSTE', description: '' }];
-        this.showBatchModal = true;
-        this.cdr.detectChanges();
-    }
-
-    closeBatchModal(): void {
-        this.showBatchModal = false;
-        this.cdr.detectChanges();
-    }
-
-    addBatchMovement(): void {
-        this.batchMovements.push({ productId: 0, productName: '', quantityDelta: 0, movementType: 'AJUSTE', description: '' });
-    }
-
-    removeBatchMovement(index: number): void {
-        this.batchMovements.splice(index, 1);
-        if (this.batchMovements.length === 0) this.addBatchMovement();
-    }
-
-    onBatchProductSelect(index: number, pid: number): void {
-        const prod = this.products.find(p => p.id === Number(pid));
-        if (prod) {
-            this.batchMovements[index].productId = prod.id;
-            this.batchMovements[index].productName = prod.name;
-        }
-    }
-
-    processBatch(): void {
-        const validMovements = this.batchMovements.filter(m => m.productId > 0 && m.quantityDelta !== 0);
-        if (!validMovements.length) {
-            this.messageService.showError('Debes añadir al menos un movimiento válido (producto y cantidad distinta de cero)');
-            return;
-        }
-        if (!this.batchReason.trim()) {
-            this.messageService.showError('Debes indicar un motivo para la operación batch');
-            return;
-        }
-
-        this.processingBatch = true;
-        this.cdr.detectChanges();
-
-        const payload = {
-            movements: validMovements.map(m => ({
-                productId: m.productId,
-                quantityDelta: m.quantityDelta,
-                movementType: m.movementType as any,
-                description: m.description || this.batchReason
-            })),
-            reason: this.batchReason,
-            orderId: null,
-            recipeCookingAuditId: null
-        };
-
-        this.stockLedgerService.processBatch(payload).pipe(
-            finalize(() => { this.processingBatch = false; this.cdr.detectChanges(); })
-        ).subscribe({
-            next: (res) => {
-                this.messageService.showSuccess(res.message);
-                this.closeBatchModal();
-                if (this.selectedProductId && validMovements.some(m => m.productId === this.selectedProductId)) {
-                    this.onProductSelect(this.selectedProductId);
-                }
-            },
-            error: (err) => {
-                this.messageService.showError(err.error?.message || err.error?.errorDetail || 'Error al procesar lote');
-            }
-        });
-    }
 
     getMovementTypeClass(type: string): string {
         const map: Record<string, string> = {
