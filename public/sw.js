@@ -3,7 +3,10 @@
 // ║     Cache-First (static) + Network-First (API)              ║
 // ╚══════════════════════════════════════════════════════════════╝
 
-const CACHE_VERSION = 'v1';
+// Build timestamp injected at deploy time — ensures every new build
+// creates fresh caches and evicts stale ones automatically.
+const BUILD_TIMESTAMP = '__BUILD_TIMESTAMP__'; // replaced by CI/build pipeline (or just bump manually)
+const CACHE_VERSION = `v1-${BUILD_TIMESTAMP}`;
 const STATIC_CACHE = `smart-economato-static-${CACHE_VERSION}`;
 const API_CACHE = `smart-economato-api-${CACHE_VERSION}`;
 
@@ -58,9 +61,23 @@ self.addEventListener('fetch', (event) => {
   // Skip non-GET requests and browser-extension requests
   if (request.method !== 'GET' || !url.protocol.startsWith('http')) return;
 
-  // Skip auth endpoints – always go to network
-  if (url.pathname.includes('/api/auth')) return;
+  // Skip auth and WebSocket endpoints — always network
+  if (url.pathname.includes('/api/auth') || url.pathname.includes('/ws')) return;
 
+  // index.html: ALWAYS Network-First (never cache-only) so deploys propagate immediately
+  if (url.pathname === '/cliente/' || url.pathname === '/cliente/index.html') {
+    event.respondWith(
+      fetch(request)
+        .then((res) => {
+          // Update the cached copy so offline works
+          const clone = res.clone();
+          caches.open(STATIC_CACHE).then((c) => c.put(request, clone));
+          return res;
+        })
+        .catch(() => caches.match('/cliente/index.html'))
+    );
+    return;
+  }
   // API calls: Network-First with cache fallback
   if (API_CACHE_PATTERNS.some((p) => p.test(url.pathname))) {
     event.respondWith(networkFirstStrategy(request, API_CACHE));
