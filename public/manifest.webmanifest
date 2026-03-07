@@ -2,13 +2,13 @@
   "name": "SmartEconomato",
   "short_name": "Economato",
   "description": "Sistema de gestión de inventario y economato para cocinas profesionales",
-  "start_url": "/",
+  "start_url": "/cliente/",
   "display": "standalone",
   "background_color": "#B84B44",
   "theme_color": "#B84B44",
   "orientation": "portrait-primary",
   "lang": "es-ES",
-  "scope": "/",
+  "scope": "/cliente/",
   "categories": ["food", "business", "productivity"],
   "icons": [
     {
@@ -41,19 +41,19 @@
     {
       "name": "Inventario",
       "short_name": "Stock",
-      "url": "/inventory",
+      "url": "/cliente/inventory",
       "icons": [{ "src": "icon-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "Recetas",
       "short_name": "Recetas",
-      "url": "/recipes",
+      "url": "/cliente/recipes",
       "icons": [{ "src": "icon-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "Órdenes",
       "short_name": "Órdenes",
-      "url": "/orders",
+      "url": "/cliente/orders",
       "icons": [{ "src": "icon-192x192.png", "sizes": "192x192" }]
     }
   ],
