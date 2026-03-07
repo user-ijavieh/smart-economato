@@ -65,4 +65,10 @@ export class SupplierService {
       params: new HttpParams().set('name', name)
     });
   }
+
+  searchByTerm(term: string): Observable<Supplier[]> {
+    return this.http.get<Supplier[]>(`${this.url}/search`, {
+      params: new HttpParams().set('term', term)
+    });
+  }
 }

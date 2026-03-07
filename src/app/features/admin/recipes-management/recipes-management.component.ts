@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RecipeService } from '../../../core/services/recipe.service';
 import { RecipeAuditService } from '../../../core/services/recipe-audit.service';
 import { UserService } from '../../../core/services/user.service';
+import { StatsService } from '../../../core/services/stats.service';
 import { MessageService } from '../../../core/services/message.service';
 import { Recipe, RecipeRequest } from '../../../shared/models/recipe.model';
 import { RecipeAudit } from '../../../shared/models/recipe-audit.model';
@@ -35,6 +36,7 @@ export class RecipesManagementComponent implements OnInit {
     private recipeService = inject(RecipeService);
     private recipeAuditService = inject(RecipeAuditService);
     private userService = inject(UserService);
+    private statsService = inject(StatsService);
     private cdr = inject(ChangeDetectorRef);
     messageService = inject(MessageService);
 
@@ -65,14 +67,15 @@ export class RecipesManagementComponent implements OnInit {
     selectedRecipe: Recipe | null = null;
 
     // Stats
-    get totalRecipes(): number { return this.totalElements; }
-    get recipesWithAllergens(): number { return this.filteredRecipes.filter(r => r.allergens?.length > 0).length; }
-    get recipesWithoutAllergens(): number { return this.filteredRecipes.filter(r => !r.allergens || r.allergens.length === 0).length; }
-    get averageCost(): number {
-        if (this.filteredRecipes.length === 0) return 0;
-        const total = this.filteredRecipes.reduce((sum, r) => sum + r.totalCost, 0);
-        return total / this.filteredRecipes.length;
-    }
+    statTotalRecipes = 0;
+    statRecipesWithAllergens = 0;
+    statRecipesWithoutAllergens = 0;
+    statAverageCost = 0;
+
+    get totalRecipes(): number { return this.statTotalRecipes; }
+    get recipesWithAllergens(): number { return this.statRecipesWithAllergens; }
+    get recipesWithoutAllergens(): number { return this.statRecipesWithoutAllergens; }
+    get averageCost(): number { return this.statAverageCost; }
 
     // ── Audits state ──
     audits: RecipeAudit[] = [];
@@ -114,6 +117,45 @@ export class RecipesManagementComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadRecipes();
+        this.loadStats();
+    }
+
+    loadStats(): void {
+        // We use the specific endpoints provided by the user to ensure maximum accuracy
+        forkJoin({
+            summary: this.statsService.getRecipeStats().pipe(catchError(() => of(null))),
+            withAllergens: this.statsService.getRecipesWithAllergensCount().pipe(catchError(() => of({ count: 0 }))),
+            withoutAllergens: this.statsService.getRecipesWithoutAllergensCount().pipe(catchError(() => of({ count: 0 }))),
+            avgCost: this.statsService.getAverageCost().pipe(catchError(() => of({ averageCost: 0 })))
+        }).subscribe({
+            next: (data: any) => {
+                // Priority 1: Specific endpoints (as they are "nuevo"/new and likely more accurate)
+                this.statRecipesWithAllergens = data.withAllergens.count || 0;
+                this.statRecipesWithoutAllergens = data.withoutAllergens.count || 0;
+                this.statAverageCost = data.avgCost.averageCost || 0;
+
+                // Priority 2: Summary endpoint for total or as fallback
+                if (data.summary) {
+                    this.statTotalRecipes = data.summary.totalRecipes || 0;
+                    
+                    // Fallback to summary if specific ones returned 0 but summary has data
+                    if (this.statRecipesWithAllergens === 0) this.statRecipesWithAllergens = data.summary.recipesWithAllergens || 0;
+                    if (this.statRecipesWithoutAllergens === 0) this.statRecipesWithoutAllergens = data.summary.recipesWithoutAllergens || 0;
+                    if (this.statAverageCost === 0) this.statAverageCost = data.summary.averagePrice || 0;
+                }
+
+                // If total is still 0, calculate from the components
+                if (this.statTotalRecipes === 0) {
+                    this.statTotalRecipes = this.statRecipesWithAllergens + this.statRecipesWithoutAllergens;
+                }
+
+                this.cdr.detectChanges();
+            },
+            error: (err: any) => {
+                console.error('Error loading recipe stats:', err);
+                this.cdr.detectChanges();
+            }
+        });
     }
 
     // ── Tab switching ──
@@ -534,12 +576,13 @@ export class RecipesManagementComponent implements OnInit {
 
     onCreateRecipe(recipeRequest: RecipeRequest): void {
         this.recipeService.create(recipeRequest).subscribe({
-            next: (recipe) => {
+            next: (recipe: Recipe) => {
                 this.messageService.showSuccess(`Receta "${recipe.name}" creada con éxito`);
                 this.closeCreateModal();
                 this.loadRecipes();
+                this.loadStats();
             },
-            error: (err) => {
+            error: (err: any) => {
                 const msg = err.error?.message || err.error || 'Error al crear la receta';
                 this.messageService.showError(msg);
             }
@@ -562,14 +605,14 @@ export class RecipesManagementComponent implements OnInit {
 
     onSaveRecipe(recipeRequest: RecipeRequest): void {
         if (!this.selectedRecipe) return;
-
         this.recipeService.update(this.selectedRecipe.id, recipeRequest).subscribe({
-            next: (recipe) => {
+            next: (recipe: Recipe) => {
                 this.messageService.showSuccess(`Receta "${recipe.name}" actualizada con éxito`);
                 this.closeEditModal();
                 this.loadRecipes();
+                this.loadStats();
             },
-            error: (err) => {
+            error: (err: any) => {
                 const msg = err.error?.message || err.error || 'Error al actualizar la receta';
                 this.messageService.showError(msg);
             }
@@ -590,8 +633,9 @@ export class RecipesManagementComponent implements OnInit {
             next: () => {
                 this.messageService.showSuccess(`Receta "${recipe.name}" eliminada correctamente`);
                 this.loadRecipes();
+                this.loadStats();
             },
-            error: (err) => {
+            error: (err: any) => {
                 const msg = err.error?.message || err.error || 'Error al eliminar la receta';
                 this.messageService.showError(msg);
             }
@@ -608,12 +652,13 @@ export class RecipesManagementComponent implements OnInit {
             quantity: event.quantity,
             details: event.details
         }).subscribe({
-            next: (recipe) => {
+            next: (recipe: Recipe) => {
                 this.messageService.showSuccess(`¡"${recipe.name}" cocinada con éxito!`);
                 this.closeDetailModal();
                 this.loadRecipes();
+                this.loadStats();
             },
-            error: (err) => {
+            error: (err: any) => {
                 const msg = err.error?.message || err.error || 'Error al cocinar la receta';
                 this.messageService.showError(msg);
             }
