@@ -10,10 +10,13 @@ export class AllergenService {
   private http = inject(HttpClient);
   private url = `${environment.apiUrl}/api/allergens`;
 
-  getAll(page = 0, size = 50): Observable<Page<Allergen>> {
-    const params = new HttpParams()
+  getAll(page = 0, size = 50, sort?: string): Observable<Page<Allergen>> {
+    let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
+    if (sort) {
+      params = params.set('sort', sort);
+    }
     return this.http.get<Page<Allergen>>(this.url, { params });
   }
 

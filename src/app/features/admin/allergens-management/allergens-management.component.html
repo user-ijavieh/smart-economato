@@ -38,8 +38,7 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 60px">#</th>
-                    <th>Nombre</th>
+                    <th class="sortable" (click)="onSortChange('name')" [attr.data-sort-dir]="getSortDir('name')">Nombre</th>
                     <th style="width: 130px">Acciones</th>
                 </tr>
             </thead>
@@ -56,9 +55,6 @@
                 } @else {
                 @for (allergen of filteredAllergens; track allergen.id) {
                 <tr>
-                    <td>
-                        <span class="id-badge">#{{ allergen.id }}</span>
-                    </td>
                     <td class="allergen-name-cell">
                         <div class="allergen-name-cell-inner">
                             <div class="allergen-icon">
@@ -95,7 +91,7 @@
                 }
                 @if (filteredAllergens.length === 0 && !loading) {
                 <tr>
-                    <td colspan="3" style="text-align: center; padding: 2rem; color: #999">
+                    <td colspan="2" style="text-align: center; padding: 2rem; color: #999">
                         No se encontraron alérgenos
                     </td>
                 </tr>

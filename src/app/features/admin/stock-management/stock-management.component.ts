@@ -256,6 +256,7 @@ export class StockManagementComponent implements OnInit {
     loadPredictions(page = 0): void {
         this.loadingPredictions = true;
         this.currentPage = page;
+        this.predictions = [];
         this.cdr.detectChanges();
         
         const backendCols: Record<string, string> = {
@@ -301,7 +302,18 @@ export class StockManagementComponent implements OnInit {
 
     changePage(delta: number): void {
         const next = this.currentPage + delta;
-        if (next >= 0 && next < this.totalPages) this.loadPredictions(next);
+        if (next >= 0 && next < this.totalPages) {
+            this.scrollToTop();
+            this.loadPredictions(next);
+        }
+    }
+
+    private scrollToTop(): void {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const container = document.querySelector('.contenedor-principal');
+        if (container) {
+            container.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     }
 
     openPredictionMobileModal(prediction: StockPredictionResponseDTO): void {

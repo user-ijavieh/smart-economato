@@ -114,7 +114,11 @@ export class UserService {
     return this.getAll(0, 10000).pipe(map(page => page.content));
   }
 
-  getByRole(role: string): Observable<User[]> {
-    return this.http.get<User[]>(`${this.url}/by-role/${role}`);
+  getByRole(role: string, sort?: string): Observable<User[]> {
+    let params = new HttpParams();
+    if (sort) {
+      params = params.set('sort', sort);
+    }
+    return this.http.get<User[]>(`${this.url}/by-role/${role}`, { params });
   }
 }
