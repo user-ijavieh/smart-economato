@@ -140,6 +140,7 @@ th.sortable {
   transition: background-color 0.2s ease;
   user-select: none;
   padding-right: 25px; /* space for arrows */
+  white-space: nowrap;
 }
 th.sortable:hover {
   background: linear-gradient(135deg, rgba(40,50,90,.95) 0%, rgba(60,70,130,.95) 100%);
@@ -1066,4 +1067,115 @@ tbody.loading { opacity: .6; }
 .btn-pdf-small:hover {
     background: #f7fafc;
     border-color: #a0aec0;
+}
+
+/* ── Ledger Transaction Detail Modal ── */
+.ledger-detail-modal {
+    max-width: 480px;
+    width: 95%;
+}
+
+.ledger-detail-body {
+    padding: 0 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.ledger-detail-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.ledger-detail-status.status-ok {
+    background: #f0fff4;
+    color: #276749;
+    border: 1px solid #c6f6d5;
+}
+
+.ledger-detail-status.status-err {
+    background: #fff5f5;
+    color: #9b2c2c;
+    border: 1px solid #fed7d7;
+}
+
+.ledger-detail-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.detail-metric {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.detail-metric-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #94a3b8;
+}
+
+.detail-metric-value {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.ledger-detail-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.detail-row {
+    display: flex;
+    padding: 10px 14px;
+    gap: 12px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.88rem;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    width: 110px;
+    flex-shrink: 0;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.detail-val {
+    color: #1e293b;
+    flex: 1;
+    word-break: break-word;
+}
+
+.hash-val {
+    font-family: 'Courier New', monospace;
+    font-size: 0.78rem;
+    color: #475569;
+    word-break: break-all;
+}
+
+/* hover effect on ledger rows */
+.ledger-row:hover {
+    background: #f8fafc;
 }

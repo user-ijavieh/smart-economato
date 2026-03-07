@@ -92,15 +92,6 @@
     background: linear-gradient(135deg, rgba(30, 40, 80, 0.95), rgba(50, 60, 120, 0.95));
 }
 
-.audit-header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #fff;
-    padding: 20px 24px;
-    z-index: 100;
-}
-
 /** ===== CONTENEDOR PRINCIPAL ===== */
 
 .contenedor-principal {
