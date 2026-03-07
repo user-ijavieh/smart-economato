@@ -66,8 +66,7 @@ export class SuppliersManagementComponent implements OnInit {
         this.serverCurrentPage = page;
         
         // Clear lists to force skeleton loader
-        this.suppliers = [];
-        this.filteredSuppliers = [];
+        // Removed array clear to prevent layout shift
         this.cdr.detectChanges();
 
         const sortParam = `${this.sortColumn},${this.sortDir}`;

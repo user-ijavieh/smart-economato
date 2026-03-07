@@ -78,9 +78,7 @@ export class AllergensManagementComponent implements OnInit {
         this.currentPage = page;
         this.serverCurrentPage = page;
         
-        // Clear lists to force skeleton loader and avoid showing stagnant data
-        this.allergens = [];
-        this.filteredAllergens = [];
+        // Removed array clear to prevent layout shift during pagination/sorting
         this.cdr.detectChanges();
 
         const term = this.searchTerm.trim();

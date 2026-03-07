@@ -67,9 +67,7 @@ export class UsersManagementComponent implements OnInit {
         this.currentPage = page;
         this.serverCurrentPage = page;
         
-        // Clear current lists to force skeletons and avoid stagnant data view
-        this.users = [];
-        this.filteredUsers = [];
+        // Removed array clear to prevent layout shift during pagination/sorting
         this.cdr.detectChanges();
 
         const sortParam = `${this.sortColumn},${this.sortDir}`;
