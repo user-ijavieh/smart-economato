@@ -225,6 +225,14 @@
         <span class="info-label">USUARIOS PARTICIPANTES:</span>
         <span class="info-value">{{ report.distinctUsersCooking }}</span>
       </div>
+      <div class="info-item highlight">
+        <span class="info-label">COSTE ESTIMADO TOTAL:</span>
+        <span class="info-value">{{ report.totalEstimatedCost | currency:'EUR' }}</span>
+      </div>
+      <div class="info-item highlight">
+        <span class="info-label">PRECIO MEDIO POR PORCIÓN:</span>
+        <span class="info-value">{{ (report.totalPortionsCooked > 0 ? report.totalEstimatedCost / report.totalPortionsCooked : 0) | currency:'EUR' }}</span>
+      </div>
       <div class="info-item">
         <span class="info-label">FECHA DE EMISIÓN:</span>
         <span class="info-value">{{ getCurrentDate() }}</span>

@@ -86,7 +86,9 @@ export class KitchenManagementComponent implements OnInit {
   loadHistory(page = 0): void {
     this.loadingHistory = true;
     this.currentPage = page;
-    this.cdr.markForCheck();
+    this.audits = [];
+    this.filteredAudits = [];
+    this.cdr.detectChanges();
 
     const backendCols: Record<string, string> = {
       'recipeName': 'recipe.name',
@@ -250,7 +252,16 @@ export class KitchenManagementComponent implements OnInit {
   changePage(delta: number): void {
     const newPage = this.currentPage + delta;
     if (newPage >= 0 && newPage < this.totalPages) {
+      this.scrollToTop();
       this.loadHistory(newPage);
+    }
+  }
+
+  private scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const container = document.querySelector('.contenedor-principal');
+    if (container) {
+      container.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
@@ -396,6 +407,10 @@ export class KitchenManagementComponent implements OnInit {
       .subscribe({
         next: (report) => {
           console.log('Report received:', report);
+          if (report && report.topRecipes) {
+            // Sort by quantity as priority
+            report.topRecipes.sort((a, b) => b.totalQuantityCooked - a.totalQuantityCooked);
+          }
           this.report = report;
           this.cdr.markForCheck();
         },
