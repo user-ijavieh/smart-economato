@@ -9,11 +9,11 @@ const API_CACHE = `smart-economato-api-${CACHE_VERSION}`;
 
 // Static assets to pre-cache on install
 const PRECACHE_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.webmanifest',
-  '/icon-192x192.png',
-  '/icon-512x512.png',
+  '/cliente/',
+  '/cliente/index.html',
+  '/cliente/manifest.webmanifest',
+  '/cliente/icon-192x192.png',
+  '/cliente/icon-512x512.png',
 ];
 
 // API routes to cache with network-first strategy
@@ -76,11 +76,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Navigation requests (SPA routes): Stale-While-Revalidate → serve index.html
+  // Navigation requests (SPA routes): serve index.html from cache
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request).catch(() =>
-        caches.match('/index.html')
+        caches.match('/cliente/index.html')
       )
     );
     return;
