@@ -4,6 +4,8 @@ export type Role = 'ADMIN' | 'CHEF' | 'USER';
 // 2. Estructura de permisos centralizada (by GPT)
 export const ROLE_PERMISSIONS: Record<Role, string[]> = {
   CHEF: [
+    "GET /api/products/ledger-integrity",
+    "GET /api/products/{id}/ledger/pdf",
     "GET /api/products",
     "GET /api/products/{id}",
     "GET /api/products/search",
@@ -54,6 +56,9 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "PATCH /api/users/{id}/password"
   ],
   ADMIN: [
+    "GET /api/products/with-ledger",
+    "GET /api/products/ledger-integrity",
+    "GET /api/products/{id}/ledger/pdf",
     "GET /api/products",
     "GET /api/products/{id}",
     "GET /api/products/search",
@@ -136,6 +141,11 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "GET /api/recipe-cooking-audit/date-range",
     "GET /api/recipe-cooking-audit/search",
     "POST /api/stock-ledger/batch",
+    "GET /api/stock-ledger/history/{productId}",
+    "GET /api/stock-ledger/verify/{productId}",
+    "GET /api/stock-ledger/verify-all",
+    "GET /api/stock-ledger/snapshot/{productId}",
+    "DELETE /api/stock-ledger/reset/{productId}",
     "GET /api/kitchen-reports",
     "GET /api/kitchen-reports/export/pdf",
     "GET /api/stock-alerts",
@@ -148,6 +158,7 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "GET /api/stats/recipes/average-cost"
   ],
   USER: [
+    "GET /api/products/with-ledger",
     "GET /api/products",
     "GET /api/products/{id}",
     "GET /api/products/search",

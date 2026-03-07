@@ -30,20 +30,20 @@ export class MessageService {
     return this.confirmDialog$.asObservable();
   }
 
-  showSuccess(message: string): void {
-    this.addToast(message, 'success');
+  showSuccess(message: string, duration?: number): void {
+    this.addToast(message, 'success', duration);
   }
 
-  showError(message: string): void {
-    this.addToast(message, 'error');
+  showError(message: string, duration?: number): void {
+    this.addToast(message, 'error', duration);
   }
 
-  showWarning(message: string): void {
-    this.addToast(message, 'warning');
+  showWarning(message: string, duration?: number): void {
+    this.addToast(message, 'warning', duration);
   }
 
-  showInfo(message: string): void {
-    this.addToast(message, 'info');
+  showInfo(message: string, duration?: number): void {
+    this.addToast(message, 'info', duration);
   }
 
   confirm(title: string, message: string): Promise<boolean> {
