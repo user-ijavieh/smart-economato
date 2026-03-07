@@ -16,6 +16,12 @@
     </svg>
     Predicciones
   </button>
+  <button class="tab-btn" [class.active]="activeTab === 'ledger'" (click)="switchTab('ledger')">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor">
+      <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm80-80h400v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 320v-560 560Z"/>
+    </svg>
+    Historial (Ledger)
+  </button>
 </div>
 
 <!-- ===== ALERTS TAB ===== -->
@@ -301,6 +307,229 @@
 </div>
 }
 
+<!-- ===== LEDGER TAB ===== -->
+@if (activeTab === 'ledger') {
+<div class="contenedor-principal">
+  <div class="controles-ledger">
+    <div class="search-box">
+      <label>Seleccionar Producto:</label>
+      <div class="custom-select-container">
+        <div class="custom-select-trigger" (click)="toggleLedgerDropdown()" [class.active]="showLedgerDropdown">
+          <span class="selected-value">{{ selectedProductName }}</span>
+          <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#666" [style.transform]="showLedgerDropdown ? 'rotate(180deg)' : ''"><path d="M480-345 285-540l35-35 160 160 160-160 35 35-195 195Z"/></svg>
+        </div>
+        
+        @if (showLedgerDropdown) {
+          <div class="custom-dropdown-menu">
+            <div class="dropdown-search">
+              <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#999"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-732q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
+              <input type="text" [(ngModel)]="ledgerSearchTerm" (input)="onLedgerSearchInput()" placeholder="Buscar producto..." (click)="$event.stopPropagation()" focus="true" />
+            </div>
+            <div class="dropdown-list" (scroll)="onLedgerDropdownScroll($event)">
+              <div class="dropdown-item" (click)="onProductSelect(null)" [class.selected]="!selectedProductId">
+                Ninguno
+              </div>
+              @for (p of ledgerProducts; track p.id) {
+                <div class="dropdown-item" (click)="onProductSelect(p.id)" [class.selected]="selectedProductId === p.id">
+                  {{ p.name }} <span class="unit-tag">{{ p.unit }}</span>
+                </div>
+              }
+              @if (loadingLedgerProducts) {
+                <div class="dropdown-loading">
+                  <span class="spinner-small"></span>
+                  Cargando...
+                </div>
+              }
+              @if ((ledgerProducts?.length || 0) === 0 && !loadingLedgerProducts) {
+                <div class="dropdown-no-results">No se encontraron productos</div>
+              }
+            </div>
+          </div>
+          <div class="dropdown-overlay" (click)="showLedgerDropdown = false"></div>
+        }
+      </div>
+    </div>
+
+    <div class="ledger-actions">
+      <button class="btn-batch" (click)="openBatchModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M200-120q-33 0-56.5-23.5T120-200v-400h80v400h560v-400h80v400q0 33-23.5 56.5T760-120H200Zm0-520v-40h560v40H200Zm0-120v-40h560v40H200Z"/></svg>
+        Movimientos Lote
+      </button>
+
+      <button class="btn-verify btn-verify-all" (click)="verifyAll()" [disabled]="verifyingIntegrity">
+        <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-80q105-30 172.5-115.5T720-474v-181l-240-90-240 90v181q0 113 67.5 198.5T480-160Zm0-320Z"/></svg>
+        Verificar Todo
+      </button>
+
+      @if (selectedProductId) {
+        <button class="btn-pdf" (click)="downloadPdf()" [disabled]="downloadingPdf">
+          <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M320-240h320v-80H320v80Zm0-160h320v-80H320v80ZM240-80q-33 0-56.5-23.5T160-200v-560q0-33 23.5-56.5T240-840h320l240 240v400q0 33-23.5 56.5T720-80H240Zm280-520v-160H240v560h480v-400H520Z"/></svg>
+          PDF
+        </button>
+        <button class="btn-verify" (click)="verifyIntegrity()" [disabled]="verifyingIntegrity">
+          <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-80q105-30 172.5-115.5T720-474v-181l-240-90-240 90v181q0 113 67.5 198.5T480-160Zm0-320Z"/></svg>
+          {{ verifyingIntegrity ? 'Verificando...' : 'Verificar Integridad' }}
+        </button>
+        <button class="btn-reset" (click)="resetProductHistory()" [disabled]="resettingHistory">
+          <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T760-120H280Zm480-600H280v520h480v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
+          Limpiar Historial
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (ledgerSnapshot) {
+  <div id="ledgerHistoryHeader" class="ledger-summary-row">
+    <div class="summary-card">
+      <span class="summary-label">Stock Actual (Ledger)</span>
+      <span class="summary-value">{{ ledgerSnapshot.currentStock | number:'1.0-3' }}</span>
+    </div>
+    <div class="summary-card">
+      <span class="summary-label">Última Secuencia</span>
+      <span class="summary-value">#{{ ledgerSnapshot.lastSequenceNumber }}</span>
+    </div>
+    <div class="summary-card">
+      <span class="summary-label">Estado de Cadena</span>
+      <span class="status-badge-ledger" [ngClass]="getIntegrityStatusClass(ledgerSnapshot.integrityStatus)">
+        {{ ledgerSnapshot.integrityStatus === 'VALID' ? 'VÁLIDA' : (ledgerSnapshot.integrityStatus === 'CORRUPTED' ? 'CORRUPTA' : 'PENDIENTE') }}
+      </span>
+    </div>
+    <div class="summary-card hide-on-mobile">
+      <span class="summary-label">Último Hash</span>
+      <span class="summary-hash" [title]="ledgerSnapshot.lastTransactionHash">{{ ledgerSnapshot.lastTransactionHash.substring(0, 16) }}...</span>
+    </div>
+  </div>
+  }
+
+  @if (ledgerIntegrity && !ledgerIntegrity.valid) {
+    <div class="ledger-error-box">
+      <div class="error-header">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#f44336"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+        <span>Se han detectado irregularidades en la cadena de este producto:</span>
+      </div>
+      <ul class="error-list">
+        @for (err of ledgerIntegrity.errors; track $index) {
+          <li>{{ err }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  @if (selectedProductId) {
+    <div id="ledgerResults" class="tabla-contenedor ledger-table-container">
+      <table>
+        <thead>
+          <tr>
+            <th class="hide-on-mobile">#</th>
+            <th class="sortable" (click)="onSortLedgerChange('sequenceNumber')" [attr.data-sort-dir]="getSortLedgerDir('sequenceNumber')">Sec.</th>
+            <th class="sortable" (click)="onSortLedgerChange('transactionTimestamp')" [attr.data-sort-dir]="getSortLedgerDir('transactionTimestamp')">Fecha</th>
+            <th>Tipo</th>
+            <th>Delta</th>
+            <th>Resultante</th>
+            <th class="hide-on-mobile">Descripción / Usuario</th>
+            <th class="hide-on-mobile">Verif.</th>
+          </tr>
+        </thead>
+        <tbody [class.loading]="loadingLedger">
+          @if (loadingLedger && ledgerHistory.length === 0) {
+            @for (i of [1,2,3,4,5]; track i) {
+              <tr class="skeleton-row">
+                <td colspan="8"><span class="skeleton" style="width: 100%"></span></td>
+              </tr>
+            }
+          } @else {
+            @for (tx of ledgerHistory; track tx.id; let idx = $index) {
+            <tr class="ledger-row" [class.row-unverified]="!tx.verified">
+              <td class="idx-cell hide-on-mobile">{{ ledgerPage * ledgerPageSize + idx + 1 }}</td>
+              <td><span class="seq-badge">#{{ tx.sequenceNumber }}</span></td>
+              <td class="date-cell-ledger">{{ formatDate(tx.transactionTimestamp) }}</td>
+              <td>
+                <span class="movement-badge" [ngClass]="getMovementTypeClass(tx.movementType)">
+                  {{ tx.movementType }}
+                </span>
+              </td>
+              <td class="delta-cell" [class.positive]="tx.quantityDelta > 0" [class.negative]="tx.quantityDelta < 0">
+                {{ tx.quantityDelta > 0 ? '+' : '' }}{{ tx.quantityDelta | number:'1.0-3' }}
+              </td>
+              <td class="result-cell"><strong>{{ tx.resultingStock | number:'1.0-3' }}</strong></td>
+              <td class="hide-on-mobile">
+                <div class="desc-cell">
+                  <span class="tx-desc">{{ tx.description }}</span>
+                  <span class="tx-user">por {{ tx.userName }} @if(tx.orderId){ | Orden #{{tx.orderId}} }</span>
+                </div>
+              </td>
+              <td class="hide-on-mobile">
+                @if(tx.verified){
+                  <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#4caf50"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+                } @else {
+                  <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#f44336"><path d="m336-280 144-144 144 144 56-56-144-144 144-144-56-56-144 144-144-144-56 56 144 144-144 144 56 56ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+                }
+              </td>
+            </tr>
+            }
+            @if (ledgerHistory.length === 0) {
+              <tr><td colspan="8" class="empty-state">No hay movimientos registrados para este producto</td></tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (ledgerTotalPages > 1) {
+    <div class="pagination-controls">
+      <button class="btn-page" [disabled]="ledgerPage === 0" (click)="onLedgerPageChange(-1)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
+        Anterior
+      </button>
+      <span class="page-info">Página {{ ledgerPage + 1 }} de {{ ledgerTotalPages }} <span class="total-info">({{ ledgerTotalElements }} mov.)</span></span>
+      <button class="btn-page" [disabled]="ledgerPage === ledgerTotalPages - 1" (click)="onLedgerPageChange(1)">
+        Siguiente
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
+      </button>
+    </div>
+    }
+  } @else {
+    <div class="ledger-empty-state">
+      <svg xmlns="http://www.w3.org/2000/svg" height="64px" viewBox="0 -960 960 960" width="64px" fill="#eee"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm40 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+      <p>Selecciona un producto para ver su historial de transacciones seguro (Blockchain-verified)</p>
+    </div>
+  }
+
+  @if (globalIntegrityResults.length > 0) {
+    <div id="globalVerificationResults" class="global-integrity-section">
+      <h3>Resultado de Verificación Global</h3>
+      <div class="global-integrity-grid">
+        @for (res of globalIntegrityResults; track res.productId) {
+          <div class="global-result-card" [class.is-invalid]="!res.valid">
+            <div class="result-header">
+              <span class="prod-name">{{ res.productName }}</span>
+              <span class="status-indicator" [ngClass]="res.valid ? 'valid' : 'invalid'">
+                {{ res.valid ? 'Íntegro' : 'CORRUPTO' }}
+              </span>
+            </div>
+            <p class="result-msg">{{ res.message }}</p>
+            @if (!res.valid && res.errors) {
+              <ul class="result-errors">
+                @for (err of res.errors.slice(0, 3); track $index) {
+                  <li>{{ err }}</li>
+                }
+                @if (res.errors.length > 3) {
+                  <li class="more-errors">y {{ res.errors.length - 3 }} errores más...</li>
+                }
+              </ul>
+            }
+            <button class="btn-pdf-small" (click)="downloadPdfById(res.productId)">
+              <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="currentColor"><path d="M320-240h320v-80H320v80Zm0-160h320v-80H320v80ZM240-80q-33 0-56.5-23.5T160-200v-560q0-33 23.5-56.5T240-840h320l240 240v400q0 33-23.5 56.5T720-80H240Zm280-520v-160H240v560h480v-400H520Z"/></svg>
+              Descargar Ledger
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
+}
+
 <!-- Order Modal -->
 @if (showOrderModal) {
 <div class="modal-overlay" (click)="closeOrderModal()">
@@ -353,6 +582,77 @@
           {{ creatingOrder ? 'Creando...' : 'Confirmar Orden' }}
         </button>
       </div>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Batch Movement Modal -->
+@if (showBatchModal) {
+<div class="modal-overlay" (click)="closeBatchModal()">
+  <div class="modal-container batch-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Operación en Lote (Stocks)</h2>
+      <button type="button" class="btn-close" (click)="closeBatchModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="batch-reason-field">
+        <label>Motivo General:</label>
+        <input type="text" [(ngModel)]="batchReason" placeholder="Ej: Ajuste mensual, Corrección de inventario..." class="batch-desc-input" />
+      </div>
+
+      <div class="batch-table-wrapper">
+        <table class="batch-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Tipo Mov.</th>
+              <th>Cantidad (+/-)</th>
+              <th>Descripción</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (m of batchMovements; track $index; let i = $index) {
+            <tr>
+              <td>
+                <select [ngModel]="m.productId" (ngModelChange)="onBatchProductSelect(i, $event)" class="batch-select">
+                  <option [ngValue]="0">Seleccionar...</option>
+                  @for (p of products; track p.id) {
+                    <option [ngValue]="p.id">{{ p.name }}</option>
+                  }
+                </select>
+              </td>
+              <td>
+                <select [(ngModel)]="m.movementType" class="batch-select">
+                  <option value="ENTRADA">ENTRADA</option>
+                  <option value="SALIDA">SALIDA</option>
+                  <option value="AJUSTE">AJUSTE</option>
+                  <option value="RECEPCION">RECEPCION</option>
+                  <option value="PRODUCCION">PRODUCCION</option>
+                </select>
+              </td>
+              <td><input type="number" [(ngModel)]="m.quantityDelta" class="batch-qty-input" /></td>
+              <td><input type="text" [(ngModel)]="m.description" [placeholder]="batchReason" class="batch-desc-line" /></td>
+              <td>
+                <button class="btn-remove-line" (click)="removeBatchMovement(i)">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T760-120H280Zm80-160h80v-360h-80v360Zm160 0h80v-360h-80v360Z"/></svg>
+                </button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <button class="btn-add-line" (click)="addBatchMovement()">+ Añadir Línea</button>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="closeBatchModal()">Cancelar</button>
+      <button type="button" class="btn-confirm" (click)="processBatch()" [disabled]="processingBatch">
+        {{ processingBatch ? 'Procesando...' : 'Ejecutar Lote Atómico' }}
+      </button>
     </div>
   </div>
 </div>
