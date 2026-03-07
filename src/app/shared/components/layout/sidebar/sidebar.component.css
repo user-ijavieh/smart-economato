@@ -240,6 +240,7 @@
     position: fixed;
     top: unset;
     bottom: 0;
+    overflow-y: hidden;
   }
 
   #sidebar>ul {
@@ -249,7 +250,7 @@
     grid-auto-flow: column;
     align-items: center;
     overflow-x: scroll;
-    height: auto;
+    height: 100%;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
@@ -271,7 +272,8 @@
 
   #sidebar ul li span,
   .toggle-item,
-  .avatar-item {
+  .avatar-item,
+  .nav-section-label {
     display: none;
   }
 
@@ -279,5 +281,6 @@
     margin-top: 0;
     border-top: none;
     padding-top: 0;
+    margin-bottom: 0;
   }
 }
