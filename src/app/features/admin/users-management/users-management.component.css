@@ -270,6 +270,44 @@ th {
     z-index: 10;
 }
 
+th.sortable {
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.2s ease;
+    user-select: none;
+    padding-right: 25px; /* space for arrows */
+}
+
+th.sortable:hover {
+    background: var(--admin-primary-hover);
+}
+
+/* Default unsorted state */
+th.sortable::after {
+    content: ' ↕';
+    position: absolute;
+    right: 8px;
+    opacity: 0.3;
+    font-size: 0.8em;
+    transition: opacity 0.2s;
+}
+
+th.sortable:hover::after {
+    opacity: 0.6;
+}
+
+th.sortable[data-sort-dir='asc']::after {
+    content: ' ▲';
+    opacity: 1;
+    color: #4caf50;
+}
+
+th.sortable[data-sort-dir='desc']::after {
+    content: ' ▼';
+    opacity: 1;
+    color: #f44336;
+}
+
 td {
     color: #333;
     transition: all 0.3s ease;

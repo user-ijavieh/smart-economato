@@ -49,6 +49,11 @@ export class SuppliersManagementComponent implements OnInit {
     showMobileModal = false;
     selectedSupplierForMobile: Supplier | null = null;
 
+    // Sorting state
+    sortColumn = 'name';
+    sortDir: 'asc' | 'desc' = 'asc';
+    sortInteracted = false;
+
     ngOnInit(): void {
         this.loadSuppliers();
     }
@@ -57,9 +62,15 @@ export class SuppliersManagementComponent implements OnInit {
         this.loading = true;
         this.currentPage = page;
         this.serverCurrentPage = page;
-        this.cdr.markForCheck();
+        
+        // Clear lists to force skeleton loader
+        this.suppliers = [];
+        this.filteredSuppliers = [];
+        this.cdr.detectChanges();
 
-        this.supplierService.getAll(this.currentPage, this.pageSize).subscribe({
+        const sortParam = `${this.sortColumn},${this.sortDir}`;
+
+        this.supplierService.getAll(this.currentPage, this.pageSize, sortParam).subscribe({
             next: (pageData) => {
                 this.suppliers = pageData.content;
                 this.serverTotalElements = pageData.totalElements;
@@ -78,12 +89,22 @@ export class SuppliersManagementComponent implements OnInit {
 
     applyFilter(): void {
         const term = this.searchTerm.trim().toLowerCase();
-        const base = term
+        let result = term
             ? this.suppliers.filter(s => s.name.toLowerCase().includes(term) || s.email?.toLowerCase().includes(term))
             : [...this.suppliers];
         
-        // Sort explicitly by active properties if available
-        this.filteredSuppliers = base.sort((a, b) => a.id - b.id);
+        // Sorting fallback
+        const factor = this.sortDir === 'asc' ? 1 : -1;
+        result.sort((a, b) => {
+            const valA = (a as any)[this.sortColumn];
+            const valB = (b as any)[this.sortColumn];
+            if (typeof valA === 'string' && typeof valB === 'string') {
+                return valA.localeCompare(valB) * factor;
+            }
+            return ((valA || 0) - (valB || 0)) * factor;
+        });
+
+        this.filteredSuppliers = result;
         
         if (term) {
             this.totalPages = 1;
@@ -113,10 +134,35 @@ export class SuppliersManagementComponent implements OnInit {
         return this.searchTerm.trim().length > 0;
     }
 
+    onSortChange(column: string): void {
+        this.sortInteracted = true;
+        if (this.sortColumn === column) {
+            this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortColumn = column;
+            this.sortDir = 'asc';
+        }
+        this.loadSuppliers(0);
+    }
+
+    getSortDir(column: string): string {
+        if (!this.sortInteracted && this.sortColumn !== column) return 'none';
+        return this.sortColumn === column ? this.sortDir : 'none';
+    }
+
     changePage(delta: number): void {
         const newPage = this.currentPage + delta;
         if (newPage >= 0 && newPage < this.totalPages) {
+            this.scrollToTop();
             this.loadSuppliers(newPage);
+        }
+    }
+
+    private scrollToTop(): void {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const container = document.querySelector('.contenedor-principal');
+        if (container) {
+            container.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 

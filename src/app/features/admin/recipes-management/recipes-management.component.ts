@@ -53,6 +53,11 @@ export class RecipesManagementComponent implements OnInit {
     totalPages = 0;
     totalElements = 0;
 
+    // Sorting state (Recipes)
+    sortColumnRecipes = 'name';
+    sortDirRecipes: 'asc' | 'desc' = 'asc';
+    sortInteractedRecipes = false;
+
     // Modal state
     showCreateModal = false;
     showEditModal = false;
@@ -86,6 +91,11 @@ export class RecipesManagementComponent implements OnInit {
     auditPageSize = 20;
     selectedAudit: RecipeAudit | null = null;
     showAuditDetailModal = false;
+
+    // Sorting state (Audits)
+    sortColumnAudits = 'auditDate';
+    sortDirAudits: 'asc' | 'desc' = 'desc';
+    sortInteractedAudits = false;
 
     // ── Caché de auditorías ──
     private auditCache: Map<string, any> = new Map();
@@ -121,29 +131,71 @@ export class RecipesManagementComponent implements OnInit {
     loadRecipes(page: number = 0): void {
         this.loading = true;
         this.currentPage = page;
-        this.cdr.markForCheck();
+        this.recipes = [];
+        this.filteredRecipes = [];
+        this.cdr.detectChanges();
+
+        const sortParam = `${this.sortColumnRecipes},${this.sortDirRecipes}`;
 
         const source$ = this.searchTerm.trim()
-            ? this.recipeService.searchByName(this.searchTerm.trim(), this.currentPage, this.pageSize, 'name,asc')
-            : this.recipeService.getAll(this.currentPage, this.pageSize, 'name,asc');
+            ? this.recipeService.searchByName(this.searchTerm.trim(), this.currentPage, this.pageSize, sortParam)
+            : this.recipeService.getAll(this.currentPage, this.pageSize, sortParam);
 
         source$.pipe(
             finalize(() => {
                 this.loading = false;
-                this.cdr.markForCheck();
+                this.cdr.detectChanges();
             })
         ).subscribe({
             next: (pageData) => {
                 this.recipes = pageData.content;
-                this.filteredRecipes = pageData.content;
                 this.totalElements = pageData.totalElements;
                 this.totalPages = pageData.totalPages;
+
+                // Client-side sorting fallback (essential for calculated fields like totalCost/allergens)
+                const factor = this.sortDirRecipes === 'asc' ? 1 : -1;
+                const sorted = [...this.recipes].sort((a, b) => {
+                    let valA = (a as any)[this.sortColumnRecipes];
+                    let valB = (b as any)[this.sortColumnRecipes];
+
+                    if (this.sortColumnRecipes === 'allergens') {
+                        valA = a.allergens?.length || 0;
+                        valB = b.allergens?.length || 0;
+                    }
+
+                    if (valA === undefined || valA === null) return 1;
+                    if (valB === undefined || valB === null) return -1;
+
+                    if (typeof valA === 'string') {
+                        return valA.localeCompare(valB) * factor;
+                    }
+                    return (valA - valB) * factor;
+                });
+
+                this.filteredRecipes = sorted;
                 this.cdr.markForCheck();
             },
             error: () => {
                 this.messageService.showError('Error al cargar las recetas');
             }
         });
+    }
+
+    onSortRecipesChange(column: string): void {
+        this.sortInteractedRecipes = true;
+        if (this.sortColumnRecipes === column) {
+            this.sortDirRecipes = this.sortDirRecipes === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortColumnRecipes = column;
+            this.sortDirRecipes = 'asc';
+        }
+        this.currentPage = 0;
+        this.loadRecipes(0);
+    }
+
+    getSortRecipesDir(column: string): string {
+        if (!this.sortInteractedRecipes && this.sortColumnRecipes !== column) return 'none';
+        return this.sortColumnRecipes === column ? this.sortDirRecipes : 'none';
     }
 
     onSearch(): void {
@@ -160,6 +212,7 @@ export class RecipesManagementComponent implements OnInit {
     changePage(delta: number): void {
         const newPage = this.currentPage + delta;
         if (newPage >= 0 && newPage < this.totalPages) {
+            this.scrollToTop();
             this.loadRecipes(newPage);
         }
     }
@@ -172,10 +225,10 @@ export class RecipesManagementComponent implements OnInit {
 
     loadAudits(page: number = 0): void {
         this.currentAuditPage = page;
-        // Generar clave de caché basada en filtros de fecha y página
+        // Generar clave de caché basada en filtros de fecha, página y ordenación
         const cacheKey = this.auditStartDate && this.auditEndDate 
-            ? `date:${this.auditStartDate}-${this.auditEndDate}-page:${page}`
-            : `all-page:${page}`;
+            ? `date:${this.auditStartDate}-${this.auditEndDate}-page:${page}-sort:${this.sortColumnAudits},${this.sortDirAudits}`
+            : `all-page:${page}-sort:${this.sortColumnAudits},${this.sortDirAudits}`;
 
         // Verificar si tenemos datos en caché
         if (this.auditCache.has(cacheKey)) {
@@ -191,11 +244,19 @@ export class RecipesManagementComponent implements OnInit {
         }
 
         this.loadingAudits = true;
+        this.audits = []; // Clear for smooth transition
         this.cdr.detectChanges();
 
-        const source$ = (this.auditStartDate && this.auditEndDate)
-            ? this.recipeAuditService.getByDateRange(this.auditStartDate, this.auditEndDate, this.currentAuditPage, this.auditPageSize, ['auditDate,desc'])
-            : this.recipeAuditService.getAll(this.currentAuditPage, this.auditPageSize, ['auditDate,desc']);
+        const auditSortParam = [`${this.sortColumnAudits},${this.sortDirAudits}`];
+
+        let source$;
+        if (this.auditStartDate && this.auditEndDate) {
+            const start = `${this.auditStartDate}T00:00:00`;
+            const end = `${this.auditEndDate}T23:59:59`;
+            source$ = this.recipeAuditService.getByDateRange(start, end, this.currentAuditPage, this.auditPageSize, auditSortParam);
+        } else {
+            source$ = this.recipeAuditService.getAll(this.currentAuditPage, this.auditPageSize, auditSortParam);
+        }
 
         source$.pipe(
             finalize(() => {
@@ -255,6 +316,21 @@ export class RecipesManagementComponent implements OnInit {
             result = result.filter(a => a.action === this.auditActionFilter);
         }
 
+        // Apply sorting as a fallback (essential if backend returns unpaged array or for better UX)
+        const factor = this.sortDirAudits === 'asc' ? 1 : -1;
+        result.sort((a, b) => {
+            const valA = (a as any)[this.sortColumnAudits];
+            const valB = (b as any)[this.sortColumnAudits];
+            
+            if (!valA) return 1;
+            if (!valB) return -1;
+            
+            if (typeof valA === 'string') {
+                return valA.localeCompare(valB) * factor;
+            }
+            return (valA - valB) * factor;
+        });
+
         this.filteredAudits = result;
         this.cdr.markForCheck();
     }
@@ -265,6 +341,23 @@ export class RecipesManagementComponent implements OnInit {
 
     onAuditActionFilterChange(): void {
         this.applyAuditFilters();
+    }
+
+    onSortAuditsChange(column: string): void {
+        this.sortInteractedAudits = true;
+        if (this.sortColumnAudits === column) {
+            this.sortDirAudits = this.sortDirAudits === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortColumnAudits = column;
+            this.sortDirAudits = 'desc'; // Default to newest first
+        }
+        this.currentAuditPage = 0;
+        this.loadAudits(0);
+    }
+
+    getSortAuditsDir(column: string): string {
+        if (!this.sortInteractedAudits && this.sortColumnAudits !== column) return 'none';
+        return this.sortColumnAudits === column ? this.sortDirAudits : 'none';
     }
 
     onDateRangeFilter(): void {
@@ -284,7 +377,16 @@ export class RecipesManagementComponent implements OnInit {
     changeAuditPage(delta: number): void {
         const newPage = this.currentAuditPage + delta;
         if (newPage >= 0 && newPage < this.totalAuditPages) {
+            this.scrollToTop();
             this.loadAudits(newPage);
+        }
+    }
+
+    private scrollToTop(): void {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const container = document.querySelector('.contenedor-principal');
+        if (container) {
+            container.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 

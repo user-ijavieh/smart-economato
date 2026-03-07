@@ -61,10 +61,10 @@
         <table>
             <thead>
                 <tr>
-                    <th>Nombre</th>
+                    <th class="sortable" (click)="onSortRecipesChange('name')" [attr.data-sort-dir]="getSortRecipesDir('name')">Nombre</th>
                     <th class="hide-on-mobile">Componentes</th>
-                    <th>Costo Total</th>
-                    <th class="hide-on-mobile">Alérgenos</th>
+                    <th class="sortable" (click)="onSortRecipesChange('totalCost')" [attr.data-sort-dir]="getSortRecipesDir('totalCost')">Costo Total</th>
+                    <th class="hide-on-mobile sortable" (click)="onSortRecipesChange('allergens')" [attr.data-sort-dir]="getSortRecipesDir('allergens')">Alérgenos</th>
                     <th class="hide-on-mobile">Acciones</th>
                     <th class="show-on-mobile-only mobile-icon-col"></th>
                 </tr>
@@ -230,7 +230,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>Fecha</th>
+                    <th class="sortable" (click)="onSortAuditsChange('auditDate')" [attr.data-sort-dir]="getSortAuditsDir('auditDate')">Fecha</th>
                     <th>Acción</th>
                     <th class="hide-on-mobile">ID Receta</th>
                     <th class="hide-on-mobile">Usuario</th>

@@ -53,6 +53,11 @@ export class UsersManagementComponent implements OnInit {
     // View state
     showingHidden = false;
 
+    // Sorting state
+    sortColumn = 'name';
+    sortDir: 'asc' | 'desc' = 'asc';
+    sortInteracted = false;
+
     ngOnInit(): void {
         this.loadUsers();
     }
@@ -61,10 +66,17 @@ export class UsersManagementComponent implements OnInit {
         this.loading = true;
         this.currentPage = page;
         this.serverCurrentPage = page;
+        
+        // Clear current lists to force skeletons and avoid stagnant data view
+        this.users = [];
+        this.filteredUsers = [];
+        this.cdr.detectChanges();
+
+        const sortParam = `${this.sortColumn},${this.sortDir}`;
 
         if (this.showingHidden) {
             // Load hidden users
-            this.userService.getHidden(this.currentPage, this.pageSize).subscribe({
+            this.userService.getHidden(this.currentPage, this.pageSize, sortParam).subscribe({
                 next: (pageData) => {
                     this.users = pageData.content;
                     this.serverTotalElements = pageData.totalElements;
@@ -81,7 +93,7 @@ export class UsersManagementComponent implements OnInit {
             });
         } else if (this.roleFilter) {
             // Role endpoint returns User[], we must do frontend pagination
-            this.userService.getByRole(this.roleFilter).subscribe({
+            this.userService.getByRole(this.roleFilter, sortParam).subscribe({
                 next: (users) => {
                     this.users = users;
                     this.applySearchFilter();
@@ -96,7 +108,7 @@ export class UsersManagementComponent implements OnInit {
             });
         } else {
             // Normal getAll returns Page<User>
-            this.userService.getAll(this.currentPage, this.pageSize).subscribe({
+            this.userService.getAll(this.currentPage, this.pageSize, sortParam).subscribe({
                 next: (pageData) => {
                     this.users = pageData.content;
                     this.serverTotalElements = pageData.totalElements;
@@ -114,8 +126,25 @@ export class UsersManagementComponent implements OnInit {
         }
     }
 
+    onSortChange(column: string): void {
+        this.sortInteracted = true;
+        if (this.sortColumn === column) {
+            this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortColumn = column;
+            this.sortDir = 'asc';
+        }
+        this.currentPage = 0;
+        this.loadUsers(0);
+    }
+
+    getSortDir(column: string): string {
+        if (!this.sortInteracted && this.sortColumn !== column) return 'none';
+        return this.sortColumn === column ? this.sortDir : 'none';
+    }
+
     applySearchFilter(isPrePaginated: boolean = false): void {
-        let result = this.users;
+        let result = [...this.users];
 
         // Apply search if present
         if (this.searchTerm.trim()) {
@@ -124,6 +153,20 @@ export class UsersManagementComponent implements OnInit {
                 u.name.toLowerCase().includes(term) ||
                 u.user.toLowerCase().includes(term)
             );
+        }
+
+        // Apply frontend sorting for role filter as it returns User[] unpaged
+        if (this.roleFilter) {
+            const factor = this.sortDir === 'asc' ? 1 : -1;
+            result.sort((a, b) => {
+                let valA = (a as any)[this.sortColumn];
+                let valB = (b as any)[this.sortColumn];
+                
+                if (typeof valA === 'string') {
+                    return valA.localeCompare(valB) * factor;
+                }
+                return (valA - valB) * factor;
+            });
         }
 
         // Apply frontend pagination only if we have all records (roleFilter active)
@@ -173,7 +216,16 @@ export class UsersManagementComponent implements OnInit {
     changePage(delta: number): void {
         const newPage = this.currentPage + delta;
         if (newPage >= 0 && newPage < this.totalPages) {
+            this.scrollToTop();
             this.loadUsers(newPage);
+        }
+    }
+
+    private scrollToTop(): void {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const container = document.querySelector('.contenedor-principal');
+        if (container) {
+            container.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 
