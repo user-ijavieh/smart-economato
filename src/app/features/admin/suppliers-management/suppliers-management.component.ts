@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupplierService } from '../../../core/services/supplier.service';
 import { MessageService } from '../../../core/services/message.service';
+import { Observable } from 'rxjs';
+import { Page } from '../../../shared/models/page.model';
 import { Supplier, SupplierRequest } from '../../../shared/models/supplier.model';
 import { SupplierFormModalComponent } from './supplier-form-modal/supplier-form-modal.component';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
@@ -69,29 +71,42 @@ export class SuppliersManagementComponent implements OnInit {
         this.cdr.detectChanges();
 
         const sortParam = `${this.sortColumn},${this.sortDir}`;
+        const term = this.searchTerm.trim();
 
-        this.supplierService.getAll(this.currentPage, this.pageSize, sortParam).subscribe({
-            next: (pageData) => {
-                this.suppliers = pageData.content;
-                this.serverTotalElements = pageData.totalElements;
-                this.serverTotalPages = pageData.totalPages;
+        const source$: Observable<Supplier[] | Page<Supplier>> = term 
+            ? this.supplierService.searchByTerm(term)
+            : this.supplierService.getAll(this.currentPage, this.pageSize, sortParam);
+
+        (source$ as Observable<any>).subscribe({
+            next: (response: any) => {
+                if (term) {
+                    // Search endpoint returns Supplier[] array
+                    const result = Array.isArray(response) ? response : (response as any).content || [];
+                    this.suppliers = result;
+                    this.serverTotalElements = result.length;
+                    this.serverTotalPages = 1;
+                } else {
+                    // Page<Supplier>
+                    const pageData = response as any;
+                    this.suppliers = pageData.content;
+                    this.serverTotalElements = pageData.totalElements;
+                    this.serverTotalPages = pageData.totalPages;
+                }
                 this.applyFilter();
                 this.loading = false;
                 this.cdr.markForCheck();
             },
-            error: (err) => {
+            error: (err: any) => {
                 console.error('Error loading suppliers:', err);
                 this.messageService.showError('Error al cargar los proveedores');
                 this.loading = false;
+                this.cdr.detectChanges();
             }
         });
     }
 
     applyFilter(): void {
-        const term = this.searchTerm.trim().toLowerCase();
-        let result = term
-            ? this.suppliers.filter(s => s.name.toLowerCase().includes(term) || s.email?.toLowerCase().includes(term))
-            : [...this.suppliers];
+        let result = [...this.suppliers];
         
         // Sorting fallback
         const factor = this.sortDir === 'asc' ? 1 : -1;
@@ -106,7 +121,7 @@ export class SuppliersManagementComponent implements OnInit {
 
         this.filteredSuppliers = result;
         
-        if (term) {
+        if (this.searchTerm.trim()) {
             this.totalPages = 1;
             this.currentPage = 0;
             this.totalElements = this.filteredSuppliers.length;
@@ -121,7 +136,7 @@ export class SuppliersManagementComponent implements OnInit {
 
     onSearch(): void {
         this.currentPage = 0;
-        this.applyFilter();
+        this.loadSuppliers(0);
     }
 
     clearFilters(): void {

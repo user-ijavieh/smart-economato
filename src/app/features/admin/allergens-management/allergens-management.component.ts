@@ -7,7 +7,9 @@ import { Allergen, AllergenRequest } from '../../../shared/models/allergen.model
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { SuppliersManagementComponent } from '../suppliers-management/suppliers-management.component';
-import { finalize } from 'rxjs';
+import { finalize, Observable, of } from 'rxjs';
+import { Page } from '../../../shared/models/page.model';
+import { catchError, map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-allergens-management',
@@ -81,25 +83,61 @@ export class AllergensManagementComponent implements OnInit {
         this.filteredAllergens = [];
         this.cdr.detectChanges();
 
-        const sortParam = `${this.sortColumn},${this.sortDir}`;
+        const term = this.searchTerm.trim();
 
-        this.allergenService.getAll(this.currentPage, this.pageSize, sortParam).pipe(
-            finalize(() => {
-                this.loading = false;
-                this.cdr.markForCheck();
-            })
-        ).subscribe({
-            next: (pageData) => {
+        if (term) {
+            // Use exact search endpoint
+            this.allergenService.searchByName(term).pipe(
+                map(allergen => ({
+                    content: [allergen],
+                    totalElements: 1,
+                    totalPages: 1,
+                    size: 1,
+                    number: 0,
+                    first: true,
+                    last: true,
+                    empty: false
+                })),
+                catchError(() => of({
+                    content: [],
+                    totalElements: 0,
+                    totalPages: 0,
+                    size: 50,
+                    number: 0,
+                    first: true,
+                    last: true,
+                    empty: true
+                })),
+                finalize(() => {
+                    this.loading = false;
+                    this.cdr.markForCheck();
+                })
+            ).subscribe((pageData: any) => {
                 this.allergens = pageData.content;
                 this.serverTotalElements = pageData.totalElements;
                 this.serverTotalPages = pageData.totalPages;
                 this.applyFilter();
-                this.cdr.markForCheck();
-            },
-            error: () => {
-                this.messageService.showError('Error al cargar los alérgenos');
-            }
-        });
+            });
+        } else {
+            const sortParam = `${this.sortColumn},${this.sortDir}`;
+            this.allergenService.getAll(this.currentPage, this.pageSize, sortParam).pipe(
+                finalize(() => {
+                    this.loading = false;
+                    this.cdr.markForCheck();
+                })
+            ).subscribe({
+                next: (pageData: Page<Allergen>) => {
+                    this.allergens = pageData.content;
+                    this.serverTotalElements = pageData.totalElements;
+                    this.serverTotalPages = pageData.totalPages;
+                    this.applyFilter();
+                },
+                error: (err: any) => {
+                    console.error('Error loading allergens:', err);
+                    this.messageService.showError('Error al cargar los alérgenos');
+                }
+            });
+        }
     }
 
     onSortChange(column: string): void {
@@ -150,7 +188,10 @@ export class AllergensManagementComponent implements OnInit {
         this.cdr.markForCheck();
     }
 
-    onSearch(): void { this.applyFilter(); }
+    onSearch(): void { 
+        this.currentPage = 0;
+        this.loadAllergens(0);
+    }
 
     clearFilters(): void {
         this.searchTerm = '';
