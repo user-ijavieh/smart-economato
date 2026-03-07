@@ -173,8 +173,7 @@ export class RecipesManagementComponent implements OnInit {
     loadRecipes(page: number = 0): void {
         this.loading = true;
         this.currentPage = page;
-        this.recipes = [];
-        this.filteredRecipes = [];
+        // Removed array clear to prevent layout shift
         this.cdr.detectChanges();
 
         const sortParam = `${this.sortColumnRecipes},${this.sortDirRecipes}`;
@@ -286,7 +285,7 @@ export class RecipesManagementComponent implements OnInit {
         }
 
         this.loadingAudits = true;
-        this.audits = []; // Clear for smooth transition
+        // Removed array clear to prevent layout shift
         this.cdr.detectChanges();
 
         const auditSortParam = [`${this.sortColumnAudits},${this.sortDirAudits}`];
