@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RecipeService } from '../../../core/services/recipe.service';
 import { RecipeAuditService } from '../../../core/services/recipe-audit.service';
 import { UserService } from '../../../core/services/user.service';
+import { StatsService } from '../../../core/services/stats.service';
 import { MessageService } from '../../../core/services/message.service';
 import { Recipe, RecipeRequest } from '../../../shared/models/recipe.model';
 import { RecipeAudit } from '../../../shared/models/recipe-audit.model';
@@ -35,6 +36,7 @@ export class RecipesManagementComponent implements OnInit {
     private recipeService = inject(RecipeService);
     private recipeAuditService = inject(RecipeAuditService);
     private userService = inject(UserService);
+    private statsService = inject(StatsService);
     private cdr = inject(ChangeDetectorRef);
     messageService = inject(MessageService);
 
@@ -53,6 +55,11 @@ export class RecipesManagementComponent implements OnInit {
     totalPages = 0;
     totalElements = 0;
 
+    // Sorting state (Recipes)
+    sortColumnRecipes = 'name';
+    sortDirRecipes: 'asc' | 'desc' = 'asc';
+    sortInteractedRecipes = false;
+
     // Modal state
     showCreateModal = false;
     showEditModal = false;
@@ -60,14 +67,15 @@ export class RecipesManagementComponent implements OnInit {
     selectedRecipe: Recipe | null = null;
 
     // Stats
-    get totalRecipes(): number { return this.totalElements; }
-    get recipesWithAllergens(): number { return this.filteredRecipes.filter(r => r.allergens?.length > 0).length; }
-    get recipesWithoutAllergens(): number { return this.filteredRecipes.filter(r => !r.allergens || r.allergens.length === 0).length; }
-    get averageCost(): number {
-        if (this.filteredRecipes.length === 0) return 0;
-        const total = this.filteredRecipes.reduce((sum, r) => sum + r.totalCost, 0);
-        return total / this.filteredRecipes.length;
-    }
+    statTotalRecipes = 0;
+    statRecipesWithAllergens = 0;
+    statRecipesWithoutAllergens = 0;
+    statAverageCost = 0;
+
+    get totalRecipes(): number { return this.statTotalRecipes; }
+    get recipesWithAllergens(): number { return this.statRecipesWithAllergens; }
+    get recipesWithoutAllergens(): number { return this.statRecipesWithoutAllergens; }
+    get averageCost(): number { return this.statAverageCost; }
 
     // ── Audits state ──
     audits: RecipeAudit[] = [];
@@ -87,6 +95,11 @@ export class RecipesManagementComponent implements OnInit {
     selectedAudit: RecipeAudit | null = null;
     showAuditDetailModal = false;
 
+    // Sorting state (Audits)
+    sortColumnAudits = 'auditDate';
+    sortDirAudits: 'asc' | 'desc' = 'desc';
+    sortInteractedAudits = false;
+
     // ── Caché de auditorías ──
     private auditCache: Map<string, any> = new Map();
 
@@ -104,6 +117,45 @@ export class RecipesManagementComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadRecipes();
+        this.loadStats();
+    }
+
+    loadStats(): void {
+        // We use the specific endpoints provided by the user to ensure maximum accuracy
+        forkJoin({
+            summary: this.statsService.getRecipeStats().pipe(catchError(() => of(null))),
+            withAllergens: this.statsService.getRecipesWithAllergensCount().pipe(catchError(() => of({ count: 0 }))),
+            withoutAllergens: this.statsService.getRecipesWithoutAllergensCount().pipe(catchError(() => of({ count: 0 }))),
+            avgCost: this.statsService.getAverageCost().pipe(catchError(() => of({ averageCost: 0 })))
+        }).subscribe({
+            next: (data: any) => {
+                // Priority 1: Specific endpoints (as they are "nuevo"/new and likely more accurate)
+                this.statRecipesWithAllergens = data.withAllergens.count || 0;
+                this.statRecipesWithoutAllergens = data.withoutAllergens.count || 0;
+                this.statAverageCost = data.avgCost.averageCost || 0;
+
+                // Priority 2: Summary endpoint for total or as fallback
+                if (data.summary) {
+                    this.statTotalRecipes = data.summary.totalRecipes || 0;
+                    
+                    // Fallback to summary if specific ones returned 0 but summary has data
+                    if (this.statRecipesWithAllergens === 0) this.statRecipesWithAllergens = data.summary.recipesWithAllergens || 0;
+                    if (this.statRecipesWithoutAllergens === 0) this.statRecipesWithoutAllergens = data.summary.recipesWithoutAllergens || 0;
+                    if (this.statAverageCost === 0) this.statAverageCost = data.summary.averagePrice || 0;
+                }
+
+                // If total is still 0, calculate from the components
+                if (this.statTotalRecipes === 0) {
+                    this.statTotalRecipes = this.statRecipesWithAllergens + this.statRecipesWithoutAllergens;
+                }
+
+                this.cdr.detectChanges();
+            },
+            error: (err: any) => {
+                console.error('Error loading recipe stats:', err);
+                this.cdr.detectChanges();
+            }
+        });
     }
 
     // ── Tab switching ──
@@ -121,29 +173,71 @@ export class RecipesManagementComponent implements OnInit {
     loadRecipes(page: number = 0): void {
         this.loading = true;
         this.currentPage = page;
-        this.cdr.markForCheck();
+        this.recipes = [];
+        this.filteredRecipes = [];
+        this.cdr.detectChanges();
+
+        const sortParam = `${this.sortColumnRecipes},${this.sortDirRecipes}`;
 
         const source$ = this.searchTerm.trim()
-            ? this.recipeService.searchByName(this.searchTerm.trim(), this.currentPage, this.pageSize, 'name,asc')
-            : this.recipeService.getAll(this.currentPage, this.pageSize, 'name,asc');
+            ? this.recipeService.searchByName(this.searchTerm.trim(), this.currentPage, this.pageSize, sortParam)
+            : this.recipeService.getAll(this.currentPage, this.pageSize, sortParam);
 
         source$.pipe(
             finalize(() => {
                 this.loading = false;
-                this.cdr.markForCheck();
+                this.cdr.detectChanges();
             })
         ).subscribe({
             next: (pageData) => {
                 this.recipes = pageData.content;
-                this.filteredRecipes = pageData.content;
                 this.totalElements = pageData.totalElements;
                 this.totalPages = pageData.totalPages;
+
+                // Client-side sorting fallback (essential for calculated fields like totalCost/allergens)
+                const factor = this.sortDirRecipes === 'asc' ? 1 : -1;
+                const sorted = [...this.recipes].sort((a, b) => {
+                    let valA = (a as any)[this.sortColumnRecipes];
+                    let valB = (b as any)[this.sortColumnRecipes];
+
+                    if (this.sortColumnRecipes === 'allergens') {
+                        valA = a.allergens?.length || 0;
+                        valB = b.allergens?.length || 0;
+                    }
+
+                    if (valA === undefined || valA === null) return 1;
+                    if (valB === undefined || valB === null) return -1;
+
+                    if (typeof valA === 'string') {
+                        return valA.localeCompare(valB) * factor;
+                    }
+                    return (valA - valB) * factor;
+                });
+
+                this.filteredRecipes = sorted;
                 this.cdr.markForCheck();
             },
             error: () => {
                 this.messageService.showError('Error al cargar las recetas');
             }
         });
+    }
+
+    onSortRecipesChange(column: string): void {
+        this.sortInteractedRecipes = true;
+        if (this.sortColumnRecipes === column) {
+            this.sortDirRecipes = this.sortDirRecipes === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortColumnRecipes = column;
+            this.sortDirRecipes = 'asc';
+        }
+        this.currentPage = 0;
+        this.loadRecipes(0);
+    }
+
+    getSortRecipesDir(column: string): string {
+        if (!this.sortInteractedRecipes && this.sortColumnRecipes !== column) return 'none';
+        return this.sortColumnRecipes === column ? this.sortDirRecipes : 'none';
     }
 
     onSearch(): void {
@@ -160,6 +254,7 @@ export class RecipesManagementComponent implements OnInit {
     changePage(delta: number): void {
         const newPage = this.currentPage + delta;
         if (newPage >= 0 && newPage < this.totalPages) {
+            this.scrollToTop();
             this.loadRecipes(newPage);
         }
     }
@@ -172,10 +267,10 @@ export class RecipesManagementComponent implements OnInit {
 
     loadAudits(page: number = 0): void {
         this.currentAuditPage = page;
-        // Generar clave de caché basada en filtros de fecha y página
+        // Generar clave de caché basada en filtros de fecha, página y ordenación
         const cacheKey = this.auditStartDate && this.auditEndDate 
-            ? `date:${this.auditStartDate}-${this.auditEndDate}-page:${page}`
-            : `all-page:${page}`;
+            ? `date:${this.auditStartDate}-${this.auditEndDate}-page:${page}-sort:${this.sortColumnAudits},${this.sortDirAudits}`
+            : `all-page:${page}-sort:${this.sortColumnAudits},${this.sortDirAudits}`;
 
         // Verificar si tenemos datos en caché
         if (this.auditCache.has(cacheKey)) {
@@ -191,11 +286,19 @@ export class RecipesManagementComponent implements OnInit {
         }
 
         this.loadingAudits = true;
+        this.audits = []; // Clear for smooth transition
         this.cdr.detectChanges();
 
-        const source$ = (this.auditStartDate && this.auditEndDate)
-            ? this.recipeAuditService.getByDateRange(this.auditStartDate, this.auditEndDate, this.currentAuditPage, this.auditPageSize, ['auditDate,desc'])
-            : this.recipeAuditService.getAll(this.currentAuditPage, this.auditPageSize, ['auditDate,desc']);
+        const auditSortParam = [`${this.sortColumnAudits},${this.sortDirAudits}`];
+
+        let source$;
+        if (this.auditStartDate && this.auditEndDate) {
+            const start = `${this.auditStartDate}T00:00:00`;
+            const end = `${this.auditEndDate}T23:59:59`;
+            source$ = this.recipeAuditService.getByDateRange(start, end, this.currentAuditPage, this.auditPageSize, auditSortParam);
+        } else {
+            source$ = this.recipeAuditService.getAll(this.currentAuditPage, this.auditPageSize, auditSortParam);
+        }
 
         source$.pipe(
             finalize(() => {
@@ -255,6 +358,21 @@ export class RecipesManagementComponent implements OnInit {
             result = result.filter(a => a.action === this.auditActionFilter);
         }
 
+        // Apply sorting as a fallback (essential if backend returns unpaged array or for better UX)
+        const factor = this.sortDirAudits === 'asc' ? 1 : -1;
+        result.sort((a, b) => {
+            const valA = (a as any)[this.sortColumnAudits];
+            const valB = (b as any)[this.sortColumnAudits];
+            
+            if (!valA) return 1;
+            if (!valB) return -1;
+            
+            if (typeof valA === 'string') {
+                return valA.localeCompare(valB) * factor;
+            }
+            return (valA - valB) * factor;
+        });
+
         this.filteredAudits = result;
         this.cdr.markForCheck();
     }
@@ -265,6 +383,23 @@ export class RecipesManagementComponent implements OnInit {
 
     onAuditActionFilterChange(): void {
         this.applyAuditFilters();
+    }
+
+    onSortAuditsChange(column: string): void {
+        this.sortInteractedAudits = true;
+        if (this.sortColumnAudits === column) {
+            this.sortDirAudits = this.sortDirAudits === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortColumnAudits = column;
+            this.sortDirAudits = 'desc'; // Default to newest first
+        }
+        this.currentAuditPage = 0;
+        this.loadAudits(0);
+    }
+
+    getSortAuditsDir(column: string): string {
+        if (!this.sortInteractedAudits && this.sortColumnAudits !== column) return 'none';
+        return this.sortColumnAudits === column ? this.sortDirAudits : 'none';
     }
 
     onDateRangeFilter(): void {
@@ -284,7 +419,16 @@ export class RecipesManagementComponent implements OnInit {
     changeAuditPage(delta: number): void {
         const newPage = this.currentAuditPage + delta;
         if (newPage >= 0 && newPage < this.totalAuditPages) {
+            this.scrollToTop();
             this.loadAudits(newPage);
+        }
+    }
+
+    private scrollToTop(): void {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const container = document.querySelector('.contenedor-principal');
+        if (container) {
+            container.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 
@@ -432,12 +576,13 @@ export class RecipesManagementComponent implements OnInit {
 
     onCreateRecipe(recipeRequest: RecipeRequest): void {
         this.recipeService.create(recipeRequest).subscribe({
-            next: (recipe) => {
+            next: (recipe: Recipe) => {
                 this.messageService.showSuccess(`Receta "${recipe.name}" creada con éxito`);
                 this.closeCreateModal();
                 this.loadRecipes();
+                this.loadStats();
             },
-            error: (err) => {
+            error: (err: any) => {
                 const msg = err.error?.message || err.error || 'Error al crear la receta';
                 this.messageService.showError(msg);
             }
@@ -460,14 +605,14 @@ export class RecipesManagementComponent implements OnInit {
 
     onSaveRecipe(recipeRequest: RecipeRequest): void {
         if (!this.selectedRecipe) return;
-
         this.recipeService.update(this.selectedRecipe.id, recipeRequest).subscribe({
-            next: (recipe) => {
+            next: (recipe: Recipe) => {
                 this.messageService.showSuccess(`Receta "${recipe.name}" actualizada con éxito`);
                 this.closeEditModal();
                 this.loadRecipes();
+                this.loadStats();
             },
-            error: (err) => {
+            error: (err: any) => {
                 const msg = err.error?.message || err.error || 'Error al actualizar la receta';
                 this.messageService.showError(msg);
             }
@@ -488,8 +633,9 @@ export class RecipesManagementComponent implements OnInit {
             next: () => {
                 this.messageService.showSuccess(`Receta "${recipe.name}" eliminada correctamente`);
                 this.loadRecipes();
+                this.loadStats();
             },
-            error: (err) => {
+            error: (err: any) => {
                 const msg = err.error?.message || err.error || 'Error al eliminar la receta';
                 this.messageService.showError(msg);
             }
@@ -506,12 +652,13 @@ export class RecipesManagementComponent implements OnInit {
             quantity: event.quantity,
             details: event.details
         }).subscribe({
-            next: (recipe) => {
+            next: (recipe: Recipe) => {
                 this.messageService.showSuccess(`¡"${recipe.name}" cocinada con éxito!`);
                 this.closeDetailModal();
                 this.loadRecipes();
+                this.loadStats();
             },
-            error: (err) => {
+            error: (err: any) => {
                 const msg = err.error?.message || err.error || 'Error al cocinar la receta';
                 this.messageService.showError(msg);
             }

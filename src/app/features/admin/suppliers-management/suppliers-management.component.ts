@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupplierService } from '../../../core/services/supplier.service';
 import { MessageService } from '../../../core/services/message.service';
+import { Observable } from 'rxjs';
+import { Page } from '../../../shared/models/page.model';
 import { Supplier, SupplierRequest } from '../../../shared/models/supplier.model';
 import { SupplierFormModalComponent } from './supplier-form-modal/supplier-form-modal.component';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
@@ -49,6 +51,11 @@ export class SuppliersManagementComponent implements OnInit {
     showMobileModal = false;
     selectedSupplierForMobile: Supplier | null = null;
 
+    // Sorting state
+    sortColumn = 'name';
+    sortDir: 'asc' | 'desc' = 'asc';
+    sortInteracted = false;
+
     ngOnInit(): void {
         this.loadSuppliers();
     }
@@ -57,35 +64,64 @@ export class SuppliersManagementComponent implements OnInit {
         this.loading = true;
         this.currentPage = page;
         this.serverCurrentPage = page;
-        this.cdr.markForCheck();
+        
+        // Clear lists to force skeleton loader
+        this.suppliers = [];
+        this.filteredSuppliers = [];
+        this.cdr.detectChanges();
 
-        this.supplierService.getAll(this.currentPage, this.pageSize).subscribe({
-            next: (pageData) => {
-                this.suppliers = pageData.content;
-                this.serverTotalElements = pageData.totalElements;
-                this.serverTotalPages = pageData.totalPages;
+        const sortParam = `${this.sortColumn},${this.sortDir}`;
+        const term = this.searchTerm.trim();
+
+        const source$: Observable<Supplier[] | Page<Supplier>> = term 
+            ? this.supplierService.searchByTerm(term)
+            : this.supplierService.getAll(this.currentPage, this.pageSize, sortParam);
+
+        (source$ as Observable<any>).subscribe({
+            next: (response: any) => {
+                if (term) {
+                    // Search endpoint returns Supplier[] array
+                    const result = Array.isArray(response) ? response : (response as any).content || [];
+                    this.suppliers = result;
+                    this.serverTotalElements = result.length;
+                    this.serverTotalPages = 1;
+                } else {
+                    // Page<Supplier>
+                    const pageData = response as any;
+                    this.suppliers = pageData.content;
+                    this.serverTotalElements = pageData.totalElements;
+                    this.serverTotalPages = pageData.totalPages;
+                }
                 this.applyFilter();
                 this.loading = false;
                 this.cdr.markForCheck();
             },
-            error: (err) => {
+            error: (err: any) => {
                 console.error('Error loading suppliers:', err);
                 this.messageService.showError('Error al cargar los proveedores');
                 this.loading = false;
+                this.cdr.detectChanges();
             }
         });
     }
 
     applyFilter(): void {
-        const term = this.searchTerm.trim().toLowerCase();
-        const base = term
-            ? this.suppliers.filter(s => s.name.toLowerCase().includes(term) || s.email?.toLowerCase().includes(term))
-            : [...this.suppliers];
+        let result = [...this.suppliers];
         
-        // Sort explicitly by active properties if available
-        this.filteredSuppliers = base.sort((a, b) => a.id - b.id);
+        // Sorting fallback
+        const factor = this.sortDir === 'asc' ? 1 : -1;
+        result.sort((a, b) => {
+            const valA = (a as any)[this.sortColumn];
+            const valB = (b as any)[this.sortColumn];
+            if (typeof valA === 'string' && typeof valB === 'string') {
+                return valA.localeCompare(valB) * factor;
+            }
+            return ((valA || 0) - (valB || 0)) * factor;
+        });
+
+        this.filteredSuppliers = result;
         
-        if (term) {
+        if (this.searchTerm.trim()) {
             this.totalPages = 1;
             this.currentPage = 0;
             this.totalElements = this.filteredSuppliers.length;
@@ -100,7 +136,7 @@ export class SuppliersManagementComponent implements OnInit {
 
     onSearch(): void {
         this.currentPage = 0;
-        this.applyFilter();
+        this.loadSuppliers(0);
     }
 
     clearFilters(): void {
@@ -113,10 +149,35 @@ export class SuppliersManagementComponent implements OnInit {
         return this.searchTerm.trim().length > 0;
     }
 
+    onSortChange(column: string): void {
+        this.sortInteracted = true;
+        if (this.sortColumn === column) {
+            this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortColumn = column;
+            this.sortDir = 'asc';
+        }
+        this.loadSuppliers(0);
+    }
+
+    getSortDir(column: string): string {
+        if (!this.sortInteracted && this.sortColumn !== column) return 'none';
+        return this.sortColumn === column ? this.sortDir : 'none';
+    }
+
     changePage(delta: number): void {
         const newPage = this.currentPage + delta;
         if (newPage >= 0 && newPage < this.totalPages) {
+            this.scrollToTop();
             this.loadSuppliers(newPage);
+        }
+    }
+
+    private scrollToTop(): void {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const container = document.querySelector('.contenedor-principal');
+        if (container) {
+            container.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 

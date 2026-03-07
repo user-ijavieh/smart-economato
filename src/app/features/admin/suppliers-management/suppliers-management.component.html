@@ -19,7 +19,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>Nombre</th>
+                    <th class="sortable" (click)="onSortChange('name')" [attr.data-sort-dir]="getSortDir('name')">Nombre</th>
                     <th class="hide-on-mobile">Email</th>
                     <th class="hide-on-mobile">Teléfono</th>
                     <th class="hide-on-mobile">Acciones</th>

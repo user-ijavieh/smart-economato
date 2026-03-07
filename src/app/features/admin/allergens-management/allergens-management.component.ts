@@ -7,7 +7,9 @@ import { Allergen, AllergenRequest } from '../../../shared/models/allergen.model
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { SuppliersManagementComponent } from '../suppliers-management/suppliers-management.component';
-import { finalize } from 'rxjs';
+import { finalize, Observable, of } from 'rxjs';
+import { Page } from '../../../shared/models/page.model';
+import { catchError, map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-allergens-management',
@@ -44,6 +46,11 @@ export class AllergensManagementComponent implements OnInit {
     serverTotalPages = 0;
     serverTotalElements = 0;
 
+    // Sorting state
+    sortColumn = 'name';
+    sortDir: 'asc' | 'desc' = 'asc';
+    sortInteracted = false;
+
     activeTab: 'allergens' | 'suppliers' = 'allergens';
 
     switchTab(tab: 'allergens' | 'suppliers'): void {
@@ -70,33 +77,103 @@ export class AllergensManagementComponent implements OnInit {
         this.loading = true;
         this.currentPage = page;
         this.serverCurrentPage = page;
-        this.cdr.markForCheck();
+        
+        // Clear lists to force skeleton loader and avoid showing stagnant data
+        this.allergens = [];
+        this.filteredAllergens = [];
+        this.cdr.detectChanges();
 
-        this.allergenService.getAll(this.currentPage, this.pageSize).pipe(
-            finalize(() => {
-                this.loading = false;
-                this.cdr.markForCheck();
-            })
-        ).subscribe({
-            next: (pageData) => {
+        const term = this.searchTerm.trim();
+
+        if (term) {
+            // Use exact search endpoint
+            this.allergenService.searchByName(term).pipe(
+                map(allergen => ({
+                    content: [allergen],
+                    totalElements: 1,
+                    totalPages: 1,
+                    size: 1,
+                    number: 0,
+                    first: true,
+                    last: true,
+                    empty: false
+                })),
+                catchError(() => of({
+                    content: [],
+                    totalElements: 0,
+                    totalPages: 0,
+                    size: 50,
+                    number: 0,
+                    first: true,
+                    last: true,
+                    empty: true
+                })),
+                finalize(() => {
+                    this.loading = false;
+                    this.cdr.markForCheck();
+                })
+            ).subscribe((pageData: any) => {
                 this.allergens = pageData.content;
                 this.serverTotalElements = pageData.totalElements;
                 this.serverTotalPages = pageData.totalPages;
                 this.applyFilter();
-                this.cdr.markForCheck();
-            },
-            error: () => {
-                this.messageService.showError('Error al cargar los alérgenos');
-            }
-        });
+            });
+        } else {
+            const sortParam = `${this.sortColumn},${this.sortDir}`;
+            this.allergenService.getAll(this.currentPage, this.pageSize, sortParam).pipe(
+                finalize(() => {
+                    this.loading = false;
+                    this.cdr.markForCheck();
+                })
+            ).subscribe({
+                next: (pageData: Page<Allergen>) => {
+                    this.allergens = pageData.content;
+                    this.serverTotalElements = pageData.totalElements;
+                    this.serverTotalPages = pageData.totalPages;
+                    this.applyFilter();
+                },
+                error: (err: any) => {
+                    console.error('Error loading allergens:', err);
+                    this.messageService.showError('Error al cargar los alérgenos');
+                }
+            });
+        }
+    }
+
+    onSortChange(column: string): void {
+        this.sortInteracted = true;
+        if (this.sortColumn === column) {
+            this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortColumn = column;
+            this.sortDir = 'asc';
+        }
+        this.loadAllergens(0);
+    }
+
+    getSortDir(column: string): string {
+        if (!this.sortInteracted && this.sortColumn !== column) return 'none';
+        return this.sortColumn === column ? this.sortDir : 'none';
     }
 
     applyFilter(): void {
         const term = this.searchTerm.trim().toLowerCase();
-        const base = term
+        let result = term
             ? this.allergens.filter(a => a.name.toLowerCase().includes(term))
             : [...this.allergens];
-        this.filteredAllergens = base.sort((a, b) => a.id - b.id);
+            
+        // Sorting fallback (essential for filtering results or backend delay)
+        const factor = this.sortDir === 'asc' ? 1 : -1;
+        result.sort((a, b) => {
+            const valA = (a as any)[this.sortColumn];
+            const valB = (b as any)[this.sortColumn];
+            if (typeof valA === 'string' && typeof valB === 'string') {
+                return valA.localeCompare(valB) * factor;
+            }
+            return ((valA as number) - (valB as number)) * factor;
+        });
+        
+        this.filteredAllergens = result;
         
         if (term) {
             this.totalPages = 1;
@@ -111,7 +188,10 @@ export class AllergensManagementComponent implements OnInit {
         this.cdr.markForCheck();
     }
 
-    onSearch(): void { this.applyFilter(); }
+    onSearch(): void { 
+        this.currentPage = 0;
+        this.loadAllergens(0);
+    }
 
     clearFilters(): void {
         this.searchTerm = '';
@@ -125,7 +205,17 @@ export class AllergensManagementComponent implements OnInit {
     changePage(delta: number): void {
         const newPage = this.currentPage + delta;
         if (newPage >= 0 && newPage < this.totalPages) {
+            this.scrollToTop();
             this.loadAllergens(newPage);
+        }
+    }
+
+    private scrollToTop(): void {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Fallback for internal scrolling containers
+        const container = document.querySelector('.contenedor-principal');
+        if (container) {
+            container.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 
