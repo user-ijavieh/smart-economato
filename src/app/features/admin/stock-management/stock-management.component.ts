@@ -315,7 +315,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         this.ngZone.run(() => {
             this.loadingPredictions = true;
             this.currentPage = page;
-            this.predictions = [];
+            // Removed array clear to prevent layout shift
             this.cdr.markForCheck();
         });
         

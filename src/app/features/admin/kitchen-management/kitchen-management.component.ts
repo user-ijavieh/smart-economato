@@ -85,9 +85,8 @@ export class KitchenManagementComponent implements OnInit {
 
   loadHistory(page = 0): void {
     this.loadingHistory = true;
+    // Removed array clear to prevent layout shift during pagination/sorting
     this.currentPage = page;
-    this.audits = [];
-    this.filteredAudits = [];
     this.cdr.detectChanges();
 
     const backendCols: Record<string, string> = {
