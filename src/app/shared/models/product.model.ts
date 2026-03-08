@@ -13,6 +13,9 @@ export interface Product {
   stock?: number; 
   currentStock: number;
   minStock?: number;  // Opcional porque el backend no siempre lo devuelve
+  minimumStock?: number;
+  availabilityPercentage?: number;
+  hidden?: boolean;
   
   supplier?: Supplier;
   barcode?: string;
@@ -39,6 +42,9 @@ export interface ProductRequest {
   stock?: number;
   currentStock: number;
   minStock?: number;  // Opcional
+  minimumStock?: number;
+  availabilityPercentage?: number;
+  hidden?: boolean;
 
   unit: string;
   supplierId?: number;

@@ -119,8 +119,31 @@ export class ProductService {
     );
   }
 
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.url}/${id}`);
+  toggleHidden(id: number, hidden: boolean): Observable<void> {
+    return this.http.patch<void>(`${this.url}/${id}/toggle-hidden?hidden=${hidden}`, null);
+  }
+
+  getHidden(page = 0, size = 10, sort = 'name,asc'): Observable<Page<Product>> {
+    const queryString = `page=${page}&size=${size}&sort=${sort}`;
+    const fullUrl = `${this.url}/hidden?${queryString}`;
+
+    return this.http.get<any>(fullUrl).pipe(
+      map(response => {
+        const rawContent = response.content || (Array.isArray(response) ? response : []);
+        const mappedContent: Product[] = rawContent.map((item: any) => this.mapToProduct(item));
+
+        return {
+          content: mappedContent,
+          totalElements: response.totalElements ?? mappedContent.length,
+          totalPages: response.totalPages ?? 1,
+          size: response.size ?? size,
+          number: response.number ?? page,
+          first: response.first ?? true,
+          last: response.last ?? true,
+          empty: mappedContent.length === 0
+        };
+      })
+    );
   }
 
   updateStockManually(id: number, product: ProductRequest): Observable<Product> {

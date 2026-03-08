@@ -12,9 +12,14 @@ import { Product } from '../../../../shared/models/product.model';
 export class ProductDetailModalComponent {
   @Input() product: Product | null = null;
   @Input() isAdmin = false;
+  @Input() showActions: boolean | null = null;
   @Output() close = new EventEmitter<void>();
   @Output() edit = new EventEmitter<Product>();
   @Output() adjustStock = new EventEmitter<Product>();
+
+  shouldShowActions(): boolean {
+    return this.showActions ?? this.isAdmin;
+  }
 
   onOverlayClick(event: MouseEvent): void {
     if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
@@ -38,8 +43,25 @@ export class ProductDetailModalComponent {
     }
   }
 
+  getMinimumStock(): number {
+    if (!this.product) return 0;
+    return this.product.minStock ?? this.product.minimumStock ?? 0;
+  }
+
+  getAvailabilityPercentage(): number | null {
+    if (!this.product) return null;
+    const rawValue = (this.product as any).availabilityPercentage
+      ?? (this.product as any).availability
+      ?? (this.product as any).disponibilidad;
+
+    if (rawValue === undefined || rawValue === null || rawValue === '') return null;
+
+    const parsed = Number(rawValue);
+    return Number.isNaN(parsed) ? null : parsed;
+  }
+
   isLowStock(): boolean {
     if (!this.product) return false;
-    return this.product.currentStock < (this.product.minStock || 0);
+    return this.product.currentStock < this.getMinimumStock();
   }
 }

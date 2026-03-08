@@ -57,7 +57,6 @@
       [suppliers]="suppliers"
       (save)="onSaveProduct($event)"
       (cancel)="onCancelForm()"
-      (delete)="onDeleteProduct()"
     ></app-product-form>
   }
 
@@ -275,7 +274,7 @@
     [product]="selectedProduct"
     [suppliers]="suppliers"
     (save)="onSaveEditedProduct($event)"
-    (delete)="onDeleteProductFromModal()"
+    (toggleHidden)="onToggleHiddenFromModal()"
     (close)="onCloseEditModal()"
   ></app-product-edit-modal>
 }
@@ -305,7 +304,8 @@
 @if (showDetailModal && selectedProduct) {
   <app-product-detail-modal
     [product]="selectedProduct"
-    [isAdmin]="isAdmin"
+    [isAdmin]="false"
+    [showActions]="canManageProducts"
     (close)="onCloseDetailModal()"
     (edit)="onEditFromDetail($event)"
     (adjustStock)="onAdjustStockFromDetail($event)"
