@@ -130,6 +130,7 @@ export class ProductsManagementComponent implements OnInit {
   }
 
   scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     const container = document.querySelector('.contenedor-principal');
     if (container) {
       container.scrollTo({ top: 0, behavior: 'smooth' });
