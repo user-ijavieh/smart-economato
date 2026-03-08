@@ -14,6 +14,7 @@ import { MessageService } from '../../../../core/services/message.service';
 })
 export class ProductCreateModalComponent {
   @Input() suppliers: Supplier[] = [];
+  @Input() isAdmin = false;
 
   @Output() save = new EventEmitter<ProductRequest>();
   @Output() close = new EventEmitter<void>();
@@ -28,6 +29,8 @@ export class ProductCreateModalComponent {
     type: 'Ingrediente',
     unitPrice: 0,
     currentStock: 0,
+    minimumStock: undefined as number | undefined,
+    availabilityPercentage: undefined as number | undefined,
     unit: 'KG',
     supplierId: undefined as number | undefined
   };
@@ -52,6 +55,12 @@ export class ProductCreateModalComponent {
     // Asegurar que los valores numéricos sean números válidos
     const unitPrice = Number(this.formData.unitPrice);
     const currentStock = Number(this.formData.currentStock);
+    const minimumStock = this.formData.minimumStock !== undefined && this.formData.minimumStock !== null
+      ? Number(this.formData.minimumStock)
+      : undefined;
+    const availabilityPercentage = this.formData.availabilityPercentage !== undefined && this.formData.availabilityPercentage !== null
+      ? Number(this.formData.availabilityPercentage)
+      : undefined;
     const supplierId = this.formData.supplierId !== undefined && this.formData.supplierId !== null
       ? Number(this.formData.supplierId)
       : undefined;
@@ -71,6 +80,8 @@ export class ProductCreateModalComponent {
 
     // Enviar JSON en el formato exacto del backend
     const productData: ProductRequest = {
+      minimumStock: minimumStock,
+      availabilityPercentage: availabilityPercentage,
       name: this.formData.name.trim(),
       type: this.formData.type,
       unit: this.formData.unit,
@@ -97,6 +108,8 @@ export class ProductCreateModalComponent {
       name: '',
       productCode: '',
       type: 'Ingrediente',
+      minimumStock: undefined,
+      availabilityPercentage: undefined,
       unitPrice: 0,
       currentStock: 0,
       unit: 'KG',

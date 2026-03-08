@@ -15,6 +15,7 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "POST /api/products",
     "PUT /api/products/{id}",
     "PUT /api/products/{id}/stock-manual",
+    "PATCH /api/products/{id}/toggle-hidden",
     "GET /api/allergens",
     "GET /api/allergens/search",
     "POST /api/allergens",
@@ -61,6 +62,7 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "GET /api/products/{id}/ledger/pdf",
     "GET /api/products",
     "GET /api/products/{id}",
+    "GET /api/products/hidden",
     "GET /api/products/search",
     "GET /api/products/codebar/{codebar}",
     "GET /api/products/barcode/{barcode}",
@@ -68,6 +70,7 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "POST /api/products",
     "PUT /api/products/{id}",
     "PUT /api/products/{id}/stock-manual",
+    "PATCH /api/products/{id}/toggle-hidden",
     "DELETE /api/products/{id}",
     "GET /api/allergens",
     "GET /api/allergens/search",
@@ -155,7 +158,12 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "GET /api/stats/recipes",
     "GET /api/stats/recipes/with-allergens/count",
     "GET /api/stats/recipes/without-allergens/count",
-    "GET /api/stats/recipes/average-cost"
+    "GET /api/stats/recipes/average-cost",
+    "GET /api/stats/products",
+    "GET /api/inventory-audits",
+    "GET /api/inventory-audits/{id}",
+    "GET /api/inventory-audits/type/{type}",
+    "GET /api/inventory-audits/by-date-range"
   ],
   USER: [
     "GET /api/products/with-ledger",

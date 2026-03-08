@@ -1093,7 +1093,7 @@ tbody.loading { opacity: .6; }
 }
 
 .ledger-detail-body {
-    padding: 0 20px 20px;
+    padding: 12px 20px 20px;
     display: flex;
     flex-direction: column;
     gap: 16px;

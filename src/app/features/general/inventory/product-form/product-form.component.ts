@@ -28,7 +28,7 @@ export class ProductFormComponent implements OnChanges {
   
   @Output() save = new EventEmitter<ProductRequest>();
   @Output() cancel = new EventEmitter<void>();
-  @Output() delete = new EventEmitter<void>();
+  // @Output() delete = new EventEmitter<void>(); // Removido: ahora se usa toggleHidden
 
   formProduct: ProductFormState = {
     name: '',
@@ -107,9 +107,5 @@ export class ProductFormComponent implements OnChanges {
     this.cancel.emit();
   }
 
-  onDelete(): void {
-    if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
-      this.delete.emit();
-    }
-  }
+  // onDelete() removido: ahora se usa toggleHidden en lugar de eliminar productos
 }

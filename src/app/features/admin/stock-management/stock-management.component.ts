@@ -493,6 +493,12 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         return p ? `${p.name} (${p.unit})` : 'Producto seleccionado';
     }
 
+    get selectedLedgerUnit(): string {
+        if (!this.selectedProductId) return 'Ud';
+        const product = this.ledgerProducts.find(p => p.id === this.selectedProductId);
+        return product?.unit || 'Ud';
+    }
+
     toggleLedgerDropdown(): void {
         this.showLedgerDropdown = !this.showLedgerDropdown;
         if (this.showLedgerDropdown && (!this.ledgerProducts || this.ledgerProducts.length === 0)) {
