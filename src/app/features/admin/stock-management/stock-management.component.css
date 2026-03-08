@@ -976,8 +976,25 @@ tbody.loading { opacity: .6; }
 .global-integrity-section h3 {
     font-family: var(--font-heading);
     color: #1e2850;
-    margin-bottom: 1.5rem;
-    font-size: 1.4rem;
+    margin-bottom: 2.5rem;
+    font-size: 1.8rem;
+    text-align: center;
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 15px;
+    letter-spacing: 0.5px;
+}
+
+.global-integrity-section h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(135deg, rgba(30,40,80,.95), rgba(50,60,120,.95));
+    border-radius: 2px;
 }
 
 .global-integrity-grid {
