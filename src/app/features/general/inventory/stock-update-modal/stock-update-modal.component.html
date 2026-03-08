@@ -1,5 +1,5 @@
 <div class="modal-overlay" (click)="onOverlayClick($event)">
-  <form #stockForm="ngForm" (ngSubmit)="onSubmit()" class="modal-content">
+  <form #stockForm="ngForm" (ngSubmit)="onSubmit()" class="modal-content" [class.admin-mode]="isAdmin" [class.general-mode]="!isAdmin">
     <div class="modal-header">
       <h2>Actualizar Stock</h2>
       <button type="button" class="modal-close" (click)="onClose()">

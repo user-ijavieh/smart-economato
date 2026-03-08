@@ -10,6 +10,12 @@ export interface RecipeStats {
     averagePrice: number;
 }
 
+export interface ProductStats {
+    totalProducts: number;
+    totalInventoryValue: number;
+    averagePrice: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class StatsService {
     private http = inject(HttpClient);
@@ -17,6 +23,10 @@ export class StatsService {
 
     getRecipeStats(): Observable<RecipeStats> {
         return this.http.get<RecipeStats>(`${this.url}/recipes`);
+    }
+
+    getProductStats(): Observable<ProductStats> {
+        return this.http.get<ProductStats>(`${this.url}/products`);
     }
 
     getRecipesWithAllergensCount(): Observable<{ count: number }> {

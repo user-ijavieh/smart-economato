@@ -15,10 +15,12 @@ import { MessageService } from '../../../../core/services/message.service';
 export class ProductEditModalComponent implements OnChanges {
   @Input() product: Product | null = null;
   @Input() suppliers: Supplier[] = [];
+  @Input() isAdmin = false;
+  @Input() showingHidden = false; // Indica si estamos en la vista de productos ocultos
 
   @Output() save = new EventEmitter<ProductRequest>();
   @Output() close = new EventEmitter<void>();
-  @Output() delete = new EventEmitter<void>();
+  @Output() toggleHidden = new EventEmitter<void>();
 
   @ViewChild('editForm') editForm?: NgForm;
 
@@ -30,6 +32,8 @@ export class ProductEditModalComponent implements OnChanges {
     type: 'Ingrediente',
     unitPrice: 0,
     currentStock: 0,
+    minimumStock: undefined as number | undefined,
+    availabilityPercentage: undefined as number | undefined,
     unit: 'KG',
     supplierId: undefined as number | undefined
   };
@@ -45,6 +49,8 @@ export class ProductEditModalComponent implements OnChanges {
         type: this.product.type || 'Ingrediente',
         unitPrice: Number(this.product.unitPrice) || 0,
         currentStock: Number(this.product.currentStock) || 0,
+        minimumStock: this.product.minimumStock || this.product.minStock || undefined,
+        availabilityPercentage: this.product.availabilityPercentage || undefined,
         unit: this.product.unit || 'KG',
         supplierId: this.product.supplier?.id
       };
@@ -58,6 +64,12 @@ export class ProductEditModalComponent implements OnChanges {
     }
 
     // Asegurar que los valores numéricos sean números válidos
+    const minimumStock = this.formData.minimumStock !== undefined && this.formData.minimumStock !== null
+      ? Number(this.formData.minimumStock)
+      : undefined;
+    const availabilityPercentage = this.formData.availabilityPercentage !== undefined && this.formData.availabilityPercentage !== null
+      ? Number(this.formData.availabilityPercentage)
+      : undefined;
     const unitPrice = Number(this.formData.unitPrice);
     const currentStock = Number(this.formData.currentStock);
     const supplierId = this.formData.supplierId !== undefined && this.formData.supplierId !== null
@@ -79,6 +91,8 @@ export class ProductEditModalComponent implements OnChanges {
 
     // Enviar JSON en el formato exacto del backend
     const productData: ProductRequest = {
+      minimumStock: minimumStock,
+      availabilityPercentage: availabilityPercentage,
       name: this.formData.name.trim(),
       type: this.formData.type,
       unit: this.formData.unit,
@@ -100,14 +114,19 @@ export class ProductEditModalComponent implements OnChanges {
     // No hacer nada para prevenir el cierre accidental
   }
 
-  async onDelete(): Promise<void> {
+  async onToggleHidden(): Promise<void> {
+    const action = this.showingHidden ? 'mostrar' : 'ocultar';
     const confirmed = await this.messageService.confirm(
-      'Confirmar eliminación',
-      `¿Estás seguro de que deseas eliminar "${this.product?.name}"? Esta acción no se puede deshacer.`
+      `Confirmar ${action}`,
+      `¿Estás seguro de que deseas ${action} "${this.product?.name}"?`
     );
 
     if (confirmed) {
-      this.delete.emit();
+      this.toggleHidden.emit();
     }
+  }
+
+  getToggleButtonText(): string {
+    return this.showingHidden ? 'Mostrar' : 'Ocultar';
   }
 }
