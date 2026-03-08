@@ -529,13 +529,8 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     onLedgerPageChange(delta: number): void {
         if (!this.selectedProductId) return;
         this.ledgerPage += delta;
+        this.scrollToTop();
         this.loadLedgerHistory(this.selectedProductId);
-        
-        // Scroll to the header of the history section to see filters and context
-        setTimeout(() => {
-            const el = document.getElementById('ledgerHistoryHeader');
-            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
     }
 
     onSortLedgerChange(col: string): void {
