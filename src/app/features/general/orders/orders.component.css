@@ -28,6 +28,7 @@
   overflow-y: auto;
   padding: 40px;
   max-width: 100%;
+  min-height: calc(100vh - 140px);
 }
 
 /** ===== GRID DE TARJETAS ===== */

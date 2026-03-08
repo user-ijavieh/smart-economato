@@ -47,7 +47,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    height: 100%;
+    height: auto;
     padding: 0 24px;
     box-sizing: border-box;
     border: none;
@@ -101,6 +101,7 @@
     max-width: 100%;
     background-color: var(--bg-color);
     animation: fadeSlideUp 0.3s ease-out;
+    min-height: calc(100vh - 140px);
 }
 
 @keyframes fadeSlideUp {
@@ -875,6 +876,15 @@ tr:hover {
     .tab-bar {
         height: 48px;
         padding: 0 15px;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    .tab-bar::-webkit-scrollbar {
+        display: none;
     }
 
     .tab-btn {
