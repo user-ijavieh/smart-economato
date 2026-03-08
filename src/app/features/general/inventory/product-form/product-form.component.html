@@ -96,10 +96,6 @@
         {{ isEditing ? 'Actualizar' : 'Guardar' }}
       </button>
 
-      @if (isEditing) {
-        <button type="button" class="btn-eliminar" (click)="onDelete()">Eliminar</button>
-      }
-
       <button type="button" class="btn-cancelar" (click)="onCancel()">Cancelar</button>
     </div>
   </form>
