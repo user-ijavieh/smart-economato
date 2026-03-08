@@ -44,6 +44,16 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+/* General mode - red theme (default) */
+.modal-content.general-mode .modal-header {
+  background: linear-gradient(135deg, #b84b44 0%, #a03d37 100%) !important;
+}
+
+/* Admin mode - different color scheme */
+.modal-content.admin-mode .modal-header {
+  background: linear-gradient(135deg, rgba(30, 40, 80, 0.95) 0%, rgba(20, 30, 60, 0.95) 100%);
+}
+
 .modal-header h2 {
   font-size: 1.6rem;
   color: white;
@@ -134,6 +144,30 @@
   font-weight: 600;
 }
 
+.availability-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.availability-high {
+  background: rgba(76, 175, 80, 0.15);
+  color: #2e7d32;
+}
+
+.availability-medium {
+  background: rgba(255, 152, 0, 0.15);
+  color: #e65100;
+}
+
+.availability-low {
+  background: rgba(244, 67, 54, 0.15);
+  color: #c62828;
+}
+
 /** ===== ALERT BANNER ===== */
 
 .alert-banner {
@@ -204,6 +238,29 @@
   background: #a03d37;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(184, 75, 68, 0.4);
+}
+
+/* General mode - red button colors (default) */
+.modal-content.general-mode .btn-editar {
+  background: #b84b44 !important;
+  color: white;
+  box-shadow: 0 2px 8px rgba(184, 75, 68, 0.3);
+}
+
+.modal-content.general-mode .btn-editar:hover {
+  background: #a03d37 !important;
+  box-shadow: 0 4px 12px rgba(184, 75, 68, 0.4);
+}
+
+/* Admin mode - different button colors */
+.modal-content.admin-mode .btn-editar {
+  background: rgba(30, 40, 80, 0.95);
+  box-shadow: 0 2px 8px rgba(30, 40, 80, 0.3);
+}
+
+.modal-content.admin-mode .btn-editar:hover {
+  background: rgba(50, 60, 120, 0.95);
+  box-shadow: 0 4px 12px rgba(30, 40, 80, 0.4);
 }
 
 /** ===== ANIMATIONS ===== */

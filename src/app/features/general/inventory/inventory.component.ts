@@ -235,18 +235,21 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.selectedProduct = null;
   }
 
-  onDeleteProductFromModal(): void {
+  onToggleHiddenFromModal(): void {
     if (!this.selectedProduct) return;
 
-    this.productService.delete(this.selectedProduct.id).subscribe({
+    // En el componente general, este método no debería ejecutarse
+    // ya que el botón solo se muestra cuando isAdmin=true
+    // Pero lo implementamos por compatibilidad
+    this.productService.toggleHidden(this.selectedProduct.id, true).subscribe({
       next: () => {
-        this.messageService.showSuccess('Producto eliminado correctamente');
+        this.messageService.showSuccess('Producto oculto correctamente');
         this.showEditModal = false;
         this.selectedProduct = null;
         this.loadProducts();
       },
       error: (err) => {
-        const errorMessage = err.error?.message || err.message || 'Error al eliminar producto';
+        const errorMessage = err.error?.message || err.message || 'Error al ocultar producto';
         this.messageService.showError(errorMessage);
       }
     });
@@ -340,29 +343,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.openStockModal(product);
   }
 
-  onDeleteProduct(): void {
-    if (this.selectedProduct) {
-      this.productService.delete(this.selectedProduct.id).subscribe({
-        next: () => {
-          this.messageService.showSuccess('Producto eliminado correctamente');
-          this.finalizeSubmit();
-        },
-        error: (err) => {
-          console.error('Error deleting product:', err);
-          const errorMessage = err.error?.message || err.message || 'Error al eliminar producto';
-
-          // Check if error is due to integrity constraint (inventory movements or recipes)
-          if (err.status === 400 && (errorMessage.includes('movimientos de inventario') || errorMessage.includes('recetas'))) {
-            if (confirm('No se puede eliminar el producto porque tiene historial o está en uso en recetas. ¿Desea desactivarlo en su lugar?')) {
-              this.softDeleteProduct();
-            }
-          } else {
-            this.messageService.showError(errorMessage);
-          }
-        }
-      });
-    }
-  }
+  // Método eliminado: onDeleteProduct() - ahora se usa toggleHidden en lugar de delete
 
   private softDeleteProduct(): void {
     if (!this.selectedProduct) return;
@@ -449,5 +430,10 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   get isAdmin(): boolean {
     return this.authService.getRole() === 'ADMIN';
+  }
+
+  get canManageProducts(): boolean {
+    const role = this.authService.getRole();
+    return role === 'ADMIN' || role === 'CHEF';
   }
 }

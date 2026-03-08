@@ -12,6 +12,7 @@ import { Product, ProductRequest } from '../../../../shared/models/product.model
 })
 export class StockUpdateModalComponent implements OnChanges {
   @Input() product: Product | null = null;
+  @Input() isAdmin = false;
   @Output() save = new EventEmitter<ProductRequest>();
   @Output() close = new EventEmitter<void>();
 

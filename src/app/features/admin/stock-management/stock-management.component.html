@@ -377,7 +377,7 @@
   <div id="ledgerHistoryHeader" class="ledger-summary-row">
     <div class="summary-card">
       <span class="summary-label">Stock Actual</span>
-      <span class="summary-value">{{ ledgerSnapshot.currentStock | number:'1.0-3' }}</span>
+      <span class="summary-value">{{ ledgerSnapshot.currentStock | number:'1.0-3' }} {{ selectedLedgerUnit }}</span>
     </div>
     <div class="summary-card">
       <span class="summary-label">Última Secuencia</span>
@@ -446,7 +446,7 @@
               <td class="delta-cell" [class.positive]="tx.quantityDelta > 0" [class.negative]="tx.quantityDelta < 0">
                 {{ tx.quantityDelta > 0 ? '+' : '' }}{{ tx.quantityDelta | number:'1.0-3' }}
               </td>
-              <td class="result-cell"><strong>{{ tx.resultingStock | number:'1.0-3' }}</strong></td>
+              <td class="result-cell"><strong>{{ tx.resultingStock | number:'1.0-3' }} {{ selectedLedgerUnit }}</strong></td>
               <td class="hide-on-mobile">
                 <div class="desc-cell">
                   <span class="tx-desc">{{ tx.description }}</span>
@@ -622,7 +622,7 @@
         </div>
         <div class="detail-metric">
           <span class="detail-metric-label">Stock resultante</span>
-          <span class="detail-metric-value"><strong>{{ selectedLedgerTx.resultingStock | number:'1.0-3' }}</strong></span>
+          <span class="detail-metric-value"><strong>{{ selectedLedgerTx.resultingStock | number:'1.0-3' }} {{ selectedLedgerUnit }}</strong></span>
         </div>
         <div class="detail-metric">
           <span class="detail-metric-label">Secuencia</span>
