@@ -55,7 +55,7 @@
 .tab-btn.active::after { background: linear-gradient(135deg, rgba(30,40,80,.95), rgba(50,60,120,.95)); }
 
 /** ===== CONTAINER ===== */
-.contenedor-principal { flex: 1; overflow-y: auto; padding: 40px; max-width: 100%; animation: fadeSlideUp 0.3s ease-out; }
+.contenedor-principal { flex: 1; overflow-y: auto; padding: 40px; max-width: 100%; animation: fadeSlideUp 0.3s ease-out; min-height: calc(100vh - 140px); }
 
 @keyframes fadeSlideUp {
     from { opacity: 0; transform: translateY(10px); }

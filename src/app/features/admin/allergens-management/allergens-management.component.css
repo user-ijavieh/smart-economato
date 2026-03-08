@@ -68,7 +68,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    height: 100%;
+    height: auto;
     padding: 0 24px;
     box-sizing: border-box;
     border: none;
@@ -121,6 +121,7 @@
     padding: 40px;
     background-color: var(--bg-color);
     animation: fadeSlideUp 0.3s ease-out;
+    min-height: calc(100vh - 140px);
 }
 
 @keyframes fadeSlideUp {
@@ -705,21 +706,7 @@ tr:hover {
     }
 
     .tab-bar {
-        padding: 0 16px;
-        overflow-x: auto;
-        white-space: nowrap;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none; /* Firefox */
-        -ms-overflow-style: none;  /* IE and Edge */
-    }
-    
-    .tab-bar::-webkit-scrollbar {
-        display: none;
-    }
-
-    .tab-btn {
-        padding: 0 16px;
-        font-size: 0.85rem;
+        padding: 0 20px;
     }
 
     .contenedor-principal {
@@ -753,6 +740,15 @@ tr:hover {
     .tab-bar {
         height: 48px;
         padding: 0 15px;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    .tab-bar::-webkit-scrollbar {
+        display: none;
     }
 
     .tab-btn {
@@ -1428,62 +1424,5 @@ tr:hover {
     font-size: 0.88rem;
     color: #bbb;
     font-style: italic;
-    font-family: var(--font-body);
-}
-
-/** ===== TAB BAR ===== */
-
-.tab-bar {
-    display: flex;
-    gap: 8px;
-    padding: 0 32px;
-    border-bottom: 2px solid #eef0f5;
-    background: #fff;
-}
-
-.tab-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    font-family: var(--font-body);
-    color: #888;
-    background: transparent;
-    border: none;
-    border-bottom: 3px solid transparent;
-    margin-bottom: -2px;
-    cursor: pointer;
-    transition: color 0.2s ease, border-color 0.2s ease;
-}
-
-.tab-btn:hover:not(:disabled) {
-    color: rgba(30, 40, 80, 0.8);
-}
-
-.tab-btn.active {
-    color: rgba(30, 40, 80, 1);
-    border-bottom-color: rgba(30, 40, 80, 0.85);
-}
-
-.tab-btn--disabled,
-.tab-btn:disabled {
-    color: #ccc;
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-.tab-soon-badge {
-    display: inline-block;
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
-    background: #f0f0f0;
-    color: #aaa;
-    border-radius: 20px;
-    padding: 2px 7px;
-    margin-left: 4px;
     font-family: var(--font-body);
 }

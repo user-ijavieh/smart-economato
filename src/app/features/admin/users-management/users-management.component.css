@@ -39,6 +39,7 @@
     max-width: 100%;
     background-color: var(--bg-color);
     animation: fadeSlideUp 0.3s ease-out;
+    min-height: calc(100vh - 140px);
 }
 
 @keyframes fadeSlideUp {
