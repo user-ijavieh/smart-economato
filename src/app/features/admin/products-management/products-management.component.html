@@ -262,7 +262,7 @@
                     <td class="hide-on-mobile">
                         <span class="user-name">{{ audit.userName }}</span>
                     </td>
-                    <td class="details-cell hide-on-mobile">{{ audit.actionDescription }}</td>
+                    <td class="details-cell hide-on-mobile">{{ translateActionDescription(audit.actionDescription) }}</td>
                     <td class="show-on-mobile-only mobile-icon-col">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
@@ -387,7 +387,7 @@
             </div>
             <div class="audit-field audit-field-full">
                 <span class="audit-field-label">Descripción</span>
-                <p class="audit-details-text">{{ selectedAudit.actionDescription }}</p>
+                <p class="audit-details-text">{{ translateActionDescription(selectedAudit.actionDescription) }}</p>
             </div>
         </div>
         }

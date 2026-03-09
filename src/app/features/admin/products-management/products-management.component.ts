@@ -452,6 +452,22 @@ export class ProductsManagementComponent implements OnInit {
     return this.userMap[userId] || 'Cargando...';
   }
 
+  translateActionDescription(description: string): string {
+    const translations: { [key: string]: string } = {
+      'HIDE_PRODUCT': 'Producto ocultado',
+      'SHOW_PRODUCT': 'Producto mostrado',
+      'UPDATE_PRODUCT': 'Producto actualizado',
+      'CREATE_PRODUCT': 'Producto creado',
+      'DELETE_PRODUCT': 'Producto eliminado',
+      'STOCK_ADJUSTMENT': 'Ajuste de stock',
+      'STOCK_IN': 'Entrada de stock',
+      'STOCK_OUT': 'Salida de stock',
+      'PRICE_UPDATE': 'Actualización de precio',
+      'SUPPLIER_CHANGE': 'Cambio de proveedor'
+    };
+    return translations[description] || description;
+  }
+
   openAuditDetailModal(audit: ProductAudit): void {
     this.selectedAudit = audit;
     this.showAuditDetailModal = true;
