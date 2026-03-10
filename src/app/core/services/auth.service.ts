@@ -25,6 +25,7 @@ interface UserProfileResponse {
   user: string;
   role: string;
   firstLogin: boolean;
+  hidden?: boolean;
 }
 
 interface TokenValidation {
@@ -64,6 +65,11 @@ export class AuthService {
       }),
       switchMap(() => this.http.get<UserProfileResponse>(`${this.apiUrl}/api/users/me`)),
       tap(profile => {
+        if (profile.hidden) {
+          this.webSocketService.disconnect();
+          localStorage.removeItem(this.TOKEN_KEY);
+          throw new Error('user_hidden');
+        }
         localStorage.setItem(this.NAME_KEY, profile.name);
         localStorage.setItem(this.ROLE_KEY, profile.role);
         localStorage.setItem(this.ID_KEY, profile.id.toString());
