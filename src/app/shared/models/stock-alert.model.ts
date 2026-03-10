@@ -24,3 +24,30 @@ export interface StockPredictionResponseDTO {
     projectedConsumptionUnit: string;
     updatedAt: string;
 }
+
+export interface PageResponse<T> {
+    content: T[];
+    totalElements: number;
+    totalPages: number;
+    size: number;
+    number: number;
+    first: boolean;
+    last: boolean;
+}
+
+export interface WeeklyConsumptionResponse {
+    productId: number;
+    productName: string;
+    unit: string;
+    weeklyConsumption: number[];
+    weeksOfHistory: number;
+}
+
+export interface DailyForecastResponse {
+    productId: number;
+    productName: string;
+    unit: string;
+    dailyForecast: number[];
+    horizonDays: number;
+    calculatedAt: string;
+}

@@ -22,6 +22,12 @@
     </svg>
     Historial
   </button>
+  <button class="tab-btn" [class.active]="activeTab === 'charts'" (click)="switchTab('charts')">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor">
+      <path d="M120-120v-80l80-80v160h-80Zm160 0v-240l80-80v320h-80Zm160 0v-320l80 81v239h-80Zm160 0v-239l80-80v319h-80Zm160 0v-400l80-80v480h-80ZM120-327v-113l280-280 160 160 280-280v113L560-447 400-607 120-327Z"/>
+    </svg>
+    Gráficas
+  </button>
 </div>
 
 <!-- ===== ALERTS TAB ===== -->
@@ -303,6 +309,58 @@
           </div>
       </div>
   </div>
+  }
+</div>
+}
+
+<!-- ===== CHARTS TAB ===== -->
+@if (activeTab === 'charts') {
+<div class="contenedor-principal">
+  <div class="controles chart-controls">
+    <div class="chart-select-group">
+      <label for="chart-product-select">Producto:</label>
+      <select
+        id="chart-product-select"
+        class="chart-product-select"
+        [ngModel]="selectedChartProductId"
+        (ngModelChange)="onChartProductChange($event)"
+        [disabled]="chartProducts.length === 0"
+      >
+        @for (product of chartProducts; track product.productId) {
+          <option [value]="product.productId">{{ product.productName }} ({{ product.unit }})</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  @if (loadingCharts) {
+    <div class="loading-spinner">Cargando gráficas...</div>
+  } @else if (selectedHistory || selectedForecast) {
+    <div class="charts-grid">
+      @if (selectedHistory) {
+      <div class="chart-card">
+        <h3>Consumo semanal histórico — {{ selectedHistory.productName }}</h3>
+        <p class="chart-subtitle">Últimas {{ selectedHistory.weeksOfHistory }} semanas ({{ selectedHistory.unit }})</p>
+        <div class="chart-canvas-wrap">
+          <canvas baseChart [type]="'bar'" [data]="weeklyChartData" [options]="weeklyChartOptions"></canvas>
+        </div>
+      </div>
+      }
+
+      @if (selectedForecast) {
+      <div class="chart-card">
+        <h3>Proyección de consumo diario — {{ selectedForecast.productName }}</h3>
+        <p class="chart-subtitle">Próximos {{ selectedForecast.horizonDays }} días ({{ selectedForecast.unit }})</p>
+        <div class="chart-canvas-wrap">
+          <canvas baseChart [type]="'line'" [data]="dailyChartData" [options]="dailyChartOptions"></canvas>
+        </div>
+      </div>
+      }
+    </div>
+  } @else {
+    <div class="empty-state">
+      <p>No hay datos de consumo disponibles para graficar.</p>
+    </div>
   }
 </div>
 }

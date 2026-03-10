@@ -1,27 +1,35 @@
 import { Component, OnInit, OnDestroy, NgZone, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { forkJoin, Subject } from 'rxjs';
+import { finalize, forkJoin, Subject } from 'rxjs';
 import { map, switchMap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartData, ChartOptions } from 'chart.js';
 import { StockAlertService } from '../../../core/services/stock-alert.service';
 import { ProductService } from '../../../core/services/product.service';
 import { OrderService } from '../../../core/services/order.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { MessageService } from '../../../core/services/message.service';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
-import { StockAlertDTO, StockPredictionResponseDTO, AlertSeverity, AlertResolution } from '../../../shared/models/stock-alert.model';
+import {
+    AlertResolution,
+    AlertSeverity,
+    DailyForecastResponse,
+    StockAlertDTO,
+    StockPredictionResponseDTO,
+    WeeklyConsumptionResponse
+} from '../../../shared/models/stock-alert.model';
 import { Page } from '../../../shared/models/page.model';
 import { StockLedgerService } from '../../../core/services/stock-ledger.service';
 import { StockLedgerResponseDTO, IntegrityCheckResponseDTO, StockSnapshotResponseDTO } from '../../../shared/models/stock-ledger.model';
 import { Product } from '../../../shared/models/product.model';
-import { finalize } from 'rxjs';
 
-type Tab = 'alerts' | 'predictions' | 'ledger';
+type Tab = 'alerts' | 'predictions' | 'ledger' | 'charts';
 
 @Component({
     selector: 'app-stock-management',
     standalone: true,
-    imports: [CommonModule, FormsModule, ToastComponent],
+    imports: [CommonModule, FormsModule, ToastComponent, BaseChartDirective],
     templateUrl: './stock-management.component.html',
     styleUrl: './stock-management.component.css'
 })
@@ -76,6 +84,37 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     // ── Mobile modal state for Predictions ──
     showPredictionMobileModal = false;
     selectedPredictionForMobile: StockPredictionResponseDTO | null = null;
+
+    // ── Charts tab state ──
+    weeklyHistoryAll: WeeklyConsumptionResponse[] = [];
+    dailyForecastAll: DailyForecastResponse[] = [];
+    selectedChartProductId: number | null = null;
+    loadingCharts = false;
+    chartsLoaded = false;
+
+    weeklyChartOptions: ChartOptions<'bar'> = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: true, position: 'top' }
+        },
+        scales: {
+            y: { beginAtZero: true, title: { display: true, text: 'Cantidad' } },
+            x: { title: { display: true, text: 'Semana' } }
+        }
+    };
+
+    dailyChartOptions: ChartOptions<'line'> = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: true, position: 'top' }
+        },
+        scales: {
+            y: { beginAtZero: true, title: { display: true, text: 'Cantidad' } },
+            x: { title: { display: true, text: 'Día' } }
+        }
+    };
 
     // ── Ledger tab state ──
     products: Product[] = [];
@@ -132,6 +171,8 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         this.activeTab = tab;
         if (tab === 'predictions' && this.predictions.length === 0) {
             this.loadPredictions();
+        } else if (tab === 'charts' && !this.chartsLoaded) {
+            this.loadChartData();
         } else if (tab === 'ledger') {
             if (this.ledgerProducts.length === 0) {
                 this.loadLedgerProducts();
@@ -392,6 +433,115 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     closePredictionMobileModal(): void {
         this.showPredictionMobileModal = false;
         this.selectedPredictionForMobile = null;
+    }
+
+    loadChartData(): void {
+        this.loadingCharts = true;
+        this.cdr.markForCheck();
+
+        forkJoin({
+            history: this.stockAlertService.getWeeklyHistory(0, 200),
+            forecast: this.stockAlertService.getDailyForecast(0, 200)
+        }).subscribe({
+            next: ({ history, forecast }) => {
+                this.ngZone.run(() => {
+                    this.weeklyHistoryAll = history.content ?? [];
+                    this.dailyForecastAll = forecast.content ?? [];
+                    this.chartsLoaded = true;
+                    this.loadingCharts = false;
+
+                    if (this.weeklyHistoryAll.length > 0) {
+                        this.selectedChartProductId = this.weeklyHistoryAll[0].productId;
+                    } else if (this.dailyForecastAll.length > 0) {
+                        this.selectedChartProductId = this.dailyForecastAll[0].productId;
+                    }
+
+                    this.cdr.markForCheck();
+                });
+            },
+            error: () => {
+                this.ngZone.run(() => {
+                    this.messageService.showError('Error al cargar datos de gráficas');
+                    this.loadingCharts = false;
+                    this.cdr.markForCheck();
+                });
+            }
+        });
+    }
+
+    onChartProductChange(productId: number | string): void {
+        const parsed = typeof productId === 'string' ? Number(productId) : productId;
+        this.selectedChartProductId = Number.isFinite(parsed) ? parsed : null;
+        this.cdr.markForCheck();
+    }
+
+    get selectedHistory(): WeeklyConsumptionResponse | null {
+        return this.weeklyHistoryAll.find(h => h.productId === this.selectedChartProductId) ?? null;
+    }
+
+    get selectedForecast(): DailyForecastResponse | null {
+        return this.dailyForecastAll.find(f => f.productId === this.selectedChartProductId) ?? null;
+    }
+
+    get chartProducts(): Array<{ productId: number; productName: string; unit: string }> {
+        const productMap = new Map<number, { productId: number; productName: string; unit: string }>();
+
+        for (const history of this.weeklyHistoryAll) {
+            productMap.set(history.productId, {
+                productId: history.productId,
+                productName: history.productName,
+                unit: history.unit
+            });
+        }
+
+        for (const forecast of this.dailyForecastAll) {
+            if (!productMap.has(forecast.productId)) {
+                productMap.set(forecast.productId, {
+                    productId: forecast.productId,
+                    productName: forecast.productName,
+                    unit: forecast.unit
+                });
+            }
+        }
+
+        return Array.from(productMap.values()).sort((a, b) => a.productName.localeCompare(b.productName));
+    }
+
+    get weeklyChartData(): ChartData<'bar'> {
+        const history = this.selectedHistory;
+        if (!history) {
+            return { labels: [], datasets: [] };
+        }
+
+        return {
+            labels: history.weeklyConsumption.map((_, i) => `Sem ${i + 1}`),
+            datasets: [{
+                label: `Consumo (${history.unit})`,
+                data: history.weeklyConsumption,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        };
+    }
+
+    get dailyChartData(): ChartData<'line'> {
+        const forecast = this.selectedForecast;
+        if (!forecast) {
+            return { labels: [], datasets: [] };
+        }
+
+        return {
+            labels: forecast.dailyForecast.map((_, i) => `Día ${i + 1}`),
+            datasets: [{
+                label: `Consumo proyectado (${forecast.unit})`,
+                data: forecast.dailyForecast,
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                fill: true,
+                tension: 0.3
+            }]
+        };
     }
 
     formatDate(dateStr: string): string {
