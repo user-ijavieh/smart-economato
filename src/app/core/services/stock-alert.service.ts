@@ -4,7 +4,14 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Page } from '../../shared/models/page.model';
-import { AlertSeverity, StockAlertDTO, StockPredictionResponseDTO } from '../../shared/models/stock-alert.model';
+import {
+    AlertSeverity,
+    DailyForecastResponse,
+    PageResponse,
+    StockAlertDTO,
+    StockPredictionResponseDTO,
+    WeeklyConsumptionResponse
+} from '../../shared/models/stock-alert.model';
 
 @Injectable({ providedIn: 'root' })
 export class StockAlertService {
@@ -50,5 +57,31 @@ export class StockAlertService {
                 empty: (response.content ?? []).length === 0
             }))
         );
+    }
+
+    getWeeklyHistory(page = 0, size = 50, sort = 'productId,asc'): Observable<PageResponse<WeeklyConsumptionResponse>> {
+        const params = new HttpParams()
+            .set('page', page.toString())
+            .set('size', size.toString())
+            .set('sort', sort);
+
+        return this.http.get<PageResponse<WeeklyConsumptionResponse>>(`${this.url}/history`, { params });
+    }
+
+    getWeeklyHistoryByProduct(productId: number): Observable<WeeklyConsumptionResponse> {
+        return this.http.get<WeeklyConsumptionResponse>(`${this.url}/history/${productId}`);
+    }
+
+    getDailyForecast(page = 0, size = 50, sort = 'productId,asc'): Observable<PageResponse<DailyForecastResponse>> {
+        const params = new HttpParams()
+            .set('page', page.toString())
+            .set('size', size.toString())
+            .set('sort', sort);
+
+        return this.http.get<PageResponse<DailyForecastResponse>>(`${this.url}/forecast`, { params });
+    }
+
+    getDailyForecastByProduct(productId: number): Observable<DailyForecastResponse> {
+        return this.http.get<DailyForecastResponse>(`${this.url}/forecast/${productId}`);
     }
 }
