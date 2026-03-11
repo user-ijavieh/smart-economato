@@ -48,7 +48,10 @@ export class LoginComponent {
           }
         }
       },
-      error: () => {
+      error: (err) => {
+        if (err.message === 'user_hidden') {
+          this.messageService.showError('El usuario está bloqueado o inactivo y no puede acceder al sistema.');
+        }
         this.loading = false;
         this.cdr.markForCheck();
       }
