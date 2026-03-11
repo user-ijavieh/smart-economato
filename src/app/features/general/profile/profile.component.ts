@@ -1,140 +1,142 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../core/services/user.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { MessageService } from '../../../core/services/message.service';
 import { User } from '../../../shared/models/user.model';
-import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, ToastComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
   private userService = inject(UserService);
   private authService = inject(AuthService);
-  public messageService = inject(MessageService);
 
-  userRole: string | null = null;
+  currentUser: User | null = null;
+  userInitials: string = '';
+  isChef: boolean = false;
+  
   students: User[] = [];
-  loading: boolean = false;
-
-  // Modales
+  loadingStudents = false;
+  
+  // Modal
   showEscalateModal = false;
   selectedStudent: User | null = null;
-  escalateDurationMinutes: number = 60;
+  durationInput = 60;
+  
+  // Control de estado loading por botón de alumno
+  processingIds = new Set<number>();
 
   ngOnInit(): void {
-    this.userRole = this.authService.getRole();
-    if (this.canManageStudents()) {
+    const role = this.authService.getRole();
+    this.isChef = role === 'CHEF' || role === 'ADMIN';
+
+    this.loadCurrentUser();
+
+    if (this.isChef) {
       this.loadStudents();
     }
   }
 
-  canManageStudents(): boolean {
-    return this.userRole === 'CHEF' || this.userRole === 'ADMIN';
-  }
-
-  loadStudents(): void {
-    this.loading = true;
-    if (this.userRole === 'CHEF') {
-      this.userService.getStudents().subscribe({
-        next: (response: any) => {
-          console.log('Respuesta de getStudents:', response);
-          if (Array.isArray(response)) {
-            this.students = response;
-          } else if (response && Array.isArray(response.content)) {
-            this.students = response.content;
-          } else {
-            this.students = [];
-          }
-          this.loading = false;
-        },
-        error: (err) => {
-          this.messageService.showError('Error al cargar alumnos');
-          console.error(err);
-          this.loading = false;
-        }
-      });
-    } else if (this.userRole === 'ADMIN') {
-      this.userService.getAllUnpaged().subscribe({
-        next: (response: any) => {
-          console.log('Respuesta de getAllUnpaged:', response);
-          let usersArray = [];
-          if (Array.isArray(response)) {
-            usersArray = response;
-          } else if (response && Array.isArray(response.content)) {
-            usersArray = response.content;
-          }
-          
-          // Filtrar solo usuarios que pueden ser elevados o revocados (USERS y ELEVATED)
-          this.students = usersArray.filter((u: User) => u.role === 'USER' || u.role === 'ELEVATED');
-          this.loading = false;
-        },
-        error: (err) => {
-          this.messageService.showError('Error al cargar usuarios');
-          console.error(err);
-          this.loading = false;
-        }
-      });
-    } else {
-      this.loading = false;
+  loadCurrentUser() {
+    this.currentUser = {
+      id: this.authService.getUserId() || 0,
+      name: this.authService.getName() || 'Usuario',
+      role: (this.authService.getRole() as any) || 'USER',
+      user: '' 
+    };
+    
+    this.userInitials = this.getInitials(this.currentUser.name);
+    
+    const id = this.authService.getUserId();
+    if(id) {
+        this.userService.getById(id).subscribe({
+           next: (user) => { 
+               this.currentUser = user; 
+               this.userInitials = this.getInitials(this.currentUser.name);
+           }
+        });
     }
   }
 
-  isElevated(user: User): boolean {
-    return user.role === 'ELEVATED';
-  }
-
-  getInitials(name: string): string {
-    if (!name) return 'U';
-    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-  }
-
-  openEscalateModal(student: User): void {
-    this.selectedStudent = student;
-    this.escalateDurationMinutes = 60; // Default 1 hora
-    this.showEscalateModal = true;
-  }
-
-  closeEscalateModal(): void {
-    this.showEscalateModal = false;
-    this.selectedStudent = null;
-  }
-
-  confirmEscalate(): void {
-    if (!this.selectedStudent || this.escalateDurationMinutes <= 0) return;
-
-    this.userService.escalateUser(this.selectedStudent.id, this.escalateDurationMinutes).subscribe({
-      next: () => {
-        this.messageService.showSuccess(`Permisos elevados para ${this.selectedStudent!.name}`);
-        this.closeEscalateModal();
-        this.loadStudents();
+  loadStudents() {
+    this.loadingStudents = true;
+    this.userService.getMyStudents().subscribe({
+      next: (data) => {
+        this.students = data;
       },
-      error: (err) => {
-        this.messageService.showError('Error al elevar permisos');
-        console.error(err);
-        this.closeEscalateModal();
+      error: (err) => console.error('Error al cargar alumnos', err),
+      complete: () => {
+        this.loadingStudents = false;
       }
     });
   }
 
-  revokePermissions(student: User): void {
-    if (confirm(`¿Estás seguro de que quieres revocar los permisos de ${student.name}?`)) {
-      this.userService.deescalateUser(student.id).subscribe({
+  getInitials(name: string): string {
+    if (!name) return 'U';
+    const parts = name.split(' ').filter(p => p.length > 0);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  }
+
+  isProcessing(id: number): boolean {
+    return this.processingIds.has(id);
+  }
+
+  openEscalateModal(student: User) {
+    this.selectedStudent = student;
+    this.durationInput = 60; // default 1h
+    this.showEscalateModal = true;
+  }
+
+  closeEscalateModal() {
+    this.showEscalateModal = false;
+    this.selectedStudent = null;
+  }
+
+  confirmEscalate() {
+    if (!this.selectedStudent) return;
+    
+    if (!this.durationInput || this.durationInput < 1) {
+       alert('Introduzca una duración válida en minutos.');
+       return;
+    }
+
+    const studentId = this.selectedStudent.id;
+    this.processingIds.add(studentId);
+    this.userService.escalateRoles(studentId, this.durationInput)
+      .pipe(finalize(() => this.processingIds.delete(studentId)))
+      .subscribe({
         next: () => {
-          this.messageService.showSuccess(`Permisos revocados para ${student.name}`);
+          this.closeEscalateModal();
           this.loadStudents();
         },
         error: (err) => {
-          this.messageService.showError('Error al revocar permisos');
           console.error(err);
+          alert('Error al intentar dar permisos temporales.');
         }
       });
-    }
+  }
+
+  deescalate(student: User) {
+    this.processingIds.add(student.id);
+    this.userService.deescalateRoles(student.id)
+      .pipe(finalize(() => this.processingIds.delete(student.id)))
+      .subscribe({
+        next: () => {
+          this.loadStudents();
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Error al intentar revocar permisos temporales.');
+        }
+      });
   }
 }
