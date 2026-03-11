@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, NgZone, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { finalize, forkJoin, Subject } from 'rxjs';
-import { map, switchMap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { finalize, forkJoin, Subject, of } from 'rxjs';
+import { map, switchMap, debounceTime, distinctUntilChanged, catchError } from 'rxjs/operators';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartOptions } from 'chart.js';
 import { StockAlertService } from '../../../core/services/stock-alert.service';
@@ -21,10 +21,10 @@ import {
 } from '../../../shared/models/stock-alert.model';
 import { Page } from '../../../shared/models/page.model';
 import { StockLedgerService } from '../../../core/services/stock-ledger.service';
-import { StockLedgerResponseDTO, IntegrityCheckResponseDTO, StockSnapshotResponseDTO } from '../../../shared/models/stock-ledger.model';
+import { StockLedgerResponseDTO, IntegrityCheckResponseDTO, StockSnapshotResponseDTO, ConsumptionBreakdownDTO } from '../../../shared/models/stock-ledger.model';
 import { Product } from '../../../shared/models/product.model';
 
-type Tab = 'alerts' | 'predictions' | 'ledger' | 'charts';
+type Tab = 'alerts' | 'predictions' | 'ledger';
 
 @Component({
     selector: 'app-stock-management',
@@ -56,7 +56,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
 
     // ── Mobile modal state ──
     showMobileModal = false;
-    selectedAlertForMobile: StockAlertDTO | null = null;
+    selectedAlertForMobile: any = null;
 
     // ── Sorting state ──
     sortColumn = 'severity';
@@ -83,36 +83,50 @@ export class StockManagementComponent implements OnInit, OnDestroy {
 
     // ── Mobile modal state for Predictions ──
     showPredictionMobileModal = false;
-    selectedPredictionForMobile: StockPredictionResponseDTO | null = null;
+    selectedPredictionForMobile: any = null;
 
-    // ── Charts tab state ──
-    weeklyHistoryAll: WeeklyConsumptionResponse[] = [];
-    dailyForecastAll: DailyForecastResponse[] = [];
-    selectedChartProductId: number | null = null;
-    loadingCharts = false;
-    chartsLoaded = false;
+    // ── Modal Chart state ──
+    modalChartData: ChartData<'line' | 'bar'> = { labels: [], datasets: [] };
+    loadingModalChart = false;
+    stockOutDay: string | null = null;
 
-    weeklyChartOptions: ChartOptions<'bar'> = {
+    modalChartOptions: ChartOptions<'line' | 'bar'> = {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
         plugins: {
-            legend: { display: true, position: 'top' }
+            legend: { display: true, position: 'top' },
+            tooltip: {
+                callbacks: {
+                    label: (context: any) => {
+                        let label = context.dataset.label || '';
+                        if (label) label += ': ';
+                        if (context.parsed.y !== null) label += context.parsed.y.toFixed(2);
+                        return label;
+                    }
+                }
+            }
         },
         scales: {
-            y: { beginAtZero: true, title: { display: true, text: 'Cantidad' } },
-            x: { title: { display: true, text: 'Semana' } }
-        }
-    };
-
-    dailyChartOptions: ChartOptions<'line'> = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: true, position: 'top' }
-        },
-        scales: {
-            y: { beginAtZero: true, title: { display: true, text: 'Cantidad' } },
-            x: { title: { display: true, text: 'Día' } }
+            y: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+                beginAtZero: true,
+                title: { display: true, text: 'Stock / Consumo' },
+                grid: { drawOnChartArea: true }
+            },
+            y1: {
+                type: 'linear',
+                display: false, // We'll use shared axis for stock level comparison but keep y1 for potential future dual-ax
+                position: 'right',
+                beginAtZero: true,
+                grid: { drawOnChartArea: false }
+            },
+            x: { 
+                title: { display: true, text: 'Fecha' },
+                ticks: { maxTicksLimit: 10 }
+            }
         }
     };
 
@@ -171,8 +185,6 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         this.activeTab = tab;
         if (tab === 'predictions' && this.predictions.length === 0) {
             this.loadPredictions();
-        } else if (tab === 'charts' && !this.chartsLoaded) {
-            this.loadChartData();
         } else if (tab === 'ledger') {
             if (this.ledgerProducts.length === 0) {
                 this.loadLedgerProducts();
@@ -212,8 +224,12 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     isExpanded(id: number): boolean { return this.expandedMessages.has(id); }
 
     openMobileModal(alert: StockAlertDTO): void {
-        this.selectedAlertForMobile = alert;
+        this.selectedAlertForMobile = {
+            ...alert,
+            estimatedDailyConsumption: alert.projectedConsumption / 14
+        };
         this.showMobileModal = true;
+        this.loadModalChartData(alert.productId, alert.currentStock, alert.projectedConsumption / 14);
     }
 
     closeMobileModal(): void {
@@ -305,17 +321,17 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         this.loadingOrderData = true;
 
         this.stockAlertService.getBatchAlerts(ids).pipe(
-            switchMap(alerts => {
+            switchMap((alerts: StockAlertDTO[]) => {
                 if (!alerts.length) return forkJoin([]);
 
                 // Fetch product details for each alert to get unitPrice
-                const priceRequests = alerts.map(a => this.productService.getById(a.productId).pipe(
-                    map(product => ({ ...a, unitPrice: product.unitPrice || 0 }))
+                const priceRequests = alerts.map((a: StockAlertDTO) => this.productService.getById(a.productId).pipe(
+                    map((product: any) => ({ ...a, unitPrice: product.unitPrice || 0 }))
                 ));
                 return forkJoin(priceRequests);
             })
         ).subscribe({
-            next: (data) => { this.orderAlerts = data as any; this.showOrderModal = true; this.loadingOrderData = false; this.cdr.detectChanges(); },
+            next: (data: any) => { this.orderAlerts = data as any; this.showOrderModal = true; this.loadingOrderData = false; this.cdr.detectChanges(); },
             error: () => { this.messageService.showError('Error al calcular los productos'); this.loadingOrderData = false; this.cdr.detectChanges(); }
         });
     }
@@ -367,7 +383,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         const sortParam = `${backendCol},${this.sortDirPredictions}`;
 
         this.stockAlertService.getPredictions(page, this.pageSize, sortParam).subscribe({
-            next: (data) => {
+            next: (data: any) => {
                 this.ngZone.run(() => {
                     this.predictions = data.content;
                     this.totalPages = data.totalPages;
@@ -426,8 +442,18 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     }
 
     openPredictionMobileModal(prediction: StockPredictionResponseDTO): void {
-        this.selectedPredictionForMobile = prediction;
+        const currentStock = prediction.currentStock || 0;
+        const dailyAvg = prediction.projectedConsumption / 14;
+        const daysOfCoverage = dailyAvg > 0 ? currentStock / dailyAvg : 0;
+
+        this.selectedPredictionForMobile = {
+            ...prediction,
+            currentStock: currentStock,
+            unit: prediction.projectedConsumptionUnit,
+            daysOfCoverage: Math.round(daysOfCoverage)
+        };
         this.showPredictionMobileModal = true;
+        this.loadModalChartData(prediction.productId, currentStock, dailyAvg);
     }
 
     closePredictionMobileModal(): void {
@@ -435,113 +461,117 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         this.selectedPredictionForMobile = null;
     }
 
-    loadChartData(): void {
-        this.loadingCharts = true;
+    loadModalChartData(productId: number, currentStock: number, dailyAverage: number): void {
+        this.loadingModalChart = true;
+        this.stockOutDay = null;
+        this.modalChartData = { labels: [], datasets: [] };
         this.cdr.markForCheck();
 
         forkJoin({
-            history: this.stockAlertService.getWeeklyHistory(0, 200),
-            forecast: this.stockAlertService.getDailyForecast(0, 200)
+            history: this.stockLedgerService.getConsumptionBreakdown(productId, { lastDays: 14 }),
+            forecast: this.stockAlertService.getDailyForecastByProduct(productId).pipe(
+                catchError(() => of(null as DailyForecastResponse | null))
+            )
         }).subscribe({
-            next: ({ history, forecast }) => {
+            next: ({ history, forecast }: { history: ConsumptionBreakdownDTO, forecast: DailyForecastResponse | null }) => {
                 this.ngZone.run(() => {
-                    this.weeklyHistoryAll = history.content ?? [];
-                    this.dailyForecastAll = forecast.content ?? [];
-                    this.chartsLoaded = true;
-                    this.loadingCharts = false;
+                    const labels: string[] = [];
+                    const historyData: (number | null)[] = [];
+                    const predictionData: (number | null)[] = [];
+                    const stockLevelData: (number | null)[] = [];
 
-                    if (this.weeklyHistoryAll.length > 0) {
-                        this.selectedChartProductId = this.weeklyHistoryAll[0].productId;
-                    } else if (this.dailyForecastAll.length > 0) {
-                        this.selectedChartProductId = this.dailyForecastAll[0].productId;
-                    }
+                    // 1. Process History (Last 14 days)
+                    history.breakdown.forEach((day: any) => {
+                        labels.push(new Date(day.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
+                        historyData.push(day.consumed);
+                        predictionData.push(null);
+                        stockLevelData.push(null);
+                    });
 
+                    // 2. Add Current Day Marker (Today)
+                    const today = new Date();
+                    const todayDateStr = today.toISOString().split('T')[0];
+                    const existingToday = history.breakdown.find((d: any) => d.date === todayDateStr);
+                    
+                    labels.push('Hoy');
+                    historyData.push(existingToday ? existingToday.consumed : 0); 
+                    predictionData.push(dailyAverage);
+                    stockLevelData.push(currentStock);
+
+                    // 3. Process Forecast (Fallback to 14 days if null or empty)
+                    let tempStock = currentStock;
+                    let outDayFound = false;
+                    
+                    const forecastValues = (forecast && forecast.dailyForecast && forecast.dailyForecast.length > 0) 
+                        ? forecast.dailyForecast 
+                        : Array(14).fill(dailyAverage);
+
+                    forecastValues.forEach((val: number, i: number) => {
+                        const date = new Date();
+                        date.setDate(today.getDate() + i + 1);
+                        labels.push(date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
+                        
+                        historyData.push(null);
+                        predictionData.push(val);
+                        
+                        tempStock = Math.max(0, tempStock - val);
+                        stockLevelData.push(tempStock);
+
+                        if (tempStock === 0 && !outDayFound) {
+                            this.stockOutDay = date.toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
+                            outDayFound = true;
+                        }
+                    });
+
+                    this.modalChartData = {
+                        labels,
+                        datasets: [
+                            {
+                                type: 'line',
+                                label: 'Stock Estimado',
+                                data: stockLevelData,
+                                borderColor: '#0ea5e9',
+                                backgroundColor: 'transparent',
+                                borderWidth: 3,
+                                pointBackgroundColor: '#fff',
+                                pointBorderColor: '#0ea5e9',
+                                pointRadius: 5,
+                                pointHoverRadius: 7,
+                                tension: 0.1,
+                                order: 1,
+                                spanGaps: true
+                            } as any,
+                            {
+                                type: 'bar',
+                                label: 'Consumo Histórico',
+                                data: historyData,
+                                backgroundColor: 'rgba(54, 162, 235, 0.4)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1,
+                                order: 2
+                            } as any,
+                            {
+                                type: 'bar',
+                                label: 'Consumo Proyectado',
+                                data: predictionData,
+                                backgroundColor: 'rgba(255, 99, 132, 0.3)',
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                borderWidth: 1,
+                                order: 2
+                            } as any
+                        ]
+                    };
+
+                    this.loadingModalChart = false;
                     this.cdr.markForCheck();
                 });
             },
             error: () => {
-                this.ngZone.run(() => {
-                    this.messageService.showError('Error al cargar datos de gráficas');
-                    this.loadingCharts = false;
-                    this.cdr.markForCheck();
-                });
+                this.messageService.showError('Error al cargar datos de la gráfica');
+                this.loadingModalChart = false;
+                this.cdr.markForCheck();
             }
         });
-    }
-
-    onChartProductChange(productId: number | string): void {
-        const parsed = typeof productId === 'string' ? Number(productId) : productId;
-        this.selectedChartProductId = Number.isFinite(parsed) ? parsed : null;
-        this.cdr.markForCheck();
-    }
-
-    get selectedHistory(): WeeklyConsumptionResponse | null {
-        return this.weeklyHistoryAll.find(h => h.productId === this.selectedChartProductId) ?? null;
-    }
-
-    get selectedForecast(): DailyForecastResponse | null {
-        return this.dailyForecastAll.find(f => f.productId === this.selectedChartProductId) ?? null;
-    }
-
-    get chartProducts(): Array<{ productId: number; productName: string; unit: string }> {
-        const productMap = new Map<number, { productId: number; productName: string; unit: string }>();
-
-        for (const history of this.weeklyHistoryAll) {
-            productMap.set(history.productId, {
-                productId: history.productId,
-                productName: history.productName,
-                unit: history.unit
-            });
-        }
-
-        for (const forecast of this.dailyForecastAll) {
-            if (!productMap.has(forecast.productId)) {
-                productMap.set(forecast.productId, {
-                    productId: forecast.productId,
-                    productName: forecast.productName,
-                    unit: forecast.unit
-                });
-            }
-        }
-
-        return Array.from(productMap.values()).sort((a, b) => a.productName.localeCompare(b.productName));
-    }
-
-    get weeklyChartData(): ChartData<'bar'> {
-        const history = this.selectedHistory;
-        if (!history) {
-            return { labels: [], datasets: [] };
-        }
-
-        return {
-            labels: history.weeklyConsumption.map((_, i) => `Sem ${i + 1}`),
-            datasets: [{
-                label: `Consumo (${history.unit})`,
-                data: history.weeklyConsumption,
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        };
-    }
-
-    get dailyChartData(): ChartData<'line'> {
-        const forecast = this.selectedForecast;
-        if (!forecast) {
-            return { labels: [], datasets: [] };
-        }
-
-        return {
-            labels: forecast.dailyForecast.map((_, i) => `Día ${i + 1}`),
-            datasets: [{
-                label: `Consumo proyectado (${forecast.unit})`,
-                data: forecast.dailyForecast,
-                borderColor: 'rgba(255, 99, 132, 1)',
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                fill: true,
-                tension: 0.3
-            }]
-        };
     }
 
     formatDate(dateStr: string): string {
