@@ -56,7 +56,12 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "POST /api/orders/reception",
     "POST /api/order-details",
     "PUT /api/order-details/{orderId}/{productId}",
-    "PATCH /api/users/{id}/password"
+    "PATCH /api/users/{id}/password",
+    "GET /api/users/{id}",
+    "GET /api/users/students",
+    "GET /api/users/teachers",
+    "POST /api/users/{id}/escalate",
+    "POST /api/users/{id}/de-escalate"
   ],
   ADMIN: [
     "GET /api/products/with-ledger",
@@ -130,6 +135,11 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "DELETE /api/users/{id}",
     "PATCH /api/users/{id}/password",
     "PATCH /api/users/{id}/hidden",
+    "GET /api/users/students",
+    "GET /api/users/teachers",
+    "POST /api/users/{id}/escalate",
+    "POST /api/users/{id}/de-escalate",
+    "PATCH /api/users/{id}/teacher",
     "GET /api/recipe-audits",
     "GET /api/recipe-audits/{id}",
     "GET /api/recipe-audits/by-user/{id}",

@@ -39,6 +39,11 @@ export class WelcomeComponent implements OnInit, OnDestroy {
     return this.navCards;
   }
 
+  get isChefOrAdmin(): boolean {
+    const role = this.authService.getRole();
+    return role === 'CHEF' || role === 'ADMIN';
+  }
+
   get isAdmin(): boolean {
     return this.authService.getRole() === 'ADMIN';
   }

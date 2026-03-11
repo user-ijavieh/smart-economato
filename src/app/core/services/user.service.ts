@@ -114,11 +114,31 @@ export class UserService {
     return this.getAll(0, 10000).pipe(map(page => page.content));
   }
 
+  getMyStudents(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.url}/students`);
+  }
+
+  escalateRoles(id: number, durationMinutes: number): Observable<void> {
+    return this.http.post<void>(`${this.url}/${id}/escalate`, { durationMinutes });
+  }
+
+  deescalateRoles(id: number): Observable<void> {
+    return this.http.post<void>(`${this.url}/${id}/de-escalate`, {});
+  }
+
   getByRole(role: string, sort?: string): Observable<User[]> {
     let params = new HttpParams();
     if (sort) {
       params = params.set('sort', sort);
     }
     return this.http.get<User[]>(`${this.url}/by-role/${role}`, { params });
+  }
+
+  getTeachers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.url}/teachers`);
+  }
+
+  assignTeacher(id: number, teacherId: number | null): Observable<User> {
+    return this.http.patch<User>(`${this.url}/${id}/teacher`, { teacherId });
   }
 }
