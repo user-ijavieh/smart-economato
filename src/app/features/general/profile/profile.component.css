@@ -239,12 +239,12 @@ button:disabled {
 }
 
 .btn-success {
-  background: #22c55e;
+  background: linear-gradient(135deg, #b84b44 0%, #a03d37 100%);
   color: white;
 }
 
 .btn-success:hover:not(:disabled) {
-  background: #16a34a;
+  background: linear-gradient(135deg, #a03d37 0%, #8c3430 100%);
 }
 
 .btn-danger {
