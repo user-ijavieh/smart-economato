@@ -254,6 +254,7 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
+
   #sidebar>ul::-webkit-scrollbar {
     display: none;
   }

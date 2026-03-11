@@ -22,12 +22,10 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    120deg,
-    rgba(0, 0, 0, 0.45) 0%,
-    rgba(0, 0, 0, 0.15) 60%,
-    rgba(0, 0, 0, 0.05) 100%
-  );
+  background: linear-gradient(120deg,
+      rgba(0, 0, 0, 0.45) 0%,
+      rgba(0, 0, 0, 0.15) 60%,
+      rgba(0, 0, 0, 0.05) 100%);
   pointer-events: none;
 }
 
@@ -57,6 +55,7 @@
     opacity: 0;
     transform: translateY(24px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -97,8 +96,15 @@
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ── Formulario ── */
@@ -198,7 +204,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, transparent 100%);
   pointer-events: none;
 }
 
