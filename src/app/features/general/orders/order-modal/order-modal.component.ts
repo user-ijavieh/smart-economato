@@ -4,9 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { OrderService } from '../../../../core/services/order.service';
 import { ProductService } from '../../../../core/services/product.service';
 import { UserService } from '../../../../core/services/user.service';
+import { SupplierService } from '../../../../core/services/supplier.service';
 import { MessageService } from '../../../../core/services/message.service';
 import { Product } from '../../../../shared/models/product.model';
 import { User } from '../../../../shared/models/user.model';
+import { Supplier } from '../../../../shared/models/supplier.model';
 import { OrderRequest } from '../../../../shared/models/order.model';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
@@ -29,6 +31,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   private orderService = inject(OrderService);
   private productService = inject(ProductService);
   private userService = inject(UserService);
+  private supplierService = inject(SupplierService);
   private messageService = inject(MessageService);
   private cdr = inject(ChangeDetectorRef);
 
@@ -37,6 +40,8 @@ export class OrderModalComponent implements OnInit, OnDestroy {
 
   users: User[] = [];
   selectedUserId: number | null = null;
+  suppliers: Supplier[] = [];
+  selectedSupplierId: number | null = null;
   products: Product[] = [];
   orderItems: OrderItem[] = [];
   showProductDropdown = false;
@@ -61,6 +66,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initialiseSearchSubscription();
     this.loadUsers();
+    this.loadSuppliers();
     this.loadProducts();
     // Listener para cerrar dropdown al hacer clic fuera
     document.addEventListener('click', this.onDocumentClick.bind(this));
@@ -97,6 +103,19 @@ export class OrderModalComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.messageService.showError('Error al cargar usuarios');
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  loadSuppliers(): void {
+    this.supplierService.getAll(0, 100).subscribe({
+      next: (page) => {
+        this.suppliers = page.content;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.messageService.showError('Error al cargar proveedores');
         this.cdr.markForCheck();
       }
     });
@@ -250,6 +269,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
 
     const orderRequest: OrderRequest = {
       userId: this.selectedUserId,
+      supplierId: this.selectedSupplierId || undefined,
       details: this.orderItems.map(item => ({
         productId: item.productId,
         quantity: item.quantity,

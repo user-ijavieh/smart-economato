@@ -1,4 +1,4 @@
-<div class="modal-overlay" (click)="close()">
+<div class="modal-overlay">
   <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-dialog">
     @if (order) {
@@ -32,6 +32,23 @@
             </div>
           </div>
         </div>
+
+        <!-- Supplier Information -->
+        @if (order.supplierId) {
+        <div class="info-section">
+          <h3>Información del Proveedor</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Nombre:</span>
+              <span class="info-value">{{ order.supplierName }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">ID:</span>
+              <span class="info-value">#{{ order.supplierId }}</span>
+            </div>
+          </div>
+        </div>
+        }
 
         <!-- Order Information -->
         <div class="info-section">

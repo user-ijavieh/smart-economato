@@ -231,40 +231,88 @@
   box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
 }
 
-/* DISEÑO PARA MÓVIL (Pantallas pequeñas - max 650px) */
-@media (max-width: 650px) {
+/* DISEÑO PARA MÓVIL (Pantallas pequeñas - max 768px) */
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 0;
+  }
+
+  .modal-container {
+    height: 100%;
+    margin: 0;
+    max-width: 100%;
+  }
+
+  .modal-dialog {
+    height: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
   .modal-header {
-    padding: 10px 20px; 
+    padding: 20px; 
+    border-radius: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
   }
 
   .modal-header h2 {
-    font-size: 1.2rem; 
+    font-size: 1.3rem; 
     margin-bottom: 5px;
   }
 
   .order-status-badge {
-    font-size: 0.75rem; 
-    padding: 4px 10px;
+    font-size: 0.8rem; 
+    padding: 5px 12px;
+  }
+
+  .modal-close {
+    width: 40px;
+    height: 40px;
   }
 
   .modal-body {
-    padding: 16px;
+    padding: 20px;
+  }
+
+  .info-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .ingredients-table {
-    font-size: 0.78rem;
-    width: 100%;
+    font-size: 0.85rem;
+    display: block;
+    overflow-x: auto;
   }
 
   .ingredients-table thead th,
   .ingredients-table tbody td,
   .ingredients-table tfoot td {
-    padding: 8px 5px;
+    padding: 12px 8px;
+    white-space: nowrap;
   }
 
-  .ingredients-table thead th:nth-child(n+2),
-  .ingredients-table tbody td:nth-child(n+2),
-  .ingredients-table tfoot td {
-    white-space: nowrap;
+  .modal-footer {
+    padding: 15px 20px;
+    flex-direction: column;
+    gap: 10px;
+    position: sticky;
+    bottom: 0;
+    background: #f9fafb;
+    border-radius: 0;
+  }
+
+  .btn-print, .btn-close-modal {
+    width: 100%;
+    justify-content: center;
+    height: 50px;
+    padding: 0;
   }
 }

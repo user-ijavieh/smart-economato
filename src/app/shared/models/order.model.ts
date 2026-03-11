@@ -4,6 +4,8 @@ export interface Order {
   id: number;
   userId: number;
   userName: string;
+  supplierId?: number;
+  supplierName?: string;
   status: OrderStatus;
   orderDate: string;
   receptionDate?: string;
@@ -24,11 +26,11 @@ export interface OrderDetail {
 
 export interface OrderRequest {
   userId: number;
+  supplierId?: number;
   details: { productId: number; quantity: number; unitPrice: number }[];
 }
 
 export interface OrderReceptionRequest {
   orderId: number;
-  status: OrderStatus;
   items: { productId: number; quantityReceived: number }[];
 }

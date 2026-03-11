@@ -1,4 +1,4 @@
-<div class="modal-overlay modal-overlay-base" (click)="close()">
+<div class="modal-overlay modal-overlay-base">
   <div class="modal-dialog modal-dialog-base" (click)="$event.stopPropagation()">
     <div class="modal-header-base">
       <h2>Crear Nuevo Pedido</h2>
@@ -22,6 +22,22 @@
             @for (user of users; track user.id) {
             <option [ngValue]="user.id">
               {{ user.name }} ({{ user.user }}) - {{ user.role }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <!-- Supplier Selection -->
+      <div class="user-selection-section">
+        <h3>Seleccionar Proveedor</h3>
+        <div class="form-group">
+          <label for="supplierSelect">Proveedor (Opcional)</label>
+          <select id="supplierSelect" [(ngModel)]="selectedSupplierId" class="form-control">
+            <option [ngValue]="null">-- Seleccionar proveedor --</option>
+            @for (supplier of suppliers; track supplier.id) {
+            <option [ngValue]="supplier.id">
+              {{ supplier.name }}
             </option>
             }
           </select>
