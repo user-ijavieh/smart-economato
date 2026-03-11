@@ -3,11 +3,12 @@ export interface User {
   name: string;
   user: string;
   role: 'ADMIN' | 'CHEF' | 'USER' | 'ELEVATED';
+  teacher?: User;
 }
 
 export interface UserRequest {
   name: string;
-  password: string;
+  password?: string;
   user: string;
   role: string;
 }
