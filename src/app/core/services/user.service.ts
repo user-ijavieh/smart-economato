@@ -134,11 +134,5 @@ export class UserService {
     return this.http.get<User[]>(`${this.url}/by-role/${role}`, { params });
   }
 
-  getTeachers(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.url}/teachers`);
-  }
-
-  assignTeacher(id: number, teacherId: number | null): Observable<User> {
-    return this.http.patch<User>(`${this.url}/${id}/teacher`, { teacherId });
-  }
 }
+
