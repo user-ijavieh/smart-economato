@@ -121,4 +121,16 @@ export class UserService {
     }
     return this.http.get<User[]>(`${this.url}/by-role/${role}`, { params });
   }
+
+  getStudents(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.url}/students`);
+  }
+
+  escalateUser(id: number, durationMinutes: number): Observable<void> {
+    return this.http.post<void>(`${this.url}/${id}/escalate`, { durationMinutes });
+  }
+
+  deescalateUser(id: number): Observable<void> {
+    return this.http.post<void>(`${this.url}/${id}/de-escalate`, {});
+  }
 }
