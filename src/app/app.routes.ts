@@ -102,7 +102,8 @@ export const routes: Routes = [
       {
         path: 'profile',
         loadComponent: () =>
-          import('./features/general/profile/profile.component').then(m => m.ProfileComponent)
+          import('./features/general/profile/profile.component').then(m => m.ProfileComponent),
+        canActivate: [roleGuard('ADMIN', 'CHEF')]
       },
       {
         path: '',

@@ -256,22 +256,83 @@ export class UsersManagementComponent implements OnInit {
 
     onSaveUser(data: any): void {
         if (this.selectedUser) {
-            // Edit mode
+            // Check if there are changes in basic fields
+            const hasBasicChanges = data.name !== this.selectedUser.name ||
+                                    data.user !== this.selectedUser.user ||
+                                    data.role !== this.selectedUser.role ||
+                                    !!data.password;
+
+            const currentTeacherId = this.selectedUser.teacher?.id || null;
+            const formTeacherId = data.teacherId ? Number(data.teacherId) : null;
+            const hasTeacherChange = data.role === 'USER' && data.teacherId !== undefined && formTeacherId !== currentTeacherId;
+
+            // If absolutely nothing changed
+            if (!hasBasicChanges && !hasTeacherChange) {
+                this.closeFormModal();
+                return;
+            }
+
+            // If ONLY teacher changed, skip the PUT request entirely to avoid password validation error
+            if (!hasBasicChanges && hasTeacherChange) {
+                this.userService.assignTeacher(this.selectedUser.id, formTeacherId).subscribe({
+                    next: () => {
+                        this.messageService.showSuccess('Profesor asignado correctamente');
+                        this.closeFormModal();
+                        this.loadUsers();
+                    },
+                    error: (err) => {
+                        console.error('Error assigning teacher:', err);
+                        this.messageService.showError('Error al asignar el profesor');
+                    }
+                });
+                return; // Early return to avoid update call!
+            }
+
+            // If basic fields changed (with or without teacher change)
             const request: UserRequest = {
                 name: data.name,
                 user: data.user,
-                password: data.password || '',
                 role: data.role
             };
+            
+            if (data.password) {
+                request.password = data.password;
+            }
+
             this.userService.update(this.selectedUser.id, request).subscribe({
                 next: () => {
-                    this.messageService.showSuccess('Usuario actualizado correctamente');
-                    this.closeFormModal();
-                    this.loadUsers();
+                    // Check if teacher assignment was provided (for USER role only)
+                    if (hasTeacherChange) {
+                        this.userService.assignTeacher(this.selectedUser!.id, formTeacherId).subscribe({
+                            next: () => {
+                                this.messageService.showSuccess('Usuario y profesor actualizados correctamente');
+                                this.closeFormModal();
+                                this.loadUsers();
+                            },
+                            error: (err) => {
+                                console.error('Error assigning teacher:', err);
+                                this.messageService.showError('Usuario actualizado, pero hubo un error al asignar el profesor');
+                                this.closeFormModal();
+                                this.loadUsers();
+                            }
+                        });
+                    } else {
+                        this.messageService.showSuccess('Usuario actualizado correctamente');
+                        this.closeFormModal();
+                        this.loadUsers();
+                    }
                 },
                 error: (err) => {
                     console.error('Error updating user:', err);
-                    this.messageService.showError('Error al actualizar el usuario');
+                    
+                    let errorMsg = 'Error al actualizar el usuario principal';
+                    if (err.error && typeof err.error === 'object') {
+                        const keys = Object.keys(err.error);
+                        if (keys.length > 0) {
+                            errorMsg += `: ${err.error[keys[0]]}`;
+                        }
+                    }
+                    this.messageService.showError(errorMsg);
                 }
             });
         } else {

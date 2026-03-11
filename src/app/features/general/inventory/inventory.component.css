@@ -598,48 +598,26 @@ th.sortable[data-sort-dir='desc']::after {
   align-items: center;
 }
 
-/** ===== SEARCH GROUP (input + scan button) ===== */
+/** ===== SEARCH GROUP ===== */
 
 .search-group {
   display: flex;
   align-items: center;
-  gap: 0;
   flex: 1;
   min-width: 200px;
   max-width: 400px;
 }
 
 .search-group input[type='text'] {
-  border-top-right-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
-  border-right: none !important;
   flex: 1;
+  width: 100%;
 }
 
 .btn-scan {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 14px !important;
-  border-top-left-radius: 0 !important;
-  border-bottom-left-radius: 0 !important;
-  border-top-right-radius: 8px !important;
-  border-bottom-right-radius: 8px !important;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
-  border: 2px solid #6366f1 !important;
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: none !important;
-  min-width: unset !important;
-  width: auto !important;
-}
-
-.btn-scan:hover {
-  background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
-  border-color: #4f46e5 !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4) !important;
+  gap: 8px;
 }
 
 .btn-scan svg {
