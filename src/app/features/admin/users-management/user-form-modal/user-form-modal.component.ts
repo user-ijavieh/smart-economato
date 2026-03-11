@@ -1,8 +1,7 @@
-import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { User } from '../../../../shared/models/user.model';
-import { UserService } from '../../../../core/services/user.service';
 import { generateUsername, generatePassword } from '../../../../core/utils/credentials-generator';
 
 @Component({
@@ -18,11 +17,8 @@ export class UserFormModalComponent implements OnInit {
     @Output() save = new EventEmitter<any>();
     @Output() close = new EventEmitter<void>();
 
-    private userService = inject(UserService);
-
     userForm!: FormGroup;
     roles = ['ADMIN', 'CHEF', 'USER'];
-    teachers: User[] = [];
 
     // Auto-generated credentials (create mode only)
     generatedUser = '';
@@ -39,15 +35,12 @@ export class UserFormModalComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.loadTeachers();
-
         if (this.isEditMode) {
             this.userForm = new FormGroup({
                 name: new FormControl(this.user?.name || '', [Validators.required, Validators.minLength(3)]),
                 user: new FormControl(this.user?.user || '', [Validators.required, Validators.minLength(3)]),
                 password: new FormControl(''),
-                role: new FormControl(this.user?.role || 'USER', [Validators.required]),
-                teacherId: new FormControl(this.user?.teacher?.id || '')
+                role: new FormControl(this.user?.role || 'USER', [Validators.required])
             });
         } else {
             // Create mode: only name and role
@@ -116,10 +109,4 @@ export class UserFormModalComponent implements OnInit {
         }
     }
 
-    private loadTeachers(): void {
-        this.userService.getTeachers().subscribe({
-            next: (data) => this.teachers = data,
-            error: (err) => console.error('Error loading teachers:', err)
-        });
-    }
 }
