@@ -1,19 +1,24 @@
 <div class="login-wrapper">
-  <div class="container">
-    <!-- Título -->
-    <div class="title">
-      <h1>Smart Economato</h1>
-    </div>
+  <div class="card">
+
+    <!-- Encabezado -->
+    <header class="card-header">
+      <p class="card-eyebrow">Gestión de Economato</p>
+      <h1 class="card-title">Smart <span>Economato</span></h1>
+    </header>
 
     <!-- Formulario -->
-    <div class="login">
-      <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-        <label for="name">Usuario:</label>
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+
+      <div class="form-group">
+        <label class="form-label" for="name">Usuario</label>
         <input
+          class="form-input"
           id="name"
           type="text"
           formControlName="name"
-          placeholder="admin"
+          placeholder="Introduce tu usuario"
+          autocomplete="username"
           [class.input-error]="loginForm.get('name')?.invalid && loginForm.get('name')?.touched"
         />
         @if (loginForm.get('name')?.hasError('required') && loginForm.get('name')?.touched) {
@@ -22,37 +27,43 @@
         @if (loginForm.get('name')?.hasError('minlength') && loginForm.get('name')?.touched) {
           <p class="field-error">El usuario debe tener al menos 3 caracteres</p>
         }
+      </div>
 
-        <label for="password">Contraseña:</label>
+      <div class="form-group">
+        <label class="form-label" for="password">Contraseña</label>
         <input
+          class="form-input"
           id="password"
           type="password"
           formControlName="password"
-          placeholder=" *********"
+          placeholder="Introduce tu contraseña"
+          autocomplete="current-password"
           [class.input-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
         />
         @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
           <p class="field-error">La contraseña es requerida</p>
         }
+      </div>
 
-        @if (errorMessage) {
-          <div class="error-banner">{{ errorMessage }}</div>
+      @if (errorMessage) {
+        <div class="error-banner">{{ errorMessage }}</div>
+      }
+
+      <button id="login-submit-btn" class="btn-submit" type="submit" [disabled]="loginForm.invalid || loading">
+        @if (loading) {
+          Ingresando...
+        } @else {
+          Entrar
         }
+      </button>
 
-        <button type="submit" [disabled]="loginForm.invalid || loading">
-          @if (loading) {
-            Ingresando...
-          } @else {
-            Entrar
-          }
-        </button>
-      </form>
-    </div>
+    </form>
 
-    <!-- Logos -->
+    <!-- Logos institucionales -->
     <div class="logos">
-      <img src="/assets/img/logoGobCan.png" alt="logoGobCan">
-      <img src="/assets/img/Candelaria.svg" alt="logoCandelaria">
+      <img src="/assets/img/logoGobCan.png" alt="Gobierno de Canarias" />
+      <img src="/assets/img/Candelaria.svg" alt="Candelaria" />
     </div>
+
   </div>
 </div>
