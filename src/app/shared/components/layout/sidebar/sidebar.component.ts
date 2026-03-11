@@ -80,7 +80,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     const userRole = this.getUserRole();
     if (userRole === 'USER') {
       return this.defaultNavItems.filter(item =>
-        item.label !== 'Recepción' && item.label !== 'Pedidos'
+        item.label !== 'Recepción' && item.label !== 'Pedidos' && item.label !== 'Perfil'
       );
     }
     return this.defaultNavItems;
