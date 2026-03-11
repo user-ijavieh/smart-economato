@@ -109,6 +109,23 @@
                 </select>
             </div>
 
+            <!-- Teacher assignment for USER role -->
+            @if (isEditMode && userForm.get('role')?.value === 'USER') {
+            <div class="form-group" style="padding-top: 15px;">
+                <label for="teacherId">Profesor Asignado</label>
+                <select id="teacherId" formControlName="teacherId">
+                    <option value="">Sin asignar</option>
+                    @for (teacher of teachers; track teacher.id) {
+                    <option [value]="teacher.id">{{ teacher.name }} ({{ teacher.role }})</option>
+                    }
+                </select>
+                <p style="font-size: 0.85rem; color: #64748b; margin-top: 5px;">
+                    Opcional: Asigna un profesor a este usuario.
+                </p>
+            </div>
+            }
+
+            <!-- UI Additions para Permisos Temporales -->
             <div class="modal-actions">
                 <button type="button" class="btn-cancel" (click)="onClose()">Cancelar</button>
                 <button type="submit" class="btn-save" [disabled]="userForm.invalid">
