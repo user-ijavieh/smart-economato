@@ -1,91 +1,138 @@
-<div class="page-header">
-  <h1>PERFIL</h1>
+<div class="header-perfil">
+  <h1>Perfil</h1>
 </div>
 
-<div class="page-content">
-  <!-- TODO: Agregar más opciones de perfil general de usuario si lo desean -->
+<div class="contenedor-principal">
+  <!-- Información del usuario -->
+  <div class="user-card">
+    <div class="user-avatar">
+      {{ userInitials }}
+    </div>
+    <div class="user-info">
+      <h2>{{ currentUser?.name || 'Cargando...' }}</h2>
+      <p class="user-role">{{ currentUser?.role || '' }}</p>
+      <p class="user-username">@{{ currentUser?.user || '' }}</p>
+    </div>
+  </div>
 
-  @if (canManageStudents()) {
-    <section class="students-section">
-      <h2 class="section-title">Gestión de Alumnos</h2>
+  <!-- Sección de Alumnos (solo CHEF) -->
+  @if (isChef) {
+    <div class="students-section">
+      <div class="section-header">
+        <h2>Mis Alumnos</h2>
+        <span class="students-count">{{ students.length }} total</span>
+      </div>
 
-      @if (loading) {
-        <p class="empty-message">Cargando...</p>
+      @if (loadingStudents) {
+        <div class="loading-state">
+          <p>Cargando alumnos...</p>
+        </div>
       } @else if (students.length === 0) {
-        <p class="empty-message">No hay alumnos asignados.</p>
+        <div class="empty-state">
+          <p>No tienes alumnos asignados actualmente.</p>
+        </div>
       } @else {
-        <div class="students-grid">
-          @for (student of students; track student.id) {
-            <div class="student-card" [class.elevated]="isElevated(student)">
-              <div class="student-header">
-                <div class="student-avatar">{{ getInitials(student.name) }}</div>
-                <div class="student-info">
-                  <h3>{{ student.name }}</h3>
-                  <p>{{ student.user }}</p>
-                  <span class="role-badge" [class.elevated]="isElevated(student)">
-                    {{ student.role }}
-                  </span>
-                </div>
-              </div>
-
-              <div class="student-actions">
-                @if (!isElevated(student)) {
-                  <button class="btn-action btn-primary" (click)="openEscalateModal(student)">
-                    Dar Permisos
-                  </button>
-                } @else {
-                  <button class="btn-action btn-danger" (click)="revokePermissions(student)">
-                    Revocar Permisos
-                  </button>
-                }
-              </div>
-            </div>
-          }
+        <div class="tabla-contenedor">
+          <table>
+            <thead>
+              <tr>
+                <th>Alumno</th>
+                <th>Usuario</th>
+                <th>Rol Actual</th>
+                <th>Permisos Temporales</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (student of students; track student.id) {
+                <tr>
+                  <td>
+                    <div class="student-name">
+                      <div class="mini-avatar">{{ getInitials(student.name) }}</div>
+                      <span>{{ student.name }}</span>
+                    </div>
+                  </td>
+                  <td>{{ student.user }}</td>
+                  <td>
+                    <span class="role-badge" [class.elevated]="student.role === 'ELEVATED'">
+                      {{ student.role === 'ELEVATED' ? 'TEMPORAL (CHEF)' : student.role }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="actions-container">
+                      @if (student.role !== 'ELEVATED') {
+                        <button class="btn-success" (click)="openEscalateModal(student)">
+                          Dar Permisos
+                        </button>
+                      } @else {
+                        <button
+                          class="btn-danger"
+                          (click)="deescalate(student)"
+                          [disabled]="isProcessing(student.id)"
+                        >
+                          {{ isProcessing(student.id) ? 'Revocando...' : 'Revocar Permisos' }}
+                        </button>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
         </div>
       }
-    </section>
-  } @else {
-    <p class="empty-message">Módulo de perfil en desarrollo...</p>
+    </div>
   }
 </div>
 
-<!-- Modal para elevar permisos -->
+<!-- Modal para Dar Permisos Temporales -->
 @if (showEscalateModal && selectedStudent) {
-  <div class="scanner-modal-overlay" (click)="closeEscalateModal()">
-    <div
-      class="scanner-modal"
-      style="max-width: 400px; padding: 20px"
-      (click)="$event.stopPropagation()"
-    >
-      <div class="scanner-modal-header" style="border-bottom: none; padding-bottom: 0">
+  <div class="modal-overlay" (click)="closeEscalateModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
         <h2>Permisos Temporales</h2>
+        <button class="modal-close-btn" (click)="closeEscalateModal()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="currentColor"
+          >
+            <path
+              d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"
+            />
+          </svg>
+        </button>
       </div>
-      <div class="scanner-modal-body" style="padding-top: 20px">
+      <div class="modal-body">
         <p>
-          Elevar permisos a <strong>{{ selectedStudent.name }}</strong>
+          Vas a escalar los permisos del alumno <strong>{{ selectedStudent.name }}</strong> a CHEF
+          temporalmente.
         </p>
-        <div class="escalate-form">
+
+        <div class="form-group">
           <label for="duration">Duración (minutos)</label>
           <input
             type="number"
             id="duration"
-            [(ngModel)]="escalateDurationMinutes"
+            [(ngModel)]="durationInput"
             min="1"
             max="1440"
+            class="duration-input"
+            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1"
           />
-          <div class="escalate-actions" style="margin-top: 15px">
-            <button class="btn-action btn-secondary" style="flex: 1" (click)="closeEscalateModal()">
-              Cancelar
-            </button>
-            <button class="btn-action btn-primary" style="flex: 1" (click)="confirmEscalate()">
-              Confirmar
-            </button>
-          </div>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeEscalateModal()">Cancelar</button>
+        <button
+          class="btn-success"
+          (click)="confirmEscalate()"
+          [disabled]="isProcessing(selectedStudent.id)"
+        >
+          {{ isProcessing(selectedStudent.id) ? 'Aplicando...' : 'Confirmar' }}
+        </button>
       </div>
     </div>
   </div>
 }
-
-<!-- Toast Notifications -->
-<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
