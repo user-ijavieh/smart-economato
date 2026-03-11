@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 export interface Toast {
   id: number;
@@ -21,6 +21,9 @@ export class MessageService {
   private confirmDialog$ = new BehaviorSubject<ConfirmDialog | null>(null);
   private confirmResolve?: (value: boolean) => void;
   private nextId = 0;
+
+  /** Emite el id del toast cuya duración ha expirado */
+  readonly toastExpired$ = new Subject<number>();
 
   get toasts(): Observable<Toast[]> {
     return this.toasts$.asObservable();
@@ -58,12 +61,12 @@ export class MessageService {
     this.confirmResolve?.(result);
   }
 
-  private addToast(message: string, type: Toast['type'], duration = 4000): void {
+  private addToast(message: string, type: Toast['type'], duration = 3000): void {
     const toast: Toast = { id: this.nextId++, message, type, duration };
 
     setTimeout(() => {
       this.toasts$.next([...this.toasts$.value, toast]);
-      setTimeout(() => this.removeToast(toast.id), duration);
+      setTimeout(() => this.toastExpired$.next(toast.id), duration);
     }, 0);
   }
 
