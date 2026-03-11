@@ -509,11 +509,23 @@
 
 /** ===== RESPONSIVE MÓVIL (UNIFICADO CON DETALLES) ===== */
 @media (max-width: 768px) {
+  .modal-overlay-base {
+    padding: 0;
+  }
+
+  .modal-dialog-base {
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
   .modal-header-base {
     padding: 18px 20px;
     position: sticky;
     top: 0;
     z-index: 100;
+    border-radius: 0;
   }
 
   .modal-header-base h2 {
@@ -521,118 +533,132 @@
   }
 
   .btn-close {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  .modal-body {
+    padding: 20px;
+  }
+
+  .user-selection-section h3,
+  .product-search-section h3,
+  .order-items-section h3 {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    padding-bottom: 8px;
+    margin-top: 10px;
+  }
+
+  .form-control, .btn-add-item {
+    height: 50px;
     font-size: 1rem;
   }
-}
 
-/* 2. Cuerpo del Modal */
-.modal-body {
-  padding: 15px;
-}
+  .items-list {
+    gap: 12px;
+    border: none;
+    background: transparent;
+  }
 
-.user-selection-section h3,
-.product-search-section h3,
-.order-items-section h3 {
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  padding-bottom: 8px;
-}
+  .order-item {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 15px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 10px;
+  }
 
-.items-list {
-  gap: 12px;
-  border: none;
-  background: transparent;
-}
+  .item-info {
+    width: 100%;
+  }
 
-.order-item {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 15px;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  position: relative;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
+  .item-name {
+    font-size: 0.95rem;
+    color: #b84b44;
+    text-transform: uppercase;
+  }
 
-.item-info {
-  width: 100%;
-}
+  .item-details {
+    font-size: 0.85rem;
+    color: #666;
+  }
 
-.item-name {
-  font-size: 0.9rem;
-  color: #b84b44;
-  text-transform: uppercase;
-}
+  .item-actions {
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px dashed #eee;
+    padding-top: 10px;
+    margin-top: 5px;
+  }
 
-.item-details {
-  font-size: 0.8rem;
-  color: #666;
-}
+  .btn-remove {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    font-size: 1.2rem;
+  }
 
-/* 4. Acciones y Botón de Borrar */
-.item-actions {
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-  border-top: 1px dashed #eee;
-  padding-top: 10px;
-  margin-top: 5px;
-}
+  /* 5. Resumen de Total */
+  .order-summary {
+    background: linear-gradient(135deg, #b84b44 0%, #a03d37 100%);
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    border: none;
+  }
 
-.btn-remove {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 28px;
-  height: 28px;
-  font-size: 1rem;
-}
+  .summary-label {
+    color: white;
+    font-size: 1rem;
+    text-transform: uppercase;
+  }
 
-/* 5. Resumen de Total (Estilo Rojo Detalles) */
-.order-summary {
-  background: linear-gradient(135deg, #b84b44 0%, #a03d37 100%);
-  padding: 15px;
-  border-radius: 12px;
-  margin-top: 20px;
-  border: none;
-}
+  .summary-value {
+    color: white;
+    font-size: 1.5rem;
+  }
 
-.summary-label {
-  color: white;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-}
+  /* 6. Footer con botones apilados */
+  .modal-footer {
+    position: sticky;
+    bottom: 0;
+    flex-direction: column;
+    padding: 20px;
+    gap: 12px;
+    background: #f9fafb;
+    border-radius: 0;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+  }
 
-.summary-value {
-  color: white;
-  font-size: 1.3rem;
-}
+  .btn-cancel,
+  .btn-submit {
+    width: 100%;
+    padding: 15px;
+    font-size: 1rem;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-/* 6. Footer con botones apilados */
-.modal-footer {
-  flex-direction: column;
-  padding: 15px;
-  gap: 10px;
-}
+  .btn-submit {
+    order: -1;
+  }
 
-.btn-cancel,
-.btn-submit {
-  width: 100%;
-  padding: 12px;
-  font-size: 0.9rem;
-}
-
-.btn-submit {
-  order: 0;
-}
-
-/* Ajuste de formulario de búsqueda */
-.form-row {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 12px;
+  /* Ajuste de formulario de búsqueda */
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
 }

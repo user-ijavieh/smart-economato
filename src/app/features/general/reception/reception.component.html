@@ -30,7 +30,7 @@
                 <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
                 <div>
                   <h3>Orden #{{ order.id }}</h3>
-                  <p>{{ order.userName }}</p>
+                  <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
                 </div>
               </div>
             </div>
@@ -107,7 +107,7 @@
                 <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
                 <div>
                   <h3>Orden #{{ order.id }}</h3>
-                  <p>{{ order.userName }}</p>
+                  <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
                 </div>
               </div>
             </div>
@@ -145,11 +145,8 @@
             <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
               Ver Detalles
             </button>
-            <button class="btn-action btn-success" (click)="confirmOrder(order)">
-              Confirmar Completa
-            </button>
-            <button class="btn-action btn-danger" (click)="markIncomplete(order)">
-              Marcar Incompleta
+            <button class="btn-action btn-success" (click)="openReceptionModal(order)">
+              Procesar Recepción
             </button>
           </div>
         </div>
@@ -184,7 +181,7 @@
                 <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
                 <div>
                   <h3>Orden #{{ order.id }}</h3>
-                  <p>{{ order.userName }}</p>
+                  <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
                 </div>
               </div>
             </div>
@@ -255,7 +252,7 @@
                 <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
                 <div>
                   <h3>Orden #{{ order.id }}</h3>
-                  <p>{{ order.userName }}</p>
+                  <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
                 </div>
               </div>
             </div>
@@ -293,6 +290,9 @@
             <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
               Ver Detalles
             </button>
+            <button class="btn-action btn-primary" (click)="reclamarFaltantes(order)">
+              Reclamar Faltantes
+            </button>
             <button class="btn-action btn-delete" (click)="deleteOrder(order)">
               Eliminar
             </button>
@@ -329,7 +329,7 @@
                 <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
                 <div>
                   <h3>Orden #{{ order.id }}</h3>
-                  <p>{{ order.userName }}</p>
+                  <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
                 </div>
               </div>
             </div>
@@ -390,4 +390,9 @@
 <!-- Details Modal -->
 @if (showDetailsModal && selectedOrder) {
 <app-order-details-modal [order]="selectedOrder" (closeModal)="closeDetailsModal()"></app-order-details-modal>
+}
+
+<!-- Reception Modal -->
+@if (showReceptionModal && selectedOrder) {
+<app-order-reception-modal [order]="selectedOrder" (closeModal)="closeReceptionModal()" (receptionProcessed)="loadOrders()"></app-order-reception-modal>
 }
