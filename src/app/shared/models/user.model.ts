@@ -3,7 +3,6 @@ export interface User {
   name: string;
   user: string;
   role: 'ADMIN' | 'CHEF' | 'USER' | 'ELEVATED';
-  teacher?: User;
 }
 
 export interface UserRequest {
