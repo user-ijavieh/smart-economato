@@ -22,6 +22,7 @@ export interface StockPredictionResponseDTO {
     productName: string;
     projectedConsumption: number;
     projectedConsumptionUnit: string;
+    currentStock: number;
     updatedAt: string;
 }
 
