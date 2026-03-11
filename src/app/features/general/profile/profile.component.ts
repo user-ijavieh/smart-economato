@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../core/services/user.service';
@@ -16,12 +16,14 @@ import { finalize } from 'rxjs';
 export class ProfileComponent implements OnInit {
   private userService = inject(UserService);
   private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
 
   currentUser: User | null = null;
   userInitials: string = '';
   isChef: boolean = false;
+  isAdmin: boolean = false;
   
-  students: User[] = [];
+  students: (User & { initials?: string })[] = [];
   loadingStudents = false;
   
   // Modal
@@ -34,7 +36,8 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     const role = this.authService.getRole();
-    this.isChef = role === 'CHEF' || role === 'ADMIN';
+    this.isAdmin = role === 'ADMIN';
+    this.isChef = role === 'CHEF' || this.isAdmin;
 
     this.loadCurrentUser();
 
@@ -52,6 +55,7 @@ export class ProfileComponent implements OnInit {
     };
     
     this.userInitials = this.getInitials(this.currentUser.name);
+    this.cdr.detectChanges();
     
     const id = this.authService.getUserId();
     if(id) {
@@ -59,6 +63,7 @@ export class ProfileComponent implements OnInit {
            next: (user) => { 
                this.currentUser = user; 
                this.userInitials = this.getInitials(this.currentUser.name);
+               this.cdr.detectChanges();
            }
         });
     }
@@ -66,13 +71,25 @@ export class ProfileComponent implements OnInit {
 
   loadStudents() {
     this.loadingStudents = true;
-    this.userService.getMyStudents().subscribe({
+    this.cdr.detectChanges();
+
+    const source$ = this.isAdmin
+      ? this.userService.getByRole('USER')
+      : this.userService.getMyStudents();
+
+    source$.subscribe({
       next: (data) => {
-        this.students = data;
-      },
-      error: (err) => console.error('Error al cargar alumnos', err),
-      complete: () => {
+        this.students = data.map(s => ({
+          ...s,
+          initials: this.getInitials(s.name)
+        }));
         this.loadingStudents = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar alumnos', err);
+        this.loadingStudents = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -94,11 +111,13 @@ export class ProfileComponent implements OnInit {
     this.selectedStudent = student;
     this.durationInput = 60; // default 1h
     this.showEscalateModal = true;
+    this.cdr.detectChanges();
   }
 
   closeEscalateModal() {
     this.showEscalateModal = false;
     this.selectedStudent = null;
+    this.cdr.detectChanges();
   }
 
   confirmEscalate() {
@@ -111,8 +130,12 @@ export class ProfileComponent implements OnInit {
 
     const studentId = this.selectedStudent.id;
     this.processingIds.add(studentId);
+    this.cdr.detectChanges();
     this.userService.escalateRoles(studentId, this.durationInput)
-      .pipe(finalize(() => this.processingIds.delete(studentId)))
+      .pipe(finalize(() => {
+        this.processingIds.delete(studentId);
+        this.cdr.detectChanges();
+      }))
       .subscribe({
         next: () => {
           this.closeEscalateModal();
@@ -127,8 +150,12 @@ export class ProfileComponent implements OnInit {
 
   deescalate(student: User) {
     this.processingIds.add(student.id);
+    this.cdr.detectChanges();
     this.userService.deescalateRoles(student.id)
-      .pipe(finalize(() => this.processingIds.delete(student.id)))
+      .pipe(finalize(() => {
+        this.processingIds.delete(student.id);
+        this.cdr.detectChanges();
+      }))
       .subscribe({
         next: () => {
           this.loadStudents();

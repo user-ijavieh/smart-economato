@@ -24,8 +24,32 @@
       </div>
 
       @if (loadingStudents) {
-        <div class="loading-state">
-          <p>Cargando alumnos...</p>
+        <div class="tabla-contenedor">
+          <table>
+            <thead>
+              <tr>
+                <th>Alumno</th>
+                <th>Usuario</th>
+                <th>Rol Actual</th>
+                <th>Permisos Temporales</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of [1,2,3,4,5]; track row) {
+                <tr>
+                  <td>
+                    <div class="student-name">
+                      <div class="mini-avatar skeleton-circle"></div>
+                      <span class="skeleton-text" style="width: 120px"></span>
+                    </div>
+                  </td>
+                  <td><span class="skeleton-text" style="width: 90px"></span></td>
+                  <td><span class="skeleton-text" style="width: 60px"></span></td>
+                  <td><span class="skeleton-text" style="width: 100px"></span></td>
+                </tr>
+              }
+            </tbody>
+          </table>
         </div>
       } @else if (students.length === 0) {
         <div class="empty-state">
@@ -47,7 +71,7 @@
                 <tr>
                   <td>
                     <div class="student-name">
-                      <div class="mini-avatar">{{ getInitials(student.name) }}</div>
+                      <div class="mini-avatar">{{ student.initials }}</div>
                       <span>{{ student.name }}</span>
                     </div>
                   </td>
