@@ -2,7 +2,7 @@ export interface User {
   id: number;
   name: string;
   user: string;
-  role: 'ADMIN' | 'CHEF' | 'USER';
+  role: 'ADMIN' | 'CHEF' | 'USER' | 'ELEVATED';
 }
 
 export interface UserRequest {
