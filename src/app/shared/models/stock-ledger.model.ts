@@ -57,3 +57,17 @@ export interface BatchStockMovementResponseDTO {
   transactions: StockLedgerResponseDTO[];
   errorDetail: string | null;
 }
+
+export interface DailyConsumptionDTO {
+  date: string;
+  consumed: number;
+}
+
+export interface ConsumptionBreakdownDTO {
+  productId: number;
+  productName: string;
+  unit: string;
+  startDate: string;
+  endDate: string;
+  breakdown: DailyConsumptionDTO[];
+}
