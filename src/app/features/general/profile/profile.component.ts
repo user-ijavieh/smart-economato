@@ -21,7 +21,6 @@ export class ProfileComponent implements OnInit {
   currentUser: User | null = null;
   userInitials: string = '';
   isChef: boolean = false;
-  isAdmin: boolean = false;
   
   students: (User & { initials?: string })[] = [];
   loadingStudents = false;
@@ -36,8 +35,7 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     const role = this.authService.getRole();
-    this.isAdmin = role === 'ADMIN';
-    this.isChef = role === 'CHEF' || this.isAdmin;
+    this.isChef = role === 'CHEF';
 
     this.loadCurrentUser();
 
@@ -73,11 +71,7 @@ export class ProfileComponent implements OnInit {
     this.loadingStudents = true;
     this.cdr.detectChanges();
 
-    const source$ = this.isAdmin
-      ? this.userService.getByRole('USER')
-      : this.userService.getMyStudents();
-
-    source$.subscribe({
+    this.userService.getMyStudents().subscribe({
       next: (data) => {
         this.students = data.map(s => ({
           ...s,
