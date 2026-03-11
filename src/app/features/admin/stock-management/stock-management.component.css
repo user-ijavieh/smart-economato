@@ -467,6 +467,14 @@ tbody.loading { opacity: .6; }
     overflow: hidden;
 }
 
+/* ensure detail tables scroll on small screens so the last row isn't hidden */
+@media (max-width: 768px) {
+    .detail-table-container {
+        max-height: 220px;
+        overflow-y: auto;
+    }
+}
+
 .detail-table {
     width: 100%;
     border-collapse: collapse;

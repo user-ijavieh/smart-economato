@@ -125,7 +125,7 @@
             <td>
               <div class="status-cell">
                 <span class="severity-badge" [ngClass]="getSeverityClass(alert.severity)">{{ getSeverityLabel(alert.severity) }}</span>
-                <span class="resolution-badge hide-on-mobile" [ngClass]="getResolutionClass(alert.resolution)" [title]="getResolutionLabel(alert.resolution)">{{ getResolutionLabel(alert.resolution) }}</span>
+                <span class="resolution-badge" [ngClass]="getResolutionClass(alert.resolution)" [title]="getResolutionLabel(alert.resolution)">{{ getResolutionLabel(alert.resolution) }}</span>
               </div>
             </td>
             <td class="show-on-mobile-only mobile-icon-col">
@@ -337,8 +337,8 @@
                       <td class="detail-td-value">{{ selectedPredictionForMobile.currentStock | number:'1.0-2' }} {{ selectedPredictionForMobile.unit }}</td>
                     </tr>
                     <tr>
-                      <td class="detail-td-label">Consumo Diario Est.</td>
-                      <td class="detail-td-value">{{ selectedPredictionForMobile.projectedConsumption | number:'1.0-2' }} {{ selectedPredictionForMobile.unit }}/día</td>
+                      <td class="detail-td-label">Consumo estimado (14 días)</td>
+                      <td class="detail-td-value">{{ selectedPredictionForMobile.projectedConsumption | number:'1.0-2' }} {{ selectedPredictionForMobile.unit }}/14 días</td>
                     </tr>
                     <tr>
                       <td class="detail-td-label">Cobertura Estimada</td>
