@@ -114,7 +114,8 @@
 }
 
 /** ===== STATES (Loading & Empty) ===== */
-.loading-state, .empty-state {
+.loading-state,
+.empty-state {
   text-align: center;
   padding: 40px;
   color: #64748b;
@@ -134,7 +135,8 @@ table {
   border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
   padding: 16px;
   text-align: left;
   border-bottom: 1px solid #e2e8f0;
@@ -258,20 +260,47 @@ button:disabled {
   .contenedor-principal {
     padding: 20px;
   }
-  
+
   .user-card {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .escalate-group {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .duration-input {
     width: 100%;
   }
+}
+
+/* skeleton loading */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeleton-text {
+  display: inline-block;
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200px 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+}
+
+.skeleton-circle {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%) !important;
+  background-size: 200px 100% !important;
+  animation: skeleton-shimmer 1.4s ease infinite;
+  color: transparent !important;
 }
 
 /** ===== MODAL OVERLAY ===== */
@@ -289,8 +318,13 @@ button:disabled {
 }
 
 @keyframes modalFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .modal-content {
@@ -305,8 +339,15 @@ button:disabled {
 }
 
 @keyframes modalSlideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .modal-header {
