@@ -6,12 +6,21 @@ import { OrderAuditService } from '../../../core/services/order-audit.service';
 import { SupplierService } from '../../../core/services/supplier.service';
 import { UserService } from '../../../core/services/user.service';
 import { MessageService } from '../../../core/services/message.service';
-import { Order } from '../../../shared/models/order.model';
+import { Order, OrderStatus } from '../../../shared/models/order.model';
 import { OrderAudit } from '../../../shared/models/order-audit.model';
 import { Supplier } from '../../../shared/models/supplier.model';
 import { User } from '../../../shared/models/user.model';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { finalize } from 'rxjs';
+
+const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
+  { value: 'CREATED',    label: 'Creada' },
+  { value: 'PENDING',    label: 'Pendiente' },
+  { value: 'REVIEW',     label: 'En Revisión' },
+  { value: 'CONFIRMED',  label: 'Confirmada' },
+  { value: 'INCOMPLETE', label: 'Incompleta' },
+  { value: 'CANCELLED',  label: 'Cancelada' },
+];
 
 @Component({
   selector: 'app-orders-management',
@@ -32,20 +41,28 @@ export class OrdersManagementComponent implements OnInit {
   // ── Tab state ──
   activeTab: 'orders' | 'audits' = 'orders';
 
+  // ── Status options exposed to template ──
+  readonly allStatuses = ALL_STATUSES;
+
   // ── Orders state ──
   orders: Order[] = [];
   filteredOrders: Order[] = [];
   loading = true;
   orderSearchTerm = '';
   orderDateFilter = '';
-  orderSupplierFilter: number | '' = '';
+  orderStatusFilter = '';
   orderUserFilter: number | '' = '';
+  currentOrderPage = 0;
+  totalOrdersCount = 0;
+  totalOrderPages = 0;
+  orderPageSize = 20;
+  statusCounts: Record<string, number> = {};
 
   // ── Dropdown lists ──
   suppliersList: Supplier[] = [];
   usersList: User[] = [];
 
-  // ── Audits state (kept for future use when backend permissions are fixed) ──
+  // ── Audits state ──
   audits: OrderAudit[] = [];
   filteredAudits: OrderAudit[] = [];
   filteredAuditOrders: Order[] = [];
@@ -60,57 +77,93 @@ export class OrdersManagementComponent implements OnInit {
   auditPageSize = 20;
 
   selectedAudit: OrderAudit | null = null;
+  selectedOrderHistory: OrderAudit[] = []; // Full history for the selected order in the audit modal
   showAuditDetailModal = false;
-
+  loadingAuditHistory = false;
+  auditTab: 'changes' | 'history' = 'changes';
+  
   // ── Order Detail Modal ──
   selectedOrder: Order | null = null;
   showOrderDetailModal = false;
 
+  // ── Change-Status Modal ──
+  showChangeStatusModal = false;
+  orderForStatusChange: Order | null = null;
+  newStatusValue = '';
+  savingStatus = false;
+
   private auditCache: Map<string, any> = new Map();
 
   ngOnInit(): void {
-    this.loadConfirmedOrders();
+    this.loadAllOrders();
     this.loadSuppliers();
     this.loadUsers();
+    this.loadStatusCounts();
+  }
+
+  // ── Status counts ──
+  loadStatusCounts(): void {
+    this.allStatuses.forEach(status => {
+      this.orderService.getByStatus(status.value).subscribe({
+        next: (orders) => {
+          this.statusCounts[status.value] = orders.length;
+          this.cdr.markForCheck();
+        }
+      });
+    });
   }
 
   // ── Tab switching ──
   switchTab(tab: 'orders' | 'audits'): void {
     this.activeTab = tab;
     if (tab === 'audits') {
-      // Use already loaded confirmed orders for the audit tab
-      this.applyAuditOrderFilters();
+      this.loadAudits();
     }
     this.cdr.detectChanges();
   }
 
   // ── Orders ──
-  loadConfirmedOrders(): void {
+  loadAllOrders(page = 0): void {
     this.loading = true;
+    this.currentOrderPage = page;
     this.cdr.markForCheck();
 
-    this.orderService.getByStatus('CONFIRMED').pipe(
+    this.orderService.getAll(page, this.orderPageSize).pipe(
       finalize(() => {
         this.loading = false;
         this.cdr.markForCheck();
       })
     ).subscribe({
-      next: (orders) => {
-        this.orders = orders;
-        this.filteredAuditOrders = [...orders]; // initialise audit tab data
+      next: (response) => {
+        if (Array.isArray(response)) {
+          this.orders = response;
+          this.totalOrdersCount = response.length;
+          this.totalOrderPages = 1;
+        } else if (response?.content) {
+          this.orders = response.content;
+          this.totalOrdersCount = response.totalElements;
+          this.totalOrderPages = response.totalPages;
+        }
+        this.filteredAuditOrders = this.orders.filter(o => o.status === 'CONFIRMED');
         this.applyOrderFilters();
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError('Error al cargar las órdenes confirmadas');
+        this.messageService.showError('Error al cargar las órdenes');
       }
     });
+  }
+
+  changeOrderPage(delta: number): void {
+    const newPage = this.currentOrderPage + delta;
+    if (newPage >= 0 && newPage < this.totalOrderPages) {
+      this.loadAllOrders(newPage);
+    }
   }
 
   applyOrderFilters(): void {
     let result = [...this.orders];
 
-    // Text search
     const term = this.orderSearchTerm.trim().toLowerCase();
     if (term) {
       result = result.filter(o =>
@@ -119,63 +172,113 @@ export class OrdersManagementComponent implements OnInit {
       );
     }
 
-    // Date filter
     if (this.orderDateFilter) {
       result = result.filter(o =>
         o.orderDate && o.orderDate.startsWith(this.orderDateFilter)
       );
     }
 
-    // User filter
+    if (this.orderStatusFilter) {
+      result = result.filter(o => o.status === this.orderStatusFilter);
+    }
+
     if (this.orderUserFilter !== '') {
       result = result.filter(o => o.userId === Number(this.orderUserFilter));
     }
-
-    // Supplier filter — orders don't carry supplierId directly;
-    // we keep this as a client-side best-effort (no-op if no match field)
-    // It will work once the API returns supplierId/supplierName on orders.
 
     this.filteredOrders = result;
     this.cdr.detectChanges();
   }
 
-  onOrderSearch(): void {
-    this.applyOrderFilters();
-  }
+  onOrderSearch(): void { this.applyOrderFilters(); }
 
   clearOrderFilters(): void {
     this.orderSearchTerm = '';
     this.orderDateFilter = '';
-    this.orderSupplierFilter = '';
+    this.orderStatusFilter = '';
     this.orderUserFilter = '';
-    this.applyOrderFilters();
+    this.loadAllOrders(0);
   }
 
   hasActiveOrderFilters(): boolean {
     return this.orderSearchTerm.trim().length > 0
       || this.orderDateFilter.length > 0
-      || this.orderSupplierFilter !== ''
+      || this.orderStatusFilter !== ''
       || this.orderUserFilter !== '';
   }
 
   // ── Dropdown loaders ──
   private loadSuppliers(): void {
     this.supplierService.getAll(0, 200, 'name,asc').subscribe({
-      next: (page) => {
-        this.suppliersList = page.content;
-        this.cdr.markForCheck();
-      },
-      error: () => { /* silent fail — dropdown stays empty */ }
+      next: (page) => { this.suppliersList = page.content; this.cdr.markForCheck(); },
+      error: () => {}
     });
   }
 
   private loadUsers(): void {
     this.userService.getAllUnpaged().subscribe({
-      next: (users) => {
-        this.usersList = users;
-        this.cdr.markForCheck();
+      next: (users) => { this.usersList = users; this.cdr.markForCheck(); },
+      error: () => {}
+    });
+  }
+
+  // ── Change Status Modal ──
+  openChangeStatusModal(order: Order): void {
+    this.orderForStatusChange = order;
+    this.newStatusValue = order.status;
+    this.showChangeStatusModal = true;
+    this.cdr.markForCheck();
+  }
+
+  closeChangeStatusModal(): void {
+    this.showChangeStatusModal = false;
+    this.orderForStatusChange = null;
+    this.newStatusValue = '';
+    this.savingStatus = false;
+    this.cdr.markForCheck();
+  }
+
+  onChangeStatusOverlayClick(event: MouseEvent): void {
+    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
+      this.closeChangeStatusModal();
+    }
+  }
+
+  confirmStatusChange(): void {
+    if (!this.orderForStatusChange || !this.newStatusValue || this.savingStatus) return;
+    if (this.newStatusValue === this.orderForStatusChange.status) {
+      this.closeChangeStatusModal();
+      return;
+    }
+
+    const orderId = this.orderForStatusChange.id;
+    const status = this.newStatusValue;
+
+    this.savingStatus = true;
+    this.cdr.markForCheck();
+
+    this.orderService.updateStatus(orderId, status).pipe(
+      finalize(() => { this.savingStatus = false; this.cdr.markForCheck(); })
+    ).subscribe({
+      next: (updated) => {
+        const idx = this.orders.findIndex(o => o.id === orderId);
+        if (idx !== -1) {
+          this.orders[idx] = { ...this.orders[idx], status: (updated.status ?? status) as OrderStatus };
+        }
+        this.applyOrderFilters();
+        this.filteredAuditOrders = this.orders.filter(o => o.status === 'CONFIRMED');
+        
+        // Clear audit cache to ensure the new record is fetched
+        this.auditCache.clear();
+        this.auditsLoaded = false;
+        
+        this.loadStatusCounts();
+        this.messageService.showSuccess('Estado actualizado correctamente');
+        this.closeChangeStatusModal();
       },
-      error: () => { /* silent fail */ }
+      error: () => {
+        this.messageService.showError('Error al actualizar el estado de la orden');
+      }
     });
   }
 
@@ -210,11 +313,7 @@ export class OrdersManagementComponent implements OnInit {
       : this.orderAuditService.getAll(page, this.auditPageSize, ['auditDate,desc']);
 
     source$.pipe(
-      finalize(() => {
-        this.loadingAudits = false;
-        this.auditsLoaded = true;
-        this.cdr.detectChanges();
-      })
+      finalize(() => { this.loadingAudits = false; this.auditsLoaded = true; this.cdr.detectChanges(); })
     ).subscribe({
       next: (response) => {
         let auditsArray: OrderAudit[] = [];
@@ -227,57 +326,63 @@ export class OrdersManagementComponent implements OnInit {
           this.totalAuditsCount = response.totalElements;
           this.totalAuditPages = response.totalPages;
         }
-        this.audits = auditsArray;
-        this.auditCache.set(cacheKey, {
-          content: auditsArray,
-          totalElements: this.totalAuditsCount,
-          totalPages: this.totalAuditPages
+        
+        auditsArray.forEach(a => {
+            if (a.orderId == null) {
+                try {
+                    if (a.newState) {
+                        const parsed = JSON.parse(a.newState);
+                        if (parsed.id) a.orderId = parsed.id;
+                    } else if (a.previousState) {
+                        const parsed = JSON.parse(a.previousState);
+                        if (parsed.id) a.orderId = parsed.id;
+                    }
+                } catch(e) {}
+            }
         });
+
+        this.audits = auditsArray;
+        this.auditCache.set(cacheKey, { content: auditsArray, totalElements: this.totalAuditsCount, totalPages: this.totalAuditPages });
         this.applyAuditOrderFilters();
         this.cdr.detectChanges();
       },
-      error: () => {
-        this.messageService.showError('Error al cargar las auditorías');
-      }
+      error: () => { this.messageService.showError('Error al cargar las auditorías'); }
     });
   }
 
-  onAuditSearch(): void {
-    this.applyAuditOrderFilters();
-  }
-
-  onAuditDateFilter(): void {
-    this.applyAuditOrderFilters();
-  }
+  onAuditSearch(): void { this.applyAuditOrderFilters(); }
+  onAuditDateFilter(): void { this.applyAuditOrderFilters(); }
 
   applyAuditOrderFilters(): void {
-    let result = [...this.orders];
+    let result = [...this.audits];
 
+    // Backend already filters by CONFIRMED status in the new endpoint
+    
     const term = this.auditSearchTerm.trim().toLowerCase();
     if (term) {
-      result = result.filter(o =>
-        o.id.toString().includes(term) ||
-        (o.userName && o.userName.toLowerCase().includes(term))
+      result = result.filter(a =>
+        (a.orderId && a.orderId.toString().includes(term)) ||
+        (a.userName && a.userName.toLowerCase().includes(term)) ||
+        (a.details && a.details.toLowerCase().includes(term)) ||
+        (a.action && a.action.toLowerCase().includes(term))
       );
     }
 
     if (this.auditStartDate) {
       const from = new Date(this.auditStartDate).getTime();
-      result = result.filter(o => {
-        const d = o.receptionDate || o.orderDate;
-        return d ? new Date(d).getTime() >= from : true;
+      result = result.filter(a => {
+        return a.auditDate ? new Date(a.auditDate).getTime() >= from : true;
       });
     }
 
     if (this.auditEndDate) {
       const to = new Date(this.auditEndDate).getTime() + 86400000;
-      result = result.filter(o => {
-        const d = o.receptionDate || o.orderDate;
-        return d ? new Date(d).getTime() <= to : true;
+      result = result.filter(a => {
+        return a.auditDate ? new Date(a.auditDate).getTime() <= to : true;
       });
     }
 
-    this.filteredAuditOrders = result;
+    this.filteredAudits = result;
     this.cdr.detectChanges();
   }
 
@@ -301,31 +406,64 @@ export class OrdersManagementComponent implements OnInit {
     }
   }
 
-  // ── Order Stats ──
+  // ── Stats ──
   get totalOrdersPrice(): number {
     return this.filteredOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
   }
 
-  get averageOrderPrice(): number {
-    if (this.filteredOrders.length === 0) return 0;
-    return this.totalOrdersPrice / this.filteredOrders.length;
+  countByStatus(status: string): number {
+    return this.orders.filter(o => o.status === status).length;
   }
 
   // ── Audit Modal ──
   openAuditDetail(audit: OrderAudit): void {
     this.selectedAudit = audit;
     this.showAuditDetailModal = true;
+    this.selectedOrderHistory = [];
+    this.loadingAuditHistory = true;
+    this.auditTab = 'changes'; // Reset to changes tab
     this.cdr.markForCheck();
+
+    // Fetch full history for this order
+    if (audit.orderId) {
+      this.orderAuditService.getByOrderId(audit.orderId).subscribe({
+        next: (history) => {
+          // Sort history by date descending (newest first)
+          this.selectedOrderHistory = history.sort((a, b) => 
+            new Date(b.auditDate).getTime() - new Date(a.auditDate).getTime()
+          );
+          this.loadingAuditHistory = false;
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.loadingAuditHistory = false;
+          this.cdr.markForCheck();
+        }
+      });
+    } else {
+      this.loadingAuditHistory = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  getReceptionStatusLabel(order: Order): string {
+    return order.receptionDate ? 'Recibido' : 'Pendiente';
+  }
+
+  getReceptionStatusClass(order: Order): string {
+    return order.receptionDate ? 'status-confirmed' : 'status-pending';
   }
 
   closeAuditDetail(): void {
     this.showAuditDetailModal = false;
     this.selectedAudit = null;
+    this.selectedOrderHistory = [];
+    this.loadingAuditHistory = false;
     this.cdr.markForCheck();
   }
 
   onAuditOverlayClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('audit-modal-overlay')) {
+    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
       this.closeAuditDetail();
     }
   }
@@ -337,6 +475,23 @@ export class OrdersManagementComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
+  downloadOrderPdf(order: Order): void {
+    if (!order.id) return;
+    this.orderService.downloadPdf(order.id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `orden-${order.id}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: () => {
+        this.messageService.showError('Error al descargar el PDF');
+      }
+    });
+  }
+
   closeOrderDetail(): void {
     this.showOrderDetailModal = false;
     this.selectedOrder = null;
@@ -344,7 +499,7 @@ export class OrdersManagementComponent implements OnInit {
   }
 
   onOrderDetailOverlayClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('audit-modal-overlay')) {
+    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
       this.closeOrderDetail();
     }
   }
@@ -369,36 +524,38 @@ export class OrdersManagementComponent implements OnInit {
     const next = this.parsedNewState;
     if (!prev || !next) return [];
 
-    const fields: { label: string; prev: string; next: string; changed: boolean }[] = [];
     const labelMap: Record<string, string> = {
-      status: 'Estado',
-      id: 'ID Orden',
-      userId: 'ID Usuario',
-      userName: 'Usuario',
-      orderDate: 'Fecha Orden',
-      totalPrice: 'Precio Total',
+      estado: 'Estado', status: 'Estado', id: 'ID Orden', userId: 'ID Usuario',
+      userName: 'Usuario', orderDate: 'Fecha Orden', fechaOrden: 'Fecha Orden', totalPrice: 'Precio Total',
     };
 
     const allKeys = new Set([...Object.keys(prev), ...Object.keys(next)]);
-
-    // Prioritize known fields first
-    const priorityKeys = ['id', 'status', 'userName', 'totalPrice', 'orderDate'];
+    const priorityKeys = ['id', 'estado', 'status', 'userName', 'totalPrice', 'orderDate', 'fechaOrden'];
     const orderedKeys = [
       ...priorityKeys.filter(k => allKeys.has(k)),
       ...[...allKeys].filter(k => !priorityKeys.includes(k) && k !== 'details')
     ];
 
-    for (const key of orderedKeys) {
-      const prevVal = prev[key] != null ? String(prev[key]) : '—';
-      const nextVal = next[key] != null ? String(next[key]) : '—';
-      fields.push({
+    return orderedKeys.map(key => {
+      let prevVal = prev[key] != null ? String(prev[key]) : '—';
+      let nextVal = next[key] != null ? String(next[key]) : '—';
+      
+      // Format special fields
+      if (key === 'estado' || key === 'status') {
+          prevVal = prev[key] != null ? this.formatStatus(prev[key] as OrderStatus) : '—';
+          nextVal = next[key] != null ? this.formatStatus(next[key] as OrderStatus) : '—';
+      } else if (key === 'orderDate' || key === 'fechaOrden') {
+          prevVal = prev[key] != null ? this.formatDate(prev[key]) : '—';
+          nextVal = next[key] != null ? this.formatDate(next[key]) : '—';
+      }
+
+      return {
         label: labelMap[key] || key,
         prev: key === 'totalPrice' && prev[key] != null ? `${parseFloat(prev[key]).toFixed(2)} €` : prevVal,
         next: key === 'totalPrice' && next[key] != null ? `${parseFloat(next[key]).toFixed(2)} €` : nextVal,
         changed: prevVal !== nextVal
-      });
-    }
-    return fields;
+      };
+    });
   }
 
   getDetailDiffs(): { product: string; prevQty: string; nextQty: string; status: 'added' | 'removed' | 'changed' | 'unchanged' }[] {
@@ -422,24 +579,34 @@ export class OrdersManagementComponent implements OnInit {
       const p = prevMap.get(id);
       const n = nextMap.get(id);
       const name = n?.productName ?? p?.productName ?? `Producto #${id}`;
-
-      if (p && !n) {
-        result.push({ product: name, prevQty: String(p.quantity), nextQty: '—', status: 'removed' });
-      } else if (!p && n) {
-        result.push({ product: name, prevQty: '—', nextQty: String(n.quantity), status: 'added' });
-      } else if (p && n) {
-        const changed = p.quantity !== n.quantity;
-        result.push({ product: name, prevQty: String(p.quantity), nextQty: String(n.quantity), status: changed ? 'changed' : 'unchanged' });
-      }
+      if (p && !n) result.push({ product: name, prevQty: String(p.quantity), nextQty: '—', status: 'removed' });
+      else if (!p && n) result.push({ product: name, prevQty: '—', nextQty: String(n.quantity), status: 'added' });
+      else if (p && n) result.push({ product: name, prevQty: String(p.quantity), nextQty: String(n.quantity), status: p.quantity !== n.quantity ? 'changed' : 'unchanged' });
     });
 
     return result;
   }
 
   // ── Helpers ──
+  formatDateWithTime(dateStr: string | undefined): string {
+    if (!dateStr) return '—';
+    try {
+      const date = new Date(dateStr);
+      return date.toLocaleString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    } catch {
+      return dateStr;
+    }
+  }
+
   formatDate(dateStr: string): string {
-    const d = new Date(dateStr);
-    return d.toLocaleString('es-ES', {
+    return new Date(dateStr).toLocaleString('es-ES', {
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit'
     });
@@ -447,44 +614,28 @@ export class OrdersManagementComponent implements OnInit {
 
   formatStatus(status: string): string {
     const map: Record<string, string> = {
-      CREATED: 'Creada',
-      PENDING: 'Pendiente',
-      REVIEW: 'En Revisión',
-      CONFIRMED: 'Confirmada',
-      INCOMPLETE: 'Incompleta',
-      CANCELLED: 'Cancelada'
+      CREATED: 'Creada', PENDING: 'Pendiente', REVIEW: 'En Revisión',
+      CONFIRMED: 'Confirmada', INCOMPLETE: 'Incompleta', CANCELLED: 'Cancelada'
     };
     return map[status] || status;
   }
 
   getStatusClass(status: string): string {
     const map: Record<string, string> = {
-      CREATED: 'status-created',
-      PENDING: 'status-pending',
-      REVIEW: 'status-review',
-      CONFIRMED: 'status-confirmed',
-      INCOMPLETE: 'status-incomplete',
-      CANCELLED: 'status-cancelled'
+      CREATED: 'status-created', PENDING: 'status-pending', REVIEW: 'status-review',
+      CONFIRMED: 'status-confirmed', INCOMPLETE: 'status-incomplete', CANCELLED: 'status-cancelled'
     };
     return map[status] || '';
   }
 
-  // Extracts the status field from an audit's previousState JSON
   getAuditPrevStatus(audit: OrderAudit): string | null {
     if (!audit.previousState) return null;
-    try {
-      const obj = JSON.parse(audit.previousState);
-      return obj.status ?? obj.estado ?? null;
-    } catch { return null; }
+    try { const o = JSON.parse(audit.previousState); return o.status ?? o.estado ?? null; } catch { return null; }
   }
 
-  // Extracts the status field from an audit's newState JSON
   getAuditNewStatus(audit: OrderAudit): string | null {
     if (!audit.newState) return null;
-    try {
-      const obj = JSON.parse(audit.newState);
-      return obj.status ?? obj.estado ?? null;
-    } catch { return null; }
+    try { const o = JSON.parse(audit.newState); return o.status ?? o.estado ?? null; } catch { return null; }
   }
 
   getActionBadgeClass(action: string): string {
