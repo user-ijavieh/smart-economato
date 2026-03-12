@@ -439,45 +439,113 @@ tr:hover { background: var(--admin-scrollbar-track); }
     .header-recetas { height: 70px; padding: 0 20px; }
     .header-recetas h1 { font-size: 1.3rem; }
     .contenedor-principal { padding: 20px; }
-    th, td { padding: 12px 8px; font-size: 0.85rem; }
+    th, td { padding: 12px 10px; font-size: 0.85rem; }
     button { font-size: 0.85rem; padding: 8px 16px; }
 }
 
 @media (max-width: 768px) {
-    .header-recetas { height: 60px; padding: 0 15px; }
-    .header-recetas h1 { font-size: 1.3rem; letter-spacing: 1px; }
+    .header-recetas { height: 60px; padding: 0 15px; position: relative; }
+    .header-recetas h1 { font-size: 1.2rem; letter-spacing: 0.5px; }
+    
     .tab-bar { height: 48px; padding: 0 15px; }
-    .tab-btn { padding: 0 16px; font-size: 0.85rem; }
-    .contenedor-principal { padding: 15px; }
-    .controles { padding: 15px; gap: 10px; }
-    .controles input[type='text'] { min-width: 150px; width: 100%; }
-    .date-input { flex: 1; min-width: 120px; }
-    button { font-size: 0.8rem; padding: 8px 14px; }
-    th, td { padding: 10px 8px; font-size: 0.8rem; }
-    .stats-row { grid-template-columns: repeat(2, 1fr); }
-    .hide-on-mobile { display: none !important; }
-    .show-on-mobile-only { display: table-cell !important; }
-    .modal-box-wide { max-width: 100vw !important; width: 100vw !important; border-radius: 0; }
-    .diff-table { font-size: 0.8rem; }
-    .diff-table thead th, .diff-table tbody td { padding: 8px 10px; }
-    .diff-label-col { width: 30%; }
-    .diff-prev-col { width: 35%; }
-    .diff-next-col { width: 35%; }
+    .tab-btn { padding: 0 12px; font-size: 0.85rem; }
+    
+    .contenedor-principal { padding: 15px; min-height: auto; }
+    
+    .controles { 
+        padding: 15px; 
+        gap: 10px; 
+        flex-direction: column; 
+        align-items: stretch;
+    }
+    .controles input[type='text'], 
+    .controles input[type='date'], 
+    .controles .action-select,
+    .controles button { 
+        width: 100%; 
+        min-width: 0;
+    }
+    
+    .stats-row { 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 10px;
+        margin-bottom: 1.5rem;
+    }
+    .stat-card { padding: 12px 8px; }
+    .stat-number { font-size: 1.3rem; }
+    .stat-label { font-size: 0.75rem; }
+
+    /* Table-to-Card transformation */
+    .responsive-table { display: block; }
+    .responsive-table thead { display: none; } /* Hide headers */
+    .responsive-table tbody, 
+    .responsive-table tr { display: block; width: 100%; }
+    
+    .responsive-table tr {
+        margin-bottom: 15px;
+        border: 1px solid #eee;
+        border-radius: 12px;
+        padding: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        background: #fff;
+    }
+    
+    .responsive-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 5px;
+        border-bottom: 1px solid #f9f9f9;
+        text-align: right;
+        font-size: 0.88rem;
+    }
+    .responsive-table td:last-child { border-bottom: none; }
+    
+    .responsive-table td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        color: #999;
+        flex: 1;
+        text-align: left;
+    }
+    
+    .responsive-table td.actions-col {
+        justify-content: center;
+        padding-top: 12px;
+        margin-top: 5px;
+        border-top: 1px solid #eee;
+    }
+    .responsive-table td.actions-col::before { display: none; }
+    
+    .actions-cell { width: 100%; gap: 10px; }
+    .actions-cell button { flex: 1; height: 40px; }
+
+    .hide-on-mobile { display: flex !important; } /* Show in card mode as a row */
+    .show-on-mobile-only { display: block !important; }
+    
+    .order-user-cell { padding: 0; }
+    .order-icon { display: none; }
+    
+    /* Modals */
+    .modal-box-wide { max-width: 95vw !important; width: 95vw !important; border-radius: 12px; }
+    .modal-header { padding: 15px 20px; }
+    .modal-header h2 { font-size: 1rem; }
+    .modal-close-btn { width: 30px; height: 30px; }
+    
+    .order-info-grid { grid-template-columns: 1fr; }
+    .diff-table thead { display: none; }
+    .diff-table tr { display: block; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
+    .diff-table td { display: block; width: 100% !important; padding: 5px 0; border: none; }
+    .diff-label { font-size: 0.75rem; color: #999; text-transform: uppercase; }
+    .diff-prev::before { content: 'Anterior: '; font-weight: 600; font-size: 0.8rem; }
+    .diff-next::before { content: 'Nuevo: '; font-weight: 600; font-size: 0.8rem; }
 }
 
-@media (max-width: 640px) {
-    .header-recetas { padding: 10px; }
+@media (max-width: 480px) {
+    .stats-row { grid-template-columns: 1fr; }
     .header-recetas h1 { font-size: 1.1rem; }
-    .tab-bar { padding: 0 16px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-    .tab-bar::-webkit-scrollbar { display: none; }
-    .tab-btn { padding: 12px 16px; font-size: 0.85rem; gap: 6px; }
-    .contenedor-principal { padding: 10px; }
-    .controles { padding: 12px; }
-    .stats-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .stat-card { padding: 12px; }
-    .stat-number { font-size: 1.4rem; }
-    .order-icon { display: none; }
-    button { width: 100%; font-size: 0.8rem; padding: 10px; }
-    .tab-btn { width: auto; }
-    .btn-cancel, .btn-save { width: auto; }
+    .tab-btn { padding: 0 8px; font-size: 0.8rem; }
+    .tab-btn svg { width: 16px; height: 16px; }
 }

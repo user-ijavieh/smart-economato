@@ -69,7 +69,7 @@
 
     <!-- Table -->
     <div class="tabla-contenedor">
-        <table>
+        <table class="responsive-table">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -95,8 +95,8 @@
                 } @else {
                     @for (order of filteredOrders; track order.id) {
                     <tr class="data-row">
-                        <td><span class="id-badge">#{{ order.id }}</span></td>
-                        <td>
+                        <td data-label="ID"><span class="id-badge">#{{ order.id }}</span></td>
+                        <td data-label="Usuario">
                             <div class="order-user-cell">
                                 <div class="order-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor">
@@ -106,7 +106,7 @@
                                 {{ order.userName }}
                             </div>
                         </td>
-                        <td>
+                        <td data-label="Fecha">
                             <span class="date-cell-inner">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="date-icon">
                                     <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
@@ -114,12 +114,12 @@
                                 {{ formatDate(order.orderDate) }}
                             </span>
                         </td>
-                        <td class="hide-on-mobile">
+                        <td data-label="Estado" class="hide-on-mobile">
                             <span class="status-badge {{ getStatusClass(order.status) }}">
                                 {{ formatStatus(order.status) }}
                             </span>
                         </td>
-                        <td><span class="cost-value">{{ (order.totalPrice || 0) | number:'1.2-2' }} €</span></td>
+                        <td data-label="Total"><span class="cost-value">{{ (order.totalPrice || 0) | number:'1.2-2' }} €</span></td>
                         <td class="actions-col">
                             <div class="actions-cell">
                                 <button class="btn-ver" (click)="openOrderDetail(order)" title="Ver detalles">
@@ -173,7 +173,7 @@
     </div>
 
     <div class="tabla-contenedor">
-        <table>
+        <table class="responsive-table">
             <thead>
                 <tr>
                     <th>Fecha</th>
@@ -199,22 +199,22 @@
                 } @else {
                     @for (audit of filteredAudits; track $index) {
                     <tr class="audit-row clickable-row mobile-clickable-row" (click)="openAuditDetail(audit)">
-                        <td>
+                        <td data-label="Fecha">
                             <span class="date-cell-inner">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="date-icon"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
                                 {{ formatDate(audit.auditDate) }}
                             </span>
                         </td>
-                        <td>
+                        <td data-label="Acción">
                             <span class="action-badge" [ngClass]="getActionBadgeClass(audit.action)">{{ audit.action }}</span>
                         </td>
-                        <td class="hide-on-mobile">
+                        <td data-label="ID Orden" class="hide-on-mobile">
                             <span class="id-badge">#{{ audit.orderId }}</span>
                         </td>
-                        <td class="hide-on-mobile">
+                        <td data-label="Usuario" class="hide-on-mobile">
                             <span class="user-name">{{ audit.userName }}</span>
                         </td>
-                        <td class="details-cell hide-on-mobile">{{ audit.details }}</td>
+                        <td data-label="Detalles" class="details-cell hide-on-mobile">{{ audit.details }}</td>
                         <td class="show-on-mobile-only mobile-icon-col">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
