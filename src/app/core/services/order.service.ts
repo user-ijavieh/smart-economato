@@ -10,13 +10,12 @@ export class OrderService {
   private http = inject(HttpClient);
   private url = `${environment.apiUrl}/api/orders`;
 
-  getAll(page = 0, size = 20): Observable<Order[]> {
-    const params = new HttpParams()
+  getAll(page = 0, size = 20, sort: string[] = ['orderDate,desc']): Observable<any> {
+    let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
-    return this.http.get<any>(this.url, { params }).pipe(
-      map(response => response.content || [])
-    );
+    sort.forEach(s => { params = params.append('sort', s); });
+    return this.http.get<any>(this.url, { params });
   }
 
   getById(id: number): Observable<Order> {
