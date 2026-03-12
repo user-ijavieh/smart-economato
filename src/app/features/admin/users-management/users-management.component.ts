@@ -260,9 +260,13 @@ export class UsersManagementComponent implements OnInit {
             const request: UserRequest = {
                 name: data.name,
                 user: data.user,
-                password: data.password || '',
                 role: data.role
             };
+
+            if (data.password) {
+                request.password = data.password;
+            }
+
             this.userService.update(this.selectedUser.id, request).subscribe({
                 next: () => {
                     this.messageService.showSuccess('Usuario actualizado correctamente');

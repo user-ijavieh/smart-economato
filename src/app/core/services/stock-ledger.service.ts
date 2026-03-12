@@ -7,7 +7,8 @@ import {
   IntegrityCheckResponseDTO,
   StockSnapshotResponseDTO,
   BatchStockMovementRequestDTO,
-  BatchStockMovementResponseDTO
+  BatchStockMovementResponseDTO,
+  ConsumptionBreakdownDTO
 } from '../../shared/models/stock-ledger.model';
 
 @Injectable({ providedIn: 'root' })
@@ -56,5 +57,9 @@ export class StockLedgerService {
 
   processBatch(request: BatchStockMovementRequestDTO): Observable<BatchStockMovementResponseDTO> {
     return this.http.post<BatchStockMovementResponseDTO>(this.url, request);
+  }
+
+  getConsumptionBreakdown(productId: number, params: { date?: string; lastDays?: number; startDate?: string; endDate?: string }): Observable<ConsumptionBreakdownDTO> {
+    return this.http.get<ConsumptionBreakdownDTO>(`${this.url}/consumption/${productId}`, { params: params as any });
   }
 }

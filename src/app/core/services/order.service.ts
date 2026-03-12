@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { Order, OrderRequest, OrderReceptionRequest } from '../../shared/models/order.model';
+import { Order, OrderRequest, OrderReceptionRequest, OrderDetail } from '../../shared/models/order.model';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
@@ -60,6 +60,10 @@ export class OrderService {
   getByDateRange(start: string, end: string): Observable<Order[]> {
     const params = new HttpParams().set('start', start).set('end', end);
     return this.http.get<Order[]>(`${this.url}/by-date-range`, { params });
+  }
+
+  getMissingItems(orderId: number): Observable<OrderDetail[]> {
+    return this.http.get<OrderDetail[]>(`${this.url}/${orderId}/missing-items`);
   }
 
   downloadPdf(id: number): Observable<Blob> {

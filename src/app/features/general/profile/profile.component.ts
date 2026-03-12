@@ -1,41 +1,163 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { UserService } from '../../../core/services/user.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { User } from '../../../shared/models/user.model';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  template: `
-    <div class="page-header">
-      <h1>Perfil</h1>
-    </div>
-    <div class="page-content">
-      <p class="empty-message">Módulo de perfil en desarrollo...</p>
-    </div>
-  `,
-  styles: [`
-    .page-header {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      padding: 20px 40px;
-      background: linear-gradient(135deg, rgba(184, 75, 68, 0.95) 0%, rgba(160, 61, 55, 0.95) 100%);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-    .page-header h1 {
-      font-size: 1.8rem;
-      color: white;
-      letter-spacing: 2px;
-      flex: 1;
-      text-align: center;
-    }
-    .page-content {
-      padding: 40px;
-      text-align: center;
-    }
-    .empty-message {
-      color: #4b5563;
-      font-size: 1.1rem;
-    }
-  `]
+  imports: [CommonModule, FormsModule],
+  templateUrl: './profile.component.html',
+  styleUrls: ['./profile.component.css']
 })
-export class ProfileComponent { }
+export class ProfileComponent implements OnInit {
+  private userService = inject(UserService);
+  private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
+
+  currentUser: User | null = null;
+  userInitials: string = '';
+  isChef: boolean = false;
+  
+  students: (User & { initials?: string })[] = [];
+  loadingStudents = false;
+  
+  // Modal
+  showEscalateModal = false;
+  selectedStudent: User | null = null;
+  durationInput = 60;
+  
+  // Control de estado loading por botón de alumno
+  processingIds = new Set<number>();
+
+  ngOnInit(): void {
+    const role = this.authService.getRole();
+    this.isChef = role === 'CHEF';
+
+    this.loadCurrentUser();
+
+    if (this.isChef) {
+      this.loadStudents();
+    }
+  }
+
+  loadCurrentUser() {
+    this.currentUser = {
+      id: this.authService.getUserId() || 0,
+      name: this.authService.getName() || 'Usuario',
+      role: (this.authService.getRole() as any) || 'USER',
+      user: '' 
+    };
+    
+    this.userInitials = this.getInitials(this.currentUser.name);
+    this.cdr.detectChanges();
+    
+    const id = this.authService.getUserId();
+    if(id) {
+        this.userService.getById(id).subscribe({
+           next: (user) => { 
+               this.currentUser = user; 
+               this.userInitials = this.getInitials(this.currentUser.name);
+               this.cdr.detectChanges();
+           }
+        });
+    }
+  }
+
+  loadStudents() {
+    this.loadingStudents = true;
+    this.cdr.detectChanges();
+
+    this.userService.getMyStudents().subscribe({
+      next: (data) => {
+        this.students = data.map(s => ({
+          ...s,
+          initials: this.getInitials(s.name)
+        }));
+        this.loadingStudents = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar alumnos', err);
+        this.loadingStudents = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  getInitials(name: string): string {
+    if (!name) return 'U';
+    const parts = name.split(' ').filter(p => p.length > 0);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  }
+
+  isProcessing(id: number): boolean {
+    return this.processingIds.has(id);
+  }
+
+  openEscalateModal(student: User) {
+    this.selectedStudent = student;
+    this.durationInput = 60; // default 1h
+    this.showEscalateModal = true;
+    this.cdr.detectChanges();
+  }
+
+  closeEscalateModal() {
+    this.showEscalateModal = false;
+    this.selectedStudent = null;
+    this.cdr.detectChanges();
+  }
+
+  confirmEscalate() {
+    if (!this.selectedStudent) return;
+    
+    if (!this.durationInput || this.durationInput < 1) {
+       alert('Introduzca una duración válida en minutos.');
+       return;
+    }
+
+    const studentId = this.selectedStudent.id;
+    this.processingIds.add(studentId);
+    this.cdr.detectChanges();
+    this.userService.escalateRoles(studentId, this.durationInput)
+      .pipe(finalize(() => {
+        this.processingIds.delete(studentId);
+        this.cdr.detectChanges();
+      }))
+      .subscribe({
+        next: () => {
+          this.closeEscalateModal();
+          this.loadStudents();
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Error al intentar dar permisos temporales.');
+        }
+      });
+  }
+
+  deescalate(student: User) {
+    this.processingIds.add(student.id);
+    this.cdr.detectChanges();
+    this.userService.deescalateRoles(student.id)
+      .pipe(finalize(() => {
+        this.processingIds.delete(student.id);
+        this.cdr.detectChanges();
+      }))
+      .subscribe({
+        next: () => {
+          this.loadStudents();
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Error al intentar revocar permisos temporales.');
+        }
+      });
+  }
+}

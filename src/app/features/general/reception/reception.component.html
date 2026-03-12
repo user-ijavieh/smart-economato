@@ -7,390 +7,392 @@
   <!-- Contenido Principal -->
   <div class="reception-content">
     @if (loading) {
-      <div class="loading-message">
-        <p>Cargando órdenes...</p>
-      </div>
+    <div class="loading-message">
+      <p>Cargando órdenes...</p>
+    </div>
     } @else {
-      <!-- PENDING Section -->
-      <section class="status-section">
-        <h2 class="section-title" [style.border-color]="getStatusColor('PENDING')">
-          {{ getStatusLabel('PENDING') }} ({{ ordersByStatus.PENDING?.length || 0 }})
-        </h2>
-        @if ((ordersByStatus.PENDING?.length || 0) === 0) {
-          <div class="empty-section">
-            No hay órdenes pendientes
-          </div>
-        } @else {
-          <div class="orders-container">
-            @for (order of getDisplayedOrders('PENDING'); track order.id) {
-              <div class="order-card" [style.border-left-color]="getStatusColor('PENDING')">
-                <div class="order-header" [style.background]="getStatusColor('PENDING')">
-                  <div class="order-title">
-                    <div class="order-user">
-                      <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
-                      <div>
-                        <h3>Orden #{{ order.id }}</h3>
-                        <p>{{ order.userName }}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <span class="order-status">{{ getStatusLabel(order.status) }}</span>
-                </div>
-
-                <div class="order-body">
-                  <div class="order-detail">
-                    <span class="detail-label">Fecha:</span>
-                    <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
-                  </div>
-                  <div class="order-detail">
-                    <span class="detail-label">Productos:</span>
-                    <span class="detail-value">{{ order.details?.length || 0 }}</span>
-                  </div>
-                  <div class="order-detail">
-                    <span class="detail-label">Total:</span>
-                    <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
-                  </div>
-
-                  <div class="order-items-preview">
-                    @for (detail of (order.details || []).slice(0, 2); track $index) {
-                      <div class="item-preview">
-                        <span>{{ detail.productName }}</span>
-                        <span>{{ detail.quantity }} uds</span>
-                      </div>
-                    }
-                    @if ((order.details?.length || 0) > 2) {
-                      <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
-                    }
-                  </div>
-                </div>
-
-                <div class="order-actions">
-                  <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
-                    Ver Detalles
-                  </button>
-                  <button class="btn-action btn-primary" (click)="reviewOrder(order)">
-                    Revisar Orden
-                  </button>
-                  <button class="btn-action btn-secondary" (click)="cancelOrder(order)">
-                    Cancelar
-                  </button>
+    <!-- PENDING Section -->
+    <section class="status-section">
+      <h2 class="section-title" [style.border-color]="getStatusColor('PENDING')">
+        {{ getStatusLabel('PENDING') }} ({{ ordersByStatus.PENDING.length || 0 }})
+      </h2>
+      @if ((ordersByStatus.PENDING.length || 0) === 0) {
+      <div class="empty-section">
+        No hay órdenes pendientes
+      </div>
+      } @else {
+      <div class="orders-container">
+        @for (order of getDisplayedOrders('PENDING'); track order.id) {
+        <div class="order-card" [style.border-left-color]="getStatusColor('PENDING')">
+          <div class="order-header" [style.background]="getStatusColor('PENDING')">
+            <div class="order-title">
+              <div class="order-user">
+                <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
+                <div>
+                  <h3>Orden #{{ order.id }}</h3>
+                  <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
                 </div>
               </div>
-            }
-          </div>
-          @if (hasMore('PENDING')) {
-            <div class="load-more-container">
-              <button class="btn-load-more" (click)="loadMoreOrders('PENDING')">
-                Cargar más antiguas ({{ getRemainingCount('PENDING') }} restantes)
-              </button>
             </div>
-          }
-        }
-      </section>
-
-      <!-- IN_REVIEW Section -->
-      <section class="status-section">
-        <h2 class="section-title" [style.border-color]="getStatusColor('REVIEW')">
-          {{ getStatusLabel('REVIEW') }} ({{ ordersByStatus.REVIEW?.length || 0 }})
-        </h2>
-        @if ((ordersByStatus.REVIEW?.length || 0) === 0) {
-          <div class="empty-section">
-            No hay órdenes en revisión
+            <span class="order-status">{{ getStatusLabel(order.status) }}</span>
           </div>
-        } @else {
-          <div class="orders-container">
-            @for (order of getDisplayedOrders('REVIEW'); track order.id) {
-              <div class="order-card" [style.border-left-color]="getStatusColor('REVIEW')">
-                <div class="order-header" [style.background]="getStatusColor('REVIEW')">
-                  <div class="order-title">
-                    <div class="order-user">
-                      <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
-                      <div>
-                        <h3>Orden #{{ order.id }}</h3>
-                        <p>{{ order.userName }}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <span class="order-status">{{ getStatusLabel(order.status) }}</span>
-                </div>
 
-                <div class="order-body">
-                  <div class="order-detail">
-                    <span class="detail-label">Fecha:</span>
-                    <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
-                  </div>
-                  <div class="order-detail">
-                    <span class="detail-label">Productos:</span>
-                    <span class="detail-value">{{ order.details?.length || 0 }}</span>
-                  </div>
-                  <div class="order-detail">
-                    <span class="detail-label">Total:</span>
-                    <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
-                  </div>
+          <div class="order-body">
+            <div class="order-detail">
+              <span class="detail-label">Fecha:</span>
+              <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Productos:</span>
+              <span class="detail-value">{{ order.details?.length || 0 }}</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Total:</span>
+              <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
+            </div>
 
-                  <div class="order-items-preview">
-                    @for (detail of (order.details || []).slice(0, 2); track $index) {
-                      <div class="item-preview">
-                        <span>{{ detail.productName }}</span>
-                        <span>{{ detail.quantity }} uds</span>
-                      </div>
-                    }
-                    @if ((order.details?.length || 0) > 2) {
-                      <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
-                    }
-                  </div>
-                </div>
+            <div class="order-items-preview">
+              @for (detail of (order.details || []).slice(0, 2); track $index) {
+              <div class="item-preview">
+                <span>{{ detail.productName }}</span>
+                <span>{{ detail.quantity }} uds</span>
+              </div>
+              }
+              @if ((order.details?.length || 0) > 2) {
+              <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
+              }
+            </div>
+          </div>
 
-                <div class="order-actions">
-                  <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
-                    Ver Detalles
-                  </button>
-                  <button class="btn-action btn-success" (click)="confirmOrder(order)">
-                    Confirmar Completa
-                  </button>
-                  <button class="btn-action btn-danger" (click)="markIncomplete(order)">
-                    Marcar Incompleta
-                  </button>
+          <div class="order-actions">
+            <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
+              Ver Detalles
+            </button>
+            <button class="btn-action btn-primary" (click)="reviewOrder(order)">
+              Revisar Orden
+            </button>
+            <button class="btn-action btn-secondary" (click)="cancelOrder(order)">
+              Cancelar
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+      @if (hasMore('PENDING')) {
+      <div class="load-more-container">
+        <button class="btn-load-more" (click)="loadMoreOrders('PENDING')">
+          Cargar más antiguas ({{ getRemainingCount('PENDING') }} restantes)
+        </button>
+      </div>
+      }
+      }
+    </section>
+
+    <!-- IN_REVIEW Section -->
+    <section class="status-section">
+      <h2 class="section-title" [style.border-color]="getStatusColor('REVIEW')">
+        {{ getStatusLabel('REVIEW') }} ({{ ordersByStatus.REVIEW.length || 0 }})
+      </h2>
+      @if ((ordersByStatus.REVIEW.length || 0) === 0) {
+      <div class="empty-section">
+        No hay órdenes en revisión
+      </div>
+      } @else {
+      <div class="orders-container">
+        @for (order of getDisplayedOrders('REVIEW'); track order.id) {
+        <div class="order-card" [style.border-left-color]="getStatusColor('REVIEW')">
+          <div class="order-header" [style.background]="getStatusColor('REVIEW')">
+            <div class="order-title">
+              <div class="order-user">
+                <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
+                <div>
+                  <h3>Orden #{{ order.id }}</h3>
+                  <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
                 </div>
               </div>
-            }
-          </div>
-          @if (hasMore('REVIEW')) {
-            <div class="load-more-container">
-              <button class="btn-load-more" (click)="loadMoreOrders('REVIEW')">
-                Cargar más antiguas ({{ getRemainingCount('REVIEW') }} restantes)
-              </button>
             </div>
-          }
-        }
-      </section>
-
-      <!-- CONFIRMED Section -->
-      <section class="status-section">
-        <h2 class="section-title" [style.border-color]="getStatusColor('CONFIRMED')">
-          {{ getStatusLabel('CONFIRMED') }} ({{ ordersByStatus.CONFIRMED?.length || 0 }})
-        </h2>
-        @if ((ordersByStatus.CONFIRMED?.length || 0) === 0) {
-          <div class="empty-section">
-            No hay órdenes confirmadas
+            <span class="order-status">{{ getStatusLabel(order.status) }}</span>
           </div>
-        } @else {
-          <div class="orders-container">
-            @for (order of getDisplayedOrders('CONFIRMED'); track order.id) {
-              <div class="order-card completed" [style.border-left-color]="getStatusColor('CONFIRMED')">
-                <div class="order-header" [style.background]="getStatusColor('CONFIRMED')">
-                  <div class="order-title">
-                    <div class="order-user">
-                      <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
-                      <div>
-                        <h3>Orden #{{ order.id }}</h3>
-                        <p>{{ order.userName }}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <span class="order-status">{{ getStatusLabel(order.status) }}</span>
-                </div>
 
-                <div class="order-body">
-                  <div class="order-detail">
-                    <span class="detail-label">Fecha:</span>
-                    <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
-                  </div>
-                  <div class="order-detail">
-                    <span class="detail-label">Productos:</span>
-                    <span class="detail-value">{{ order.details?.length || 0 }}</span>
-                  </div>
-                  <div class="order-detail">
-                    <span class="detail-label">Total:</span>
-                    <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
-                  </div>
+          <div class="order-body">
+            <div class="order-detail">
+              <span class="detail-label">Fecha:</span>
+              <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Productos:</span>
+              <span class="detail-value">{{ order.details?.length || 0 }}</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Total:</span>
+              <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
+            </div>
 
-                  <div class="order-items-preview">
-                    @for (detail of (order.details || []).slice(0, 2); track $index) {
-                      <div class="item-preview">
-                        <span>{{ detail.productName }}</span>
-                        <span>{{ detail.quantity }} uds</span>
-                      </div>
-                    }
-                    @if ((order.details?.length || 0) > 2) {
-                      <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
-                    }
-                  </div>
-                </div>
+            <div class="order-items-preview">
+              @for (detail of (order.details || []).slice(0, 2); track $index) {
+              <div class="item-preview">
+                <span>{{ detail.productName }}</span>
+                <span>{{ detail.quantity }} uds</span>
+              </div>
+              }
+              @if ((order.details?.length || 0) > 2) {
+              <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
+              }
+            </div>
+          </div>
 
-                <div class="order-actions">
-                  <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
-                    Ver Detalles
-                  </button>
+          <div class="order-actions">
+            <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
+              Ver Detalles
+            </button>
+            <button class="btn-action btn-success" (click)="openReceptionModal(order)">
+              Procesar Recepción
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+      @if (hasMore('REVIEW')) {
+      <div class="load-more-container">
+        <button class="btn-load-more" (click)="loadMoreOrders('REVIEW')">
+          Cargar más antiguas ({{ getRemainingCount('REVIEW') }} restantes)
+        </button>
+      </div>
+      }
+      }
+    </section>
+
+    <!-- CONFIRMED Section -->
+    <section class="status-section">
+      <h2 class="section-title" [style.border-color]="getStatusColor('CONFIRMED')">
+        {{ getStatusLabel('CONFIRMED') }} ({{ ordersByStatus.CONFIRMED.length || 0 }})
+      </h2>
+      @if ((ordersByStatus.CONFIRMED.length || 0) === 0) {
+      <div class="empty-section">
+        No hay órdenes confirmadas
+      </div>
+      } @else {
+      <div class="orders-container">
+        @for (order of getDisplayedOrders('CONFIRMED'); track order.id) {
+        <div class="order-card completed" [style.border-left-color]="getStatusColor('CONFIRMED')">
+          <div class="order-header" [style.background]="getStatusColor('CONFIRMED')">
+            <div class="order-title">
+              <div class="order-user">
+                <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
+                <div>
+                  <h3>Orden #{{ order.id }}</h3>
+                  <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
                 </div>
               </div>
-            }
-          </div>
-          @if (hasMore('CONFIRMED')) {
-            <div class="load-more-container">
-              <button class="btn-load-more" (click)="loadMoreOrders('CONFIRMED')">
-                Cargar más antiguas ({{ getRemainingCount('CONFIRMED') }} restantes)
-              </button>
             </div>
-          }
-        }
-      </section>
-
-      <!-- INCOMPLETE Section -->
-      <section class="status-section">
-        <h2 class="section-title" [style.border-color]="getStatusColor('INCOMPLETE')">
-          {{ getStatusLabel('INCOMPLETE') }} ({{ ordersByStatus.INCOMPLETE?.length || 0 }})
-        </h2>
-        @if ((ordersByStatus.INCOMPLETE?.length || 0) === 0) {
-          <div class="empty-section">
-            No hay órdenes incompletas
+            <span class="order-status">{{ getStatusLabel(order.status) }}</span>
           </div>
-        } @else {
-          <div class="orders-container">
-            @for (order of getDisplayedOrders('INCOMPLETE'); track order.id) {
-              <div class="order-card incomplete" [style.border-left-color]="getStatusColor('INCOMPLETE')">
-                <div class="order-header" [style.background]="getStatusColor('INCOMPLETE')">
-                  <div class="order-title">
-                    <div class="order-user">
-                      <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
-                      <div>
-                        <h3>Orden #{{ order.id }}</h3>
-                        <p>{{ order.userName }}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <span class="order-status">{{ getStatusLabel(order.status) }}</span>
-                </div>
 
-                <div class="order-body">
-                  <div class="order-detail">
-                    <span class="detail-label">Fecha:</span>
-                    <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
-                  </div>
-                  <div class="order-detail">
-                    <span class="detail-label">Productos:</span>
-                    <span class="detail-value">{{ order.details?.length || 0 }}</span>
-                  </div>
-                  <div class="order-detail">
-                    <span class="detail-label">Total:</span>
-                    <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
-                  </div>
+          <div class="order-body">
+            <div class="order-detail">
+              <span class="detail-label">Fecha:</span>
+              <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Productos:</span>
+              <span class="detail-value">{{ order.details?.length || 0 }}</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Total:</span>
+              <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
+            </div>
 
-                  <div class="order-items-preview">
-                    @for (detail of (order.details || []).slice(0, 2); track $index) {
-                      <div class="item-preview">
-                        <span>{{ detail.productName }}</span>
-                        <span>{{ detail.quantity }} uds</span>
-                      </div>
-                    }
-                    @if ((order.details?.length || 0) > 2) {
-                      <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
-                    }
-                  </div>
-                </div>
+            <div class="order-items-preview">
+              @for (detail of (order.details || []).slice(0, 2); track $index) {
+              <div class="item-preview">
+                <span>{{ detail.productName }}</span>
+                <span>{{ detail.quantity }} uds</span>
+              </div>
+              }
+              @if ((order.details?.length || 0) > 2) {
+              <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
+              }
+            </div>
+          </div>
 
-                <div class="order-actions">
-                  <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
-                    Ver Detalles
-                  </button>
-                  <button class="btn-action btn-delete" (click)="deleteOrder(order)">
-                    Eliminar
-                  </button>
+          <div class="order-actions">
+            <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
+              Ver Detalles
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+      @if (hasMore('CONFIRMED')) {
+      <div class="load-more-container">
+        <button class="btn-load-more" (click)="loadMoreOrders('CONFIRMED')">
+          Cargar más antiguas ({{ getRemainingCount('CONFIRMED') }} restantes)
+        </button>
+      </div>
+      }
+      }
+    </section>
+
+    <!-- INCOMPLETE Section -->
+    <section class="status-section">
+      <h2 class="section-title" [style.border-color]="getStatusColor('INCOMPLETE')">
+        {{ getStatusLabel('INCOMPLETE') }} ({{ ordersByStatus.INCOMPLETE.length || 0 }})
+      </h2>
+      @if ((ordersByStatus.INCOMPLETE.length || 0) === 0) {
+      <div class="empty-section">
+        No hay órdenes incompletas
+      </div>
+      } @else {
+      <div class="orders-container">
+        @for (order of getDisplayedOrders('INCOMPLETE'); track order.id) {
+        <div class="order-card incomplete" [style.border-left-color]="getStatusColor('INCOMPLETE')">
+          <div class="order-header" [style.background]="getStatusColor('INCOMPLETE')">
+            <div class="order-title">
+              <div class="order-user">
+                <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
+                <div>
+                  <h3>Orden #{{ order.id }}</h3>
+                  <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
                 </div>
               </div>
-            }
-          </div>
-          @if (hasMore('INCOMPLETE')) {
-            <div class="load-more-container">
-              <button class="btn-load-more" (click)="loadMoreOrders('INCOMPLETE')">
-                Cargar más antiguas ({{ getRemainingCount('INCOMPLETE') }} restantes)
-              </button>
             </div>
-          }
-        }
-      </section>
-
-      <!-- CANCELLED Section -->
-      <section class="status-section">
-        <h2 class="section-title" [style.border-color]="getStatusColor('CANCELLED')">
-          {{ getStatusLabel('CANCELLED') }} ({{ ordersByStatus.CANCELLED?.length || 0 }})
-        </h2>
-        @if ((ordersByStatus.CANCELLED?.length || 0) === 0) {
-          <div class="empty-section">
-            No hay órdenes canceladas
+            <span class="order-status">{{ getStatusLabel(order.status) }}</span>
           </div>
-        } @else {
-          <div class="orders-container">
-            @for (order of getDisplayedOrders('CANCELLED'); track order.id) {
-              <div class="order-card cancelled" [style.border-left-color]="getStatusColor('CANCELLED')">
-                <div class="order-header" [style.background]="getStatusColor('CANCELLED')">
-                  <div class="order-title">
-                    <div class="order-user">
-                      <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
-                      <div>
-                        <h3>Orden #{{ order.id }}</h3>
-                        <p>{{ order.userName }}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <span class="order-status">{{ getStatusLabel(order.status) }}</span>
-                </div>
 
-                <div class="order-body">
-                  <div class="order-detail">
-                    <span class="detail-label">Fecha:</span>
-                    <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
-                  </div>
-                  <div class="order-detail">
-                    <span class="detail-label">Productos:</span>
-                    <span class="detail-value">{{ order.details?.length || 0 }}</span>
-                  </div>
-                  <div class="order-detail">
-                    <span class="detail-label">Total:</span>
-                    <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
-                  </div>
+          <div class="order-body">
+            <div class="order-detail">
+              <span class="detail-label">Fecha:</span>
+              <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Productos:</span>
+              <span class="detail-value">{{ order.details?.length || 0 }}</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Total:</span>
+              <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
+            </div>
 
-                  <div class="order-items-preview">
-                    @for (detail of (order.details || []).slice(0, 2); track $index) {
-                      <div class="item-preview">
-                        <span>{{ detail.productName }}</span>
-                        <span>{{ detail.quantity }} uds</span>
-                      </div>
-                    }
-                    @if ((order.details?.length || 0) > 2) {
-                      <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
-                    }
-                  </div>
-                </div>
+            <div class="order-items-preview">
+              @for (detail of (order.details || []).slice(0, 2); track $index) {
+              <div class="item-preview">
+                <span>{{ detail.productName }}</span>
+                <span>{{ detail.quantity }} uds</span>
+              </div>
+              }
+              @if ((order.details?.length || 0) > 2) {
+              <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
+              }
+            </div>
+          </div>
 
-                <div class="order-actions">
-                  <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
-                    Ver Detalles
-                  </button>
-                  <button class="btn-action btn-delete" (click)="deleteOrder(order)">
-                    Eliminar
-                  </button>
+          <div class="order-actions">
+            <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
+              Ver Detalles
+            </button>
+            <button class="btn-action btn-primary" (click)="reclamarFaltantes(order)">
+              Reclamar Faltantes
+            </button>
+            <button class="btn-action btn-delete" (click)="deleteOrder(order)">
+              Eliminar
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+      @if (hasMore('INCOMPLETE')) {
+      <div class="load-more-container">
+        <button class="btn-load-more" (click)="loadMoreOrders('INCOMPLETE')">
+          Cargar más antiguas ({{ getRemainingCount('INCOMPLETE') }} restantes)
+        </button>
+      </div>
+      }
+      }
+    </section>
+
+    <!-- CANCELLED Section -->
+    <section class="status-section">
+      <h2 class="section-title" [style.border-color]="getStatusColor('CANCELLED')">
+        {{ getStatusLabel('CANCELLED') }} ({{ ordersByStatus.CANCELLED.length || 0 }})
+      </h2>
+      @if ((ordersByStatus.CANCELLED.length || 0) === 0) {
+      <div class="empty-section">
+        No hay órdenes canceladas
+      </div>
+      } @else {
+      <div class="orders-container">
+        @for (order of getDisplayedOrders('CANCELLED'); track order.id) {
+        <div class="order-card cancelled" [style.border-left-color]="getStatusColor('CANCELLED')">
+          <div class="order-header" [style.background]="getStatusColor('CANCELLED')">
+            <div class="order-title">
+              <div class="order-user">
+                <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
+                <div>
+                  <h3>Orden #{{ order.id }}</h3>
+                  <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
                 </div>
               </div>
-            }
-          </div>
-          @if (hasMore('CANCELLED')) {
-            <div class="load-more-container">
-              <button class="btn-load-more" (click)="loadMoreOrders('CANCELLED')">
-                Cargar más antiguas ({{ getRemainingCount('CANCELLED') }} restantes)
-              </button>
             </div>
-          }
+            <span class="order-status">{{ getStatusLabel(order.status) }}</span>
+          </div>
+
+          <div class="order-body">
+            <div class="order-detail">
+              <span class="detail-label">Fecha:</span>
+              <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Productos:</span>
+              <span class="detail-value">{{ order.details?.length || 0 }}</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Total:</span>
+              <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
+            </div>
+
+            <div class="order-items-preview">
+              @for (detail of (order.details || []).slice(0, 2); track $index) {
+              <div class="item-preview">
+                <span>{{ detail.productName }}</span>
+                <span>{{ detail.quantity }} uds</span>
+              </div>
+              }
+              @if ((order.details?.length || 0) > 2) {
+              <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
+              }
+            </div>
+          </div>
+
+          <div class="order-actions">
+            <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
+              Ver Detalles
+            </button>
+            <button class="btn-action btn-delete" (click)="deleteOrder(order)">
+              Eliminar
+            </button>
+          </div>
+        </div>
         }
-      </section>
+      </div>
+      @if (hasMore('CANCELLED')) {
+      <div class="load-more-container">
+        <button class="btn-load-more" (click)="loadMoreOrders('CANCELLED')">
+          Cargar más antiguas ({{ getRemainingCount('CANCELLED') }} restantes)
+        </button>
+      </div>
+      }
+      }
+    </section>
     }
   </div>
 </div>
 
 <!-- Details Modal -->
 @if (showDetailsModal && selectedOrder) {
-  <app-order-details-modal
-    [order]="selectedOrder"
-    (closeModal)="closeDetailsModal()"
-  ></app-order-details-modal>
+<app-order-details-modal [order]="selectedOrder" (closeModal)="closeDetailsModal()"></app-order-details-modal>
+}
+
+<!-- Reception Modal -->
+@if (showReceptionModal && selectedOrder) {
+<app-order-reception-modal [order]="selectedOrder" (closeModal)="closeReceptionModal()" (receptionProcessed)="loadOrders()"></app-order-reception-modal>
 }

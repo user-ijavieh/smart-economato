@@ -5,7 +5,7 @@ import { OrderService } from '../../../core/services/order.service';
 import { MessageService } from '../../../core/services/message.service';
 import { Order, OrderStatus } from '../../../shared/models/order.model';
 import { OrderDetailsModalComponent } from '../orders/order-details-modal/order-details-modal.component';
-
+import { OrderReceptionModalComponent } from './order-reception-modal/order-reception-modal.component';
 interface OrdersByStatus {
   PENDING: Order[];
   REVIEW: Order[];
@@ -17,7 +17,7 @@ interface OrdersByStatus {
 @Component({
   selector: 'app-reception',
   standalone: true,
-  imports: [CommonModule, FormsModule, OrderDetailsModalComponent],
+  imports: [CommonModule, FormsModule, OrderDetailsModalComponent, OrderReceptionModalComponent],
   templateUrl: './reception.component.html',
   styleUrl: './reception.component.css'
 })
@@ -36,6 +36,7 @@ export class ReceptionComponent implements OnInit {
 
   loading = false;
   showDetailsModal = false;
+  showReceptionModal = false;
   selectedOrder: Order | null = null;
 
   // Paginación por sección
@@ -176,54 +177,55 @@ export class ReceptionComponent implements OnInit {
     });
   }
 
-  async confirmOrder(order: Order): Promise<void> {
-    const confirmed = await this.messageService.confirm(
-      'Confirmar orden',
-      `¿Confirmar la orden #${order.id}? Esto guardará el stock en el sistema.`
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    // Construir el request de recepción con las cantidades recibidas
-    const receptionRequest = {
-      orderId: order.id,
-      status: 'CONFIRMED' as const,
-      items: (order.details || []).map(detail => ({
-        productId: detail.productId,
-        quantityReceived: detail.quantityReceived || detail.quantity // Usar cantidad recibida o la solicitada
-      }))
-    };
-
-    this.orderService.processReception(receptionRequest).subscribe({
-      next: () => {
-        this.messageService.showSuccess('Orden confirmada y stock actualizado');
-        this.loadOrders();
-      },
-      error: () => {
-        this.messageService.showError('Error al confirmar orden');
-      }
-    });
+  openReceptionModal(order: Order): void {
+    this.selectedOrder = order;
+    this.showReceptionModal = true;
   }
 
-  async markIncomplete(order: Order): Promise<void> {
-    const confirmed = await this.messageService.confirm(
-      'Marcar como incompleta',
-      `¿Marcar la orden #${order.id} como incompleta?`
-    );
+  closeReceptionModal(): void {
+    this.showReceptionModal = false;
+    this.selectedOrder = null;
+  }
 
-    if (!confirmed) {
-      return;
-    }
+  reclamarFaltantes(order: Order): void {
+    this.orderService.getMissingItems(order.id).subscribe({
+      next: async (missingItems) => {
+        if (!missingItems || missingItems.length === 0) {
+          this.messageService.showInfo('No hay items faltantes para esta orden.');
+          return;
+        }
 
-    this.orderService.updateStatus(order.id, 'INCOMPLETE').subscribe({
-      next: () => {
-        this.messageService.showWarning('Orden marcada como incompleta');
-        this.loadOrders();
+        const itemsList = missingItems.map(item => `- ${item.productName}: ${item.quantity} uds`).join('\n');
+        
+        const confirmed = await this.messageService.confirm(
+          'Reclamar Faltantes',
+          `Los siguientes productos faltan de esta orden:\n\n${itemsList}\n\n¿Deseas crear una nueva orden con estos productos faltantes?`
+        );
+
+        if (confirmed) {
+          const newOrderRequest: import('../../../shared/models/order.model').OrderRequest = {
+            userId: order.userId,
+            supplierId: order.supplierId,
+            details: missingItems.map(item => ({
+              productId: item.productId,
+              quantity: item.quantity,
+              unitPrice: item.unitPrice
+            }))
+          };
+
+          this.orderService.create(newOrderRequest).subscribe({
+            next: () => {
+              this.messageService.showSuccess('Nueva orden creada con los productos faltantes.');
+              this.loadOrders();
+            },
+            error: () => {
+              this.messageService.showError('Error al crear la nueva orden.');
+            }
+          });
+        }
       },
       error: () => {
-        this.messageService.showError('Error al marcar como incompleta');
+        this.messageService.showError('Error al obtener items faltantes.');
       }
     });
   }

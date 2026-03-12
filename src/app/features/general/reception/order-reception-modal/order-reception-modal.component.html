@@ -1,0 +1,56 @@
+<div class="modal-overlay">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Procesar Recepción de Orden #{{ order.id }}</h2>
+      <button class="btn-close" (click)="close()" [disabled]="isProcessing">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="detail-group">
+        <p><strong>Usuario:</strong> {{ order.userName }}</p>
+        <p><strong>Fecha Solicitud:</strong> {{ order.orderDate | date:'dd/MM/yyyy' }}</p>
+      </div>
+
+      <div class="table-container">
+        <table class="details-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+
+              <th class="text-center">Solicitado</th>
+              <th class="text-center received-col">Recibido</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (detail of order.details; track detail.productId) {
+            <tr>
+              <td>{{ detail.productName }}</td>
+
+              <td class="text-center">{{ detail.quantity }}</td>
+              <td class="text-center received-col">
+                <input 
+                  type="number" 
+                  class="form-control quantity-input" 
+                  [(ngModel)]="detail.quantityReceived" 
+                  min="0"
+                  [max]="detail.quantity"
+                  [disabled]="isProcessing" />
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="close()" [disabled]="isProcessing">Cancelar</button>
+      <button class="btn btn-primary" (click)="processReception()" [disabled]="isProcessing">
+        <span *ngIf="isProcessing">Procesando...</span>
+        <span *ngIf="!isProcessing">Procesar Recepción</span>
+      </button>
+    </div>
+  </div>
+</div>
