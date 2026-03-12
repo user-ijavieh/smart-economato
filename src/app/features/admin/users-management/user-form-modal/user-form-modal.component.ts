@@ -108,4 +108,5 @@ export class UserFormModalComponent implements OnInit {
             this.onClose();
         }
     }
+
 }

@@ -114,6 +114,18 @@ export class UserService {
     return this.getAll(0, 10000).pipe(map(page => page.content));
   }
 
+  getMyStudents(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.url}/students`);
+  }
+
+  escalateRoles(id: number, durationMinutes: number): Observable<void> {
+    return this.http.post<void>(`${this.url}/${id}/escalate`, { durationMinutes });
+  }
+
+  deescalateRoles(id: number): Observable<void> {
+    return this.http.post<void>(`${this.url}/${id}/de-escalate`, {});
+  }
+
   getByRole(role: string, sort?: string): Observable<User[]> {
     let params = new HttpParams();
     if (sort) {
@@ -121,4 +133,6 @@ export class UserService {
     }
     return this.http.get<User[]>(`${this.url}/by-role/${role}`, { params });
   }
+
 }
+

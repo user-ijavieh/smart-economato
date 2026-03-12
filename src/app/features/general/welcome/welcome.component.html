@@ -29,6 +29,14 @@
         <span>{{ card.label }}</span>
       </a>
       }
+      @if (isChefOrAdmin) {
+      <a routerLink="/profile" class="btn-card">
+        <div class="btn-card-icon">
+          <img src="/assets/img/icons/students-white.svg" alt="Gestión de alumnos">
+        </div>
+        <span>Gestión de alumnos</span>
+      </a>
+      }
       @if (isAdmin) {
       <a routerLink="/admin-panel" class="btn-card btn-admin">
         <div class="btn-card-icon">

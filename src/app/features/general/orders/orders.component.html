@@ -31,7 +31,7 @@
               <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
               <div class="user-info">
                 <h4>Pedido #{{ order.id }}</h4>
-                <p>{{ order.userName || 'Usuario desconocido' }}</p>
+                <p>{{ order.userName || 'Usuario desconocido' }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
               </div>
             </div>
             <span class="order-status created">CREADO</span>
