@@ -4,9 +4,11 @@
 
 <div class="tab-bar">
   <button class="tab-btn" [class.active]="activeTab === 'history'" (click)="switchTab('history')">
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor">
-      <path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Zm-40-200 184-184-56-56-128 128v-168h-80v200h80Z"/>
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+      <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 1 1-8 8h1a7 7 0 1 0 7.515-6.981z"/>
+      <path d="M8.5 4.5a.5.5 0 0 0-1 0v4h-3a.5.5 0 0 0 0 1h4a.5.5 0 0 0 .5-.5v-4z"/>
     </svg>
+
     Historial
   </button>
   <button class="tab-btn" [class.active]="activeTab === 'reports'" (click)="switchTab('reports')">
@@ -96,7 +98,20 @@
           </td>
           <td class="hide-on-mobile">{{ audit.quantityCooked | number:'1.2-2' }}</td>
           <td class="actions-cell hide-on-mobile" (click)="$event.stopPropagation()">
-            <button class="btn-revert" (click)="revertAudit(audit)">Revertir</button>
+              <div class="actions-cell">
+                <button class="btn-trace" (click)="viewTraceability(audit)" title="Trazabilidad">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                  </svg>
+                </button>
+                <button class="btn-revert" (click)="revertAudit(audit)" title="Revertir">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/>
+                    <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966a.25.25 0 0 0 .41-.192z"/>
+                  </svg>
+                </button>
+              </div>
           </td>
           <td class="show-on-mobile-only mobile-icon-col">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
@@ -329,3 +344,84 @@
 
 <app-confirm-dialog></app-confirm-dialog>
 <app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
+
+<!-- Traceability Modal -->
+@if (showTraceabilityModal) {
+  <div class="modal-overlay" (click)="closeTraceabilityModal()">
+    <div class="modal-container traceability-modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Trazabilidad de Ingredientes</h2>
+        <button class="btn-close" (click)="closeTraceabilityModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        @if (loadingTraceability) {
+          <div class="loading-traceability">
+            <div class="spinner"></div>
+            <p>Rastreando origen de ingredientes...</p>
+          </div>
+        } @else if (traceData) {
+          <div class="traceability-summary">
+            <h3>Resumen del Cocinado</h3>
+            <div class="summary-grid">
+              <div class="summary-item">
+                <span class="summary-label">Receta</span>
+                <span class="summary-value">{{ traceData.cookingAudit.recipeName }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Cocinero</span>
+                <span class="summary-value">{{ traceData.cookingAudit.userName }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Fecha</span>
+                <span class="summary-value">{{ traceData.cookingAudit.cookingDate | date:'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Cantidad</span>
+                <span class="summary-value">{{ traceData.cookingAudit.quantityCooked }} raciones</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ingredients-trace-section">
+            <h3 class="section-title">Origen por Ingrediente</h3>
+            <div class="ingredients-trace-list">
+              @for (ingredient of traceData.ingredientTrace; track ingredient.productName) {
+                <div class="ingredient-trace-card">
+                  <div class="ingredient-header">
+                    <span class="ingredient-name">{{ ingredient.productName }}</span>
+                  </div>
+                  <div class="trace-details-grid">
+                    <div class="trace-item">
+                      <span class="trace-label">Hash Ledger</span>
+                      <span class="trace-value hash-value">{{ ingredient.ledgerHash || 'N/A' }}</span>
+                    </div>
+                    <div class="trace-item">
+                      <span class="trace-label">Proveedor</span>
+                      <span class="trace-value">{{ ingredient.supplierName || 'Desconocido' }}</span>
+                    </div>
+                    <div class="trace-item">
+                      <span class="trace-label">ID Orden/Entrada</span>
+                      <span class="trace-value">{{ ingredient.orderId || 'N/A' }}</span>
+                    </div>
+                  </div>
+                </div>
+              }
+              @if (!traceData.ingredientTrace.length) {
+                <p class="empty-state">No se encontró información de trazabilidad para los ingredientes.</p>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeTraceabilityModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+}

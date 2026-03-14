@@ -74,6 +74,12 @@ export const routes: Routes = [
           import('./features/admin/orders-management/orders-management.component').then(m => m.OrdersManagementComponent),
         canActivate: [roleGuard('ADMIN')]
       },
+      {
+        path: 'admin-panel/traceability',
+        loadComponent: () =>
+          import('./features/admin/traceability-management/traceability-management.component').then(m => m.TraceabilityManagementComponent),
+        canActivate: [roleGuard('ADMIN')]
+      },
 
       {
         path: 'inventario',

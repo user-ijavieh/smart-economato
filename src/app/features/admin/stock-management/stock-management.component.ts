@@ -11,6 +11,7 @@ import { OrderService } from '../../../core/services/order.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { MessageService } from '../../../core/services/message.service';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
+import { ProductBatchService } from '../../../core/services/product-batch.service';
 import {
     AlertResolution,
     AlertSeverity,
@@ -23,8 +24,9 @@ import { Page } from '../../../shared/models/page.model';
 import { StockLedgerService } from '../../../core/services/stock-ledger.service';
 import { StockLedgerResponseDTO, IntegrityCheckResponseDTO, StockSnapshotResponseDTO, ConsumptionBreakdownDTO } from '../../../shared/models/stock-ledger.model';
 import { Product } from '../../../shared/models/product.model';
+import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.model';
 
-type Tab = 'alerts' | 'predictions' | 'ledger';
+type Tab = 'alerts' | 'predictions' | 'ledger' | 'batches';
 
 @Component({
     selector: 'app-stock-management',
@@ -41,11 +43,13 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     private ngZone = inject(NgZone);
     private authService = inject(AuthService);
     private stockLedgerService = inject(StockLedgerService);
+    private productBatchService = inject(ProductBatchService);
     messageService = inject(MessageService);
 
     loadingAlerts = true;
     loadingPredictions = true;
     loadingOrderData = false;
+    loadingBatches = false;
 
     activeTab: Tab = 'alerts';
 
@@ -163,6 +167,22 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     private searchSubject = new Subject<string>();
     private searchSubscription?: any;
 
+    // ── Batches tab state ──
+    batchesSubTab: 'expiring' | 'expired' = 'expiring';
+    expiringDays = 7;
+    expiringBatches: ProductBatchResponseDTO[] = [];
+    expiredBatches: ProductBatchResponseDTO[] = [];
+    withdrawingBatchId: number | null = null;
+
+    // ── Manual Adjustment Modal state ──
+    showManualAdjustmentModal = false;
+    adjustmentDelta: number | null = null;
+    adjustmentType: string = 'AJUSTE';
+    adjustmentDescription = '';
+    adjustmentBatchId: number | null = null;
+    activeBatchesForAdjustment: ProductBatchResponseDTO[] = [];
+    submittingAdjustment = false;
+
     ngOnInit(): void {
         this.loadAlerts();
         
@@ -189,6 +209,8 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             if (this.ledgerProducts.length === 0) {
                 this.loadLedgerProducts();
             }
+        } else if (tab === 'batches' && this.expiringBatches.length === 0 && this.expiredBatches.length === 0) {
+            this.loadBatches();
         }
         this.showLedgerDropdown = false;
         this.ledgerSearchTerm = '';
@@ -848,6 +870,144 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             },
             error: (err) => this.messageService.showError(err.error || 'Error al resetear historial')
         });
+    }
+
+    openManualAdjustmentModal(): void {
+        if (!this.selectedProductId) return;
+        this.showManualAdjustmentModal = true;
+        this.adjustmentDelta = null;
+        this.adjustmentType = 'AJUSTE';
+        this.adjustmentDescription = '';
+        this.adjustmentBatchId = null;
+        this.productBatchService.getActiveBatches(this.selectedProductId).subscribe({
+            next: (batches) => {
+                this.activeBatchesForAdjustment = batches;
+                this.cdr.detectChanges();
+            },
+            error: () => this.messageService.showError('Error al cargar lotes activos')
+        });
+    }
+
+    closeManualAdjustmentModal(): void {
+        this.showManualAdjustmentModal = false;
+        this.activeBatchesForAdjustment = [];
+    }
+
+    submitManualAdjustment(): void {
+        if (!this.selectedProductId || !this.adjustmentDelta || !this.adjustmentDescription) return;
+        
+        const request = {
+            productId: this.selectedProductId,
+            quantityDelta: this.adjustmentDelta,
+            movementType: this.adjustmentType,
+            description: this.adjustmentDescription,
+            batchId: this.adjustmentBatchId || undefined
+        };
+
+        this.submittingAdjustment = true;
+        this.stockLedgerService.registerManualAdjustment(request).pipe(
+            finalize(() => { this.submittingAdjustment = false; this.cdr.detectChanges(); })
+        ).subscribe({
+            next: () => {
+                this.messageService.showSuccess('Ajuste de stock registrado con éxito');
+                this.closeManualAdjustmentModal();
+                this.loadLedgerHistory(this.selectedProductId!);
+                this.loadLedgerSnapshot(this.selectedProductId!);
+            },
+            error: (err) => this.messageService.showError(err.error?.message || 'Error al registrar el ajuste')
+        });
+    }
+
+    // ================================================================
+    // BATCHES TAB
+    // ================================================================
+
+    loadBatches(): void {
+        this.loadingBatches = true;
+        forkJoin({
+            expiring: this.productBatchService.getExpiringBatches(this.expiringDays),
+            expired: this.productBatchService.getExpiredBatches()
+        }).pipe(
+            finalize(() => {
+                this.loadingBatches = false;
+                this.cdr.detectChanges();
+            })
+        ).subscribe({
+            next: ({ expiring, expired }) => {
+                this.expiringBatches = expiring;
+                this.expiredBatches = expired;
+            },
+            error: () => this.messageService.showError('No se pudieron cargar los lotes.')
+        });
+    }
+
+    refreshExpiringBatches(): void {
+        this.loadingBatches = true;
+        this.productBatchService.getExpiringBatches(this.expiringDays).pipe(
+            finalize(() => {
+                this.loadingBatches = false;
+                this.cdr.detectChanges();
+            })
+        ).subscribe({
+            next: data => this.expiringBatches = data,
+            error: () => this.messageService.showError('No se pudieron actualizar los lotes por vencer.')
+        });
+    }
+    
+    withdrawBatch(batch: ProductBatchResponseDTO): void {
+        this.messageService.confirm(
+            'Confirmar Retirada',
+            `¿Estás seguro de que deseas retirar el lote #${batch.id} de "${batch.productName}"? Esta acción no se puede deshacer.`
+        ).then(confirmed => {
+            if (confirmed) {
+                this.withdrawingBatchId = batch.id;
+                this.cdr.markForCheck();
+                
+                this.productBatchService.withdrawBatch(batch.id).pipe(
+                    finalize(() => {
+                        this.withdrawingBatchId = null;
+                        this.cdr.markForCheck();
+                    })
+                ).subscribe({
+                    next: () => {
+                        this.messageService.showSuccess(`Lote #${batch.id} retirado correctamente`);
+                        this.loadBatches();
+                    },
+                    error: (err) => {
+                        this.messageService.showError(err.error?.message || 'Error al retirar el lote');
+                    }
+                });
+            }
+        });
+    }
+
+    getBatchSeverityClass(daysUntilExpiration: number): string {
+        if (daysUntilExpiration < 0) {
+            return 'batch-expired';
+        }
+        if (daysUntilExpiration <= 2) {
+            return 'batch-critical';
+        }
+        if (daysUntilExpiration <= 7) {
+            return 'batch-warning';
+        }
+        return 'batch-ok';
+    }
+
+    getBatchSeverityLabel(daysUntilExpiration: number): string {
+        if (daysUntilExpiration < 0) {
+            return 'Caducado';
+        }
+        if (daysUntilExpiration === 0) {
+            return 'Caduca hoy';
+        }
+        if (daysUntilExpiration <= 2) {
+            return 'Crítico';
+        }
+        if (daysUntilExpiration <= 7) {
+            return 'Próximo';
+        }
+        return 'Controlado';
     }
 
 

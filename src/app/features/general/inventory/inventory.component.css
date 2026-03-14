@@ -734,3 +734,161 @@ th.sortable[data-sort-dir='desc']::after {
     padding: 10px 12px !important;
   }
 }
+/** ===== CADUCIDADES ===== */
+
+.btn-expirations {
+  background: white;
+  color: #555;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-expirations:hover {
+  background: #f9f9f9;
+  border-color: #ccc;
+  color: #333;
+}
+
+.btn-expirations.alert {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: #fef2f2;
+}
+
+.btn-expirations.alert:hover {
+  background: #fee2e2;
+}
+
+.expirations-panel {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  overflow: hidden;
+  border: 1px solid #eee;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.panel-header {
+  padding: 15px 20px;
+  background: #f8fafc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+}
+
+.panel-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #1e293b;
+}
+
+.panel-content {
+  padding: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.expiration-section {
+  margin-bottom: 25px;
+}
+
+.expiration-section:last-child {
+  margin-bottom: 0;
+}
+
+.expiration-section h4 {
+  margin: 0 0 15px 0;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.expired h4 { color: #ef4444; }
+.expiring h4 { color: #f59e0b; }
+
+.batch-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+}
+
+.batch-item {
+  background: #f1f5f9;
+  padding: 12px 15px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.batch-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.product-name {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.batch-details {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.batch-date {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.expired .batch-date { color: #ef4444; }
+.expiring .batch-date { color: #f59e0b; }
+
+.btn-withdraw {
+  background: #ef4444;
+  font-size: 0.8rem;
+  padding: 6px 12px;
+  box-shadow: none;
+}
+
+.btn-withdraw:hover {
+  background: #dc2626;
+}
+
+.empty-msg {
+  text-align: center;
+  color: #94a3b8;
+  font-style: italic;
+  padding: 20px;
+}
+
+.btn-icon {
+  background: transparent;
+  color: #94a3b8;
+  padding: 5px;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+}
+
+.btn-icon:hover {
+  background: #e2e8f0;
+  color: #475569;
+  transform: none;
+}

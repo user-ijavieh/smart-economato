@@ -15,7 +15,9 @@ import { ConfirmDialogComponent } from '../../../shared/components/layout/confir
 import { StockUpdateModalComponent } from './stock-update-modal/stock-update-modal.component';
 import { ProductDetailModalComponent } from './product-detail-modal/product-detail-modal.component';
 import { BarcodeScannerComponent } from '../barcode-scanner/barcode-scanner.component';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { ProductBatchService } from '../../../core/services/product-batch.service';
+import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.model';
+import { finalize, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-inventory',
@@ -29,11 +31,18 @@ export class InventoryComponent implements OnInit, OnDestroy {
   private supplierService = inject(SupplierService);
   messageService = inject(MessageService);
   private authService = inject(AuthService);
+  private productBatchService = inject(ProductBatchService);
   private cdr = inject(ChangeDetectorRef);
 
   // Listas de datos
   products: Product[] = [];
   suppliers: Supplier[] = [];
+
+  // Expirations
+  expiringBatches: ProductBatchResponseDTO[] = [];
+  expiredBatches: ProductBatchResponseDTO[] = [];
+  loadingExpirations = false;
+  showExpirationsPanel = false;
 
   // Estado de la vista
   loading = false;
@@ -61,25 +70,23 @@ export class InventoryComponent implements OnInit, OnDestroy {
   sortInteracted = false;
 
   ngOnInit(): void {
-    this.initialiseSearchSubscription();
     this.loadProducts();
     // Solo cargar proveedores si el usuario puede editar productos
     if (this.isAdmin || this.authService.getRole() === 'CHEF') {
       this.loadSuppliers();
     }
-  }
-
-  ngOnDestroy(): void {
-    this.searchSubject.complete();
-  }
-
-  initialiseSearchSubscription(): void {
+    this.loadExpirations();
+    
     this.searchSubject.pipe(
       debounceTime(400),
       distinctUntilChanged()
     ).subscribe(term => {
       this.performSearch(term);
     });
+  }
+
+  ngOnDestroy(): void {
+    this.searchSubject.complete();
   }
 
   loadProducts(): void {
@@ -108,6 +115,54 @@ export class InventoryComponent implements OnInit, OnDestroy {
   onPageChange(newPage: number): void {
     this.page = newPage;
     this.loadProducts();
+  }
+
+  // --- Expirations & Batches ---
+
+  loadExpirations(): void {
+    this.loadingExpirations = true;
+    this.productBatchService.getExpiringBatches(15).subscribe({
+      next: (batches) => {
+        this.expiringBatches = batches;
+        this.cdr.markForCheck();
+      }
+    });
+
+    this.productBatchService.getExpiredBatches().subscribe({
+      next: (batches) => {
+        this.expiredBatches = batches;
+        this.loadingExpirations = false;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.loadingExpirations = false;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  toggleExpirationsPanel(): void {
+    this.showExpirationsPanel = !this.showExpirationsPanel;
+  }
+
+  async onWithdrawBatch(batch: ProductBatchResponseDTO): Promise<void> {
+    const confirmed = await this.messageService.confirm(
+      'Retirar lote',
+      `¿Estás seguro de que deseas retirar el lote ${batch.id} de "${batch.productName}"? Se registrará como merma en el ledger.`
+    );
+
+    if (!confirmed) return;
+
+    this.productBatchService.withdrawBatch(batch.id).subscribe({
+      next: () => {
+        this.messageService.showSuccess('Lote retirado correctamente');
+        this.loadExpirations();
+        this.loadProducts(); // Reload main stock
+      },
+      error: (err) => {
+        this.messageService.showError(err.error?.message || 'Error al retirar el lote');
+      }
+    });
   }
 
   onSizeChange(event: any): void {

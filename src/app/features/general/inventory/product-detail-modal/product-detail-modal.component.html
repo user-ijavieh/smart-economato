@@ -69,6 +69,40 @@
             </table>
           </div>
 
+          <!-- Lotes (Trazabilidad) -->
+          <div class="modal-section">
+            <h4>Lotes Activos (Trazabilidad)</h4>
+            <div class="batches-container">
+              @if (loadingBatches) {
+                <p class="loading-text">Cargando lotes...</p>
+              } @else if (batches.length > 0) {
+                <table class="batches-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Cantidad</th>
+                      <th>Caducidad</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (batch of batches; track batch.id) {
+                      <tr [class.expiring-row]="batch.daysUntilExpiration <= 7" [class.expired-row]="batch.expired">
+                        <td>#{{ batch.id }}</td>
+                        <td>{{ batch.remainingQuantity }} {{ product.unit }}</td>
+                        <td>
+                          {{ batch.expirationDate ? (batch.expirationDate | date:'dd/MM/yyyy') : '—' }}
+                          @if (batch.expired) { <span class="badge-expired">CADUCADO</span> }
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              } @else {
+                <p class="empty-text">No hay lotes activos registrados.</p>
+              }
+            </div>
+          </div>
+
           <!-- Descripción -->
           @if (product.description) {
             <div class="modal-section">

@@ -104,13 +104,18 @@ export class RecipeService {
   }
 
   findByMaxCost(maxCost: number): Observable<Recipe[]> {
-    return this.http.get<Recipe[]>(`${this.url}/by-max-cost`, {
+    return this.http.get<Recipe[]>(`${this.url}/maxcost`, {
       params: new HttpParams().set('maxCost', maxCost.toString())
     });
   }
 
   cook(request: CookRequest): Observable<Recipe> {
     return this.http.post<Recipe>(`${this.url}/cook`, request);
+  }
+
+  revertCooking(auditId: number, reason: string = 'Reversión manual'): Observable<void> {
+    const params = new HttpParams().set('reason', reason);
+    return this.http.post<void>(`${this.url}/cook/${auditId}/revert`, {}, { params });
   }
 
   getPdf(id: number): Observable<Blob> {
