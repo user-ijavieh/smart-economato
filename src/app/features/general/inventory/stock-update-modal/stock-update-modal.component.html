@@ -37,6 +37,18 @@
           El sistema calculará automáticamente la diferencia y registrará un movimiento de AJUSTE.
         </small>
       </div>
+      <div class="form-group">
+        <label for="expirationDate">Fecha de Expiración (Opcional)</label>
+        <input
+          type="date"
+          id="expirationDate"
+          [(ngModel)]="expirationDate"
+          name="expirationDate"
+        />
+        <small class="hint">
+          Si el stock aumenta, se creará un lote con esta fecha.
+        </small>
+      </div>
     </div>
 
     <div class="modal-footer">

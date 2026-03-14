@@ -182,6 +182,7 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "GET /api/order-audits/by-user/{id}",
     "GET /api/order-audits/by-order/{id}",
     "GET /api/order-audits/by-date-range",
+    "POST /api/stock-ledger/manual-adjustment",
     "POST /api/stock-ledger/batch",
     "GET /api/stock-ledger/consumption/{productId}",
     "GET /api/stock-ledger/history/{productId}",

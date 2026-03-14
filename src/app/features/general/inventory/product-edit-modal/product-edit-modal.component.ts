@@ -35,7 +35,8 @@ export class ProductEditModalComponent implements OnChanges {
     minimumStock: undefined as number | undefined,
     availabilityPercentage: undefined as number | undefined,
     unit: 'KG',
-    supplierId: undefined as number | undefined
+    supplierId: undefined as number | undefined,
+    expirationDate: ''
   };
 
   allowedUnits = ['KG', 'G', 'L', 'ML', 'UND'];
@@ -52,7 +53,8 @@ export class ProductEditModalComponent implements OnChanges {
         minimumStock: this.product.minimumStock || this.product.minStock || undefined,
         availabilityPercentage: this.product.availabilityPercentage || undefined,
         unit: this.product.unit || 'KG',
-        supplierId: this.product.supplier?.id
+        supplierId: this.product.supplier?.id,
+        expirationDate: this.product.expirationDate || ''
       };
     }
   }
@@ -99,7 +101,8 @@ export class ProductEditModalComponent implements OnChanges {
       unitPrice: unitPrice,
       productCode: this.formData.productCode.trim(),
       currentStock: currentStock,
-      supplierId: supplierId
+      supplierId: supplierId,
+      expirationDate: this.formData.expirationDate || undefined
     };
 
     this.save.emit(productData);

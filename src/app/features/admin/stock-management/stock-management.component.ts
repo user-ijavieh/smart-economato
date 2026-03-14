@@ -177,6 +177,8 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     // ── Manual Adjustment Modal state ──
     showManualAdjustmentModal = false;
     adjustmentDelta: number | null = null;
+    adjustmentDirection: 'ENTRY' | 'EXIT' = 'ENTRY';
+    absoluteAdjustmentQuantity: number | null = null;
     adjustmentType: string = 'AJUSTE';
     adjustmentDescription = '';
     adjustmentBatchId: number | null = null;
@@ -876,6 +878,8 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         if (!this.selectedProductId) return;
         this.showManualAdjustmentModal = true;
         this.adjustmentDelta = null;
+        this.absoluteAdjustmentQuantity = null;
+        this.adjustmentDirection = 'ENTRY';
         this.adjustmentType = 'AJUSTE';
         this.adjustmentDescription = '';
         this.adjustmentBatchId = null;
@@ -894,11 +898,16 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     }
 
     submitManualAdjustment(): void {
-        if (!this.selectedProductId || !this.adjustmentDelta || !this.adjustmentDescription) return;
+        if (!this.selectedProductId || !this.absoluteAdjustmentQuantity || !this.adjustmentDescription) return;
         
+        // Calculate signed delta
+        const delta = this.adjustmentDirection === 'ENTRY' 
+            ? Math.abs(this.absoluteAdjustmentQuantity) 
+            : -Math.abs(this.absoluteAdjustmentQuantity);
+
         const request = {
             productId: this.selectedProductId,
-            quantityDelta: this.adjustmentDelta,
+            quantityDelta: delta,
             movementType: this.adjustmentType,
             description: this.adjustmentDescription,
             batchId: this.adjustmentBatchId || undefined
