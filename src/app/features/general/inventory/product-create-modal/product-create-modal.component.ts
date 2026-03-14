@@ -32,7 +32,8 @@ export class ProductCreateModalComponent {
     minimumStock: undefined as number | undefined,
     availabilityPercentage: undefined as number | undefined,
     unit: 'KG',
-    supplierId: undefined as number | undefined
+    supplierId: undefined as number | undefined,
+    expirationDate: ''
   };
 
   allowedUnits = ['KG', 'G', 'L', 'ML', 'UND'];
@@ -88,7 +89,8 @@ export class ProductCreateModalComponent {
       unitPrice: unitPrice,
       productCode: this.formData.productCode.trim(),
       currentStock: currentStock,
-      supplierId: supplierId
+      supplierId: supplierId,
+      expirationDate: this.formData.expirationDate || undefined
     };
 
     this.save.emit(productData);
@@ -113,7 +115,8 @@ export class ProductCreateModalComponent {
       unitPrice: 0,
       currentStock: 0,
       unit: 'KG',
-      supplierId: undefined
+      supplierId: undefined,
+      expirationDate: ''
     };
   }
 }

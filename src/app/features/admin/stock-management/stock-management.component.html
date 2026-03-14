@@ -841,15 +841,26 @@
         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
       </button>
     </div>
+    
     <div class="modal-body">
+      <div class="adjustment-type-toggle">
+        <button type="button" class="toggle-btn" [class.active]="adjustmentDirection === 'ENTRY'" (click)="adjustmentDirection = 'ENTRY'">
+          <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
+          Entrada
+        </button>
+        <button type="button" class="toggle-btn" [class.active]="adjustmentDirection === 'EXIT'" (click)="adjustmentDirection = 'EXIT'">
+          <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor"><path d="M200-440v-80h560v80H200Z"/></svg>
+          Salida
+        </button>
+      </div>
+
       <div class="form-row-group">
         <div class="form-item form-item-flex">
-          <label>Cantidad (Delta)</label>
-          <input type="number" [(ngModel)]="adjustmentDelta" placeholder="Ej. -5 o 10" class="input-standard"/>
-          <small class="form-hint">- para salida, + para entrada</small>
+          <label>Cantidad *</label>
+          <input type="number" [(ngModel)]="absoluteAdjustmentQuantity" min="0.001" step="0.001" placeholder="0.000" class="input-standard"/>
         </div>
         <div class="form-item form-item-flex">
-          <label>Tipo de Movimiento</label>
+          <label>Tipo Movimiento</label>
           <select [(ngModel)]="adjustmentType" class="input-standard">
             <option value="AJUSTE">AJUSTE</option>
             <option value="MERMA">MERMA</option>
@@ -862,7 +873,7 @@
       <div class="form-item">
         <label>Asignar a Lote Específico (Opcional)</label>
         <select [(ngModel)]="adjustmentBatchId" class="input-standard">
-          <option [ngValue]="null">--- Automático / No Lote ---</option>
+          <option [ngValue]="null">--- Selección Automática / No Lote ---</option>
           @for (batch of activeBatchesForAdjustment; track batch.id) {
             <option [ngValue]="batch.id">Lote #{{ batch.id }} - Stock: {{ batch.remainingQuantity | number:'1.0-2' }} (Cad: {{ batch.expirationDate | date:'dd/MM/yyyy' }})</option>
           }
@@ -870,13 +881,14 @@
       </div>
 
       <div class="form-item">
-        <label>Motivo del Ajuste</label>
+        <label>Motivo del Ajuste *</label>
         <textarea [(ngModel)]="adjustmentDescription" rows="3" placeholder="Ej. Corrección de inventario, merma no registrada, rotura..." class="input-standard textarea-standard"></textarea>
       </div>
     </div>
+    
     <div class="modal-footer">
       <button type="button" class="btn-cancel" (click)="closeManualAdjustmentModal()">Cancelar</button>
-      <button type="button" class="btn-confirm" (click)="submitManualAdjustment()" [disabled]="submittingAdjustment || !adjustmentDelta || !adjustmentDescription">
+      <button type="button" class="btn-confirm adjustment-confirm-btn" (click)="submitManualAdjustment()" [disabled]="submittingAdjustment || !absoluteAdjustmentQuantity || absoluteAdjustmentQuantity <= 0 || !adjustmentDescription">
         {{ submittingAdjustment ? 'Registrando...' : 'Registrar Ajuste' }}
       </button>
     </div>

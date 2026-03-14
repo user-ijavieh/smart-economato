@@ -20,6 +20,7 @@ export class StockUpdateModalComponent implements OnChanges {
 
   currentStock = 0;
   productName = '';
+  expirationDate: string = '';
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['product'] && this.product) {
@@ -55,7 +56,8 @@ export class StockUpdateModalComponent implements OnChanges {
       // Legacy/Compat fields just in case
       price: this.product.unitPrice,
       stock: this.currentStock,
-      minStock: this.product.minStock
+      minStock: this.product.minStock,
+      expirationDate: this.expirationDate || undefined
     };
 
     this.save.emit(productRequest);
