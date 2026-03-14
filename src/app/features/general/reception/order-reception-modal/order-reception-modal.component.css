@@ -102,6 +102,10 @@
   width: 150px;
 }
 
+.expiry-col {
+  width: 180px;
+}
+
 .quantity-input {
   width: 100%;
   padding: 0.5rem;
@@ -209,6 +213,10 @@
 
   .received-col {
     width: 90px;
+  }
+
+  .expiry-col {
+    width: 150px;
   }
 
   .quantity-input {

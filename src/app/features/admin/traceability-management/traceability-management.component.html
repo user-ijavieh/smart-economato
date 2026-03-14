@@ -1,0 +1,355 @@
+<div class="header-recetas">
+  <h1>Trazabilidad y Crisis</h1>
+</div>
+
+<div class="tab-bar">
+  <button type="button" class="tab-btn" [class.active]="activeView === 'active'" (click)="activeView = 'active'">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2L1 21h22L12 2zm1 14h-2v-2h2v2zm0-4h-2V8h2v4z"/>
+    </svg>
+    Crisis Activas ({{ activeCrises.length }})
+  </button>
+  <button type="button" class="tab-btn" [class.active]="activeView === 'history'" (click)="activeView = 'history'">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+      <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 1 1-8 8h1a7 7 0 1 0 7.515-6.981z"/>
+      <path d="M8.5 4.5a.5.5 0 0 0-1 0v4h-3a.5.5 0 0 0 0 1h4a.5.5 0 0 0 .5-.5v-4z"/>
+    </svg>
+
+    Historial ({{ liftedCrises.length }})
+  </button>
+</div>
+
+@if (activeView === 'active') {
+<div class="contenedor-principal">
+  
+  <div class="action-header" style="justify-content: space-between; align-items: center; display: flex; flex-wrap: wrap; gap: 15px;">
+    <div class="search-group-standard" style="flex: 1; max-width: 400px; min-width: 250px;">
+      <input type="text" [(ngModel)]="activeSearchTerm" (ngModelChange)="onActiveSearch()" placeholder="Buscar por ID, proveedor o motivo..." class="full-width-search" />
+    </div>
+    <button type="button" class="btn-new-alert" (click)="openActivationModal()">
+      <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px" fill="currentColor">
+        <path d="M12 2L1 21h22L12 2zm1 14h-2v-2h2v2zm0-4h-2V8h2v4z"/>
+      </svg>
+      Declarar Nueva Alerta
+    </button>
+  </div>
+
+  <div class="tabla-contenedor">
+    <table>
+      <thead>
+        <tr>
+          <th>Código/ID</th>
+          <th>Proveedor</th>
+          <th class="hide-on-mobile">Fecha</th>
+          <th class="hide-on-mobile">Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (crisis of filteredActiveCrises; track crisis.crisisId) {
+          <tr>
+            <td><div class="id-badge">{{ crisis.crisisCode || ('CRISIS-' + crisis.crisisId) }}</div></td>
+            <td>{{ crisis.supplierName }}</td>
+            <td class="hide-on-mobile">{{ crisis.timestamp | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="hide-on-mobile"><span class="status-badge badge-active">CUARENTENA</span></td>
+            <td class="actions-cell">
+              <button class="btn-ver" (click)="openCrisisDetail(crisis)" title="Ver Detalle">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                  <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                </svg>
+
+              </button>
+              <button class="btn-edit-status" (click)="downloadReport(crisis)" title="Descargar PDF">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 15v3H6v-3H4v3c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-3h-2zm-1-4l-1.41-1.41L13 12.17V4h-2v8.17L8.41 9.59 7 11l5 5 5-5z"/></svg>
+              </button>
+            </td>
+          </tr>
+        }
+        @if (activeCrises.length === 0) {
+          <tr><td colspan="5" class="empty-row text-center">No hay crisis activas</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+}
+@if (activeView === 'history') {
+<div class="contenedor-principal">
+  
+  <div class="action-header" style="justify-content: flex-start; align-items: center; display: flex; flex-wrap: wrap; gap: 15px;">
+    <div class="search-group-standard" style="flex: 1; max-width: 400px; min-width: 250px;">
+      <input type="text" [(ngModel)]="historySearchTerm" (ngModelChange)="onHistorySearch()" placeholder="Buscar por ID, proveedor o motivo..." class="full-width-search" />
+    </div>
+  </div>
+
+  <div class="tabla-contenedor">
+    <table>
+      <thead>
+        <tr>
+          <th>Código/ID</th>
+          <th>Proveedor</th>
+          <th class="hide-on-mobile">Fecha</th>
+          <th class="hide-on-mobile">Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (crisis of filteredHistoryCrises; track crisis.crisisId) {
+          <tr>
+            <td><div class="id-badge">{{ crisis.crisisCode || ('CRISIS-' + crisis.crisisId) }}</div></td>
+            <td>{{ crisis.supplierName }}</td>
+            <td class="hide-on-mobile">{{ crisis.timestamp | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="hide-on-mobile"><span class="status-badge badge-lifted">LEVANTADA</span></td>
+            <td class="actions-cell">
+              <button class="btn-ver" (click)="openCrisisDetail(crisis)" title="Ver Detalle">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                  <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                </svg>
+
+              </button>
+              <button class="btn-edit-status" (click)="downloadReport(crisis)" title="Descargar PDF">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 15v3H6v-3H4v3c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-3h-2zm-1-4l-1.41-1.41L13 12.17V4h-2v8.17L8.41 9.59 7 11l5 5 5-5z"/></svg>
+              </button>
+            </td>
+          </tr>
+        }
+        @if (filteredHistoryCrises.length === 0 && !loadingHistory) {
+          <tr><td colspan="5" class="empty-row text-center">No hay registros en el historial</td></tr>
+        }
+        @if (loadingHistory) {
+          <tr><td colspan="5" class="text-center" style="padding: 20px;">Cargando historial...</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (historyTotalPages > 1) {
+    <div class="pagination-controls" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding: 0 10px;">
+      <span style="font-size: 0.85rem; color: #64748b;">
+        Mostrando página {{ historyPage + 1 }} de {{ historyTotalPages }} ({{ historyTotalElements }} resultados)
+      </span>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-cancel" [disabled]="historyPage === 0" (click)="prevHistoryPage()" style="padding: 6px 12px; font-size: 0.85rem;">Anterior</button>
+        <button class="btn-cancel" [disabled]="historyPage >= historyTotalPages - 1" (click)="nextHistoryPage()" style="padding: 6px 12px; font-size: 0.85rem;">Siguiente</button>
+      </div>
+    </div>
+  }
+</div>
+}
+
+@if (showActivationModal) {
+<div class="modal-overlay" (click)="closeActivationModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Declarar Alerta de Trazabilidad</h2>
+      <button class="btn-close" (click)="closeActivationModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="activation-form-grid">
+        <div class="form-item">
+          <label>Proveedor Responsable</label>
+          <div class="custom-select-container">
+            <div class="custom-select-trigger" (click)="toggleSupplierDropdown()" [class.active]="showSupplierDropdown">
+              <span class="selected-value">{{ selectedSupplier?.name || 'Selecciona un proveedor...' }}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-345 285-540l35-35 160 160 160-160 35 35-195 195Z"/></svg>
+            </div>
+            
+            @if (showSupplierDropdown) {
+              <div class="custom-dropdown-menu">
+                <div class="dropdown-search">
+                  <input type="text" [(ngModel)]="supplierSearchTerm" (input)="onSupplierSearchInput()" placeholder="Buscar proveedor..." (click)="$event.stopPropagation()" focus="true" />
+                </div>
+                <div class="dropdown-list" (scroll)="onSupplierDropdownScroll($event)">
+                  @for (supplier of suppliers; track supplier.id) {
+                    <div class="dropdown-item" (click)="onSupplierSelect(supplier)" [class.selected]="selectedSupplierId === supplier.id">{{ supplier.name }}</div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-item">
+            <label>Desde</label>
+            <input type="datetime-local" [(ngModel)]="dateFrom" class="date-input-full" />
+          </div>
+          <div class="form-item">
+            <label>Hasta</label>
+            <input type="datetime-local" [(ngModel)]="dateTo" class="date-input-full" />
+          </div>
+        </div>
+
+        <div class="form-item">
+          <label>Productos Afectados</label>
+          <div class="custom-select-container">
+            <div class="custom-select-trigger" (click)="toggleProductDropdown()" [class.active]="showProductDropdown">
+              <span class="selected-value">
+                {{ selectedProductIds.length === 0 ? 'Selecciona productos...' : selectedProductIds.length + ' seleccionados' }}
+              </span>
+              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-345 285-540l35-35 160 160 160-160 35 35-195 195Z"/></svg>
+            </div>
+            
+            @if (showProductDropdown) {
+              <div class="custom-dropdown-menu">
+                <div class="dropdown-search">
+                  <input type="text" [(ngModel)]="productSearchTerm" (input)="onProductSearchInput()" placeholder="Buscar producto..." (click)="$event.stopPropagation()" focus="true" />
+                </div>
+                <div class="dropdown-list" (scroll)="onProductDropdownScroll($event)">
+                  <div class="dropdown-actions">
+                    <button type="button" class="btn-text-only" (click)="selectAllFilteredProducts()">Visibles</button>
+                    <button type="button" class="btn-text-only" (click)="clearSelection()">Limpiar</button>
+                  </div>
+                  @for (product of products; track product.id) {
+                    <div class="dropdown-item-checkbox" (click)="toggleProductSelection(product.id, !selectedProductIds.includes(product.id)); $event.stopPropagation()">
+                      <input type="checkbox" [checked]="selectedProductIds.includes(product.id)" (click)="$event.stopPropagation(); toggleProductSelection(product.id, $any($event.target).checked)" />
+                      <span class="product-info">{{ product.name }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="form-item">
+          <label>Motivo de la Alerta</label>
+          <textarea [(ngModel)]="reason" class="reason-textarea" placeholder="Escribe el motivo detallado..."></textarea>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeActivationModal()">Cancelar</button>
+      <button class="btn-activate-modal" (click)="activateCrisis()" [disabled]="activating">
+        {{ activating ? 'Declarando...' : 'Declarar Alerta' }}
+      </button>
+    </div>
+  </div>
+  <div class="dropdown-overlay" (click)="closeActivationModal()" style="z-index: 1000;"></div>
+</div>
+}
+
+<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
+
+@if (showCrisisDetailModal && selectedCrisis) {
+<div class="modal-overlay" (click)="closeCrisisDetail()">
+  <div class="modal-container traceability-modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Crisis / {{ selectedCrisis.crisisCode || ('CRISIS-' + selectedCrisis.crisisId) }}</h2>
+      <button class="btn-close" (click)="closeCrisisDetail()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="crisis-detail-content" style="border-left: none; padding: 0;">
+        <div class="detail-grid-standard">
+          <div class="detail-col"><strong>Motivo:</strong><p>{{ selectedCrisis.reason }}</p></div>
+          <div class="detail-col"><strong>Impacto:</strong><ul><li>Lotes afectados: {{ selectedCrisis.affectedBatches?.length || 0 }}</li><li>Pedidos implicados: {{ selectedCrisis.affectedOrders?.length || 0 }}</li><li>Cocinados implicados: {{ selectedCrisis.affectedCookings?.length || 0 }}</li></ul></div>
+        </div>
+        
+        <div class="quarantine-section" style="margin-top: 20px;">
+          <strong>Productos en Cuarentena:</strong>
+          <div class="quarantine-tags">
+            @if (selectedCrisis.quarantinedProducts | keyvalue; as quarantinedProducts) {
+              @for (item of quarantinedProducts; track item.key) {<span class="q-tag">{{ item.key }}: {{ item.value }}</span>}
+            }
+          </div>
+        </div>
+
+        <div class="affected-batches-section" style="margin-top: 20px;">
+          <strong>Lotes Implicados:</strong>
+          <div class="batch-list-grid">
+            @for (batch of selectedCrisis.affectedBatches; track batch.batchId) {
+              <div class="batch-card">
+                <div class="batch-card-header">
+                  <span class="batch-id">#{{ batch.batchId }}</span>
+                  <div class="batch-badges">
+                    @if (batch.depleted) { <span class="status-badge badge-depleted">RETIRADO</span> }
+                    @if (batch.expired) { <span class="status-badge badge-expired">CADUCADO</span> }
+                  </div>
+                </div>
+                <div class="batch-product-name">{{ batch.productName }}</div>
+                <div class="batch-details">
+                  <span>Quedan: <strong>{{ batch.remainingQuantity }}</strong></span>
+                  @if (batch.expirationDate) {
+                    <span>Cad: {{ batch.expirationDate | date:'dd/MM/yyyy' }}</span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        @if (selectedCrisis.affectedOrders?.length) {
+        <div class="affected-batches-section" style="margin-top: 20px;">
+          <strong>Pedidos Implicados:</strong>
+          <div class="traceability-table-wrap">
+            <table class="traceability-sub-table">
+              <thead><tr><th>#Pedido</th><th>Proveedor</th><th>Estado</th><th>Fecha</th><th>Líneas</th></tr></thead>
+              <tbody>
+                @for (ord of selectedCrisis.affectedOrders; track ord.orderId) {
+                  <tr>
+                    <td><span class="id-badge">#{{ ord.orderId }}</span></td>
+                    <td>{{ ord.supplierName }}</td>
+                    <td><span class="status-badge badge-lifted">{{ ord.status }}</span></td>
+                    <td>{{ ord.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                    <td>{{ ord.totalItems }} líneas</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+        }
+
+        @if (selectedCrisis.affectedCookings?.length) {
+        <div class="affected-batches-section" style="margin-top: 20px;">
+          <strong>Cocinados Implicados:</strong>
+          <div class="traceability-table-wrap">
+            <table class="traceability-sub-table">
+              <thead><tr><th>#ID</th><th>Receta</th><th>Cocinero</th><th>Fecha</th><th>Cantidad</th></tr></thead>
+              <tbody>
+                @for (cook of selectedCrisis.affectedCookings; track cook.cookingAuditId) {
+                  <tr>
+                    <td><span class="id-badge">#{{ cook.cookingAuditId }}</span></td>
+                    <td><strong>{{ cook.recipeName }}</strong></td>
+                    <td>{{ cook.userName }}</td>
+                    <td>{{ cook.cookingDate | date:'dd/MM/yyyy HH:mm' }}</td>
+                    <td>{{ cook.quantityCooked | number:'1.0-2' }} ud.</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      @if (selectedCrisis.status === 'ACTIVE') {
+      <div class="lift-crisis-actions" style="margin-top: 0; padding-top: 0; border: none; width: 100%; display: flex; justify-content: space-between;">
+        <div style="display: flex; gap: 10px;">
+          <input type="number" min="0" max="100" [(ngModel)]="liftAvailabilityByCrisis[selectedCrisis.crisisId]" placeholder="Disp. %" class="input-standard" style="width: 120px;" />
+          <button class="btn-lift btn-confirm" style="background:#22c55e;" (click)="liftCrisis(selectedCrisis)">Levantar Crisis</button>
+        </div>
+        <button class="btn-cancel" (click)="closeCrisisDetail()">Cerrar</button>
+      </div>
+      } @else {
+        <button class="btn-cancel" (click)="closeCrisisDetail()">Cerrar</button>
+      }
+    </div>
+  </div>
+</div>
+}

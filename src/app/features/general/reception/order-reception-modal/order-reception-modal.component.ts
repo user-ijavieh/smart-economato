@@ -50,6 +50,12 @@ export class OrderReceptionModalComponent implements OnInit {
       return;
     }
 
+    const hasInvalidExpirationDate = this.order.details.some(d => d.expirationDate !== undefined && d.expirationDate !== null && d.expirationDate !== '' && !/^\d{4}-\d{2}-\d{2}$/.test(d.expirationDate));
+    if (hasInvalidExpirationDate) {
+      this.messageService.showError('Revisa el formato de fecha de caducidad.');
+      return;
+    }
+
     const confirmed = await this.messageService.confirm(
       'Procesar Recepción',
       `¿Confirmar recepción de la orden #${this.order.id}?`
@@ -65,7 +71,8 @@ export class OrderReceptionModalComponent implements OnInit {
       orderId: this.order.id,
       items: this.order.details.map(d => ({
         productId: d.productId,
-        quantityReceived: d.quantityReceived ?? 0
+        quantityReceived: d.quantityReceived ?? 0,
+        expirationDate: d.expirationDate ?? null
       }))
     };
 

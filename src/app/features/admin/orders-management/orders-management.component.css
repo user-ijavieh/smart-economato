@@ -171,11 +171,34 @@ tr:hover { background: var(--admin-scrollbar-track); }
 .actions-col { width: 110px; text-align: center; }
 .actions-cell { display: flex; gap: 6px; justify-content: center; }
 
-.btn-ver { background: rgba(33,150,243,0.1); color: #1976d2; padding: 8px; box-shadow: none; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
-.btn-ver:hover  { background: rgba(33,150,243,0.2); box-shadow: none; transform: translateY(-1px); }
+.btn-ver, .btn-pdf, .btn-edit-status {
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    border: none;
+    cursor: pointer;
+}
 
-.btn-edit-status { background: rgba(255,152,0,0.1); color: #e65100; padding: 8px; box-shadow: none; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
-.btn-edit-status:hover { background: rgba(255,152,0,0.2); box-shadow: none; transform: translateY(-1px); }
+.btn-ver { 
+    background: rgba(99, 102, 241, 0.1); 
+    color: #6366f1;
+}
+.btn-ver:hover {
+    background: rgba(99, 102, 241, 0.2);
+    transform: translateY(-1px);
+}
+
+.btn-pdf, .btn-edit-status { 
+    background: rgba(245, 158, 11, 0.1); 
+    color: #f59e0b;
+}
+.btn-pdf:hover, .btn-edit-status:hover {
+    background: rgba(245, 158, 11, 0.2);
+    transform: translateY(-1px);
+}
 
 /** ===== MODAL SHARED ===== */
 .modal-overlay {
