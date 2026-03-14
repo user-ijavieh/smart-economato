@@ -406,8 +406,19 @@
                     </div>
                     <div class="trace-item">
                       <span class="trace-label">ID Orden/Entrada</span>
-                      <span class="trace-value">{{ ingredient.orderId || 'N/A' }}</span>
+                      <span class="trace-value">
+                        {{ ingredient.orderId || 'Manual/Inicial' }}
+                        @if (ingredient.movementType) {
+                          <span class="movement-type-badge">({{ ingredient.movementType }})</span>
+                        }
+                      </span>
                     </div>
+                    @if (ingredient.description && !ingredient.orderId) {
+                      <div class="trace-item full-width">
+                        <span class="trace-label">Detalles del Origen</span>
+                        <span class="trace-value">{{ ingredient.description }}</span>
+                      </div>
+                    }
                   </div>
                 </div>
               }

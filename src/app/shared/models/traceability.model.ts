@@ -22,4 +22,6 @@ export interface IngredientTraceDTO {
   ledgerHash: string | null;
   orderId: number | null;
   supplierName: string | null;
+  movementType: string | null;
+  description: string | null;
 }
