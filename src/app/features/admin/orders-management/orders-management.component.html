@@ -265,52 +265,64 @@
 
 <!-- ===== CHANGE STATUS MODAL ===== -->
 @if (showChangeStatusModal && orderForStatusChange) {
-<div class="modal-overlay modal-overlay-base admin-theme" (click)="onChangeStatusOverlayClick($event)">
-    <div class="modal-dialog-base modal-status-change" (click)="$event.stopPropagation()">
-        <div class="modal-header-base">
-            <h2>Cambiar Estado</h2>
-            <button class="close-btn" (click)="closeChangeStatusModal()">×</button>
-        </div>
-
-        <div class="modal-body">
-            <div class="modal-header-meta-status">
-                <span class="id-badge">#{{ orderForStatusChange.id }}</span>
-                <span class="meta-user">{{ orderForStatusChange.userName }}</span>
+<div class="modal-overlay modal-overlay-base admin-theme" (click)="closeChangeStatusModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+        <div class="modal-dialog-base modal-content modal-status-change">
+            <div class="modal-header-base">
+                <h2>Cambiar Estado</h2>
+                <button class="modal-close" (click)="closeChangeStatusModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
             </div>
 
-            <div class="form-group">
-                <label class="field-label">Nuevo estado</label>
-                <select [(ngModel)]="newStatusValue" class="action-select status-select-full">
-                    @for (s of allStatuses; track s.value) {
-                    <option [value]="s.value">{{ s.label }}</option>
-                    }
-                </select>
+            <div class="modal-body">
+                <div class="modal-section" style="margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                        <span class="id-badge">#{{ orderForStatusChange.id }}</span>
+                        <span style="font-weight: 500; color: #666;">{{ orderForStatusChange.userName }}</span>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #6b7280; margin-bottom: 8px;">Nuevo estado</label>
+                        <select [(ngModel)]="newStatusValue" class="action-select" style="width: 100%;">
+                            @for (s of allStatuses; track s.value) {
+                            <option [value]="s.value">{{ s.label }}</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="status-transition-preview">
+                        <span class="status-badge {{ getStatusClass(orderForStatusChange.status) }}">
+                            {{ formatStatus(orderForStatusChange.status) }}
+                        </span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+                        </svg>
+                        <span class="status-badge {{ getStatusClass(newStatusValue) }}">
+                            {{ formatStatus(newStatusValue) }}
+                        </span>
+                    </div>
+                </div>
             </div>
 
-            <div class="status-transition-preview">
-                <span class="status-badge {{ getStatusClass(orderForStatusChange.status) }}">
-                    {{ formatStatus(orderForStatusChange.status) }}
-                </span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
-                </svg>
-                <span class="status-badge {{ getStatusClass(newStatusValue) }}">
-                    {{ formatStatus(newStatusValue) }}
-                </span>
+            <div class="modal-footer">
+                <div class="modal-actions">
+                    <button class="btn-cancel" (click)="closeChangeStatusModal()" [disabled]="savingStatus">Cancelar</button>
+                    <button class="btn-editar" (click)="confirmStatusChange()"
+                        [disabled]="savingStatus || newStatusValue === orderForStatusChange.status">
+                        @if (savingStatus) {
+                            <span class="spinner"></span> Guardando...
+                        } @else {
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                            Guardar Cambios
+                        }
+                    </button>
+                </div>
             </div>
-        </div>
-
-        <div class="modal-footer">
-            <button class="btn-cancel" (click)="closeChangeStatusModal()" [disabled]="savingStatus">Cancelar</button>
-            <button class="btn-save" (click)="confirmStatusChange()"
-                [disabled]="savingStatus || newStatusValue === orderForStatusChange.status">
-                @if (savingStatus) {
-                    <span class="spinner"></span> Guardando...
-                } @else {
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                    Guardar Cambios
-                }
-            </button>
         </div>
     </div>
 </div>
@@ -318,82 +330,86 @@
 
 <!-- ===== AUDIT DETAIL MODAL ===== -->
 @if (showAuditDetailModal && selectedAudit) {
-<div class="audit-modal-overlay" (click)="onAuditOverlayClick($event)">
-    <div class="audit-modal" [class.audit-modal-wide]="hasDiffData">
-        <div class="audit-modal-header">
-            <div class="modal-header-left">
-                <h2>Pedido #{{ selectedAudit.orderId }} <span class="id-badge-white">Audit #{{ selectedAudit.id }}</span></h2>
-                <div class="modal-header-meta">
-                    <span class="action-badge" [ngClass]="getActionBadgeClass(selectedAudit.action)">
-                        {{ translateAction(selectedAudit.action) }}
-                    </span>
-                    <span class="meta-date">{{ formatDateWithTime(selectedAudit.auditDate) }}</span>
-                    <span class="meta-user">{{ selectedAudit.userName }}</span>
-                </div>
-            </div>
-            <button class="modal-close-btn" (click)="closeAuditDetail()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-            </button>
-        </div>
-
-        <div class="audit-modal-body simplified-audit">
-            <div class="audit-info-grid">
-                <div class="audit-info-item">
-                    <span class="audit-field-label">ID Auditoría</span>
-                    <span class="audit-field-value">#{{ selectedAudit.id }}</span>
-                </div>
-                <div class="audit-info-item">
-                    <span class="audit-field-label">Fecha y Hora</span>
-                    <span class="audit-field-value">{{ formatDateWithTime(selectedAudit.auditDate) }}</span>
-                </div>
-                <div class="audit-info-item">
-                    <span class="audit-field-label">Usuario</span>
-                    <span class="audit-field-value">{{ selectedAudit.userName }}</span>
-                </div>
-            </div>
-
-            <div class="status-change-container">
-                <div class="status-box prev">
-                    <span class="audit-field-label">Estado Anterior</span>
-                    <span class="status-badge {{ getStatusClass(getAuditPrevStatus(selectedAudit) || '') }}">
-                        {{ formatStatus(getAuditPrevStatus(selectedAudit) || '—') }}
-                    </span>
-                </div>
-                <div class="status-arrow">
+<!-- ===== AUDIT DETAIL MODAL ===== -->
+@if (showAuditDetailModal && selectedAudit) {
+<div class="modal-overlay modal-overlay-base admin-theme" (click)="closeAuditDetail()">
+    <div class="modal-container" (click)="$event.stopPropagation()" [style.maxWidth]="hasDiffData ? '900px' : '600px'">
+        <div class="modal-dialog-base modal-content">
+            <div class="modal-header-base">
+                <h2>Pedido #{{ selectedAudit.orderId }} <span class="id-badge-white" style="background: rgba(255, 255, 255, 0.2); padding: 3px 10px; border-radius: 6px; font-size: 0.85rem; margin-left: 10px; font-weight: 600;">Audit #{{ selectedAudit.id }}</span></h2>
+                <button class="modal-close" (click)="closeAuditDetail()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
-                </div>
-                <div class="status-box next">
-                    <span class="audit-field-label">Estado Nuevo</span>
-                    <span class="status-badge {{ getStatusClass(getAuditNewStatus(selectedAudit) || '') }}">
-                        {{ formatStatus(getAuditNewStatus(selectedAudit) || '—') }}
-                    </span>
+                </button>
+            </div>
+
+            <div class="modal-body simplified-audit">
+                <div class="modal-section">
+                    <div class="audit-info-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 25px; margin-bottom: 35px; padding-bottom: 25px; border-bottom: 1px solid #f3f4f6;">
+                        <div class="info-item">
+                            <span class="info-label">ID Auditoría</span>
+                            <span class="info-value">#{{ selectedAudit.id }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Fecha y Hora</span>
+                            <span class="info-value">{{ formatDateWithTime(selectedAudit.auditDate) }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Usuario</span>
+                            <span class="info-value">{{ selectedAudit.userName }}</span>
+                        </div>
+                    </div>
+
+                    <div class="status-change-container" style="display: flex; align-items: center; justify-content: center; gap: 50px; padding: 30px; background: #f9fafb; border-radius: 16px; border: 1px solid #f3f4f6;">
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; flex: 1;">
+                            <span class="info-label">Estado Anterior</span>
+                            <span class="status-badge {{ getStatusClass(getAuditPrevStatus(selectedAudit) || '') }}">
+                                {{ formatStatus(getAuditPrevStatus(selectedAudit) || '—') }}
+                            </span>
+                        </div>
+                        <div style="color: #9ca3af; display: flex; align-items: center; justify-content: center; background: white; width: 44px; height: 44px; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; flex: 1;">
+                            <span class="info-label">Estado Nuevo</span>
+                            <span class="status-badge {{ getStatusClass(getAuditNewStatus(selectedAudit) || '') }}">
+                                {{ formatStatus(getAuditNewStatus(selectedAudit) || '—') }}
+                            </span>
+                        </div>
+                    </div>
+
+                    @if (selectedAudit.details) {
+                    <div style="margin-top: 25px;">
+                        <span class="info-label">Detalles Adicionales</span>
+                        <p style="margin: 0; font-size: 0.95rem; color: #4b5563; line-height: 1.6; background: #fff; padding: 18px 22px; border-radius: 12px; border: 1px solid #e5e7eb; white-space: pre-wrap; word-break: break-word;">{{ selectedAudit.details }}</p>
+                    </div>
+                    }
                 </div>
             </div>
-            
-            @if (selectedAudit.details) {
-            <div class="audit-field audit-field-full" style="margin-top: 25px;">
-                <span class="audit-field-label">Detalles Adicionales</span>
-                <p class="audit-details-text">{{ selectedAudit.details }}</p>
+
+            <div class="modal-footer">
+                <div class="modal-actions">
+                    <button class="btn-cancel" (click)="closeAuditDetail()">Cerrar</button>
+                </div>
             </div>
-            }
         </div>
     </div>
 </div>
 }
+}
 
 <!-- ===== ORDER DETAIL MODAL ===== -->
 @if (showOrderDetailModal && selectedOrder) {
-<div class="modal-overlay modal-overlay-base admin-theme" (click)="onOrderDetailOverlayClick($event)">
-    <div class="modal-container" (click)="$event.stopPropagation()">
-        <div class="modal-dialog-base modal-content modal-box-detail">
+<div class="modal-overlay modal-overlay-base admin-theme" (click)="closeOrderDetail()">
+    <div class="modal-container" (click)="$event.stopPropagation()" style="max-width: 950px;">
+        <div class="modal-dialog-base modal-content">
             <div class="modal-header-base">
                 <h2>Pedido #{{ selectedOrder.id }}</h2>
                 <button class="modal-close" (click)="closeOrderDetail()">
@@ -405,7 +421,7 @@
                 </button>
             </div>
 
-            <div class="modal-body">
+            <div class="modal-body" style="padding: 35px 40px;">
                 <!-- Información General -->
                 <div class="modal-section">
                     <h4>Información General</h4>
