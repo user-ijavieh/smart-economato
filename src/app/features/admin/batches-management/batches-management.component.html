@@ -8,23 +8,22 @@
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
       <path d="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/>
     </svg>
-    Todos los Lotes
+    Lotes
   </button>
   <button class="tab-btn" [class.active]="activeTab === 'control'" (click)="switchTab('control')">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor">
       <path d="M480-120q-33 0-56.5-23.5T400-200h160q0 33-23.5 56.5T480-120ZM160-240v-80h80v-280q0-83 50-149.5T420-830v-50q0-25 17.5-42.5T480-940q25 0 42.5 17.5T540-880v50q80 16 130 82.5T720-600v280h80v80H160Zm320-360q-33 0-56.5 23.5T400-520v280h160v-280q0-33-23.5-56.5T480-600Z"/>
     </svg>
-    Control de Caducidad
+    Caducidad
   </button>
 </div>
 
-<div class="contenedor-principal" (scroll)="onScroll($event)">
-  
-  @if (activeTab === 'all') {
+@if (activeTab === 'all') {
+  <div class="contenedor-principal" (scroll)="onScroll($event)">
     <!-- CONTROLES TAB 1 -->
     <div class="controles">
       <div class="search-group">
-        <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por producto..." (ngModelChange)="onSearch()" />
+        <input type="text" class="input-standard" [(ngModel)]="searchTerm" placeholder="Buscar por producto..." (ngModelChange)="onSearch()" />
       </div>
       
       <select [(ngModel)]="statusFilter" (change)="onSearch()" class="action-select">
@@ -205,9 +204,10 @@
         <div class="loading-more">Cargando más...</div>
       }
     </div>
-  }
-
-  @if (activeTab === 'control') {
+  </div>
+}
+@if (activeTab === 'control') {
+  <div class="contenedor-principal" (scroll)="onScroll($event)">
     <!-- CONTROL DE CADUCIDAD -->
     <div class="controles-caducidad">
       <div class="sub-tab-bar">
@@ -357,9 +357,8 @@
         </div>
       }
     </div>
-  }
-
-</div>
+  </div>
+}
 
 <!-- MODAL EDICION -->
 @if (showEditModal && selectedBatch) {
