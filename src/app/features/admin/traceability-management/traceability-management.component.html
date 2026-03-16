@@ -22,8 +22,8 @@
 @if (activeView === 'active') {
 <div class="contenedor-principal">
   
-  <div class="action-header" style="justify-content: space-between; align-items: center; display: flex; flex-wrap: wrap; gap: 15px;">
-    <div class="search-group-standard" style="flex: 1; max-width: 400px; min-width: 250px;">
+  <div class="action-header action-header-main">
+    <div class="search-group-standard search-group-compact">
       <input type="text" [(ngModel)]="activeSearchTerm" (ngModelChange)="onActiveSearch()" placeholder="Buscar por ID, proveedor o motivo..." class="full-width-search" />
     </div>
     <button type="button" class="btn-new-alert" (click)="openActivationModal()">
@@ -77,8 +77,8 @@
 @if (activeView === 'history') {
 <div class="contenedor-principal">
   
-  <div class="action-header" style="justify-content: flex-start; align-items: center; display: flex; flex-wrap: wrap; gap: 15px;">
-    <div class="search-group-standard" style="flex: 1; max-width: 400px; min-width: 250px;">
+  <div class="action-header action-header-history">
+    <div class="search-group-standard search-group-compact">
       <input type="text" [(ngModel)]="historySearchTerm" (ngModelChange)="onHistorySearch()" placeholder="Buscar por ID, proveedor o motivo..." class="full-width-search" />
     </div>
   </div>
@@ -126,13 +126,13 @@
   </div>
 
   @if (historyTotalPages > 1) {
-    <div class="pagination-controls" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding: 0 10px;">
-      <span style="font-size: 0.85rem; color: #64748b;">
+    <div class="pagination-controls history-pagination">
+      <span class="history-page-info">
         Mostrando página {{ historyPage + 1 }} de {{ historyTotalPages }} ({{ historyTotalElements }} resultados)
       </span>
-      <div style="display: flex; gap: 10px;">
-        <button class="btn-cancel" [disabled]="historyPage === 0" (click)="prevHistoryPage()" style="padding: 6px 12px; font-size: 0.85rem;">Anterior</button>
-        <button class="btn-cancel" [disabled]="historyPage >= historyTotalPages - 1" (click)="nextHistoryPage()" style="padding: 6px 12px; font-size: 0.85rem;">Siguiente</button>
+      <div class="history-pagination-actions">
+        <button class="btn-cancel" [disabled]="historyPage === 0" (click)="prevHistoryPage()">Anterior</button>
+        <button class="btn-cancel" [disabled]="historyPage >= historyTotalPages - 1" (click)="nextHistoryPage()">Siguiente</button>
       </div>
     </div>
   }
