@@ -1,0 +1,45 @@
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ProductBatchResponseDTO } from '../../../../shared/models/product-batch.model';
+import { MessageService } from '../../../../core/services/message.service';
+
+@Component({
+  selector: 'app-batch-expiration-modal',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './batch-expiration-modal.component.html',
+  styleUrl: './batch-expiration-modal.component.css'
+})
+export class BatchExpirationModalComponent {
+  @Input({ required: true }) batch!: ProductBatchResponseDTO;
+  @Output() save = new EventEmitter<{ expirationDate: string; reason?: string }>();
+  @Output() close = new EventEmitter<void>();
+
+  private messageService = inject(MessageService);
+
+  expirationDate = '';
+  reason = '';
+
+  ngOnInit() {
+    if (this.batch && this.batch.expirationDate) {
+      this.expirationDate = this.batch.expirationDate;
+    }
+  }
+
+  onSubmit() {
+    if (!this.expirationDate) {
+      this.messageService.showError('La fecha de caducidad es obligatoria.');
+      return;
+    }
+
+    this.save.emit({
+      expirationDate: this.expirationDate,
+      reason: this.reason || undefined
+    });
+  }
+
+  onClose() {
+    this.close.emit();
+  }
+}

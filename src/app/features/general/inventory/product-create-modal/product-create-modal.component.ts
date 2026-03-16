@@ -79,6 +79,11 @@ export class ProductCreateModalComponent {
       return;
     }
 
+    if (currentStock > 0 && !this.formData.expirationDate) {
+      this.messageService.showError('La fecha de caducidad es obligatoria cuando se introduce stock inicial.');
+      return;
+    }
+
     // Enviar JSON en el formato exacto del backend
     const productData: ProductRequest = {
       minimumStock: minimumStock,

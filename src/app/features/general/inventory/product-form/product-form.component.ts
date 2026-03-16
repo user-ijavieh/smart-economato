@@ -85,6 +85,11 @@ export class ProductFormComponent implements OnChanges {
     const stockValue = this.formProduct.stock !== null ? this.formProduct.stock : 0;
     const minStockValue = this.formProduct.minStock !== null ? this.formProduct.minStock : 0;
 
+    if (stockValue > 0 && !this.formProduct.expirationDate) {
+      alert('La fecha de caducidad es obligatoria cuando se introduce stock inicial.');
+      return;
+    }
+
     const productData: ProductRequest = {
       name: this.formProduct.name,
       productCode: this.formProduct.productCode,

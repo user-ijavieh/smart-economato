@@ -38,7 +38,11 @@
         </small>
       </div>
       <div class="form-group">
-        <label for="expirationDate">Fecha de Expiración (Opcional)</label>
+        <label for="expirationDate">
+          Fecha de Expiración 
+          <span *ngIf="product && currentStock > (product.currentStock || 0); else optionalText" class="required-text">(Obligatoria en incremento) <span class="required-asterisk">*</span></span>
+          <ng-template #optionalText><span>(Opcional)</span></ng-template>
+        </label>
         <input
           type="date"
           id="expirationDate"

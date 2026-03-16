@@ -337,18 +337,13 @@
       </div>
     </div>
     
-    <div class="modal-footer">
-      @if (selectedCrisis.status === 'ACTIVE') {
-      <div class="lift-crisis-actions" style="margin-top: 0; padding-top: 0; border: none; width: 100%; display: flex; justify-content: space-between;">
+    <div class="modal-footer" *ngIf="selectedCrisis.status === 'ACTIVE'">
+      <div class="lift-crisis-actions" style="margin-top: 0; padding-top: 0; border: none; width: 100%; display: flex; justify-content: flex-end;">
         <div style="display: flex; gap: 10px;">
           <input type="number" min="0" max="100" [(ngModel)]="liftAvailabilityByCrisis[selectedCrisis.crisisId]" placeholder="Disp. %" class="input-standard" style="width: 120px;" />
           <button class="btn-lift btn-confirm" style="background:#22c55e;" (click)="liftCrisis(selectedCrisis)">Levantar Crisis</button>
         </div>
-        <button class="btn-cancel" (click)="closeCrisisDetail()">Cerrar</button>
       </div>
-      } @else {
-        <button class="btn-cancel" (click)="closeCrisisDetail()">Cerrar</button>
-      }
     </div>
   </div>
 </div>

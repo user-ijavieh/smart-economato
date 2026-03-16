@@ -26,7 +26,8 @@ import { StockLedgerResponseDTO, IntegrityCheckResponseDTO, StockSnapshotRespons
 import { Product } from '../../../shared/models/product.model';
 import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.model';
 
-type Tab = 'alerts' | 'predictions' | 'ledger' | 'batches';
+
+type Tab = 'alerts' | 'predictions' | 'ledger';
 
 @Component({
     selector: 'app-stock-management',
@@ -49,7 +50,6 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     loadingAlerts = true;
     loadingPredictions = true;
     loadingOrderData = false;
-    loadingBatches = false;
 
     activeTab: Tab = 'alerts';
 
@@ -153,6 +153,17 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     ledgerSortColumn = 'transactionTimestamp';
     ledgerSortDir: 'asc' | 'desc' = 'desc';
 
+    // ── Manual adjustment modal state ──
+    showManualAdjustmentModal = false;
+    adjustmentDelta: number | null = null;
+    absoluteAdjustmentQuantity: number | null = null;
+    adjustmentDirection: 'ENTRY' | 'EXIT' = 'ENTRY';
+    adjustmentType: 'AJUSTE' | 'MERMA' | 'ENTRADA' | 'SALIDA' = 'AJUSTE';
+    adjustmentDescription = '';
+    adjustmentBatchId: number | null = null;
+    activeBatchesForAdjustment: ProductBatchResponseDTO[] = [];
+    submittingAdjustment = false;
+
     // ── Mobile modal for Ledger transactions ──
     showLedgerMobileModal = false;
     selectedLedgerTx: StockLedgerResponseDTO | null = null;
@@ -167,23 +178,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     private searchSubject = new Subject<string>();
     private searchSubscription?: any;
 
-    // ── Batches tab state ──
-    batchesSubTab: 'expiring' | 'expired' = 'expiring';
-    expiringDays = 7;
-    expiringBatches: ProductBatchResponseDTO[] = [];
-    expiredBatches: ProductBatchResponseDTO[] = [];
-    withdrawingBatchId: number | null = null;
 
-    // ── Manual Adjustment Modal state ──
-    showManualAdjustmentModal = false;
-    adjustmentDelta: number | null = null;
-    adjustmentDirection: 'ENTRY' | 'EXIT' = 'ENTRY';
-    absoluteAdjustmentQuantity: number | null = null;
-    adjustmentType: string = 'AJUSTE';
-    adjustmentDescription = '';
-    adjustmentBatchId: number | null = null;
-    activeBatchesForAdjustment: ProductBatchResponseDTO[] = [];
-    submittingAdjustment = false;
 
     ngOnInit(): void {
         this.loadAlerts();
@@ -211,8 +206,6 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             if (this.ledgerProducts.length === 0) {
                 this.loadLedgerProducts();
             }
-        } else if (tab === 'batches' && this.expiringBatches.length === 0 && this.expiredBatches.length === 0) {
-            this.loadBatches();
         }
         this.showLedgerDropdown = false;
         this.ledgerSearchTerm = '';
@@ -874,6 +867,10 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         });
     }
 
+
+
+
+
     openManualAdjustmentModal(): void {
         if (!this.selectedProductId) return;
         this.showManualAdjustmentModal = true;
@@ -925,98 +922,6 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             },
             error: (err) => this.messageService.showError(err.error?.message || 'Error al registrar el ajuste')
         });
-    }
-
-    // ================================================================
-    // BATCHES TAB
-    // ================================================================
-
-    loadBatches(): void {
-        this.loadingBatches = true;
-        forkJoin({
-            expiring: this.productBatchService.getExpiringBatches(this.expiringDays),
-            expired: this.productBatchService.getExpiredBatches()
-        }).pipe(
-            finalize(() => {
-                this.loadingBatches = false;
-                this.cdr.detectChanges();
-            })
-        ).subscribe({
-            next: ({ expiring, expired }) => {
-                this.expiringBatches = expiring;
-                this.expiredBatches = expired;
-            },
-            error: () => this.messageService.showError('No se pudieron cargar los lotes.')
-        });
-    }
-
-    refreshExpiringBatches(): void {
-        this.loadingBatches = true;
-        this.productBatchService.getExpiringBatches(this.expiringDays).pipe(
-            finalize(() => {
-                this.loadingBatches = false;
-                this.cdr.detectChanges();
-            })
-        ).subscribe({
-            next: data => this.expiringBatches = data,
-            error: () => this.messageService.showError('No se pudieron actualizar los lotes por vencer.')
-        });
-    }
-    
-    withdrawBatch(batch: ProductBatchResponseDTO): void {
-        this.messageService.confirm(
-            'Confirmar Retirada',
-            `¿Estás seguro de que deseas retirar el lote #${batch.id} de "${batch.productName}"? Esta acción no se puede deshacer.`
-        ).then(confirmed => {
-            if (confirmed) {
-                this.withdrawingBatchId = batch.id;
-                this.cdr.markForCheck();
-                
-                this.productBatchService.withdrawBatch(batch.id).pipe(
-                    finalize(() => {
-                        this.withdrawingBatchId = null;
-                        this.cdr.markForCheck();
-                    })
-                ).subscribe({
-                    next: () => {
-                        this.messageService.showSuccess(`Lote #${batch.id} retirado correctamente`);
-                        this.loadBatches();
-                    },
-                    error: (err) => {
-                        this.messageService.showError(err.error?.message || 'Error al retirar el lote');
-                    }
-                });
-            }
-        });
-    }
-
-    getBatchSeverityClass(daysUntilExpiration: number): string {
-        if (daysUntilExpiration < 0) {
-            return 'batch-expired';
-        }
-        if (daysUntilExpiration <= 2) {
-            return 'batch-critical';
-        }
-        if (daysUntilExpiration <= 7) {
-            return 'batch-warning';
-        }
-        return 'batch-ok';
-    }
-
-    getBatchSeverityLabel(daysUntilExpiration: number): string {
-        if (daysUntilExpiration < 0) {
-            return 'Caducado';
-        }
-        if (daysUntilExpiration === 0) {
-            return 'Caduca hoy';
-        }
-        if (daysUntilExpiration <= 2) {
-            return 'Crítico';
-        }
-        if (daysUntilExpiration <= 7) {
-            return 'Próximo';
-        }
-        return 'Controlado';
     }
 
 

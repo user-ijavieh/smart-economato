@@ -12,7 +12,6 @@ import { ProductEditModalComponent } from './product-edit-modal/product-edit-mod
 import { ProductCreateModalComponent } from './product-create-modal/product-create-modal.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
-import { StockUpdateModalComponent } from './stock-update-modal/stock-update-modal.component';
 import { ProductDetailModalComponent } from './product-detail-modal/product-detail-modal.component';
 import { BarcodeScannerComponent } from '../barcode-scanner/barcode-scanner.component';
 import { ProductBatchService } from '../../../core/services/product-batch.service';
@@ -22,7 +21,7 @@ import { finalize, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductFormComponent, ProductEditModalComponent, ProductCreateModalComponent, StockUpdateModalComponent, ProductDetailModalComponent, BarcodeScannerComponent, ToastComponent, ConfirmDialogComponent],
+  imports: [CommonModule, FormsModule, ProductFormComponent, ProductEditModalComponent, ProductCreateModalComponent, ProductDetailModalComponent, BarcodeScannerComponent, ToastComponent, ConfirmDialogComponent],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.css'
 })
@@ -53,7 +52,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
   showEditModal = false;
 
   showCreateModal = false;
-  showStockModal = false;
   showDetailModal = false;
   showScannerModal = false;
   selectedProduct: Product | null = null;
@@ -345,35 +343,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
     });
   }
 
-  // --- LOGICA DEL MODAL DE STOCK ---
-
-  openStockModal(product: Product): void {
-    this.selectedProduct = product;
-    this.showStockModal = true;
-  }
-
-  onCloseStockModal(): void {
-    this.showStockModal = false;
-    this.selectedProduct = null;
-  }
-
-  onSaveStock(productData: ProductRequest): void {
-    if (!this.selectedProduct) return;
-
-    this.productService.updateStockManually(this.selectedProduct.id, productData).subscribe({
-      next: (response) => {
-        this.messageService.showSuccess('Stock actualizado correctamente');
-        this.showStockModal = false;
-        this.selectedProduct = null;
-        this.loadProducts();
-      },
-      error: (err) => {
-        const errorMessage = err.error?.message || err.message || 'Error al actualizar stock';
-        this.messageService.showError(errorMessage);
-      }
-    });
-  }
-
   // --- LOGICA DEL MODAL DE DETALLES ---
 
   openDetailModal(product: Product): void {
@@ -392,11 +361,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.editProduct(product);
   }
 
-  onAdjustStockFromDetail(product: Product): void {
-    // Close detail modal and open stock modal
-    this.showDetailModal = false;
-    this.openStockModal(product);
-  }
 
   // Método eliminado: onDeleteProduct() - ahora se usa toggleHidden en lugar de delete
 
