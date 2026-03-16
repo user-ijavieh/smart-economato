@@ -431,6 +431,23 @@ tr:hover {
 
 /** ===== BADGES ===== */
 
+.status-badge {
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 8px;
+    white-space: nowrap;
+}
+
+.hidden-badge {
+    background: #fef2f2;
+    color: #ef4444;
+    border: 1px solid #fee2e2;
+}
+
 .component-count {
     display: inline-block;
     padding: 4px 12px;

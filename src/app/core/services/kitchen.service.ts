@@ -153,7 +153,8 @@ export class KitchenService {
       quantityCooked: Number(audit?.quantityCooked ?? audit?.quantity_cooked ?? 0),
       details: audit?.details ?? '',
       componentsState: audit?.componentsState ?? audit?.components_state ?? null,
-      cookingDate: audit?.cookingDate ?? audit?.cooking_date ?? ''
+      cookingDate: audit?.cookingDate ?? audit?.cooking_date ?? '',
+      correlationId: audit?.correlationId ?? audit?.correlation_id ?? null
     };
   }
 }

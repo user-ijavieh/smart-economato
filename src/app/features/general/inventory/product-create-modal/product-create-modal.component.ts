@@ -32,7 +32,8 @@ export class ProductCreateModalComponent {
     minimumStock: undefined as number | undefined,
     availabilityPercentage: undefined as number | undefined,
     unit: 'KG',
-    supplierId: undefined as number | undefined
+    supplierId: undefined as number | undefined,
+    expirationDate: ''
   };
 
   allowedUnits = ['KG', 'G', 'L', 'ML', 'UND'];
@@ -78,6 +79,11 @@ export class ProductCreateModalComponent {
       return;
     }
 
+    if (currentStock > 0 && !this.formData.expirationDate) {
+      this.messageService.showError('La fecha de caducidad es obligatoria cuando se introduce stock inicial.');
+      return;
+    }
+
     // Enviar JSON en el formato exacto del backend
     const productData: ProductRequest = {
       minimumStock: minimumStock,
@@ -88,7 +94,8 @@ export class ProductCreateModalComponent {
       unitPrice: unitPrice,
       productCode: this.formData.productCode.trim(),
       currentStock: currentStock,
-      supplierId: supplierId
+      supplierId: supplierId,
+      expirationDate: this.formData.expirationDate || undefined
     };
 
     this.save.emit(productData);
@@ -113,7 +120,8 @@ export class ProductCreateModalComponent {
       unitPrice: 0,
       currentStock: 0,
       unit: 'KG',
-      supplierId: undefined
+      supplierId: undefined,
+      expirationDate: ''
     };
   }
 }

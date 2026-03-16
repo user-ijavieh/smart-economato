@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { finalize, Observable, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { KitchenService } from '../../../core/services/kitchen.service';
 import { RecipeService } from '../../../core/services/recipe.service';
@@ -11,6 +12,8 @@ import {
   RecipeCookingAudit,
   ReportRange
 } from '../../../shared/models/kitchen.model';
+import { TraceabilityService } from '../../../core/services/traceability.service';
+import { ReverseTraceabilityDTO } from '../../../shared/models/traceability.model';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 
@@ -25,7 +28,9 @@ import { ToastComponent } from '../../../shared/components/layout/toast/toast.co
 export class KitchenManagementComponent implements OnInit {
   private kitchenService = inject(KitchenService);
   private recipeService = inject(RecipeService);
+  private traceabilityService = inject(TraceabilityService);
   private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
   messageService = inject(MessageService);
 
   activeTab: 'history' | 'reports' = 'history';
@@ -60,6 +65,11 @@ export class KitchenManagementComponent implements OnInit {
   // Mobile detail modal state for History
   showMobileModal = false;
   selectedAuditForMobile: RecipeCookingAudit | null = null;
+
+  // Traceability modal state
+  showTraceabilityModal = false;
+  loadingTraceability = false;
+  traceData: ReverseTraceabilityDTO | null = null;
 
   ngOnInit(): void {
     this.loadHistory();
@@ -338,51 +348,26 @@ export class KitchenManagementComponent implements OnInit {
   async revertAudit(audit: RecipeCookingAudit): Promise<void> {
     const confirmed = await this.messageService.confirm(
       'Revertir cocinado',
-      `Se revertirá el cocinado de la receta "${audit.recipeName}" y se devolverá stock de los ingredientes.`
+      `Se revertirá el cocinado de la receta "${audit.recipeName}" y se devolverá stock de los ingredientes a sus lotes originales.`
     );
 
     if (!confirmed) {
       return;
     }
 
-    // Obtener los detalles de la receta para extraer los componentes
-    this.recipeService.getById(audit.recipeId).subscribe({
-      next: (recipe) => {
-        if (!recipe.components || recipe.components.length === 0) {
-          this.messageService.showError('La receta no tiene ingredientes para revertir');
-          return;
-        }
+    this.loadingHistory = true;
+    this.cdr.markForCheck();
 
-        const request: BatchStockMovementRequest = {
-          reason: `Reversión de cocinado - Auditoría #${audit.id}`,
-          recipeCookingAuditId: audit.id,
-          movements: recipe.components.map(component => ({
-            productId: component.productId,
-            quantityDelta: Math.abs(component.quantity * audit.quantityCooked),
-            movementType: 'AJUSTE',
-            description: `Reversión receta ${audit.recipeName} (audit ${audit.id})`
-          }))
-        };
-
-        this.kitchenService.revertCookingBatch(request).subscribe({
-          next: (response) => {
-            if (response.success) {
-              this.messageService.showSuccess('Cocinado revertido correctamente');
-              this.applyServerFilters();
-            } else {
-              this.messageService.showError(response.errorDetail || 'La reversión no pudo completarse');
-            }
-            this.cdr.detectChanges();
-          },
-          error: () => {
-            this.messageService.showError('Error al revertir el cocinado');
-            this.cdr.detectChanges();
-          }
-        });
+    this.recipeService.revertCooking(audit.id).subscribe({
+      next: () => {
+        this.messageService.showSuccess('Audit reverted successfully');
+        this.loadHistory(this.currentPage);
       },
-      error: () => {
-        this.messageService.showError('No se pudo cargar la receta para la reversión');
-        this.cdr.detectChanges();
+      error: (err) => {
+        const msg = err.error?.message || err.error || 'Error al revertir el cocinado';
+        this.messageService.showError(msg);
+        this.loadingHistory = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -507,5 +492,35 @@ export class KitchenManagementComponent implements OnInit {
     // Sort before applying filter and rendering
     this.applyHistorySorting();
     this.applySearchFilter();
+  }
+
+  viewTraceability(audit: RecipeCookingAudit): void {
+    this.showTraceabilityModal = true;
+    this.loadingTraceability = true;
+    this.traceData = null;
+    this.cdr.markForCheck();
+
+    this.traceabilityService.getReverseTraceability(audit.id)
+      .pipe(finalize(() => {
+        this.loadingTraceability = false;
+        this.cdr.markForCheck();
+      }))
+      .subscribe({
+        next: (data: any) => {
+          this.traceData = data as ReverseTraceabilityDTO;
+        },
+        error: () => this.messageService.showError('No se pudo obtener la trazabilidad de los ingredientes.')
+      });
+  }
+
+  closeTraceabilityModal(): void {
+    this.showTraceabilityModal = false;
+    this.traceData = null;
+    this.cdr.markForCheck();
+  }
+  
+  goToOrder(orderId: number): void {
+    this.router.navigate(['/admin/orders'], { queryParams: { id: orderId } });
+    this.closeTraceabilityModal();
   }
 }

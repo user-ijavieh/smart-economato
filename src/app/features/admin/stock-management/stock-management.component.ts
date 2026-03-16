@@ -11,6 +11,7 @@ import { OrderService } from '../../../core/services/order.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { MessageService } from '../../../core/services/message.service';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
+import { ProductBatchService } from '../../../core/services/product-batch.service';
 import {
     AlertResolution,
     AlertSeverity,
@@ -23,6 +24,8 @@ import { Page } from '../../../shared/models/page.model';
 import { StockLedgerService } from '../../../core/services/stock-ledger.service';
 import { StockLedgerResponseDTO, IntegrityCheckResponseDTO, StockSnapshotResponseDTO, ConsumptionBreakdownDTO } from '../../../shared/models/stock-ledger.model';
 import { Product } from '../../../shared/models/product.model';
+import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.model';
+
 
 type Tab = 'alerts' | 'predictions' | 'ledger';
 
@@ -41,6 +44,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     private ngZone = inject(NgZone);
     private authService = inject(AuthService);
     private stockLedgerService = inject(StockLedgerService);
+    private productBatchService = inject(ProductBatchService);
     messageService = inject(MessageService);
 
     loadingAlerts = true;
@@ -149,6 +153,17 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     ledgerSortColumn = 'transactionTimestamp';
     ledgerSortDir: 'asc' | 'desc' = 'desc';
 
+    // ── Manual adjustment modal state ──
+    showManualAdjustmentModal = false;
+    adjustmentDelta: number | null = null;
+    absoluteAdjustmentQuantity: number | null = null;
+    adjustmentDirection: 'ENTRY' | 'EXIT' = 'ENTRY';
+    adjustmentType: 'AJUSTE' | 'MERMA' | 'ENTRADA' | 'SALIDA' = 'AJUSTE';
+    adjustmentDescription = '';
+    adjustmentBatchId: number | null = null;
+    activeBatchesForAdjustment: ProductBatchResponseDTO[] = [];
+    submittingAdjustment = false;
+
     // ── Mobile modal for Ledger transactions ──
     showLedgerMobileModal = false;
     selectedLedgerTx: StockLedgerResponseDTO | null = null;
@@ -162,6 +177,8 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     loadingLedgerProducts = false;
     private searchSubject = new Subject<string>();
     private searchSubscription?: any;
+
+
 
     ngOnInit(): void {
         this.loadAlerts();
@@ -847,6 +864,63 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 this.loadLedgerSnapshot(this.selectedProductId!);
             },
             error: (err) => this.messageService.showError(err.error || 'Error al resetear historial')
+        });
+    }
+
+
+
+
+
+    openManualAdjustmentModal(): void {
+        if (!this.selectedProductId) return;
+        this.showManualAdjustmentModal = true;
+        this.adjustmentDelta = null;
+        this.absoluteAdjustmentQuantity = null;
+        this.adjustmentDirection = 'ENTRY';
+        this.adjustmentType = 'AJUSTE';
+        this.adjustmentDescription = '';
+        this.adjustmentBatchId = null;
+        this.productBatchService.getActiveBatches(this.selectedProductId).subscribe({
+            next: (batches) => {
+                this.activeBatchesForAdjustment = batches;
+                this.cdr.detectChanges();
+            },
+            error: () => this.messageService.showError('Error al cargar lotes activos')
+        });
+    }
+
+    closeManualAdjustmentModal(): void {
+        this.showManualAdjustmentModal = false;
+        this.activeBatchesForAdjustment = [];
+    }
+
+    submitManualAdjustment(): void {
+        if (!this.selectedProductId || !this.absoluteAdjustmentQuantity || !this.adjustmentDescription) return;
+        
+        // Calculate signed delta
+        const delta = this.adjustmentDirection === 'ENTRY' 
+            ? Math.abs(this.absoluteAdjustmentQuantity) 
+            : -Math.abs(this.absoluteAdjustmentQuantity);
+
+        const request = {
+            productId: this.selectedProductId,
+            quantityDelta: delta,
+            movementType: this.adjustmentType,
+            description: this.adjustmentDescription,
+            batchId: this.adjustmentBatchId || undefined
+        };
+
+        this.submittingAdjustment = true;
+        this.stockLedgerService.registerManualAdjustment(request).pipe(
+            finalize(() => { this.submittingAdjustment = false; this.cdr.detectChanges(); })
+        ).subscribe({
+            next: () => {
+                this.messageService.showSuccess('Ajuste de stock registrado con éxito');
+                this.closeManualAdjustmentModal();
+                this.loadLedgerHistory(this.selectedProductId!);
+                this.loadLedgerSnapshot(this.selectedProductId!);
+            },
+            error: (err) => this.messageService.showError(err.error?.message || 'Error al registrar el ajuste')
         });
     }
 
