@@ -1,5 +1,5 @@
 <div class="modal-overlay" (click)="onClose()">
-  <div class="modal-content admin-mode" (click)="$event.stopPropagation()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <h2>Modificar Caducidad - Lote #{{ batch.id }}</h2>
       <button type="button" class="modal-close" (click)="onClose()" title="Cerrar">
@@ -47,7 +47,7 @@
 
     <div class="modal-footer">
       <button type="button" class="btn-cancel" (click)="onClose()">Cancelar</button>
-      <button type="button" class="btn-save" (click)="onSubmit()" [disabled]="!expirationDate">Guardar Cambios</button>
+      <button type="button" class="btn-confirm" (click)="onSubmit()" [disabled]="!expirationDate">Guardar Cambios</button>
     </div>
   </div>
 </div>
