@@ -62,4 +62,8 @@ export class StockLedgerService {
   getConsumptionBreakdown(productId: number, params: { date?: string; lastDays?: number; startDate?: string; endDate?: string }): Observable<ConsumptionBreakdownDTO> {
     return this.http.get<ConsumptionBreakdownDTO>(`${this.url}/consumption/${productId}`, { params: params as any });
   }
+
+  registerManualAdjustment(request: any): Observable<StockLedgerResponseDTO> {
+    return this.http.post<StockLedgerResponseDTO>(`${this.url}/manual-adjustment`, request);
+  }
 }

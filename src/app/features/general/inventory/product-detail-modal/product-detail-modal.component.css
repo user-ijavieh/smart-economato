@@ -143,6 +143,59 @@
   color: #ef4444 !important;
   font-weight: 600;
 }
+/* Batches Table */
+.batches-container {
+  margin-top: 10px;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.batches-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.batches-table th {
+  text-align: left;
+  padding: 8px;
+  color: #64748b;
+  font-weight: 600;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.batches-table td {
+  padding: 8px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.expiring-row {
+  background-color: #fffbeb;
+}
+
+.expired-row {
+  background-color: #fef2f2;
+}
+
+.badge-expired {
+  background: #ef4444;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 5px;
+  font-weight: bold;
+}
+
+.loading-text, .empty-text {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  font-style: italic;
+  text-align: center;
+  margin: 10px 0;
+}
 
 .availability-badge {
   display: inline-block;

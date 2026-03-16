@@ -1,0 +1,237 @@
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ProductBatchService } from '../../../core/services/product-batch.service';
+import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.model';
+import { BatchExpirationModalComponent } from '../stock-management/batch-expiration-modal/batch-expiration-modal.component';
+import { MessageService } from '../../../core/services/message.service';
+
+type ManagementTab = 'all' | 'control';
+type ControlSubTab = 'expiring' | 'expired';
+
+@Component({
+  selector: 'app-batches-management',
+  standalone: true,
+  imports: [CommonModule, FormsModule, BatchExpirationModalComponent],
+  templateUrl: './batches-management.component.html',
+  styleUrl: './batches-management.component.css'
+})
+export class BatchesManagementComponent implements OnInit {
+  private batchService = inject(ProductBatchService);
+  private cdr = inject(ChangeDetectorRef);
+  private messageService = inject(MessageService);
+
+  // Tabs
+  activeTab: ManagementTab = 'all';
+  batchesSubTab: ControlSubTab = 'expiring';
+
+  // State
+  batches: ProductBatchResponseDTO[] = [];
+  controlBatches: ProductBatchResponseDTO[] = [];
+  loading = false;
+  
+  // Filters & Search
+  searchTerm = '';
+  statusFilter: 'all' | 'active' | 'depleted' | 'expired' = 'all';
+  expiringDays = 7;
+
+  // Pagination
+  currentPage = 0;
+  pageSize = 15;
+  totalPages = 0;
+  totalElements = 0;
+  hasMore = true;
+
+  // Sorting
+  sortColumn = 'expirationDate';
+  sortDir: 'asc' | 'desc' = 'asc';
+
+  // Counters
+  expiredCount = 0;
+  expiringSoonCount = 0;
+
+  // Modal State
+  showEditModal = false;
+  selectedBatch: ProductBatchResponseDTO | null = null;
+
+  ngOnInit(): void {
+    this.loadBatches();
+    this.updateCounters();
+  }
+
+  updateCounters(): void {
+    // Podríamos optimizar esto con un endpoint de stats si creciera mucho
+    this.batchService.getExpiredBatches().subscribe(list => this.expiredCount = list.length);
+    this.batchService.getExpiringBatches(7).subscribe(list => this.expiringSoonCount = list.length);
+  }
+
+  loadBatches(page: number = 0, append: boolean = false): void {
+    if (this.loading || (!append && page > 0 && page >= this.totalPages)) return;
+    
+    this.currentPage = page;
+    this.loading = true;
+    this.cdr.detectChanges();
+
+    const sortParam = `${this.sortColumn},${this.sortDir}`;
+    let depleted: boolean | undefined = undefined;
+    
+    if (this.statusFilter === 'active') depleted = false;
+    else if (this.statusFilter === 'depleted') depleted = true;
+
+    this.batchService.getAllBatches(this.currentPage, this.pageSize, sortParam, this.searchTerm, depleted)
+      .subscribe({
+        next: (res) => {
+          let content = res.content || [];
+          if (this.statusFilter === 'expired') {
+            content = content.filter((b: any) => b.expired);
+          }
+          
+          if (append) {
+            this.batches = [...this.batches, ...content];
+          } else {
+            this.batches = content;
+          }
+          
+          this.totalPages = res.totalPages;
+          this.totalElements = res.totalElements;
+          this.hasMore = this.currentPage < this.totalPages - 1;
+          this.loading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.messageService.showError("Error al cargar lotes");
+          this.loading = false;
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
+  onScroll(event: any): void {
+    if (this.activeTab !== 'all') return;
+    
+    const element = event.target;
+    if (element.scrollHeight - element.scrollTop <= element.clientHeight + 100) {
+      if (!this.loading && this.hasMore) {
+        this.loadBatches(this.currentPage + 1, true);
+      }
+    }
+  }
+
+  loadControlBatches(): void {
+    this.loading = true;
+    this.cdr.detectChanges();
+
+    const obs = this.batchesSubTab === 'expiring' 
+      ? this.batchService.getExpiringBatches(this.expiringDays)
+      : this.batchService.getExpiredBatches();
+
+    obs.subscribe({
+      next: (list) => {
+        this.controlBatches = list;
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.messageService.showError("Error al cargar control de caducidad");
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  switchTab(tab: ManagementTab): void {
+    this.activeTab = tab;
+    if (tab === 'all') this.loadBatches(0);
+    else this.loadControlBatches();
+  }
+
+  setSubTab(subTab: ControlSubTab): void {
+    this.batchesSubTab = subTab;
+    this.loadControlBatches();
+  }
+
+  onSearch(): void {
+    this.loadBatches(0);
+  }
+
+  clearFilters(): void {
+    this.searchTerm = '';
+    this.statusFilter = 'all';
+    this.loadBatches(0);
+  }
+
+  onSort(column: string): void {
+    if (this.sortColumn === column) {
+      this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDir = 'asc';
+    }
+    this.loadBatches(this.currentPage);
+  }
+
+  getSortDir(column: string): string {
+    return this.sortColumn === column ? this.sortDir : '';
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages - 1) this.loadBatches(this.currentPage + 1);
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 0) this.loadBatches(this.currentPage - 1);
+  }
+
+  openEditModal(batch: ProductBatchResponseDTO): void {
+    this.selectedBatch = batch;
+    this.showEditModal = true;
+  }
+
+  onModalClosed(): void {
+    this.showEditModal = false;
+    this.selectedBatch = null;
+  }
+
+  onSaveBatch(data: { expirationDate: string; reason?: string }): void {
+    if (this.selectedBatch) {
+      this.batchService.updateBatchExpiration(this.selectedBatch.id, data).subscribe({
+        next: () => {
+          this.messageService.showSuccess("Caducidad actualizada correctamente");
+          this.showEditModal = false;
+          this.refreshData();
+        },
+        error: (err) => this.messageService.showError('Error al actualizar fecha')
+      });
+    }
+  }
+
+  async onWithdraw(batch: ProductBatchResponseDTO): Promise<void> {
+    const confirmed = await this.messageService.confirm(
+      'Desechar Lote',
+      `¿Estás seguro de que deseas desechar el lote #${batch.id} de ${batch.productName}? Esta acción es irreversible y se registrará como merma.`
+    );
+
+    if (confirmed) {
+      this.batchService.withdrawBatch(batch.id).subscribe({
+        next: () => {
+          this.messageService.showSuccess("Lote desechado correctamente");
+          this.refreshData();
+        },
+        error: () => this.messageService.showError("Error al desechar el lote")
+      });
+    }
+  }
+
+  refreshData(): void {
+    if (this.activeTab === 'all') this.loadBatches(this.currentPage);
+    else this.loadControlBatches();
+    this.updateCounters();
+  }
+
+  getStatusText(batch: ProductBatchResponseDTO): string {
+    if (batch.depleted) return 'Agotado';
+    if (batch.expired) return 'Caducado';
+    if (batch.daysUntilExpiration <= 7) return 'Próximo';
+    return 'Activo';
+  }
+}

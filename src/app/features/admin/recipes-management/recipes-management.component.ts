@@ -59,6 +59,7 @@ export class RecipesManagementComponent implements OnInit {
     sortColumnRecipes = 'name';
     sortDirRecipes: 'asc' | 'desc' = 'asc';
     sortInteractedRecipes = false;
+    showHiddenRecipes = false;
 
     // Modal state
     showCreateModal = false;
@@ -178,9 +179,11 @@ export class RecipesManagementComponent implements OnInit {
 
         const sortParam = `${this.sortColumnRecipes},${this.sortDirRecipes}`;
 
-        const source$ = this.searchTerm.trim()
-            ? this.recipeService.searchByName(this.searchTerm.trim(), this.currentPage, this.pageSize, sortParam)
-            : this.recipeService.getAll(this.currentPage, this.pageSize, sortParam);
+        const source$ = this.showHiddenRecipes
+            ? this.recipeService.getHidden(this.currentPage, this.pageSize, sortParam)
+            : (this.searchTerm.trim()
+                ? this.recipeService.searchByName(this.searchTerm.trim(), this.currentPage, this.pageSize, sortParam)
+                : this.recipeService.getAll(this.currentPage, this.pageSize, sortParam));
 
         source$.pipe(
             finalize(() => {
@@ -260,6 +263,32 @@ export class RecipesManagementComponent implements OnInit {
 
     hasActiveFilters(): boolean {
         return this.searchTerm.trim().length > 0;
+    }
+
+    toggleShowHidden(): void {
+        this.showHiddenRecipes = !this.showHiddenRecipes;
+        this.clearFilters();
+    }
+
+    onToggleHiddenFromModal(): void {
+        if (!this.selectedRecipe) return;
+
+        const currentlyHidden = this.showHiddenRecipes;
+        const newHiddenState = !currentlyHidden;
+        const actionText = newHiddenState ? 'ocultado' : 'mostrado';
+
+        this.recipeService.toggleHidden(this.selectedRecipe.id, newHiddenState).subscribe({
+            next: () => {
+                this.messageService.showSuccess(`Receta "${this.selectedRecipe!.name}" ha sido ${actionText}`);
+                this.closeEditModal();
+                this.loadRecipes();
+                this.loadStats();
+            },
+            error: (err: any) => {
+                const errorMessage = err.error?.message || err.message || `Error al ${newHiddenState ? 'ocultar' : 'mostrar'} receta`;
+                this.messageService.showError(errorMessage);
+            }
+        });
     }
 
     // ── Audits ──

@@ -68,6 +68,46 @@ export class RecipeService {
     return this.http.delete<void>(`${this.url}/${id}`);
   }
 
+  getHidden(page = 0, size = 12, sort = 'name,asc'): Observable<Page<Recipe>> {
+    const queryString = `page=${page}&size=${size}&sort=${sort}`;
+    const fullUrl = `${this.url}/hidden?${queryString}`;
+
+    return this.http.get<any>(fullUrl).pipe(
+      map(response => {
+        const isPage = response.hasOwnProperty('content');
+        const rawContent = isPage ? response.content : (Array.isArray(response) ? response : []);
+
+        let content = rawContent;
+        let totalElements = response.totalElements ?? rawContent.length;
+        let totalPages = response.totalPages ?? 1;
+
+        if (!isPage || rawContent.length > size) {
+          totalElements = rawContent.length;
+          totalPages = Math.ceil(totalElements / size);
+          const start = page * size;
+          const end = Math.min(start + size, totalElements);
+          content = rawContent.slice(start, end);
+        }
+
+        return {
+          content: content,
+          totalElements: totalElements,
+          totalPages: totalPages,
+          size: size,
+          number: page,
+          first: page === 0,
+          last: page === totalPages - 1,
+          empty: content.length === 0
+        };
+      })
+    );
+  }
+
+  toggleHidden(id: number, hidden: boolean): Observable<void> {
+    const params = new HttpParams().set('hidden', hidden.toString());
+    return this.http.patch<void>(`${this.url}/${id}/toggle-hidden`, {}, { params });
+  }
+
 
   searchByName(name: string, page = 0, size = 12, sort = 'name,asc'): Observable<Page<Recipe>> {
     const queryString = `name=${encodeURIComponent(name)}&page=${page}&size=${size}&sort=${sort}`;
@@ -104,13 +144,18 @@ export class RecipeService {
   }
 
   findByMaxCost(maxCost: number): Observable<Recipe[]> {
-    return this.http.get<Recipe[]>(`${this.url}/by-max-cost`, {
+    return this.http.get<Recipe[]>(`${this.url}/maxcost`, {
       params: new HttpParams().set('maxCost', maxCost.toString())
     });
   }
 
   cook(request: CookRequest): Observable<Recipe> {
     return this.http.post<Recipe>(`${this.url}/cook`, request);
+  }
+
+  revertCooking(auditId: number, reason: string = 'Reversión manual'): Observable<void> {
+    const params = new HttpParams().set('reason', reason);
+    return this.http.post<void>(`${this.url}/cook/${auditId}/revert`, {}, { params });
   }
 
   getPdf(id: number): Observable<Blob> {

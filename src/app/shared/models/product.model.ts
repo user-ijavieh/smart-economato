@@ -52,5 +52,5 @@ export interface ProductRequest {
   description?: string;
   image?: string;
   brand?: string;
-  expirationDate?: string;
+  expirationDate?: string; // Format: YYYY-MM-DD
 }

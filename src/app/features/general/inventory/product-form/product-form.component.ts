@@ -13,6 +13,7 @@ export interface ProductFormState {
   minStock: number;
   unit: string;
   supplierId: number | undefined;
+  expirationDate: string;
 }
 
 @Component({
@@ -38,7 +39,8 @@ export class ProductFormComponent implements OnChanges {
     stock: 0,
     minStock: 0,
     unit: 'UND', // Default to valid unit
-    supplierId: undefined
+    supplierId: undefined,
+    expirationDate: ''
   };
 
   allowedUnits = ['KG', 'G', 'L', 'ML', 'UND'];
@@ -56,7 +58,8 @@ export class ProductFormComponent implements OnChanges {
         stock: this.product.currentStock || 0,
         minStock: this.product.minStock || 0,
         unit: this.product.unit || 'UND',
-        supplierId: this.product.supplier?.id
+        supplierId: this.product.supplier?.id,
+        expirationDate: this.product.expirationDate || ''
       };
     } else if (changes['product'] && !this.product) {
       this.isEditing = false;
@@ -73,20 +76,19 @@ export class ProductFormComponent implements OnChanges {
       stock: 0,
       minStock: 0,
       unit: 'UND',
-      supplierId: undefined
+      supplierId: undefined,
+      expirationDate: ''
     };
   }
 
   onSubmit(): void {
-    // Force 0 for stock fields if it's a new product or per user request for testing
-    // The user asked to send them as null for the test, but the backend returned 400.
-    // Reverting to 0 for creation as a safe default.
-    
-    // Logic: If isEditing, use form values (which might come from existing product).
-    // If NOT isEditing (Creating), explicitly send 0.
-    
-    const stockValue = this.isEditing && this.formProduct.stock !== null ? this.formProduct.stock : 0;
-    const minStockValue = this.isEditing && this.formProduct.minStock !== null ? this.formProduct.minStock : 0;
+    const stockValue = this.formProduct.stock !== null ? this.formProduct.stock : 0;
+    const minStockValue = this.formProduct.minStock !== null ? this.formProduct.minStock : 0;
+
+    if (stockValue > 0 && !this.formProduct.expirationDate) {
+      alert('La fecha de caducidad es obligatoria cuando se introduce stock inicial.');
+      return;
+    }
 
     const productData: ProductRequest = {
       name: this.formProduct.name,
@@ -94,11 +96,13 @@ export class ProductFormComponent implements OnChanges {
       type: this.formProduct.type,
       price: this.formProduct.price,
       unitPrice: this.formProduct.price,
-      stock: stockValue, // Send 0
-      currentStock: stockValue, // Send 0
-      minStock: minStockValue, // Send 0
+      stock: stockValue,
+      currentStock: stockValue,
+      minStock: minStockValue,
+      minimumStock: minStockValue,
       unit: this.formProduct.unit,
-      supplierId: this.formProduct.supplierId
+      supplierId: this.formProduct.supplierId,
+      expirationDate: this.formProduct.expirationDate || undefined
     };
     this.save.emit(productData);
   }
