@@ -885,6 +885,107 @@ tr:hover { background: var(--admin-scrollbar-track); }
 /* Cleaning redundant styles */
 /* (Previous redundant blocks were removed here) */
 
+/** ===== RESPONSIVE (SECTION ALIGNMENT) ===== */
+@media (max-width: 1024px) {
+    .header-recetas {
+        height: 70px;
+        padding: 0 20px;
+    }
+
+    .header-recetas h1 {
+        font-size: 1.3rem;
+    }
+
+    .tab-bar {
+        padding: 0 20px;
+    }
+
+    .contenedor-principal {
+        padding: 20px;
+    }
+
+    th,
+    td {
+        padding: 12px 8px;
+        font-size: 0.85rem;
+    }
+
+    button {
+        font-size: 0.85rem;
+        padding: 8px 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-recetas {
+        height: 60px;
+        padding: 0 15px;
+    }
+
+    .header-recetas h1 {
+        font-size: 1.3rem;
+        letter-spacing: 1px;
+    }
+
+    .tab-bar {
+        height: 48px;
+        padding: 0 15px;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .tab-bar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab-btn {
+        padding: 0 16px;
+        font-size: 0.85rem;
+    }
+
+    .contenedor-principal {
+        padding: 15px;
+    }
+
+    .controles {
+        padding: 15px;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 640px) {
+    .header-recetas {
+        padding: 10px;
+    }
+
+    .header-recetas h1 {
+        font-size: 1.1rem;
+    }
+
+    .tab-bar {
+        padding: 0 16px;
+    }
+
+    .tab-btn {
+        padding: 12px 16px;
+        font-size: 0.85rem;
+        gap: 6px;
+    }
+
+    .contenedor-principal {
+        padding: 10px;
+    }
+
+    th,
+    td {
+        padding: 8px 6px;
+        font-size: 0.78rem;
+    }
+}
+
 /** ===== RESPONSIVE OVERRIDES ===== */
 @media (max-width: 768px) {
     .modal-dialog-base {
