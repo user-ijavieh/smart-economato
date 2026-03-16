@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { finalize, Observable, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { KitchenService } from '../../../core/services/kitchen.service';
 import { RecipeService } from '../../../core/services/recipe.service';
@@ -29,6 +30,7 @@ export class KitchenManagementComponent implements OnInit {
   private recipeService = inject(RecipeService);
   private traceabilityService = inject(TraceabilityService);
   private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
   messageService = inject(MessageService);
 
   activeTab: 'history' | 'reports' = 'history';
@@ -515,5 +517,10 @@ export class KitchenManagementComponent implements OnInit {
     this.showTraceabilityModal = false;
     this.traceData = null;
     this.cdr.markForCheck();
+  }
+  
+  goToOrder(orderId: number): void {
+    this.router.navigate(['/admin/orders'], { queryParams: { id: orderId } });
+    this.closeTraceabilityModal();
   }
 }

@@ -13,6 +13,22 @@ export class ProductBatchService {
     return this.http.get<ProductBatchResponseDTO[]>(`${this.url}/product/${productId}`);
   }
 
+  getAllBatches(page: number = 0, size: number = 10, sort: string = 'expirationDate,asc', search?: string, depleted?: boolean): Observable<any> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sort', sort);
+
+    if (search) {
+      params = params.set('search', search);
+    }
+    if (depleted !== undefined && depleted !== null) {
+      params = params.set('depleted', depleted.toString());
+    }
+
+    return this.http.get<any>(this.url, { params });
+  }
+
   getExpiringBatches(days = 7): Observable<ProductBatchResponseDTO[]> {
     const params = new HttpParams().set('days', days.toString());
     return this.http.get<ProductBatchResponseDTO[]>(`${this.url}/expiring`, { params });
@@ -24,5 +40,9 @@ export class ProductBatchService {
 
   withdrawBatch(batchId: number): Observable<void> {
     return this.http.post<void>(`${this.url}/${batchId}/withdraw`, {});
+  }
+
+  updateBatchExpiration(batchId: number, data: { expirationDate: string; reason?: string }): Observable<void> {
+    return this.http.patch<void>(`${this.url}/${batchId}/expiration`, data);
   }
 }

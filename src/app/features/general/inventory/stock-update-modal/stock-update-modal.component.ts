@@ -36,6 +36,12 @@ export class StockUpdateModalComponent implements OnChanges {
 
     if (!this.product) return;
 
+    if (this.currentStock > (this.product.currentStock || 0) && !this.expirationDate) {
+      // Usaremos una alerta genérica ya que no se inyectó messageService aun aquí
+      alert('Al registrar un incremento de stock, la caducidad es obligatoria.');
+      return;
+    }
+
     // Build the ProductRequest with ONLY stock updated, and existing values for others
     // The backend logic checks stockDelta, so currentStock is crucial.
     // Other fields are required by ProductRequestDTO validity checks (e.g. valid unit), so we pass them along.

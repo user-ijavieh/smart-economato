@@ -50,6 +50,14 @@ export class OrderReceptionModalComponent implements OnInit {
       return;
     }
 
+    const missingExpiration = this.order.details.some(d => 
+      (d.quantityReceived ?? 0) > 0 && !d.expirationDate
+    );
+    if (missingExpiration) {
+      this.messageService.showError('La fecha de caducidad es obligatoria para los productos recibidos.');
+      return;
+    }
+
     const hasInvalidExpirationDate = this.order.details.some(d => d.expirationDate !== undefined && d.expirationDate !== null && d.expirationDate !== '' && !/^\d{4}-\d{2}-\d{2}$/.test(d.expirationDate));
     if (hasInvalidExpirationDate) {
       this.messageService.showError('Revisa el formato de fecha de caducidad.');

@@ -19,7 +19,6 @@ export class ProductDetailModalComponent implements OnInit {
   @Input() showActions: boolean | null = null;
   @Output() close = new EventEmitter<void>();
   @Output() edit = new EventEmitter<Product>();
-  @Output() adjustStock = new EventEmitter<Product>();
 
   batches: ProductBatchResponseDTO[] = [];
   loadingBatches = false;
@@ -60,12 +59,6 @@ export class ProductDetailModalComponent implements OnInit {
   onEdit(): void {
     if (this.product) {
       this.edit.emit(this.product);
-    }
-  }
-
-  onAdjustStock(): void {
-    if (this.product) {
-      this.adjustStock.emit(this.product);
     }
   }
 
