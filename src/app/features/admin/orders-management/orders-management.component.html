@@ -37,6 +37,13 @@
             }
         </select>
 
+        <select [(ngModel)]="orderSupplierFilter" class="action-select" (ngModelChange)="onOrderSearch()">
+            <option value="">Todos los proveedores</option>
+            @for (s of suppliersList; track s.id) {
+            <option [value]="s.id">{{ s.name }}</option>
+            }
+        </select>
+
         <select [(ngModel)]="orderUserFilter" class="action-select" (ngModelChange)="onOrderSearch()">
             <option value="">Todos los usuarios</option>
             @for (u of usersList; track u.id) {
@@ -55,12 +62,6 @@
             <span class="stat-number">{{ totalOrdersCount }}</span>
             <span class="stat-label">Total Órdenes</span>
         </div>
-        @for (s of allStatuses; track s.value) {
-        <div class="stat-card" [ngClass]="getStatusClass(s.value)">
-            <span class="stat-number">{{ statusCounts[s.value] || 0 }}</span>
-            <span class="stat-label">{{ s.label }}</span>
-        </div>
-        }
         <div class="stat-card stat-total-cost">
             <span class="stat-number">{{ totalOrdersPrice | number:'1.2-2' }}€</span>
             <span class="stat-label">Total Acumulado</span>
@@ -93,7 +94,7 @@
                     </tr>
                     }
                 } @else {
-                    @for (order of filteredOrders; track order.id) {
+                    @for (order of pagedFilteredOrders; track order.id) {
                     <tr class="data-row">
                         <td data-label="ID"><span class="id-badge">#{{ order.id }}</span></td>
                         <td data-label="Usuario">
@@ -125,12 +126,29 @@
                                 <button class="btn-ver" (click)="openOrderDetail(order)" title="Ver detalles">
                                     <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 126.5 25t99.5 73l-58 58q-32-34-76-52.5t-92-18.5q-100 0-170 70t-70 170q0 100 70 170t170 70q88 0 152.5-54T634-360H480v-80h240v240h-80v-91q-41 46-97 71.5T480-160Z"/></svg>
                                 </button>
-                                <!-- Change status button removed as requested -->
-                                <button class="btn-pdf" (click)="downloadOrderPdf(order)" title="Descargar PDF">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M18 15v3H6v-3H4v3c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-3h-2zm-1-4l-1.41-1.41L13 12.17V4h-2v8.17L8.41 9.59 7 11l5 5 5-5z"/>
+                                <button class="btn-edit-status" (click)="openChangeStatusModal(order)" title="Cambiar Estado">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        viewBox="0 0 16 16">
+                                        <path
+                                            d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                        <path fill-rule="evenodd"
+                                            d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
                                     </svg>
                                 </button>
+                                <button class="btn-pdf" (click)="onDownloadPdf(order)" title="Descargar PDF">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        viewBox="0 0 16 16">
+                                        <path
+                                            d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                                        <path
+                                            d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+                                    </svg>
+                                </button>
+                                @if (order.status === 'CONFIRMED') {
+                                <button class="btn-revert btn-textual" (click)="revertOrder(order)" title="Revertir Orden">
+                                    Revertir
+                                </button>
+                                }
                             </div>
                         </td>
                     </tr>
@@ -174,11 +192,10 @@
         <table class="responsive-table">
             <thead>
                 <tr>
-                    <th>Fecha</th>
+                    <th>Fecha / Hora</th>
                     <th>Acción</th>
-                    <th class="hide-on-mobile">ID Orden</th>
+                    <th>ID Pedido</th>
                     <th class="hide-on-mobile">Usuario</th>
-                    <th class="hide-on-mobile">Detalles</th>
                     <th class="show-on-mobile-only mobile-icon-col"></th>
                 </tr>
             </thead>
@@ -188,9 +205,8 @@
                     <tr class="skeleton-row">
                         <td><span class="skeleton skeleton-text" style="width:130px"></span></td>
                         <td><span class="skeleton skeleton-text" style="width:100px"></span></td>
-                        <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width:60px"></span></td>
+                        <td><span class="skeleton skeleton-text" style="width:60px"></span></td>
                         <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width:120px"></span></td>
-                        <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width:200px"></span></td>
                         <td class="show-on-mobile-only mobile-icon-col"></td>
                     </tr>
                     }
@@ -200,19 +216,18 @@
                         <td data-label="Fecha">
                             <span class="date-cell-inner">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="date-icon"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-                                {{ formatDate(audit.auditDate) }}
+                                {{ formatDateWithTime(audit.auditDate) }}
                             </span>
                         </td>
                         <td data-label="Acción">
                             <span class="action-badge" [ngClass]="getActionBadgeClass(audit.action)">{{ audit.action }}</span>
                         </td>
-                        <td data-label="ID Orden" class="hide-on-mobile">
+                        <td data-label="ID Orden">
                             <span class="id-badge">#{{ audit.orderId }}</span>
                         </td>
                         <td data-label="Usuario" class="hide-on-mobile">
                             <span class="user-name">{{ audit.userName }}</span>
                         </td>
-                        <td data-label="Detalles" class="details-cell hide-on-mobile">{{ audit.details }}</td>
                         <td class="show-on-mobile-only mobile-icon-col">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
@@ -221,7 +236,7 @@
                     </tr>
                     }
                     @if (filteredAudits.length === 0 && !loadingAudits) {
-                    <tr><td colspan="6" class="empty-state">No se encontraron auditorías</td></tr>
+                    <tr><td colspan="5" class="empty-state">No se encontraron auditorías</td></tr>
                     }
                 }
             </tbody>
@@ -244,54 +259,63 @@
 
 <!-- ===== CHANGE STATUS MODAL ===== -->
 @if (showChangeStatusModal && orderForStatusChange) {
-<div class="modal-overlay" (click)="onChangeStatusOverlayClick($event)">
-    <div class="modal-box status-change-modal">
-        <div class="modal-header">
-            <div class="modal-header-left">
+<div class="modal-overlay modal-overlay-base admin-theme" (click)="closeChangeStatusModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+        <div class="modal-dialog-base modal-content modal-status-change">
+            <div class="modal-header-base">
                 <h2>Cambiar Estado</h2>
-                <div class="modal-header-meta">
-                    <span class="id-badge">#{{ orderForStatusChange.id }}</span>
-                    <span class="meta-user">{{ orderForStatusChange.userName }}</span>
+                <button class="modal-close" (click)="closeChangeStatusModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="modal-section" style="margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                        <span class="id-badge">#{{ orderForStatusChange.id }}</span>
+                        <span style="font-weight: 500; color: #666;">{{ orderForStatusChange.userName }}</span>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #6b7280; margin-bottom: 8px;">Nuevo estado</label>
+                        <select [(ngModel)]="newStatusValue" class="action-select" style="width: 100%;">
+                            @for (s of allStatuses; track s.value) {
+                            <option [value]="s.value">{{ s.label }}</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="status-transition-preview">
+                        <span class="status-badge {{ getStatusClass(orderForStatusChange.status) }}">
+                            {{ formatStatus(orderForStatusChange.status) }}
+                        </span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+                        </svg>
+                        <span class="status-badge {{ getStatusClass(newStatusValue) }}">
+                            {{ formatStatus(newStatusValue) }}
+                        </span>
+                    </div>
                 </div>
             </div>
-            <button class="modal-close-btn" (click)="closeChangeStatusModal()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-            </button>
-        </div>
 
-        <div class="status-modal-body">
-            <label class="field-label">Nuevo estado</label>
-            <select [(ngModel)]="newStatusValue" class="action-select status-select-full">
-                @for (s of allStatuses; track s.value) {
-                <option [value]="s.value">{{ s.label }}</option>
-                }
-            </select>
-
-            <div class="transition-preview">
-                <span class="status-badge {{ getStatusClass(orderForStatusChange.status) }}">
-                    {{ formatStatus(orderForStatusChange.status) }}
-                </span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" class="arrow-icon">
-                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
-                </svg>
-                <span class="status-badge {{ getStatusClass(newStatusValue) }}">
-                    {{ formatStatus(newStatusValue) }}
-                </span>
-            </div>
-
-            <div class="modal-actions">
-                <button class="btn-cancel" (click)="closeChangeStatusModal()" [disabled]="savingStatus">Cancelar</button>
-                <button class="btn-save" (click)="confirmStatusChange()"
-                    [disabled]="savingStatus || newStatusValue === orderForStatusChange.status">
-                    @if (savingStatus) {
-                        <span class="spinner"></span> Guardando...
-                    } @else {
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                        Guardar
-                    }
-                </button>
+            <div class="modal-footer">
+                <div class="modal-actions">
+                    <button class="btn-cancel" (click)="closeChangeStatusModal()" [disabled]="savingStatus">Cancelar</button>
+                    <button class="btn-editar" (click)="confirmStatusChange()"
+                        [disabled]="savingStatus || newStatusValue === orderForStatusChange.status">
+                        @if (savingStatus) {
+                            <span class="spinner"></span> Guardando...
+                        } @else {
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                            Guardar Cambios
+                        }
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -300,169 +324,182 @@
 
 <!-- ===== AUDIT DETAIL MODAL ===== -->
 @if (showAuditDetailModal && selectedAudit) {
-<div class="modal-overlay" (click)="onAuditOverlayClick($event)">
-    <div class="modal-box" [class.modal-box-wide]="hasDiffData">
-        <div class="modal-header">
-            <div class="modal-header-left">
-                <h2>Detalle de Auditoría</h2>
-                <div class="modal-header-meta">
-                    <span class="action-badge" [ngClass]="getActionBadgeClass(selectedAudit.action)">{{ selectedAudit.action }}</span>
-                    <span class="meta-date">{{ formatDate(selectedAudit.auditDate) }}</span>
-                    <span class="meta-user">{{ selectedAudit.userName }}</span>
-                    <span class="id-badge">#{{ selectedAudit.orderId }}</span>
-                </div>
+<!-- ===== AUDIT DETAIL MODAL ===== -->
+@if (showAuditDetailModal && selectedAudit) {
+<div class="modal-overlay modal-overlay-base admin-theme" (click)="closeAuditDetail()">
+    <div class="modal-container" (click)="$event.stopPropagation()" [style.maxWidth]="hasDiffData ? '900px' : '600px'">
+        <div class="modal-dialog-base modal-content">
+            <div class="modal-header-base">
+                <h2>Pedido #{{ selectedAudit.orderId }} <span class="id-badge-white" style="background: rgba(255, 255, 255, 0.2); padding: 3px 10px; border-radius: 6px; font-size: 0.85rem; margin-left: 10px; font-weight: 600;">Audit #{{ selectedAudit.id }}</span></h2>
+                <button class="modal-close" (click)="closeAuditDetail()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
             </div>
-            <button class="modal-close-btn" (click)="closeAuditDetail()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-            </button>
-        </div>
 
-        @if (hasDiffData) {
-        <div class="modal-tab-container">
-            <div class="modal-tabs">
-                <button class="modal-tab-btn" [class.active]="auditTab === 'changes'" (click)="auditTab = 'changes'">Cambios</button>
-                <button class="modal-tab-btn" [class.active]="auditTab === 'history'" (click)="auditTab = 'history'">Histórico</button>
-            </div>
-        </div>
-
-        @if (auditTab === 'changes') {
-        <div class="diff-container">
-            <table class="diff-table">
-                <thead><tr><th class="diff-label-col">Campo</th><th class="diff-prev-col">Anterior</th><th class="diff-next-col">Nuevo</th></tr></thead>
-                <tbody>
-                    @for (field of getDiffFields(); track field.label) {
-                    <tr [class.diff-changed]="field.changed">
-                        <td class="diff-label">{{ field.label }}</td>
-                        <td class="diff-prev" [class.diff-highlight-old]="field.changed">{{ field.prev }}</td>
-                        <td class="diff-next" [class.diff-highlight-new]="field.changed">{{ field.next }}</td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-            @if (getDetailDiffs().length > 0) {
-            <h3 class="diff-section-title">Productos de la Orden</h3>
-            <table class="diff-table">
-                <thead><tr><th class="diff-label-col">Producto</th><th class="diff-prev-col">Cant. Anterior</th><th class="diff-next-col">Cant. Nueva</th></tr></thead>
-                <tbody>
-                    @for (det of getDetailDiffs(); track det.product) {
-                    <tr [class.diff-row-added]="det.status==='added'" [class.diff-row-removed]="det.status==='removed'" [class.diff-changed]="det.status==='changed'">
-                        <td class="diff-label">{{ det.product }}
-                            @if (det.status==='added') { <span class="diff-tag tag-added">Nuevo</span> }
-                            @if (det.status==='removed') { <span class="diff-tag tag-removed">Eliminado</span> }
-                        </td>
-                        <td class="diff-prev" [class.diff-highlight-old]="det.status==='changed'||det.status==='removed'">{{ det.prevQty }}</td>
-                        <td class="diff-next" [class.diff-highlight-new]="det.status==='changed'||det.status==='added'">{{ det.nextQty }}</td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-            }
-        </div>
-        } @else {
-        <div class="history-timeline-container">
-            @if (loadingAuditHistory) {
-                <div class="history-loading"><span class="spinner"></span> Cargando histórico...</div>
-            } @else {
-                <div class="timeline">
-                    @for (h of selectedOrderHistory; track h.id) {
-                    <div class="timeline-item">
-                        <div class="timeline-point"></div>
-                        <div class="timeline-content">
-                            <div class="timeline-header">
-                                <span class="timeline-action">{{ h.action }}</span>
-                                <span class="timeline-date">{{ formatDateWithTime(h.auditDate) }}</span>
-                            </div>
-                            <div class="timeline-body">
-                                <p class="timeline-details">{{ h.details }}</p>
-                                <span class="timeline-user">Realizado por: <strong>{{ h.userName }}</strong></span>
-                            </div>
+            <div class="modal-body simplified-audit">
+                <div class="modal-section">
+                    <div class="audit-info-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 25px; margin-bottom: 35px; padding-bottom: 25px; border-bottom: 1px solid #f3f4f6;">
+                        <div class="info-item">
+                            <span class="info-label">ID Auditoría</span>
+                            <span class="info-value">#{{ selectedAudit.id }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Fecha y Hora</span>
+                            <span class="info-value">{{ formatDateWithTime(selectedAudit.auditDate) }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Usuario</span>
+                            <span class="info-value">{{ selectedAudit.userName }}</span>
                         </div>
                     </div>
-                    }
-                    @if (selectedOrderHistory.length === 0) {
-                        <p class="history-empty">No se encontró historial para esta orden.</p>
+
+                    <div class="status-change-container" style="display: flex; align-items: center; justify-content: center; gap: 50px; padding: 30px; background: #f9fafb; border-radius: 16px; border: 1px solid #f3f4f6;">
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; flex: 1;">
+                            <span class="info-label">Estado Anterior</span>
+                            <span class="status-badge {{ getStatusClass(getAuditPrevStatus(selectedAudit) || '') }}">
+                                {{ formatStatus(getAuditPrevStatus(selectedAudit) || '—') }}
+                            </span>
+                        </div>
+                        <div style="color: #9ca3af; display: flex; align-items: center; justify-content: center; background: white; width: 44px; height: 44px; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; flex: 1;">
+                            <span class="info-label">Estado Nuevo</span>
+                            <span class="status-badge {{ getStatusClass(getAuditNewStatus(selectedAudit) || '') }}">
+                                {{ formatStatus(getAuditNewStatus(selectedAudit) || '—') }}
+                            </span>
+                        </div>
+                    </div>
+
+                    @if (selectedAudit.details) {
+                    <div style="margin-top: 25px;">
+                        <span class="info-label">Detalles Adicionales</span>
+                        <p style="margin: 0; font-size: 0.95rem; color: #4b5563; line-height: 1.6; background: #fff; padding: 18px 22px; border-radius: 12px; border: 1px solid #e5e7eb; white-space: pre-wrap; word-break: break-word;">{{ selectedAudit.details }}</p>
+                    </div>
                     }
                 </div>
-            }
+            </div>
+
+            <div class="modal-footer">
+                <div class="modal-actions">
+                    <button class="btn-cancel" (click)="closeAuditDetail()">Cerrar</button>
+                </div>
+            </div>
         </div>
-        }
-        } @else {
-        <div class="audit-modal-body">
-            <div class="audit-field"><span class="audit-field-label">ID Orden</span><span class="audit-field-value"><span class="id-badge">#{{ selectedAudit.orderId }}</span></span></div>
-            <div class="audit-field"><span class="audit-field-label">Usuario</span><span class="audit-field-value">{{ selectedAudit.userName }}</span></div>
-            <div class="audit-field audit-field-full"><span class="audit-field-label">Detalles</span><p class="audit-details-text">{{ selectedAudit.details }}</p></div>
-        </div>
-        }
     </div>
 </div>
+}
 }
 
 <!-- ===== ORDER DETAIL MODAL ===== -->
 @if (showOrderDetailModal && selectedOrder) {
-<div class="modal-overlay" (click)="onOrderDetailOverlayClick($event)">
-    <div class="modal-box modal-box-wide order-detail-modal">
-        <div class="modal-header">
-            <div class="modal-header-left">
-                <h2>Detalle del Pedido <span class="id-badge-white">#{{ selectedOrder.id }}</span></h2>
-                <div class="modal-header-meta">
-                    <span class="status-badge {{ getStatusClass(selectedOrder.status) }}">{{ formatStatus(selectedOrder.status) }}</span>
-                    <span class="meta-date">{{ formatDate(selectedOrder.orderDate) }}</span>
-                    <span class="meta-user">{{ selectedOrder.userName }}</span>
+<div class="modal-overlay modal-overlay-base admin-theme" (click)="closeOrderDetail()">
+    <div class="modal-container" (click)="$event.stopPropagation()" style="max-width: 950px;">
+        <div class="modal-dialog-base modal-content">
+            <div class="modal-header-base">
+                <h2>Pedido #{{ selectedOrder.id }}</h2>
+                <button class="modal-close" (click)="closeOrderDetail()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="modal-body" style="padding: 35px 40px;">
+                <!-- Información General -->
+                <div class="modal-section">
+                    <h4>Información General</h4>
+                    <div class="order-info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Estado</span>
+                            <span class="status-badge {{ getStatusClass(selectedOrder.status) }}">
+                                {{ formatStatus(selectedOrder.status) }}
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Usuario</span>
+                            <span class="info-value">{{ selectedOrder.userName }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Fecha Pedido</span>
+                            <span class="info-value">{{ formatDate(selectedOrder.orderDate) }}</span>
+                        </div>
+                        @if (selectedOrder.supplierName) {
+                        <div class="info-item">
+                            <span class="info-label">Proveedor</span>
+                            <span class="info-value">{{ selectedOrder.supplierName }}</span>
+                        </div>
+                        }
+                        <div class="info-item cost-total-item">
+                            <span class="info-label">Total Pedido</span>
+                            <span class="info-value total-price-large">{{ (selectedOrder.totalPrice || 0) | number:'1.2-2' }} €</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Líneas de Pedido -->
+                @if (selectedOrder.details && selectedOrder.details.length > 0) {
+                <div class="modal-section">
+                    <h4>Líneas de Pedido</h4>
+                    <table class="ingredients-table">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th class="text-right">Cantidad</th>
+                                <th class="text-right">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (line of selectedOrder.details; track line.productId) {
+                            <tr>
+                                <td>{{ line.productName }}</td>
+                                <td class="text-right">{{ line.quantity }}</td>
+                                <td class="text-right">{{ (line.subtotal ?? line.quantity * line.unitPrice) | number:'1.2-2' }} €</td>
+                            </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2">Coste total</td>
+                                <td class="text-right">{{ (selectedOrder.totalPrice || 0) | number:'1.2-2' }} €</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                }
+            </div>
+
+            <div class="modal-footer">
+                <div class="modal-actions">
+                    <button class="btn-imprimir" (click)="onDownloadPdf(selectedOrder)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="16" y1="13" x2="8" y2="13" />
+                            <line x1="16" y1="17" x2="8" y2="17" />
+                            <polyline points="10 9 9 9 8 9" />
+                        </svg>
+                        Exportar
+                    </button>
+                    <button class="btn-cancel" (click)="closeOrderDetail()">Cerrar</button>
                 </div>
             </div>
-            <button class="modal-close-btn" (click)="closeOrderDetail()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-            </button>
-        </div>
-
-        <div class="order-detail-body">
-            <div class="order-info-grid">
-                <div class="order-info-card"><span class="order-info-label">ID Pedido</span><span class="order-info-value"><span class="id-badge">#{{ selectedOrder.id }}</span></span></div>
-                <div class="order-info-card"><span class="order-info-label">Usuario</span><span class="order-info-value">{{ selectedOrder.userName }}</span></div>
-                <div class="order-info-card"><span class="order-info-label">Fecha de Pedido</span><span class="order-info-value">{{ formatDate(selectedOrder.orderDate) }}</span></div>
-                @if (selectedOrder.receptionDate) {
-                <div class="order-info-card"><span class="order-info-label">Fecha de Recepción</span><span class="order-info-value">{{ formatDate(selectedOrder.receptionDate) }}</span></div>
-                }
-                <div class="order-info-card order-info-card-total"><span class="order-info-label">Total</span><span class="order-info-value order-total-value">{{ (selectedOrder.totalPrice || 0) | number:'1.2-2' }} €</span></div>
-            </div>
-
-            @if (selectedOrder.details && selectedOrder.details.length > 0) {
-            <h3 class="order-detail-section-title">Líneas de Pedido</h3>
-            <div class="order-lines-table-wrapper">
-                <table class="order-lines-table">
-                    <thead><tr><th>Producto</th><th class="text-right">Cantidad</th><th class="text-right">Precio Unit.</th><th class="text-right">Subtotal</th></tr></thead>
-                    <tbody>
-                        @for (line of selectedOrder.details; track line.productId) {
-                        <tr>
-                            <td>{{ line.productName }}</td>
-                            <td class="text-right">{{ line.quantity }}</td>
-                            <td class="text-right">{{ line.unitPrice | number:'1.2-2' }} €</td>
-                            <td class="text-right subtotal-cell">{{ (line.subtotal ?? line.quantity * line.unitPrice) | number:'1.2-2' }} €</td>
-                        </tr>
-                        }
-                    </tbody>
-                    <tfoot>
-                        <tr class="order-lines-total-row">
-                            <td colspan="3" class="text-right">TOTAL</td>
-                            <td class="text-right subtotal-cell">{{ (selectedOrder.totalPrice || 0) | number:'1.2-2' }} €</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-            } @else {
-            <div class="order-no-lines">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" style="color:#ccc"><path d="M11 15h2v2h-2v-2zm0-8h2v6h-2V7zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>
-                <p>No hay líneas de detalle disponibles</p>
-            </div>
-            }
         </div>
     </div>
 </div>
 }
 
-<!-- Toasts -->
+<!-- Modals & Toasts -->
+<app-confirm-dialog></app-confirm-dialog>
 <app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
