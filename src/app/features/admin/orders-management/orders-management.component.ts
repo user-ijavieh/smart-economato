@@ -557,16 +557,8 @@ export class OrdersManagementComponent implements OnInit {
     this.kitchenService.revertCookingBatch(request).subscribe({
         next: (res: any) => {
             if (res.success || res.id) {
-                this.orderService.updateStatus(order.id, previousStatus).subscribe({
-                    next: () => {
-                        this.messageService.showSuccess(`Orden revertida correctamente al estado "${this.formatStatus(previousStatus)}"`);
-                        this.loadAllOrders();
-                    },
-                    error: (err) => {
-                        const msg = err.error?.message || 'Stock revertido, pero falló el cambio de estado';
-                        this.messageService.showError(msg);
-                    }
-                });
+                this.messageService.showSuccess(`Orden revertida correctamente`);
+                this.loadAllOrders();
             } else {
                 this.messageService.showError(res.message || 'Error al revertir el stock');
             }
