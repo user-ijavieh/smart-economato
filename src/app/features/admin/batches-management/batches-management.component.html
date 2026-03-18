@@ -1,0 +1,371 @@
+<div class="header-productos">
+  <h1>Gestión de Lotes</h1>
+</div>
+
+<!-- Tab bar -->
+<div class="tab-bar">
+  <button class="tab-btn" [class.active]="activeTab === 'all'" (click)="switchTab('all')">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/>
+    </svg>
+    Lotes
+  </button>
+  <button class="tab-btn" [class.active]="activeTab === 'control'" (click)="switchTab('control')">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor">
+      <path d="M480-120q-33 0-56.5-23.5T400-200h160q0 33-23.5 56.5T480-120ZM160-240v-80h80v-280q0-83 50-149.5T420-830v-50q0-25 17.5-42.5T480-940q25 0 42.5 17.5T540-880v50q80 16 130 82.5T720-600v280h80v80H160Zm320-360q-33 0-56.5 23.5T400-520v280h160v-280q0-33-23.5-56.5T480-600Z"/>
+    </svg>
+    Caducidad
+  </button>
+</div>
+
+@if (activeTab === 'all') {
+  <div class="contenedor-principal" (scroll)="onScroll($event)">
+    <!-- CONTROLES TAB 1 -->
+    <div class="controles">
+      <div class="search-group">
+        <input type="text" class="input-standard" [(ngModel)]="searchTerm" placeholder="Buscar por producto..." (ngModelChange)="onSearch()" />
+      </div>
+      
+      <select [(ngModel)]="statusFilter" (change)="onSearch()" class="action-select">
+        <option value="all">Ver Todos</option>
+        <option value="active">Solo Activos</option>
+        <option value="depleted">Solo Agotados</option>
+        <option value="expired">Solo Caducados</option>
+      </select>
+
+      @if (searchTerm || statusFilter !== 'all') {
+        <button class="btn-clear" (click)="clearFilters()">Limpiar Filtros</button>
+      }
+    </div>
+
+    <!-- STATS ROW -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="stat-number">{{ totalElements }}</span>
+        <span class="stat-label">Total Lotes</span>
+      </div>
+      <div class="stat-card stat-critical">
+        <span class="stat-number">{{ expiredCount }}</span>
+        <span class="stat-label">Caducados</span>
+      </div>
+      <div class="stat-card stat-cost">
+        <span class="stat-number">{{ expiringSoonCount }}</span>
+        <span class="stat-label">Prox. Vencimiento</span>
+      </div>
+    </div>
+
+    <!-- VISTA DE TABLA (ESCRITORIO) -->
+    <div class="tabla-contenedor desktop-view">
+      <table>
+        <thead>
+          <tr>
+            <th class="sortable" (click)="onSort('id')" [attr.data-sort-dir]="getSortDir('id')">ID</th>
+            <th class="sortable" (click)="onSort('productName')" [attr.data-sort-dir]="getSortDir('productName')">Producto</th>
+            <th>Cant. Original</th>
+            <th class="sortable" (click)="onSort('remainingQuantity')" [attr.data-sort-dir]="getSortDir('remainingQuantity')">Stock</th>
+            <th class="sortable" (click)="onSort('receivedAt')" [attr.data-sort-dir]="getSortDir('receivedAt')">Recibido</th>
+            <th class="sortable" (click)="onSort('expirationDate')" [attr.data-sort-dir]="getSortDir('expirationDate')">Caducidad</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody [class.loading]="loading">
+          @if (loading && batches.length === 0) {
+            @for (i of [1,2,3,4,5,6]; track i) {
+              <tr class="skeleton-row">
+                <td><span class="skeleton" style="width: 40px"></span></td>
+                <td><span class="skeleton" style="width: 150px"></span></td>
+                <td><span class="skeleton" style="width: 80px"></span></td>
+                <td><span class="skeleton" style="width: 80px"></span></td>
+                <td><span class="skeleton" style="width: 100px"></span></td>
+                <td><span class="skeleton" style="width: 100px"></span></td>
+                <td><span class="skeleton" style="width: 80px"></span></td>
+                <td><span class="skeleton" style="width: 80px"></span></td>
+              </tr>
+            }
+          } @else {
+            @for (batch of batches; track batch.id) {
+              <tr 
+                [class.expired-row]="batch.expired" 
+                [class.depleted-row]="batch.depleted" 
+                class="clickable-row"
+                (click)="openEditModal(batch)">
+                <td><span class="id-badge">#{{batch.id}}</span></td>
+                <td>
+                  <div class="product-name-with-icon">
+                    <div class="product-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/>
+                      </svg>
+                    </div>
+                    <strong>{{batch.productName}}</strong>
+                  </div>
+                </td>
+                <td>{{batch.initialQuantity | number:'1.0-2'}}</td>
+                <td>
+                  <span class="stock-value" [class.stock-low]="batch.remainingQuantity < 5">
+                    {{batch.remainingQuantity | number:'1.0-2'}}
+                  </span>
+                </td>
+                <td>
+                  <span class="date-cell-inner">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="date-icon">
+                      <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                    </svg>
+                    {{batch.receivedAt | date:'dd/MM/yy'}}
+                  </span>
+                </td>
+                <td>
+                  <span class="date-badge" [class.expired]="batch.expired" [class.warning]="batch.daysUntilExpiration <= 7 && !batch.expired">
+                    {{ (batch.expirationDate | date:'dd/MM/yyyy') || 'Sin fecha' }}
+                  </span>
+                </td>
+                <td>
+                  <span class="action-badge" [class.badge-delete]="batch.expired" [class.badge-update]="batch.daysUntilExpiration <= 7 && !batch.expired" [class.badge-create]="!batch.expired && batch.daysUntilExpiration > 7 && !batch.depleted" [class.badge-default]="batch.depleted">
+                    {{ getStatusText(batch) }}
+                  </span>
+                </td>
+                <td class="actions-cell">
+                  <button class="btn-editar" (click)="$event.stopPropagation(); openEditModal(batch)" title="Editar Caducidad">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12|6.813-6.814z"/>
+                    </svg>
+                  </button>
+                  @if (!batch.depleted) {
+                    <button class="btn-eliminar" (click)="$event.stopPropagation(); onWithdraw(batch)" title="Desechar Lote">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                      </svg>
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+            @if (batches.length === 0 && !loading) {
+              <tr>
+                <td colspan="8" class="empty-state">No se encontraron lotes activos</td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- VISTA DE TARJETAS (MÓVIL) -->
+    <div class="mobile-cards-view">
+      @for (batch of batches; track batch.id) {
+        <div 
+          class="batch-card" 
+          [class.card-expired]="batch.expired" 
+          [class.card-depleted]="batch.depleted"
+          (click)="openEditModal(batch)">
+          <div class="card-header">
+            <span class="id-badge">#{{ batch.id }}</span>
+            <span class="action-badge" [class.badge-delete]="batch.expired" [class.badge-update]="batch.daysUntilExpiration <= 7 && !batch.expired" [class.badge-create]="!batch.expired && batch.daysUntilExpiration > 7 && !batch.depleted" [class.badge-default]="batch.depleted">
+              {{ getStatusText(batch) }}
+            </span>
+          </div>
+          <div class="card-body">
+            <div class="card-product">
+              <strong>{{ batch.productName }}</strong>
+            </div>
+            <div class="card-details">
+              <div class="detail-item">
+                <span class="detail-label">Stock:</span>
+                <span class="stock-value" [class.stock-low]="batch.remainingQuantity < 5">
+                  {{ batch.remainingQuantity | number:'1.0-2' }}
+                </span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Caducidad:</span>
+                <span class="date-badge" [class.expired]="batch.expired" [class.warning]="batch.daysUntilExpiration <= 7 && !batch.expired">
+                  {{ (batch.expirationDate | date:'dd/MM/yyyy') || 'Sin fecha' }}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="received-info">
+              Recibido: {{ batch.receivedAt | date:'dd/MM/yy' }}
+            </div>
+            <div class="card-actions">
+              <button class="btn-eliminar" (click)="$event.stopPropagation(); onWithdraw(batch)" title="Desechar Lote">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                  <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+      @if (loading) {
+        <div class="loading-more">Cargando más...</div>
+      }
+    </div>
+  </div>
+}
+@if (activeTab === 'control') {
+  <div class="contenedor-principal" (scroll)="onScroll($event)">
+    <!-- CONTROL DE CADUCIDAD -->
+    <div class="controles-caducidad">
+      <div class="sub-tab-bar">
+        <button class="tab-btn" [class.active]="batchesSubTab === 'expiring'" (click)="setSubTab('expiring')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+          </svg>
+          Por vencer
+        </button>
+        <button class="tab-btn" [class.active]="batchesSubTab === 'expired'" (click)="setSubTab('expired')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+          Caducados
+        </button>
+      </div>
+
+      <div class="filter-actions-right">
+        @if (batchesSubTab === 'expiring') {
+          <div class="premium-filter-group">
+            <label class="filter-label">Días objetivo:</label>
+            <div class="input-with-button">
+              <input type="number" min="1" max="90" [(ngModel)]="expiringDays" class="days-input" />
+              <button (click)="loadControlBatches()" class="btn-refresh-icon" title="Actualizar vista">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                  <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- VISTA DE TABLA (ESCRITORIO) - CONTROL -->
+    <div class="tabla-contenedor desktop-view">
+      <table>
+        <thead>
+            <tr>
+              <th class="sortable">Producto</th>
+              <th class="sortable">Caducidad</th>
+              <th class="sortable">Recibido</th>
+              <th class="sortable">Stock Lote</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody [class.loading]="loading">
+          @if (loading && controlBatches.length === 0) {
+            @for (i of [1,2,3,4,5]; track i) {
+              <tr class="skeleton-row">
+                <td><span class="skeleton" style="width: 150px"></span></td>
+                <td><span class="skeleton" style="width: 100px"></span></td>
+                <td><span class="skeleton" style="width: 100px"></span></td>
+                <td><span class="skeleton" style="width: 80px"></span></td>
+                <td><span class="skeleton" style="width: 80px"></span></td>
+                <td><span class="skeleton" style="width: 80px"></span></td>
+              </tr>
+            }
+          } @else {
+            @for (batch of controlBatches; track batch.id) {
+              <tr class="clickable-row" (click)="openEditModal(batch)">
+                <td>
+                  <div class="product-cell">
+                    <strong class="product-name-text">{{ batch.productName }}</strong>
+                    <span class="unit-tag">Lote #{{ batch.id }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="date-badge" [class.expired]="batch.expired" [class.warning]="batch.daysUntilExpiration <= 7 && !batch.expired">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    {{ batch.expirationDate | date:'dd/MM/yyyy' }}
+                  </span>
+                </td>
+                <td>
+                  <span class="date-cell-inner">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="date-icon">
+                      <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                    </svg>
+                    {{ batch.receivedAt | date:'dd/MM/yyyy' }}
+                  </span>
+                </td>
+                <td><strong>{{ batch.remainingQuantity | number:'1.0-2' }}</strong></td>
+                <td>
+                  <span class="action-badge" [class.badge-delete]="batch.expired" [class.badge-update]="batch.daysUntilExpiration <= 7 && !batch.expired" [class.badge-create]="!batch.expired && batch.daysUntilExpiration > 7">
+                    {{ getStatusText(batch) }}
+                  </span>
+                </td>
+                <td class="actions-cell">
+                  <button class="btn-editar" (click)="$event.stopPropagation(); openEditModal(batch)" title="Editar Caducidad">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                    </svg>
+                  </button>
+                  <button class="btn-eliminar" (click)="$event.stopPropagation(); onWithdraw(batch)" title="Desechar Lote">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                      <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            }
+            @if (controlBatches.length === 0 && !loading) {
+              <tr><td colspan="6" class="empty-state">No hay lotes que requieran atención inmediata.</td></tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- VISTA DE TARJETAS (MÓVIL) - CONTROL -->
+    <div class="mobile-cards-view">
+      @for (batch of controlBatches; track batch.id) {
+        <div class="batch-card" (click)="openEditModal(batch)">
+          <div class="card-header">
+            <span class="id-badge">#{{ batch.id }}</span>
+            <span class="action-badge" [class.badge-delete]="batch.expired" [class.badge-update]="batch.daysUntilExpiration <= 7 && !batch.expired" [class.badge-create]="!batch.expired && batch.daysUntilExpiration > 7">
+              {{ getStatusText(batch) }}
+            </span>
+          </div>
+          <div class="card-body">
+            <div class="card-product">
+              <strong>{{ batch.productName }}</strong>
+            </div>
+            <div class="card-details">
+              <div class="detail-item">
+                <span class="detail-label">Caducidad:</span>
+                <span class="date-badge" [class.expired]="batch.expired" [class.warning]="batch.daysUntilExpiration <= 7 && !batch.expired">
+                  {{ batch.expirationDate | date:'dd/MM/yyyy' }}
+                </span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Stock:</span>
+                <strong>{{ batch.remainingQuantity | number:'1.0-2' }}</strong>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button class="btn-eliminar" (click)="$event.stopPropagation(); onWithdraw(batch)">Eliminar</button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}
+
+<!-- MODAL EDICION -->
+@if (showEditModal && selectedBatch) {
+  <app-batch-expiration-modal
+    [batch]="selectedBatch"
+    (close)="onModalClosed()"
+    (save)="onSaveBatch($event)">
+  </app-batch-expiration-modal>
+}
+

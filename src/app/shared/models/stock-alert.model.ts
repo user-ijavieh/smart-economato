@@ -15,6 +15,8 @@ export interface StockAlertDTO {
     resolution: AlertResolution;
     message: string;
     topConsumingRecipes: string[];
+    nearestExpirationDate?: string;
+    expiringQuantity?: number;
 }
 
 export interface StockPredictionResponseDTO {

@@ -50,7 +50,64 @@
       </svg>
       Exportar a Excel
     </button>
+    <button class="btn-expirations" [class.alert]="expiredBatches.length > 0" (click)="toggleExpirationsPanel()" title="Ver Caducidades">
+      <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+        <path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t25-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-1 13.5l103 78-110 190-119-50q-11 8-23 15t-25 12l-16 128H370Zm110-280q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z"/>
+      </svg>
+      Caducidades ({{ expiredBatches.length + expiringBatches.length }})
+    </button>
   </div>
+
+  <!-- Panel de Caducidades -->
+  @if (showExpirationsPanel) {
+    <div class="expirations-panel" [@fadeSlide]>
+      <div class="panel-header">
+        <h3>Control de Caducidades</h3>
+        <button class="btn-icon" (click)="toggleExpirationsPanel()">✕</button>
+      </div>
+
+      <div class="panel-content">
+        @if (expiredBatches.length > 0) {
+          <div class="expiration-section expired">
+            <h4>🚨 Caducados ({{ expiredBatches.length }})</h4>
+            <div class="batch-list">
+              @for (batch of expiredBatches; track batch.id) {
+                <div class="batch-item">
+                  <div class="batch-info">
+                    <span class="product-name">{{ batch.productName }}</span>
+                    <span class="batch-details">Lote #{{ batch.id }} · Cant: {{ batch.remainingQuantity }}</span>
+                    <span class="batch-date">Caducó: {{ batch.expirationDate | date:'dd/MM/yyyy' }}</span>
+                  </div>
+                  <button class="btn-withdraw" (click)="onWithdrawBatch(batch)">Retirar</button>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (expiringBatches.length > 0) {
+          <div class="expiration-section expiring">
+            <h4>⚠️ Próximos a caducar ({{ expiringBatches.length }})</h4>
+            <div class="batch-list">
+              @for (batch of expiringBatches; track batch.id) {
+                <div class="batch-item">
+                  <div class="batch-info">
+                    <span class="product-name">{{ batch.productName }}</span>
+                    <span class="batch-details">Lote #{{ batch.id }} · Cant: {{ batch.remainingQuantity }}</span>
+                    <span class="batch-date">Caduca en {{ batch.daysUntilExpiration }} días</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (expiredBatches.length === 0 && expiringBatches.length === 0) {
+          <p class="empty-msg">No hay lotes caducados ni próximos a caducar.</p>
+        }
+      </div>
+    </div>
+  }
 
   @if (showForm) {
     <app-product-form
@@ -158,24 +215,6 @@
               <td class="hide-on-mobile">{{ product.supplier?.name || '—' }}</td>
               @if (isAdmin) {
                 <td class="hide-on-mobile" (click)="$event.stopPropagation()">
-                  <button
-                    class="btn-stock"
-                    (click)="openStockModal(product)"
-                    title="Ajustar Stock"
-                    style="margin-right: 0.5rem"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"
-                      />
-                    </svg>
-                  </button>
                   <button class="btn-editar" (click)="editProduct(product)" title="Editar">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -292,15 +331,6 @@
 <!-- Toast Notifications -->
 <app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
 
-<!-- Modal de ajuste de Stock -->
-@if (showStockModal && selectedProduct) {
-  <app-stock-update-modal
-    [product]="selectedProduct"
-    (save)="onSaveStock($event)"
-    (close)="onCloseStockModal()"
-  ></app-stock-update-modal>
-}
-
 <!-- Modal de detalles del producto -->
 @if (showDetailModal && selectedProduct) {
   <app-product-detail-modal
@@ -309,7 +339,6 @@
     [showActions]="canManageProducts"
     (close)="onCloseDetailModal()"
     (edit)="onEditFromDetail($event)"
-    (adjustStock)="onAdjustStockFromDetail($event)"
   ></app-product-detail-modal>
 }
 

@@ -27,6 +27,14 @@ export class OrderAuditService {
     return this.http.get<any>(`${this.url}/by-date-range`, { params });
   }
 
+  getConfirmedAudits(page = 0, size = 20, sort: string[] = ['auditDate,desc']): Observable<any> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    sort.forEach(s => { params = params.append('sort', s); });
+    return this.http.get<any>(`${this.url}/confirmed`, { params });
+  }
+
   getByOrderId(orderId: number): Observable<OrderAudit[]> {
     return this.http.get<OrderAudit[]>(`${this.url}/by-order/${orderId}`);
   }

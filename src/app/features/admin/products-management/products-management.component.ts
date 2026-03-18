@@ -13,7 +13,6 @@ import { Supplier } from '../../../shared/models/supplier.model';
 import { ProductCreateModalComponent } from '../../general/inventory/product-create-modal/product-create-modal.component';
 import { ProductEditModalComponent } from '../../general/inventory/product-edit-modal/product-edit-modal.component';
 import { ProductDetailModalComponent } from '../../general/inventory/product-detail-modal/product-detail-modal.component';
-import { StockUpdateModalComponent } from '../../general/inventory/stock-update-modal/stock-update-modal.component';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { finalize, catchError, forkJoin } from 'rxjs';
@@ -28,7 +27,6 @@ import { of } from 'rxjs';
     ProductCreateModalComponent,
     ProductEditModalComponent,
     ProductDetailModalComponent,
-    StockUpdateModalComponent,
     ConfirmDialogComponent,
     ToastComponent
   ],
@@ -71,7 +69,6 @@ export class ProductsManagementComponent implements OnInit {
   showCreateModal = false;
   showEditModal = false;
   showDetailModal = false;
-  showStockModal = false;
   selectedProduct: Product | null = null;
 
   // Stats
@@ -573,38 +570,6 @@ export class ProductsManagementComponent implements OnInit {
     this.openEditModal(product);
   }
 
-  openStockModal(product: Product): void {
-    this.selectedProduct = product;
-    this.showStockModal = true;
-  }
-
-  onCloseStockModal(): void {
-    this.showStockModal = false;
-    this.selectedProduct = null;
-  }
-
-  onAdjustStockFromDetail(product: Product): void {
-    this.showDetailModal = false;
-    this.openStockModal(product);
-  }
-
-  onSaveStock(stockData: any): void {
-    if (!this.selectedProduct) return;
-
-    this.productService.updateStockManually(this.selectedProduct.id, stockData).subscribe({
-      next: () => {
-        this.messageService.showSuccess('Stock actualizado correctamente');
-        this.showStockModal = false;
-        this.selectedProduct = null;
-        this.loadProducts(this.currentPage);
-        this.loadStats();
-      },
-      error: (err: any) => {
-        const errorMessage = err.error?.message || err.message || 'Error al actualizar stock';
-        this.messageService.showError(errorMessage);
-      }
-    });
-  }
 
   exportToExcel(): void {
     this.productService.exportToExcel().subscribe({

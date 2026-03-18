@@ -21,6 +21,7 @@
 
               <th class="text-center">Solicitado</th>
               <th class="text-center received-col">Recibido</th>
+              <th class="text-center expiry-col">F. Caducidad <span class="required-asterisk">*</span></th>
             </tr>
           </thead>
           <tbody>
@@ -36,6 +37,13 @@
                   [(ngModel)]="detail.quantityReceived" 
                   min="0"
                   [max]="detail.quantity"
+                  [disabled]="isProcessing" />
+              </td>
+              <td class="text-center expiry-col">
+                <input
+                  type="date"
+                  class="form-control quantity-input"
+                  [(ngModel)]="detail.expirationDate"
                   [disabled]="isProcessing" />
               </td>
             </tr>

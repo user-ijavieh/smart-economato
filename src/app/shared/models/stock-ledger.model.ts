@@ -2,6 +2,7 @@ export interface StockLedgerResponseDTO {
   id: number;
   productId: number;
   productName: string;
+  expirationDate?: string | null;
   quantityDelta: number;
   resultingStock: number;
   movementType: 'ENTRADA' | 'SALIDA' | 'AJUSTE' | 'RECEPCION' | 'PRODUCCION';
@@ -38,6 +39,7 @@ export interface StockSnapshotResponseDTO {
 export interface StockMovementItemDTO {
   productId: number;
   quantityDelta: number;
+  expirationDate?: string | null;
   movementType: 'ENTRADA' | 'SALIDA' | 'AJUSTE' | 'RECEPCION' | 'PRODUCCION';
   description: string;
 }
