@@ -93,18 +93,17 @@ export const routes: Routes = [
           import('./features/general/inventory/inventory.component').then(m => m.InventoryComponent)
       },
       {
-        path: 'orders',
-        loadComponent: () =>
-          import('./features/general/orders/orders.component').then(m => m.OrdersComponent),
-        canActivate: [roleGuard('ADMIN', 'CHEF')]
-      },
-      {
         path: 'reception',
         loadComponent: () =>
           import('./features/general/reception/reception.component').then(m => m.ReceptionComponent),
         canActivate: [roleGuard('ADMIN', 'CHEF')]
       },
-
+      {
+        path: 'orders',
+        loadComponent: () =>
+          import('./features/general/orders/orders.component').then(m => m.OrdersComponent),
+        canActivate: [roleGuard('ADMIN', 'CHEF')]
+      },
 
       {
         path: 'recipes',

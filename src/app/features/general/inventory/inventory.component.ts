@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../../core/services/product.service';
 import { MessageService } from '../../../core/services/message.service';
@@ -23,7 +24,27 @@ import { finalize, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
   standalone: true,
   imports: [CommonModule, FormsModule, ProductFormComponent, ProductEditModalComponent, ProductCreateModalComponent, ProductDetailModalComponent, BarcodeScannerComponent, ToastComponent, ConfirmDialogComponent],
   templateUrl: './inventory.component.html',
-  styleUrl: './inventory.component.css'
+  styleUrl: './inventory.component.css',
+  animations: [
+    trigger('fadeSlide', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(-15px)' }),
+        animate('300ms cubic-bezier(0.175, 0.885, 0.32, 1.1)', style({ opacity: 1, transform: 'translateY(0)' }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({ opacity: 0, transform: 'translateY(-10px)' }))
+      ])
+    ]),
+    trigger('modalAnimation', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('350ms ease-out', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('250ms ease-in', style({ opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class InventoryComponent implements OnInit, OnDestroy {
   private productService = inject(ProductService);
@@ -102,7 +123,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('❌ Error loading products:', err);
-        this.messageService.showError('Error al cargar productos');
         this.loading = false;
         this.initialLoad = false;
         this.cdr.detectChanges();
@@ -112,7 +132,37 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   onPageChange(newPage: number): void {
     this.page = newPage;
-    this.loadProducts();
+    this.scrollToTop();
+    this.cdr.detectChanges();
+    // Delay loading to let the scroll start smoothly and button animation finish
+    setTimeout(() => {
+      this.loadProducts();
+    }, 100);
+  }
+
+  private scrollToTop(): void {
+    const container = document.querySelector('.contenedor-principal');
+    if (container) {
+      // Much smoother and more deliberate scroll behavior (800ms)
+      let start = container.scrollTop;
+      let startWindow = window.scrollY;
+      let startTime = performance.now();
+      const duration = 800; 
+      const animateScroll = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        // Using a more eased cubic bezier for smoothness
+        const easeInOutCubic = (t: number) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        container.scrollTop = start * (1 - easeInOutCubic(progress));
+        window.scrollTo(0, startWindow * (1 - easeInOutCubic(progress)));
+        if (progress < 1) {
+          requestAnimationFrame(animateScroll);
+        }
+      };
+      requestAnimationFrame(animateScroll);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }
 
   // --- Expirations & Batches ---
@@ -158,7 +208,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         this.loadProducts(); // Reload main stock
       },
       error: (err) => {
-        this.messageService.showError(err.error?.message || 'Error al retirar el lote');
+        // Interceptor handles the message
       }
     });
   }
@@ -177,7 +227,12 @@ export class InventoryComponent implements OnInit, OnDestroy {
       this.sortColumn = column;
       this.sortDir = 'asc';
     }
-    this.loadProducts();
+    this.page = 0;
+    this.scrollToTop();
+    this.cdr.detectChanges(); // Fix freeze on sort
+    setTimeout(() => {
+      this.loadProducts();
+    }, 100);
   }
 
   loadSuppliers(): void {
@@ -217,7 +272,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('❌ Error searching products:', err);
-        this.messageService.showError('Error al buscar productos');
         this.loading = false;
         this.initialLoad = false;
         this.cdr.detectChanges();
@@ -251,8 +305,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         this.messageService.showSuccess('Excel descargado correctamente');
       },
       error: (err) => {
-        const errorMessage = err.error?.message || err.message || 'Error al descargar Excel';
-        this.messageService.showError(errorMessage);
+        // Handled by interceptor
       }
     });
   }
@@ -302,8 +355,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         this.loadProducts();
       },
       error: (err) => {
-        const errorMessage = err.error?.message || err.message || 'Error al ocultar producto';
-        this.messageService.showError(errorMessage);
+        // Handled by interceptor
       }
     });
   }
@@ -323,8 +375,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         this.loadProducts();
       },
       error: (err) => {
-        const errorMessage = err.error?.message || err.message || 'Error al actualizar producto';
-        this.messageService.showError(errorMessage);
+        // Handled by interceptor
       }
     });
   }
@@ -337,8 +388,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         this.loadProducts();
       },
       error: (err) => {
-        const errorMessage = err.error?.message || err.message || 'Error al crear producto';
-        this.messageService.showError(errorMessage);
+        // Handled by interceptor
       }
     });
   }
@@ -348,6 +398,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   openDetailModal(product: Product): void {
     this.selectedProduct = product;
     this.showDetailModal = true;
+    this.cdr.detectChanges();
   }
 
   onCloseDetailModal(): void {
@@ -401,8 +452,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Error deactivating product:', err);
-        const errorMessage = err.error?.message || err.message || 'Error al desactivar el producto';
-        this.messageService.showError(errorMessage);
       }
     });
   }

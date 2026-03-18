@@ -18,9 +18,13 @@ export class OrderDetailsModalComponent {
   private orderService = inject(OrderService);
   private messageService = inject(MessageService);
   isDownloading = false;
+  isClosing = false;
 
   close(): void {
-    this.closeModal.emit();
+    this.isClosing = true;
+    setTimeout(() => {
+      this.closeModal.emit();
+    }, 280);
   }
 
   getOrderTotal(): number {
@@ -56,14 +60,14 @@ export class OrderDetailsModalComponent {
 
   getStatusColor(status: string): string {
     const colors: Record<string, string> = {
-      'CREATED': '#3b82f6',
-      'PENDING': '#f59e0b',
-      'REVIEW': '#8b5cf6',
-      'CONFIRMED': '#10b981',
-      'INCOMPLETE': '#6b7280',
-      'CANCELLED': '#ef4444'
+      'CREATED': 'rgba(59, 130, 246, 0.25)',
+      'PENDING': 'rgba(245, 158, 11, 0.25)',
+      'REVIEW': 'rgba(139, 92, 246, 0.25)',
+      'CONFIRMED': 'rgba(16, 185, 129, 0.25)',
+      'INCOMPLETE': 'rgba(107, 114, 128, 0.25)',
+      'CANCELLED': 'rgba(239, 68, 68, 0.25)'
     };
-    return colors[status] || '#6b7280';
+    return colors[status] || 'rgba(107, 114, 128, 0.25)';
   }
 
   printOrder(): void {

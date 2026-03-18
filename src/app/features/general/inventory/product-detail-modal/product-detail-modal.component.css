@@ -1,62 +1,78 @@
 /** ===== MODAL OVERLAY ===== */
+:host {
+  --color-brand-primary: #B84B44;
+  --color-brand-dark: #8C2E28;
+  --color-brand-glow: rgba(184, 75, 68, 0.35);
+  --color-surface-glass: rgba(8, 3, 3, 0.58);
+  --color-border-glass: rgba(255, 255, 255, 0.14);
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A1A1A1;
+  --effect-glass: blur(24px);
+  --radius-card: 18px;
+  --radius-input: 14px;
+  --radius-btn: 12px;
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.50);
+}
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(184, 75, 68, 0.3);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 75, 68, 0.5);
+}
 
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
+  z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10000;
-  padding: 20px;
-  animation: fadeIn 0.2s ease;
+  padding: 1rem;
 }
 
 .modal-container {
   width: 100%;
   max-width: 900px;
-  animation: slideUp 0.3s ease;
+  animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
 }
 
 .modal-content {
-  background: white;
-  border-radius: 16px;
+  background: var(--color-surface-glass);
+  backdrop-filter: var(--effect-glass);
+  -webkit-backdrop-filter: var(--effect-glass);
+  border: 1px solid var(--color-border-glass);
+  border-radius: var(--radius-card);
   max-height: 85vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-card);
+  color: var(--color-text-primary);
 }
 
 /** ===== MODAL HEADER ===== */
-
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 24px 30px;
-  background: linear-gradient(135deg, #b84b44 0%, #a03d37 100%);
-  border-radius: 16px 16px 0 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   flex-shrink: 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-/* General mode - red theme (default) */
-.modal-content.general-mode .modal-header {
-  background: linear-gradient(135deg, #b84b44 0%, #a03d37 100%) !important;
-}
-
-/* Admin mode - different color scheme */
-.modal-content.admin-mode .modal-header {
-  background: linear-gradient(135deg, rgba(30, 40, 80, 0.95) 0%, rgba(20, 30, 60, 0.95) 100%);
 }
 
 .modal-header h2 {
   font-size: 1.6rem;
-  color: white;
+  color: var(--color-text-primary);
   margin: 0;
   font-weight: 700;
 }
@@ -64,8 +80,8 @@
 .modal-close {
   width: 36px;
   height: 36px;
-  border: none;
-  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   color: white;
   cursor: pointer;
@@ -76,12 +92,13 @@
 }
 
 .modal-close:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #ff8a8a;
   transform: scale(1.05);
 }
 
 /** ===== MODAL BODY ===== */
-
 .modal-body {
   padding: 30px;
   overflow-y: auto;
@@ -98,7 +115,7 @@
 
 .modal-section h4 {
   font-size: 1.15rem;
-  color: #374151;
+  color: var(--color-text-primary);
   margin-bottom: 12px;
   font-weight: 600;
   display: flex;
@@ -107,13 +124,12 @@
 }
 
 .modal-section p {
-  color: #6b7280;
+  color: var(--color-text-secondary);
   line-height: 1.6;
   font-size: 0.95rem;
 }
 
 /** ===== DETAILS TABLE ===== */
-
 .details-table {
   width: 100%;
   border-collapse: collapse;
@@ -122,34 +138,35 @@
 
 .details-table td {
   padding: 10px 12px;
-  border-bottom: 1px solid #f3f4f6;
-  color: #4b5563;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--color-text-primary);
 }
 
 .details-table .detail-label {
   font-weight: 600;
-  color: #374151;
+  color: var(--color-text-secondary);
   width: 40%;
-  background: #f9fafb;
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .price-value {
-  color: #b84b44;
+  color: #ff8a8a;
   font-weight: 700;
   font-size: 1rem;
 }
 
 .low-stock-row td {
-  color: #ef4444 !important;
+  color: #ff8a8a !important;
   font-weight: 600;
 }
+
 /* Batches Table */
 .batches-container {
   margin-top: 10px;
-  background: #f8fafc;
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 8px;
   padding: 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border-glass);
 }
 
 .batches-table {
@@ -161,27 +178,28 @@
 .batches-table th {
   text-align: left;
   padding: 8px;
-  color: #64748b;
+  color: var(--color-text-secondary);
   font-weight: 600;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .batches-table td {
   padding: 8px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .expiring-row {
-  background-color: #fffbeb;
+  background-color: rgba(250, 204, 21, 0.1);
 }
 
 .expired-row {
-  background-color: #fef2f2;
+  background-color: rgba(239, 68, 68, 0.1);
 }
 
 .badge-expired {
-  background: #ef4444;
-  color: white;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #ff8a8a;
   font-size: 0.7rem;
   padding: 2px 6px;
   border-radius: 4px;
@@ -191,7 +209,7 @@
 
 .loading-text, .empty-text {
   font-size: 0.85rem;
-  color: #94a3b8;
+  color: var(--color-text-secondary);
   font-style: italic;
   text-align: center;
   margin: 10px 0;
@@ -205,34 +223,30 @@
   font-weight: 600;
   letter-spacing: 0.3px;
 }
-
 .availability-high {
   background: rgba(76, 175, 80, 0.15);
-  color: #2e7d32;
+  color: #4caf50;
 }
-
 .availability-medium {
   background: rgba(255, 152, 0, 0.15);
-  color: #e65100;
+  color: #ff9800;
 }
-
 .availability-low {
   background: rgba(244, 67, 54, 0.15);
-  color: #c62828;
+  color: #f44336;
 }
 
 /** ===== ALERT BANNER ===== */
-
 .alert-banner {
   margin-top: 20px;
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 8px;
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #991b1b;
+  color: #ff8a8a;
 }
 
 .alert-banner svg {
@@ -240,12 +254,10 @@
 }
 
 /** ===== MODAL FOOTER ===== */
-
 .modal-footer {
   padding: 20px 30px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
-  border-radius: 0 0 16px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0 0 calc(var(--radius-card) - 2px) calc(var(--radius-card) - 2px);
 }
 
 .modal-actions {
@@ -261,7 +273,7 @@
   align-items: center;
   gap: 6px;
   padding: 10px 28px;
-  border-radius: 8px;
+  border-radius: 12px;
   border: none;
   font-size: 0.9rem;
   font-weight: bold;
@@ -270,98 +282,51 @@
 }
 
 .btn-stock {
-  background: #f59e0b;
+  background: rgba(255, 255, 255, 0.1);
   color: white;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+  border: 1px solid var(--color-border-glass);
 }
-
 .btn-stock:hover {
-  background: #d97706;
+  background: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
 }
 
 .btn-editar {
-  background: #b84b44;
-  color: white;
-  box-shadow: 0 2px 8px rgba(184, 75, 68, 0.3);
+  background: rgba(184, 75, 68, 0.15) !important;
+  color: #ff8a8a !important;
+  border: 1px solid rgba(184, 75, 68, 0.3) !important;
+  backdrop-filter: blur(4px);
 }
 
 .btn-editar:hover {
-  background: #a03d37;
+  background: rgba(184, 75, 68, 0.25) !important;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(184, 75, 68, 0.4);
-}
-
-/* General mode - red button colors (default) */
-.modal-content.general-mode .btn-editar {
-  background: #b84b44 !important;
-  color: white;
-  box-shadow: 0 2px 8px rgba(184, 75, 68, 0.3);
-}
-
-.modal-content.general-mode .btn-editar:hover {
-  background: #a03d37 !important;
-  box-shadow: 0 4px 12px rgba(184, 75, 68, 0.4);
-}
-
-/* Admin mode - different button colors */
-.modal-content.admin-mode .btn-editar {
-  background: rgba(30, 40, 80, 0.95);
-  box-shadow: 0 2px 8px rgba(30, 40, 80, 0.3);
-}
-
-.modal-content.admin-mode .btn-editar:hover {
-  background: rgba(50, 60, 120, 0.95);
-  box-shadow: 0 4px 12px rgba(30, 40, 80, 0.4);
+  box-shadow: 0 8px 25px rgba(184, 75, 68, 0.15);
 }
 
 /** ===== ANIMATIONS ===== */
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /** ===== RESPONSIVE ===== */
-
 @media (max-width: 768px) {
   .modal-content {
-    width: 95%;
     max-height: 90vh;
   }
-
   .modal-header {
     padding: 18px 20px;
   }
-
   .modal-body {
     padding: 20px;
   }
-
   .modal-footer {
     padding: 14px 20px;
   }
-
   .modal-actions {
     flex-direction: column;
   }
-
   .btn-stock,
   .btn-editar {
     width: 100%;

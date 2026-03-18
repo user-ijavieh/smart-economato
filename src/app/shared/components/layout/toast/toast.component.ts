@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Toast } from '../../../../core/services/message.service';
+import { Subscription } from 'rxjs';
+import { Toast, MessageService } from '../../../../core/services/message.service';
 
 @Component({
   selector: 'app-toast',
@@ -9,26 +10,51 @@ import { Toast } from '../../../../core/services/message.service';
   templateUrl: './toast.component.html',
   styleUrl: './toast.component.css'
 })
-export class ToastComponent {
+export class ToastComponent implements OnInit, OnDestroy {
   @Input() toasts: Toast[] = [];
 
-  getIconClass(type: string): string {
-    const icons: Record<string, string> = {
-      success: '✓',
-      error: '✕',
-      warning: '⚠',
-      info: 'ⓘ'
-    };
-    return icons[type] || 'ⓘ';
+  private messageService = inject(MessageService);
+  private expiredSub?: Subscription;
+
+  /** Signal con el Set de IDs en animación de salida — notifica al scheduler zoneless */
+  private exitingIds = signal<ReadonlySet<number>>(new Set());
+
+  /** Devuelve true si el toast con ese id está saliendo */
+  isExiting = (id: number) => this.exitingIds().has(id);
+
+  ngOnInit(): void {
+    this.expiredSub = this.messageService.toastExpired$.subscribe(id => {
+      this.dismiss(id);
+    });
   }
 
-  getTypeClass(type: string): string {
-    const classes: Record<string, string> = {
-      success: 'toast-success',
-      error: 'toast-error',
-      warning: 'toast-warning',
-      info: 'toast-info'
+  ngOnDestroy(): void {
+    this.expiredSub?.unsubscribe();
+  }
+
+  dismiss(id: number): void {
+    if (this.exitingIds().has(id)) return;
+
+    // Actualizar la signal → Angular detecta el cambio en modo zoneless
+    this.exitingIds.update(prev => new Set([...prev, id]));
+
+    setTimeout(() => {
+      this.exitingIds.update(prev => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+      this.messageService.removeToast(id);
+    }, 420);
+  }
+
+  getTitle(type: string): string {
+    const titles: Record<string, string> = {
+      success: 'Éxito',
+      error: 'Error',
+      warning: 'Advertencia',
+      info: 'Información'
     };
-    return classes[type] || 'toast-info';
+    return titles[type] ?? '';
   }
 }

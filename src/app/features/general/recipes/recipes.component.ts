@@ -22,10 +22,19 @@ import { finalize, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
     trigger('fadeSlide', [
       transition(':enter', [
         style({ opacity: 0, transform: 'translateX(-10px)' }),
-        animate('400ms cubic-bezier(0.4, 0, 0.2, 1)', style({ opacity: 1, transform: 'translateX(0)' }))
+        animate('300ms cubic-bezier(0.175, 0.885, 0.32, 1.1)', style({ opacity: 1, transform: 'translateX(0)' }))
       ]),
       transition(':leave', [
-        animate('300ms cubic-bezier(0.4, 0, 0.2, 1)', style({ opacity: 0, transform: 'translateX(-10px)' }))
+        animate('200ms ease-in', style({ opacity: 0, transform: 'translateX(-10px)' }))
+      ])
+    ]),
+    trigger('modalAnimation', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('350ms ease-out', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('250ms ease-in', style({ opacity: 0 }))
       ])
     ])
   ]
@@ -39,6 +48,7 @@ export class RecipesComponent implements OnInit {
   recipes: Recipe[] = [];
   // filteredRecipes no longer needed as we filter on backend or just show current page
   loading = false;
+  initialLoad = true;
   searchTerm = '';
   private searchSubject = new Subject<string>();
 
@@ -50,9 +60,6 @@ export class RecipesComponent implements OnInit {
 
   // Filtros
   filterAllergens: 'all' | 'with' | 'without' = 'all';
-  filterMaxPrice: number | null = null;
-  filterMinIngredients: number | null = null;
-  filterMaxIngredients: number | null = null;
 
   // Paginación
   // Paginación
@@ -102,6 +109,7 @@ export class RecipesComponent implements OnInit {
         this.totalElements = page.totalElements;
         this.totalPages = page.totalPages;
         console.log('🔢 Total Pages:', this.totalPages);
+        this.initialLoad = false;
         this.cdr.markForCheck();
       },
       error: () => {
@@ -137,6 +145,7 @@ export class RecipesComponent implements OnInit {
           this.recipes = page.content;
           this.totalElements = page.totalElements;
           this.totalPages = page.totalPages;
+          this.initialLoad = false;
           this.cdr.markForCheck();
         },
         error: () => {
@@ -159,10 +168,6 @@ export class RecipesComponent implements OnInit {
 
   clearFilters(): void {
     this.filterAllergens = 'all';
-    this.filterMaxPrice = null;
-    this.filterMinIngredients = null;
-    this.filterMaxIngredients = null;
-    this.searchTerm = '';
     this.searchTerm = '';
     this.currentPage = 0;
     this.loadRecipes();
@@ -175,9 +180,6 @@ export class RecipesComponent implements OnInit {
   get activeFilterCount(): number {
     let count = 0;
     if (this.filterAllergens !== 'all') count++;
-    if (this.filterMaxPrice !== null && this.filterMaxPrice > 0) count++;
-    if (this.filterMinIngredients !== null && this.filterMinIngredients > 0) count++;
-    if (this.filterMaxIngredients !== null && this.filterMaxIngredients > 0) count++;
     return count;
   }
 
@@ -188,6 +190,7 @@ export class RecipesComponent implements OnInit {
   openRecipe(recipe: Recipe): void {
     this.selectedRecipe = recipe;
     this.showModal = true;
+    this.cdr.detectChanges(); // Fix modal rendering issues
   }
 
   closeModal(): void {
@@ -211,14 +214,50 @@ export class RecipesComponent implements OnInit {
 
 
 
-  goToPage(page: number): void {
-    if (page >= 0 && page < this.totalPages) {
-      this.currentPage = page;
-      if (this.searchTerm) {
-        this.onSearch();
-      } else {
-        this.loadRecipes();
-      }
+  onPageChange(newPage: number): void {
+    if (newPage >= 0 && newPage < this.totalPages) {
+      this.currentPage = newPage;
+      this.scrollToTop();
+      this.cdr.detectChanges();
+      // Delay loading to let the scroll start smoothly and button animation finish
+      setTimeout(() => {
+        if (this.searchTerm) {
+          this.onSearch();
+        } else {
+          this.loadRecipes();
+        }
+      }, 200);
+    }
+  }
+
+  onSizeChange(event: any): void {
+    this.pageSize = Number(event.target.value);
+    this.currentPage = 0; // Reset to first page
+    this.loadRecipes();
+  }
+
+  private scrollToTop(): void {
+    const container = document.querySelector('.contenedor-principal');
+    if (container) {
+      // Much smoother and more deliberate scroll behavior (800ms)
+      let start = container.scrollTop;
+      let startWindow = window.scrollY;
+      let startTime = performance.now();
+      const duration = 800; 
+      const animateScroll = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        // Using a more eased cubic bezier for smoothness
+        const easeInOutCubic = (t: number) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        container.scrollTop = start * (1 - easeInOutCubic(progress));
+        window.scrollTo(0, startWindow * (1 - easeInOutCubic(progress)));
+        if (progress < 1) {
+          requestAnimationFrame(animateScroll);
+        }
+      };
+      requestAnimationFrame(animateScroll);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
@@ -282,8 +321,7 @@ export class RecipesComponent implements OnInit {
         this.loadRecipes();
       },
       error: (err) => {
-        const msg = err.error?.message || err.error || 'Error al actualizar la receta';
-        this.messageService.showError(msg);
+        // Handled by interceptor
       }
     });
   }
@@ -296,8 +334,7 @@ export class RecipesComponent implements OnInit {
         this.loadRecipes();
       },
       error: (err) => {
-        const msg = err.error?.message || err.error || 'Error al crear la receta';
-        this.messageService.showError(msg);
+        // Handled by interceptor
       }
     });
   }
@@ -316,8 +353,7 @@ export class RecipesComponent implements OnInit {
         this.loadRecipes();
       },
       error: (err) => {
-        const msg = err.error?.message || err.error || 'Error al cocinar la receta';
-        this.messageService.showError(msg);
+        // Handled by interceptor
       }
     });
   }

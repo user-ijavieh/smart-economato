@@ -45,3 +45,6 @@ Thumbs.db
 
 /SmartEconomatoPrototype
 errors.txt
+
+.agents
+skills-lock.json

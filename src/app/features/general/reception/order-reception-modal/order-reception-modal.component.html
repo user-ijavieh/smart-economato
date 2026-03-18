@@ -1,10 +1,7 @@
-<div class="modal-overlay">
+<div class="modal-overlay" [class.closing]="isClosing">
   <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
+    <div class="modal-header-base">
       <h2>Procesar Recepción de Orden #{{ order.id }}</h2>
-      <button class="btn-close" (click)="close()" [disabled]="isProcessing">
-        <i class="fas fa-times"></i>
-      </button>
     </div>
 
     <div class="modal-body">
@@ -29,7 +26,7 @@
             <tr>
               <td>{{ detail.productName }}</td>
 
-              <td class="text-center">{{ detail.quantity }}</td>
+              <td class="text-center">{{ detail.quantity }} {{ detail.unit || 'uds' }}</td>
               <td class="text-center received-col">
                 <input 
                   type="number" 
@@ -54,7 +51,7 @@
     </div>
 
     <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="close()" [disabled]="isProcessing">Cancelar</button>
+      <button class="btn btn-secondary" (click)="confirmCancel()" [disabled]="isProcessing">Cancelar</button>
       <button class="btn btn-primary" (click)="processReception()" [disabled]="isProcessing">
         <span *ngIf="isProcessing">Procesando...</span>
         <span *ngIf="!isProcessing">Procesar Recepción</span>

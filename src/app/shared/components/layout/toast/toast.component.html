@@ -1,11 +1,29 @@
-<div class="toast-container">
+<div class="toast-container" role="region" aria-label="Notificaciones" aria-live="polite">
   @for (toast of toasts; track toast.id) {
-    <div
-      [class]="'toast ' + getTypeClass(toast.type)"
-      role="alert"
-    >
-      <span class="toast-icon">{{ getIconClass(toast.type) }}</span>
+  <div [class]="'toast toast-' + toast.type + (isExiting(toast.id) ? ' toast-exit' : '')" role="alert">
+
+    <!-- Icono -->
+    <span class="toast-icon">
+      <svg width="22" height="22" aria-hidden="true">
+        <use [attr.href]="'#icon-' + toast.type"></use>
+      </svg>
+    </span>
+
+    <!-- Contenido: título + mensaje -->
+    <div class="toast-body">
+      <p class="toast-title">{{ getTitle(toast.type) }}</p>
       <p class="toast-message">{{ toast.message }}</p>
     </div>
+
+    <!-- Cerrar -->
+    <button class="toast-close" (click)="dismiss(toast.id)" aria-label="Cerrar">
+      <svg width="13" height="13" aria-hidden="true">
+        <use href="#icon-close"></use>
+      </svg>
+    </button>
+
+    <!-- Barra de progreso -->
+    <div class="toast-progress"></div>
+  </div>
   }
 </div>

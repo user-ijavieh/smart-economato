@@ -1,6 +1,6 @@
 <!-- Header -->
 <div class="header-pedidos">
-  <h1>PEDIDOS</h1>
+  <h1>Pedidos</h1>
 </div>
 
 <!-- Contenido -->
@@ -8,7 +8,7 @@
   <!-- Action Button -->
   <div class="top-actions">
     <button class="btn-create-order" (click)="openCreateOrderModal()">
-      + CREAR PEDIDO
+      + Crear Pedido
     </button>
   </div>
 
@@ -26,9 +26,8 @@
     <div class="orders-grid">
       @for (order of displayedOrders; track order.id) {
         <div class="order-card">
-          <div class="order-card-header">
+          <div class="order-card-header" [style.background]="getStatusBgColor(order.status)">
             <div class="order-card-user">
-              <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
               <div class="user-info">
                 <h4>Pedido #{{ order.id }}</h4>
                 <p>{{ order.userName || 'Usuario desconocido' }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
