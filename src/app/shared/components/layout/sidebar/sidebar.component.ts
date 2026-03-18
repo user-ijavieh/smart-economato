@@ -23,7 +23,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private routerSub!: Subscription;
 
-  isOpen = false;
+  isOpen = window.innerWidth > 800;
   isAdminRoute = false;
 
   @Output() sidebarToggled = new EventEmitter<boolean>();
@@ -32,11 +32,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
   // Items para la vista normal
   private defaultNavItems: NavItem[] = [
     { label: 'Inicio', route: '/welcome', icon: 'home' },
-    { label: 'Inventario', route: '/inventario', icon: 'inventory' },
+    { label: 'Inventario', route: '/inventario', icon: 'inventory', section: 'Gestión' },
 
     { label: 'Recetas', route: '/recipes', icon: 'book' },
-    { label: 'Recepción', route: '/reception', icon: 'truck' },
     { label: 'Pedidos', route: '/orders', icon: 'cart' },
+    { label: 'Recepción', route: '/reception', icon: 'truck' },
+
 
     { label: 'Perfil', route: '/profile', icon: 'person' }
   ];

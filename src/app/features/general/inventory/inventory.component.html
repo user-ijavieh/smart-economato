@@ -2,7 +2,7 @@
   <h1>Inventario</h1>
 </div>
 
-<div class="contenedor-principal">
+<div class="contenedor-principal hide-scrollbar">
   <div class="controles">
     <div class="search-group">
       <input
@@ -12,8 +12,8 @@
         (ngModelChange)="onSearch()"
       />
     </div>
-    <button (click)="onSearch()">Buscar</button>
-    <button class="btn-scan" (click)="openBarcodeScanner()" title="Escanear código de barras">
+
+    <button class="btn-primary" (click)="openBarcodeScanner()" title="Escanear código de barras">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         height="20px"
@@ -27,9 +27,7 @@
       </svg>
       Escanear
     </button>
-    @if (isAdmin) {
-      <button id="btnAgregarProducto" (click)="openCreateModal()">Agregar Producto</button>
-    }
+
     @if (hasActiveFilters()) {
       <button (click)="clearFilters()">Limpiar Filtros</button>
     }
@@ -56,6 +54,14 @@
       </svg>
       Caducidades ({{ expiredBatches.length + expiringBatches.length }})
     </button>
+    @if (isAdmin) {
+      <button id="btnAgregarProducto" class="btn-primary" (click)="openCreateModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+          <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
+        </svg>
+        Agregar Producto
+      </button>
+    }
   </div>
 
   <!-- Panel de Caducidades -->
@@ -69,7 +75,7 @@
       <div class="panel-content">
         @if (expiredBatches.length > 0) {
           <div class="expiration-section expired">
-            <h4>🚨 Caducados ({{ expiredBatches.length }})</h4>
+            <h4>Caducados ({{ expiredBatches.length }})</h4>
             <div class="batch-list">
               @for (batch of expiredBatches; track batch.id) {
                 <div class="batch-item">
@@ -87,7 +93,7 @@
 
         @if (expiringBatches.length > 0) {
           <div class="expiration-section expiring">
-            <h4>⚠️ Próximos a caducar ({{ expiringBatches.length }})</h4>
+            <h4>Próximos a caducar ({{ expiringBatches.length }})</h4>
             <div class="batch-list">
               @for (batch of expiringBatches; track batch.id) {
                 <div class="batch-item">
@@ -263,34 +269,24 @@
         <tr>
           <td colspan="8">
             <div class="pagination-controls">
-              <div class="pagination-info">
-                Total: {{ totalElements }} productos | Página {{ page + 1 }} de {{ totalPages }}
-              </div>
-              <div class="pagination-actions">
-                <div class="items-per-page">
-                  <label for="itemsPerPage">Mostrar:</label>
-                  <select
-                    id="itemsPerPage"
-                    [value]="size"
-                    (change)="onSizeChange($event)"
-                    class="pagination-size-input"
-                  >
-                    <option [value]="10">10</option>
-                    <option [value]="15">15</option>
-                    <option [value]="20">20</option>
-                    <option [value]="50">50</option>
-                  </select>
-                </div>
-                <button (click)="onPageChange(page - 1)" [disabled]="page === 0 || loading">
-                  Anterior
-                </button>
-                <button
-                  (click)="onPageChange(page + 1)"
-                  [disabled]="page >= totalPages - 1 || loading"
-                >
-                  Siguiente
-                </button>
-              </div>
+              <button class="btn-page" [disabled]="page === 0 || loading" (click)="onPageChange(page - 1)">
+                Anterior
+              </button>
+              <span class="page-info">
+                Página {{ page + 1 }} de {{ totalPages }}
+                <span class="total-info">({{ totalElements }} productos)</span>
+              </span>
+
+              <select class="size-selector" [ngModel]="size" (change)="onSizeChange($event)" title="Productos por página">
+                <option [value]="10">10 por pág.</option>
+                <option [value]="20">20 por pág.</option>
+                <option [value]="50">50 por pág.</option>
+                <option [value]="100">100 por pág.</option>
+              </select>
+
+              <button class="btn-page" [disabled]="page >= totalPages - 1 || loading" (click)="onPageChange(page + 1)">
+                Siguiente
+              </button>
             </div>
           </td>
         </tr>
@@ -302,6 +298,7 @@
 <!-- Modal de creación -->
 @if (showCreateModal) {
   <app-product-create-modal
+    [@modalAnimation]
     [suppliers]="suppliers"
     (save)="onSaveProduct($event)"
     (close)="onCloseCreateModal()"
@@ -311,6 +308,7 @@
 <!-- Modal de edición -->
 @if (showEditModal && selectedProduct) {
   <app-product-edit-modal
+    [@modalAnimation]
     [product]="selectedProduct"
     [suppliers]="suppliers"
     (save)="onSaveEditedProduct($event)"
@@ -334,6 +332,7 @@
 <!-- Modal de detalles del producto -->
 @if (showDetailModal && selectedProduct) {
   <app-product-detail-modal
+    [@modalAnimation]
     [product]="selectedProduct"
     [isAdmin]="false"
     [showActions]="canManageProducts"
@@ -344,7 +343,7 @@
 
 <!-- Modal de escáner de código de barras -->
 @if (showScannerModal) {
-  <div class="scanner-modal-overlay" (click)="closeBarcodeScanner()">
+  <div class="scanner-modal-overlay" (click)="closeBarcodeScanner()" [@modalAnimation]>
     <div class="scanner-modal" (click)="$event.stopPropagation()">
       <div class="scanner-modal-header">
         <h2>Escanear Código de Barras</h2>

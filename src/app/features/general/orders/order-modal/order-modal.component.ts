@@ -236,8 +236,13 @@ export class OrderModalComponent implements OnInit, OnDestroy {
     return this.orderItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
   }
 
+  isClosing = false;
+
   close(): void {
-    this.closeModal.emit();
+    this.isClosing = true;
+    setTimeout(() => {
+      this.closeModal.emit();
+    }, 280);
   }
 
   async submitOrder(): Promise<void> {
