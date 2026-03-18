@@ -171,7 +171,7 @@
 <!-- Modal de creación/edición -->
 @if (showFormModal) {
 <app-user-form-modal [user]="selectedUser" [existingUsers]="getExistingUsers()" (save)="onSaveUser($event)"
-    (close)="closeFormModal()" (refresh)="loadUsers()"></app-user-form-modal>
+    (close)="closeFormModal()"></app-user-form-modal>
 }
 
 <!-- Confirm Dialog -->

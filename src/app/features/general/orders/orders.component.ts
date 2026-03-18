@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OrderService } from '../../../core/services/order.service';
 import { MessageService } from '../../../core/services/message.service';
-import { Order } from '../../../shared/models/order.model';
+import { Order, OrderStatus } from '../../../shared/models/order.model';
 import { OrderModalComponent } from './order-modal/order-modal.component';
 import { OrderDetailsModalComponent } from './order-details-modal/order-details-modal.component';
 
@@ -88,17 +88,24 @@ export class OrdersComponent implements OnInit {
     return (order.details || []).reduce((sum, d) => sum + d.quantity * d.unitPrice, 0);
   }
 
-  getUserInitials(user: { name: string }): string {
-    if (!user || !user.name) return 'U';
-    return user.name.substring(0, 2).toUpperCase();
-  }
-
   formatDate(date: string): string {
     return new Date(date).toLocaleDateString('es-ES', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric'
     });
+  }
+
+  getStatusBgColor(status: OrderStatus): string {
+    const colors: Record<OrderStatus, string> = {
+      CREATED: 'rgba(59, 130, 246, 0.15)',
+      PENDING: 'rgba(245, 158, 11, 0.15)',
+      REVIEW: 'rgba(139, 92, 246, 0.15)',
+      CONFIRMED: 'rgba(16, 185, 129, 0.15)',
+      CANCELLED: 'rgba(107, 114, 128, 0.15)',
+      INCOMPLETE: 'rgba(239, 68, 68, 0.15)'
+    };
+    return colors[status];
   }
 
   async confirmOrder(order: Order): Promise<void> {

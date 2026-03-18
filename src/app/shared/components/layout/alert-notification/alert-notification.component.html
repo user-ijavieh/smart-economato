@@ -1,6 +1,23 @@
 <div class="alert-stack" aria-live="assertive" aria-atomic="false">
   @for (alert of getFailureList(); track alert.id) {
     <section [class]="'alert-card ' + getFailureClass(alert)" role="alert">
+      <!-- Icono -->
+      <span class="alert-icon">
+        @if (alert.severity === 'critical') {
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        } @else {
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        }
+      </span>
+      <!-- Contenido -->
       <div class="alert-content">
         <p class="alert-title">{{ alert.title }}</p>
         @if (alert.services && alert.services.length > 0) {
@@ -17,6 +34,14 @@
 
   @for (alert of getRecoveryList(); track alert.id) {
     <section class="alert-card alert-recovered" role="status">
+      <!-- Icono -->
+      <span class="alert-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+      </span>
+      <!-- Contenido -->
       <div class="alert-content">
         <p class="alert-title">{{ alert.title }}</p>
         <p class="alert-time">{{ alert.timestamp | date: 'dd/MM/yyyy HH:mm:ss' }}</p>

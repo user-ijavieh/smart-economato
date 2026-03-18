@@ -16,12 +16,12 @@ import { ToastComponent } from '../../../shared/components/layout/toast/toast.co
 import { finalize } from 'rxjs';
 
 const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
-  { value: 'CREATED',    label: 'Creada' },
-  { value: 'PENDING',    label: 'Pendiente' },
-  { value: 'REVIEW',     label: 'En Revisión' },
-  { value: 'CONFIRMED',  label: 'Confirmada' },
+  { value: 'CREATED', label: 'Creada' },
+  { value: 'PENDING', label: 'Pendiente' },
+  { value: 'REVIEW', label: 'Revisión' },
+  { value: 'CONFIRMED', label: 'Confirmada' },
   { value: 'INCOMPLETE', label: 'Incompleta' },
-  { value: 'CANCELLED',  label: 'Cancelada' },
+  { value: 'CANCELLED', label: 'Cancelada' },
 ];
 
 @Component({
@@ -86,7 +86,7 @@ export class OrdersManagementComponent implements OnInit {
   showAuditDetailModal = false;
   loadingAuditHistory = false;
   auditTab: 'changes' | 'history' = 'changes';
-  
+
   // ── Order Detail Modal ──
   selectedOrder: Order | null = null;
   showOrderDetailModal = false;
@@ -192,11 +192,11 @@ export class OrdersManagementComponent implements OnInit {
     this.totalOrdersCount = result.length;
     this.totalOrdersPrice = result.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
     this.totalOrderPages = Math.ceil(this.totalOrdersCount / this.orderPageSize);
-    
+
     // Reset to first page when filtering
     this.currentOrderPage = 0;
     this.paginateOrders();
-    
+
     this.cdr.detectChanges();
   }
 
@@ -223,14 +223,14 @@ export class OrdersManagementComponent implements OnInit {
   private loadSuppliers(): void {
     this.supplierService.getAll(0, 200, 'name,asc').subscribe({
       next: (page) => { this.suppliersList = page.content; this.cdr.markForCheck(); },
-      error: () => {}
+      error: () => { }
     });
   }
 
   private loadUsers(): void {
     this.userService.getAllUnpaged().subscribe({
       next: (users) => { this.usersList = users; this.cdr.markForCheck(); },
-      error: () => {}
+      error: () => { }
     });
   }
 
@@ -277,10 +277,10 @@ export class OrdersManagementComponent implements OnInit {
         }
         this.applyOrderFilters();
         this.filteredAuditOrders = this.orders.filter(o => o.status === 'CONFIRMED');
-        
+
         this.auditCache.clear();
         this.auditsLoaded = false;
-        
+
         this.messageService.showSuccess(`Estado de la orden #${orderId} actualizado a ${this.formatStatus(status as OrderStatus)}`);
         this.closeChangeStatusModal();
         this.savingStatus = false;
@@ -319,10 +319,10 @@ export class OrdersManagementComponent implements OnInit {
 
     const source$ = (this.auditStartDate && this.auditEndDate)
       ? this.orderAuditService.getByDateRange(
-          this.auditStartDate + 'T00:00:00',
-          this.auditEndDate + 'T23:59:59',
-          page, this.auditPageSize, ['auditDate,desc']
-        )
+        this.auditStartDate + 'T00:00:00',
+        this.auditEndDate + 'T23:59:59',
+        page, this.auditPageSize, ['auditDate,desc']
+      )
       : this.orderAuditService.getAll(page, this.auditPageSize, ['auditDate,desc']);
 
     source$.pipe(
@@ -339,25 +339,25 @@ export class OrdersManagementComponent implements OnInit {
           this.totalAuditsCount = response.totalElements;
           this.totalAuditPages = response.totalPages;
         }
-        
-        auditsArray.forEach(a => {
-            if (a.orderId == null) {
-                try {
-                    // Try different variations of orderId
-                    const raw = a as any;
-                    a.orderId = raw.orderId ?? raw.order_id ?? raw.id_order;
 
-                    if (a.orderId == null) {
-                        if (a.newState) {
-                            const parsed = JSON.parse(a.newState);
-                            a.orderId = parsed.id ?? parsed.orderId ?? parsed.order_id ?? parsed.id_order;
-                        } else if (a.previousState) {
-                            const parsed = JSON.parse(a.previousState);
-                            a.orderId = parsed.id ?? parsed.orderId ?? parsed.order_id ?? parsed.id_order;
-                        }
-                    }
-                } catch(e) {}
-            }
+        auditsArray.forEach(a => {
+          if (a.orderId == null) {
+            try {
+              // Try different variations of orderId
+              const raw = a as any;
+              a.orderId = raw.orderId ?? raw.order_id ?? raw.id_order;
+
+              if (a.orderId == null) {
+                if (a.newState) {
+                  const parsed = JSON.parse(a.newState);
+                  a.orderId = parsed.id ?? parsed.orderId ?? parsed.order_id ?? parsed.id_order;
+                } else if (a.previousState) {
+                  const parsed = JSON.parse(a.previousState);
+                  a.orderId = parsed.id ?? parsed.orderId ?? parsed.order_id ?? parsed.id_order;
+                }
+              }
+            } catch (e) { }
+          }
         });
 
         this.audits = auditsArray;
@@ -439,11 +439,11 @@ export class OrdersManagementComponent implements OnInit {
     // Fetch full history for this order
     if (audit.orderId) {
       this.orderAuditService.getByOrderId(audit.orderId).subscribe({
-      next: (response: any) => {
-        const auditsArray = Array.isArray(response) ? response : (response?.content || []);
-        this.selectedOrderHistory = auditsArray.sort((a: any, b: any) => 
-          new Date(b.auditDate).getTime() - new Date(a.auditDate).getTime()
-        );
+        next: (response: any) => {
+          const auditsArray = Array.isArray(response) ? response : (response?.content || []);
+          this.selectedOrderHistory = auditsArray.sort((a: any, b: any) =>
+            new Date(b.auditDate).getTime() - new Date(a.auditDate).getTime()
+          );
           this.loadingAuditHistory = false;
           this.cdr.markForCheck();
         },
@@ -489,8 +489,8 @@ export class OrdersManagementComponent implements OnInit {
 
   async revertOrder(order: Order): Promise<void> {
     const confirmed = await this.messageService.confirm(
-        'Revertir orden confirmada',
-        `Se revertirá la recepción de la orden #${order.id}. Esto devolverá el stock de los productos al inventario y restaurará el estado anterior del pedido.`
+      'Revertir orden confirmada',
+      `Se revertirá la recepción de la orden #${order.id}. Esto devolverá el stock de los productos al inventario y restaurará el estado anterior del pedido.`
     );
 
     if (!confirmed || !order.id || !order.details) return;
@@ -499,17 +499,17 @@ export class OrdersManagementComponent implements OnInit {
     this.orderAuditService.getByOrderId(order.id).subscribe({
       next: (audits: any[]) => {
         const sortedAudits = [...audits].sort((a, b) => new Date(b.auditDate).getTime() - new Date(a.auditDate).getTime());
-        
+
         // Look for the audit that CHANGED the state to CONFIRMED
         const confirmationAudit = sortedAudits.find(a => {
-            try {
-              const newState = typeof a.newState === 'string' ? JSON.parse(a.newState) : a.newState;
-              const prevState = typeof a.previousState === 'string' ? JSON.parse(a.previousState) : a.previousState;
-              const newStatus = (newState?.status || newState?.estado || '').toUpperCase();
-              const prevStatus = (prevState?.status || prevState?.estado || '').toUpperCase();
-              
-              return newStatus === 'CONFIRMED' && prevStatus !== 'CONFIRMED';
-            } catch { return false; }
+          try {
+            const newState = typeof a.newState === 'string' ? JSON.parse(a.newState) : a.newState;
+            const prevState = typeof a.previousState === 'string' ? JSON.parse(a.previousState) : a.previousState;
+            const newStatus = (newState?.status || newState?.estado || '').toUpperCase();
+            const prevStatus = (prevState?.status || prevState?.estado || '').toUpperCase();
+
+            return newStatus === 'CONFIRMED' && prevStatus !== 'CONFIRMED';
+          } catch { return false; }
         });
 
         let previousStatus: OrderStatus = 'CREATED';
@@ -517,14 +517,14 @@ export class OrdersManagementComponent implements OnInit {
           try {
             const prevState = typeof confirmationAudit.previousState === 'string' ? JSON.parse(confirmationAudit.previousState) : confirmationAudit.previousState;
             const rawStatus = (prevState?.status || prevState?.estado || 'CREATED').toUpperCase();
-            
+
             const statusMap: Record<string, OrderStatus> = {
-                'CREADA': 'CREATED', 'CREADO': 'CREATED',
-                'PENDIENTE': 'PENDING',
-                'REVISIÓN': 'REVIEW', 'REVISION': 'REVIEW', 'EN REVISIÓN': 'REVIEW',
-                'CONFIRMADA': 'CONFIRMED', 'CONFIRMADO': 'CONFIRMED',
-                'INCOMPLETA': 'INCOMPLETE', 'INCOMPLETO': 'INCOMPLETE',
-                'CANCELADA': 'CANCELLED', 'CANCELADO': 'CANCELLED'
+              'CREADA': 'CREATED', 'CREADO': 'CREATED',
+              'PENDIENTE': 'PENDING',
+              'REVISIÓN': 'REVIEW', 'REVISION': 'REVIEW', 'EN REVISIÓN': 'REVIEW',
+              'CONFIRMADA': 'CONFIRMED', 'CONFIRMADO': 'CONFIRMED',
+              'INCOMPLETA': 'INCOMPLETE', 'INCOMPLETO': 'INCOMPLETE',
+              'CANCELADA': 'CANCELLED', 'CANCELADO': 'CANCELLED'
             };
             previousStatus = statusMap[rawStatus] || (rawStatus as OrderStatus);
           } catch { previousStatus = 'CREATED'; }
@@ -544,26 +544,26 @@ export class OrdersManagementComponent implements OnInit {
     if (!order.details) return;
 
     const request = {
-        reason: `Reversión de orden #${order.id}`,
-        orderId: order.id,
-        movements: order.details.map((detail: any) => ({
-            productId: detail.productId,
-            quantityDelta: -detail.quantity,
-            movementType: 'AJUSTE' as 'AJUSTE',
-            description: `Reversión automática orden #${order.id}`
-        }))
+      reason: `Reversión de orden #${order.id}`,
+      orderId: order.id,
+      movements: order.details.map((detail: any) => ({
+        productId: detail.productId,
+        quantityDelta: -detail.quantity,
+        movementType: 'AJUSTE' as 'AJUSTE',
+        description: `Reversión automática orden #${order.id}`
+      }))
     };
 
     this.kitchenService.revertCookingBatch(request).subscribe({
-        next: (res: any) => {
-            if (res.success || res.id) {
-                this.messageService.showSuccess(`Orden revertida correctamente`);
-                this.loadAllOrders();
-            } else {
-                this.messageService.showError(res.message || 'Error al revertir el stock');
-            }
-        },
-        error: () => this.messageService.showError('Error de comunicación al revertir orden')
+      next: (res: any) => {
+        if (res.success || res.id) {
+          this.messageService.showSuccess(`Orden revertida correctamente`);
+          this.loadAllOrders();
+        } else {
+          this.messageService.showError(res.message || 'Error al revertir el stock');
+        }
+      },
+      error: () => this.messageService.showError('Error de comunicación al revertir orden')
     });
   }
 
@@ -695,7 +695,7 @@ export class OrdersManagementComponent implements OnInit {
 
   formatStatus(status: string): string {
     const map: Record<string, string> = {
-      CREATED: 'Creada', PENDING: 'Pendiente', REVIEW: 'En Revisión',
+      CREATED: 'Creada', PENDING: 'Pendiente', REVIEW: 'Revisión',
       CONFIRMED: 'Confirmada', INCOMPLETE: 'Incompleta', CANCELLED: 'Cancelada'
     };
     return map[status] || status;

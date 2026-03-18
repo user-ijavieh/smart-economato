@@ -1,7 +1,7 @@
 <div class="reception-page">
   <!-- Header -->
   <header class="reception-header">
-    <h1>RECEPCIÓN DE ÓRDENES</h1>
+    <h1>Recepción</h1>
   </header>
 
   <!-- Contenido Principal -->
@@ -24,10 +24,9 @@
       <div class="orders-container">
         @for (order of getDisplayedOrders('PENDING'); track order.id) {
         <div class="order-card" [style.border-left-color]="getStatusColor('PENDING')">
-          <div class="order-header" [style.background]="getStatusColor('PENDING')">
+          <div class="order-header" [style.background]="getStatusBgColor('PENDING')">
             <div class="order-title">
               <div class="order-user">
-                <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
                 <div>
                   <h3>Orden #{{ order.id }}</h3>
                   <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
@@ -101,10 +100,9 @@
       <div class="orders-container">
         @for (order of getDisplayedOrders('REVIEW'); track order.id) {
         <div class="order-card" [style.border-left-color]="getStatusColor('REVIEW')">
-          <div class="order-header" [style.background]="getStatusColor('REVIEW')">
+          <div class="order-header" [style.background]="getStatusBgColor('REVIEW')">
             <div class="order-title">
               <div class="order-user">
-                <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
                 <div>
                   <h3>Orden #{{ order.id }}</h3>
                   <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
@@ -175,10 +173,9 @@
       <div class="orders-container">
         @for (order of getDisplayedOrders('CONFIRMED'); track order.id) {
         <div class="order-card completed" [style.border-left-color]="getStatusColor('CONFIRMED')">
-          <div class="order-header" [style.background]="getStatusColor('CONFIRMED')">
+          <div class="order-header" [style.background]="getStatusBgColor('CONFIRMED')">
             <div class="order-title">
               <div class="order-user">
-                <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
                 <div>
                   <h3>Orden #{{ order.id }}</h3>
                   <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
@@ -246,10 +243,9 @@
       <div class="orders-container">
         @for (order of getDisplayedOrders('INCOMPLETE'); track order.id) {
         <div class="order-card incomplete" [style.border-left-color]="getStatusColor('INCOMPLETE')">
-          <div class="order-header" [style.background]="getStatusColor('INCOMPLETE')">
+          <div class="order-header" [style.background]="getStatusBgColor('INCOMPLETE')">
             <div class="order-title">
               <div class="order-user">
-                <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
                 <div>
                   <h3>Orden #{{ order.id }}</h3>
                   <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
@@ -323,10 +319,9 @@
       <div class="orders-container">
         @for (order of getDisplayedOrders('CANCELLED'); track order.id) {
         <div class="order-card cancelled" [style.border-left-color]="getStatusColor('CANCELLED')">
-          <div class="order-header" [style.background]="getStatusColor('CANCELLED')">
+          <div class="order-header" [style.background]="getStatusBgColor('CANCELLED')">
             <div class="order-title">
               <div class="order-user">
-                <div class="user-avatar">{{ getUserInitials({name: order.userName}) }}</div>
                 <div>
                   <h3>Orden #{{ order.id }}</h3>
                   <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>

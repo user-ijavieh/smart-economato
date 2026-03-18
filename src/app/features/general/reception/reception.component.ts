@@ -64,7 +64,7 @@ export class ReceptionComponent implements OnInit {
           // Respuesta paginada con estructura {content: [], ...}
           ordersArray = (response as any).content;
         }
-        
+
         // Ordenar las órdenes de más reciente a más antigua (creando una copia)
         const sortedOrders = [...ordersArray].sort((a, b) => b.id - a.id);
         this.ordersByStatus = {
@@ -90,7 +90,7 @@ export class ReceptionComponent implements OnInit {
     const labels: Record<OrderStatus, string> = {
       CREATED: 'Creado',
       PENDING: 'Pendiente',
-      REVIEW: 'En Revisión',
+      REVIEW: 'Revisión',
       CONFIRMED: 'Confirmado',
       CANCELLED: 'Cancelado',
       INCOMPLETE: 'Incompleto'
@@ -110,9 +110,16 @@ export class ReceptionComponent implements OnInit {
     return colors[status];
   }
 
-  getUserInitials(user: { name: string }): string {
-    if (!user || !user.name) return 'U';
-    return user.name.substring(0, 2).toUpperCase();
+  getStatusBgColor(status: OrderStatus): string {
+    const colors: Record<OrderStatus, string> = {
+      CREATED: 'rgba(59, 130, 246, 0.15)',
+      PENDING: 'rgba(245, 158, 11, 0.15)',
+      REVIEW: 'rgba(139, 92, 246, 0.15)',
+      CONFIRMED: 'rgba(16, 185, 129, 0.15)',
+      CANCELLED: 'rgba(107, 114, 128, 0.15)',
+      INCOMPLETE: 'rgba(239, 68, 68, 0.15)'
+    };
+    return colors[status];
   }
 
   formatDate(date: string): string {
@@ -196,7 +203,7 @@ export class ReceptionComponent implements OnInit {
         }
 
         const itemsList = missingItems.map(item => `- ${item.productName}: ${item.quantity} uds`).join('\n');
-        
+
         const confirmed = await this.messageService.confirm(
           'Reclamar Faltantes',
           `Los siguientes productos faltan de esta orden:\n\n${itemsList}\n\n¿Deseas crear una nueva orden con estos productos faltantes?`
