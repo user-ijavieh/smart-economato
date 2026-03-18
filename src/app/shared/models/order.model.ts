@@ -19,6 +19,7 @@ export interface OrderDetail {
   productId: number;
   productName: string;
   quantity: number;
+  unit?: string;
   quantityReceived?: number;
   expirationDate?: string | null;
   unitPrice: number;

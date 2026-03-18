@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, inject, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, OnInit, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Product } from '../../../../shared/models/product.model';
 import { ProductBatchService } from '../../../../core/services/product-batch.service';
@@ -11,8 +11,9 @@ import { ProductBatchResponseDTO } from '../../../../shared/models/product-batch
   templateUrl: './product-detail-modal.component.html',
   styleUrl: './product-detail-modal.component.css'
 })
-export class ProductDetailModalComponent implements OnInit {
+export class ProductDetailModalComponent implements OnInit, OnChanges {
   private batchService = inject(ProductBatchService);
+  private cdr = inject(ChangeDetectorRef);
 
   @Input() product: Product | null = null;
   @Input() isAdmin = false;
@@ -27,6 +28,12 @@ export class ProductDetailModalComponent implements OnInit {
     this.loadBatches();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['product'] && !changes['product'].firstChange) {
+      this.loadBatches();
+    }
+  }
+
   loadBatches(): void {
     if (!this.product?.id) return;
     this.loadingBatches = true;
@@ -34,9 +41,11 @@ export class ProductDetailModalComponent implements OnInit {
       next: (batches) => {
         this.batches = batches;
         this.loadingBatches = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.loadingBatches = false;
+        this.cdr.detectChanges();
       }
     });
   }

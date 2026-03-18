@@ -1,20 +1,13 @@
-<div class="modal-overlay">
-  <div class="modal-container" (click)="$event.stopPropagation()">
-    <div class="modal-dialog">
+<div class="modal-overlay" [class.closing]="isClosing">
+  <div class="modal-content" (click)="$event.stopPropagation()">
     @if (order) {
-      <div class="modal-header">
+      <div class="modal-header-base">
         <div>
           <h2>Detalles del Pedido #{{ order.id }}</h2>
-          <span class="order-status-badge" [style.background]="getStatusColor(order.status)">
+          <span class="order-status-badge" [style.background]="getStatusColor(order.status) || 'rgba(0,0,0,0.4)'">
             {{ getStatusLabel(order.status) }}
           </span>
         </div>
-        <button type="button" class="modal-close" (click)="close()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
       </div>
 
       <div class="modal-body">
@@ -25,10 +18,6 @@
             <div class="info-item">
               <span class="info-label">Nombre:</span>
               <span class="info-value">{{ order.userName }}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">ID:</span>
-              <span class="info-value">#{{ order.userId }}</span>
             </div>
           </div>
         </div>
@@ -41,10 +30,6 @@
             <div class="info-item">
               <span class="info-label">Nombre:</span>
               <span class="info-value">{{ order.supplierName }}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">ID:</span>
-              <span class="info-value">#{{ order.supplierId }}</span>
             </div>
           </div>
         </div>
@@ -68,39 +53,44 @@
         <!-- Products List -->
         <div class="info-section">
           <h3>Productos ({{ order.details?.length || 0 }})</h3>
-          <table class="ingredients-table">
-            <thead>
-              <tr>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Precio Unit.</th>
-                <th>Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (detail of (order.details || []); track $index) {
-                @if (detail.productName) {
-                  <tr>
-                    <td>{{ detail.productName }}</td>
-                    <td>{{ detail.quantity }} uds</td>
-                    <td>{{ detail.unitPrice | number:'1.2-2' }} €</td>
-                    <td>{{ (detail.quantity * detail.unitPrice) | number:'1.2-2' }} €</td>
-                  </tr>
+          <div class="table-container">
+            <table class="details-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Precio Unit.</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (detail of (order.details || []); track $index) {
+                  @if (detail.productName) {
+                    <tr>
+                      <td>{{ detail.productName }}</td>
+                      <td>{{ detail.quantity }} {{ detail.unit || 'uds' }}</td>
+                      <td>{{ detail.unitPrice | number:'1.2-2' }} €</td>
+                      <td>{{ (detail.quantity * detail.unitPrice) | number:'1.2-2' }} €</td>
+                    </tr>
+                  }
                 }
-              }
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="3">Total del Pedido</td>
-                <td>{{ getOrderTotal() | number:'1.2-2' }} €</td>
-              </tr>
-            </tfoot>
-          </table>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3">Total del Pedido</td>
+                  <td>{{ getOrderTotal() | number:'1.2-2' }} €</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
         </div>
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn-print" (click)="printOrder()" [disabled]="isDownloading">
+        <button type="button" class="btn btn-secondary" (click)="close()">
+          Cerrar
+        </button>
+        <button type="button" class="btn btn-print" (click)="printOrder()" [disabled]="isDownloading">
           @if (!isDownloading) {
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
             Exportar
@@ -108,11 +98,7 @@
             Descargando...
           }
         </button>
-        <button type="button" class="btn-close-modal" (click)="close()">
-          Cerrar
-        </button>
       </div>
     }
-    </div>
   </div>
 </div>

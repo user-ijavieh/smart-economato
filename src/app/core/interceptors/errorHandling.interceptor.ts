@@ -31,27 +31,37 @@ function handleError(error: HttpErrorResponse, messageService: MessageService): 
   const status = error.status;
   let message = 'Error desconocido';
 
-  // Intenta parsear la respuesta del backend
-  const errorResponse: ErrorResponse | null = parseErrorResponse(error);
+  const errorResponse: any = parseErrorResponse(error);
 
-  // Si hay mensaje personalizado del backend, usarlo; sino, usar mensaje por defecto
-  if (errorResponse?.message) {
+  if (Array.isArray(errorResponse)) {
+    message = errorResponse.map((e: any) => typeof e === 'string' ? e : (e.message || 'Error desconocido')).join(' • ');
+  } else if (errorResponse?.message) {
     message = errorResponse.message;
+  } else if (errorResponse?.errors) {
+    if (Array.isArray(errorResponse.errors)) {
+      message = errorResponse.errors.join(' • ');
+    } else {
+      message = errorResponse.errors;
+    }
+  } else if (typeof errorResponse === 'string') {
+    message = errorResponse;
   } else {
     message = getDefaultErrorMessage(status);
   }
 
-  // Mostrar el error según su severidad
+  if (typeof message === 'string' && message.includes('\n')) {
+    message = message.split('\n').filter(m => m.trim().length > 0).join(' • ');
+  }
+
   displayError(status, message, messageService);
 }
 
-function parseErrorResponse(error: HttpErrorResponse): ErrorResponse | null {
+function parseErrorResponse(error: HttpErrorResponse): any {
   try {
-    if (error.error && typeof error.error === 'object') {
-      return error.error as ErrorResponse;
+    if (error.error) {
+      return error.error;
     }
   } catch (e) {
-    // Si no se puede parsear, continuará con el manejo por defecto
   }
   return null;
 }

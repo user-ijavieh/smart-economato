@@ -17,7 +17,7 @@ export class LayoutComponent {
   private authService = inject(AuthService);
   public messageService = inject(MessageService);
 
-  sidebarOpen = false;
+  sidebarOpen = window.innerWidth > 800;
   showLogoutModal = false;
 
   isAuthenticated$ = this.authService.authStatus$;

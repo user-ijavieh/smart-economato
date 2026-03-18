@@ -54,6 +54,7 @@
   /* Admin theme */
   --admin-rgb: 30, 40, 80;
   --admin-secondary-rgb: 50, 60, 120;
+  --admin-bg-light: #f4f7fa;
   --admin-primary: rgba(var(--admin-rgb), 0.95);
   --admin-primary-light: rgba(var(--admin-rgb), 0.6);
   --admin-primary-hover: rgba(var(--admin-rgb), 0.8);
@@ -96,34 +97,72 @@ html {
   font-family: var(--font-body);
   font-weight: var(--font-body-weight);
   line-height: 1.5rem;
+  background-color: #0c0808;
 }
 
 body {
   min-height: 100vh;
   min-height: 100dvh;
+  background-color: #0c0808;
+  color: white;
 }
 
-/* Custom scrollbar - Default (rojo) */
+body.admin-theme, html.admin-theme {
+  background-color: var(--admin-bg-light) !important;
+  color: #333 !important;
+}
+
+/* Aggressive scrollbar hide for root elements */
+html, body {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+html::-webkit-scrollbar, 
+body::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Custom scrollbar - Default (rojo) - HIDDEN BY DEFAULT FOR PAGES */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 8px !important;
+  display: none !important; /* Hide by default */
+}
+
+/* Show scrollbar ONLY in modals/dialogs or specific scrollable areas */
+.modal-overlay ::-webkit-scrollbar,
+.modal-overlay-base ::-webkit-scrollbar,
+[class*="modal"] ::-webkit-scrollbar,
+.modal-dialog ::-webkit-scrollbar,
+.modal-body ::-webkit-scrollbar {
+  display: block !important;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: transparent !important;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--primary-color);
-  border-radius: 4px;
+  background: var(--primary-color) !important;
+  border-radius: 4px !important;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a03d37;
+  background: #a03d37 !important;
 }
 
-/* Custom scrollbar - Admin Theme */
+/* Custom scrollbar - Admin Theme - HIDDEN BY DEFAULT */
+.admin-theme ::-webkit-scrollbar {
+  display: none !important;
+}
+
+.admin-theme [class*="modal"] ::-webkit-scrollbar {
+  display: block !important;
+}
+
 .admin-theme ::-webkit-scrollbar-track {
-  background: var(--admin-scrollbar-track);
+  background: var(--admin-scrollbar-track) !important;
 }
 
 .admin-theme ::-webkit-scrollbar-thumb {
@@ -148,14 +187,12 @@ body {
   justify-content: center;
   z-index: 10000;
   padding: 20px;
-  animation: fadeIn 0.2s ease;
 }
 
 .modal-dialog-base {
   background: white;
   border-radius: 16px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s ease;
   max-height: 85vh;
   display: flex;
   flex-direction: column;
@@ -291,4 +328,14 @@ body {
     justify-content: center;
     padding: 12px 16px;
   }
+}
+
+/* Utility to hide scrollbars while keeping functionality */
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }

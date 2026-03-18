@@ -1,21 +1,68 @@
 /** ===== MODAL OVERLAY ===== */
+:host {
+  --color-brand-primary: #B84B44;
+  --color-brand-dark: #8C2E28;
+  --color-brand-glow: rgba(184, 75, 68, 0.35);
+  --color-surface-glass: rgba(8, 3, 3, 0.58);
+  --color-border-glass: rgba(255, 255, 255, 0.14);
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A1A1A1;
+  --effect-glass: blur(24px);
+  --radius-card: 18px;
+  --radius-input: 14px;
+  --radius-btn: 12px;
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.50);
+}
 
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
+::-webkit-scrollbar-thumb { background: rgba(184, 75, 68, 0.3); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(184, 75, 68, 0.5); }
 
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
 
 .modal-container {
   width: 100%;
   max-width: 900px;
+  animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+}
+
+.modal-content {
+  background: var(--color-surface-glass);
+  backdrop-filter: var(--effect-glass);
+  -webkit-backdrop-filter: var(--effect-glass);
+  border: 1px solid var(--color-border-glass);
+  border-radius: var(--radius-card);
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-card);
+  color: var(--color-text-primary);
 }
 
 /** ===== MODAL HEADER ===== */
-
-.modal-header-base {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 30px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
 }
 
-.modal-header-base h2 {
+.modal-header h2 {
   font-size: 1.6rem;
-  color: white;
+  color: var(--color-text-primary);
   margin: 0;
   font-weight: 700;
 }
@@ -23,8 +70,8 @@
 .modal-close {
   width: 36px;
   height: 36px;
-  border: none;
-  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   color: white;
   cursor: pointer;
@@ -35,12 +82,13 @@
 }
 
 .modal-close:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #ff8a8a;
   transform: scale(1.05);
 }
 
 /** ===== MODAL BODY ===== */
-
 .modal-body {
   padding: 30px;
   overflow-y: auto;
@@ -57,7 +105,7 @@
 
 .modal-section h4 {
   font-size: 1.15rem;
-  color: #374151;
+  color: var(--color-text-primary);
   margin-bottom: 12px;
   font-weight: 600;
   display: flex;
@@ -66,7 +114,7 @@
 }
 
 .modal-section p {
-  color: #6b7280;
+  color: var(--color-text-secondary);
   line-height: 1.6;
   font-size: 0.95rem;
 }
@@ -74,7 +122,7 @@
 .elaboration-steps {
   margin: 0;
   padding-left: 24px;
-  color: #4b5563;
+  color: var(--color-text-secondary);
 }
 
 .elaboration-steps li {
@@ -87,29 +135,33 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--color-border-glass);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .ingredients-table thead th {
-  background: #f9fafb;
+  background: rgba(0, 0, 0, 0.4);
   padding: 12px;
   text-align: left;
   font-weight: 600;
-  color: #374151;
-  border-bottom: 2px solid #e5e7eb;
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .ingredients-table tbody td {
   padding: 10px 12px;
-  color: #6b7280;
-  border-bottom: 1px solid #f3f4f6;
+  color: var(--color-text-primary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .ingredients-table tfoot td {
   padding: 12px;
   font-weight: 700;
-  color: #b84b44;
-  border-top: 2px solid #e5e7eb;
-  background: #fef2f2;
+  color: #ff8a8a;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .allergens-list {
@@ -122,27 +174,25 @@
   display: inline-flex;
   align-items: center;
   padding: 6px 14px;
-  background: #fef2f2;
-  color: #dc2626;
+  background: rgba(239, 68, 68, 0.15);
+  color: #ff8a8a;
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 600;
-  border: 1px solid #fecaca;
+  border: 1px solid rgba(239, 68, 68, 0.4);
 }
 
 .no-allergens {
-  color: #10b981;
+  color: #6ee7b7;
   font-weight: 500;
   font-size: 0.95rem;
 }
 
 /** ===== MODAL FOOTER ===== */
-
 .modal-footer {
   padding: 20px 30px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
-  border-radius: 0 0 16px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0 0 calc(var(--radius-card) - 2px) calc(var(--radius-card) - 2px);
 }
 
 .cook-form {
@@ -167,20 +217,23 @@
 .cook-field label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--color-text-secondary);
 }
 
 .cook-field input {
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid var(--color-border-glass);
+  border-radius: var(--radius-input);
   font-size: 0.9rem;
-  transition: border-color 0.2s;
+  color: var(--color-text-primary);
+  transition: all 0.2s;
 }
 
 .cook-field input:focus {
   outline: none;
-  border-color: #b84b44;
+  border-color: var(--color-brand-primary);
+  box-shadow: 0 0 0 3px var(--color-brand-glow);
 }
 
 .modal-actions {
@@ -197,7 +250,7 @@
   align-items: center;
   gap: 6px;
   padding: 10px 28px;
-  border-radius: 8px;
+  border-radius: 12px;
   border: none;
   font-size: 0.9rem;
   font-weight: bold;
@@ -206,99 +259,52 @@
 }
 
 .btn-imprimir {
-  background: #6b7280;
+  background: rgba(255, 255, 255, 0.1);
   color: white;
-  box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3);
+  border: 1px solid var(--color-border-glass);
 }
-
 .btn-imprimir:hover {
-  background: #4b5563;
+  background: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
 }
 
 .btn-editar {
-  background: #f59e0b;
-  color: white;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+  background: rgba(184, 75, 68, 0.15) !important;
+  color: #ff8a8a !important;
+  border: 1px solid rgba(184, 75, 68, 0.3) !important;
+  backdrop-filter: blur(4px);
 }
-
 .btn-editar:hover {
-  background: #d97706;
+  background: rgba(184, 75, 68, 0.25) !important;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+  box-shadow: 0 8px 25px rgba(184, 75, 68, 0.15);
 }
 
 .btn-cocinar {
-  background: #10b981;
-  color: white;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.15);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  backdrop-filter: blur(4px);
 }
-
 .btn-cocinar:hover {
-  background: #059669;
+  background: rgba(16, 185, 129, 0.25);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15);
 }
 
-/** ===== ANIMATIONS ===== */
-
-
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 /** ===== RESPONSIVE ===== */
-
 @media (max-width: 768px) {
-  .modal-content {
-    width: 95%;
-    max-height: 90vh;
-  }
-
-  .modal-header-base {
-    padding: 18px 20px;
-  }
-
-  .modal-body {
-    padding: 20px;
-  }
-
-  .modal-footer {
-    padding: 14px 20px;
-  }
-
-  .cook-form {
-    flex-direction: column;
-  }
-
-  .cook-field,
-  .cook-field-detail {
-    flex: 1;
-    width: 100%;
-    min-width: 0;
-  }
-
-  .modal-actions {
-    flex-direction: column;
-  }
-
-  .btn-imprimir,
-  .btn-editar,
-  .btn-cocinar {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-/** ===== ADMIN THEME OVERRIDES ===== */
-
-.admin-theme .modal-header-base {
-  background: var(--admin-gradient);
-}
-
-.admin-theme .ingredients-table tfoot td {
-  color: var(--admin-primary);
-  background: var(--admin-scrollbar-track);
-}
-
-.admin-theme .cook-field input:focus {
-  border-color: var(--admin-primary-light);
+  .modal-content { max-height: 90vh; }
+  .modal-header-base { padding: 18px 20px; }
+  .modal-body { padding: 20px; }
+  .modal-footer { padding: 14px 20px; }
+  .cook-form { flex-direction: column; }
+  .cook-field, .cook-field-detail { flex: 1; width: 100%; min-width: 0; }
+  .modal-actions { flex-direction: column; }
+  .btn-imprimir, .btn-editar, .btn-cocinar { width: 100%; justify-content: center; }
 }

@@ -1,4 +1,4 @@
-<div class="modal-overlay modal-overlay-base">
+<div class="modal-overlay modal-overlay-base" [class.closing]="isClosing">
   <div class="modal-dialog modal-dialog-base" (click)="$event.stopPropagation()">
     <div class="modal-header-base">
       <h2>Crear Nuevo Pedido</h2>

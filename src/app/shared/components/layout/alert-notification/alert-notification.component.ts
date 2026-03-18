@@ -14,10 +14,10 @@ interface AlertViewModel {
 }
 
 const ALERT_TEXT: Record<string, string> = {
-  DB_FAILURE: 'Sistema caído: la base de datos principal no está disponible.',
-  REDIS_FAILURE: 'Sistema parcialmente caído: el servicio de caché no está disponible.',
-  KAFKA_FAILURE: 'Sistema parcialmente caído: el servicio de mensajería no está disponible.',
-  REPLICA_FAILURE: 'Sistema parcialmente caído: la réplica de datos no está disponible.',
+  DB_FAILURE: 'La base de datos principal no está disponible.',
+  REDIS_FAILURE: 'El servicio de caché no está disponible.',
+  KAFKA_FAILURE: 'El servicio de mensajería no está disponible.',
+  REPLICA_FAILURE: 'La réplica de datos no está disponible.',
   DB_RECOVERED: 'La base de datos se ha restablecido.',
   REDIS_RECOVERED: 'El servicio de caché se ha restablecido.',
   KAFKA_RECOVERED: 'El servicio de mensajería se ha restablecido.',
@@ -64,7 +64,7 @@ export class AlertNotificationComponent {
         return SERVICE_NAMES[serviceKey] || serviceKey;
       });
       const latestTimestamp = Math.max(...partialFailures.map(f => f.timestamp));
-      
+
       const mergedAlert: AlertViewModel = {
         id: 'merged-partial-failure',
         code: 'MERGED_PARTIAL_FAILURE',
@@ -74,7 +74,7 @@ export class AlertNotificationComponent {
         severity: 'partial',
         services
       };
-      
+
       return [...criticalFailures, mergedAlert].sort((a, b) => b.timestamp - a.timestamp);
     }
 

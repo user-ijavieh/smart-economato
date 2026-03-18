@@ -50,10 +50,10 @@ export class ToastComponent implements OnInit, OnDestroy {
 
   getTitle(type: string): string {
     const titles: Record<string, string> = {
-      success: 'Success!',
-      error: 'Error!',
-      warning: 'Warning!',
-      info: 'Info!'
+      success: 'Éxito',
+      error: 'Error',
+      warning: 'Advertencia',
+      info: 'Información'
     };
     return titles[type] ?? '';
   }
