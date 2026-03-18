@@ -22,6 +22,7 @@ export interface RecipeCookingAudit {
   details: string;
   componentsState?: string | KitchenComponentsState | null;
   cookingDate: string;
+  correlationId?: string;
 }
 
 export interface BatchStockMovementItem {

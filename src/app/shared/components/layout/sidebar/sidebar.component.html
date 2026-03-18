@@ -75,6 +75,21 @@
               />
             </svg>
           }
+
+          <!-- Lotes -->
+          @if (item.icon === 'batches') {
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="#e3e3e3"
+            >
+              <path
+                d="M200-200q-33 0-56.5-23.5T120-280v-480q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v480q0 33-23.5 56.5T760-200H200Zm0-80h560v-440H200v440Zm0-520v-80h560v80H200Zm120 360h320v-80H320v80Zm0-160h320v-80H320v80Z"
+              />
+            </svg>
+          }
           <!-- Recetas -->
           @if (item.icon === 'book' || item.icon === 'menu_book') {
             <svg
@@ -195,13 +210,12 @@
             d="M480-120q-33 0-56.5-23.5T400-200h160q0 33-23.5 56.5T480-120ZM160-240v-80h80v-280q0-83 50-149.5T420-830v-50q0-25 17.5-42.5T480-940q25 0 42.5 17.5T540-880v50q80 16 130 82.5T720-600v280h80v80H160Zm320-80Zm0-360q-33 0-56.5 23.5T400-600v280h160v-280q0-33-23.5-56.5T480-680Z"/>
         </svg>
         }
-        <!-- Predicciones -->
-        @if (item.icon === 'chart') {
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
-          <path
-            d="M120-120v-80l80-80v160h-80Zm160 0v-240l80-80v320h-80Zm160 0v-320l80 81v239h-80Zm160 0v-239l80-80v319h-80Zm160 0v-400l80-80v480h-80ZM120-327v-113l280-280 160 160 280-280v113L560-447 400-607 120-327Z"/>
-        </svg>
-          }
+        <!-- Trazabilidad / Shield -->
+        @if (item.icon === 'shield') {
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+            <path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-120q105-30 172.5-115.5T720-474v-181l-240-90-240 90v181q0 113 67.5 198.5T480-200Zm0-280Z"/>
+          </svg>
+        }
           <span>{{ item.label }}</span>
         </a>
       </li>

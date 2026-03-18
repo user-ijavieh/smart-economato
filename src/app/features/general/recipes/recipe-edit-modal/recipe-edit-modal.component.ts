@@ -33,7 +33,8 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<RecipeRequest>();
   @Input() isAdmin = false;
-
+  @Input() showingHidden = false;
+  @Output() toggleHidden = new EventEmitter<void>();
   editForm: RecipeRequest = {
     name: '',
     elaboration: '',
@@ -337,5 +338,21 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
     }
 
     return true;
+  }
+
+  async onToggleHidden(): Promise<void> {
+    const action = this.showingHidden ? 'mostrar' : 'ocultar';
+    const confirmed = await this.messageService.confirm(
+      `Confirmar ${action}`,
+      `¿Estás seguro de que deseas ${action} la receta "${this.recipe.name}"?`
+    );
+
+    if (confirmed) {
+      this.toggleHidden.emit();
+    }
+  }
+
+  getToggleButtonText(): string {
+    return this.showingHidden ? 'Mostrar' : 'Ocultar';
   }
 }

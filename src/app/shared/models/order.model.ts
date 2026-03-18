@@ -20,6 +20,7 @@ export interface OrderDetail {
   productName: string;
   quantity: number;
   quantityReceived?: number;
+  expirationDate?: string | null;
   unitPrice: number;
   subtotal?: number;
 }
@@ -32,5 +33,5 @@ export interface OrderRequest {
 
 export interface OrderReceptionRequest {
   orderId: number;
-  items: { productId: number; quantityReceived: number }[];
+  items: { productId: number; quantityReceived: number; expirationDate?: string | null }[];
 }

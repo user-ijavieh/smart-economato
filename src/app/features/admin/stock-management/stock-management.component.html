@@ -22,6 +22,7 @@
     </svg>
     Historial
   </button>
+
 </div>
 
 <!-- ===== ALERTS TAB ===== -->
@@ -382,6 +383,8 @@
 </div>
 }
 
+
+
 <!-- ===== LEDGER TAB ===== -->
 @if (activeTab === 'ledger') {
 <div class="contenedor-principal">
@@ -436,6 +439,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M320-240h320v-80H320v80Zm0-160h320v-80H320v80ZM240-80q-33 0-56.5-23.5T160-200v-560q0-33 23.5-56.5T240-840h320l240 240v400q0 33-23.5 56.5T720-80H240Zm280-520v-160H240v560h480v-400H520Z"/></svg>
           PDF
         </button>
+
         <button class="btn-verify" (click)="verifyIntegrity()" [disabled]="verifyingIntegrity">
           <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-80q105-30 172.5-115.5T720-474v-181l-240-90-240 90v181q0 113 67.5 198.5T480-160Zm0-320Z"/></svg>
           {{ verifyingIntegrity ? 'Verificando...' : 'Verificar Integridad' }}
@@ -443,6 +447,11 @@
         <button class="btn-reset" (click)="resetProductHistory()" [disabled]="resettingHistory">
           <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T760-120H280Zm480-600H280v520h480v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
           Limpiar Historial
+        </button>
+
+        <button class="btn-adjust" (click)="openManualAdjustmentModal()" [disabled]="!selectedProductId || submittingAdjustment">
+          <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
+          Ajuste Manual
         </button>
       }
     </div>
@@ -734,6 +743,72 @@
           <span class="detail-val hash-val">{{ selectedLedgerTx.previousHash }}</span>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+}
+
+
+
+@if (showManualAdjustmentModal) {
+<div class="modal-overlay" (click)="closeManualAdjustmentModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Ajuste de Stock Manual</h2>
+      <button type="button" class="btn-close" (click)="closeManualAdjustmentModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="adjustment-type-toggle">
+        <button type="button" class="toggle-btn" [class.active]="adjustmentDirection === 'ENTRY'" (click)="adjustmentDirection = 'ENTRY'">
+          <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
+          Entrada
+        </button>
+        <button type="button" class="toggle-btn" [class.active]="adjustmentDirection === 'EXIT'" (click)="adjustmentDirection = 'EXIT'">
+          <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor"><path d="M200-440v-80h560v80H200Z"/></svg>
+          Salida
+        </button>
+      </div>
+
+      <div class="form-row-group">
+        <div class="form-item form-item-flex">
+          <label>Cantidad *</label>
+          <input type="number" [(ngModel)]="absoluteAdjustmentQuantity" min="0.001" step="0.001" placeholder="0.000" class="input-standard"/>
+        </div>
+        <div class="form-item form-item-flex">
+          <label>Tipo Movimiento</label>
+          <select [(ngModel)]="adjustmentType" class="input-standard">
+            <option value="AJUSTE">AJUSTE</option>
+            <option value="MERMA">MERMA</option>
+            <option value="ENTRADA">ENTRADA (Extra)</option>
+            <option value="SALIDA">SALIDA (Extra)</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-item">
+        <label>Asignar a Lote Específico (Opcional)</label>
+        <select [(ngModel)]="adjustmentBatchId" class="input-standard">
+          <option [ngValue]="null">--- Selección Automática / No Lote ---</option>
+          @for (batch of activeBatchesForAdjustment; track batch.id) {
+            <option [ngValue]="batch.id">Lote #{{ batch.id }} - Stock: {{ batch.remainingQuantity | number:'1.0-2' }} (Cad: {{ batch.expirationDate | date:'dd/MM/yyyy' }})</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-item">
+        <label>Motivo del Ajuste *</label>
+        <textarea [(ngModel)]="adjustmentDescription" rows="3" placeholder="Ej. Corrección de inventario, merma no registrada, rotura..." class="input-standard textarea-standard"></textarea>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="closeManualAdjustmentModal()">Cancelar</button>
+      <button type="button" class="btn-confirm adjustment-confirm-btn" (click)="submitManualAdjustment()" [disabled]="submittingAdjustment || !absoluteAdjustmentQuantity || absoluteAdjustmentQuantity <= 0 || !adjustmentDescription">
+        {{ submittingAdjustment ? 'Registrando...' : 'Registrar Ajuste' }}
+      </button>
     </div>
   </div>
 </div>

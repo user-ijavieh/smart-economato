@@ -3,20 +3,31 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OrderService } from '../../../core/services/order.service';
 import { OrderAuditService } from '../../../core/services/order-audit.service';
+import { KitchenService } from '../../../core/services/kitchen.service';
 import { SupplierService } from '../../../core/services/supplier.service';
 import { UserService } from '../../../core/services/user.service';
 import { MessageService } from '../../../core/services/message.service';
-import { Order } from '../../../shared/models/order.model';
+import { Order, OrderStatus } from '../../../shared/models/order.model';
 import { OrderAudit } from '../../../shared/models/order-audit.model';
 import { Supplier } from '../../../shared/models/supplier.model';
 import { User } from '../../../shared/models/user.model';
+import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { finalize } from 'rxjs';
+
+const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
+  { value: 'CREATED',    label: 'Creada' },
+  { value: 'PENDING',    label: 'Pendiente' },
+  { value: 'REVIEW',     label: 'En Revisión' },
+  { value: 'CONFIRMED',  label: 'Confirmada' },
+  { value: 'INCOMPLETE', label: 'Incompleta' },
+  { value: 'CANCELLED',  label: 'Cancelada' },
+];
 
 @Component({
   selector: 'app-orders-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, ToastComponent],
+  imports: [CommonModule, FormsModule, ConfirmDialogComponent, ToastComponent],
   templateUrl: './orders-management.component.html',
   styleUrl: './orders-management.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -24,6 +35,7 @@ import { finalize } from 'rxjs';
 export class OrdersManagementComponent implements OnInit {
   private orderService = inject(OrderService);
   private orderAuditService = inject(OrderAuditService);
+  private kitchenService = inject(KitchenService);
   private supplierService = inject(SupplierService);
   private userService = inject(UserService);
   private cdr = inject(ChangeDetectorRef);
@@ -32,20 +44,30 @@ export class OrdersManagementComponent implements OnInit {
   // ── Tab state ──
   activeTab: 'orders' | 'audits' = 'orders';
 
+  // ── Status options exposed to template ──
+  readonly allStatuses = ALL_STATUSES;
+
   // ── Orders state ──
   orders: Order[] = [];
   filteredOrders: Order[] = [];
+  pagedFilteredOrders: Order[] = []; // Current page of filtered orders
   loading = true;
   orderSearchTerm = '';
   orderDateFilter = '';
-  orderSupplierFilter: number | '' = '';
+  orderStatusFilter = '';
   orderUserFilter: number | '' = '';
+  orderSupplierFilter: number | '' = '';
+  currentOrderPage = 0;
+  totalOrdersCount = 0;
+  totalOrdersPrice = 0;
+  totalOrderPages = 0;
+  orderPageSize = 20;
 
   // ── Dropdown lists ──
   suppliersList: Supplier[] = [];
   usersList: User[] = [];
 
-  // ── Audits state (kept for future use when backend permissions are fixed) ──
+  // ── Audits state ──
   audits: OrderAudit[] = [];
   filteredAudits: OrderAudit[] = [];
   filteredAuditOrders: Order[] = [];
@@ -60,57 +82,86 @@ export class OrdersManagementComponent implements OnInit {
   auditPageSize = 20;
 
   selectedAudit: OrderAudit | null = null;
+  selectedOrderHistory: OrderAudit[] = []; // Full history for the selected order in the audit modal
   showAuditDetailModal = false;
-
+  loadingAuditHistory = false;
+  auditTab: 'changes' | 'history' = 'changes';
+  
   // ── Order Detail Modal ──
   selectedOrder: Order | null = null;
   showOrderDetailModal = false;
 
+  // ── Change-Status Modal ──
+  showChangeStatusModal = false;
+  orderForStatusChange: Order | null = null;
+  newStatusValue = '';
+  savingStatus = false;
+
   private auditCache: Map<string, any> = new Map();
 
   ngOnInit(): void {
-    this.loadConfirmedOrders();
+    this.loadAllOrders();
     this.loadSuppliers();
     this.loadUsers();
   }
+
 
   // ── Tab switching ──
   switchTab(tab: 'orders' | 'audits'): void {
     this.activeTab = tab;
     if (tab === 'audits') {
-      // Use already loaded confirmed orders for the audit tab
-      this.applyAuditOrderFilters();
+      this.loadAudits();
     }
     this.cdr.detectChanges();
   }
 
   // ── Orders ──
-  loadConfirmedOrders(): void {
+  loadAllOrders(): void {
     this.loading = true;
+    this.currentOrderPage = 0;
     this.cdr.markForCheck();
 
-    this.orderService.getByStatus('CONFIRMED').pipe(
+    // Fetching all orders (using a large page size to support client-side filtering and totals)
+    this.orderService.getAll(0, 1000).pipe(
       finalize(() => {
         this.loading = false;
         this.cdr.markForCheck();
       })
     ).subscribe({
-      next: (orders) => {
-        this.orders = orders;
-        this.filteredAuditOrders = [...orders]; // initialise audit tab data
+      next: (response) => {
+        if (Array.isArray(response)) {
+          this.orders = response;
+        } else if (response?.content) {
+          this.orders = response.content;
+        }
+        this.filteredAuditOrders = this.orders.filter(o => o.status === 'CONFIRMED');
         this.applyOrderFilters();
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError('Error al cargar las órdenes confirmadas');
+        this.messageService.showError('Error al cargar las órdenes');
       }
     });
+  }
+
+  changeOrderPage(delta: number): void {
+    const newPage = this.currentOrderPage + delta;
+    if (newPage >= 0 && newPage < this.totalOrderPages) {
+      this.currentOrderPage = newPage;
+      this.paginateOrders();
+      this.cdr.markForCheck();
+    }
+  }
+
+  private paginateOrders(): void {
+    const start = this.currentOrderPage * this.orderPageSize;
+    const end = start + this.orderPageSize;
+    this.pagedFilteredOrders = this.filteredOrders.slice(start, end);
   }
 
   applyOrderFilters(): void {
     let result = [...this.orders];
 
-    // Text search
     const term = this.orderSearchTerm.trim().toLowerCase();
     if (term) {
       result = result.filter(o =>
@@ -119,63 +170,128 @@ export class OrdersManagementComponent implements OnInit {
       );
     }
 
-    // Date filter
     if (this.orderDateFilter) {
       result = result.filter(o =>
         o.orderDate && o.orderDate.startsWith(this.orderDateFilter)
       );
     }
 
-    // User filter
+    if (this.orderStatusFilter) {
+      result = result.filter(o => o.status === this.orderStatusFilter);
+    }
+
     if (this.orderUserFilter !== '') {
       result = result.filter(o => o.userId === Number(this.orderUserFilter));
     }
 
-    // Supplier filter — orders don't carry supplierId directly;
-    // we keep this as a client-side best-effort (no-op if no match field)
-    // It will work once the API returns supplierId/supplierName on orders.
+    if (this.orderSupplierFilter !== '') {
+      result = result.filter(o => o.supplierId === Number(this.orderSupplierFilter));
+    }
 
     this.filteredOrders = result;
+    this.totalOrdersCount = result.length;
+    this.totalOrdersPrice = result.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
+    this.totalOrderPages = Math.ceil(this.totalOrdersCount / this.orderPageSize);
+    
+    // Reset to first page when filtering
+    this.currentOrderPage = 0;
+    this.paginateOrders();
+    
     this.cdr.detectChanges();
   }
 
-  onOrderSearch(): void {
-    this.applyOrderFilters();
-  }
+  onOrderSearch(): void { this.applyOrderFilters(); }
 
   clearOrderFilters(): void {
     this.orderSearchTerm = '';
     this.orderDateFilter = '';
-    this.orderSupplierFilter = '';
+    this.orderStatusFilter = '';
     this.orderUserFilter = '';
+    this.orderSupplierFilter = '';
     this.applyOrderFilters();
   }
 
   hasActiveOrderFilters(): boolean {
     return this.orderSearchTerm.trim().length > 0
       || this.orderDateFilter.length > 0
-      || this.orderSupplierFilter !== ''
-      || this.orderUserFilter !== '';
+      || this.orderStatusFilter !== ''
+      || this.orderUserFilter !== ''
+      || this.orderSupplierFilter !== '';
   }
 
   // ── Dropdown loaders ──
   private loadSuppliers(): void {
     this.supplierService.getAll(0, 200, 'name,asc').subscribe({
-      next: (page) => {
-        this.suppliersList = page.content;
-        this.cdr.markForCheck();
-      },
-      error: () => { /* silent fail — dropdown stays empty */ }
+      next: (page) => { this.suppliersList = page.content; this.cdr.markForCheck(); },
+      error: () => {}
     });
   }
 
   private loadUsers(): void {
     this.userService.getAllUnpaged().subscribe({
-      next: (users) => {
-        this.usersList = users;
+      next: (users) => { this.usersList = users; this.cdr.markForCheck(); },
+      error: () => {}
+    });
+  }
+
+  // ── Change Status Modal ──
+  openChangeStatusModal(order: Order): void {
+    this.orderForStatusChange = order;
+    this.newStatusValue = order.status;
+    this.showChangeStatusModal = true;
+    this.cdr.markForCheck();
+  }
+
+  closeChangeStatusModal(): void {
+    this.showChangeStatusModal = false;
+    this.orderForStatusChange = null;
+    this.newStatusValue = '';
+    this.savingStatus = false;
+    this.cdr.markForCheck();
+  }
+
+  onChangeStatusOverlayClick(event: MouseEvent): void {
+    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
+      this.closeChangeStatusModal();
+    }
+  }
+
+  confirmStatusChange(): void {
+    if (!this.orderForStatusChange || !this.newStatusValue || this.savingStatus) return;
+    if (this.newStatusValue === this.orderForStatusChange.status) {
+      this.closeChangeStatusModal();
+      return;
+    }
+
+    const orderId = this.orderForStatusChange.id;
+    const status = this.newStatusValue;
+
+    this.savingStatus = true;
+    this.cdr.markForCheck();
+
+    this.orderService.updateStatus(orderId, status).subscribe({
+      next: (updated) => {
+        const idx = this.orders.findIndex(o => o.id === orderId);
+        if (idx !== -1) {
+          this.orders[idx] = { ...this.orders[idx], status: (updated?.status || status) as OrderStatus };
+        }
+        this.applyOrderFilters();
+        this.filteredAuditOrders = this.orders.filter(o => o.status === 'CONFIRMED');
+        
+        this.auditCache.clear();
+        this.auditsLoaded = false;
+        
+        this.messageService.showSuccess(`Estado de la orden #${orderId} actualizado a ${this.formatStatus(status as OrderStatus)}`);
+        this.closeChangeStatusModal();
+        this.savingStatus = false;
         this.cdr.markForCheck();
       },
-      error: () => { /* silent fail */ }
+      error: (err) => {
+        this.savingStatus = false;
+        const msg = err.error?.message || 'Error al actualizar el estado de la orden';
+        this.messageService.showError(msg);
+        this.cdr.markForCheck();
+      }
     });
   }
 
@@ -210,11 +326,7 @@ export class OrdersManagementComponent implements OnInit {
       : this.orderAuditService.getAll(page, this.auditPageSize, ['auditDate,desc']);
 
     source$.pipe(
-      finalize(() => {
-        this.loadingAudits = false;
-        this.auditsLoaded = true;
-        this.cdr.detectChanges();
-      })
+      finalize(() => { this.loadingAudits = false; this.auditsLoaded = true; this.cdr.detectChanges(); })
     ).subscribe({
       next: (response) => {
         let auditsArray: OrderAudit[] = [];
@@ -227,57 +339,70 @@ export class OrdersManagementComponent implements OnInit {
           this.totalAuditsCount = response.totalElements;
           this.totalAuditPages = response.totalPages;
         }
-        this.audits = auditsArray;
-        this.auditCache.set(cacheKey, {
-          content: auditsArray,
-          totalElements: this.totalAuditsCount,
-          totalPages: this.totalAuditPages
+        
+        auditsArray.forEach(a => {
+            if (a.orderId == null) {
+                try {
+                    // Try different variations of orderId
+                    const raw = a as any;
+                    a.orderId = raw.orderId ?? raw.order_id ?? raw.id_order;
+
+                    if (a.orderId == null) {
+                        if (a.newState) {
+                            const parsed = JSON.parse(a.newState);
+                            a.orderId = parsed.id ?? parsed.orderId ?? parsed.order_id ?? parsed.id_order;
+                        } else if (a.previousState) {
+                            const parsed = JSON.parse(a.previousState);
+                            a.orderId = parsed.id ?? parsed.orderId ?? parsed.order_id ?? parsed.id_order;
+                        }
+                    }
+                } catch(e) {}
+            }
         });
+
+        this.audits = auditsArray;
+        this.auditCache.set(cacheKey, { content: auditsArray, totalElements: this.totalAuditsCount, totalPages: this.totalAuditPages });
         this.applyAuditOrderFilters();
         this.cdr.detectChanges();
       },
-      error: () => {
-        this.messageService.showError('Error al cargar las auditorías');
-      }
+      error: () => { this.messageService.showError('Error al cargar las auditorías'); }
     });
   }
 
-  onAuditSearch(): void {
-    this.applyAuditOrderFilters();
-  }
-
-  onAuditDateFilter(): void {
-    this.applyAuditOrderFilters();
-  }
+  onAuditSearch(): void { this.applyAuditOrderFilters(); }
+  onAuditDateFilter(): void { this.applyAuditOrderFilters(); }
 
   applyAuditOrderFilters(): void {
-    let result = [...this.orders];
+    let result = [...this.audits];
+
+    // Relaxed filter: show all audits that have an orderId
+    result = result.filter(a => a.orderId != null);
 
     const term = this.auditSearchTerm.trim().toLowerCase();
     if (term) {
-      result = result.filter(o =>
-        o.id.toString().includes(term) ||
-        (o.userName && o.userName.toLowerCase().includes(term))
+      result = result.filter(a =>
+        (a.orderId && a.orderId.toString().includes(term)) ||
+        (a.userName && a.userName.toLowerCase().includes(term)) ||
+        (a.details && a.details.toLowerCase().includes(term)) ||
+        (a.action && a.action.toLowerCase().includes(term))
       );
     }
 
     if (this.auditStartDate) {
       const from = new Date(this.auditStartDate).getTime();
-      result = result.filter(o => {
-        const d = o.receptionDate || o.orderDate;
-        return d ? new Date(d).getTime() >= from : true;
+      result = result.filter(a => {
+        return a.auditDate ? new Date(a.auditDate).getTime() >= from : true;
       });
     }
 
     if (this.auditEndDate) {
       const to = new Date(this.auditEndDate).getTime() + 86400000;
-      result = result.filter(o => {
-        const d = o.receptionDate || o.orderDate;
-        return d ? new Date(d).getTime() <= to : true;
+      result = result.filter(a => {
+        return a.auditDate ? new Date(a.auditDate).getTime() <= to : true;
       });
     }
 
-    this.filteredAuditOrders = result;
+    this.filteredAudits = result;
     this.cdr.detectChanges();
   }
 
@@ -301,31 +426,56 @@ export class OrdersManagementComponent implements OnInit {
     }
   }
 
-  // ── Order Stats ──
-  get totalOrdersPrice(): number {
-    return this.filteredOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
-  }
-
-  get averageOrderPrice(): number {
-    if (this.filteredOrders.length === 0) return 0;
-    return this.totalOrdersPrice / this.filteredOrders.length;
-  }
 
   // ── Audit Modal ──
   openAuditDetail(audit: OrderAudit): void {
     this.selectedAudit = audit;
     this.showAuditDetailModal = true;
+    this.selectedOrderHistory = [];
+    this.loadingAuditHistory = true;
+    this.auditTab = 'changes'; // Reset to changes tab
     this.cdr.markForCheck();
+
+    // Fetch full history for this order
+    if (audit.orderId) {
+      this.orderAuditService.getByOrderId(audit.orderId).subscribe({
+      next: (response: any) => {
+        const auditsArray = Array.isArray(response) ? response : (response?.content || []);
+        this.selectedOrderHistory = auditsArray.sort((a: any, b: any) => 
+          new Date(b.auditDate).getTime() - new Date(a.auditDate).getTime()
+        );
+          this.loadingAuditHistory = false;
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.loadingAuditHistory = false;
+          this.cdr.markForCheck();
+        }
+      });
+    } else {
+      this.loadingAuditHistory = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  getReceptionStatusLabel(order: Order): string {
+    return order.receptionDate ? 'Recibido' : 'Pendiente';
+  }
+
+  getReceptionStatusClass(order: Order): string {
+    return order.receptionDate ? 'status-confirmed' : 'status-pending';
   }
 
   closeAuditDetail(): void {
     this.showAuditDetailModal = false;
     this.selectedAudit = null;
+    this.selectedOrderHistory = [];
+    this.loadingAuditHistory = false;
     this.cdr.markForCheck();
   }
 
   onAuditOverlayClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('audit-modal-overlay')) {
+    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
       this.closeAuditDetail();
     }
   }
@@ -337,6 +487,106 @@ export class OrdersManagementComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
+  async revertOrder(order: Order): Promise<void> {
+    const confirmed = await this.messageService.confirm(
+        'Revertir orden confirmada',
+        `Se revertirá la recepción de la orden #${order.id}. Esto devolverá el stock de los productos al inventario y restaurará el estado anterior del pedido.`
+    );
+
+    if (!confirmed || !order.id || !order.details) return;
+
+    // Fetch audits to find previous status
+    this.orderAuditService.getByOrderId(order.id).subscribe({
+      next: (audits: any[]) => {
+        const sortedAudits = [...audits].sort((a, b) => new Date(b.auditDate).getTime() - new Date(a.auditDate).getTime());
+        
+        // Look for the audit that CHANGED the state to CONFIRMED
+        const confirmationAudit = sortedAudits.find(a => {
+            try {
+              const newState = typeof a.newState === 'string' ? JSON.parse(a.newState) : a.newState;
+              const prevState = typeof a.previousState === 'string' ? JSON.parse(a.previousState) : a.previousState;
+              const newStatus = (newState?.status || newState?.estado || '').toUpperCase();
+              const prevStatus = (prevState?.status || prevState?.estado || '').toUpperCase();
+              
+              return newStatus === 'CONFIRMED' && prevStatus !== 'CONFIRMED';
+            } catch { return false; }
+        });
+
+        let previousStatus: OrderStatus = 'CREATED';
+        if (confirmationAudit) {
+          try {
+            const prevState = typeof confirmationAudit.previousState === 'string' ? JSON.parse(confirmationAudit.previousState) : confirmationAudit.previousState;
+            const rawStatus = (prevState?.status || prevState?.estado || 'CREATED').toUpperCase();
+            
+            const statusMap: Record<string, OrderStatus> = {
+                'CREADA': 'CREATED', 'CREADO': 'CREATED',
+                'PENDIENTE': 'PENDING',
+                'REVISIÓN': 'REVIEW', 'REVISION': 'REVIEW', 'EN REVISIÓN': 'REVIEW',
+                'CONFIRMADA': 'CONFIRMED', 'CONFIRMADO': 'CONFIRMED',
+                'INCOMPLETA': 'INCOMPLETE', 'INCOMPLETO': 'INCOMPLETE',
+                'CANCELADA': 'CANCELLED', 'CANCELADO': 'CANCELLED'
+            };
+            previousStatus = statusMap[rawStatus] || (rawStatus as OrderStatus);
+          } catch { previousStatus = 'CREATED'; }
+        }
+
+        this.proceedWithRevert(order, previousStatus);
+      },
+      error: () => {
+        // Fallback: if audits fail or 404, default to CREATED but allow revert
+        this.messageService.showWarning('No se encontró el historial del pedido. Revirtiendo al estado inicial (Creado).');
+        this.proceedWithRevert(order, 'CREATED');
+      }
+    });
+  }
+
+  private proceedWithRevert(order: Order, previousStatus: OrderStatus): void {
+    if (!order.details) return;
+
+    const request = {
+        reason: `Reversión de orden #${order.id}`,
+        orderId: order.id,
+        movements: order.details.map((detail: any) => ({
+            productId: detail.productId,
+            quantityDelta: -detail.quantity,
+            movementType: 'AJUSTE' as 'AJUSTE',
+            description: `Reversión automática orden #${order.id}`
+        }))
+    };
+
+    this.kitchenService.revertCookingBatch(request).subscribe({
+        next: (res: any) => {
+            if (res.success || res.id) {
+                this.messageService.showSuccess(`Orden revertida correctamente`);
+                this.loadAllOrders();
+            } else {
+                this.messageService.showError(res.message || 'Error al revertir el stock');
+            }
+        },
+        error: () => this.messageService.showError('Error de comunicación al revertir orden')
+    });
+  }
+
+  onDownloadPdf(order: Order): void {
+    if (!order || !order.id) return;
+    this.orderService.downloadPdf(order.id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `orden-${order.id}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.messageService.showSuccess('PDF descargado correctamente');
+      },
+      error: () => {
+        this.messageService.showError('Error al generar el PDF');
+      }
+    });
+  }
+
   closeOrderDetail(): void {
     this.showOrderDetailModal = false;
     this.selectedOrder = null;
@@ -344,102 +594,100 @@ export class OrdersManagementComponent implements OnInit {
   }
 
   onOrderDetailOverlayClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('audit-modal-overlay')) {
+    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
       this.closeOrderDetail();
     }
   }
 
-  // ── Diff helpers ──
-  get parsedPreviousState(): any | null {
-    if (!this.selectedAudit?.previousState) return null;
-    try { return JSON.parse(this.selectedAudit.previousState); } catch { return null; }
-  }
 
-  get parsedNewState(): any | null {
-    if (!this.selectedAudit?.newState) return null;
-    try { return JSON.parse(this.selectedAudit.newState); } catch { return null; }
-  }
-
+  // ── Audit Diff Logic ──
   get hasDiffData(): boolean {
-    return this.parsedPreviousState !== null && this.parsedNewState !== null;
+    return !!this.selectedAudit?.previousState || !!this.selectedAudit?.newState;
   }
 
   getDiffFields(): { label: string; prev: string; next: string; changed: boolean }[] {
-    const prev = this.parsedPreviousState;
-    const next = this.parsedNewState;
-    if (!prev || !next) return [];
-
+    const prev = this.selectedAudit?.previousState ? JSON.parse(this.selectedAudit.previousState) : {};
+    const next = this.selectedAudit?.newState ? JSON.parse(this.selectedAudit.newState) : {};
     const fields: { label: string; prev: string; next: string; changed: boolean }[] = [];
-    const labelMap: Record<string, string> = {
-      status: 'Estado',
-      id: 'ID Orden',
-      userId: 'ID Usuario',
-      userName: 'Usuario',
-      orderDate: 'Fecha Orden',
-      totalPrice: 'Precio Total',
+
+    const compare = (label: string, key: string, formatter?: (val: any) => string) => {
+      const v1 = prev[key];
+      const v2 = next[key];
+      const changed = v1 !== v2;
+      fields.push({
+        label,
+        prev: formatter ? formatter(v1) : String(v1 ?? '—'),
+        next: formatter ? formatter(v2) : String(v2 ?? '—'),
+        changed
+      });
     };
 
-    const allKeys = new Set([...Object.keys(prev), ...Object.keys(next)]);
-
-    // Prioritize known fields first
-    const priorityKeys = ['id', 'status', 'userName', 'totalPrice', 'orderDate'];
-    const orderedKeys = [
-      ...priorityKeys.filter(k => allKeys.has(k)),
-      ...[...allKeys].filter(k => !priorityKeys.includes(k) && k !== 'details')
-    ];
-
-    for (const key of orderedKeys) {
-      const prevVal = prev[key] != null ? String(prev[key]) : '—';
-      const nextVal = next[key] != null ? String(next[key]) : '—';
-      fields.push({
-        label: labelMap[key] || key,
-        prev: key === 'totalPrice' && prev[key] != null ? `${parseFloat(prev[key]).toFixed(2)} €` : prevVal,
-        next: key === 'totalPrice' && next[key] != null ? `${parseFloat(next[key]).toFixed(2)} €` : nextVal,
-        changed: prevVal !== nextVal
-      });
+    compare('Estado', 'status', (val) => this.formatStatus(val));
+    compare('Proveedor', 'supplierName');
+    compare('Precio Total', 'totalPrice', (val) => val != null ? `${Number(val).toFixed(2)} €` : '—');
+    if (prev.receptionDate || next.receptionDate) {
+      compare('Fecha Recepción', 'receptionDate', (val) => val ? this.formatDate(val) : '—');
     }
+
     return fields;
   }
 
-  getDetailDiffs(): { product: string; prevQty: string; nextQty: string; status: 'added' | 'removed' | 'changed' | 'unchanged' }[] {
-    const prev = this.parsedPreviousState;
-    const next = this.parsedNewState;
-    if (!prev || !next) return [];
+  getDetailDiffs(): { product: string; status: 'added' | 'removed' | 'changed' | 'unchanged'; prevQty: string; nextQty: string }[] {
+    if (!this.selectedAudit) return [];
+    const prev = this.selectedAudit.previousState ? JSON.parse(this.selectedAudit.previousState) : {};
+    const next = this.selectedAudit.newState ? JSON.parse(this.selectedAudit.newState) : {};
 
-    const prevDetails: any[] = prev.details ?? prev.orderDetails ?? [];
-    const nextDetails: any[] = next.details ?? next.orderDetails ?? [];
-    if (prevDetails.length === 0 && nextDetails.length === 0) return [];
+    const prevDetails: any[] = prev.details || [];
+    const nextDetails: any[] = next.details || [];
 
-    const prevMap = new Map<number, any>();
-    const nextMap = new Map<number, any>();
-    prevDetails.forEach(d => prevMap.set(d.productId, d));
-    nextDetails.forEach(d => nextMap.set(d.productId, d));
+    const allProductIds = new Set([
+      ...prevDetails.map(d => d.productId),
+      ...nextDetails.map(d => d.productId)
+    ]);
 
-    const allIds = new Set([...prevMap.keys(), ...nextMap.keys()]);
-    const result: any[] = [];
+    const diffs: any[] = [];
+    allProductIds.forEach(id => {
+      const p1 = prevDetails.find(d => d.productId === id);
+      const p2 = nextDetails.find(d => d.productId === id);
 
-    allIds.forEach(id => {
-      const p = prevMap.get(id);
-      const n = nextMap.get(id);
-      const name = n?.productName ?? p?.productName ?? `Producto #${id}`;
-
-      if (p && !n) {
-        result.push({ product: name, prevQty: String(p.quantity), nextQty: '—', status: 'removed' });
-      } else if (!p && n) {
-        result.push({ product: name, prevQty: '—', nextQty: String(n.quantity), status: 'added' });
-      } else if (p && n) {
-        const changed = p.quantity !== n.quantity;
-        result.push({ product: name, prevQty: String(p.quantity), nextQty: String(n.quantity), status: changed ? 'changed' : 'unchanged' });
+      if (!p1 && p2) {
+        diffs.push({ product: p2.productName, status: 'added', prevQty: '—', nextQty: String(p2.quantity) });
+      } else if (p1 && !p2) {
+        diffs.push({ product: p1.productName, status: 'removed', prevQty: String(p1.quantity), nextQty: '—' });
+      } else if (p1 && p2) {
+        const changed = p1.quantity !== p2.quantity || p1.unitPrice !== p2.unitPrice;
+        diffs.push({
+          product: p2.productName,
+          status: changed ? 'changed' : 'unchanged',
+          prevQty: String(p1.quantity),
+          nextQty: String(p2.quantity)
+        });
       }
     });
 
-    return result;
+    return diffs;
   }
 
   // ── Helpers ──
+  formatDateWithTime(dateStr: string | undefined): string {
+    if (!dateStr) return '—';
+    try {
+      const date = new Date(dateStr);
+      return date.toLocaleString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    } catch {
+      return dateStr;
+    }
+  }
+
   formatDate(dateStr: string): string {
-    const d = new Date(dateStr);
-    return d.toLocaleString('es-ES', {
+    return new Date(dateStr).toLocaleString('es-ES', {
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit'
     });
@@ -447,44 +695,28 @@ export class OrdersManagementComponent implements OnInit {
 
   formatStatus(status: string): string {
     const map: Record<string, string> = {
-      CREATED: 'Creada',
-      PENDING: 'Pendiente',
-      REVIEW: 'En Revisión',
-      CONFIRMED: 'Confirmada',
-      INCOMPLETE: 'Incompleta',
-      CANCELLED: 'Cancelada'
+      CREATED: 'Creada', PENDING: 'Pendiente', REVIEW: 'En Revisión',
+      CONFIRMED: 'Confirmada', INCOMPLETE: 'Incompleta', CANCELLED: 'Cancelada'
     };
     return map[status] || status;
   }
 
   getStatusClass(status: string): string {
     const map: Record<string, string> = {
-      CREATED: 'status-created',
-      PENDING: 'status-pending',
-      REVIEW: 'status-review',
-      CONFIRMED: 'status-confirmed',
-      INCOMPLETE: 'status-incomplete',
-      CANCELLED: 'status-cancelled'
+      CREATED: 'status-created', PENDING: 'status-pending', REVIEW: 'status-review',
+      CONFIRMED: 'status-confirmed', INCOMPLETE: 'status-incomplete', CANCELLED: 'status-cancelled'
     };
     return map[status] || '';
   }
 
-  // Extracts the status field from an audit's previousState JSON
   getAuditPrevStatus(audit: OrderAudit): string | null {
     if (!audit.previousState) return null;
-    try {
-      const obj = JSON.parse(audit.previousState);
-      return obj.status ?? obj.estado ?? null;
-    } catch { return null; }
+    try { const o = JSON.parse(audit.previousState); return o.status ?? o.estado ?? null; } catch { return null; }
   }
 
-  // Extracts the status field from an audit's newState JSON
   getAuditNewStatus(audit: OrderAudit): string | null {
     if (!audit.newState) return null;
-    try {
-      const obj = JSON.parse(audit.newState);
-      return obj.status ?? obj.estado ?? null;
-    } catch { return null; }
+    try { const o = JSON.parse(audit.newState); return o.status ?? o.estado ?? null; } catch { return null; }
   }
 
   getActionBadgeClass(action: string): string {
@@ -492,7 +724,19 @@ export class OrdersManagementComponent implements OnInit {
     if (u.includes('CREA') || u.includes('CREATE')) return 'badge-create';
     if (u.includes('MODIF') || u.includes('UPDATE') || u.includes('CAMBIO') || u.includes('ESTADO')) return 'badge-update';
     if (u.includes('ELIMIN') || u.includes('DELETE') || u.includes('CANCEL')) return 'badge-delete';
-    if (u.includes('CONFIRM') || u.includes('RECEP')) return 'badge-confirm';
+    if (u.includes('CONFIRM') || u.includes('RECEP') || u.includes('RECEPCION')) return 'badge-confirm';
     return 'badge-default';
+  }
+
+  translateAction(action: string): string {
+    const u = action.toUpperCase();
+    if (u.includes('CREATE')) return 'Creación';
+    if (u.includes('UPDATE')) return 'Modificación';
+    if (u.includes('DELETE')) return 'Eliminación';
+    if (u.includes('RECEP')) return 'Recepcionado';
+    if (u.includes('CONFIRM')) return 'Confirmado';
+    if (u.includes('REVERSION')) return 'Reversión';
+    if (u.includes('CAMBIO') && u.includes('ESTADO')) return 'Cambio Estado';
+    return action;
   }
 }
