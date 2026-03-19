@@ -36,6 +36,45 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/** ===== SKELETON LOADERS ===== */
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-line,
+.skeleton-badge {
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.05) 25%,
+    rgba(255,255,255,0.12) 50%,
+    rgba(255,255,255,0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+}
+
+.skeleton-badge {
+  width: 70px;
+  height: 22px;
+  border-radius: 20px;
+}
+
+.skeleton-header {
+  background: rgba(255,255,255,0.05) !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+
+.skeleton-card {
+  pointer-events: none;
+  animation: fadeInStaggered 0.5s ease both;
+}
+
+
 /** ===== HEADER ===== */
 .header-pedidos {
   display: flex;
