@@ -75,10 +75,11 @@
                 <tr>
                     <th>ID</th>
                     <th>Usuario</th>
-                    <th>Fecha</th>
+                    <th class="hide-on-mobile">Fecha</th>
                     <th class="hide-on-mobile">Estado</th>
                     <th>Total</th>
-                    <th class="actions-col">Acciones</th>
+                    <th class="actions-col hide-on-mobile">Acciones</th>
+                    <th class="show-on-mobile-only mobile-icon-col"></th>
                 </tr>
             </thead>
             <tbody [class.loading]="loading">
@@ -87,15 +88,16 @@
                     <tr class="skeleton-row">
                         <td><span class="skeleton skeleton-text" style="width:50px"></span></td>
                         <td><span class="skeleton skeleton-text" style="width:140px"></span></td>
-                        <td><span class="skeleton skeleton-text" style="width:130px"></span></td>
+                        <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width:130px"></span></td>
                         <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width:90px"></span></td>
                         <td><span class="skeleton skeleton-text" style="width:80px"></span></td>
-                        <td class="actions-col"></td>
+                        <td class="actions-col hide-on-mobile"></td>
+                        <td class="show-on-mobile-only mobile-icon-col"></td>
                     </tr>
                     }
                 } @else {
                     @for (order of pagedFilteredOrders; track order.id) {
-                    <tr class="data-row">
+                    <tr class="data-row mobile-clickable-row" (click)="openOrderDetail(order)">
                         <td data-label="ID"><span class="id-badge">#{{ order.id }}</span></td>
                         <td data-label="Usuario">
                             <div class="order-user-cell">
@@ -107,7 +109,7 @@
                                 {{ order.userName }}
                             </div>
                         </td>
-                        <td data-label="Fecha">
+                        <td data-label="Fecha" class="hide-on-mobile">
                             <span class="date-cell-inner">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="date-icon">
                                     <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
@@ -121,7 +123,7 @@
                             </span>
                         </td>
                         <td data-label="Total"><span class="cost-value">{{ (order.totalPrice || 0) | number:'1.2-2' }} €</span></td>
-                        <td class="actions-col">
+                        <td class="actions-col hide-on-mobile" (click)="$event.stopPropagation()">
                             <div class="actions-cell">
                                 <button class="btn-ver" (click)="openOrderDetail(order)" title="Ver detalles">
                                     <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 126.5 25t99.5 73l-58 58q-32-34-76-52.5t-92-18.5q-100 0-170 70t-70 170q0 100 70 170t170 70q88 0 152.5-54T634-360H480v-80h240v240h-80v-91q-41 46-97 71.5T480-160Z"/></svg>
@@ -150,6 +152,11 @@
                                 </button>
                                 }
                             </div>
+                        </td>
+                        <td class="show-on-mobile-only mobile-icon-col">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+                            </svg>
                         </td>
                     </tr>
                     }
@@ -193,7 +200,7 @@
             <thead>
                 <tr>
                     <th>Fecha / Hora</th>
-                    <th>Acción</th>
+                    <th class="hide-on-mobile">Acción</th>
                     <th>ID Pedido</th>
                     <th class="hide-on-mobile">Usuario</th>
                     <th class="show-on-mobile-only mobile-icon-col"></th>
@@ -219,8 +226,8 @@
                                 {{ formatDateWithTime(audit.auditDate) }}
                             </span>
                         </td>
-                        <td data-label="Acción">
-                            <span class="action-badge" [ngClass]="getActionBadgeClass(audit.action)">{{ audit.action }}</span>
+                        <td data-label="Acción" class="hide-on-mobile">
+                            <span class="action-badge" [ngClass]="getActionBadgeClass(audit.action)">{{ translateAction(audit.action) }}</span>
                         </td>
                         <td data-label="ID Orden">
                             <span class="id-badge">#{{ audit.orderId }}</span>
@@ -324,79 +331,102 @@
 
 <!-- ===== AUDIT DETAIL MODAL ===== -->
 @if (showAuditDetailModal && selectedAudit) {
-<!-- ===== AUDIT DETAIL MODAL ===== -->
 @if (showAuditDetailModal && selectedAudit) {
-<div class="modal-overlay modal-overlay-base admin-theme" (click)="closeAuditDetail()">
-    <div class="modal-container" (click)="$event.stopPropagation()" [style.maxWidth]="hasDiffData ? '900px' : '600px'">
-        <div class="modal-dialog-base modal-content">
-            <div class="modal-header-base">
-                <h2>Pedido #{{ selectedAudit.orderId }} <span class="id-badge-white" style="background: rgba(255, 255, 255, 0.2); padding: 3px 10px; border-radius: 6px; font-size: 0.85rem; margin-left: 10px; font-weight: 600;">Audit #{{ selectedAudit.id }}</span></h2>
-                <button class="modal-close" (click)="closeAuditDetail()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                </button>
-            </div>
-
-            <div class="modal-body simplified-audit">
-                <div class="modal-section">
-                    <div class="audit-info-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 25px; margin-bottom: 35px; padding-bottom: 25px; border-bottom: 1px solid #f3f4f6;">
-                        <div class="info-item">
-                            <span class="info-label">ID Auditoría</span>
-                            <span class="info-value">#{{ selectedAudit.id }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Fecha y Hora</span>
-                            <span class="info-value">{{ formatDateWithTime(selectedAudit.auditDate) }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Usuario</span>
-                            <span class="info-value">{{ selectedAudit.userName }}</span>
-                        </div>
-                    </div>
-
-                    <div class="status-change-container" style="display: flex; align-items: center; justify-content: center; gap: 50px; padding: 30px; background: #f9fafb; border-radius: 16px; border: 1px solid #f3f4f6;">
-                        <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; flex: 1;">
-                            <span class="info-label">Estado Anterior</span>
-                            <span class="status-badge {{ getStatusClass(getAuditPrevStatus(selectedAudit) || '') }}">
-                                {{ formatStatus(getAuditPrevStatus(selectedAudit) || '—') }}
-                            </span>
-                        </div>
-                        <div style="color: #9ca3af; display: flex; align-items: center; justify-content: center; background: white; width: 44px; height: 44px; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                <polyline points="12 5 19 12 12 19"></polyline>
-                            </svg>
-                        </div>
-                        <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; flex: 1;">
-                            <span class="info-label">Estado Nuevo</span>
-                            <span class="status-badge {{ getStatusClass(getAuditNewStatus(selectedAudit) || '') }}">
-                                {{ formatStatus(getAuditNewStatus(selectedAudit) || '—') }}
-                            </span>
-                        </div>
-                    </div>
-
-                    @if (selectedAudit.details) {
-                    <div style="margin-top: 25px;">
-                        <span class="info-label">Detalles Adicionales</span>
-                        <p style="margin: 0; font-size: 0.95rem; color: #4b5563; line-height: 1.6; background: #fff; padding: 18px 22px; border-radius: 12px; border: 1px solid #e5e7eb; white-space: pre-wrap; word-break: break-word;">{{ selectedAudit.details }}</p>
-                    </div>
-                    }
+<div class="audit-modal-overlay" (click)="onAuditOverlayClick($event)">
+    <div class="audit-modal" [class.audit-modal-wide]="hasDiffData">
+        <div class="audit-modal-header">
+            <div class="audit-header-content">
+                <h2>Detalle de Auditoría</h2>
+                <div class="audit-modal-header-info">
+                    <span class="action-badge" [ngClass]="getActionBadgeClass(selectedAudit.action)">
+                        {{ translateAction(selectedAudit.action) }}
+                    </span>
+                    <span class="audit-header-date">{{ formatDateWithTime(selectedAudit.auditDate) }}</span>
+                    <span class="audit-header-user">{{ selectedAudit.userName }}</span>
                 </div>
             </div>
-
-            <div class="modal-footer">
-                <div class="modal-actions">
-                    <button class="btn-cancel" (click)="closeAuditDetail()">Cerrar</button>
-                </div>
-            </div>
+            <button class="modal-close" (click)="closeAuditDetail()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
         </div>
+
+        @if (hasDiffData) {
+        <div class="diff-container">
+            <table class="diff-table">
+                <thead>
+                    <tr>
+                        <th class="diff-label-col">Campo</th>
+                        <th class="diff-prev-col">Estado Anterior</th>
+                        <th class="diff-next-col">Estado Nuevo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (field of getDiffFields(); track field.label) {
+                    <tr [class.diff-changed]="field.changed">
+                        <td class="diff-label">{{ field.label }}</td>
+                        <td class="diff-prev" [class.diff-highlight-old]="field.changed">{{ field.prev }}</td>
+                        <td class="diff-next" [class.diff-highlight-new]="field.changed">{{ field.next }}</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+            @if (getDetailDiffs().length > 0) {
+            <h3 class="diff-section-title">Líneas de Pedido</h3>
+            <table class="diff-table">
+                <thead>
+                    <tr>
+                        <th class="diff-label-col">Producto</th>
+                        <th class="diff-prev-col">Cantidad Anterior</th>
+                        <th class="diff-next-col">Cantidad Nueva</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (item of getDetailDiffs(); track item.product) {
+                    <tr [class.diff-row-added]="item.status === 'added'"
+                        [class.diff-row-removed]="item.status === 'removed'"
+                        [class.diff-changed]="item.status === 'changed'">
+                        <td class="diff-label">
+                            {{ item.product }}
+                            @if (item.status === 'added') { <span class="diff-tag tag-added">Nuevo</span> }
+                            @if (item.status === 'removed') { <span class="diff-tag tag-removed">Eliminado</span> }
+                        </td>
+                        <td class="diff-prev"
+                            [class.diff-highlight-old]="item.status === 'changed' || item.status === 'removed'">
+                            {{ item.prevQty }}
+                        </td>
+                        <td class="diff-next"
+                            [class.diff-highlight-new]="item.status === 'changed' || item.status === 'added'">
+                            {{ item.nextQty }}
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            }
+        </div>
+        } @else {
+        <div class="audit-modal-body">
+            <div class="audit-field">
+                <span class="audit-field-label">Pedido</span>
+                <span class="audit-field-value">#{{ selectedAudit.orderId }}</span>
+            </div>
+            @if (selectedAudit.details) {
+            <div class="audit-field audit-field-full">
+                <span class="audit-field-label">Detalles</span>
+                <p class="audit-details-text">{{ selectedAudit.details }}</p>
+            </div>
+            }
+        </div>
+        }
     </div>
 </div>
 }
+
 }
 
 <!-- ===== ORDER DETAIL MODAL ===== -->
@@ -405,7 +435,16 @@
     <div class="modal-container" (click)="$event.stopPropagation()" style="max-width: 950px;">
         <div class="modal-dialog-base modal-content">
             <div class="modal-header-base">
-                <h2>Pedido #{{ selectedOrder.id }}</h2>
+                <div class="modal-header-content">
+                    <h2>Pedido #{{ selectedOrder.id }}</h2>
+                    <div class="modal-header-info">
+                        <span class="status-badge {{ getStatusClass(selectedOrder.status) }}">
+                            {{ formatStatus(selectedOrder.status) }}
+                        </span>
+                        <span class="modal-header-date">{{ formatDateWithTime(selectedOrder.orderDate) }}</span>
+                        <span class="modal-header-user">{{ selectedOrder.userName }}</span>
+                    </div>
+                </div>
                 <button class="modal-close" (click)="closeOrderDetail()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -418,22 +457,7 @@
             <div class="modal-body" style="padding: 35px 40px;">
                 <!-- Información General -->
                 <div class="modal-section">
-                    <h4>Información General</h4>
                     <div class="order-info-grid">
-                        <div class="info-item">
-                            <span class="info-label">Estado</span>
-                            <span class="status-badge {{ getStatusClass(selectedOrder.status) }}">
-                                {{ formatStatus(selectedOrder.status) }}
-                            </span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Usuario</span>
-                            <span class="info-value">{{ selectedOrder.userName }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Fecha Pedido</span>
-                            <span class="info-value">{{ formatDate(selectedOrder.orderDate) }}</span>
-                        </div>
                         @if (selectedOrder.supplierName) {
                         <div class="info-item">
                             <span class="info-label">Proveedor</span>
@@ -492,6 +516,11 @@
                         </svg>
                         Exportar
                     </button>
+                    @if (selectedOrder.status === 'CONFIRMED') {
+                    <button class="btn-revert btn-textual" (click)="revertOrder(selectedOrder)">
+                        Revertir
+                    </button>
+                    }
                     <button class="btn-cancel" (click)="closeOrderDetail()">Cerrar</button>
                 </div>
             </div>
