@@ -2,6 +2,17 @@ main {
   transition: margin-left 300ms ease-in-out;
   padding: min(30px, 7%);
   min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.route-animation-wrapper {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 main.main-collapsed {
