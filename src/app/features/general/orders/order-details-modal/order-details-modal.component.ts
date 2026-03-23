@@ -14,6 +14,8 @@ import { MessageService } from '../../../../core/services/message.service';
 export class OrderDetailsModalComponent {
   @Input() order: Order | null = null;
   @Output() closeModal = new EventEmitter<void>();
+  @Output() deleteOrder = new EventEmitter<number>();
+  @Output() editOrderRequested = new EventEmitter<Order>();
 
   private orderService = inject(OrderService);
   private messageService = inject(MessageService);
@@ -68,6 +70,36 @@ export class OrderDetailsModalComponent {
       'CANCELLED': 'rgba(239, 68, 68, 0.25)'
     };
     return colors[status] || 'rgba(107, 114, 128, 0.25)';
+  }
+
+  async onEdit(): Promise<void> {
+    if (!this.order) return;
+    const confirmed = await this.messageService.confirm(
+      'Editar pedido',
+      `¿Deseas editar el pedido #${this.order.id}?`
+    );
+    if (confirmed) {
+      this.editOrderRequested.emit(this.order);
+    }
+  }
+
+  async onDelete(): Promise<void> {
+    if (!this.order) return;
+    const confirmed = await this.messageService.confirm(
+      'Eliminar pedido',
+      `¿Estás seguro de que deseas eliminar el pedido #${this.order.id}? Esta acción no se puede deshacer.`
+    );
+    if (confirmed) {
+      this.orderService.delete(this.order.id).subscribe({
+        next: () => {
+          this.messageService.showSuccess('Pedido eliminado correctamente');
+          this.deleteOrder.emit(this.order!.id);
+        },
+        error: () => {
+          this.messageService.showError('Error al eliminar el pedido');
+        }
+      });
+    }
   }
 
   printOrder(): void {

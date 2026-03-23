@@ -130,6 +130,7 @@
 <!-- Modal -->
 @if (showModal) {
   <app-order-modal
+    [editOrder]="orderToEdit"
     (closeModal)="closeModal()"
     (orderCreated)="onOrderCreated()"
   ></app-order-modal>
@@ -140,5 +141,7 @@
   <app-order-details-modal
     [order]="selectedOrder"
     (closeModal)="closeDetailsModal()"
+    (deleteOrder)="onOrderDeleted()"
+    (editOrderRequested)="onEditOrderRequested($event)"
   ></app-order-details-modal>
 }

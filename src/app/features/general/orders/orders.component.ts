@@ -15,24 +15,25 @@ import { OrderDetailsModalComponent } from './order-details-modal/order-details-
   styleUrl: './orders.component.css'
 })
 export class OrdersComponent implements OnInit {
+  public orders: Order[] = [];
+  public loading = false;
+  public showModal = false;
+  public showDetailsModal = false;
+  public selectedOrder: Order | null = null;
+  public orderToEdit: Order | null = null;
+
   private orderService = inject(OrderService);
   private messageService = inject(MessageService);
   private cdr = inject(ChangeDetectorRef);
 
-  orders: Order[] = [];
-  loading = false;
-  showModal = false;
-  showDetailsModal = false;
-  selectedOrder: Order | null = null;
-
   // Paginación
-  displayCount = 1;
+  public displayCount = 1;
 
   ngOnInit(): void {
     this.loadOrders();
   }
 
-  loadOrders(): void {
+  public loadOrders(): void {
     this.loading = true;
     // Load only CREATED orders
     this.orderService.getByStatus('CREATED').subscribe({
@@ -58,17 +59,30 @@ export class OrdersComponent implements OnInit {
     });
   }
 
-  openCreateOrderModal(): void {
+  public openCreateOrderModal(): void {
     this.showModal = true;
   }
 
-  closeModal(): void {
+  public closeModal(): void {
     this.showModal = false;
+    this.orderToEdit = null;
+    this.cdr.markForCheck();
   }
 
-  onOrderCreated(): void {
+  public onOrderCreated(): void {
     this.loadOrders();
-    this.showModal = false;
+    this.closeModal();
+  }
+
+  public onOrderDeleted(): void {
+    this.loadOrders();
+    this.closeDetailsModal();
+  }
+
+  public onEditOrderRequested(order: Order): void {
+    this.orderToEdit = order;
+    this.closeDetailsModal();
+    this.openCreateOrderModal();
   }
 
   // Paginación
@@ -80,15 +94,15 @@ export class OrdersComponent implements OnInit {
     return this.displayCount < this.orders.length;
   }
 
-  loadMore(): void {
+  public loadMore(): void {
     this.displayCount += 10;
   }
 
-  getOrderTotal(order: Order): number {
+  public getOrderTotal(order: Order): number {
     return (order.details || []).reduce((sum, d) => sum + d.quantity * d.unitPrice, 0);
   }
 
-  formatDate(date: string): string {
+  public formatDate(date: string): string {
     return new Date(date).toLocaleDateString('es-ES', {
       day: '2-digit',
       month: '2-digit',
@@ -96,7 +110,7 @@ export class OrdersComponent implements OnInit {
     });
   }
 
-  getStatusBgColor(status: OrderStatus): string {
+  public getStatusBgColor(status: OrderStatus): string {
     const colors: Record<OrderStatus, string> = {
       CREATED: 'rgba(59, 130, 246, 0.15)',
       PENDING: 'rgba(245, 158, 11, 0.15)',
@@ -108,7 +122,7 @@ export class OrdersComponent implements OnInit {
     return colors[status];
   }
 
-  async confirmOrder(order: Order): Promise<void> {
+  public async confirmOrder(order: Order): Promise<void> {
     const confirmed = await this.messageService.confirm(
       'Confirmar pedido',
       `¿Confirmar y enviar el pedido #${order.id} a recepción?`
@@ -129,17 +143,17 @@ export class OrdersComponent implements OnInit {
     });
   }
 
-  viewOrderDetails(order: Order): void {
+  public viewOrderDetails(order: Order): void {
     this.selectedOrder = order;
     this.showDetailsModal = true;
   }
 
-  closeDetailsModal(): void {
+  public closeDetailsModal(): void {
     this.showDetailsModal = false;
     this.selectedOrder = null;
   }
 
-  printOrder(order: Order, event?: Event): void {
+  public printOrder(order: Order, event?: Event): void {
     if (event) {
       event.stopPropagation();
     }

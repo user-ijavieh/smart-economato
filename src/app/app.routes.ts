@@ -36,85 +36,98 @@ export const routes: Routes = [
         path: 'admin-panel/users',
         loadComponent: () =>
           import('./features/admin/users-management/users-management.component').then(m => m.UsersManagementComponent),
-        canActivate: [roleGuard('ADMIN')]
+        canActivate: [roleGuard('ADMIN')],
+        data: { animation: 2 }
       },
       {
         path: 'admin-panel/recipes',
         loadComponent: () =>
           import('./features/admin/recipes-management/recipes-management.component').then(m => m.RecipesManagementComponent),
-        canActivate: [roleGuard('ADMIN')]
+        canActivate: [roleGuard('ADMIN')],
+        data: { animation: 3 }
       },
       {
         path: 'admin-panel/products',
         loadComponent: () =>
           import('./features/admin/products-management/products-management.component').then(m => m.ProductsManagementComponent),
-        canActivate: [roleGuard('ADMIN')]
+        canActivate: [roleGuard('ADMIN')],
+        data: { animation: 4 }
       },
       {
         path: 'admin-panel/master-data',
         loadComponent: () =>
           import('./features/admin/allergens-management/allergens-management.component').then(m => m.AllergensManagementComponent),
-        canActivate: [roleGuard('ADMIN')]
+        canActivate: [roleGuard('ADMIN')],
+        data: { animation: 6 }
       },
       {
         path: 'admin-panel/kitchen',
         loadComponent: () =>
           import('./features/admin/kitchen-management/kitchen-management.component').then(m => m.KitchenManagementComponent),
-        canActivate: [roleGuard('ADMIN')]
+        canActivate: [roleGuard('ADMIN')],
+        data: { animation: 7 }
       },
       {
         path: 'admin-panel/stock',
         loadComponent: () =>
           import('./features/admin/stock-management/stock-management.component').then(m => m.StockManagementComponent),
-        canActivate: [roleGuard('ADMIN')]
+        canActivate: [roleGuard('ADMIN')],
+        data: { animation: 8 }
       },
       {
         path: 'admin-panel/orders',
         loadComponent: () =>
           import('./features/admin/orders-management/orders-management.component').then(m => m.OrdersManagementComponent),
-        canActivate: [roleGuard('ADMIN')]
+        canActivate: [roleGuard('ADMIN')],
+        data: { animation: 9 }
       },
       {
         path: 'admin-panel/traceability',
         loadComponent: () =>
           import('./features/admin/traceability-management/traceability-management.component').then(m => m.TraceabilityManagementComponent),
-        canActivate: [roleGuard('ADMIN')]
+        canActivate: [roleGuard('ADMIN')],
+        data: { animation: 10 }
       },
       {
         path: 'admin-panel/batches',
         loadComponent: () =>
           import('./features/admin/batches-management/batches-management.component').then(m => m.BatchesManagementComponent),
-        canActivate: [roleGuard('ADMIN')]
+        canActivate: [roleGuard('ADMIN')],
+        data: { animation: 5 }
       },
 
       {
         path: 'inventario',
         loadComponent: () =>
-          import('./features/general/inventory/inventory.component').then(m => m.InventoryComponent)
+          import('./features/general/inventory/inventory.component').then(m => m.InventoryComponent),
+        data: { animation: 21 }
       },
       {
-        path: 'reception',
+        path: 'recipes',
         loadComponent: () =>
-          import('./features/general/reception/reception.component').then(m => m.ReceptionComponent),
-        canActivate: [roleGuard('ADMIN', 'CHEF')]
+          import('./features/general/recipes/recipes.component').then(m => m.RecipesComponent),
+        data: { animation: 22 }
       },
       {
         path: 'orders',
         loadComponent: () =>
           import('./features/general/orders/orders.component').then(m => m.OrdersComponent),
-        canActivate: [roleGuard('ADMIN', 'CHEF')]
+        canActivate: [roleGuard('ADMIN', 'CHEF')],
+        data: { animation: 23 }
       },
-
       {
-        path: 'recipes',
+        path: 'reception',
         loadComponent: () =>
-          import('./features/general/recipes/recipes.component').then(m => m.RecipesComponent)
+          import('./features/general/reception/reception.component').then(m => m.ReceptionComponent),
+        canActivate: [roleGuard('ADMIN', 'CHEF')],
+        data: { animation: 24 }
       },
       {
         path: 'profile',
         loadComponent: () =>
           import('./features/general/profile/profile.component').then(m => m.ProfileComponent),
-        canActivate: [roleGuard('ADMIN', 'CHEF')]
+        canActivate: [roleGuard('ADMIN', 'CHEF')],
+        data: { animation: 25 }
       },
       {
         path: '',
