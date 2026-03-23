@@ -1,7 +1,7 @@
 <div class="modal-overlay modal-overlay-base" [class.closing]="isClosing">
   <div class="modal-dialog modal-dialog-base" (click)="$event.stopPropagation()">
     <div class="modal-header-base">
-      <h2>Crear Nuevo Pedido</h2>
+      <h2>{{ editOrder ? 'Editar Pedido #' + editOrder.id : 'Crear Nuevo Pedido' }}</h2>
       <button type="button" class="btn-close" (click)="close()">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -151,7 +151,7 @@
       </button>
       <button type="button" class="btn-submit" (click)="submitOrder()"
         [disabled]="!selectedUserId || orderItems.length === 0 || isSubmitting">
-        {{ isSubmitting ? 'Creando...' : 'Crear Pedido' }}
+        {{ isSubmitting ? (editOrder ? 'Actualizando...' : 'Creando...') : (editOrder ? 'Confirmar edición' : 'Crear Pedido') }}
       </button>
     </div>
   </div>
