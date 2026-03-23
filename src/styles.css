@@ -51,17 +51,19 @@
   --font-body: 'Sora', sans-serif;
   --font-body-weight: 400;
 
-  /* Admin theme */
-  --admin-rgb: 30, 40, 80;
-  --admin-secondary-rgb: 50, 60, 120;
-  --admin-bg-light: #f4f7fa;
+  /* Admin theme - Premium Dark Glassmorphism */
+  --admin-rgb: 90, 120, 220; /* Bright blue for accents */
+  --admin-secondary-rgb: 122, 150, 240;
+  --admin-bg-base: #080D1C; /* Very dark blue for background base */
+  
   --admin-primary: rgba(var(--admin-rgb), 0.95);
-  --admin-primary-light: rgba(var(--admin-rgb), 0.6);
+  --admin-primary-light: rgba(var(--admin-secondary-rgb), 0.6);
   --admin-primary-hover: rgba(var(--admin-rgb), 0.8);
-  --admin-gradient: linear-gradient(135deg, rgba(var(--admin-rgb), 0.95) 0%, rgba(var(--admin-secondary-rgb), 0.95) 100%);
+  --admin-gradient: linear-gradient(135deg, rgba(30, 40, 80, 0.4) 0%, rgba(20, 30, 60, 0.4) 100%);
   --admin-scrollbar-track: rgba(var(--admin-rgb), 0.05);
-  --admin-scrollbar-thumb: linear-gradient(135deg, rgba(var(--admin-rgb), 0.6), rgba(var(--admin-secondary-rgb), 0.6));
-  --admin-scrollbar-thumb-hover: linear-gradient(135deg, rgba(var(--admin-rgb), 0.8), rgba(var(--admin-secondary-rgb), 0.8));
+  --admin-scrollbar-thumb: linear-gradient(135deg, rgba(var(--admin-rgb), 0.4), rgba(var(--admin-secondary-rgb), 0.4));
+  --admin-scrollbar-thumb-hover: linear-gradient(135deg, rgba(var(--admin-rgb), 0.6), rgba(var(--admin-secondary-rgb), 0.6));
+
 }
 
 /* Fuentes Sora */
@@ -107,17 +109,20 @@ body {
   color: white;
 }
 
-body.admin-theme, html.admin-theme {
-  background-color: var(--admin-bg-light) !important;
-  color: #333 !important;
+body.admin-theme,
+html.admin-theme {
+  background-color: var(--admin-bg-base) !important;
+  color: white !important;
 }
 
 /* Aggressive scrollbar hide for root elements */
-html, body {
+html,
+body {
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
 }
-html::-webkit-scrollbar, 
+
+html::-webkit-scrollbar,
 body::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
@@ -127,7 +132,8 @@ body::-webkit-scrollbar {
 /* Custom scrollbar - Default (rojo) - HIDDEN BY DEFAULT FOR PAGES */
 ::-webkit-scrollbar {
   width: 8px !important;
-  display: none !important; /* Hide by default */
+  display: none !important;
+  /* Hide by default */
 }
 
 /* Show scrollbar ONLY in modals/dialogs or specific scrollable areas */
@@ -332,10 +338,13 @@ body::-webkit-scrollbar {
 
 /* Utility to hide scrollbars while keeping functionality */
 .hide-scrollbar {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
 }
 
 .hide-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
+  display: none;
+  /* Chrome, Safari and Opera */
 }
