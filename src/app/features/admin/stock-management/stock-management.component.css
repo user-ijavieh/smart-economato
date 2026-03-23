@@ -670,10 +670,12 @@ tbody.loading { opacity: 0.6; }
   .tab-bar { padding: 0; overflow-x: auto; white-space: nowrap; justify-content: flex-start; }
   .tab-btn { padding: 0 16px; }
   
-  .contenedor-principal { padding: 16px; }
-  .controles, .controles-ledger { flex-direction: column; align-items: stretch; padding: 15px; }
-  .controles button, .controles-ledger button { width: 100%; justify-content: center; }
-  .custom-select-container { width: 100%; }
+  .contenedor-principal { padding: 16px; box-sizing: border-box; overflow-x: hidden; }
+  .controles, .controles-ledger { flex-direction: column; align-items: stretch; padding: 15px; box-sizing: border-box; width: 100%; }
+  .controles button, .controles-ledger button { width: 100%; justify-content: center; box-sizing: border-box; }
+  .search-box { flex-direction: column; align-items: stretch; gap: 8px; width: 100%; box-sizing: border-box; }
+  .custom-select-container { width: 100%; max-width: 100%; box-sizing: border-box; }
+  .custom-select-trigger { width: 100%; box-sizing: border-box; }
   
   .stats-row { flex-direction: column; }
   .stat-card { max-width: none; }
