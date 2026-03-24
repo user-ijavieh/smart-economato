@@ -71,11 +71,6 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
     }
   }
 
-  getMinimumStock(): number {
-    if (!this.product) return 0;
-    return this.product.minStock ?? this.product.minimumStock ?? 0;
-  }
-
   getAvailabilityPercentage(): number | null {
     if (!this.product) return null;
     const rawValue = (this.product as any).availabilityPercentage
@@ -90,6 +85,6 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
 
   isLowStock(): boolean {
     if (!this.product) return false;
-    return this.product.currentStock < this.getMinimumStock();
+    return false; // Eliminado stock mínimo, por ahora no hay alerta de bajo stock basada en él
   }
 }

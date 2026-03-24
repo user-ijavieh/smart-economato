@@ -945,6 +945,122 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.05); }
 
 .btn-full { width: 100%; padding: 12px; justify-content: center; font-size: 0.95rem; }
 
+/** ===== TRAZABILIDAD MÓVIL ===== */
+.mobile-traceability-section {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 2px dashed rgba(255, 255, 255, 0.1);
+}
+
+.mobile-traceability-section .section-title {
+  font-size: 1rem;
+  margin-bottom: 16px;
+  color: #fff;
+  text-align: left;
+}
+
+.loading-traceability-mobile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 0;
+  color: var(--text-secondary);
+}
+
+.spinner-small {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid #5a78dc;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.mobile-ingredients-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mobile-ingredient-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.ingredient-name-mobile {
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 6px;
+}
+
+.mobile-trace-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobile-trace-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.mobile-trace-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.mobile-trace-value {
+  color: #fff;
+  font-weight: 500;
+}
+
+.mobile-trace-value.hash {
+  font-family: monospace;
+  font-size: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.order-chip-mobile {
+  background: rgba(90, 120, 220, 0.2);
+  color: #8da2fb;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  border: 1px solid rgba(90, 120, 220, 0.3);
+  cursor: pointer;
+}
+
+.initial-stock-badge-small {
+  font-size: 0.75rem;
+  color: #aaaaaa;
+  font-style: italic;
+}
+
+.empty-trace-mobile {
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 1400px) {

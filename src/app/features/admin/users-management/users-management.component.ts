@@ -85,7 +85,7 @@ export class UsersManagementComponent implements OnInit {
                 },
                 error: (err) => {
                     console.error('Error loading hidden users:', err);
-                    this.messageService.showError('Error al cargar los usuarios ocultos');
+                    this.messageService.showError('Error al cargar los usuarios desactivados');
                     this.loading = false;
                 }
             });

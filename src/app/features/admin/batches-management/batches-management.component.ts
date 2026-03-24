@@ -65,8 +65,8 @@ export class BatchesManagementComponent implements OnInit {
     this.batchService.getExpiringBatches(7).subscribe(list => this.expiringSoonCount = list.length);
   }
 
-  loadBatches(page: number = 0, append: boolean = false): void {
-    if (this.loading || (!append && page > 0 && page >= this.totalPages)) return;
+  loadBatches(page: number = 0): void {
+    if (this.loading) return;
     
     this.currentPage = page;
     this.loading = true;
@@ -86,11 +86,7 @@ export class BatchesManagementComponent implements OnInit {
             content = content.filter((b: any) => b.expired);
           }
           
-          if (append) {
-            this.batches = [...this.batches, ...content];
-          } else {
-            this.batches = content;
-          }
+          this.batches = content;
           
           this.totalPages = res.totalPages;
           this.totalElements = res.totalElements;
@@ -106,20 +102,14 @@ export class BatchesManagementComponent implements OnInit {
       });
   }
 
-  onScroll(event: any): void {
-    if (this.activeTab !== 'all') return;
+  loadControlBatches(page: number = 0): void {
+    if (this.loading) return;
     
-    const element = event.target;
-    if (element.scrollHeight - element.scrollTop <= element.clientHeight + 100) {
-      if (!this.loading && this.hasMore) {
-        this.loadBatches(this.currentPage + 1, true);
-      }
-    }
-  }
-
-  loadControlBatches(): void {
+    this.currentPage = page;
     this.loading = true;
     this.cdr.detectChanges();
+
+    const sortParam = `${this.sortColumn},${this.sortDir}`;
 
     const obs = this.batchesSubTab === 'expiring' 
       ? this.batchService.getExpiringBatches(this.expiringDays)
@@ -127,7 +117,14 @@ export class BatchesManagementComponent implements OnInit {
 
     obs.subscribe({
       next: (list) => {
-        this.controlBatches = list;
+        // Paginación manual si el API no la da para mantener el estilo
+        this.totalElements = list.length;
+        this.totalPages = Math.ceil(this.totalElements / this.pageSize);
+        
+        const start = this.currentPage * this.pageSize;
+        const end = start + this.pageSize;
+        this.controlBatches = list.slice(start, end);
+        
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -139,15 +136,27 @@ export class BatchesManagementComponent implements OnInit {
     });
   }
 
+  changePage(delta: number): void {
+    const next = this.currentPage + delta;
+    if (next >= 0 && next < this.totalPages) {
+      if (this.activeTab === 'all') {
+        this.loadBatches(next);
+      } else {
+        this.loadControlBatches(next);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
   switchTab(tab: ManagementTab): void {
     this.activeTab = tab;
     if (tab === 'all') this.loadBatches(0);
-    else this.loadControlBatches();
+    else this.loadControlBatches(0);
   }
 
   setSubTab(subTab: ControlSubTab): void {
     this.batchesSubTab = subTab;
-    this.loadControlBatches();
+    this.loadControlBatches(0);
   }
 
   onSearch(): void {
@@ -172,14 +181,6 @@ export class BatchesManagementComponent implements OnInit {
 
   getSortDir(column: string): string {
     return this.sortColumn === column ? this.sortDir : '';
-  }
-
-  nextPage(): void {
-    if (this.currentPage < this.totalPages - 1) this.loadBatches(this.currentPage + 1);
-  }
-
-  prevPage(): void {
-    if (this.currentPage > 0) this.loadBatches(this.currentPage - 1);
   }
 
   openEditModal(batch: ProductBatchResponseDTO): void {

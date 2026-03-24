@@ -161,8 +161,13 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     adjustmentType: 'AJUSTE' | 'MERMA' | 'ENTRADA' | 'SALIDA' = 'AJUSTE';
     adjustmentDescription = '';
     adjustmentBatchId: number | null = null;
+    adjustmentExpirationDate: string = '';
     activeBatchesForAdjustment: ProductBatchResponseDTO[] = [];
     submittingAdjustment = false;
+    
+    get todayStr(): string {
+        return new Date().toISOString().split('T')[0];
+    }
 
     // ── Mobile modal for Ledger transactions ──
     showLedgerMobileModal = false;
@@ -880,6 +885,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         this.adjustmentType = 'AJUSTE';
         this.adjustmentDescription = '';
         this.adjustmentBatchId = null;
+        this.adjustmentExpirationDate = '';
         this.productBatchService.getActiveBatches(this.selectedProductId).subscribe({
             next: (batches) => {
                 this.activeBatchesForAdjustment = batches;
@@ -897,6 +903,12 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     submitManualAdjustment(): void {
         if (!this.selectedProductId || !this.absoluteAdjustmentQuantity || !this.adjustmentDescription) return;
         
+        // If no batch is selected and we're adding stock, expiration date is mandatory (Backend DTO requirement)
+        if (!this.adjustmentBatchId && this.adjustmentDirection === 'ENTRY' && !this.adjustmentExpirationDate) {
+            this.messageService.showError('La fecha de caducidad es obligatoria para un nuevo lote.');
+            return;
+        }
+
         // Calculate signed delta
         const delta = this.adjustmentDirection === 'ENTRY' 
             ? Math.abs(this.absoluteAdjustmentQuantity) 
@@ -907,7 +919,8 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             quantityDelta: delta,
             movementType: this.adjustmentType,
             description: this.adjustmentDescription,
-            batchId: this.adjustmentBatchId || undefined
+            batchId: this.adjustmentBatchId || undefined,
+            expirationDate: (!this.adjustmentBatchId && this.adjustmentDirection === 'ENTRY') ? this.adjustmentExpirationDate : undefined
         };
 
         this.submittingAdjustment = true;

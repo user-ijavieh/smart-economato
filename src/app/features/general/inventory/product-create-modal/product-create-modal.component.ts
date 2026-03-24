@@ -26,18 +26,28 @@ export class ProductCreateModalComponent {
   formData = {
     name: '',
     productCode: '',
-    type: 'Ingrediente',
     unitPrice: 0,
     currentStock: 0,
-    minimumStock: undefined as number | undefined,
     availabilityPercentage: undefined as number | undefined,
     unit: 'KG',
     supplierId: undefined as number | undefined,
     expirationDate: ''
   };
 
-  allowedUnits = ['KG', 'G', 'L', 'ML', 'UND'];
-  productTypes = ['Ingrediente', 'Producto terminado', 'Bebida', 'Otro'];
+  allowedUnits = [
+    // Peso
+    "KG", "G", "MG", "ONZA", "LIBRA",
+    // Volumen
+    "L", "ML", "CL", "DL", "GARRAFA",
+    // Medidas de cocina
+    "CUCHARADA", "CUCHARADITA", "TAZA", "PIZCA", "VASO",
+    // Unidades discretas
+    "UNIDAD", "UND", "UDS", "PIEZA", "DOCENA",
+    // Envases/Empaquetado
+    "BOTE", "LATA", "PAQUETE", "SOBRE", "BOLSA", "CAJA", "SACO", "BANDEJA", "TUBO",
+    // Formas específicas de cocina
+    "MANOJO", "HOJA", "LONCHA", "DIENTE", "RAMA", "FILETE", "RODAJA", "REBANADA"
+  ];
 
   async onSubmit(): Promise<void> {
     // Verificar si el formulario es válido
@@ -56,9 +66,6 @@ export class ProductCreateModalComponent {
     // Asegurar que los valores numéricos sean números válidos
     const unitPrice = Number(this.formData.unitPrice);
     const currentStock = Number(this.formData.currentStock);
-    const minimumStock = this.formData.minimumStock !== undefined && this.formData.minimumStock !== null
-      ? Number(this.formData.minimumStock)
-      : undefined;
     const availabilityPercentage = this.formData.availabilityPercentage !== undefined && this.formData.availabilityPercentage !== null
       ? Number(this.formData.availabilityPercentage)
       : undefined;
@@ -86,10 +93,8 @@ export class ProductCreateModalComponent {
 
     // Enviar JSON en el formato exacto del backend
     const productData: ProductRequest = {
-      minimumStock: minimumStock,
       availabilityPercentage: availabilityPercentage,
       name: this.formData.name.trim(),
-      type: this.formData.type,
       unit: this.formData.unit,
       unitPrice: unitPrice,
       productCode: this.formData.productCode.trim(),
@@ -114,8 +119,6 @@ export class ProductCreateModalComponent {
     this.formData = {
       name: '',
       productCode: '',
-      type: 'Ingrediente',
-      minimumStock: undefined,
       availabilityPercentage: undefined,
       unitPrice: 0,
       currentStock: 0,

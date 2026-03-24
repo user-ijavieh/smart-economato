@@ -19,7 +19,10 @@ export const errorHandlingInterceptor: HttpInterceptorFn = (req, next) => {
       const isGetRequest = req.method === 'GET';
       const isForbidden = error.status === 403;
       
-      if (!(isGetRequest && isForbidden)) {
+      // No mostrar 401 aquí: el authInterceptor se encarga del logout
+      const isUnauthorized = error.status === 401;
+      
+      if (!(isGetRequest && isForbidden) && !isUnauthorized) {
         handleError(error, messageService);
       }
       return throwError(() => error);

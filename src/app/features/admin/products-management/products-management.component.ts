@@ -254,8 +254,7 @@ export class ProductsManagementComponent implements OnInit {
   }
 
   isLowStock(product: Product): boolean {
-    const minStock = product.minStock ?? product.minimumStock ?? 0;
-    return product.currentStock < minStock;
+    return false; // He eliminado el stock mínimo
   }
 
   getSupplierName(supplierId?: number): string {
@@ -451,8 +450,8 @@ export class ProductsManagementComponent implements OnInit {
 
   translateActionDescription(description: string): string {
     const translations: { [key: string]: string } = {
-      'HIDE_PRODUCT': 'Producto ocultado',
-      'SHOW_PRODUCT': 'Producto mostrado',
+      'HIDE_PRODUCT': 'Producto desactivado',
+      'SHOW_PRODUCT': 'Producto activado',
       'UPDATE_PRODUCT': 'Producto actualizado',
       'CREATE_PRODUCT': 'Producto creado',
       'DELETE_PRODUCT': 'Producto eliminado',
@@ -534,7 +533,7 @@ export class ProductsManagementComponent implements OnInit {
     // El estado actual es el inverso: si están mostrándose ocultos, el producto está oculto
     const currentlyHidden = this.showHiddenProducts;
     const newHiddenState = !currentlyHidden;
-    const actionText = newHiddenState ? 'oculto' : 'mostrado';
+    const actionText = newHiddenState ? 'desactivado' : 'activado';
 
     this.productService.toggleHidden(this.selectedProduct.id, newHiddenState).subscribe({
       next: () => {
@@ -549,7 +548,7 @@ export class ProductsManagementComponent implements OnInit {
         this.loadStats();
       },
       error: (err: any) => {
-        const errorMessage = err.error?.message || err.message || `Error al ${newHiddenState ? 'ocultar' : 'mostrar'} producto`;
+        const errorMessage = err.error?.message || err.message || `Error al ${newHiddenState ? 'desactivar' : 'activar'} producto`;
         this.messageService.showError(errorMessage);
       }
     });

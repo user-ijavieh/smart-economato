@@ -19,7 +19,7 @@
 </div>
 
 @if (activeTab === 'all') {
-  <div class="contenedor-principal" (scroll)="onScroll($event)">
+  <div class="contenedor-principal">
     <!-- CONTROLES TAB 1 -->
     <div class="controles">
       <div class="search-group">
@@ -154,60 +154,92 @@
 
     <!-- VISTA DE TARJETAS (MÓVIL) -->
     <div class="mobile-cards-view">
-      @for (batch of batches; track batch.id) {
-        <div 
-          class="batch-card" 
-          [class.card-expired]="batch.expired" 
-          [class.card-depleted]="batch.depleted"
-          (click)="openEditModal(batch)">
-          <div class="card-header">
-            <span class="id-badge">#{{ batch.id }}</span>
-            <span class="action-badge" [class.badge-delete]="batch.expired" [class.badge-update]="batch.daysUntilExpiration <= 7 && !batch.expired" [class.badge-create]="!batch.expired && batch.daysUntilExpiration > 7 && !batch.depleted" [class.badge-default]="batch.depleted">
-              {{ getStatusText(batch) }}
-            </span>
-          </div>
-          <div class="card-body">
-            <div class="card-product">
-              <strong>{{ batch.productName }}</strong>
+      @if (loading && batches.length === 0) {
+        @for (i of [1,2,3,4,5]; track i) {
+          <div class="batch-card skeleton-card">
+            <div class="card-header">
+              <span class="skeleton" style="width: 50px; height: 20px;"></span>
+              <span class="skeleton" style="width: 70px; height: 20px;"></span>
             </div>
-            <div class="card-details">
-              <div class="detail-item">
-                <span class="detail-label">Stock:</span>
-                <span class="stock-value" [class.stock-low]="batch.remainingQuantity < 5">
-                  {{ batch.remainingQuantity | number:'1.0-2' }}
-                </span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">Caducidad:</span>
-                <span class="date-badge" [class.expired]="batch.expired" [class.warning]="batch.daysUntilExpiration <= 7 && !batch.expired">
-                  {{ (batch.expirationDate | date:'dd/MM/yyyy') || 'Sin fecha' }}
-                </span>
+            <div class="card-body">
+              <div class="skeleton" style="width: 80%; height: 24px; margin-bottom: 12px;"></div>
+              <div class="card-details">
+                <div class="skeleton" style="width: 100%; height: 16px; margin-bottom: 8px;"></div>
+                <div class="skeleton" style="width: 100%; height: 16px;"></div>
               </div>
             </div>
           </div>
-          <div class="card-footer">
-            <div class="received-info">
-              Recibido: {{ batch.receivedAt | date:'dd/MM/yy' }}
+        }
+      } @else {
+        @for (batch of batches; track batch.id) {
+          <div 
+            class="batch-card" 
+            [class.card-expired]="batch.expired" 
+            [class.card-depleted]="batch.depleted"
+            (click)="openEditModal(batch)">
+            <div class="card-header">
+              <span class="id-badge">#{{ batch.id }}</span>
+              <span class="action-badge" [class.badge-delete]="batch.expired" [class.badge-update]="batch.daysUntilExpiration <= 7 && !batch.expired" [class.badge-create]="!batch.expired && batch.daysUntilExpiration > 7 && !batch.depleted" [class.badge-default]="batch.depleted">
+                {{ getStatusText(batch) }}
+              </span>
             </div>
-            <div class="card-actions">
-              <button class="btn-eliminar" (click)="$event.stopPropagation(); onWithdraw(batch)" title="Desechar Lote">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                  <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                </svg>
-              </button>
+            <div class="card-body">
+              <div class="card-product">
+                <strong>{{ batch.productName }}</strong>
+              </div>
+              <div class="card-details">
+                <div class="detail-item">
+                  <span class="detail-label">Stock:</span>
+                  <span class="stock-value" [class.stock-low]="batch.remainingQuantity < 5">
+                    {{ batch.remainingQuantity | number:'1.0-2' }}
+                  </span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Caducidad:</span>
+                  <span class="date-badge" [class.expired]="batch.expired" [class.warning]="batch.daysUntilExpiration <= 7 && !batch.expired">
+                    {{ (batch.expirationDate | date:'dd/MM/yyyy') || 'Sin fecha' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="received-info">
+                Recibido: {{ batch.receivedAt | date:'dd/MM/yy' }}
+              </div>
+              <div class="card-actions">
+                <button class="btn-eliminar" (click)="$event.stopPropagation(); onWithdraw(batch)" title="Desechar Lote">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      }
-      @if (loading) {
-        <div class="loading-more">Cargando más...</div>
+        }
+        @if (batches.length === 0 && !loading) {
+          <div class="empty-state">No se encontraron lotes activos</div>
+        }
       }
     </div>
+
+    @if (totalPages > 1) {
+    <div class="pagination-controls">
+        <button class="btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
+            Anterior
+        </button>
+        <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }} <span class="total-info">({{ totalElements }} lotes)</span></span>
+        <button class="btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
+            Siguiente
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
+        </button>
+    </div>
+    }
   </div>
 }
 @if (activeTab === 'control') {
-  <div class="contenedor-principal" (scroll)="onScroll($event)">
+  <div class="contenedor-principal">
     <!-- CONTROL DE CADUCIDAD -->
     <div class="controles-caducidad">
       <div class="sub-tab-bar">
@@ -326,37 +358,72 @@
 
     <!-- VISTA DE TARJETAS (MÓVIL) - CONTROL -->
     <div class="mobile-cards-view">
-      @for (batch of controlBatches; track batch.id) {
-        <div class="batch-card" (click)="openEditModal(batch)">
-          <div class="card-header">
-            <span class="id-badge">#{{ batch.id }}</span>
-            <span class="action-badge" [class.badge-delete]="batch.expired" [class.badge-update]="batch.daysUntilExpiration <= 7 && !batch.expired" [class.badge-create]="!batch.expired && batch.daysUntilExpiration > 7">
-              {{ getStatusText(batch) }}
-            </span>
-          </div>
-          <div class="card-body">
-            <div class="card-product">
-              <strong>{{ batch.productName }}</strong>
+      @if (loading && controlBatches.length === 0) {
+        @for (i of [1,2,3,4]; track i) {
+          <div class="batch-card skeleton-card">
+            <div class="card-header">
+              <span class="skeleton" style="width: 50px; height: 20px;"></span>
+              <span class="skeleton" style="width: 70px; height: 20px;"></span>
             </div>
-            <div class="card-details">
-              <div class="detail-item">
-                <span class="detail-label">Caducidad:</span>
-                <span class="date-badge" [class.expired]="batch.expired" [class.warning]="batch.daysUntilExpiration <= 7 && !batch.expired">
-                  {{ batch.expirationDate | date:'dd/MM/yyyy' }}
-                </span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">Stock:</span>
-                <strong>{{ batch.remainingQuantity | number:'1.0-2' }}</strong>
+            <div class="card-body">
+              <div class="skeleton" style="width: 85%; height: 22px; margin-bottom: 12px;"></div>
+              <div class="card-details">
+                <div class="skeleton" style="width: 100%; height: 16px; margin-bottom: 8px;"></div>
+                <div class="skeleton" style="width: 100%; height: 16px;"></div>
               </div>
             </div>
           </div>
-          <div class="card-footer">
-            <button class="btn-eliminar" (click)="$event.stopPropagation(); onWithdraw(batch)">Eliminar</button>
+        }
+      } @else {
+        @for (batch of controlBatches; track batch.id) {
+          <div class="batch-card" (click)="openEditModal(batch)">
+            <div class="card-header">
+              <span class="id-badge">#{{ batch.id }}</span>
+              <span class="action-badge" [class.badge-delete]="batch.expired" [class.badge-update]="batch.daysUntilExpiration <= 7 && !batch.expired" [class.badge-create]="!batch.expired && batch.daysUntilExpiration > 7">
+                {{ getStatusText(batch) }}
+              </span>
+            </div>
+            <div class="card-body">
+              <div class="card-product">
+                <strong>{{ batch.productName }}</strong>
+              </div>
+              <div class="card-details">
+                <div class="detail-item">
+                  <span class="detail-label">Caducidad:</span>
+                  <span class="date-badge" [class.expired]="batch.expired" [class.warning]="batch.daysUntilExpiration <= 7 && !batch.expired">
+                    {{ batch.expirationDate | date:'dd/MM/yyyy' }}
+                  </span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Stock:</span>
+                  <strong>{{ batch.remainingQuantity | number:'1.0-2' }}</strong>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button class="btn-eliminar" (click)="$event.stopPropagation(); onWithdraw(batch)">Eliminar</button>
+            </div>
           </div>
-        </div>
+        }
+        @if (controlBatches.length === 0 && !loading) {
+          <div class="empty-state">No hay lotes que requieran atención inmediata.</div>
+        }
       }
     </div>
+
+    @if (totalPages > 1) {
+      <div class="pagination-controls">
+        <button class="btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
+          Anterior
+        </button>
+        <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }} <span class="total-info">({{ totalElements }} lotes)</span></span>
+        <button class="btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
+          Siguiente
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
+        </button>
+      </div>
+    }
   </div>
 }
 

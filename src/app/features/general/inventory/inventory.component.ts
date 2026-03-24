@@ -349,7 +349,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     // Pero lo implementamos por compatibilidad
     this.productService.toggleHidden(this.selectedProduct.id, true).subscribe({
       next: () => {
-        this.messageService.showSuccess('Producto oculto correctamente');
+        this.messageService.showSuccess('Producto desactivado correctamente');
         this.showEditModal = false;
         this.selectedProduct = null;
         this.loadProducts();
@@ -434,12 +434,10 @@ export class InventoryComponent implements OnInit, OnDestroy {
     const productRequest: ProductRequest = {
       name: this.selectedProduct.name,
       productCode: this.selectedProduct.productCode || `PROD-${this.selectedProduct.id}`,
-      type: this.selectedProduct.type || 'Ingrediente',
       unitPrice: price,
       price: price, // legacy?
       currentStock: this.selectedProduct.currentStock || 0,
       stock: this.selectedProduct.currentStock || 0, // legacy?
-      minStock: this.selectedProduct.minStock || 0,
       unit: unit,
       supplierId: this.selectedProduct.supplier?.id,
       active: false
@@ -493,7 +491,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   isLowStock(product: Product): boolean {
-    return product.currentStock <= (product.minStock || 0);
+    return false; // He eliminado el stock mínimo, así que no hay lógica de stock bajo aquí
   }
 
   get isAdmin(): boolean {

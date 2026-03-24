@@ -27,16 +27,6 @@
 
     <div class="form-row">
       <div class="form-group">
-        <label for="tipoProducto">Tipo</label>
-        <input
-          type="text"
-          id="tipoProducto"
-          [(ngModel)]="formProduct.type"
-          name="type"
-          placeholder="Ej: Ingrediente"
-        />
-      </div>
-      <div class="form-group">
         <label for="precioProducto">Precio (€) *</label>
         <input
           type="number"
@@ -58,18 +48,6 @@
           id="stockProducto"
           [(ngModel)]="formProduct.stock"
           name="stock"
-          step="0.001"
-          min="0"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <label for="stockMinimoProducto">Stock Mínimo *</label>
-        <input
-          type="number"
-          id="stockMinimoProducto"
-          [(ngModel)]="formProduct.minStock"
-          name="minStock"
           step="0.001"
           min="0"
           required

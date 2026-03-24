@@ -7,9 +7,14 @@ export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
+  // Verificar si hay token y si está autenticado
   if (authService.isAuthenticated()) {
+    // El token existe, pero podría estar expirado
+    // Los interceptores manejarán los 401 cuando haga peticiones
     return true;
   }
 
-  return router.createUrlTree(['/login']);
+  // No hay token o no está autenticado - ir al login
+  router.navigate(['/login']);
+  return false;
 };
