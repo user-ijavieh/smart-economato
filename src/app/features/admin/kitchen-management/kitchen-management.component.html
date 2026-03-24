@@ -175,6 +175,50 @@
                   <span class="detail-label">Cantidad (Porciones)</span>
                   <span class="detail-value">{{ selectedAuditForMobile.quantityCooked | number:'1.2-2' }}</span>
               </div>
+
+              <!-- Trazabilidad en Móvil -->
+              <div class="mobile-traceability-section">
+                  <h3 class="section-title">Trazabilidad de Ingredientes</h3>
+                  
+                  @if (loadingTraceability) {
+                    <div class="loading-traceability-mobile">
+                      <div class="spinner-small"></div>
+                      <p>Cargando origen...</p>
+                    </div>
+                  } @else if (traceData) {
+                    <div class="mobile-ingredients-list">
+                      @for (ingredient of traceData.ingredientTrace; track ingredient.productName) {
+                        <div class="mobile-ingredient-card">
+                          <div class="ingredient-name-mobile">{{ ingredient.productName }}</div>
+                          <div class="mobile-trace-grid">
+                            <div class="mobile-trace-item">
+                              <span class="mobile-trace-label">Hash:</span>
+                              <span class="mobile-trace-value hash">{{ ingredient.ledgerHash || 'N/A' }}</span>
+                            </div>
+                            <div class="mobile-trace-item">
+                              <span class="mobile-trace-label">Origen:</span>
+                              <span class="mobile-trace-value">
+                                @if (ingredient.orderId) {
+                                  <span class="order-chip-mobile" (click)="goToOrder(ingredient.orderId)">Orden #{{ ingredient.orderId }}</span>
+                                } @else {
+                                  <span class="initial-stock-badge-small">Manual / Stock Inicial</span>
+                                }
+                              </span>
+                            </div>
+                            <div class="mobile-trace-item">
+                              <span class="mobile-trace-label">Proveedor:</span>
+                              <span class="mobile-trace-value">{{ ingredient.supplierName || 'Desconocido' }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                      @if (!traceData.ingredientTrace.length) {
+                        <p class="empty-trace-mobile">No hay datos de trazabilidad.</p>
+                      }
+                    </div>
+                  }
+              </div>
+
               <div class="detail-actions">
                   <button class="btn-revert btn-full" (click)="revertAudit(selectedAuditForMobile); closeMobileModal()">
                       Revertir Cocinado
@@ -190,7 +234,7 @@
 @if (activeTab === 'reports') {
 <div class="contenedor-principal">
   <div class="controles">
-    <select [(ngModel)]="reportRange" class="action-select">
+    <select [(ngModel)]="reportRange" class="action-select" (ngModelChange)="loadReport()">
       @for (range of reportRanges; track range) {
       <option [value]="range">{{ translateRange(range) }}</option>
       }
@@ -198,13 +242,12 @@
 
     @if (reportRange === 'CUSTOM') {
     <div class="date-range-group">
-      <input type="date" [(ngModel)]="reportStartDate" class="date-input" />
+      <input type="date" [(ngModel)]="reportStartDate" class="date-input" (ngModelChange)="loadReport()" />
       <span class="date-separator">—</span>
-      <input type="date" [(ngModel)]="reportEndDate" class="date-input" />
+      <input type="date" [(ngModel)]="reportEndDate" class="date-input" (ngModelChange)="loadReport()" />
     </div>
     }
 
-    <button (click)="loadReport()">Generar Informe</button>
     <button class="btn-pdf" (click)="downloadReportPdf()">Descargar PDF</button>
   </div>
 

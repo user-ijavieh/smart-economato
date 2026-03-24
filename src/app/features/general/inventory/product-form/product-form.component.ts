@@ -7,10 +7,8 @@ import { Supplier } from '../../../../shared/models/supplier.model';
 export interface ProductFormState {
   name: string;
   productCode: string;
-  type: string;
   price: number;
   stock: number;
-  minStock: number;
   unit: string;
   supplierId: number | undefined;
   expirationDate: string;
@@ -34,16 +32,27 @@ export class ProductFormComponent implements OnChanges {
   formProduct: ProductFormState = {
     name: '',
     productCode: '',
-    type: 'Ingrediente',
     price: 0,
     stock: 0,
-    minStock: 0,
     unit: 'UND', // Default to valid unit
     supplierId: undefined,
     expirationDate: ''
   };
 
-  allowedUnits = ['KG', 'G', 'L', 'ML', 'UND'];
+  allowedUnits = [
+    // Peso
+    "KG", "G", "MG", "ONZA", "LIBRA",
+    // Volumen
+    "L", "ML", "CL", "DL", "GARRAFA",
+    // Medidas de cocina
+    "CUCHARADA", "CUCHARADITA", "TAZA", "PIZCA", "VASO",
+    // Unidades discretas
+    "UNIDAD", "UND", "UDS", "PIEZA", "DOCENA",
+    // Envases/Empaquetado
+    "BOTE", "LATA", "PAQUETE", "SOBRE", "BOLSA", "CAJA", "SACO", "BANDEJA", "TUBO",
+    // Formas específicas de cocina
+    "MANOJO", "HOJA", "LONCHA", "DIENTE", "RAMA", "FILETE", "RODAJA", "REBANADA"
+  ];
   
   isEditing = false;
 
@@ -53,10 +62,8 @@ export class ProductFormComponent implements OnChanges {
       this.formProduct = {
         name: this.product.name,
         productCode: this.product.productCode || '',
-        type: this.product.type || 'Ingrediente',
         price: this.product.unitPrice || 0,
         stock: this.product.currentStock || 0,
-        minStock: this.product.minStock || 0,
         unit: this.product.unit || 'UND',
         supplierId: this.product.supplier?.id,
         expirationDate: this.product.expirationDate || ''
@@ -71,10 +78,8 @@ export class ProductFormComponent implements OnChanges {
     this.formProduct = {
       name: '',
       productCode: '',
-      type: 'Ingrediente',
       price: 0,
       stock: 0,
-      minStock: 0,
       unit: 'UND',
       supplierId: undefined,
       expirationDate: ''
@@ -83,7 +88,6 @@ export class ProductFormComponent implements OnChanges {
 
   onSubmit(): void {
     const stockValue = this.formProduct.stock !== null ? this.formProduct.stock : 0;
-    const minStockValue = this.formProduct.minStock !== null ? this.formProduct.minStock : 0;
 
     if (stockValue > 0 && !this.formProduct.expirationDate) {
       alert('La fecha de caducidad es obligatoria cuando se introduce stock inicial.');
@@ -93,13 +97,10 @@ export class ProductFormComponent implements OnChanges {
     const productData: ProductRequest = {
       name: this.formProduct.name,
       productCode: this.formProduct.productCode,
-      type: this.formProduct.type,
       price: this.formProduct.price,
       unitPrice: this.formProduct.price,
       stock: stockValue,
       currentStock: stockValue,
-      minStock: minStockValue,
-      minimumStock: minStockValue,
       unit: this.formProduct.unit,
       supplierId: this.formProduct.supplierId,
       expirationDate: this.formProduct.expirationDate || undefined

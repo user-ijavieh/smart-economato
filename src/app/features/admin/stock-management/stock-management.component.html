@@ -791,12 +791,22 @@
       <div class="form-item">
         <label>Asignar a Lote Específico (Opcional)</label>
         <select [(ngModel)]="adjustmentBatchId" class="input-standard">
-          <option [ngValue]="null">--- Selección Automática / No Lote ---</option>
+          <option [ngValue]="null">--- Crear Lote Nuevo / Selección Automática ---</option>
           @for (batch of activeBatchesForAdjustment; track batch.id) {
             <option [ngValue]="batch.id">Lote #{{ batch.id }} - Stock: {{ batch.remainingQuantity | number:'1.0-2' }} (Cad: {{ batch.expirationDate | date:'dd/MM/yyyy' }})</option>
           }
         </select>
       </div>
+
+      <!-- Expiration Date for New Batch (Backend requires this if batchId is null for entries) -->
+      @if (!adjustmentBatchId && adjustmentDirection === 'ENTRY') {
+      <div class="form-item arrival-animation">
+        <label>Fecha de Caducidad (Lote Nuevo) *</label>
+        <input type="date" [(ngModel)]="adjustmentExpirationDate" class="input-standard" 
+              [min]="todayStr" required />
+        <small class="form-help">Obligatorio al crear un nuevo lote para el inventario.</small>
+      </div>
+      }
 
       <div class="form-item">
         <label>Motivo del Ajuste *</label>

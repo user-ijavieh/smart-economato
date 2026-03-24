@@ -211,7 +211,6 @@
               (click)="openDetailModal(product)"
             >
               <td>{{ product.name }}</td>
-              <td class="hide-on-mobile">{{ product.type || '—' }}</td>
               <td class="hide-on-mobile">{{ product.unitPrice | number: '1.2-2' }} €</td>
               <td>
                 {{ product.currentStock }}

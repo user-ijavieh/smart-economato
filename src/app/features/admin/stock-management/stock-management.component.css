@@ -636,6 +636,26 @@ tbody.loading { opacity: 0.6; }
 .input-standard:focus { outline: none; border-color: rgba(90, 120, 220, 0.6); background: rgba(255,255,255,0.08); box-shadow: 0 0 0 3px rgba(90, 120, 220, 0.2); }
 .input-standard option { background: #1a1f33; color: white; }
 
+.arrival-animation {
+  animation: fadeIn 0.4s ease-out both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.form-help {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.input-standard[required]:invalid {
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
 /** ===== LEDGER MOBILE DETAIL MODAL ===== */
 .ledger-detail-status { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 20px; border-radius: 12px; font-weight: bold; font-size: 1.1rem; margin-bottom: 20px; }
 .ledger-detail-status.status-ok { background: rgba(76, 175, 80, 0.1); color: #a7f3d0; border: 1px solid rgba(76, 175, 80, 0.3); }

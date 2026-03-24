@@ -26,15 +26,6 @@
         </div>
 
         <div class="form-group">
-          <label for="type">Tipo *</label>
-          <select id="type" [(ngModel)]="formData.type" name="type" required>
-            @for (type of productTypes; track type) {
-            <option [value]="type">{{ type }}</option>
-            }
-          </select>
-        </div>
-
-        <div class="form-group">
           <label for="unit">Unidad *</label>
           <select id="unit" [(ngModel)]="formData.unit" name="unit" required>
             @for (unit of allowedUnits; track unit) {
@@ -47,12 +38,6 @@
           <label for="unitPrice">Precio Unitario (€) *</label>
           <input type="number" id="unitPrice" [(ngModel)]="formData.unitPrice" name="unitPrice" required min="0"
             step="0.01" placeholder="0.00" />
-        </div>
-
-        <div class="form-group">
-          <label for="minimumStock">Stock Mínimo</label>
-          <input type="number" id="minimumStock" [(ngModel)]="formData.minimumStock" name="minimumStock"
-            min="0" step="0.01" placeholder="0" />
         </div>
 
         <div class="form-group">

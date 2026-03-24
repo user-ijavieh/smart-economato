@@ -278,11 +278,34 @@ export class KitchenManagementComponent implements OnInit {
   openMobileModal(audit: RecipeCookingAudit): void {
     this.selectedAuditForMobile = audit;
     this.showMobileModal = true;
+    
+    // Cargar trazabilidad para el modal móvil también
+    this.loadingTraceability = true;
+    this.traceData = null;
+    this.cdr.markForCheck();
+
+    this.traceabilityService.getReverseTraceability(audit.id)
+      .pipe(finalize(() => {
+        this.loadingTraceability = false;
+        this.cdr.markForCheck();
+      }))
+      .subscribe({
+        next: (data: any) => {
+          this.traceData = data as ReverseTraceabilityDTO;
+        },
+        error: () => {
+          console.error('Error loading traceability for mobile modal');
+          this.loadingTraceability = false;
+          this.cdr.markForCheck();
+        }
+      });
   }
 
   closeMobileModal(): void {
     this.showMobileModal = false;
     this.selectedAuditForMobile = null;
+    this.traceData = null; // Limpiar datos de trazabilidad
+    this.cdr.markForCheck();
   }
 
   hasActiveHistoryFilters(): boolean {
@@ -374,7 +397,7 @@ export class KitchenManagementComponent implements OnInit {
 
   loadReport(): void {
     if (this.reportRange === 'CUSTOM' && (!this.reportStartDate || !this.reportEndDate)) {
-      this.messageService.showWarning('Debes indicar fecha de inicio y fin para rango personalizado');
+      // No mostramos warning automáticamente al cambiar el selector para no molestar al usuario si aún no ha puesto fechas
       return;
     }
 

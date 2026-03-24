@@ -4,7 +4,6 @@ import { Supplier } from './supplier.model';
 export interface Product {
   id: number;
   name: string;
-  type?: string;
   unit: string;
   unitPrice: number;
   productCode?: string;
@@ -12,8 +11,6 @@ export interface Product {
   // Stock property - favoring currentStock as per recent changes but keeping stock for compatibility if backend sends it
   stock?: number; 
   currentStock: number;
-  minStock?: number;  // Opcional porque el backend no siempre lo devuelve
-  minimumStock?: number;
   availabilityPercentage?: number;
   hidden?: boolean;
   
@@ -31,7 +28,6 @@ export interface Product {
 export interface ProductRequest {
   name: string;
   productCode?: string;
-  type?: string;
   barcode?: string;
   
   // Price
@@ -41,8 +37,6 @@ export interface ProductRequest {
   // Stock
   stock?: number;
   currentStock: number;
-  minStock?: number;  // Opcional
-  minimumStock?: number;
   availabilityPercentage?: number;
   hidden?: boolean;
 

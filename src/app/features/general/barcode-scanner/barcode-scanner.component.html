@@ -144,21 +144,9 @@
             <span class="info-label">Stock actual</span>
             <span
               class="info-value"
-              [class.low-stock]="product.currentStock <= (product.minStock || 0)"
             >
               {{ product.currentStock }} {{ product.unit }}
             </span>
-          </div>
-          <div
-            class="info-item"
-            *ngIf="product.minStock !== undefined && product.minStock !== null"
-          >
-            <span class="info-label">Stock mínimo</span>
-            <span class="info-value">{{ product.minStock }} {{ product.unit }}</span>
-          </div>
-          <div class="info-item" *ngIf="product.type">
-            <span class="info-label">Tipo</span>
-            <span class="info-value">{{ product.type }}</span>
           </div>
           <div class="info-item" *ngIf="product.supplier?.name">
             <span class="info-label">Proveedor</span>

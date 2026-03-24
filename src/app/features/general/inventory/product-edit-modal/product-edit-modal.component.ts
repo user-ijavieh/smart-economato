@@ -29,27 +29,35 @@ export class ProductEditModalComponent implements OnChanges {
   formData = {
     name: '',
     productCode: '',
-    type: 'Ingrediente',
     unitPrice: 0,
     currentStock: 0,
-    minimumStock: undefined as number | undefined,
     availabilityPercentage: undefined as number | undefined,
     unit: 'KG',
     supplierId: undefined as number | undefined
   };
 
-  allowedUnits = ['KG', 'G', 'L', 'ML', 'UND'];
-  productTypes = ['Ingrediente', 'Producto terminado', 'Bebida', 'Otro'];
+  allowedUnits = [
+    // Peso
+    "KG", "G", "MG", "ONZA", "LIBRA",
+    // Volumen
+    "L", "ML", "CL", "DL", "GARRAFA",
+    // Medidas de cocina
+    "CUCHARADA", "CUCHARADITA", "TAZA", "PIZCA", "VASO",
+    // Unidades discretas
+    "UNIDAD", "UND", "UDS", "PIEZA", "DOCENA",
+    // Envases/Empaquetado
+    "BOTE", "LATA", "PAQUETE", "SOBRE", "BOLSA", "CAJA", "SACO", "BANDEJA", "TUBO",
+    // Formas específicas de cocina
+    "MANOJO", "HOJA", "LONCHA", "DIENTE", "RAMA", "FILETE", "RODAJA", "REBANADA"
+  ];
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['product'] && this.product) {
       this.formData = {
         name: this.product.name,
         productCode: this.product.productCode || '',
-        type: this.product.type || 'Ingrediente',
         unitPrice: Number(this.product.unitPrice) || 0,
         currentStock: Number(this.product.currentStock) || 0,
-        minimumStock: this.product.minimumStock || this.product.minStock || undefined,
         availabilityPercentage: this.product.availabilityPercentage || undefined,
         unit: this.product.unit || 'KG',
         supplierId: this.product.supplier?.id
@@ -64,9 +72,6 @@ export class ProductEditModalComponent implements OnChanges {
     }
 
     // Asegurar que los valores numéricos sean números válidos
-    const minimumStock = this.formData.minimumStock !== undefined && this.formData.minimumStock !== null
-      ? Number(this.formData.minimumStock)
-      : undefined;
     const availabilityPercentage = this.formData.availabilityPercentage !== undefined && this.formData.availabilityPercentage !== null
       ? Number(this.formData.availabilityPercentage)
       : undefined;
@@ -91,10 +96,8 @@ export class ProductEditModalComponent implements OnChanges {
 
     // Enviar JSON en el formato exacto del backend
     const productData: ProductRequest = {
-      minimumStock: minimumStock,
       availabilityPercentage: availabilityPercentage,
       name: this.formData.name.trim(),
-      type: this.formData.type,
       unit: this.formData.unit,
       unitPrice: unitPrice,
       productCode: this.formData.productCode.trim(),

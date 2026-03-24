@@ -53,7 +53,6 @@ export class StockUpdateModalComponent implements OnChanges {
     const productRequest: ProductRequest = {
       name: this.product.name,
       productCode: this.product.productCode,
-      type: this.product.type,
       unit: this.product.unit,
       unitPrice: this.product.unitPrice,
       supplierId: this.product.supplier?.id,
@@ -62,7 +61,6 @@ export class StockUpdateModalComponent implements OnChanges {
       // Legacy/Compat fields just in case
       price: this.product.unitPrice,
       stock: this.currentStock,
-      minStock: this.product.minStock,
       expirationDate: this.expirationDate || undefined
     };
 

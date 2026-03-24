@@ -23,10 +23,6 @@
                   <td>{{ product.productCode || '—' }}</td>
                 </tr>
                 <tr>
-                  <td class="detail-label">Tipo</td>
-                  <td>{{ product.type || '—' }}</td>
-                </tr>
-                <tr>
                   <td class="detail-label">Unidad</td>
                   <td>{{ product.unit }}</td>
                 </tr>
@@ -50,10 +46,6 @@
                 <tr [class.low-stock-row]="isLowStock()">
                   <td class="detail-label">Stock Actual</td>
                   <td>{{ product.currentStock }} {{ product.unit }}</td>
-                </tr>
-                <tr>
-                  <td class="detail-label">Stock Mínimo</td>
-                  <td>{{ getMinimumStock() }} {{ product.unit }}</td>
                 </tr>
                 @if (getAvailabilityPercentage() !== null) {
                 <tr>
