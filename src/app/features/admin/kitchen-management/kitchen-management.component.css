@@ -1015,10 +1015,12 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.05); }
 }
 
 @media (max-width: 576px) {
-  .header-recetas h1 { font-size: 1.1rem; }
+  .header-recetas h1 { font-size: 1.3rem; }
   .tab-btn { padding: 10px 12px; font-size: 0.85rem; gap: 6px; }
   .tab-btn svg { width: 16px; height: 16px; }
   .contenedor-principal { padding: 12px; }
   .controles { padding: 14px; gap: 10px; }
-  .stats-row { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .stat-card { padding: 12px; }
+  .stat-number { font-size: 1.4rem; }
 }

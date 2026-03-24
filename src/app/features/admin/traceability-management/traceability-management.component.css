@@ -403,7 +403,7 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.05); }
 @media (max-width: 768px) {
   .hide-on-mobile { display: none !important; }
   .header-recetas { height: 60px; padding: 0 20px; }
-  .header-recetas h1 { font-size: 1.4rem; }
+  .header-recetas h1 { font-size: 1.5rem; }
   
   .contenedor-principal { padding: 16px; }
   .action-header { padding: 16px; flex-direction: column; align-items: stretch; }
