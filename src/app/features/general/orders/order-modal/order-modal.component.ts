@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, Input, EventEmitter, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OrderService } from '../../../../core/services/order.service';
@@ -9,7 +9,7 @@ import { MessageService } from '../../../../core/services/message.service';
 import { Product } from '../../../../shared/models/product.model';
 import { User } from '../../../../shared/models/user.model';
 import { Supplier } from '../../../../shared/models/supplier.model';
-import { OrderRequest } from '../../../../shared/models/order.model';
+import { Order, OrderRequest } from '../../../../shared/models/order.model';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 interface OrderItem {
@@ -37,6 +37,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
 
   @Output() closeModal = new EventEmitter<void>();
   @Output() orderCreated = new EventEmitter<void>();
+  @Input() editOrder: Order | null = null;
 
   users: User[] = [];
   selectedUserId: number | null = null;
@@ -68,6 +69,19 @@ export class OrderModalComponent implements OnInit, OnDestroy {
     this.loadUsers();
     this.loadSuppliers();
     this.loadProducts();
+
+    if (this.editOrder) {
+      this.selectedUserId = this.editOrder.userId;
+      this.selectedSupplierId = this.editOrder.supplierId || null;
+      this.orderItems = (this.editOrder.details || []).map(d => ({
+        productId: d.productId,
+        productName: d.productName,
+        unit: d.unit || 'uds',
+        quantity: d.quantity,
+        unitPrice: d.unitPrice
+      }));
+    }
+
     // Listener para cerrar dropdown al hacer clic fuera
     document.addEventListener('click', this.onDocumentClick.bind(this));
   }
@@ -282,16 +296,20 @@ export class OrderModalComponent implements OnInit, OnDestroy {
       }))
     };
 
-    this.orderService.create(orderRequest).subscribe({
+    const action$ = this.editOrder 
+      ? this.orderService.update(this.editOrder.id, orderRequest)
+      : this.orderService.create(orderRequest);
+
+    action$.subscribe({
       next: () => {
-        this.messageService.showSuccess('Pedido creado exitosamente');
+        this.messageService.showSuccess(this.editOrder ? 'Pedido actualizado exitosamente' : 'Pedido creado exitosamente');
         this.isSubmitting = false;
         this.orderCreated.emit();
         this.close();
       },
       error: (error) => {
-        console.error('Error creating order:', error);
-        this.messageService.showError('Error al crear el pedido');
+        console.error('Error submitting order:', error);
+        this.messageService.showError(this.editOrder ? 'Error al actualizar el pedido' : 'Error al crear el pedido');
         this.isSubmitting = false;
         this.cdr.markForCheck();
       }
