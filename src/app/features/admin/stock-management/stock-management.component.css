@@ -688,7 +688,7 @@ tbody.loading { opacity: 0.6; }
 }
 
 @media (max-width: 576px) {
-  .header-stock h1 { font-size: 1.2rem; }
+  .header-stock h1 { font-size: 1.3rem; }
   .info-card { flex-direction: column; text-align: center; }
   .detail-table td { display: block; width: 100%; }
   .detail-td-label { border-bottom: none; padding-bottom: 0; }
