@@ -80,6 +80,31 @@ export class LayoutComponent {
   }
 
   prepareRoute(outlet: RouterOutlet) {
-    return outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
+    const animation = outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
+    if (!animation) return null;
+    
+    // Si estamos en móvil, animamos en el eje X (horizontal) en vez de Y (vertical)
+    if (window.innerWidth <= 768) {
+      return {
+        value: animation,
+        params: {
+          enterTransform: 'translateX(100%)',
+          leaveTransform: 'translateX(-10%)',
+          enterTransformDec: 'translateX(-100%)',
+          leaveTransformDec: 'translateX(10%)'
+        }
+      };
+    }
+    
+    // Por defecto en desktop (eje Y)
+    return {
+      value: animation,
+      params: {
+        enterTransform: 'translateY(100%)',
+        leaveTransform: 'translateY(-10%)',
+        enterTransformDec: 'translateY(-100%)',
+        leaveTransformDec: 'translateY(10%)'
+      }
+    };
   }
 }

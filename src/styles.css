@@ -100,6 +100,7 @@ html {
   font-weight: var(--font-body-weight);
   line-height: 1.5rem;
   background-color: #0c0808;
+  overflow-x: hidden;
 }
 
 body {
@@ -107,6 +108,8 @@ body {
   min-height: 100dvh;
   background-color: #0c0808;
   color: white;
+  overflow-x: hidden;
+  position: relative;
 }
 
 body.admin-theme,
