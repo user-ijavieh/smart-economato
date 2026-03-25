@@ -85,7 +85,7 @@
                     <th class="hide-on-mobile">Fecha</th>
                     <th class="hide-on-mobile">Estado</th>
                     <th>Total</th>
-                    <th class="actions-col hide-on-mobile">Acciones</th>
+                    <th class="actions-col">Acciones</th>
                 </tr>
             </thead>
             <tbody [class.loading]="loading">
@@ -97,7 +97,7 @@
                         <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width:130px"></span></td>
                         <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width:90px"></span></td>
                         <td><span class="skeleton skeleton-text" style="width:80px"></span></td>
-                        <td class="actions-col hide-on-mobile"></td>
+                        <td class="actions-col"></td>
                     </tr>
                     }
                 } @else {
@@ -128,7 +128,7 @@
                             </span>
                         </td>
                         <td data-label="Total"><span class="cost-value">{{ (order.totalPrice || 0) | number:'1.2-2' }} €</span></td>
-                        <td class="actions-col hide-on-mobile" (click)="$event.stopPropagation()">
+                        <td class="actions-col" (click)="$event.stopPropagation()">
                             <div class="actions-cell">
                                 <button class="btn-ver" (click)="openOrderDetail(order)" title="Ver detalles">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -351,9 +351,9 @@
                     <span class="audit-header-user">{{ selectedAudit.userName }}</span>
                 </div>
             </div>
-            <button class="modal-close" (click)="closeAuditDetail()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <button class="audit-modal-close" (click)="closeAuditDetail()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                     <line x1="18" y1="6" x2="6" y2="18" />
                     <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
