@@ -103,7 +103,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   background: var(--color-surface-glass);
   backdrop-filter: var(--effect-glass);
@@ -117,7 +117,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   width: 100%;
 }
@@ -328,11 +328,11 @@ tbody tr:hover {
 .badge-update { background: rgba(168, 85, 247, 0.15); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3); }
 
 /** ===== ACTIONS ===== */
-.actions-col { text-align: center; }
+.actions-col { text-align: left; }
 .actions-cell {
   display: flex;
   gap: 8px;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .btn-ver, .btn-pdf, .btn-edit-status, .btn-revert, .btn-imprimir {
