@@ -18,10 +18,10 @@
   --radius-card: 18px;
   --radius-input: 14px;
   --radius-btn: 12px;
-  
+
   --effect-glass: blur(24px);
-  --shadow-card: 0 4px 24px rgba(0,0,0,0.50);
-  --shadow-hover: 0 22px 55px rgba(0,0,0,0.65);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.50);
+  --shadow-hover: 0 22px 55px rgba(0, 0, 0, 0.65);
 }
 
 /* ── Wrapper: imagen de fondo fija ── */
@@ -44,7 +44,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(155deg, rgba(10,3,3,0.78) 0%, rgba(184,75,68,0.32) 48%, rgba(10,3,3,0.82) 100%);
+  background: linear-gradient(155deg, rgba(10, 3, 3, 0.78) 0%, rgba(184, 75, 68, 0.32) 48%, rgba(10, 3, 3, 0.82) 100%);
   pointer-events: none;
   z-index: 0;
 }
@@ -53,14 +53,16 @@
 .card {
   position: relative;
   z-index: 1;
-  width: 400px; /* 3.2 Modals */
+  width: 400px;
+  /* 3.2 Modals */
   background: var(--color-surface-glass);
   backdrop-filter: var(--effect-glass);
   -webkit-backdrop-filter: var(--effect-glass);
   border-radius: var(--radius-card);
   border: 1px solid var(--color-border-glass);
   box-shadow: var(--shadow-card);
-  padding: 40px 36px 32px; /* space-lg top, modal standard */
+  padding: 40px 36px 32px;
+  /* space-lg top, modal standard */
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -68,16 +70,25 @@
 }
 
 @keyframes cardIn {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ── Encabezado ── */
 .card-header {
-  margin-bottom: 24px; /* space-md */
+  margin-bottom: 24px;
+  /* space-md */
   display: flex;
   flex-direction: column;
-  gap: 6px; /* space-xs */
+  gap: 6px;
+  /* space-xs */
   text-align: left;
 }
 
@@ -85,7 +96,8 @@
   margin: 0;
   font-family: var(--font-body);
   font-weight: 300;
-  font-size: 0.8rem; /* font-label-sm */
+  font-size: 0.8rem;
+  /* font-label-sm */
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-text-secondary);
@@ -95,7 +107,8 @@
 .card-title {
   margin: 0;
   font-family: var(--font-heading);
-  font-size: 1.4rem; /* font-heading-md */
+  font-size: 1.4rem;
+  /* font-heading-md */
   font-weight: 600;
   letter-spacing: 0.5px;
   color: var(--color-text-primary);
@@ -108,16 +121,25 @@
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ── Formulario ── */
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px; /* space-xs */
-  margin-bottom: 24px; /* space-md */
+  gap: 6px;
+  /* space-xs */
+  margin-bottom: 24px;
+  /* space-md */
   animation: fadeUp 0.5s 0.26s both;
 }
 
@@ -128,7 +150,8 @@
 .form-label {
   font-family: var(--font-body);
   font-weight: 300;
-  font-size: 0.8rem; /* font-label-sm */
+  font-size: 0.8rem;
+  /* font-label-sm */
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-text-secondary);
@@ -146,7 +169,8 @@
   -webkit-backdrop-filter: blur(8px);
   font-family: var(--font-body);
   font-weight: 400;
-  font-size: 0.98rem; /* font-body-base */
+  font-size: 0.98rem;
+  /* font-body-base */
   color: var(--color-text-primary);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
@@ -195,7 +219,8 @@
   font-size: 0.82rem;
   padding: 10px 14px;
   border-radius: 10px;
-  margin-bottom: 24px; /* space-md */
+  margin-bottom: 24px;
+  /* space-md */
   animation: fadeUp 0.5s 0.26s both;
 }
 
@@ -209,7 +234,8 @@
   color: #fff;
   font-family: var(--font-body);
   font-weight: 600;
-  font-size: 0.98rem; /* font-body-base */
+  font-size: 0.98rem;
+  /* font-body-base */
   letter-spacing: 0.5px;
   cursor: pointer;
   position: relative;
@@ -249,7 +275,8 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 24px; /* space-md */
+  gap: 24px;
+  /* space-md */
   margin-top: 36px;
   padding-top: 24px;
   border-top: 1px solid var(--color-border-glass);
@@ -257,7 +284,7 @@
 }
 
 .logos img {
-  height: 48px;
+  height: 50px;
   width: auto;
   object-fit: contain;
   opacity: 0.9;
