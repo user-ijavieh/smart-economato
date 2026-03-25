@@ -53,7 +53,8 @@ export class OrdersManagementComponent implements OnInit {
   pagedFilteredOrders: Order[] = []; // Current page of filtered orders
   loading = true;
   orderSearchTerm = '';
-  orderDateFilter = '';
+  orderStartDate = '';
+  orderEndDate = '';
   orderStatusFilter = '';
   orderUserFilter: number | '' = '';
   orderSupplierFilter: number | '' = '';
@@ -170,10 +171,18 @@ export class OrdersManagementComponent implements OnInit {
       );
     }
 
-    if (this.orderDateFilter) {
-      result = result.filter(o =>
-        o.orderDate && o.orderDate.startsWith(this.orderDateFilter)
-      );
+    if (this.orderStartDate) {
+      const from = new Date(this.orderStartDate).getTime();
+      result = result.filter(o => {
+        return o.orderDate ? new Date(o.orderDate).getTime() >= from : true;
+      });
+    }
+
+    if (this.orderEndDate) {
+      const to = new Date(this.orderEndDate).getTime() + 86400000;
+      result = result.filter(o => {
+        return o.orderDate ? new Date(o.orderDate).getTime() <= to : true;
+      });
     }
 
     if (this.orderStatusFilter) {
@@ -204,7 +213,8 @@ export class OrdersManagementComponent implements OnInit {
 
   clearOrderFilters(): void {
     this.orderSearchTerm = '';
-    this.orderDateFilter = '';
+    this.orderStartDate = '';
+    this.orderEndDate = '';
     this.orderStatusFilter = '';
     this.orderUserFilter = '';
     this.orderSupplierFilter = '';
@@ -213,7 +223,8 @@ export class OrdersManagementComponent implements OnInit {
 
   hasActiveOrderFilters(): boolean {
     return this.orderSearchTerm.trim().length > 0
-      || this.orderDateFilter.length > 0
+      || this.orderStartDate.length > 0
+      || this.orderEndDate.length > 0
       || this.orderStatusFilter !== ''
       || this.orderUserFilter !== ''
       || this.orderSupplierFilter !== '';

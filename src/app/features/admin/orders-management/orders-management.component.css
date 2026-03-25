@@ -101,8 +101,8 @@
 .controles {
   margin-bottom: 2rem;
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+  flex-direction: column;
+  gap: 16px;
   justify-content: center;
   align-items: center;
   background: var(--color-surface-glass);
@@ -111,6 +111,15 @@
   border-radius: var(--radius-card);
   border: 1px solid var(--color-border-glass);
   box-shadow: var(--shadow-card);
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 .controles input[type='text'],
