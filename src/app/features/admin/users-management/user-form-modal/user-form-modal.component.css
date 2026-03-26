@@ -15,7 +15,7 @@
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--theme-border-medium);
 }
 
 /** ===== MODAL BACKDROP ===== */
@@ -82,7 +82,7 @@
 
 .btn-close {
     background: var(--theme-surface-glass-hover);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--theme-border-medium);
     color: var(--theme-text-primary);
     cursor: pointer;
     border-radius: 8px;
@@ -130,7 +130,7 @@ form {
     padding: 10px 14px;
     border-radius: 8px;
     border: 1.5px solid var(--theme-border-glass);
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--theme-input-bg);
     color: var(--theme-text-primary);
     font-family: var(--font-body);
     font-size: 0.9rem;
@@ -200,7 +200,7 @@ form {
 .btn-cancel {
     padding: 10px 20px;
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--theme-border-medium);
     background: var(--theme-surface-glass-hover);
     color: var(--theme-text-primary);
     cursor: pointer;
@@ -235,7 +235,7 @@ form {
 
 .btn-save:disabled {
     background: var(--theme-surface-glass-hover);
-    color: rgba(255, 255, 255, 0.3);
+    color: var(--theme-border-hover);
     cursor: not-allowed;
     box-shadow: none;
 }

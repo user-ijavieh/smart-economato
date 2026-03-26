@@ -76,7 +76,7 @@
   border-radius: var(--theme-radius-input);
   padding: 0 16px;
   border: 1.5px solid var(--theme-border-glass);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   backdrop-filter: blur(8px);
   color: var(--theme-text-primary);
   font-family: var(--font-body);
@@ -100,7 +100,7 @@
   border-radius: var(--theme-radius-input);
   padding: 0 16px;
   border: 1.5px solid var(--theme-border-glass);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   backdrop-filter: blur(8px);
   color: var(--theme-text-primary);
   font-family: var(--font-body);
@@ -139,7 +139,7 @@ button,
 
 button:hover {
   background: var(--theme-border-glass);
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: var(--theme-border-hover);
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
@@ -157,7 +157,7 @@ button:active {
 
 .btn-primary {
   background: var(--theme-surface-glass-hover) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid var(--theme-border-medium) !important;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
   color: var(--theme-text-primary)!important;
   backdrop-filter: blur(8px);
@@ -211,7 +211,7 @@ button:active {
 .recipe-card:hover {
   transform: translateY(-6px);
   background: var(--theme-surface-glass-hover);
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: var(--theme-border-hover);
   box-shadow: var(--theme-shadow-hover);
 }
 
@@ -396,7 +396,7 @@ button:active {
   font-family: var(--font-body);
   border-radius: 10px;
   border: 1px solid var(--theme-border-glass);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   color: var(--theme-text-primary);
   backdrop-filter: blur(8px);
   cursor: pointer;

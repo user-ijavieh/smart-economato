@@ -182,7 +182,7 @@ tr:last-child td {
 }
 
 tr:hover td {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
 }
 
 /** ===== STUDENT NAME ===== */
@@ -373,7 +373,7 @@ button:disabled {
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border-medium);
   background: var(--theme-surface-glass-active);
   color: var(--theme-text-primary);
   cursor: pointer;

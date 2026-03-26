@@ -79,7 +79,7 @@
   font-weight: 600;
   text-transform: uppercase;
   background: var(--theme-table-header-bg);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--theme-border-hover);
   letter-spacing: 0.5px;
   color: var(--theme-text-primary);
   align-self: flex-start;
@@ -89,7 +89,7 @@
 .close-btn {
   width: 36px;
   height: 36px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border-medium);
   background: var(--theme-surface-glass-hover);
   border-radius: 8px;
   color: var(--theme-text-primary);
@@ -239,13 +239,13 @@
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--theme-border-medium);
   transform: translateY(-2px);
 }
 
 .btn-print {
   background: var(--theme-border-glass) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border: 1px solid var(--theme-border-hover) !important;
   color: var(--theme-text-primary)!important;
   backdrop-filter: blur(8px);
 }
@@ -254,7 +254,7 @@
   background: rgba(255, 255, 255, 0.25) !important;
   border-color: rgba(255, 255, 255, 0.5) !important;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 8px 25px var(--theme-border-medium) !important;
 }
 
 .btn-edit {

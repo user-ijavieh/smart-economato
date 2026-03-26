@@ -158,7 +158,7 @@
   padding: 0 16px;
   box-sizing: border-box;
   border: 1.5px solid var(--theme-border-glass);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   font-family: var(--font-body);
