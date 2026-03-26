@@ -109,6 +109,21 @@
                 </select>
             </div>
 
+            @if (showTeacherField) {
+            <div class="form-group teacher-select-group teacher-select-enter">
+                <label for="teacherId">
+                    Profesor asignado
+                    <span class="optional-label">(opcional)</span>
+                </label>
+                <select id="teacherId" formControlName="teacherId">
+                    <option [ngValue]="null">Sin profesor</option>
+                    @for (teacher of teachers; track teacher.id) {
+                    <option [ngValue]="teacher.id">{{ teacher.name }}</option>
+                    }
+                </select>
+            </div>
+            }
+
             <!-- UI Additions para Permisos Temporales -->
             <div class="modal-actions">
                 <button type="button" class="btn-cancel" (click)="onClose()">Cancelar</button>

@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of, switchMap } from 'rxjs';
 import { UserService } from '../../../core/services/user.service';
 import { MessageService } from '../../../core/services/message.service';
 import { User, UserRequest, BatchAssignResponse } from '../../../shared/models/user.model';
@@ -65,6 +65,7 @@ export class UsersManagementComponent implements OnInit {
     // ── Assignments state ──
     unassignedStudents: User[] = [];
     teachers: User[] = [];
+    teachersLoaded = false;
     pendingAssignments: Map<number, User[]> = new Map(); // teacherId → students pendientes
     loadingAssignments = false;
     assignmentsLoaded = false;
@@ -75,6 +76,23 @@ export class UsersManagementComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadUsers();
+        this.loadTeachers();
+    }
+
+    loadTeachers(force = false): void {
+        if (this.teachersLoaded && !force) return;
+
+        this.userService.getTeachers().subscribe({
+            next: (teachers) => {
+                this.teachers = teachers;
+                this.teachersLoaded = true;
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error loading teachers:', err);
+                this.messageService.showError('Error al cargar los profesores');
+            }
+        });
     }
 
     loadUsers(page: number = 0): void {
@@ -259,13 +277,18 @@ export class UsersManagementComponent implements OnInit {
         this.loadingAssignments = true;
         this.cdr.detectChanges();
 
+        const teachers$ = this.teachersLoaded
+            ? of(this.teachers)
+            : this.userService.getTeachers();
+
         forkJoin({
             students: this.userService.getUnassignedStudents(),
-            teachers: this.userService.getTeachers()
+            teachers: teachers$
         }).subscribe({
             next: ({ students, teachers }) => {
                 this.unassignedStudents = students;
                 this.teachers = teachers;
+                this.teachersLoaded = true;
                 this.pendingAssignments = new Map();
                 this.loadingAssignments = false;
                 this.assignmentsLoaded = true;
@@ -479,8 +502,26 @@ export class UsersManagementComponent implements OnInit {
     }
 
     openEditModal(user: User): void {
-        this.selectedUser = { ...user };
-        this.showFormModal = true;
+        this.loadTeachers();
+
+        const hasTeacherProperty = Object.prototype.hasOwnProperty.call(user, 'teacher');
+        if (hasTeacherProperty) {
+            this.selectedUser = { ...user };
+            this.showFormModal = true;
+            return;
+        }
+
+        this.userService.getById(user.id).subscribe({
+            next: (fullUser) => {
+                this.selectedUser = { ...fullUser };
+                this.showFormModal = true;
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error loading user details:', err);
+                this.messageService.showError('No se pudieron cargar los datos completos del usuario');
+            }
+        });
     }
 
     closeFormModal(): void {
@@ -500,7 +541,8 @@ export class UsersManagementComponent implements OnInit {
 
     onSaveUser(data: any): void {
         if (this.selectedUser) {
-            // Edit mode
+            const userId = this.selectedUser.id;
+            const originalTeacherId = this.selectedUser.teacher?.id ?? null;
             const request: UserRequest = {
                 name: data.name,
                 user: data.user,
@@ -511,7 +553,19 @@ export class UsersManagementComponent implements OnInit {
                 request.password = data.password;
             }
 
-            this.userService.update(this.selectedUser.id, request).subscribe({
+            const hasTeacherPayload = Object.prototype.hasOwnProperty.call(data, 'teacherId');
+            const nextTeacherId = hasTeacherPayload
+                ? (data.teacherId === '' || data.teacherId === undefined ? null : Number(data.teacherId))
+                : originalTeacherId;
+
+            this.userService.update(userId, request).pipe(
+                switchMap(() => {
+                    if (!hasTeacherPayload || nextTeacherId === originalTeacherId) {
+                        return of(null);
+                    }
+                    return this.userService.assignTeacher(userId, nextTeacherId);
+                })
+            ).subscribe({
                 next: () => {
                     this.messageService.showSuccess('Usuario actualizado correctamente');
                     this.closeFormModal();
@@ -530,7 +584,19 @@ export class UsersManagementComponent implements OnInit {
                 password: data.password,
                 role: data.role
             };
-            this.userService.create(request).subscribe({
+            const hasTeacherPayload = Object.prototype.hasOwnProperty.call(data, 'teacherId');
+            const teacherId = hasTeacherPayload
+                ? (data.teacherId === '' || data.teacherId === undefined ? null : Number(data.teacherId))
+                : null;
+
+            this.userService.create(request).pipe(
+                switchMap((createdUser) => {
+                    if (!teacherId || !createdUser?.id) {
+                        return of(null);
+                    }
+                    return this.userService.assignTeacher(createdUser.id, teacherId);
+                })
+            ).subscribe({
                 next: () => {
                     this.messageService.showSuccess('Usuario creado correctamente');
                     this.loadUsers();
@@ -587,5 +653,9 @@ export class UsersManagementComponent implements OnInit {
 
     getExistingUsers(): string[] {
         return this.users.map(u => u.user);
+    }
+
+    isStudentRole(role: string): boolean {
+        return role === 'USER' || role === 'ELEVATED';
     }
 }
