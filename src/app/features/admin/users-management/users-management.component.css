@@ -956,7 +956,7 @@ tr.row-hidden .user-avatar-small {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid var(--theme-border-medium);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1024,7 +1024,7 @@ tr.row-hidden .user-avatar-small {
 
 .student-username,
 .teacher-role {
-  color: rgba(255, 255, 255, 0.62);
+  color: var(--theme-text-secondary);
   font-size: 0.8rem;
 }
 
@@ -1115,9 +1115,9 @@ tr.row-hidden .user-avatar-small {
 .empty-state {
   width: 100%;
   min-height: 58px;
-  border: 1px dashed rgba(255, 255, 255, 0.22);
+  border: 1px dashed var(--theme-border-medium);
   border-radius: 12px;
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--theme-text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;

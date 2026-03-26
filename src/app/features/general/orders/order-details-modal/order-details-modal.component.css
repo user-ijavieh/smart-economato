@@ -251,7 +251,7 @@
 }
 
 .btn-print:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.25) !important;
+  background: var(--theme-surface-glass-active) !important;
   border-color: var(--theme-text-secondary) !important;
   transform: translateY(-2px);
   box-shadow: 0 8px 25px var(--theme-border-medium) !important;
