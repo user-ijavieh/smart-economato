@@ -95,7 +95,7 @@ main.main-expanded {
   margin: 0 0 10px;
   font-size: 1.4rem;
   font-weight: 700;
-  color: var(--theme-text-primary)fff;
+  color: var(--theme-text-primary);
 }
 
 .logout-modal p {
