@@ -960,7 +960,7 @@ tr.clickable-row {
 }
 
 .btn-page:disabled {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--theme-surface-glass-hover);
   color: var(--theme-border-hover);
   cursor: not-allowed;
   transform: none;
@@ -976,7 +976,7 @@ tr.clickable-row {
 }
 
 .total-info {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--theme-text-secondary);
   font-size: 12px;
   background: var(--theme-surface-glass-active);
   padding: 4px 12px;

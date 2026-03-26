@@ -9,7 +9,7 @@
   display: none !important;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--theme-surface-glass-hover);
 }
 ::-webkit-scrollbar-thumb {
   background: rgba(184, 75, 68, 0.3);
@@ -152,7 +152,7 @@ button:active {
 
 .btn-primary:hover {
   background: rgba(255, 255, 255, 0.18) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
+  border-color: var(--theme-text-secondary) !important;
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
 }
@@ -349,7 +349,7 @@ tfoot td {
 }
 
 .total-info {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--theme-text-secondary);
   font-size: 12px;
   background: var(--theme-surface-glass-hover);
   padding: 4px 12px;
@@ -615,7 +615,7 @@ tfoot td {
 .scanner-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: var(--theme-overlay-bg);
   backdrop-filter: blur(8px);
   z-index: 9999;
   display: flex;

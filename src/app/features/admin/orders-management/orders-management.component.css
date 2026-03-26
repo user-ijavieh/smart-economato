@@ -389,7 +389,7 @@ tbody tr:hover {
 }
 
 .btn-page:disabled {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--theme-surface-glass-hover);
   color: var(--theme-border-hover);
   cursor: not-allowed;
 }
@@ -403,7 +403,7 @@ tbody tr:hover {
 }
 
 .total-info {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--theme-text-secondary);
   font-size: 12px;
   background: var(--theme-surface-glass-active);
   padding: 4px 12px;
@@ -564,7 +564,7 @@ tbody tr:hover {
 .spinner {
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  border: 2px solid var(--theme-text-secondary);
   border-top-color: var(--theme-text-primary);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
@@ -622,7 +622,7 @@ tbody tr:hover {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 20px;
-  background: rgba(255,255,255,0.03);
+  background: var(--theme-surface-glass-hover);
   padding: 20px;
   border-radius: 12px;
   border: 1px solid var(--theme-surface-glass-active);
@@ -635,7 +635,7 @@ tbody tr:hover {
 }
 
 .ingredients-table {
-  background: rgba(255,255,255,0.03);
+  background: var(--theme-surface-glass-hover);
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid var(--theme-surface-glass-active);

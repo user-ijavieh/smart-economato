@@ -4,7 +4,7 @@
 }
 
 ::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
+::-webkit-scrollbar-track { background: var(--theme-surface-glass-hover); }
 ::-webkit-scrollbar-thumb { background: rgba(184, 75, 68, 0.3); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(184, 75, 68, 0.5); }
 
@@ -12,7 +12,7 @@
 .modal-overlay-base {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: var(--theme-overlay-bg);
   backdrop-filter: blur(24px);
   z-index: 10000;
   display: flex;
@@ -306,7 +306,7 @@
   border: 1px solid var(--theme-border-glass);
   border-radius: 12px;
   overflow: hidden;
-  background: rgba(0, 0, 0, 0.15);
+  background: var(--theme-overlay-light);
 }
 
 .order-item {
@@ -403,7 +403,7 @@
   padding: 40px 20px;
   color: var(--theme-text-secondary);
   font-style: italic;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--theme-surface-glass-hover);
   border: 1px dashed var(--theme-surface-glass-hover);
   border-radius: 12px;
 }
@@ -416,7 +416,7 @@
   justify-content: flex-end;
   gap: 12px;
   flex-shrink: 0;
-  background: rgba(0, 0, 0, 0.15);
+  background: var(--theme-overlay-light);
   border-radius: 0 0 var(--theme-radius-card) var(--theme-radius-card);
 }
 
