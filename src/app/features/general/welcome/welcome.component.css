@@ -718,7 +718,7 @@
   .mainContent {
     padding: 36px 16px;
     gap: 30px;
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .header {
@@ -743,9 +743,13 @@
   .welcome-title {
     font-size: 1.3rem;
     letter-spacing: 2.5px;
-    animation:
-      typing 2.2s steps(31, end) 0.6s forwards,
-      blinkCaret 0.75s step-end 0.6s infinite;
+    white-space: normal;
+    overflow: visible;
+    max-width: 100%;
+    border-right: none;
+    animation: none;
+    text-align: center;
+    width: 100%;
   }
 
   .buttonsContainer {
@@ -796,19 +800,20 @@
   .mainContent {
     padding: 72px 10px 16px;
     gap: 22px;
+    justify-content: flex-start;
   }
 
   .welcome-title {
-    font-size: 1rem;
+    font-size: 1.1rem;
     letter-spacing: 1.5px;
-    /* Móvil: desactivar typing, mostrar texto completo y wrappeable */
     white-space: normal;
     overflow: visible;
-    max-width: 96%;
+    max-width: 100%;
     border-right: none;
     animation: none;
     opacity: 1;
     text-align: center;
+    width: 100%;
   }
 
   .buttonsContainer {
