@@ -162,7 +162,7 @@ a.master-card:hover {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: white;
+  color: var(--theme-text-primary);
 }
 
 .master-card-icon--allergen {
@@ -186,7 +186,7 @@ a.master-card:hover {
   font-family: var(--font-heading);
   font-weight: var(--font-heading-weight);
   font-size: 1rem;
-  color: white;
+  color: var(--theme-text-primary);
   letter-spacing: 0.3px;
 }
 

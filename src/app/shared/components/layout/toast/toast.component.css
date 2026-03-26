@@ -83,8 +83,8 @@
   background: rgba(15, 15, 15, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--theme-surface-glass-hover);
+  box-shadow: 0 8px 32px var(--theme-table-header-bg);
 }
 
 @keyframes toastIn {
@@ -142,7 +142,7 @@
   font-family: var(--font-body, system-ui);
   font-weight: 600;
   font-size: 0.85rem;
-  color: #fff;
+  color: var(--theme-text-primary);
 }
 
 .toast-message {

@@ -1,17 +1,6 @@
 /** ===== MODAL OVERLAY ===== */
 :host {
-  --color-brand-primary: #B84B44;
-  --color-brand-dark: #8C2E28;
-  --color-brand-glow: rgba(184, 75, 68, 0.35);
-  --color-surface-glass: rgba(8, 3, 3, 0.58);
-  --color-border-glass: rgba(255, 255, 255, 0.14);
-  --color-text-primary: #FFFFFF;
-  --color-text-secondary: #A1A1A1;
-  --effect-glass: blur(24px);
-  --radius-card: 18px;
-  --radius-input: 14px;
-  --radius-btn: 12px;
-  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.3);
+  display: block;
 }
 
 /* Custom Scrollbar Styles */
@@ -45,13 +34,13 @@
   max-width: 600px;
   width: 100%;
   max-height: 85vh;
-  background: var(--color-surface-glass);
-  backdrop-filter: var(--effect-glass);
-  -webkit-backdrop-filter: var(--effect-glass);
-  border: 1px solid var(--color-border-glass);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-card);
-  color: var(--color-text-primary);
+  background: var(--theme-surface-glass);
+  backdrop-filter: var(--theme-effect-glass);
+  -webkit-backdrop-filter: var(--theme-effect-glass);
+  border: 1px solid var(--theme-border-glass);
+  border-radius: var(--theme-radius-card);
+  box-shadow: var(--theme-shadow-card);
+  color: var(--theme-text-primary);
   display: flex;
   flex-direction: column;
   animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
@@ -60,7 +49,7 @@
 /** ===== MODAL HEADER ===== */
 .modal-header-base {
   padding: 24px 30px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--theme-surface-glass-hover);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -70,7 +59,7 @@
 
 .modal-header-base h2 {
   font-size: 1.5rem;
-  color: var(--color-text-primary);
+  color: var(--theme-text-primary);
   margin: 0;
   font-weight: 700;
   letter-spacing: -0.5px;
@@ -80,9 +69,9 @@
   width: 36px;
   height: 36px;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--theme-surface-glass-hover);
   border-radius: 8px;
-  color: white;
+  color: var(--theme-text-primary);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -122,17 +111,17 @@
 .form-group label {
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--color-text-secondary);
+  color: var(--theme-text-secondary);
   margin-bottom: 8px;
 }
 
 .form-group input,
 .form-group select {
   padding: 10px 14px;
-  border: 1.5px solid var(--color-border-glass);
-  border-radius: var(--radius-input);
+  border: 1.5px solid var(--theme-border-glass);
+  border-radius: var(--theme-radius-input);
   background: rgba(255, 255, 255, 0.04);
-  color: var(--color-text-primary);
+  color: var(--theme-text-primary);
   font-size: 0.95rem;
   transition: all 0.25s ease;
   font-family: inherit;
@@ -140,21 +129,21 @@
 
 .form-group select option {
   background: #1e1e1e;
-  color: white;
+  color: var(--theme-text-primary);
 }
 
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--color-brand-primary);
-  box-shadow: 0 0 0 4px var(--color-brand-glow);
+  background: var(--theme-surface-glass-active);
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 4px var(--brand-glow);
 }
 
 /** ===== MODAL FOOTER ===== */
 .modal-footer {
   padding: 20px 30px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--theme-surface-glass-hover);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -171,7 +160,7 @@
 .btn-save,
 .btn-delete {
   padding: 12px 24px;
-  border-radius: var(--radius-btn);
+  border-radius: var(--theme-radius-btn);
   border: none;
   font-size: 0.95rem;
   font-weight: bold;
@@ -183,21 +172,21 @@
 }
 
 .btn-cancel {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--color-text-secondary);
-  border: 1px solid var(--color-border-glass);
+  background: var(--theme-surface-glass-hover);
+  color: var(--theme-text-secondary);
+  border: 1px solid var(--theme-border-glass);
 }
 
 .btn-cancel:hover {
   background: rgba(255, 255, 255, 0.2);
-  color: white;
+  color: var(--theme-text-primary);
   transform: translateY(-2px);
 }
 
 .btn-save {
   background: rgba(184, 75, 68, 0.15) !important;
   border: 1px solid rgba(184, 75, 68, 0.3) !important;
-  color: white !important;
+  color: var(--theme-text-primary)!important;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2) !important;
   backdrop-filter: blur(8px);
 }
@@ -206,11 +195,11 @@
   background: rgba(184, 75, 68, 0.25) !important;
   border-color: rgba(184, 75, 68, 0.5) !important;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px var(--color-brand-glow) !important;
+  box-shadow: 0 8px 25px var(--brand-glow) !important;
 }
 
 .btn-save:disabled {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--theme-surface-glass-hover);
   color: rgba(255, 255, 255, 0.3);
   cursor: not-allowed;
   box-shadow: none;
@@ -225,7 +214,7 @@
 
 .btn-delete:hover {
   background: rgba(239, 68, 68, 0.25);
-  color: white;
+  color: var(--theme-text-primary);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
 }
@@ -270,7 +259,7 @@
   background: linear-gradient(135deg, rgba(30, 40, 80, 0.95) 0%, rgba(20, 30, 60, 0.95) 100%) !important;
   border: none !important;
   box-shadow: 0 4px 18px rgba(90, 120, 220, 0.2) !important;
-  color: white !important;
+  color: var(--theme-text-primary)!important;
 }
 :host-context(.admin-theme) .btn-save:hover:not(:disabled),
 :host-context(.admin-theme) .btn-cocinar:hover:not(:disabled) {

@@ -93,7 +93,7 @@
 
 .avatar-item {
   padding: 0 0 1em;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--theme-border-subtle);
   margin-bottom: 0.6em;
 }
 
@@ -114,7 +114,7 @@
   justify-content: center;
   font-weight: 600;
   font-size: 0.95rem;
-  color: #ffffff;
+  color: var(--theme-text-primary)fff;
   flex-shrink: 0;
   border: 1.5px solid rgba(184, 75, 68, 0.65);
   box-shadow: 0 0 0 4px rgba(184, 75, 68, 0.10), 0 4px 16px rgba(0, 0, 0, 0.40);
@@ -131,7 +131,7 @@
 .user-name {
   font-weight: 600;
   font-size: 0.88rem;
-  color: #ffffff;
+  color: var(--theme-text-primary)fff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -185,7 +185,7 @@
 
 #sidebar ul li a.active {
   background: rgba(184, 75, 68, 0.16);
-  color: #ffffff;
+  color: var(--theme-text-primary)fff;
   font-weight: 600;
   border-left: 2px solid #B84B44;
   box-shadow: inset 0 0 30px rgba(184, 75, 68, 0.08);
@@ -232,7 +232,7 @@
 }
 
 #sidebar a:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--theme-surface-glass-hover);
   color: rgba(255, 255, 255, 0.90);
   border-left-color: rgba(184, 75, 68, 0.40);
 }
@@ -249,7 +249,7 @@
 
 .logout-item {
   margin-top: auto;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid var(--theme-border-subtle);
   padding-top: 6px;
   margin-bottom: 6px;
 }
@@ -293,7 +293,7 @@
 }
 
 #toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--theme-border-subtle);
 }
 
 #toggle-btn:hover svg {
