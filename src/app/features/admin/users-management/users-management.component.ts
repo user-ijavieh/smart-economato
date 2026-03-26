@@ -1,9 +1,10 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { forkJoin, of, switchMap } from 'rxjs';
 import { UserService } from '../../../core/services/user.service';
 import { MessageService } from '../../../core/services/message.service';
-import { User, UserRequest } from '../../../shared/models/user.model';
+import { User, UserRequest, BatchAssignResponse } from '../../../shared/models/user.model';
 import { UserFormModalComponent } from './user-form-modal/user-form-modal.component';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
@@ -58,8 +59,43 @@ export class UsersManagementComponent implements OnInit {
     sortDir: 'asc' | 'desc' = 'asc';
     sortInteracted = false;
 
+    // ── Tab state ──
+    activeTab: 'users' | 'assignments' = 'users';
+
+    // ── Assignments state ──
+    unassignedStudents: User[] = [];
+    teachers: User[] = [];
+    teachersLoaded = false;
+    pendingAssignments: Map<number, User[]> = new Map(); // teacherId → students pendientes
+    loadingAssignments = false;
+    assignmentsLoaded = false;
+    assigningInProgress = false;
+    dragOverTeacherId: number | null = null;
+    dragOverUnassigned = false;
+    draggedStudent: User | null = null;
+    draggedStudentIds: number[] = [];
+    selectedStudentIds: Set<number> = new Set();
+    lastSelectedIndex: number | null = null;
+
     ngOnInit(): void {
         this.loadUsers();
+        this.loadTeachers();
+    }
+
+    loadTeachers(force = false): void {
+        if (this.teachersLoaded && !force) return;
+
+        this.userService.getTeachers().subscribe({
+            next: (teachers) => {
+                this.teachers = teachers;
+                this.teachersLoaded = true;
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error loading teachers:', err);
+                this.messageService.showError('Error al cargar los profesores');
+            }
+        });
     }
 
     loadUsers(page: number = 0): void {
@@ -227,6 +263,364 @@ export class UsersManagementComponent implements OnInit {
         }
     }
 
+    // ── Tab switching ──
+
+    switchTab(tab: 'users' | 'assignments'): void {
+        if (this.activeTab === tab) return;
+        this.clearSelection();
+        this.activeTab = tab;
+        this.scrollToTop();
+        if (tab === 'assignments' && !this.assignmentsLoaded) {
+            this.loadAssignmentData();
+        }
+    }
+
+    // ── Assignments data loading ──
+
+    loadAssignmentData(): void {
+        this.loadingAssignments = true;
+        this.clearSelection();
+        this.cdr.detectChanges();
+
+        const teachers$ = this.teachersLoaded
+            ? of(this.teachers)
+            : this.userService.getTeachers();
+
+        forkJoin({
+            students: this.userService.getUnassignedStudents(),
+            teachers: teachers$
+        }).subscribe({
+            next: ({ students, teachers }) => {
+                this.unassignedStudents = students;
+                this.teachers = teachers;
+                this.teachersLoaded = true;
+                this.pendingAssignments = new Map();
+                this.clearSelection();
+                this.loadingAssignments = false;
+                this.assignmentsLoaded = true;
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error loading assignment data:', err);
+                this.messageService.showError('Error al cargar los datos de asignacion');
+                this.loadingAssignments = false;
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    // ── Drag and Drop (HTML5 nativo) ──
+
+    onDragStart(event: DragEvent, student: User): void {
+        this.draggedStudent = student;
+        if (!this.selectedStudentIds.has(student.id)) {
+            this.clearSelection();
+            this.selectedStudentIds.add(student.id);
+            this.lastSelectedIndex = this.unassignedStudents.findIndex(s => s.id === student.id);
+        }
+
+        this.draggedStudentIds = Array.from(this.selectedStudentIds);
+        if (this.draggedStudentIds.length === 0) {
+            this.draggedStudentIds = [student.id];
+        }
+
+        event.dataTransfer?.setData('text/plain', JSON.stringify(this.draggedStudentIds));
+        if (event.dataTransfer) {
+            event.dataTransfer.effectAllowed = 'move';
+
+            const dragBadge = document.createElement('div');
+            dragBadge.textContent = `${this.draggedStudentIds.length} alumno${this.draggedStudentIds.length > 1 ? 's' : ''}`;
+            dragBadge.style.position = 'fixed';
+            dragBadge.style.top = '-1000px';
+            dragBadge.style.left = '-1000px';
+            dragBadge.style.padding = '8px 12px';
+            dragBadge.style.borderRadius = '999px';
+            dragBadge.style.background = 'rgba(90, 120, 220, 0.95)';
+            dragBadge.style.color = 'white';
+            dragBadge.style.fontSize = '12px';
+            dragBadge.style.fontWeight = '600';
+            dragBadge.style.boxShadow = '0 6px 18px rgba(0,0,0,0.35)';
+            document.body.appendChild(dragBadge);
+            event.dataTransfer.setDragImage(dragBadge, 20, 20);
+            setTimeout(() => dragBadge.remove(), 0);
+        }
+    }
+
+    private getDraggedIds(event: DragEvent): number[] {
+        const rawData = event.dataTransfer?.getData('text/plain');
+        if (rawData) {
+            try {
+                const parsed = JSON.parse(rawData);
+                if (Array.isArray(parsed)) {
+                    return parsed.map(id => Number(id)).filter(id => Number.isFinite(id) && id > 0);
+                }
+                const asNumber = Number(parsed);
+                if (Number.isFinite(asNumber) && asNumber > 0) {
+                    return [asNumber];
+                }
+            } catch {
+                const asNumber = Number(rawData);
+                if (Number.isFinite(asNumber) && asNumber > 0) {
+                    return [asNumber];
+                }
+            }
+        }
+        return this.draggedStudentIds;
+    }
+
+    onDragOverTeacher(event: DragEvent, teacherId: number): void {
+        event.preventDefault();
+        if (event.dataTransfer) {
+            event.dataTransfer.dropEffect = 'move';
+        }
+        this.dragOverTeacherId = teacherId;
+    }
+
+    onDragOverUnassigned(event: DragEvent): void {
+        event.preventDefault();
+        if (event.dataTransfer) {
+            event.dataTransfer.dropEffect = 'move';
+        }
+        this.dragOverUnassigned = true;
+    }
+
+    onDragLeave(): void {
+        this.dragOverTeacherId = null;
+        this.dragOverUnassigned = false;
+    }
+
+    onDragEnd(): void {
+        this.draggedStudent = null;
+        this.draggedStudentIds = [];
+        this.dragOverTeacherId = null;
+        this.dragOverUnassigned = false;
+    }
+
+    onDrop(event: DragEvent, teacherId: number): void {
+        event.preventDefault();
+        this.dragOverTeacherId = null;
+
+        const studentIds = this.getDraggedIds(event);
+        if (!studentIds.length) return;
+
+        for (const studentId of studentIds) {
+            let studentIndex = this.unassignedStudents.findIndex(s => s.id === studentId);
+            let student: User | undefined;
+
+            if (studentIndex !== -1) {
+                student = this.unassignedStudents[studentIndex];
+                this.unassignedStudents.splice(studentIndex, 1);
+            } else {
+                for (const [tid, students] of this.pendingAssignments) {
+                    const idx = students.findIndex(s => s.id === studentId);
+                    if (idx !== -1) {
+                        student = students[idx];
+                        students.splice(idx, 1);
+                        if (students.length === 0) this.pendingAssignments.delete(tid);
+                        break;
+                    }
+                }
+            }
+
+            if (!student) continue;
+
+            if (!this.pendingAssignments.has(teacherId)) {
+                this.pendingAssignments.set(teacherId, []);
+            }
+
+            const existing = this.pendingAssignments.get(teacherId)!;
+            if (!existing.find(s => s.id === student.id)) {
+                existing.push(student);
+            }
+        }
+
+        this.draggedStudent = null;
+        this.draggedStudentIds = [];
+        this.clearSelection();
+        this.cdr.detectChanges();
+    }
+
+    onDropBackToUnassigned(event: DragEvent): void {
+        event.preventDefault();
+        this.dragOverUnassigned = false;
+
+        const studentIds = this.getDraggedIds(event);
+        if (!studentIds.length) return;
+
+        for (const studentId of studentIds) {
+            for (const [tid, students] of this.pendingAssignments) {
+                const idx = students.findIndex(s => s.id === studentId);
+                if (idx !== -1) {
+                    const student = students[idx];
+                    students.splice(idx, 1);
+                    if (students.length === 0) this.pendingAssignments.delete(tid);
+
+                    if (!this.unassignedStudents.find(s => s.id === student.id)) {
+                        this.unassignedStudents.push(student);
+                    }
+                    break;
+                }
+            }
+        }
+
+        this.draggedStudent = null;
+        this.draggedStudentIds = [];
+        this.clearSelection();
+        this.cdr.detectChanges();
+    }
+
+    toggleStudentSelection(student: User, event: MouseEvent): void {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const currentIndex = this.unassignedStudents.findIndex(s => s.id === student.id);
+        if (currentIndex === -1) {
+            return;
+        }
+
+        if (event.shiftKey && this.lastSelectedIndex !== null) {
+            const start = Math.min(this.lastSelectedIndex, currentIndex);
+            const end = Math.max(this.lastSelectedIndex, currentIndex);
+            for (let i = start; i <= end; i++) {
+                this.selectedStudentIds.add(this.unassignedStudents[i].id);
+            }
+        } else if (event.ctrlKey || event.metaKey) {
+            if (this.selectedStudentIds.has(student.id)) {
+                this.selectedStudentIds.delete(student.id);
+            } else {
+                this.selectedStudentIds.add(student.id);
+            }
+        } else {
+            this.selectedStudentIds.clear();
+            this.selectedStudentIds.add(student.id);
+        }
+
+        this.lastSelectedIndex = currentIndex;
+    }
+
+    selectAllStudents(): void {
+        if (this.isAllSelected) {
+            this.clearSelection();
+            return;
+        }
+
+        this.selectedStudentIds.clear();
+        for (const student of this.unassignedStudents) {
+            this.selectedStudentIds.add(student.id);
+        }
+        this.lastSelectedIndex = this.unassignedStudents.length ? this.unassignedStudents.length - 1 : null;
+    }
+
+    clearSelection(): void {
+        this.selectedStudentIds.clear();
+        this.lastSelectedIndex = null;
+    }
+
+    get isAllSelected(): boolean {
+        return this.unassignedStudents.length > 0
+            && this.unassignedStudents.every(student => this.selectedStudentIds.has(student.id));
+    }
+
+    get selectionCount(): number {
+        return this.unassignedStudents.reduce((count, student) => {
+            return this.selectedStudentIds.has(student.id) ? count + 1 : count;
+        }, 0);
+    }
+
+    isSelected(studentId: number): boolean {
+        return this.selectedStudentIds.has(studentId);
+    }
+
+    removeFromTeacher(student: User, teacherId: number): void {
+        const students = this.pendingAssignments.get(teacherId);
+        if (!students) return;
+
+        const idx = students.findIndex(s => s.id === student.id);
+        if (idx !== -1) {
+            students.splice(idx, 1);
+            if (students.length === 0) this.pendingAssignments.delete(teacherId);
+            if (!this.unassignedStudents.find(s => s.id === student.id)) {
+                this.unassignedStudents.push(student);
+            }
+            this.cdr.detectChanges();
+        }
+    }
+
+    // ── Assignment helpers ──
+
+    getPendingForTeacher(teacherId: number): User[] {
+        return this.pendingAssignments.get(teacherId) || [];
+    }
+
+    hasPendingAssignments(): boolean {
+        for (const students of this.pendingAssignments.values()) {
+            if (students.length > 0) return true;
+        }
+        return false;
+    }
+
+    get totalPendingCount(): number {
+        let count = 0;
+        for (const students of this.pendingAssignments.values()) {
+            count += students.length;
+        }
+        return count;
+    }
+
+    clearPendingAssignments(): void {
+        for (const students of this.pendingAssignments.values()) {
+            for (const student of students) {
+                if (!this.unassignedStudents.find(s => s.id === student.id)) {
+                    this.unassignedStudents.push(student);
+                }
+            }
+        }
+        this.pendingAssignments = new Map();
+        this.cdr.detectChanges();
+    }
+
+    // ── Confirm assignments ──
+
+    confirmAssignments(): void {
+        if (!this.hasPendingAssignments() || this.assigningInProgress) return;
+
+        this.clearSelection();
+        this.assigningInProgress = true;
+        this.cdr.detectChanges();
+
+        const requests: { teacherId: number; studentIds: number[] }[] = [];
+        for (const [teacherId, students] of this.pendingAssignments) {
+            if (students.length > 0) {
+                requests.push({ teacherId, studentIds: students.map(s => s.id) });
+            }
+        }
+
+        forkJoin(
+            requests.map(req => this.userService.assignTeacherBatch(req.teacherId, req.studentIds))
+        ).subscribe({
+            next: (responses: BatchAssignResponse[]) => {
+                const totalProcessed = responses.reduce((sum, r) => sum + r.processedCount, 0);
+                const totalFailed = responses.reduce((sum, r) => sum + (r.failedStudentIds?.length || 0), 0);
+
+                if (totalFailed > 0) {
+                    this.messageService.showWarning(`${totalProcessed} alumnos asignados, ${totalFailed} fallaron`);
+                } else {
+                    this.messageService.showSuccess(`${totalProcessed} alumnos asignados correctamente`);
+                }
+
+                this.assigningInProgress = false;
+                this.pendingAssignments = new Map();
+                this.loadAssignmentData();
+            },
+            error: (err) => {
+                console.error('Error assigning students:', err);
+                this.messageService.showError('Error al asignar los alumnos');
+                this.assigningInProgress = false;
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
     // ── Modal operations ──
 
     openCreateModal(): void {
@@ -235,8 +629,26 @@ export class UsersManagementComponent implements OnInit {
     }
 
     openEditModal(user: User): void {
-        this.selectedUser = { ...user };
-        this.showFormModal = true;
+        this.loadTeachers();
+
+        const hasTeacherProperty = Object.prototype.hasOwnProperty.call(user, 'teacher');
+        if (hasTeacherProperty) {
+            this.selectedUser = { ...user };
+            this.showFormModal = true;
+            return;
+        }
+
+        this.userService.getById(user.id).subscribe({
+            next: (fullUser) => {
+                this.selectedUser = { ...fullUser };
+                this.showFormModal = true;
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error loading user details:', err);
+                this.messageService.showError('No se pudieron cargar los datos completos del usuario');
+            }
+        });
     }
 
     closeFormModal(): void {
@@ -256,7 +668,8 @@ export class UsersManagementComponent implements OnInit {
 
     onSaveUser(data: any): void {
         if (this.selectedUser) {
-            // Edit mode
+            const userId = this.selectedUser.id;
+            const originalTeacherId = this.selectedUser.teacher?.id ?? null;
             const request: UserRequest = {
                 name: data.name,
                 user: data.user,
@@ -267,7 +680,19 @@ export class UsersManagementComponent implements OnInit {
                 request.password = data.password;
             }
 
-            this.userService.update(this.selectedUser.id, request).subscribe({
+            const hasTeacherPayload = Object.prototype.hasOwnProperty.call(data, 'teacherId');
+            const nextTeacherId = hasTeacherPayload
+                ? (data.teacherId === '' || data.teacherId === undefined ? null : Number(data.teacherId))
+                : originalTeacherId;
+
+            this.userService.update(userId, request).pipe(
+                switchMap(() => {
+                    if (!hasTeacherPayload || nextTeacherId === originalTeacherId) {
+                        return of(null);
+                    }
+                    return this.userService.assignTeacher(userId, nextTeacherId);
+                })
+            ).subscribe({
                 next: () => {
                     this.messageService.showSuccess('Usuario actualizado correctamente');
                     this.closeFormModal();
@@ -286,7 +711,19 @@ export class UsersManagementComponent implements OnInit {
                 password: data.password,
                 role: data.role
             };
-            this.userService.create(request).subscribe({
+            const hasTeacherPayload = Object.prototype.hasOwnProperty.call(data, 'teacherId');
+            const teacherId = hasTeacherPayload
+                ? (data.teacherId === '' || data.teacherId === undefined ? null : Number(data.teacherId))
+                : null;
+
+            this.userService.create(request).pipe(
+                switchMap((createdUser) => {
+                    if (!teacherId || !createdUser?.id) {
+                        return of(null);
+                    }
+                    return this.userService.assignTeacher(createdUser.id, teacherId);
+                })
+            ).subscribe({
                 next: () => {
                     this.messageService.showSuccess('Usuario creado correctamente');
                     this.loadUsers();
@@ -343,5 +780,9 @@ export class UsersManagementComponent implements OnInit {
 
     getExistingUsers(): string[] {
         return this.users.map(u => u.user);
+    }
+
+    isStudentRole(role: string): boolean {
+        return role === 'USER' || role === 'ELEVATED';
     }
 }

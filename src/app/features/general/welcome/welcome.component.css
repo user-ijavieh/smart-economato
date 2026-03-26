@@ -16,24 +16,7 @@
 
 /* ===== TOKENS LOCALES ===== */
 :host {
-  --accent: #B84B44;
-  --accent-dark: #8c2e28;
-  --accent-mid: rgba(184, 75, 68, 0.55);
-  --accent-soft: rgba(184, 75, 68, 0.25);
-  --accent-glow: rgba(184, 75, 68, 0.35);
-  --accent-rim: rgba(220, 100, 90, 0.50);
-
-  --white-08: rgba(255, 255, 255, 0.08);
-  --white-12: rgba(255, 255, 255, 0.12);
-  --white-20: rgba(255, 255, 255, 0.20);
-  --white-50: rgba(255, 255, 255, 0.50);
-
-  --blur-lg: blur(20px);
-  --blur-md: blur(24px);
-
-  --radius-card: 18px;
-  --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
-  --transition: all 0.36s var(--ease-out);
+  display: block;
 }
 
 /* ===== KEYFRAMES ===== */
@@ -293,7 +276,7 @@
   font-weight: var(--font-heading-weight);
   font-size: 2.3rem;
   /* Contraste máximo: blanco con múltiples capas de sombra */
-  color: #ffffff;
+  color: var(--theme-text-primary)fff;
   text-shadow:
     0 0 2px rgba(0, 0, 0, 0.9),
     0 2px 6px rgba(0, 0, 0, 0.85),
@@ -343,10 +326,10 @@
   background: rgba(8, 3, 3, 0.58);
   backdrop-filter: var(--blur-md);
   -webkit-backdrop-filter: var(--blur-md);
-  border-radius: var(--radius-card);
+  border-radius: var(--theme-radius-card);
   border: 1px solid rgba(255, 255, 255, 0.14);
   text-decoration: none;
-  color: #ffffff;
+  color: var(--theme-text-primary)fff;
   font-family: var(--font-body);
   font-weight: var(--font-body-weight);
   font-size: 0.98rem;
@@ -357,7 +340,7 @@
   padding: 22px 14px;
   box-shadow:
     0 4px 24px rgba(0, 0, 0, 0.50),
-    0 1px 0 rgba(255, 255, 255, 0.06) inset;
+    0 1px 0 var(--theme-border-subtle) inset;
   text-shadow:
     0 0 2px rgba(0, 0, 0, 0.95),
     0 1px 4px rgba(0, 0, 0, 0.90),
@@ -417,7 +400,7 @@
   right: 0;
   height: 38%;
   background: linear-gradient(180deg, var(--white-08) 0%, transparent 100%);
-  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  border-radius: var(--theme-radius-card) var(--theme-radius-card) 0 0;
   pointer-events: none;
 }
 
@@ -432,9 +415,9 @@
   background: linear-gradient(110deg,
       transparent 0%,
       rgba(255, 255, 255, 0) 30%,
-      rgba(255, 255, 255, 0.15) 45%,
+      var(--theme-border-glass) 45%,
       rgba(255, 255, 255, 0.5) 50%,
-      rgba(255, 255, 255, 0.15) 55%,
+      var(--theme-border-glass) 55%,
       rgba(255, 255, 255, 0) 70%,
       transparent 100%);
   opacity: 0;
@@ -575,7 +558,7 @@
   text-align: center;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
   animation: logoutSlideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-  color: white;
+  color: var(--theme-text-primary);
 }
 
 .logout-modal-icon {
@@ -597,7 +580,7 @@
   font-family: var(--font-heading);
   font-weight: var(--font-heading-weight);
   font-size: 1.4rem;
-  color: #ffffff;
+  color: var(--theme-text-primary)fff;
   letter-spacing: 0.5px;
 }
 
@@ -616,8 +599,8 @@
 .btn-logout-cancel {
   flex: 1;
   padding: 12px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--theme-border-glass);
+  background: var(--theme-surface-glass-active);
   color: rgba(255, 255, 255, 0.85);
   border-radius: 12px;
   font-family: var(--font-body);
@@ -630,9 +613,9 @@
 }
 
 .btn-logout-cancel:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--theme-border-glass);
   border-color: rgba(255, 255, 255, 0.3);
-  color: white;
+  color: var(--theme-text-primary);
 }
 
 .btn-logout-confirm {
@@ -654,7 +637,7 @@
 .btn-logout-confirm:hover {
   background: rgba(239, 68, 68, 0.28);
   border-color: rgba(239, 68, 68, 0.55);
-  color: white;
+  color: var(--theme-text-primary);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
 }

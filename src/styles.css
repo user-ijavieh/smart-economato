@@ -3,12 +3,51 @@
    ============================================ */
 
 :root {
-  /* Colores principales */
+  /* ===== THEME TOKENS (Dark Mode — General/User) ===== */
+  --theme-bg-page: #0c0808;
+  --theme-bg-base: rgba(8, 3, 3, 0.85);
+  --theme-surface-glass: rgba(12, 12, 12, 0.65);
+  --theme-surface-glass-hover: rgba(255, 255, 255, 0.05);
+  --theme-surface-glass-active: rgba(255, 255, 255, 0.08);
+  --theme-border-glass: rgba(255, 255, 255, 0.15);
+  --theme-border-subtle: rgba(255, 255, 255, 0.06);
+  --theme-text-primary: #FFFFFF;
+  --theme-text-secondary: rgba(255, 255, 255, 0.6);
+  --theme-text-muted: rgba(255, 255, 255, 0.28);
+  --theme-text-on-brand: #FFFFFF;
+  --theme-shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --theme-shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.6);
+  --theme-effect-glass: blur(32px);
+  --theme-radius-card: 20px;
+  --theme-radius-input: 12px;
+  --theme-radius-btn: 12px;
+
+  /* Brand (invariante — no cambia con el tema) */
+  --brand-primary: #B84B44;
+  --brand-dark: #8C2E28;
+  --brand-light: #D4625A;
+  --brand-glow: rgba(184, 75, 68, 0.35);
+
+  /* Danger (invariante) */
+  --theme-danger-bg: rgba(239, 68, 68, 0.08);
+  --theme-danger-border: rgba(239, 68, 68, 0.35);
+
+  /* Table-specific */
+  --theme-table-header-bg: rgba(0, 0, 0, 0.4);
+  --theme-table-row-hover: rgba(255, 255, 255, 0.03);
+  --theme-table-row-alt: rgba(255, 255, 255, 0.02);
+
+  /* Sidebar-specific */
+  --theme-sidebar-bg: #160C0B;
+  --theme-sidebar-border: rgba(184, 75, 68, 0.18);
+  --theme-sidebar-tint: rgba(184, 75, 68, 0.07);
+
+  /* Colores principales (legacy — mantener para compatibilidad) */
   --primary-color: #B84B44;
   --secondary-color: #FAE7E0;
   --login-background-color: #fae7e0b1;
 
-  /* Sidebar */
+  /* Sidebar (legacy — mantener para compatibilidad) */
   --base-clr: #B84B44;
   --line-clr: rgba(255, 255, 255, 0.15);
   --hover-clr: rgba(255, 255, 255, 0.1);
@@ -99,23 +138,30 @@ html {
   font-family: var(--font-body);
   font-weight: var(--font-body-weight);
   line-height: 1.5rem;
-  background-color: #0c0808;
+  background-color: var(--theme-bg-page);
   overflow-x: hidden;
 }
 
 body {
   min-height: 100vh;
   min-height: 100dvh;
-  background-color: #0c0808;
-  color: white;
+  background-color: var(--theme-bg-page);
+  color: var(--theme-text-primary);
   overflow-x: hidden;
   position: relative;
 }
 
 body.admin-theme,
 html.admin-theme {
-  background-color: var(--admin-bg-base) !important;
-  color: white !important;
+  --theme-bg-page: #080D1C;
+  --theme-surface-glass: rgba(12, 16, 28, 0.65);
+  --theme-border-glass: rgba(90, 120, 220, 0.15);
+  --theme-sidebar-bg: #080D1C;
+  --theme-sidebar-border: rgba(90, 120, 220, 0.18);
+  --theme-sidebar-tint: rgba(90, 120, 220, 0.07);
+
+  background-color: var(--theme-bg-page) !important;
+  color: var(--theme-text-primary) !important;
 }
 
 /* Aggressive scrollbar hide for root elements */
@@ -270,7 +316,7 @@ body::-webkit-scrollbar {
   align-items: center;
   gap: 10px;
   padding: 10px 22px;
-  background: #fff;
+  background: var(--theme-surface-glass);
   border: 1px solid rgba(var(--admin-rgb), 0.15);
   border-radius: 12px;
   color: var(--admin-primary);
@@ -291,8 +337,8 @@ body::-webkit-scrollbar {
 .admin-theme .btn-page:disabled {
   opacity: 0.45;
   cursor: not-allowed;
-  background: #fdfdfd;
-  border-color: #eee;
+  background: var(--theme-surface-glass-hover);
+  border-color: var(--theme-border-subtle);
   box-shadow: none;
   transform: none;
 }
@@ -303,13 +349,13 @@ body::-webkit-scrollbar {
   gap: 8px;
   font-family: var(--font-body);
   font-weight: 500;
-  color: #444;
+  color: var(--theme-text-primary);
   white-space: nowrap;
   padding: 0 4px;
 }
 
 .admin-theme .total-info {
-  color: #888;
+  color: var(--theme-text-secondary);
   font-size: 12px;
   background: rgba(var(--admin-rgb), 0.08);
   padding: 4px 12px;

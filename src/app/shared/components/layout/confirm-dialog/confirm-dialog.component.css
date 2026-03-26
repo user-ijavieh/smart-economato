@@ -21,8 +21,8 @@
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 18px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  color: #FFFFFF;
+  box-shadow: 0 4px 20px var(--theme-table-header-bg);
+  color: var(--theme-text-primary)FFF;
   max-width: 500px;
   width: 90%;
   animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
@@ -35,7 +35,7 @@
 
 .dialog-header {
   padding: 24px 30px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--theme-surface-glass-hover);
   background: linear-gradient(to right, rgba(184, 75, 68, 0.15), transparent);
 }
 
@@ -43,7 +43,7 @@
   margin: 0;
   font-size: 1.4rem;
   font-weight: 700;
-  color: #FFFFFF;
+  color: var(--theme-text-primary)FFF;
 }
 
 .dialog-body {
@@ -60,7 +60,7 @@
 
 .dialog-footer {
   padding: 20px 30px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--theme-surface-glass-hover);
   display: flex;
   justify-content: flex-end;
   gap: 12px;
@@ -80,9 +80,9 @@
 }
 
 .btn-cancel {
-  background: rgba(255, 255, 255, 0.1);
-  color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--theme-surface-glass-hover);
+  color: var(--theme-text-primary)FFF;
+  border: 1px solid var(--theme-border-glass);
 }
 
 .btn-cancel:hover {
