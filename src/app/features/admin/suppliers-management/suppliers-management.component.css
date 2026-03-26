@@ -334,7 +334,7 @@ tr:hover { background: rgba(255, 255, 255, 0.05); }
 
 @media (max-width: 640px) {
   .header-proveedores { padding: 10px; }
-  .header-proveedores h1 { font-size: 1.1rem; }
+  .header-proveedores h1 { font-size: 1.3rem; }
   .contenedor-principal { padding: 10px; }
   .controles { padding: 12px; }
   button { width: 100%; font-size: 0.8rem; padding: 10px; }
