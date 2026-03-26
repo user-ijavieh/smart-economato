@@ -1,9 +1,10 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { UserService } from '../../../core/services/user.service';
 import { MessageService } from '../../../core/services/message.service';
-import { User, UserRequest } from '../../../shared/models/user.model';
+import { User, UserRequest, BatchAssignResponse } from '../../../shared/models/user.model';
 import { UserFormModalComponent } from './user-form-modal/user-form-modal.component';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
@@ -57,6 +58,20 @@ export class UsersManagementComponent implements OnInit {
     sortColumn = 'name';
     sortDir: 'asc' | 'desc' = 'asc';
     sortInteracted = false;
+
+    // ── Tab state ──
+    activeTab: 'users' | 'assignments' = 'users';
+
+    // ── Assignments state ──
+    unassignedStudents: User[] = [];
+    teachers: User[] = [];
+    pendingAssignments: Map<number, User[]> = new Map(); // teacherId → students pendientes
+    loadingAssignments = false;
+    assignmentsLoaded = false;
+    assigningInProgress = false;
+    dragOverTeacherId: number | null = null;
+    dragOverUnassigned = false;
+    draggedStudent: User | null = null;
 
     ngOnInit(): void {
         this.loadUsers();
@@ -225,6 +240,235 @@ export class UsersManagementComponent implements OnInit {
         if (container) {
             container.scrollTo({ top: 0, behavior: 'smooth' });
         }
+    }
+
+    // ── Tab switching ──
+
+    switchTab(tab: 'users' | 'assignments'): void {
+        if (this.activeTab === tab) return;
+        this.activeTab = tab;
+        this.scrollToTop();
+        if (tab === 'assignments' && !this.assignmentsLoaded) {
+            this.loadAssignmentData();
+        }
+    }
+
+    // ── Assignments data loading ──
+
+    loadAssignmentData(): void {
+        this.loadingAssignments = true;
+        this.cdr.detectChanges();
+
+        forkJoin({
+            students: this.userService.getUnassignedStudents(),
+            teachers: this.userService.getTeachers()
+        }).subscribe({
+            next: ({ students, teachers }) => {
+                this.unassignedStudents = students;
+                this.teachers = teachers;
+                this.pendingAssignments = new Map();
+                this.loadingAssignments = false;
+                this.assignmentsLoaded = true;
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error loading assignment data:', err);
+                this.messageService.showError('Error al cargar los datos de asignacion');
+                this.loadingAssignments = false;
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    // ── Drag and Drop (HTML5 nativo) ──
+
+    onDragStart(event: DragEvent, student: User): void {
+        this.draggedStudent = student;
+        event.dataTransfer?.setData('text/plain', student.id.toString());
+        if (event.dataTransfer) {
+            event.dataTransfer.effectAllowed = 'move';
+        }
+    }
+
+    onDragOverTeacher(event: DragEvent, teacherId: number): void {
+        event.preventDefault();
+        if (event.dataTransfer) {
+            event.dataTransfer.dropEffect = 'move';
+        }
+        this.dragOverTeacherId = teacherId;
+    }
+
+    onDragOverUnassigned(event: DragEvent): void {
+        event.preventDefault();
+        if (event.dataTransfer) {
+            event.dataTransfer.dropEffect = 'move';
+        }
+        this.dragOverUnassigned = true;
+    }
+
+    onDragLeave(): void {
+        this.dragOverTeacherId = null;
+        this.dragOverUnassigned = false;
+    }
+
+    onDragEnd(): void {
+        this.draggedStudent = null;
+        this.dragOverTeacherId = null;
+        this.dragOverUnassigned = false;
+    }
+
+    onDrop(event: DragEvent, teacherId: number): void {
+        event.preventDefault();
+        this.dragOverTeacherId = null;
+
+        const studentId = Number(event.dataTransfer?.getData('text/plain'));
+        if (!studentId) return;
+
+        let studentIndex = this.unassignedStudents.findIndex(s => s.id === studentId);
+        let student: User | undefined;
+
+        if (studentIndex !== -1) {
+            student = this.unassignedStudents[studentIndex];
+            this.unassignedStudents.splice(studentIndex, 1);
+        } else {
+            for (const [tid, students] of this.pendingAssignments) {
+                const idx = students.findIndex(s => s.id === studentId);
+                if (idx !== -1) {
+                    student = students[idx];
+                    students.splice(idx, 1);
+                    if (students.length === 0) this.pendingAssignments.delete(tid);
+                    break;
+                }
+            }
+        }
+
+        if (!student) return;
+
+        if (!this.pendingAssignments.has(teacherId)) {
+            this.pendingAssignments.set(teacherId, []);
+        }
+
+        const existing = this.pendingAssignments.get(teacherId)!;
+        if (!existing.find(s => s.id === student.id)) {
+            existing.push(student);
+        }
+
+        this.draggedStudent = null;
+        this.cdr.detectChanges();
+    }
+
+    onDropBackToUnassigned(event: DragEvent): void {
+        event.preventDefault();
+        this.dragOverUnassigned = false;
+
+        const studentId = Number(event.dataTransfer?.getData('text/plain'));
+        if (!studentId) return;
+
+        for (const [tid, students] of this.pendingAssignments) {
+            const idx = students.findIndex(s => s.id === studentId);
+            if (idx !== -1) {
+                const student = students[idx];
+                students.splice(idx, 1);
+                if (students.length === 0) this.pendingAssignments.delete(tid);
+
+                if (!this.unassignedStudents.find(s => s.id === student.id)) {
+                    this.unassignedStudents.push(student);
+                }
+                break;
+            }
+        }
+
+        this.draggedStudent = null;
+        this.cdr.detectChanges();
+    }
+
+    removeFromTeacher(student: User, teacherId: number): void {
+        const students = this.pendingAssignments.get(teacherId);
+        if (!students) return;
+
+        const idx = students.findIndex(s => s.id === student.id);
+        if (idx !== -1) {
+            students.splice(idx, 1);
+            if (students.length === 0) this.pendingAssignments.delete(teacherId);
+            if (!this.unassignedStudents.find(s => s.id === student.id)) {
+                this.unassignedStudents.push(student);
+            }
+            this.cdr.detectChanges();
+        }
+    }
+
+    // ── Assignment helpers ──
+
+    getPendingForTeacher(teacherId: number): User[] {
+        return this.pendingAssignments.get(teacherId) || [];
+    }
+
+    hasPendingAssignments(): boolean {
+        for (const students of this.pendingAssignments.values()) {
+            if (students.length > 0) return true;
+        }
+        return false;
+    }
+
+    get totalPendingCount(): number {
+        let count = 0;
+        for (const students of this.pendingAssignments.values()) {
+            count += students.length;
+        }
+        return count;
+    }
+
+    clearPendingAssignments(): void {
+        for (const students of this.pendingAssignments.values()) {
+            for (const student of students) {
+                if (!this.unassignedStudents.find(s => s.id === student.id)) {
+                    this.unassignedStudents.push(student);
+                }
+            }
+        }
+        this.pendingAssignments = new Map();
+        this.cdr.detectChanges();
+    }
+
+    // ── Confirm assignments ──
+
+    confirmAssignments(): void {
+        if (!this.hasPendingAssignments() || this.assigningInProgress) return;
+
+        this.assigningInProgress = true;
+        this.cdr.detectChanges();
+
+        const requests: { teacherId: number; studentIds: number[] }[] = [];
+        for (const [teacherId, students] of this.pendingAssignments) {
+            if (students.length > 0) {
+                requests.push({ teacherId, studentIds: students.map(s => s.id) });
+            }
+        }
+
+        forkJoin(
+            requests.map(req => this.userService.assignTeacherBatch(req.teacherId, req.studentIds))
+        ).subscribe({
+            next: (responses: BatchAssignResponse[]) => {
+                const totalProcessed = responses.reduce((sum, r) => sum + r.processedCount, 0);
+                const totalFailed = responses.reduce((sum, r) => sum + (r.failedStudentIds?.length || 0), 0);
+
+                if (totalFailed > 0) {
+                    this.messageService.showWarning(`${totalProcessed} alumnos asignados, ${totalFailed} fallaron`);
+                } else {
+                    this.messageService.showSuccess(`${totalProcessed} alumnos asignados correctamente`);
+                }
+
+                this.assigningInProgress = false;
+                this.pendingAssignments = new Map();
+                this.loadAssignmentData();
+            },
+            error: (err) => {
+                console.error('Error assigning students:', err);
+                this.messageService.showError('Error al asignar los alumnos');
+                this.assigningInProgress = false;
+                this.cdr.detectChanges();
+            }
+        });
     }
 
     // ── Modal operations ──

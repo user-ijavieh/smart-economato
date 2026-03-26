@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { User, UserRequest } from '../../shared/models/user.model';
+import { User, UserRequest, BatchAssignResponse } from '../../shared/models/user.model';
 import { Page } from '../../shared/models/page.model';
 
 @Injectable({ providedIn: 'root' })
@@ -132,6 +132,22 @@ export class UserService {
       params = params.set('sort', sort);
     }
     return this.http.get<User[]>(`${this.url}/by-role/${role}`, { params });
+  }
+
+  getUnassignedStudents(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.url}/students/unassigned`);
+  }
+
+  getTeachers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.url}/teachers`);
+  }
+
+  assignTeacher(studentId: number, teacherId: number | null): Observable<void> {
+    return this.http.patch<void>(`${this.url}/${studentId}/teacher`, { teacherId });
+  }
+
+  assignTeacherBatch(teacherId: number | null, studentIds: number[]): Observable<BatchAssignResponse> {
+    return this.http.patch<BatchAssignResponse>(`${this.url}/batch/teacher`, { teacherId, studentIds });
   }
 
 }
