@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
 import { MessageService } from '../../../core/services/message.service';
+import { ThemeService } from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-login',
@@ -17,6 +18,7 @@ export class LoginComponent {
   private router = inject(Router);
   private messageService = inject(MessageService);
   private cdr = inject(ChangeDetectorRef);
+  private themeService = inject(ThemeService);
 
   loginForm = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -25,6 +27,14 @@ export class LoginComponent {
 
   loading = false;
   errorMessage = '';
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+  }
+
+  isDarkMode(): boolean {
+    return this.themeService.isDark();
+  }
 
   onLogin(): void {
     if (this.loginForm.invalid) return;
