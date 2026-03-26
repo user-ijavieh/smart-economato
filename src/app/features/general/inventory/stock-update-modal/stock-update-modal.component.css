@@ -53,7 +53,7 @@
   width: 36px;
   height: 36px;
   border: none;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--theme-border-medium);
   border-radius: 8px;
   color: var(--theme-text-primary);
   cursor: pointer;
@@ -64,7 +64,7 @@
 }
 
 .modal-close:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--theme-border-hover);
   transform: scale(1.05);
 }
 

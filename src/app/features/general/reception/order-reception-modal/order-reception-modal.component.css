@@ -4,14 +4,14 @@
 }
 
 ::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
+::-webkit-scrollbar-track { background: var(--theme-surface-glass-hover); }
 ::-webkit-scrollbar-thumb { background: rgba(184, 75, 68, 0.3); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(184, 75, 68, 0.5); }
 
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: var(--theme-overlay-bg);
   backdrop-filter: blur(24px);
   z-index: 10000;
   display: flex;
@@ -71,7 +71,7 @@
 .close-btn {
   width: 36px;
   height: 36px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border-medium);
   background: var(--theme-surface-glass-hover);
   border-radius: 8px;
   color: var(--theme-text-primary);
@@ -170,7 +170,7 @@
   padding: 10px 14px;
   border: 1.5px solid var(--theme-border-glass);
   border-radius: var(--theme-radius-input);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   color: var(--theme-text-primary);
   font-size: 0.95rem;
   transition: all 0.25s ease;
@@ -199,7 +199,7 @@
   gap: 12px;
   justify-content: flex-end;
   flex-shrink: 0;
-  background: rgba(0, 0, 0, 0.15);
+  background: var(--theme-overlay-light);
 }
 
 .btn {
@@ -226,7 +226,7 @@
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--theme-border-medium);
   transform: translateY(-2px);
 }
 

@@ -4,7 +4,7 @@
 }
 
 ::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
+::-webkit-scrollbar-track { background: var(--theme-surface-glass-hover); }
 ::-webkit-scrollbar-thumb { background: rgba(184, 75, 68, 0.3); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(184, 75, 68, 0.5); }
 
@@ -59,7 +59,7 @@
 .modal-close {
   width: 36px;
   height: 36px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border-medium);
   background: var(--theme-surface-glass-hover);
   border-radius: 8px;
   color: var(--theme-text-primary);
@@ -211,7 +211,7 @@
 
 .cook-field input {
   padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   border: 1.5px solid var(--theme-border-glass);
   border-radius: var(--theme-radius-input);
   font-size: 0.9rem;
@@ -253,7 +253,7 @@
   border: 1px solid var(--theme-border-glass);
 }
 .btn-imprimir:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--theme-border-medium);
   transform: translateY(-2px);
 }
 
@@ -302,7 +302,7 @@
   --color-brand-primary: rgba(90, 120, 220, 0.95);
   --color-brand-dark: rgba(90, 120, 220, 0.8);
   --color-brand-glow: rgba(90, 120, 220, 0.35);
-  --color-surface-glass: rgba(12, 16, 28, 0.65);
+  --color-surface-glass: var(--theme-surface-glass);
   --color-border-glass: rgba(90, 120, 220, 0.15);
 }
 :host-context(.admin-theme) .modal-header-base {

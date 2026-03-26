@@ -42,11 +42,11 @@ main.main-expanded {
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid var(--theme-border-light);
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--theme-text-primary);
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -98,10 +98,10 @@ main.main-expanded {
 }
 
 .logout-modal {
-  background: rgba(12, 12, 12, 0.75);
+  background: var(--theme-modal-glass);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--theme-border-card);
   border-radius: 22px;
   padding: 40px 36px 32px;
   max-width: 420px;
@@ -148,7 +148,7 @@ main.main-expanded {
 .logout-modal p {
   margin: 0 0 30px;
   font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--theme-text-secondary);
   line-height: 1.6;
 }
 
@@ -162,7 +162,7 @@ main.main-expanded {
   padding: 12px 20px;
   border: 1px solid var(--theme-border-glass);
   background: var(--theme-surface-glass-active);
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--theme-text-primary);
   border-radius: 12px;
   font-size: 0.95rem;
   font-weight: 600;
@@ -173,7 +173,7 @@ main.main-expanded {
 
 .btn-logout-cancel:hover {
   background: var(--theme-border-glass);
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: var(--theme-border-hover);
   transform: translateY(-2px);
 }
 
@@ -197,6 +197,25 @@ main.main-expanded {
   color: var(--theme-text-primary);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+}
+
+/* Light mode overrides para Logout Modal */
+:host-context([data-theme="light"]) .logout-modal {
+  box-shadow: var(--theme-shadow-deep);
+}
+
+:host-context([data-theme="light"]) .btn-logout-cancel {
+  color: var(--theme-text-primary);
+}
+
+:host-context([data-theme="light"]) .btn-logout-confirm {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+:host-context([data-theme="light"]) .btn-logout-confirm:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
 }
 
 @media (max-width: 480px) {

@@ -36,7 +36,7 @@
   background: rgba(15, 15, 15, 0.88);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid var(--theme-surface-glass-hover);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
 }
 
@@ -74,7 +74,7 @@
   font-family: var(--font-body, system-ui);
   font-size: 0.83rem;
   font-weight: 600;
-  color: var(--theme-text-primary);
+  color: #ffffff;
   line-height: 1.35;
 }
 
@@ -82,7 +82,7 @@
   margin: 0;
   font-family: var(--font-body, system-ui);
   font-size: 0.73rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--theme-text-secondary);
 }
 
 /* ─── Lista de servicios ─────────────────────────────── */

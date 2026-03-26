@@ -30,11 +30,11 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid var(--theme-border-card);
   background: rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--theme-text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,6 +64,10 @@
   background: linear-gradient(155deg, rgba(10,3,3,0.78) 0%, rgba(184,75,68,0.32) 48%, rgba(10,3,3,0.82) 100%);
   pointer-events: none;
   z-index: 0;
+}
+
+:host-context([data-theme="light"]) .login-wrapper::before {
+  background: linear-gradient(155deg, rgba(255,255,255,0.65) 0%, rgba(184,75,68,0.15) 48%, rgba(255,255,255,0.70) 100%);
 }
 
 /* ── Card principal (Dark Glassmorphism) ── */
@@ -158,7 +162,7 @@
   padding: 0 16px;
   box-sizing: border-box;
   border: 1.5px solid var(--theme-border-glass);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   font-family: var(--font-body);
@@ -187,6 +191,13 @@
   -webkit-box-shadow: 0 0 0 30px rgba(8, 3, 3, 0.95) inset !important;
   -webkit-text-fill-color: var(--theme-text-primary) !important;
   transition: background-color 5000s ease-in-out 0s;
+}
+
+:host-context([data-theme="light"]) .form-input:-webkit-autofill,
+:host-context([data-theme="light"]) .form-input:-webkit-autofill:hover,
+:host-context([data-theme="light"]) .form-input:-webkit-autofill:focus,
+:host-context([data-theme="light"]) .form-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px rgba(255, 255, 255, 0.95) inset !important;
 }
 
 .form-input.input-error {

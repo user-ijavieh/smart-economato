@@ -9,7 +9,7 @@
   display: none !important;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--theme-surface-glass-hover);
 }
 ::-webkit-scrollbar-thumb {
   background: rgba(184, 75, 68, 0.3);
@@ -78,7 +78,7 @@
   border-radius: var(--theme-radius-input);
   padding: 0 16px;
   border: 1.5px solid var(--theme-border-glass);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   backdrop-filter: blur(8px);
   color: var(--theme-text-primary);
   font-family: var(--font-body);
@@ -131,7 +131,7 @@ button,
 
 button:hover {
   background: var(--theme-border-glass);
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: var(--theme-border-hover);
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
@@ -144,15 +144,15 @@ button:active {
 /* Glassy Primary Buttons */
 .btn-primary {
   background: var(--theme-surface-glass-hover) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid var(--theme-border-medium) !important;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
   color: var(--theme-text-primary)!important;
   backdrop-filter: blur(8px);
 }
 
 .btn-primary:hover {
-  background: rgba(255, 255, 255, 0.18) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
+  background: var(--theme-surface-glass-active) !important;
+  border-color: var(--theme-text-secondary) !important;
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
 }
@@ -182,7 +182,7 @@ button:active {
 
 button[click*="clearFilters"] {
   background: var(--theme-surface-glass-hover);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border-medium);
   color: var(--theme-text-secondary);
 }
 
@@ -344,12 +344,12 @@ tfoot td {
   align-items: center;
   gap: 8px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--theme-text-secondary);
   white-space: nowrap;
 }
 
 .total-info {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--theme-text-secondary);
   font-size: 12px;
   background: var(--theme-surface-glass-hover);
   padding: 4px 12px;
@@ -364,7 +364,7 @@ tfoot td {
   font-family: var(--font-body);
   border-radius: 10px;
   border: 1px solid var(--theme-border-glass);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   color: var(--theme-text-primary);
   backdrop-filter: blur(8px);
   cursor: pointer;
@@ -615,7 +615,7 @@ tfoot td {
 .scanner-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: var(--theme-overlay-bg);
   backdrop-filter: blur(8px);
   z-index: 9999;
   display: flex;
@@ -653,7 +653,7 @@ tfoot td {
 }
 .scanner-close-btn {
   background: var(--theme-surface-glass-hover);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border-medium);
   color: var(--theme-text-primary);
   width: 36px; height: 36px; padding: 0; border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
