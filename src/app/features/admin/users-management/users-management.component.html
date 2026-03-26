@@ -227,14 +227,39 @@
                 </svg>
                 <h2>Alumnos sin profesor</h2>
                 <span class="count-badge">{{ unassignedStudents.length }}</span>
+                <button class="selection-toggle" (click)="selectAllStudents()" [class.active]="isAllSelected" type="button">
+                    <span class="selection-toggle-box">
+                        @if (isAllSelected) {
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M13.485 1.929a.75.75 0 0 1 .086 1.057l-7.25 8.5a.75.75 0 0 1-1.104.041l-2.75-2.75a.75.75 0 1 1 1.06-1.06l2.178 2.178 6.72-7.882a.75.75 0 0 1 1.06-.084z"/>
+                        </svg>
+                        }
+                    </span>
+                    Seleccionar todos
+                </button>
             </div>
             <div class="students-list" role="listbox" aria-label="Alumnos sin asignar">
+                @if (selectionCount > 0) {
+                <div class="selection-actions">
+                    <span>{{ selectionCount }} seleccionados</span>
+                    <button type="button" (click)="clearSelection()">Deseleccionar</button>
+                </div>
+                }
                 @for (student of unassignedStudents; track student.id) {
                 <div class="student-card"
+                    [class.selected]="isSelected(student.id)"
                     draggable="true"
                     role="option"
+                    (click)="toggleStudentSelection(student, $event)"
                     (dragstart)="onDragStart($event, student)"
                     (dragend)="onDragEnd()">
+                    <span class="selection-checkbox" aria-hidden="true">
+                        @if (isSelected(student.id)) {
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M13.485 1.929a.75.75 0 0 1 .086 1.057l-7.25 8.5a.75.75 0 0 1-1.104.041l-2.75-2.75a.75.75 0 1 1 1.06-1.06l2.178 2.178 6.72-7.882a.75.75 0 0 1 1.06-.084z"/>
+                        </svg>
+                        }
+                    </span>
                     <div class="user-avatar-small">{{ student.name.charAt(0).toUpperCase() }}</div>
                     <div class="student-info">
                         <span class="student-name">{{ student.name }}</span>

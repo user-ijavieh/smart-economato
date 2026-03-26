@@ -73,6 +73,9 @@ export class UsersManagementComponent implements OnInit {
     dragOverTeacherId: number | null = null;
     dragOverUnassigned = false;
     draggedStudent: User | null = null;
+    draggedStudentIds: number[] = [];
+    selectedStudentIds: Set<number> = new Set();
+    lastSelectedIndex: number | null = null;
 
     ngOnInit(): void {
         this.loadUsers();
@@ -264,6 +267,7 @@ export class UsersManagementComponent implements OnInit {
 
     switchTab(tab: 'users' | 'assignments'): void {
         if (this.activeTab === tab) return;
+        this.clearSelection();
         this.activeTab = tab;
         this.scrollToTop();
         if (tab === 'assignments' && !this.assignmentsLoaded) {
@@ -275,6 +279,7 @@ export class UsersManagementComponent implements OnInit {
 
     loadAssignmentData(): void {
         this.loadingAssignments = true;
+        this.clearSelection();
         this.cdr.detectChanges();
 
         const teachers$ = this.teachersLoaded
@@ -290,6 +295,7 @@ export class UsersManagementComponent implements OnInit {
                 this.teachers = teachers;
                 this.teachersLoaded = true;
                 this.pendingAssignments = new Map();
+                this.clearSelection();
                 this.loadingAssignments = false;
                 this.assignmentsLoaded = true;
                 this.cdr.detectChanges();
@@ -307,10 +313,59 @@ export class UsersManagementComponent implements OnInit {
 
     onDragStart(event: DragEvent, student: User): void {
         this.draggedStudent = student;
-        event.dataTransfer?.setData('text/plain', student.id.toString());
+        if (!this.selectedStudentIds.has(student.id)) {
+            this.clearSelection();
+            this.selectedStudentIds.add(student.id);
+            this.lastSelectedIndex = this.unassignedStudents.findIndex(s => s.id === student.id);
+        }
+
+        this.draggedStudentIds = Array.from(this.selectedStudentIds);
+        if (this.draggedStudentIds.length === 0) {
+            this.draggedStudentIds = [student.id];
+        }
+
+        event.dataTransfer?.setData('text/plain', JSON.stringify(this.draggedStudentIds));
         if (event.dataTransfer) {
             event.dataTransfer.effectAllowed = 'move';
+
+            const dragBadge = document.createElement('div');
+            dragBadge.textContent = `${this.draggedStudentIds.length} alumno${this.draggedStudentIds.length > 1 ? 's' : ''}`;
+            dragBadge.style.position = 'fixed';
+            dragBadge.style.top = '-1000px';
+            dragBadge.style.left = '-1000px';
+            dragBadge.style.padding = '8px 12px';
+            dragBadge.style.borderRadius = '999px';
+            dragBadge.style.background = 'rgba(90, 120, 220, 0.95)';
+            dragBadge.style.color = 'white';
+            dragBadge.style.fontSize = '12px';
+            dragBadge.style.fontWeight = '600';
+            dragBadge.style.boxShadow = '0 6px 18px rgba(0,0,0,0.35)';
+            document.body.appendChild(dragBadge);
+            event.dataTransfer.setDragImage(dragBadge, 20, 20);
+            setTimeout(() => dragBadge.remove(), 0);
         }
+    }
+
+    private getDraggedIds(event: DragEvent): number[] {
+        const rawData = event.dataTransfer?.getData('text/plain');
+        if (rawData) {
+            try {
+                const parsed = JSON.parse(rawData);
+                if (Array.isArray(parsed)) {
+                    return parsed.map(id => Number(id)).filter(id => Number.isFinite(id) && id > 0);
+                }
+                const asNumber = Number(parsed);
+                if (Number.isFinite(asNumber) && asNumber > 0) {
+                    return [asNumber];
+                }
+            } catch {
+                const asNumber = Number(rawData);
+                if (Number.isFinite(asNumber) && asNumber > 0) {
+                    return [asNumber];
+                }
+            }
+        }
+        return this.draggedStudentIds;
     }
 
     onDragOverTeacher(event: DragEvent, teacherId: number): void {
@@ -336,6 +391,7 @@ export class UsersManagementComponent implements OnInit {
 
     onDragEnd(): void {
         this.draggedStudent = null;
+        this.draggedStudentIds = [];
         this.dragOverTeacherId = null;
         this.dragOverUnassigned = false;
     }
@@ -344,39 +400,43 @@ export class UsersManagementComponent implements OnInit {
         event.preventDefault();
         this.dragOverTeacherId = null;
 
-        const studentId = Number(event.dataTransfer?.getData('text/plain'));
-        if (!studentId) return;
+        const studentIds = this.getDraggedIds(event);
+        if (!studentIds.length) return;
 
-        let studentIndex = this.unassignedStudents.findIndex(s => s.id === studentId);
-        let student: User | undefined;
+        for (const studentId of studentIds) {
+            let studentIndex = this.unassignedStudents.findIndex(s => s.id === studentId);
+            let student: User | undefined;
 
-        if (studentIndex !== -1) {
-            student = this.unassignedStudents[studentIndex];
-            this.unassignedStudents.splice(studentIndex, 1);
-        } else {
-            for (const [tid, students] of this.pendingAssignments) {
-                const idx = students.findIndex(s => s.id === studentId);
-                if (idx !== -1) {
-                    student = students[idx];
-                    students.splice(idx, 1);
-                    if (students.length === 0) this.pendingAssignments.delete(tid);
-                    break;
+            if (studentIndex !== -1) {
+                student = this.unassignedStudents[studentIndex];
+                this.unassignedStudents.splice(studentIndex, 1);
+            } else {
+                for (const [tid, students] of this.pendingAssignments) {
+                    const idx = students.findIndex(s => s.id === studentId);
+                    if (idx !== -1) {
+                        student = students[idx];
+                        students.splice(idx, 1);
+                        if (students.length === 0) this.pendingAssignments.delete(tid);
+                        break;
+                    }
                 }
+            }
+
+            if (!student) continue;
+
+            if (!this.pendingAssignments.has(teacherId)) {
+                this.pendingAssignments.set(teacherId, []);
+            }
+
+            const existing = this.pendingAssignments.get(teacherId)!;
+            if (!existing.find(s => s.id === student.id)) {
+                existing.push(student);
             }
         }
 
-        if (!student) return;
-
-        if (!this.pendingAssignments.has(teacherId)) {
-            this.pendingAssignments.set(teacherId, []);
-        }
-
-        const existing = this.pendingAssignments.get(teacherId)!;
-        if (!existing.find(s => s.id === student.id)) {
-            existing.push(student);
-        }
-
         this.draggedStudent = null;
+        this.draggedStudentIds = [];
+        this.clearSelection();
         this.cdr.detectChanges();
     }
 
@@ -384,25 +444,91 @@ export class UsersManagementComponent implements OnInit {
         event.preventDefault();
         this.dragOverUnassigned = false;
 
-        const studentId = Number(event.dataTransfer?.getData('text/plain'));
-        if (!studentId) return;
+        const studentIds = this.getDraggedIds(event);
+        if (!studentIds.length) return;
 
-        for (const [tid, students] of this.pendingAssignments) {
-            const idx = students.findIndex(s => s.id === studentId);
-            if (idx !== -1) {
-                const student = students[idx];
-                students.splice(idx, 1);
-                if (students.length === 0) this.pendingAssignments.delete(tid);
+        for (const studentId of studentIds) {
+            for (const [tid, students] of this.pendingAssignments) {
+                const idx = students.findIndex(s => s.id === studentId);
+                if (idx !== -1) {
+                    const student = students[idx];
+                    students.splice(idx, 1);
+                    if (students.length === 0) this.pendingAssignments.delete(tid);
 
-                if (!this.unassignedStudents.find(s => s.id === student.id)) {
-                    this.unassignedStudents.push(student);
+                    if (!this.unassignedStudents.find(s => s.id === student.id)) {
+                        this.unassignedStudents.push(student);
+                    }
+                    break;
                 }
-                break;
             }
         }
 
         this.draggedStudent = null;
+        this.draggedStudentIds = [];
+        this.clearSelection();
         this.cdr.detectChanges();
+    }
+
+    toggleStudentSelection(student: User, event: MouseEvent): void {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const currentIndex = this.unassignedStudents.findIndex(s => s.id === student.id);
+        if (currentIndex === -1) {
+            return;
+        }
+
+        if (event.shiftKey && this.lastSelectedIndex !== null) {
+            const start = Math.min(this.lastSelectedIndex, currentIndex);
+            const end = Math.max(this.lastSelectedIndex, currentIndex);
+            for (let i = start; i <= end; i++) {
+                this.selectedStudentIds.add(this.unassignedStudents[i].id);
+            }
+        } else if (event.ctrlKey || event.metaKey) {
+            if (this.selectedStudentIds.has(student.id)) {
+                this.selectedStudentIds.delete(student.id);
+            } else {
+                this.selectedStudentIds.add(student.id);
+            }
+        } else {
+            this.selectedStudentIds.clear();
+            this.selectedStudentIds.add(student.id);
+        }
+
+        this.lastSelectedIndex = currentIndex;
+    }
+
+    selectAllStudents(): void {
+        if (this.isAllSelected) {
+            this.clearSelection();
+            return;
+        }
+
+        this.selectedStudentIds.clear();
+        for (const student of this.unassignedStudents) {
+            this.selectedStudentIds.add(student.id);
+        }
+        this.lastSelectedIndex = this.unassignedStudents.length ? this.unassignedStudents.length - 1 : null;
+    }
+
+    clearSelection(): void {
+        this.selectedStudentIds.clear();
+        this.lastSelectedIndex = null;
+    }
+
+    get isAllSelected(): boolean {
+        return this.unassignedStudents.length > 0
+            && this.unassignedStudents.every(student => this.selectedStudentIds.has(student.id));
+    }
+
+    get selectionCount(): number {
+        return this.unassignedStudents.reduce((count, student) => {
+            return this.selectedStudentIds.has(student.id) ? count + 1 : count;
+        }, 0);
+    }
+
+    isSelected(studentId: number): boolean {
+        return this.selectedStudentIds.has(studentId);
     }
 
     removeFromTeacher(student: User, teacherId: number): void {
@@ -458,6 +584,7 @@ export class UsersManagementComponent implements OnInit {
     confirmAssignments(): void {
         if (!this.hasPendingAssignments() || this.assigningInProgress) return;
 
+        this.clearSelection();
         this.assigningInProgress = true;
         this.cdr.detectChanges();
 
