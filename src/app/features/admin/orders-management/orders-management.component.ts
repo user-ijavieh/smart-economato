@@ -117,13 +117,31 @@ export class OrdersManagementComponent implements OnInit {
   }
 
   // ── Orders ──
+  // Server-side filters: startDate, endDate, userId, supplierId
+  // Client-side filters: orderSearchTerm, orderStatusFilter
   loadAllOrders(): void {
     this.loading = true;
     this.currentOrderPage = 0;
     this.cdr.markForCheck();
 
-    // Fetching all orders (using a large page size to support client-side filtering and totals)
-    this.orderService.getAll(0, 1000).pipe(
+    const filters: {
+      startDate?: string;
+      endDate?: string;
+      userId?: number;
+      supplierId?: number;
+      size: number;
+    } = { size: 500 };
+
+    if (this.orderStartDate)
+      filters.startDate = this.orderStartDate + 'T00:00:00';
+    if (this.orderEndDate)
+      filters.endDate = this.orderEndDate + 'T23:59:59';
+    if (this.orderUserFilter !== '')
+      filters.userId = Number(this.orderUserFilter);
+    if (this.orderSupplierFilter !== '')
+      filters.supplierId = Number(this.orderSupplierFilter);
+
+    this.orderService.search(filters).pipe(
       finalize(() => {
         this.loading = false;
         this.cdr.markForCheck();
@@ -132,8 +150,12 @@ export class OrdersManagementComponent implements OnInit {
       next: (response) => {
         if (Array.isArray(response)) {
           this.orders = response;
+        } else if (response?.orders) {
+          this.orders = response.orders;
         } else if (response?.content) {
           this.orders = response.content;
+        } else {
+          this.orders = [];
         }
         this.filteredAuditOrders = this.orders.filter(o => o.status === 'CONFIRMED');
         this.applyOrderFilters();
@@ -160,6 +182,7 @@ export class OrdersManagementComponent implements OnInit {
     this.pagedFilteredOrders = this.filteredOrders.slice(start, end);
   }
 
+  // Client-side filtering: only text and status (server already filtered by date/user/supplier)
   applyOrderFilters(): void {
     let result = [...this.orders];
 
@@ -171,30 +194,8 @@ export class OrdersManagementComponent implements OnInit {
       );
     }
 
-    if (this.orderStartDate) {
-      const from = new Date(this.orderStartDate).getTime();
-      result = result.filter(o => {
-        return o.orderDate ? new Date(o.orderDate).getTime() >= from : true;
-      });
-    }
-
-    if (this.orderEndDate) {
-      const to = new Date(this.orderEndDate).getTime() + 86400000;
-      result = result.filter(o => {
-        return o.orderDate ? new Date(o.orderDate).getTime() <= to : true;
-      });
-    }
-
     if (this.orderStatusFilter) {
       result = result.filter(o => o.status === this.orderStatusFilter);
-    }
-
-    if (this.orderUserFilter !== '') {
-      result = result.filter(o => o.userId === Number(this.orderUserFilter));
-    }
-
-    if (this.orderSupplierFilter !== '') {
-      result = result.filter(o => o.supplierId === Number(this.orderSupplierFilter));
     }
 
     this.filteredOrders = result;
@@ -202,13 +203,22 @@ export class OrdersManagementComponent implements OnInit {
     this.totalOrdersPrice = result.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
     this.totalOrderPages = Math.ceil(this.totalOrdersCount / this.orderPageSize);
 
-    // Reset to first page when filtering
     this.currentOrderPage = 0;
     this.paginateOrders();
-
     this.cdr.detectChanges();
   }
 
+  // Called when a server-side filter changes (date, user, supplier) → new API call
+  onServerFilterChange(): void {
+    this.loadAllOrders();
+  }
+
+  // Called when a client-side filter changes (text, status) → no API call
+  onClientFilterChange(): void {
+    this.applyOrderFilters();
+  }
+
+  // Keep for backward compat (HTML uses it for text search)
   onOrderSearch(): void { this.applyOrderFilters(); }
 
   clearOrderFilters(): void {
@@ -218,7 +228,7 @@ export class OrdersManagementComponent implements OnInit {
     this.orderStatusFilter = '';
     this.orderUserFilter = '';
     this.orderSupplierFilter = '';
-    this.applyOrderFilters();
+    this.loadAllOrders();
   }
 
   hasActiveOrderFilters(): boolean {
