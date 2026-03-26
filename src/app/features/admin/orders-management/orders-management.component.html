@@ -26,31 +26,31 @@
     <div class="controles">
         <div class="filter-row">
             <input type="text" [(ngModel)]="orderSearchTerm" placeholder="Buscar por usuario o ID..."
-                (ngModelChange)="onOrderSearch()" />
+                (ngModelChange)="onClientFilterChange()" />
 
             <input type="date" [(ngModel)]="orderStartDate" class="date-input"
-                (ngModelChange)="onOrderSearch()" title="Desde" />
+                (ngModelChange)="onServerFilterChange()" title="Desde" />
             <span class="date-separator">—</span>
             <input type="date" [(ngModel)]="orderEndDate" class="date-input"
-                (ngModelChange)="onOrderSearch()" title="Hasta" />
+                (ngModelChange)="onServerFilterChange()" title="Hasta" />
         </div>
 
         <div class="filter-row">
-            <select [(ngModel)]="orderStatusFilter" class="action-select" (ngModelChange)="onOrderSearch()">
+            <select [(ngModel)]="orderStatusFilter" class="action-select" (ngModelChange)="onClientFilterChange()">
                 <option value="">Todos los estados</option>
                 @for (s of allStatuses; track s.value) {
                 <option [value]="s.value">{{ s.label }}</option>
                 }
             </select>
 
-            <select [(ngModel)]="orderSupplierFilter" class="action-select" (ngModelChange)="onOrderSearch()">
+            <select [(ngModel)]="orderSupplierFilter" class="action-select" (ngModelChange)="onServerFilterChange()">
                 <option value="">Todos los proveedores</option>
                 @for (s of suppliersList; track s.id) {
                 <option [value]="s.id">{{ s.name }}</option>
                 }
             </select>
 
-            <select [(ngModel)]="orderUserFilter" class="action-select" (ngModelChange)="onOrderSearch()">
+            <select [(ngModel)]="orderUserFilter" class="action-select" (ngModelChange)="onServerFilterChange()">
                 <option value="">Todos los usuarios</option>
                 @for (u of usersList; track u.id) {
                 <option [value]="u.id">{{ u.name }}</option>
