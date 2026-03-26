@@ -5,6 +5,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { MessageService, Toast } from '../../../core/services/message.service';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { ToastComponent } from './toast/toast.component';
+import { ThemeService } from '../../../core/services/theme.service';
 import { slideInAnimation } from '../../animations/route-animations';
 
 @Component({
@@ -19,6 +20,7 @@ export class LayoutComponent {
   private authService = inject(AuthService);
   public messageService = inject(MessageService);
   private router = inject(Router);
+  private themeService = inject(ThemeService);
 
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
 
@@ -58,6 +60,14 @@ export class LayoutComponent {
 
   onSidebarToggled(isOpen: boolean): void {
     this.sidebarOpen = isOpen;
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+  }
+
+  isDarkMode(): boolean {
+    return this.themeService.isDark();
   }
 
   logout(): void {
