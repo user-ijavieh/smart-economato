@@ -1022,7 +1022,9 @@ tr.clickable-row {
 }
 
 @media (max-width: 480px) {
-  .stats-row { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .stat-card { padding: 12px; }
+  .stat-number { font-size: 1.4rem; }
   .recipe-icon { width: 28px; height: 28px; font-size: 0.8rem; }
 }
 

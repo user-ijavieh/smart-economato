@@ -246,7 +246,7 @@ button:disabled {
 /** ===== STATS ROW ===== */
 .stats-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 16px;
   margin-bottom: 2rem;
 }
@@ -694,14 +694,16 @@ tr:hover { background: rgba(255, 255, 255, 0.05); }
   .tab-btn { padding: 0 16px; font-size: 0.85rem; }
   .contenedor-principal { padding: 15px; }
   .controles { padding: 15px; }
-  .stats-row { grid-template-columns: 1fr 1fr; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
   .allergen-modal { width: 95%; }
 }
 
 @media (max-width: 480px) {
   .header-recetas { padding: 12px 15px; }
-  .header-recetas h1 { font-size: 1.1rem; }
-  .stats-row { grid-template-columns: 1fr; }
+  .header-recetas h1 { font-size: 1.2rem; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .stat-card { padding: 12px; }
+  .stat-number { font-size: 1.4rem; }
   .allergen-modal-footer { flex-direction: column; }
   .allergen-modal-footer .btn-save, .allergen-modal-footer .btn-cancel { width: 100%; justify-content: center; }
 }
