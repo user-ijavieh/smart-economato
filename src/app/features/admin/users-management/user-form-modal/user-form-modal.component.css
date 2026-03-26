@@ -1,10 +1,5 @@
 :host {
-    display: block;
-    --color-surface-glass: rgba(12, 16, 28, 0.65);
-    --color-border-glass: rgba(90, 120, 220, 0.15);
-    --effect-glass: blur(32px);
-    --text-primary: #ffffff;
-    --text-secondary: rgba(255, 255, 255, 0.6);
+  display: block;
 }
 
 /** ===== SCROLLBAR PERSONALIZADO ===== */
@@ -16,7 +11,7 @@
     background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--theme-surface-glass-hover);
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -46,10 +41,10 @@
 
 /** ===== MODAL CONTENT ===== */
 .modal-content {
-    background: var(--color-surface-glass);
-    backdrop-filter: var(--effect-glass);
-    -webkit-backdrop-filter: var(--effect-glass);
-    border: 1px solid var(--color-border-glass);
+    background: var(--theme-surface-glass);
+    backdrop-filter: var(--theme-effect-glass);
+    -webkit-backdrop-filter: var(--theme-effect-glass);
+    border: 1px solid var(--theme-border-glass);
     border-radius: 16px;
     width: 90%;
     max-width: 500px;
@@ -57,7 +52,7 @@
     overflow-y: auto;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     animation: slideUp 0.3s ease;
-    color: var(--text-primary);
+    color: var(--theme-text-primary);
 }
 
 @keyframes slideUp {
@@ -73,11 +68,11 @@
     padding: 20px 25px;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 16px 16px 0 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--theme-surface-glass-hover);
 }
 
 .modal-header h2 {
-    color: white;
+    color: var(--theme-text-primary);
     font-family: var(--font-heading);
     font-weight: var(--font-heading-weight);
     font-size: 1.3rem;
@@ -86,9 +81,9 @@
 }
 
 .btn-close {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--theme-surface-glass-hover);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
+    color: var(--theme-text-primary);
     cursor: pointer;
     border-radius: 8px;
     padding: 6px;
@@ -119,13 +114,13 @@ form {
     font-family: var(--font-body);
     font-weight: 600;
     font-size: 0.9rem;
-    color: var(--text-primary);
+    color: var(--theme-text-primary);
 }
 
 .optional-label {
     font-weight: 400;
     font-size: 0.8rem;
-    color: var(--text-secondary);
+    color: var(--theme-text-secondary);
     margin-left: 4px;
 }
 
@@ -134,9 +129,9 @@ form {
     width: 100%;
     padding: 10px 14px;
     border-radius: 8px;
-    border: 1.5px solid var(--color-border-glass);
+    border: 1.5px solid var(--theme-border-glass);
     background: rgba(255, 255, 255, 0.04);
-    color: var(--text-primary);
+    color: var(--theme-text-primary);
     font-family: var(--font-body);
     font-size: 0.9rem;
     transition: all 0.3s ease;
@@ -144,14 +139,14 @@ form {
 }
 
 .form-group input::placeholder {
-    color: var(--text-secondary);
+    color: var(--theme-text-secondary);
 }
 
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
     border-color: rgba(90, 120, 220, 0.6);
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--theme-surface-glass-active);
     box-shadow: 0 0 0 3px rgba(90, 120, 220, 0.2);
 }
 
@@ -170,7 +165,7 @@ form {
 
 .form-group select option {
     background: #1e1e1e;
-    color: white;
+    color: var(--theme-text-primary);
 }
 
 .teacher-select-group {
@@ -199,15 +194,15 @@ form {
     gap: 12px;
     justify-content: flex-end;
     padding-top: 10px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid var(--theme-surface-glass-active);
 }
 
 .btn-cancel {
     padding: 10px 20px;
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-primary);
+    background: var(--theme-surface-glass-hover);
+    color: var(--theme-text-primary);
     cursor: pointer;
     font-family: var(--font-body);
     font-size: 0.9rem;
@@ -215,8 +210,8 @@ form {
 }
 
 .btn-cancel:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+    background: var(--theme-surface-glass-hover);
+    color: var(--theme-text-primary);
 }
 
 .btn-save {
@@ -224,7 +219,7 @@ form {
     border-radius: 8px;
     border: none;
     background: var(--admin-gradient);
-    color: white;
+    color: var(--theme-text-primary);
     cursor: pointer;
     font-family: var(--font-body);
     font-size: 0.9rem;
@@ -239,7 +234,7 @@ form {
 }
 
 .btn-save:disabled {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--theme-surface-glass-hover);
     color: rgba(255, 255, 255, 0.3);
     cursor: not-allowed;
     box-shadow: none;
@@ -310,20 +305,20 @@ form {
     margin: 0 0 8px;
     font-size: 1.2rem;
     font-weight: 700;
-    color: white;
+    color: var(--theme-text-primary);
     font-family: var(--font-heading);
 }
 
 .credentials-note {
     margin: 0 0 24px;
     font-size: 0.85rem;
-    color: var(--text-secondary);
+    color: var(--theme-text-secondary);
     line-height: 1.4;
 }
 
 .credentials-box {
     background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--theme-surface-glass-hover);
     border-radius: 12px;
     padding: 16px;
     margin-bottom: 24px;
@@ -338,12 +333,12 @@ form {
 }
 
 .credential-row:first-child {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid var(--theme-surface-glass-active);
 }
 
 .credential-label {
     font-size: 0.8rem;
-    color: var(--text-secondary);
+    color: var(--theme-text-secondary);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -352,7 +347,7 @@ form {
 .credential-value {
     font-size: 0.95rem;
     font-weight: 600;
-    color: white;
+    color: var(--theme-text-primary);
     font-family: 'Courier New', monospace;
 }
 
@@ -386,7 +381,7 @@ form {
 .btn-copy:hover {
     border-color: rgba(90, 120, 220, 0.6);
     background: rgba(90, 120, 220, 0.25);
-    color: white;
+    color: var(--theme-text-primary);
 }
 
 .btn-done {
@@ -394,7 +389,7 @@ form {
     padding: 11px 20px;
     border: none;
     background: var(--admin-gradient);
-    color: white;
+    color: var(--theme-text-primary);
     border-radius: 10px;
     font-size: 0.9rem;
     font-weight: 600;
