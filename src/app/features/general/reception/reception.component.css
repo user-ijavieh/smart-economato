@@ -87,7 +87,7 @@
   background: linear-gradient(
     90deg,
     var(--theme-surface-glass-hover) 25%,
-    rgba(255,255,255,0.12) 50%,
+    var(--theme-border-light) 50%,
     var(--theme-surface-glass-hover) 75%
   );
   background-size: 200% 100%;
@@ -186,7 +186,7 @@
 .order-card:hover {
   transform: translateY(-5px);
   box-shadow: var(--theme-shadow-hover);
-  border-right-color: rgba(255, 255, 255, 0.3);
+  border-right-color: var(--theme-border-hover);
 }
 
 .order-card.completed {
@@ -240,7 +240,7 @@
   font-weight: bold;
   font-size: 1.1rem;
   color: var(--theme-text-primary);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--theme-border-hover);
   backdrop-filter: blur(4px);
 }
 
@@ -268,7 +268,7 @@
   font-weight: 600;
   text-transform: uppercase;
   background: var(--theme-table-header-bg);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--theme-border-hover);
   letter-spacing: 0.5px;
   color: var(--theme-text-primary);
 }
@@ -399,7 +399,7 @@
 
 .btn-secondary:hover {
   background: var(--theme-border-glass);
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: var(--theme-border-hover);
 }
 
 .btn-success {
@@ -442,7 +442,7 @@
 
 .btn-details {
   background: var(--theme-surface-glass-hover) !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
+  border-color: var(--theme-border-medium) !important;
   color: var(--theme-text-primary)!important;
 }
 
@@ -462,7 +462,7 @@
 .btn-load-more {
   padding: 12px 32px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border-medium);
   background: var(--theme-surface-glass-hover);
   color: var(--theme-text-primary);
   font-size: 0.95rem;

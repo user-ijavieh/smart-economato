@@ -30,7 +30,7 @@
   background: linear-gradient(
     90deg,
     var(--theme-surface-glass-hover) 25%,
-    rgba(255,255,255,0.12) 50%,
+    var(--theme-border-light) 50%,
     var(--theme-surface-glass-hover) 75%
   );
   background-size: 200% 100%;
@@ -234,7 +234,7 @@
   letter-spacing: 0.5px;
   background: var(--theme-table-header-bg);
   color: var(--theme-text-primary);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--theme-border-hover);
   backdrop-filter: blur(8px);
   white-space: nowrap;
 }
@@ -293,7 +293,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   border: 1px solid var(--theme-border-subtle);
   border-radius: 8px;
   font-size: 0.9rem;
@@ -355,7 +355,7 @@
 
 .btn-details {
   background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: var(--theme-border-light);
 }
 
 .btn-confirm {

@@ -42,7 +42,7 @@ main.main-expanded {
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid var(--theme-border-light);
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -101,7 +101,7 @@ main.main-expanded {
   background: rgba(12, 12, 12, 0.75);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--theme-border-card);
   border-radius: 22px;
   padding: 40px 36px 32px;
   max-width: 420px;
@@ -148,7 +148,7 @@ main.main-expanded {
 .logout-modal p {
   margin: 0 0 30px;
   font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--theme-text-secondary);
   line-height: 1.6;
 }
 
@@ -173,7 +173,7 @@ main.main-expanded {
 
 .btn-logout-cancel:hover {
   background: var(--theme-border-glass);
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: var(--theme-border-hover);
   transform: translateY(-2px);
 }
 

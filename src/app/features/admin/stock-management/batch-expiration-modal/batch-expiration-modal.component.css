@@ -66,7 +66,7 @@
 
 .modal-close {
   background: var(--theme-surface-glass-hover);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border-medium);
   color: var(--theme-text-primary);
   width: 36px;
   height: 36px;
@@ -144,7 +144,7 @@
 input {
   width: 100%;
   padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   border: 1.5px solid var(--theme-border-glass);
   border-radius: var(--theme-radius-input);
   font-size: 0.95rem;
@@ -199,7 +199,7 @@ input:focus {
 }
 
 .btn-cancel:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--theme-border-medium);
   color: var(--theme-text-primary);
   transform: translateY(-2px);
 }
@@ -219,7 +219,7 @@ input:focus {
 
 .btn-confirm:disabled {
   background: var(--theme-surface-glass-hover);
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--theme-border-hover);
   border-color: var(--theme-surface-glass-hover);
   cursor: not-allowed;
   transform: none;

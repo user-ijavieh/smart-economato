@@ -57,7 +57,7 @@
 .close-btn {
   width: 36px;
   height: 36px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border-medium);
   background: var(--theme-surface-glass-hover);
   border-radius: 8px;
   color: var(--theme-text-primary);
@@ -112,7 +112,7 @@
   padding: 10px 14px;
   border: 1.5px solid var(--theme-border-glass);
   border-radius: var(--theme-radius-input);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   color: var(--theme-text-primary);
   font-size: 0.95rem;
   transition: all 0.25s ease;
@@ -165,7 +165,7 @@
 .quantity-input {
   padding: 8px 12px;
   border: 1px solid var(--theme-border-glass);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   color: var(--theme-text-primary);
   border-radius: 6px;
   font-size: 0.9rem;
@@ -249,7 +249,7 @@
   align-items: center;
   gap: 6px;
   padding: 10px 16px;
-  border: 1px dashed rgba(255, 255, 255, 0.3);
+  border: 1px dashed var(--theme-border-hover);
   background: var(--theme-surface-glass-hover);
   border-radius: 8px;
   cursor: pointer;
@@ -287,7 +287,7 @@
 
 .allergen-checkbox:hover {
   background: var(--theme-surface-glass-hover);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: var(--theme-border-medium);
 }
 
 .allergen-checkbox span {
@@ -360,7 +360,7 @@
 }
 
 .btn-cancel:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--theme-border-medium);
   color: var(--theme-text-primary);
   transform: translateY(-2px);
 }

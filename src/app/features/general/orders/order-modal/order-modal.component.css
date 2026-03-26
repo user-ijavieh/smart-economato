@@ -72,7 +72,7 @@
 .btn-close {
   width: 36px;
   height: 36px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border-medium);
   background: var(--theme-surface-glass-hover);
   border-radius: 8px;
   color: var(--theme-text-primary);
@@ -148,7 +148,7 @@
   padding: 12px 16px;
   border: 1.5px solid var(--theme-border-glass);
   border-radius: var(--theme-radius-input);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   color: var(--theme-text-primary);
   font-size: 0.95rem;
   transition: all 0.25s ease;
@@ -169,7 +169,7 @@
 
 .price-display {
   padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   border: 1.5px solid var(--theme-border-glass);
   border-radius: var(--theme-radius-input);
   font-size: 1.1rem;
@@ -189,7 +189,7 @@
   padding-right: 35px !important;
   border: 1.5px solid var(--theme-border-glass);
   border-radius: var(--theme-radius-input);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   color: var(--theme-text-primary);
   font-size: 0.95rem;
   display: flex;
@@ -439,7 +439,7 @@
 }
 
 .btn-cancel:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--theme-border-medium);
   transform: translateY(-2px);
 }
 

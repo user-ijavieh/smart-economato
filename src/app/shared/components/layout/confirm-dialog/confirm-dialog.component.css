@@ -19,7 +19,7 @@
   background: rgba(8, 3, 3, 0.7);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--theme-border-card);
   border-radius: 18px;
   box-shadow: 0 4px 20px var(--theme-table-header-bg);
   color: var(--theme-text-primary);
@@ -86,14 +86,14 @@
 }
 
 .btn-cancel:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--theme-border-medium);
   transform: translateY(-2px);
 }
 
 .btn-confirm {
   background: rgba(184, 75, 68, 0.15) !important;
   border: 1px solid rgba(184, 75, 68, 0.3) !important;
-  color: white !important;
+  color: var(--theme-text-on-brand) !important;
   backdrop-filter: blur(8px);
 }
 
