@@ -62,7 +62,7 @@
 
 .user-card:hover {
   box-shadow: var(--theme-shadow-hover);
-  border-color: rgba(255, 255, 255, 0.22);
+  border-color: var(--theme-border-medium);
 }
 
 .user-avatar {
@@ -161,7 +161,7 @@ table {
 th, td {
   padding: 16px 20px;
   text-align: left;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid var(--theme-border-light);
 }
 
 th {
@@ -282,12 +282,12 @@ button,
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--theme-surface-glass-hover);
   border-color: var(--theme-border-glass);
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.13);
+  background: var(--theme-surface-glass-active);
   transform: translateY(-2px);
 }
 

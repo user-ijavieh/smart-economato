@@ -46,7 +46,7 @@ main.main-expanded {
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--theme-text-primary);
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -162,7 +162,7 @@ main.main-expanded {
   padding: 12px 20px;
   border: 1px solid var(--theme-border-glass);
   background: var(--theme-surface-glass-active);
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--theme-text-primary);
   border-radius: 12px;
   font-size: 0.95rem;
   font-weight: 600;

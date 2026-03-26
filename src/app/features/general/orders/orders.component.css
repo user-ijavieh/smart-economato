@@ -189,7 +189,7 @@
 .order-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 16px 40px var(--theme-table-header-bg);
-  border-color: rgba(255, 255, 255, 0.22);
+  border-color: var(--theme-border-medium);
 }
 
 /** ===== CARD HEADER ===== */
@@ -301,7 +301,7 @@
 }
 
 .item-preview:hover {
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--theme-surface-glass-hover);
 }
 
 .item-name {
@@ -354,7 +354,7 @@
 }
 
 .btn-details {
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--theme-surface-glass-hover);
   border-color: var(--theme-border-light);
 }
 

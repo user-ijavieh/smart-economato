@@ -601,7 +601,7 @@
   padding: 12px 20px;
   border: 1px solid var(--theme-border-glass);
   background: var(--theme-surface-glass-active);
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--theme-text-primary);
   border-radius: 12px;
   font-family: var(--font-body);
   font-size: 0.92rem;
