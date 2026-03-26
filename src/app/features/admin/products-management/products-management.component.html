@@ -77,7 +77,6 @@
             <thead>
                 <tr>
                     <th class="sortable" (click)="onSortProductsChange('name')" [attr.data-sort-dir]="getSortProductsDir('name')">Nombre</th>
-                    <th class="hide-on-mobile sortable" (click)="onSortProductsChange('type')" [attr.data-sort-dir]="getSortProductsDir('type')">Tipo</th>
                     <th class="sortable" (click)="onSortProductsChange('currentStock')" [attr.data-sort-dir]="getSortProductsDir('currentStock')">Stock</th>
                     <th class="hide-on-mobile sortable" (click)="onSortProductsChange('unitPrice')" [attr.data-sort-dir]="getSortProductsDir('unitPrice')">Precio (€)</th>
                     <th class="hide-on-mobile sortable" (click)="onSortProductsChange('availabilityPercentage')" [attr.data-sort-dir]="getSortProductsDir('availabilityPercentage')">Disponibilidad</th>
@@ -91,7 +90,6 @@
                 @for (i of [1, 2, 3, 4, 5, 6]; track i) {
                 <tr class="skeleton-row">
                     <td><span class="skeleton skeleton-text" style="width: 160px"></span></td>
-                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 100px"></span></td>
                     <td><span class="skeleton skeleton-text" style="width: 80px"></span></td>
                     <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 60px"></span></td>
                     <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 80px"></span></td>
@@ -150,7 +148,7 @@
                 }
                 @if (filteredProducts.length === 0 && !loading) {
                 <tr>
-                    <td colspan="7" style="text-align: center; padding: 2rem; color: #999">
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: #999">
                         No se encontraron productos
                     </td>
                 </tr>
