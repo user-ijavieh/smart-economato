@@ -62,7 +62,7 @@ main.main-expanded {
   text-align: center;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
   animation: logoutSlideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-  color: white;
+  color: var(--theme-text-primary);
 }
 
 @keyframes logoutSlideUp {
@@ -95,7 +95,7 @@ main.main-expanded {
   margin: 0 0 10px;
   font-size: 1.4rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--theme-text-primary)fff;
 }
 
 .logout-modal p {
@@ -113,8 +113,8 @@ main.main-expanded {
 .btn-logout-cancel {
   flex: 1;
   padding: 12px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--theme-border-glass);
+  background: var(--theme-surface-glass-active);
   color: rgba(255, 255, 255, 0.85);
   border-radius: 12px;
   font-size: 0.95rem;
@@ -125,7 +125,7 @@ main.main-expanded {
 }
 
 .btn-logout-cancel:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--theme-border-glass);
   border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
 }
@@ -147,7 +147,7 @@ main.main-expanded {
 .btn-logout-confirm:hover {
   background: rgba(239, 68, 68, 0.28);
   border-color: rgba(239, 68, 68, 0.55);
-  color: white;
+  color: var(--theme-text-primary);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
 }

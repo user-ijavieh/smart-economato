@@ -164,6 +164,8 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "POST /api/users/{id}/escalate",
     "POST /api/users/{id}/de-escalate",
     "PATCH /api/users/{id}/teacher",
+    "GET /api/users/students/unassigned",
+    "PATCH /api/users/batch/teacher",
     "GET /api/recipe-audits",
     "GET /api/recipe-audits/{id}",
     "GET /api/recipe-audits/by-user/{id}",

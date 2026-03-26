@@ -2,6 +2,22 @@
     <h1>Gestión de Usuarios</h1>
 </div>
 
+<div class="tab-bar">
+    <button class="tab-btn" [class.active]="activeTab === 'users'" (click)="switchTab('users')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+        </svg>
+        Usuarios
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'assignments'" (click)="switchTab('assignments')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" />
+        </svg>
+        Asignaciones
+    </button>
+</div>
+
+@if (activeTab === 'users') {
 <div class="contenedor-principal">
     <div class="controles">
         <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por nombre o usuario..."
@@ -41,7 +57,6 @@
         }
     </div>
 
-    <!-- Stats cards -->
     <div class="stats-row">
         <div class="stat-card">
             <span class="stat-number">{{ filteredUsers.length }}</span>
@@ -68,18 +83,19 @@
                     <th class="sortable" (click)="onSortChange('name')" [attr.data-sort-dir]="getSortDir('name')">Nombre</th>
                     <th class="hide-on-mobile">Usuario</th>
                     <th class="sortable" (click)="onSortChange('role')" [attr.data-sort-dir]="getSortDir('role')">Rol</th>
+                    <th class="hide-on-mobile">Profesor</th>
                     <th class="hide-on-mobile">Acciones</th>
                     <th class="show-on-mobile-only mobile-icon-col"></th>
                 </tr>
             </thead>
             <tbody [class.loading]="loading">
-                <!-- Skeleton Loader -->
                 @if (loading && users.length === 0) {
                 @for (i of [1, 2, 3, 4, 5, 6]; track i) {
                 <tr class="skeleton-row">
                     <td><span class="skeleton skeleton-text" style="width: 140px"></span></td>
                     <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 180px"></span></td>
                     <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 70px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 120px"></span></td>
                     <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 100px"></span></td>
                     <td class="show-on-mobile-only mobile-icon-col"></td>
                 </tr>
@@ -90,7 +106,12 @@
                     <td (click)="openMobileModal(user)">
                         <div class="user-name-cell">
                             <div class="user-avatar-small">{{ user.name.charAt(0).toUpperCase() }}</div>
-                            {{ user.name }}
+                            <div class="user-name-meta">
+                                <span class="user-name">{{ user.name }}</span>
+                                @if (isStudentRole(user.role)) {
+                                <span class="teacher-subtitle">Profesor: {{ user.teacher?.name || 'Sin asignar' }}</span>
+                                }
+                            </div>
                         </div>
                     </td>
                     <td class="hide-on-mobile">{{ user.user }}</td>
@@ -98,6 +119,13 @@
                         <span class="role-badge" [ngClass]="getRoleBadgeClass(user.role)">
                             {{ user.role }}
                         </span>
+                    </td>
+                    <td class="hide-on-mobile teacher-cell">
+                        @if (isStudentRole(user.role)) {
+                        <span class="teacher-cell-name">{{ user.teacher?.name || 'Sin asignar' }}</span>
+                        } @else {
+                        <span class="teacher-cell-name teacher-cell-empty">-</span>
+                        }
                     </td>
                     <td class="hide-on-mobile" (click)="$event.stopPropagation()">
                         <div class="actions-cell">
@@ -143,7 +171,7 @@
                 }
                 @if (filteredUsers.length === 0 && !loading) {
                 <tr>
-                    <td colspan="5" style="text-align: center; padding: 2rem; color: #999">
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: #999">
                         No se encontraron usuarios
                     </td>
                 </tr>
@@ -167,10 +195,176 @@
     </div>
     }
 </div>
+}
+
+@if (activeTab === 'assignments') {
+<div class="contenedor-principal assignments-container">
+    @if (loadingAssignments) {
+    <div class="assignments-skeleton">
+        <div class="skeleton-column">
+            <div class="skeleton skeleton-header" style="width: 200px; height: 24px; margin-bottom: 16px"></div>
+            @for (i of [1,2,3,4,5]; track i) {
+            <div class="skeleton skeleton-card" style="width: 100%; height: 56px; margin-bottom: 8px; border-radius: 12px"></div>
+            }
+        </div>
+        <div class="skeleton-column">
+            @for (i of [1,2,3]; track i) {
+            <div class="skeleton skeleton-card" style="width: 100%; height: 140px; margin-bottom: 12px; border-radius: 16px"></div>
+            }
+        </div>
+    </div>
+    } @else {
+    <div class="assignments-layout">
+        <div class="unassigned-column"
+            [class.drag-over]="dragOverUnassigned"
+            (dragover)="onDragOverUnassigned($event)"
+            (dragleave)="onDragLeave()"
+            (drop)="onDropBackToUnassigned($event)"
+            aria-label="Zona de alumnos sin profesor">
+            <div class="column-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                </svg>
+                <h2>Alumnos sin profesor</h2>
+                <span class="count-badge">{{ unassignedStudents.length }}</span>
+                <button class="selection-toggle" (click)="selectAllStudents()" [class.active]="isAllSelected" type="button">
+                    <span class="selection-toggle-box">
+                        @if (isAllSelected) {
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M13.485 1.929a.75.75 0 0 1 .086 1.057l-7.25 8.5a.75.75 0 0 1-1.104.041l-2.75-2.75a.75.75 0 1 1 1.06-1.06l2.178 2.178 6.72-7.882a.75.75 0 0 1 1.06-.084z"/>
+                        </svg>
+                        }
+                    </span>
+                    Seleccionar todos
+                </button>
+            </div>
+            <div class="students-list" role="listbox" aria-label="Alumnos sin asignar">
+                @if (selectionCount > 0) {
+                <div class="selection-actions">
+                    <span>{{ selectionCount }} seleccionados</span>
+                    <button type="button" (click)="clearSelection()">Deseleccionar</button>
+                </div>
+                }
+                @for (student of unassignedStudents; track student.id) {
+                <div class="student-card"
+                    [class.selected]="isSelected(student.id)"
+                    draggable="true"
+                    role="option"
+                    (click)="toggleStudentSelection(student, $event)"
+                    (dragstart)="onDragStart($event, student)"
+                    (dragend)="onDragEnd()">
+                    <span class="selection-checkbox" aria-hidden="true">
+                        @if (isSelected(student.id)) {
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M13.485 1.929a.75.75 0 0 1 .086 1.057l-7.25 8.5a.75.75 0 0 1-1.104.041l-2.75-2.75a.75.75 0 1 1 1.06-1.06l2.178 2.178 6.72-7.882a.75.75 0 0 1 1.06-.084z"/>
+                        </svg>
+                        }
+                    </span>
+                    <div class="user-avatar-small">{{ student.name.charAt(0).toUpperCase() }}</div>
+                    <div class="student-info">
+                        <span class="student-name">{{ student.name }}</span>
+                        <span class="student-username">{{ student.user }}</span>
+                    </div>
+                    <svg class="drag-handle" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                    </svg>
+                </div>
+                }
+                @if (unassignedStudents.length === 0 && !hasPendingAssignments()) {
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                    </svg>
+                    <span>Todos los alumnos tienen profesor</span>
+                </div>
+                }
+                @if (unassignedStudents.length === 0 && hasPendingAssignments()) {
+                <div class="empty-state drop-hint-state">
+                    <span>Arrastra aquí para desasignar</span>
+                </div>
+                }
+            </div>
+        </div>
+
+        <div class="teachers-column">
+            @for (teacher of teachers; track teacher.id) {
+            <div class="teacher-box"
+                [class.drag-over]="dragOverTeacherId === teacher.id"
+                [class.has-pending]="getPendingForTeacher(teacher.id).length > 0"
+                (dragover)="onDragOverTeacher($event, teacher.id)"
+                (dragleave)="onDragLeave()"
+                (drop)="onDrop($event, teacher.id)"
+                aria-label="Zona de asignación para profesor">
+                <div class="teacher-header">
+                    <div class="user-avatar-small teacher-avatar">{{ teacher.name.charAt(0).toUpperCase() }}</div>
+                    <div class="teacher-info">
+                        <span class="teacher-name">{{ teacher.name }}</span>
+                        <span class="teacher-role">Profesor</span>
+                    </div>
+                    @if (getPendingForTeacher(teacher.id).length > 0) {
+                    <span class="count-badge pending-badge">+{{ getPendingForTeacher(teacher.id).length }}</span>
+                    }
+                </div>
+                <div class="teacher-students-area" role="listbox" aria-label="Alumnos pendientes para profesor">
+                    @for (student of getPendingForTeacher(teacher.id); track student.id) {
+                    <div class="assigned-student-chip"
+                        draggable="true"
+                        role="option"
+                        (dragstart)="onDragStart($event, student)"
+                        (dragend)="onDragEnd()">
+                        <div class="chip-avatar">{{ student.name.charAt(0).toUpperCase() }}</div>
+                        <span class="chip-name">{{ student.name }}</span>
+                        <button class="chip-remove" (click)="removeFromTeacher(student, teacher.id)" title="Quitar"
+                            [attr.aria-label]="'Quitar alumno ' + student.name + ' del profesor ' + teacher.name">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                            </svg>
+                        </button>
+                    </div>
+                    }
+                    @if (getPendingForTeacher(teacher.id).length === 0) {
+                    <div class="drop-hint">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                        </svg>
+                        Arrastra alumnos aquí
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+            @if (teachers.length === 0) {
+            <div class="empty-state">
+                <span>No hay profesores registrados</span>
+            </div>
+            }
+        </div>
+    </div>
+
+    @if (hasPendingAssignments()) {
+    <div class="assignments-actions">
+        <span class="actions-summary">{{ totalPendingCount }} alumno{{ totalPendingCount > 1 ? 's' : '' }} por asignar</span>
+        <div class="actions-buttons">
+            <button class="btn-cancel-assignments" (click)="clearPendingAssignments()">
+                Cancelar
+            </button>
+            <button class="btn-confirm-assignments" (click)="confirmAssignments()" [disabled]="assigningInProgress">
+                @if (assigningInProgress) {
+                <span class="spinner"></span> Asignando...
+                } @else {
+                Confirmar Asignaciones
+                }
+            </button>
+        </div>
+    </div>
+    }
+    }
+</div>
+}
 
 <!-- Modal de creación/edición -->
 @if (showFormModal) {
-<app-user-form-modal [user]="selectedUser" [existingUsers]="getExistingUsers()" (save)="onSaveUser($event)"
+<app-user-form-modal [user]="selectedUser" [teachers]="teachers" [existingUsers]="getExistingUsers()" (save)="onSaveUser($event)"
     (close)="closeFormModal()"></app-user-form-modal>
 }
 
@@ -180,8 +374,8 @@
 <!-- Toasts -->
 <app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
 
-<!-- Mobile Detail Modal -->
-@if (showMobileModal && selectedUserForMobile) {
+<!-- Mobile Detail Modal (solo visible en tab users) -->
+@if (activeTab === 'users' && showMobileModal && selectedUserForMobile) {
 <div class="mobile-detail-modal-overlay" (click)="closeMobileModal()">
     <div class="mobile-detail-modal" (click)="$event.stopPropagation()">
         <div class="mobile-detail-modal-header">
@@ -207,6 +401,10 @@
                         {{ selectedUserForMobile.role }}
                     </span>
                 </span>
+            </div>
+            <div class="detail-field">
+                <span class="detail-label">Profesor</span>
+                <span class="detail-value">{{ selectedUserForMobile.teacher?.name || 'Sin asignar' }}</span>
             </div>
             <div class="detail-field">
                 <span class="detail-label">Estado</span>
