@@ -330,7 +330,7 @@
   gap: 10px;
   padding: 14px 20px;
   border-top: 1px solid var(--theme-surface-glass-active);
-  background: rgba(0, 0, 0, 0.15);
+  background: var(--theme-overlay-light);
   margin-top: auto;
 }
 

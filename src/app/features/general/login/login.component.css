@@ -66,6 +66,10 @@
   z-index: 0;
 }
 
+:host-context([data-theme="light"]) .login-wrapper::before {
+  background: linear-gradient(155deg, rgba(255,255,255,0.65) 0%, rgba(184,75,68,0.15) 48%, rgba(255,255,255,0.70) 100%);
+}
+
 /* ── Card principal (Dark Glassmorphism) ── */
 .card {
   position: relative;
@@ -187,6 +191,13 @@
   -webkit-box-shadow: 0 0 0 30px rgba(8, 3, 3, 0.95) inset !important;
   -webkit-text-fill-color: var(--theme-text-primary) !important;
   transition: background-color 5000s ease-in-out 0s;
+}
+
+:host-context([data-theme="light"]) .form-input:-webkit-autofill,
+:host-context([data-theme="light"]) .form-input:-webkit-autofill:hover,
+:host-context([data-theme="light"]) .form-input:-webkit-autofill:focus,
+:host-context([data-theme="light"]) .form-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px rgba(255, 255, 255, 0.95) inset !important;
 }
 
 .form-input.input-error {

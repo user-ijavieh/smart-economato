@@ -1,7 +1,7 @@
 .dialog-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: var(--theme-overlay-bg);
   backdrop-filter: blur(24px);
   display: flex;
   align-items: center;
@@ -16,7 +16,7 @@
 }
 
 .dialog-content {
-  background: rgba(8, 3, 3, 0.7);
+  background: var(--theme-modal-glass-alt);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--theme-border-card);
@@ -54,7 +54,7 @@
   margin: 0;
   font-size: 1rem;
   line-height: 1.6;
-  color: #E0E0E0;
+  color: var(--theme-text-secondary);
   white-space: pre-wrap;
 }
 
@@ -64,7 +64,7 @@
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  background: rgba(0, 0, 0, 0.15);
+  background: var(--theme-overlay-light);
 }
 
 .btn-cancel,
@@ -86,7 +86,7 @@
 }
 
 .btn-cancel:hover {
-  background: var(--theme-border-medium);
+  background: var(--theme-surface-glass-active);
   transform: translateY(-2px);
 }
 

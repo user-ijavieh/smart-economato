@@ -357,7 +357,7 @@ tr:hover { background: var(--theme-surface-glass-hover); }
 tr.expired-row td { background: rgba(239, 68, 68, 0.05); }
 tr.expired-row:hover td { background: rgba(239, 68, 68, 0.1); }
 
-tr.depleted-row td { background: rgba(255, 255, 255, 0.02); opacity: 0.7; }
+tr.depleted-row td { background: var(--theme-surface-glass-hover); opacity: 0.7; }
 tr.depleted-row:hover td { background: var(--theme-surface-glass-hover); }
 
 .id-badge {
@@ -754,7 +754,7 @@ tr.depleted-row:hover td { background: var(--theme-surface-glass-hover); }
 }
 
 .btn-page:disabled {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--theme-surface-glass-hover);
   color: var(--theme-border-hover);
   cursor: not-allowed;
   transform: none;
@@ -770,7 +770,7 @@ tr.depleted-row:hover td { background: var(--theme-surface-glass-hover); }
 }
 
 .total-info {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--theme-text-secondary);
   font-size: 12px;
   background: var(--theme-surface-glass-active);
   padding: 4px 12px;

@@ -564,7 +564,7 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 }
 
 .btn-page:disabled {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--theme-surface-glass-hover);
   color: var(--theme-border-hover);
   cursor: not-allowed;
   transform: none;
@@ -580,7 +580,7 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 }
 
 .total-info {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--theme-text-secondary);
   font-size: 12px;
   background: var(--theme-surface-glass-active);
   padding: 4px 12px;
@@ -728,7 +728,7 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 }
 
 .ingredient-trace-card {
-  background: rgba(255,255,255,0.03);
+  background: var(--theme-surface-glass-hover);
   border: 1px solid var(--theme-surface-glass-active);
   border-radius: 12px;
   padding: 20px;
@@ -975,7 +975,7 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 }
 
 .mobile-ingredient-card {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--theme-surface-glass-hover);
   border: 1px solid var(--theme-surface-glass-active);
   border-radius: 12px;
   padding: 12px;

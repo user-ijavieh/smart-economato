@@ -98,7 +98,7 @@ main.main-expanded {
 }
 
 .logout-modal {
-  background: rgba(12, 12, 12, 0.75);
+  background: var(--theme-modal-glass);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
   border: 1px solid var(--theme-border-card);
@@ -197,6 +197,25 @@ main.main-expanded {
   color: var(--theme-text-primary);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+}
+
+/* Light mode overrides para Logout Modal */
+:host-context([data-theme="light"]) .logout-modal {
+  box-shadow: var(--theme-shadow-deep);
+}
+
+:host-context([data-theme="light"]) .btn-logout-cancel {
+  color: var(--theme-text-primary);
+}
+
+:host-context([data-theme="light"]) .btn-logout-confirm {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+:host-context([data-theme="light"]) .btn-logout-confirm:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
 }
 
 @media (max-width: 480px) {
