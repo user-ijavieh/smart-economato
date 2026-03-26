@@ -193,17 +193,17 @@ a.master-card:hover {
 .master-card-desc {
   font-family: var(--font-body);
   font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--theme-text-secondary);
 }
 
 .master-card-arrow {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--theme-text-secondary);
   flex-shrink: 0;
   transition: transform 0.2s ease, color 0.2s ease;
 }
 
 a.master-card:hover .master-card-arrow {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--theme-text-secondary);
   transform: translateX(3px);
 }
 

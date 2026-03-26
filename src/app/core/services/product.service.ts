@@ -78,7 +78,6 @@ export class ProductService {
       // Fallback strategies for English/Spanish properties
       name: item.name || item.nombre || 'Sin nombre',
       productCode: item.productCode || item.codigo || '',
-      type: item.type || item.tipo || '',
       // Ensure numeric values
       unitPrice: Number(item.unitPrice ?? item.price ?? item.precio ?? 0),
       // Map both stock properties to ensure compatibility
@@ -104,7 +103,6 @@ export class ProductService {
         id: response.id,
         name: response.name || response.nombre || 'Sin nombre',
         productCode: response.productCode || response.codigo || '',
-        type: response.type || response.tipo || '',
         unitPrice: Number(response.unitPrice ?? response.price ?? response.precio ?? 0),
         currentStock: Number(response.currentStock ?? response.stock ?? 0),
         minStock: response.minStock !== undefined ? Number(response.minStock) : undefined,

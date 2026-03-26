@@ -4,7 +4,7 @@
 }
 
 ::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
+::-webkit-scrollbar-track { background: var(--theme-surface-glass-hover); }
 ::-webkit-scrollbar-thumb { background: rgba(184, 75, 68, 0.3); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(184, 75, 68, 0.5); }
 
@@ -12,7 +12,7 @@
 .modal-overlay-base {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: var(--theme-overlay-bg);
   backdrop-filter: blur(24px);
   z-index: 10000;
   display: flex;
@@ -72,7 +72,7 @@
 .btn-close {
   width: 36px;
   height: 36px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border-medium);
   background: var(--theme-surface-glass-hover);
   border-radius: 8px;
   color: var(--theme-text-primary);
@@ -106,7 +106,7 @@
 
 .user-selection-section:not(:last-child) {
   padding-bottom: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid var(--theme-border-light);
 }
 
 .user-selection-section h3,
@@ -148,7 +148,7 @@
   padding: 12px 16px;
   border: 1.5px solid var(--theme-border-glass);
   border-radius: var(--theme-radius-input);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   color: var(--theme-text-primary);
   font-size: 0.95rem;
   transition: all 0.25s ease;
@@ -169,7 +169,7 @@
 
 .price-display {
   padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   border: 1.5px solid var(--theme-border-glass);
   border-radius: var(--theme-radius-input);
   font-size: 1.1rem;
@@ -189,7 +189,7 @@
   padding-right: 35px !important;
   border: 1.5px solid var(--theme-border-glass);
   border-radius: var(--theme-radius-input);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   color: var(--theme-text-primary);
   font-size: 0.95rem;
   display: flex;
@@ -306,7 +306,7 @@
   border: 1px solid var(--theme-border-glass);
   border-radius: 12px;
   overflow: hidden;
-  background: rgba(0, 0, 0, 0.15);
+  background: var(--theme-overlay-light);
 }
 
 .order-item {
@@ -403,7 +403,7 @@
   padding: 40px 20px;
   color: var(--theme-text-secondary);
   font-style: italic;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--theme-surface-glass-hover);
   border: 1px dashed var(--theme-surface-glass-hover);
   border-radius: 12px;
 }
@@ -416,7 +416,7 @@
   justify-content: flex-end;
   gap: 12px;
   flex-shrink: 0;
-  background: rgba(0, 0, 0, 0.15);
+  background: var(--theme-overlay-light);
   border-radius: 0 0 var(--theme-radius-card) var(--theme-radius-card);
 }
 
@@ -439,7 +439,7 @@
 }
 
 .btn-cancel:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--theme-border-medium);
   transform: translateY(-2px);
 }
 

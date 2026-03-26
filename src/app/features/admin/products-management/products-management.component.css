@@ -147,7 +147,7 @@
   padding: 10px 15px;
   border-radius: 8px;
   border: 1.5px solid var(--theme-border-glass);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   color: var(--theme-text-primary);
   font-size: 0.9rem;
   font-family: var(--font-body);
@@ -170,7 +170,7 @@
   padding: 10px 15px;
   border-radius: 8px;
   border: 1.5px solid var(--theme-border-glass);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   color: var(--theme-text-primary);
   font-size: 0.9rem;
   font-family: var(--font-body);
@@ -199,7 +199,7 @@
   padding: 10px 12px;
   border-radius: 8px;
   border: 1.5px solid var(--theme-border-glass);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   font-size: 0.85rem;
   font-family: var(--font-body);
   transition: all 0.3s ease;
@@ -251,7 +251,7 @@ button {
 
 button:hover:not(:disabled) {
   background: var(--theme-border-glass);
-  border-color: rgba(255,255,255,0.3);
+  border-color: var(--theme-border-hover);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
@@ -277,7 +277,7 @@ button:active {
 
 .btn-clear {
   background: var(--theme-surface-glass-hover);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border-medium);
   color: var(--theme-text-secondary);
   display: flex;
   align-items: center;
@@ -292,7 +292,7 @@ button:active {
 
 .btn-toggle-hidden {
   background: var(--theme-surface-glass-hover);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border-medium);
   color: var(--theme-text-secondary);
   display: flex;
   align-items: center;
@@ -341,7 +341,7 @@ button:active {
   backdrop-filter: var(--theme-effect-glass);
   border: 1px solid var(--theme-border-glass);
   transition: all 0.2s ease;
-  border-top: 2px solid rgba(255,255,255,0.2);
+  border-top: 2px solid var(--theme-border-medium);
 }
 
 .stat-card:hover {
@@ -783,7 +783,7 @@ tr.low-stock-row:hover td {
 
 .audit-modal-close {
   background: var(--theme-surface-glass-hover);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border-medium);
   color: var(--theme-text-primary);
   width: 36px;
   height: 36px;
@@ -940,8 +940,8 @@ tr.low-stock-row:hover td {
 }
 
 .btn-page:disabled {
-  background: rgba(255, 255, 255, 0.02);
-  color: rgba(255, 255, 255, 0.3);
+  background: var(--theme-surface-glass-hover);
+  color: var(--theme-border-hover);
   cursor: not-allowed;
   transform: none;
 }
@@ -956,7 +956,7 @@ tr.low-stock-row:hover td {
 }
 
 .total-info {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--theme-text-secondary);
   font-size: 12px;
   background: var(--theme-surface-glass-active);
   padding: 4px 12px;

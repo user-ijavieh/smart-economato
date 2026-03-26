@@ -62,7 +62,7 @@
 
 .user-card:hover {
   box-shadow: var(--theme-shadow-hover);
-  border-color: rgba(255, 255, 255, 0.22);
+  border-color: var(--theme-border-medium);
 }
 
 .user-avatar {
@@ -161,7 +161,7 @@ table {
 th, td {
   padding: 16px 20px;
   text-align: left;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid var(--theme-border-light);
 }
 
 th {
@@ -182,7 +182,7 @@ tr:last-child td {
 }
 
 tr:hover td {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
 }
 
 /** ===== STUDENT NAME ===== */
@@ -282,12 +282,12 @@ button,
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--theme-surface-glass-hover);
   border-color: var(--theme-border-glass);
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.13);
+  background: var(--theme-surface-glass-active);
   transform: translateY(-2px);
 }
 
@@ -330,7 +330,7 @@ button:disabled {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: var(--theme-overlay-bg);
   backdrop-filter: blur(24px);
   z-index: 10000;
   display: flex;
@@ -373,7 +373,7 @@ button:disabled {
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border-medium);
   background: var(--theme-surface-glass-active);
   color: var(--theme-text-primary);
   cursor: pointer;
@@ -446,7 +446,7 @@ button:disabled {
   gap: 10px;
   padding: 16px 24px;
   border-top: 1px solid var(--theme-surface-glass-active);
-  background: rgba(0, 0, 0, 0.15);
+  background: var(--theme-overlay-light);
 }
 
 /** ===== ANIMATIONS ===== */

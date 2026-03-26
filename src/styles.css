@@ -17,6 +17,20 @@
   --theme-text-on-brand: #FFFFFF;
   --theme-shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
   --theme-shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.6);
+  --theme-input-bg: rgba(255, 255, 255, 0.04);
+  --theme-border-hover: rgba(255, 255, 255, 0.3);
+  --theme-border-medium: rgba(255, 255, 255, 0.2);
+  --theme-border-light: rgba(255, 255, 255, 0.12);
+  --theme-border-card: rgba(255, 255, 255, 0.14);
+  --theme-overlay-bg: var(--theme-overlay-bg);
+  --theme-overlay-light: var(--theme-overlay-light);
+  --theme-shadow-deep: 0 24px 60px rgba(0, 0, 0, 0.55);
+  --theme-text-link-inactive: rgba(255, 255, 255, 0.58);
+  --theme-text-link-hover: rgba(255, 255, 255, 0.90);
+  --theme-svg-inactive: rgba(255, 255, 255, 0.45);
+  --theme-svg-hover: rgba(255, 255, 255, 0.75);
+  --theme-modal-glass: var(--theme-modal-glass);
+  --theme-modal-glass-alt: var(--theme-modal-glass-alt);
   --theme-effect-glass: blur(32px);
   --theme-radius-card: 20px;
   --theme-radius-input: 12px;
@@ -42,19 +56,7 @@
   --theme-sidebar-border: rgba(184, 75, 68, 0.18);
   --theme-sidebar-tint: rgba(184, 75, 68, 0.07);
 
-  /* Colores principales (legacy — mantener para compatibilidad) */
-  --primary-color: #B84B44;
-  --secondary-color: #FAE7E0;
-  --login-background-color: #fae7e0b1;
-
-  /* Sidebar (legacy — mantener para compatibilidad) */
-  --base-clr: #B84B44;
-  --line-clr: rgba(255, 255, 255, 0.15);
-  --hover-clr: rgba(255, 255, 255, 0.1);
-  --text-clr: #ffffff;
-  --accent-clr: #ffffff;
-  --secondary-text-clr: rgba(255, 255, 255, 0.7);
-  --content-bg: #FAE7E0;
+  
 
   /* Toast / Message Service */
   --toast-success-bg: #10b981;
@@ -111,17 +113,31 @@
   --theme-surface-glass: rgba(255, 255, 255, 0.75);
   --theme-surface-glass-hover: rgba(0, 0, 0, 0.04);
   --theme-surface-glass-active: rgba(0, 0, 0, 0.07);
+  --theme-input-bg: rgba(0, 0, 0, 0.03);
 
   /* Bordes */
   --theme-border-glass: rgba(0, 0, 0, 0.08);
+  --theme-border-hover: var(--theme-overlay-light);
+  --theme-border-medium: rgba(0, 0, 0, 0.12);
+  --theme-border-light: rgba(0, 0, 0, 0.06);
+  --theme-border-card: rgba(0, 0, 0, 0.08);
 
   /* Texto */
   --theme-text-primary: #1E293B;
   --theme-text-secondary: #64748B;
+  --theme-text-link-inactive: #64748B;
+  --theme-text-link-hover: #1E293B;
+  --theme-svg-inactive: #94A3B8;
+  --theme-svg-hover: #475569;
 
   /* Sombras */
   --theme-shadow-card: 0 4px 20px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
   --theme-shadow-hover: 0 12px 40px rgba(15, 23, 42, 0.10);
+  --theme-shadow-deep: 0 24px 60px rgba(15, 23, 42, 0.12);
+  --theme-overlay-bg: rgba(0, 0, 0, 0.45);
+  --theme-overlay-light: rgba(0, 0, 0, 0.04);
+  --theme-modal-glass: rgba(255, 255, 255, 0.85);
+  --theme-modal-glass-alt: rgba(255, 255, 255, 0.80);
 
   /* Tabla */
   --theme-table-header-bg: rgba(0, 0, 0, 0.03);
@@ -146,7 +162,9 @@ body.admin-theme[data-theme="light"],
 [data-theme="light"] .admin-theme {
   --theme-bg-page: #F0F4FF;
   --theme-surface-glass: rgba(255, 255, 255, 0.80);
+  --theme-input-bg: rgba(59, 130, 246, 0.04);
   --theme-border-glass: rgba(59, 130, 246, 0.10);
+  --theme-border-card: rgba(59, 130, 246, 0.14);
   --theme-sidebar-bg: #FFFFFF;
   --theme-sidebar-border: rgba(59, 130, 246, 0.10);
   --theme-sidebar-tint: rgba(59, 130, 246, 0.03);
@@ -246,7 +264,7 @@ body::-webkit-scrollbar {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--primary-color) !important;
+  background: var(--brand-primary) !important;
   border-radius: 4px !important;
 }
 
@@ -314,9 +332,9 @@ body::-webkit-scrollbar {
   justify-content: space-between;
   align-items: center;
   padding: 24px 30px;
-  background: linear-gradient(135deg, var(--primary-color) 0%, #a03d37 100%);
+  background: linear-gradient(135deg, var(--brand-primary) 0%, #a03d37 100%);
   border-radius: 16px 16px 0 0;
-  color: white;
+  color: var(--theme-text-on-brand);
   flex-shrink: 0;
 }
 

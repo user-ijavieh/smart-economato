@@ -110,7 +110,7 @@
   padding: 10px 15px;
   border-radius: 12px;
   border: 1.5px solid var(--theme-border-glass);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   color: var(--theme-text-primary);
   font-size: 0.9rem;
   transition: all 0.3s ease;
@@ -141,7 +141,7 @@
 .btn-clear {
   padding: 10px 20px;
   border-radius: var(--theme-radius-btn);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border-medium);
   font-size: 0.9rem;
   font-weight: 600;
   background: var(--theme-surface-glass-hover);
@@ -171,7 +171,7 @@
   padding: 24px;
   text-align: center;
   box-shadow: var(--theme-shadow-card);
-  border-top: 2px solid rgba(255, 255, 255, 0.2);
+  border-top: 2px solid var(--theme-border-medium);
   flex: 1;
   max-width: 300px;
   transition: transform 0.2s ease;
@@ -389,8 +389,8 @@ tbody tr:hover {
 }
 
 .btn-page:disabled {
-  background: rgba(255, 255, 255, 0.02);
-  color: rgba(255, 255, 255, 0.3);
+  background: var(--theme-surface-glass-hover);
+  color: var(--theme-border-hover);
   cursor: not-allowed;
 }
 
@@ -403,7 +403,7 @@ tbody tr:hover {
 }
 
 .total-info {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--theme-text-secondary);
   font-size: 12px;
   background: var(--theme-surface-glass-active);
   padding: 4px 12px;
@@ -480,7 +480,7 @@ tbody tr:hover {
 
 .modal-close {
   background: var(--theme-surface-glass-hover);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border-medium);
   color: var(--theme-text-primary);
   width: 36px;
   height: 36px;
@@ -528,7 +528,7 @@ tbody tr:hover {
 }
 
 .btn-cancel:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--theme-border-medium);
   color: var(--theme-text-primary);
 }
 
@@ -555,7 +555,7 @@ tbody tr:hover {
 
 .btn-editar:disabled {
   background: var(--theme-surface-glass-hover);
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--theme-border-hover);
   border-color: var(--theme-surface-glass-hover);
   cursor: not-allowed;
   box-shadow: none;
@@ -564,7 +564,7 @@ tbody tr:hover {
 .spinner {
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  border: 2px solid var(--theme-text-secondary);
   border-top-color: var(--theme-text-primary);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
@@ -577,7 +577,7 @@ tbody tr:hover {
   justify-content: center;
   gap: 20px;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--theme-input-bg);
   border: 1px solid var(--theme-surface-glass-hover);
   border-radius: 12px;
 }
@@ -588,7 +588,7 @@ tbody tr:hover {
   justify-content: center;
   gap: 50px;
   padding: 30px;
-  background: rgba(255, 255, 255, 0.04) !important;
+  background: var(--theme-input-bg) !important;
   border-radius: 16px;
   border: 1px solid var(--theme-surface-glass-hover) !important;
 }
@@ -622,7 +622,7 @@ tbody tr:hover {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 20px;
-  background: rgba(255,255,255,0.03);
+  background: var(--theme-surface-glass-hover);
   padding: 20px;
   border-radius: 12px;
   border: 1px solid var(--theme-surface-glass-active);
@@ -635,7 +635,7 @@ tbody tr:hover {
 }
 
 .ingredients-table {
-  background: rgba(255,255,255,0.03);
+  background: var(--theme-surface-glass-hover);
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid var(--theme-surface-glass-active);

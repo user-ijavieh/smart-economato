@@ -629,14 +629,6 @@ export class ProductsManagementComponent implements OnInit {
       changed: prev.codigoProducto !== next.codigoProducto
     });
 
-    // Tipo
-    fields.push({
-      label: 'Tipo',
-      prev: prev.tipo ?? '',
-      next: next.tipo ?? '',
-      changed: prev.tipo !== next.tipo
-    });
-
     // Unidad
     fields.push({
       label: 'Unidad',

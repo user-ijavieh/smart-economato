@@ -4,14 +4,14 @@
 }
 
 ::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
+::-webkit-scrollbar-track { background: var(--theme-surface-glass-hover); }
 ::-webkit-scrollbar-thumb { background: rgba(184, 75, 68, 0.3); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(184, 75, 68, 0.5); }
 
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: var(--theme-overlay-bg);
   backdrop-filter: blur(24px);
   z-index: 10000;
   display: flex;
@@ -79,7 +79,7 @@
   font-weight: 600;
   text-transform: uppercase;
   background: var(--theme-table-header-bg);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--theme-border-hover);
   letter-spacing: 0.5px;
   color: var(--theme-text-primary);
   align-self: flex-start;
@@ -89,7 +89,7 @@
 .close-btn {
   width: 36px;
   height: 36px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border-medium);
   background: var(--theme-surface-glass-hover);
   border-radius: 8px;
   color: var(--theme-text-primary);
@@ -208,7 +208,7 @@
   gap: 12px;
   justify-content: flex-end;
   flex-shrink: 0;
-  background: rgba(0, 0, 0, 0.15);
+  background: var(--theme-overlay-light);
 }
 
 .btn {
@@ -239,22 +239,22 @@
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--theme-border-medium);
   transform: translateY(-2px);
 }
 
 .btn-print {
   background: var(--theme-border-glass) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border: 1px solid var(--theme-border-hover) !important;
   color: var(--theme-text-primary)!important;
   backdrop-filter: blur(8px);
 }
 
 .btn-print:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.25) !important;
-  border-color: rgba(255, 255, 255, 0.5) !important;
+  background: var(--theme-surface-glass-active) !important;
+  border-color: var(--theme-text-secondary) !important;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 8px 25px var(--theme-border-medium) !important;
 }
 
 .btn-edit {
