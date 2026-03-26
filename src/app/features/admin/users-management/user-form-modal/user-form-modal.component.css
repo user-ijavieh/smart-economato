@@ -173,6 +173,26 @@ form {
     color: white;
 }
 
+.teacher-select-group {
+    border-left: 2px solid rgba(90, 120, 220, 0.3);
+    padding-left: 12px;
+}
+
+.teacher-select-enter {
+    animation: teacherFieldIn 0.2s ease;
+}
+
+@keyframes teacherFieldIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /** ===== ACTIONS ===== */
 .modal-actions {
     display: flex;

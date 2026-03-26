@@ -83,6 +83,7 @@
                     <th class="sortable" (click)="onSortChange('name')" [attr.data-sort-dir]="getSortDir('name')">Nombre</th>
                     <th class="hide-on-mobile">Usuario</th>
                     <th class="sortable" (click)="onSortChange('role')" [attr.data-sort-dir]="getSortDir('role')">Rol</th>
+                    <th class="hide-on-mobile">Profesor</th>
                     <th class="hide-on-mobile">Acciones</th>
                     <th class="show-on-mobile-only mobile-icon-col"></th>
                 </tr>
@@ -94,6 +95,7 @@
                     <td><span class="skeleton skeleton-text" style="width: 140px"></span></td>
                     <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 180px"></span></td>
                     <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 70px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 120px"></span></td>
                     <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 100px"></span></td>
                     <td class="show-on-mobile-only mobile-icon-col"></td>
                 </tr>
@@ -104,7 +106,12 @@
                     <td (click)="openMobileModal(user)">
                         <div class="user-name-cell">
                             <div class="user-avatar-small">{{ user.name.charAt(0).toUpperCase() }}</div>
-                            {{ user.name }}
+                            <div class="user-name-meta">
+                                <span class="user-name">{{ user.name }}</span>
+                                @if (isStudentRole(user.role)) {
+                                <span class="teacher-subtitle">Profesor: {{ user.teacher?.name || 'Sin asignar' }}</span>
+                                }
+                            </div>
                         </div>
                     </td>
                     <td class="hide-on-mobile">{{ user.user }}</td>
@@ -112,6 +119,13 @@
                         <span class="role-badge" [ngClass]="getRoleBadgeClass(user.role)">
                             {{ user.role }}
                         </span>
+                    </td>
+                    <td class="hide-on-mobile teacher-cell">
+                        @if (isStudentRole(user.role)) {
+                        <span class="teacher-cell-name">{{ user.teacher?.name || 'Sin asignar' }}</span>
+                        } @else {
+                        <span class="teacher-cell-name teacher-cell-empty">-</span>
+                        }
                     </td>
                     <td class="hide-on-mobile" (click)="$event.stopPropagation()">
                         <div class="actions-cell">
@@ -157,7 +171,7 @@
                 }
                 @if (filteredUsers.length === 0 && !loading) {
                 <tr>
-                    <td colspan="5" style="text-align: center; padding: 2rem; color: #999">
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: #999">
                         No se encontraron usuarios
                     </td>
                 </tr>
@@ -325,7 +339,7 @@
 
 <!-- Modal de creación/edición -->
 @if (showFormModal) {
-<app-user-form-modal [user]="selectedUser" [existingUsers]="getExistingUsers()" (save)="onSaveUser($event)"
+<app-user-form-modal [user]="selectedUser" [teachers]="teachers" [existingUsers]="getExistingUsers()" (save)="onSaveUser($event)"
     (close)="closeFormModal()"></app-user-form-modal>
 }
 
@@ -362,6 +376,10 @@
                         {{ selectedUserForMobile.role }}
                     </span>
                 </span>
+            </div>
+            <div class="detail-field">
+                <span class="detail-label">Profesor</span>
+                <span class="detail-value">{{ selectedUserForMobile.teacher?.name || 'Sin asignar' }}</span>
             </div>
             <div class="detail-field">
                 <span class="detail-label">Estado</span>
