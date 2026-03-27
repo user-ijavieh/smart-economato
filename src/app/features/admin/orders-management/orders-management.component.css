@@ -182,7 +182,7 @@
   background: var(--theme-surface-glass-active);
 }
 
-.stat-card.stat-primary { border-top-color: #4caf50; }
+.stat-card.stat-primary { border-top-color: var(--color-success); }
 .stat-card.stat-total-cost { border-top-color: rgba(90, 120, 220, 0.8); }
 
 .stat-number {

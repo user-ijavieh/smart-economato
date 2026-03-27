@@ -1,4 +1,4 @@
-<div class="header-recetas">
+<div class="page-header header-recetas">
   <h1>Gestión de Cocina</h1>
 </div>
 
@@ -20,8 +20,8 @@
 </div>
 
 @if (activeTab === 'history') {
-<div class="contenedor-principal">
-  <div class="controles">
+<div class="page-content contenedor-principal">
+  <div class="controls-bar controles">
     <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar en historial..." (ngModelChange)="applySearchFilter()" />
     <input type="number" [(ngModel)]="recipeIdFilter" placeholder="ID Receta" min="1" class="id-input" />
     <input type="number" [(ngModel)]="userIdFilter" placeholder="ID Usuario" min="1" class="id-input" />
@@ -36,7 +36,7 @@
     }
   </div>
 
-  <div class="tabla-contenedor">
+  <div class="table-container tabla-contenedor">
     <table>
       <thead>
         <tr>

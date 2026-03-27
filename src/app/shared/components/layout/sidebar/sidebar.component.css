@@ -1,4 +1,4 @@
-/** ===== SIDEBAR ===== */
+﻿/** ===== SIDEBAR ===== */
 
 #sidebar {
   box-sizing: border-box;
@@ -10,7 +10,7 @@
     linear-gradient(135deg, var(--theme-sidebar-tint) 0%, transparent 55%),
     linear-gradient(180deg, var(--theme-sidebar-bg) 0%, var(--theme-sidebar-bg-mid) 50%, var(--theme-sidebar-bg) 100%);
   border-right: 1px solid var(--theme-sidebar-border);
-  box-shadow: 1px 0 0 rgba(184, 75, 68, 0.08), 6px 0 40px rgba(0, 0, 0, 0.65);
+  box-shadow: 1px 0 0 color-mix(in srgb, var(--brand-primary) 8%, transparent), 6px 0 40px rgba(0, 0, 0, 0.65);
   position: fixed;
   top: 0;
   left: 0;
@@ -108,7 +108,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(184, 75, 68, 0.42), rgba(140, 46, 40, 0.28));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--brand-primary) 42%, transparent), rgba(140, 46, 40, 0.28));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -116,8 +116,8 @@
   font-size: 0.95rem;
   color: var(--theme-text-primary);
   flex-shrink: 0;
-  border: 1.5px solid rgba(184, 75, 68, 0.65);
-  box-shadow: 0 0 0 4px rgba(184, 75, 68, 0.10), 0 4px 16px rgba(0, 0, 0, 0.40);
+  border: 1.5px solid color-mix(in srgb, var(--brand-primary) 65%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand-primary) 10%, transparent), 0 4px 16px rgba(0, 0, 0, 0.40);
   letter-spacing: 0.5px;
 }
 
@@ -184,11 +184,11 @@
 /** ===== LINKS ===== */
 
 #sidebar ul li a.active {
-  background: rgba(184, 75, 68, 0.16);
+  background: color-mix(in srgb, var(--brand-primary) 16%, transparent);
   color: var(--theme-text-primary);
   font-weight: 600;
   border-left: 2px solid #B84B44;
-  box-shadow: inset 0 0 30px rgba(184, 75, 68, 0.08);
+  box-shadow: inset 0 0 30px color-mix(in srgb, var(--brand-primary) 8%, transparent);
 }
 
 #sidebar ul li a.active svg {
@@ -234,7 +234,7 @@
 #sidebar a:hover {
   background: var(--theme-surface-glass-hover);
   color: var(--theme-sidebar-link-hover-color);
-  border-left-color: rgba(184, 75, 68, 0.40);
+  border-left-color: color-mix(in srgb, var(--brand-primary) 40%, transparent);
 }
 
 #sidebar a:hover svg {
@@ -320,7 +320,7 @@
 }
 
 #sidebar::-webkit-scrollbar-thumb {
-  background: rgba(184, 75, 68, 0.30);
+  background: color-mix(in srgb, var(--brand-primary) 30%, transparent);
   border-radius: 3px;
 }
 
@@ -383,7 +383,7 @@
   #sidebar ul li a.active {
     border-left: none;
     border-bottom: 2px solid #B84B44;
-    background: rgba(184, 75, 68, 0.14);
+    background: color-mix(in srgb, var(--brand-primary) 14%, transparent);
     box-shadow: none;
   }
 
@@ -426,7 +426,7 @@
 
   :host-context([data-theme="light"]) #sidebar ul li a.active {
     border-bottom-color: #B84B44;
-    background: rgba(184, 75, 68, 0.06);
+    background: color-mix(in srgb, var(--brand-primary) 6%, transparent);
   }
 
   :host-context([data-theme="light"]) #sidebar.admin-mode ul li a.active {
@@ -438,7 +438,7 @@
 /* ===== LIGHT MODE ===== */
 :host-context([data-theme="light"]) #sidebar {
   background:
-    linear-gradient(135deg, rgba(184, 75, 68, 0.03) 0%, transparent 55%),
+    linear-gradient(135deg, color-mix(in srgb, var(--brand-primary) 3%, transparent) 0%, transparent 55%),
     linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%);
   border-right: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 1px 0 0 rgba(0, 0, 0, 0.03), 4px 0 20px rgba(0, 0, 0, 0.04);
@@ -474,7 +474,7 @@
 }
 
 :host-context([data-theme="light"]) #sidebar ul li a.active {
-  background: rgba(184, 75, 68, 0.08);
+  background: color-mix(in srgb, var(--brand-primary) 8%, transparent);
   color: #B84B44;
   border-left-color: #B84B44;
 }
@@ -494,10 +494,10 @@
 }
 
 :host-context([data-theme="light"]) .user-avatar {
-  background: linear-gradient(135deg, rgba(184, 75, 68, 0.12), rgba(184, 75, 68, 0.06));
-  border-color: rgba(184, 75, 68, 0.25);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--brand-primary) 12%, transparent), color-mix(in srgb, var(--brand-primary) 6%, transparent));
+  border-color: color-mix(in srgb, var(--brand-primary) 25%, transparent);
   color: #B84B44;
-  box-shadow: 0 0 0 4px rgba(184, 75, 68, 0.05);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand-primary) 5%, transparent);
 }
 
 :host-context([data-theme="light"]) .user-name {
@@ -539,3 +539,4 @@
 :host-context([data-theme="light"]) #toggle-btn:hover svg {
   fill: rgba(0, 0, 0, 0.6);
 }
+

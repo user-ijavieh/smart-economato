@@ -1,48 +1,5 @@
 /** ===== ANIMACIONES ===== */
 
-/* Entrada: desliza desde la derecha */
-@keyframes toastIn {
-  from {
-    opacity: 0;
-    transform: translateX(calc(100% + 2rem));
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* Salida: desliza hacia la derecha y colapsa */
-@keyframes toastOut {
-  0% {
-    opacity: 1;
-    transform: translateX(0);
-    max-height: 120px;
-    margin-bottom: 0;
-    padding-top: 16px;
-    padding-bottom: 22px;
-  }
-
-  50% {
-    opacity: 0;
-    transform: translateX(calc(100% + 2rem));
-    max-height: 120px;
-    margin-bottom: 0;
-    padding-top: 16px;
-    padding-bottom: 22px;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translateX(calc(100% + 2rem));
-    max-height: 0;
-    margin-bottom: -10px;
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-}
-
 /* Barra de progreso: se consume de izquierda a derecha */
 @keyframes progress {
   from {

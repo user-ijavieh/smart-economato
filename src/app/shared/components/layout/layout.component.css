@@ -87,16 +87,6 @@ main.main-expanded {
   animation: fadeInOverlay 0.3s ease forwards;
 }
 
-@keyframes fadeInOverlay {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
 .logout-modal {
   background: var(--theme-modal-glass);
   backdrop-filter: blur(28px);

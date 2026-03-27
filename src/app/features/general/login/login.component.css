@@ -1,11 +1,8 @@
-:host {
+﻿:host {
   display: block;
 }
 
 /* ===== TOKENS (Reference from STYLE_GUIDE) ===== */
-:host {
-  display: block;
-}
 /** ===== Wrapper: imagen de fondo fija ===== */
 .login-wrapper {
   background-image: url('/assets/img/loginBackground.jpg');
@@ -60,13 +57,13 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(155deg, rgba(10,3,3,0.78) 0%, rgba(184,75,68,0.32) 48%, rgba(10,3,3,0.82) 100%);
+  background: linear-gradient(155deg, rgba(10,3,3,0.78) 0%, color-mix(in srgb, var(--brand-primary) 32%, transparent) 48%, rgba(10,3,3,0.82) 100%);
   pointer-events: none;
   z-index: 0;
 }
 
 :host-context([data-theme="light"]) .login-wrapper::before {
-  background: linear-gradient(155deg, rgba(255,255,255,0.65) 0%, rgba(184,75,68,0.15) 48%, rgba(255,255,255,0.70) 100%);
+  background: linear-gradient(155deg, rgba(255,255,255,0.65) 0%, color-mix(in srgb, var(--brand-primary) 15%, transparent) 48%, rgba(255,255,255,0.70) 100%);
 }
 /** ===== Card principal (Dark Glassmorphism) ===== */
 .card {
@@ -206,14 +203,14 @@
   font-family: var(--font-body);
   font-weight: 400;
   font-size: 0.75rem;
-  color: #ff6b6b;
+  color: var(--color-danger-muted);
   padding-left: 4px;
 }
 /** ===== Error banner ===== */
 .error-banner {
   background: var(--theme-danger-bg);
   border: 1px solid var(--theme-danger-border);
-  color: #ff6b6b;
+  color: var(--color-danger-muted);
   font-family: var(--font-body);
   font-size: 0.82rem;
   padding: 10px 14px;
@@ -238,7 +235,7 @@
   overflow: hidden;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   animation: fadeUp 0.5s 0.38s both;
-  box-shadow: 0 4px 18px rgba(184, 75, 68, 0.15);
+  box-shadow: 0 4px 18px color-mix(in srgb, var(--brand-primary) 15%, transparent);
 }
 
 .btn-submit::after {
