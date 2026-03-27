@@ -57,7 +57,7 @@ form {
 .form-group select {
   padding: 12px 15px;
   border-radius: 8px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--theme-border-glass);
   font-size: 0.9rem;
   font-family: var(--font-body);
   font-weight: var(--font-body-weight);
