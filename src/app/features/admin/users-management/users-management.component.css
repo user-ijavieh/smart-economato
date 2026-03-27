@@ -50,7 +50,7 @@
   line-height: 1;
   font-family: var(--font-heading);
   font-weight: var(--font-heading-weight);
-  text-shadow: 0 0 10px rgba(90, 120, 220, 0.4);
+  text-shadow: var(--theme-heading-glow-admin);
 }
 
 /** ===== CONTENEDOR PRINCIPAL ===== */
@@ -113,7 +113,7 @@
 }
 
 .role-select option {
-  background: #1e1e1e;
+  background: var(--theme-option-bg);
   color: var(--theme-text-primary);
 }
 
@@ -148,13 +148,13 @@ button:active {
 }
 
 #btnAgregarUsuario {
-  background: rgba(90, 120, 220, 0.15);
-  border-color: rgba(90, 120, 220, 0.3);
+  background: var(--color-accent-admin-bg);
+  border-color: var(--color-accent-admin-border);
   color: var(--theme-text-primary);
 }
 
 #btnAgregarUsuario:hover {
-  background: rgba(90, 120, 220, 0.25);
+  background: var(--color-accent-admin-hover-bg);
   border-color: rgba(90, 120, 220, 0.5);
   box-shadow: 0 8px 25px rgba(90, 120, 220, 0.3);
 }
@@ -171,9 +171,9 @@ button:active {
 }
 
 .btn-toggle-view.active {
-  background: rgba(90, 120, 220, 0.2);
+  background: var(--color-accent-admin-bg);
   color: var(--theme-text-primary);
-  border-color: rgba(90, 120, 220, 0.4);
+  border-color: var(--color-accent-admin-hover-border);
 }
 
 /** ===== STATS ROW ===== */
@@ -257,7 +257,7 @@ th:nth-child(4), td:nth-child(4) { width: 20%; min-width: 180px; }
 th:nth-child(5), td:nth-child(5) { width: 18%; min-width: 100px; }
 
 th {
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--theme-section-header-bg-strong);
   color: var(--theme-text-secondary);
   font-weight: 600;
   letter-spacing: 1px;
@@ -329,7 +329,7 @@ tr:hover {
 }
 
 tr.row-hidden {
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--theme-section-header-bg);
   opacity: 0.7;
 }
 
@@ -392,9 +392,9 @@ tr.row-hidden .user-avatar-small {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: rgba(90, 120, 220, 0.2);
+  background: var(--color-accent-admin-bg);
   border: 1px solid rgba(90, 120, 220, 0.4);
-  color: #9DB5FF;
+  color: var(--color-accent-admin);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -415,21 +415,21 @@ tr.row-hidden .user-avatar-small {
 }
 
 .badge-admin { 
-  background: rgba(239, 68, 68, 0.15);
+  background: var(--color-danger-bg);
   border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #ff8a8a;
+  color: var(--color-danger-muted);
 }
 
 .badge-chef {
-  background: rgba(250, 204, 21, 0.15);
+  background: var(--color-warning-bg);
   border: 1px solid rgba(250, 204, 21, 0.3);
-  color: #fde047;
+  color: var(--color-warning);
 }
 
 .badge-user {
   background: rgba(74, 222, 128, 0.15);
   border: 1px solid rgba(74, 222, 128, 0.3);
-  color: #86efac;
+  color: var(--color-success);
 }
 
 /** ===== ACTIONS ===== */
@@ -452,30 +452,30 @@ tr.row-hidden .user-avatar-small {
 }
 
 .btn-editar {
-  background: rgba(90, 120, 220, 0.15);
-  color: #9DB5FF;
+  background: var(--color-accent-admin-bg);
+  color: var(--color-accent-admin);
 }
 .btn-editar:hover {
-  background: rgba(90, 120, 220, 0.25);
-  border-color: rgba(90, 120, 220, 0.4);
+  background: var(--color-accent-admin-hover-bg);
+  border-color: var(--color-accent-admin-hover-border);
   color: var(--theme-text-primary);
   transform: translateY(-2px);
 }
 
 .btn-eliminar {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ff8a8a;
+  background: var(--color-danger-bg);
+  color: var(--color-danger-muted);
 }
 .btn-eliminar:hover {
-  background: rgba(239, 68, 68, 0.25);
+  background: var(--color-danger-hover-bg);
   border-color: rgba(239, 68, 68, 0.4);
   color: var(--theme-text-primary);
   transform: translateY(-2px);
 }
 
 .btn-ocultar {
-  background: rgba(250, 204, 21, 0.15);
-  color: #fde047;
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
 }
 .btn-ocultar:hover {
   background: rgba(250, 204, 21, 0.25);
@@ -486,7 +486,7 @@ tr.row-hidden .user-avatar-small {
 
 .btn-mostrar {
   background: rgba(74, 222, 128, 0.15);
-  color: #86efac;
+  color: var(--color-success);
 }
 .btn-mostrar:hover {
   background: rgba(74, 222, 128, 0.25);
@@ -515,7 +515,7 @@ tr.row-hidden .user-avatar-small {
   border-bottom: 1px solid var(--theme-surface-glass-active);
 }
 
-/** ===== PAGINACIÓN ===== */
+/** ===== PAGINACION ===== */
 .pagination-controls {
   display: flex;
   justify-content: center;
@@ -544,8 +544,8 @@ tr.row-hidden .user-avatar-small {
 }
 
 .btn-page:hover:not(:disabled) {
-  background: rgba(90, 120, 220, 0.15);
-  border-color: rgba(90, 120, 220, 0.3);
+  background: var(--color-accent-admin-bg);
+  border-color: var(--color-accent-admin-border);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
@@ -630,7 +630,7 @@ tr.row-hidden .user-avatar-small {
 .mobile-detail-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--theme-overlay-bg);
   backdrop-filter: blur(8px);
   z-index: 9999;
   display: flex;
@@ -677,7 +677,7 @@ tr.row-hidden .user-avatar-small {
   align-items: center;
   justify-content: space-between;
   padding: 20px 24px;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--theme-section-header-bg);
   color: var(--theme-text-primary);
   border-bottom: 1px solid var(--theme-surface-glass-hover);
 }
@@ -712,7 +712,7 @@ tr.row-hidden .user-avatar-small {
 
 .modal-close-btn:hover {
   background: rgba(239, 68, 68, 0.2);
-  color: #ff8a8a;
+  color: var(--color-danger-muted);
   border-color: rgba(239, 68, 68, 0.4);
 }
 
@@ -860,7 +860,7 @@ tr.row-hidden .user-avatar-small {
 
 .count-badge {
   margin-left: auto;
-  background: rgba(90, 120, 220, 0.2);
+  background: var(--color-accent-admin-bg);
   border: 1px solid rgba(90, 120, 220, 0.45);
   color: var(--theme-text-primary);
   border-radius: 999px;
@@ -1061,7 +1061,7 @@ tr.row-hidden .user-avatar-small {
   gap: 8px;
   border-radius: 999px;
   border: 1px solid rgba(90, 120, 220, 0.35);
-  background: rgba(90, 120, 220, 0.15);
+  background: var(--color-accent-admin-bg);
   padding: 6px 8px 6px 6px;
   color: var(--theme-text-accent-lighter);
   cursor: grab;
@@ -1139,7 +1139,7 @@ tr.row-hidden .user-avatar-small {
 }
 
 .teacher-box.has-pending {
-  border-color: rgba(90, 120, 220, 0.4);
+  border-color: var(--color-accent-admin-hover-border);
 }
 
 .unassigned-column.drag-over {
