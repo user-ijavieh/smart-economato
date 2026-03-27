@@ -43,7 +43,7 @@
   letter-spacing: 2px;
   text-align: center;
   margin: 0;
-  text-shadow: 0 0 10px var(--brand-glow);
+  text-shadow: var(--theme-heading-glow);
 }
 
 .reception-content {
@@ -214,7 +214,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(0, 0, 0, 0.2); /* Override inline backgrounds with subtle tint */
+  background: var(--theme-section-header-bg); /* Override inline backgrounds with subtle tint */
 }
 
 .order-title {
@@ -305,7 +305,7 @@
 .detail-value.total {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #ff8a8a;
+  color: var(--color-danger-muted);
 }
 
 .order-items-preview {
@@ -348,7 +348,7 @@
 
 .order-actions {
   padding: 16px 20px;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--theme-section-header-bg);
   display: flex;
   gap: 12px;
   border-top: 1px solid var(--theme-surface-glass-hover);
@@ -405,7 +405,7 @@
 .btn-success {
   background: rgba(16, 185, 129, 0.15) !important;
   border-color: rgba(16, 185, 129, 0.3) !important;
-  color: #34d399 !important;
+  color: var(--color-success) !important;
 }
 
 .btn-success:hover {
@@ -418,7 +418,7 @@
 .btn-danger, .btn-delete {
   background: rgba(239, 68, 68, 0.15) !important;
   border-color: rgba(239, 68, 68, 0.3) !important;
-  color: #ff8a8a !important;
+  color: var(--color-danger-muted) !important;
 }
 
 .btn-danger:hover, .btn-delete:hover {

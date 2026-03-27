@@ -50,7 +50,7 @@
   line-height: 1;
   font-family: var(--font-heading);
   font-weight: var(--font-heading-weight);
-  text-shadow: 0 0 10px rgba(90, 120, 220, 0.4);
+  text-shadow: var(--theme-heading-glow-admin);
 }
 
 /** ===== TAB BAR ===== */
@@ -207,7 +207,7 @@ button:disabled {
 #btnAgregarAlergeno {
   background: rgba(76, 175, 80, 0.15);
   border-color: rgba(76, 175, 80, 0.3);
-  color: #a7f3d0;
+  color: var(--color-success-soft);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -303,7 +303,7 @@ th, td {
 }
 
 th {
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--theme-section-header-bg-strong);
   color: var(--theme-text-secondary);
   font-weight: 600;
   letter-spacing: 1px;
@@ -369,9 +369,9 @@ tr:hover { background: var(--theme-surface-glass-hover); }
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: rgba(90, 120, 220, 0.2);
+  background: var(--color-accent-admin-bg);
   border: 1px solid rgba(90, 120, 220, 0.4);
-  color: #9DB5FF;
+  color: var(--color-accent-admin);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -385,8 +385,8 @@ tr:hover { background: var(--theme-surface-glass-hover); }
 }
 
 .btn-editar {
-  background: rgba(90, 120, 220, 0.15);
-  color: #9DB5FF;
+  background: var(--color-accent-admin-bg);
+  color: var(--color-accent-admin);
   padding: 8px;
   border-radius: 8px;
   border: none;
@@ -398,14 +398,14 @@ tr:hover { background: var(--theme-surface-glass-hover); }
   box-shadow: none;
 }
 .btn-editar:hover {
-  background: rgba(90, 120, 220, 0.25);
+  background: var(--color-accent-admin-hover-bg);
   color: var(--theme-text-primary);
   transform: translateY(-2px);
 }
 
 .btn-eliminar {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ff8a8a;
+  background: var(--color-danger-bg);
+  color: var(--color-danger-muted);
   padding: 8px;
   border-radius: 8px;
   border: none;
@@ -417,7 +417,7 @@ tr:hover { background: var(--theme-surface-glass-hover); }
   box-shadow: none;
 }
 .btn-eliminar:hover {
-  background: rgba(239, 68, 68, 0.25);
+  background: var(--color-danger-hover-bg);
   color: var(--theme-text-primary);
   transform: translateY(-2px);
 }
@@ -473,8 +473,8 @@ tr:hover { background: var(--theme-surface-glass-hover); }
 }
 
 .btn-page:hover:not(:disabled) {
-  background: rgba(90, 120, 220, 0.15);
-  border-color: rgba(90, 120, 220, 0.3);
+  background: var(--color-accent-admin-bg);
+  border-color: var(--color-accent-admin-border);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
@@ -511,7 +511,7 @@ tr:hover { background: var(--theme-surface-glass-hover); }
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--theme-overlay-bg);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -550,7 +550,7 @@ tr:hover { background: var(--theme-surface-glass-hover); }
   align-items: center;
   justify-content: space-between;
   padding: 20px 28px;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--theme-section-header-bg);
   border-bottom: 1px solid var(--theme-surface-glass-hover);
 }
 
@@ -579,8 +579,8 @@ tr:hover { background: var(--theme-surface-glass-hover); }
 
 .allergen-modal-close:hover {
   background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #ff8a8a;
+  border-color: var(--color-danger-hover-border);
+  color: var(--color-danger-muted);
   transform: scale(1.05);
 }
 
@@ -639,7 +639,7 @@ tr:hover { background: var(--theme-surface-glass-hover); }
 .allergen-modal-footer .btn-cancel:hover { background: var(--theme-border-medium); color: var(--theme-text-primary); transform: translateY(-2px); }
 
 .allergen-modal-footer .btn-save {
-  background: linear-gradient(135deg, rgba(30, 40, 80, 0.95), rgba(20, 30, 60, 0.95));
+  background: var(--theme-surface-glass-active);
   color: var(--theme-text-primary);
   border: 1px solid rgba(90, 120, 220, 0.3);
   box-shadow: 0 4px 18px rgba(90, 120, 220, 0.2);
@@ -648,7 +648,7 @@ tr:hover { background: var(--theme-surface-glass-hover); }
   gap: 6px;
 }
 .allergen-modal-footer .btn-save:hover:not(:disabled) {
-  background: rgba(30, 40, 80, 0.95);
+  background: rgba(90, 120, 220, 0.25);
   box-shadow: 0 8px 25px rgba(90, 120, 220, 0.4);
   transform: translateY(-2px);
 }

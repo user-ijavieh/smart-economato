@@ -1,4 +1,4 @@
-/* ─── Animaciones ──────────────────────────────────── */
+/** ===== ANIMACIONES ===== */
 @keyframes alertIn {
   from { opacity: 0; transform: translateY(-20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -8,7 +8,7 @@
   to { opacity: 0; transform: translateY(-20px) scale(0.95); }
 }
 
-/* ─── Contenedor ───────────────────────────────────── */
+/** ===== CONTENEDOR ===== */
 .alert-stack {
   position: fixed;
   top: 1.5rem;
@@ -21,7 +21,7 @@
   pointer-events: none;
 }
 
-/* ─── Card base ─────────────────────────────────────── */
+/** ===== CARD BASE ===== */
 .alert-card {
   position: relative;
   display: flex;
@@ -33,19 +33,19 @@
   overflow: hidden;
   animation: alertIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
 
-  background: rgba(15, 15, 15, 0.88);
+  background: var(--theme-toast-bg);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid var(--theme-notification-border);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--theme-toast-border);
+  box-shadow: var(--theme-toast-shadow);
 }
 
-/* ─── Color accent strip por tipo ───────────────────── */
-.alert-failure-critical { border-left: 3px solid #f87171; }
+/** ===== COLOR ACCENT STRIP POR TIPO ===== */
+.alert-failure-critical { border-left: 3px solid var(--color-danger); }
 .alert-failure-partial  { border-left: 3px solid #fbbf24; }
 .alert-recovered        { border-left: 3px solid #4ade80; }
 
-/* ─── Icono circular ────────────────────────────────── */
+/** ===== ICONO CIRCULAR ===== */
 .alert-icon {
   flex-shrink: 0;
   width: 32px;
@@ -56,11 +56,11 @@
   justify-content: center;
 }
 
-.alert-failure-critical .alert-icon { color: #f87171; background: rgba(248, 113, 113, 0.15); }
-.alert-failure-partial  .alert-icon { color: #fbbf24; background: rgba(251, 191, 36, 0.15); }
+.alert-failure-critical .alert-icon { color: var(--color-danger); background: rgba(248, 113, 113, 0.15); }
+.alert-failure-partial  .alert-icon { color: var(--color-warning); background: rgba(251, 191, 36, 0.15); }
 .alert-recovered        .alert-icon { color: #4ade80; background: rgba(74, 222, 128, 0.15); }
 
-/* ─── Cuerpo ─────────────────────────────────────────── */
+/** ===== CUERPO ===== */
 .alert-content {
   flex: 1;
   min-width: 0;
@@ -74,7 +74,7 @@
   font-family: var(--font-body, system-ui);
   font-size: 0.83rem;
   font-weight: 600;
-  color: var(--theme-notification-text);
+  color: var(--theme-toast-title);
   line-height: 1.35;
 }
 
@@ -85,17 +85,26 @@
   color: var(--theme-text-secondary);
 }
 
-/* ─── Lista de servicios ─────────────────────────────── */
+/** ===== LISTA DE SERVICIOS ===== */
 .alert-services-list {
   margin: 4px 0 0 0;
   padding-left: 1.1rem;
   font-family: var(--font-body, system-ui);
   font-size: 0.77rem;
-  color: var(--theme-notification-text-subtle);
+  color: var(--theme-toast-message);
   line-height: 1.5;
 }
 
-/* ─── Responsive ─────────────────────────────────────── */
+:host-context([data-theme="light"]) .alert-card {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+:host-context([data-theme="light"]) .alert-failure-critical .alert-icon { background: rgba(248, 113, 113, 0.10); }
+:host-context([data-theme="light"]) .alert-failure-partial .alert-icon { background: rgba(251, 191, 36, 0.10); }
+:host-context([data-theme="light"]) .alert-recovered .alert-icon { background: rgba(74, 222, 128, 0.10); }
+
+/** ===== RESPONSIVE ===== */
 @media (max-width: 800px) {
   .alert-stack {
     width: 220px;

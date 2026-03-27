@@ -1,4 +1,4 @@
-:host {
+﻿:host {
   display: block;
 }
 
@@ -80,7 +80,7 @@
   flex: 1;
   text-align: center;
   margin: 0;
-  text-shadow: 0 0 10px var(--brand-glow);
+  text-shadow: var(--theme-heading-glow);
 }
 
 /** ===== MAIN CONTAINER ===== */
@@ -114,8 +114,8 @@
   padding: 12px 24px;
   border-radius: 12px;
   border: 1px solid rgba(16, 185, 129, 0.3);
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
+  background: var(--color-success-bg);
+  color: var(--color-success);
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
@@ -125,8 +125,8 @@
 }
 
 .btn-create-order:hover {
-  background: rgba(16, 185, 129, 0.25);
-  border-color: rgba(16, 185, 129, 0.5);
+  background: var(--color-success-hover-bg);
+  border-color: var(--color-success-hover-border);
   color: var(--theme-text-primary);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(16, 185, 129, 0.2);
@@ -199,7 +199,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--theme-section-header-bg);
 }
 
 .order-card-user {
@@ -277,7 +277,7 @@
 .order-detail.total .detail-value {
   font-size: 1.25rem;
   font-weight: 800;
-  color: #f87171;
+  color: var(--color-danger);
 }
 
 /** ===== ITEM PREVIEW ===== */
@@ -361,7 +361,7 @@
 .btn-confirm {
   background: rgba(184, 75, 68, 0.15);
   border-color: rgba(184, 75, 68, 0.3);
-  color: #f87171;
+  color: var(--color-danger);
 }
 
 .btn-confirm:hover {
@@ -393,7 +393,7 @@
 
 .btn-load-more:hover {
   border-color: rgba(184, 75, 68, 0.5);
-  color: #f87171;
+  color: var(--color-danger);
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(184, 75, 68, 0.2);
 }
