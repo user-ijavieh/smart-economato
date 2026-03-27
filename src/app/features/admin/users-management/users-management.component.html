@@ -1,4 +1,4 @@
-<div class="header-usuarios">
+<div class="page-header header-usuarios">
     <h1>Gestión de Usuarios</h1>
 </div>
 
@@ -18,8 +18,8 @@
 </div>
 
 @if (activeTab === 'users') {
-<div class="contenedor-principal">
-    <div class="controles">
+<div class="page-content contenedor-principal">
+    <div class="controls-bar controles">
         <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por nombre o usuario..."
             (ngModelChange)="onSearch()" />
         <select [(ngModel)]="roleFilter" (ngModelChange)="onRoleFilterChange()" class="role-select">
@@ -76,7 +76,7 @@
         </div>
     </div>
 
-    <div class="tabla-contenedor">
+    <div class="table-container tabla-contenedor">
         <table>
             <thead>
                 <tr>
@@ -198,7 +198,7 @@
 }
 
 @if (activeTab === 'assignments') {
-<div class="contenedor-principal assignments-container">
+<div class="page-content contenedor-principal assignments-container">
     @if (loadingAssignments) {
     <div class="assignments-skeleton">
         <div class="skeleton-column">

@@ -1,12 +1,12 @@
-/** ===== MODAL OVERLAY ===== */
+﻿/** ===== MODAL OVERLAY ===== */
 :host {
   display: block;
 }
 
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--theme-surface-glass-hover); }
-::-webkit-scrollbar-thumb { background: rgba(184, 75, 68, 0.3); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(184, 75, 68, 0.5); }
+::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--brand-primary) 30%, transparent); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--brand-primary) 50%, transparent); }
 
 .modal-overlay {
   position: fixed;
@@ -258,15 +258,15 @@
 }
 
 .btn-editar {
-  background: rgba(184, 75, 68, 0.15) !important;
+  background: color-mix(in srgb, var(--brand-primary) 15%, transparent) !important;
   color: var(--color-danger-muted) !important;
-  border: 1px solid rgba(184, 75, 68, 0.3) !important;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 30%, transparent) !important;
   backdrop-filter: blur(4px);
 }
 .btn-editar:hover {
-  background: rgba(184, 75, 68, 0.25) !important;
+  background: color-mix(in srgb, var(--brand-primary) 25%, transparent) !important;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(184, 75, 68, 0.15);
+  box-shadow: 0 8px 25px color-mix(in srgb, var(--brand-primary) 15%, transparent);
 }
 
 .btn-cocinar {
@@ -338,3 +338,4 @@
   color: var(--color-accent-admin);
   background: rgba(90, 120, 220, 0.1);
 }
+

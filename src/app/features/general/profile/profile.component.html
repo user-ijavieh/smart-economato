@@ -1,8 +1,8 @@
-<div class="header-perfil">
+<div class="page-header header-perfil">
   <h1>Perfil</h1>
 </div>
 
-<div class="contenedor-principal hide-scrollbar">
+<div class="page-content contenedor-principal hide-scrollbar">
   <!-- Información del usuario -->
   <div class="user-card">
     <div class="user-avatar">
@@ -24,7 +24,7 @@
     </div>
 
     @if (loadingStudents) {
-    <div class="tabla-contenedor">
+    <div class="table-container tabla-contenedor">
       <table>
         <thead>
           <tr>
@@ -56,7 +56,7 @@
       <p>No tienes alumnos asignados actualmente.</p>
     </div>
     } @else {
-    <div class="tabla-contenedor">
+    <div class="table-container tabla-contenedor">
       <table>
         <thead>
           <tr>

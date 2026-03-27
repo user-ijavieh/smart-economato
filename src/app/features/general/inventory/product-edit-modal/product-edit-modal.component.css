@@ -1,4 +1,4 @@
-/** ===== MODAL OVERLAY ===== */
+﻿/** ===== MODAL OVERLAY ===== */
 :host {
   display: block;
 }
@@ -11,11 +11,11 @@
   background: var(--theme-surface-glass-hover);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(184, 75, 68, 0.3);
+  background: color-mix(in srgb, var(--brand-primary) 30%, transparent);
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(184, 75, 68, 0.5);
+  background: color-mix(in srgb, var(--brand-primary) 50%, transparent);
 }
 
 .modal-overlay-base {
@@ -54,7 +54,7 @@
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
-  background: linear-gradient(to right, rgba(184, 75, 68, 0.15), transparent);
+  background: linear-gradient(to right, color-mix(in srgb, var(--brand-primary) 15%, transparent), transparent);
 }
 
 .modal-header-base h2 {
@@ -184,16 +184,16 @@
 }
 
 .btn-save {
-  background: rgba(184, 75, 68, 0.15) !important;
-  border: 1px solid rgba(184, 75, 68, 0.3) !important;
+  background: color-mix(in srgb, var(--brand-primary) 15%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 30%, transparent) !important;
   color: var(--theme-text-primary)!important;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2) !important;
   backdrop-filter: blur(8px);
 }
 
 .btn-save:hover:not(:disabled) {
-  background: rgba(184, 75, 68, 0.25) !important;
-  border-color: rgba(184, 75, 68, 0.5) !important;
+  background: color-mix(in srgb, var(--brand-primary) 25%, transparent) !important;
+  border-color: color-mix(in srgb, var(--brand-primary) 50%, transparent) !important;
   transform: translateY(-2px);
   box-shadow: 0 8px 25px var(--brand-glow) !important;
 }
@@ -293,3 +293,4 @@
   background: rgba(239, 68, 68, 0.25) !important;
   box-shadow: 0 8px 25px rgba(239, 68, 68, 0.15) !important;
 }
+
