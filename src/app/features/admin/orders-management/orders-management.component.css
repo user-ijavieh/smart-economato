@@ -5,8 +5,8 @@
 /** ===== SCROLLBAR PERSONALIZADO ===== */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: var(--admin-scrollbar-track, var(--theme-section-header-bg)); border-radius: 10px; }
-::-webkit-scrollbar-thumb { background: var(--admin-scrollbar-thumb, var(--theme-accent-gradient)); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--admin-scrollbar-thumb-hover, var(--theme-accent-gradient)); }
+::-webkit-scrollbar-thumb { background: var(--admin-scrollbar-thumb, linear-gradient(135deg, rgba(90, 120, 220, 0.4), rgba(122, 150, 240, 0.4))); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--admin-scrollbar-thumb-hover, linear-gradient(135deg, rgba(90, 120, 220, 0.6), rgba(122, 150, 240, 0.6))); }
 
 /** ===== HEADER ===== */
 .header-recetas {
