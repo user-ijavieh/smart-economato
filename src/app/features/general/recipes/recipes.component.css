@@ -1,4 +1,4 @@
-﻿:host {
+:host {
   display: block;
 }
 
@@ -231,7 +231,7 @@ button:active {
   border-left-color: rgba(16, 185, 129, 1);
 }
 
-/** ===== BADGE ALÃ‰RGENOS ===== */
+/** ===== BADGE ALERGENOS ===== */
 .allergen-badge {
   display: inline-flex;
   align-items: center;
@@ -316,7 +316,7 @@ button:active {
   font-family: var(--font-body);
 }
 
-/** ===== PAGINACIÃ“N ===== */
+/** ===== PAGINACION ===== */
 .pagination-container {
   display: flex;
   justify-content: center;

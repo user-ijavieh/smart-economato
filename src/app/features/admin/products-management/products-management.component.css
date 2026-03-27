@@ -904,7 +904,7 @@ tr.low-stock-row:hover td {
   font-weight: 600;
 }
 
-/** ===== PAGINACIÃ“N ===== */
+/** ===== PAGINACION ===== */
 .pagination-controls {
   display: flex;
   justify-content: center;
