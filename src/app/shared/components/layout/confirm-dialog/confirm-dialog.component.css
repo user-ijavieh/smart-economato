@@ -16,10 +16,10 @@
 }
 
 .dialog-content {
-  background: var(--theme-modal-glass-alt);
+  background: var(--theme-modal-glass-bg);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--theme-border-card);
+  border: 1px solid var(--theme-border-light);
   border-radius: 18px;
   box-shadow: 0 4px 20px var(--theme-table-header-bg);
   color: var(--theme-text-primary);
@@ -93,7 +93,7 @@
 .btn-confirm {
   background: rgba(184, 75, 68, 0.15) !important;
   border: 1px solid rgba(184, 75, 68, 0.3) !important;
-  color: var(--theme-text-on-brand) !important;
+  color: var(--theme-text-primary) !important;
   backdrop-filter: blur(8px);
 }
 

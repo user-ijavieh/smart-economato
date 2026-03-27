@@ -49,7 +49,7 @@
 :host-context([data-theme="light"]) .login-theme-toggle {
   background: rgba(255, 255, 255, 0.85);
   border-color: rgba(0, 0, 0, 0.1);
-  color: #475569;
+  color: var(--theme-svg-hover);
 }
 
 :host-context([data-theme="light"]) .login-theme-toggle:hover {
@@ -188,7 +188,7 @@
 .form-input:-webkit-autofill:hover,
 .form-input:-webkit-autofill:focus,
 .form-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px rgba(8, 3, 3, 0.95) inset !important;
+  -webkit-box-shadow: 0 0 0 30px var(--theme-bg-base) inset !important;
   -webkit-text-fill-color: var(--theme-text-primary) !important;
   transition: background-color 5000s ease-in-out 0s;
 }
