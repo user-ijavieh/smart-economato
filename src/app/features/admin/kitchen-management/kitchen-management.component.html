@@ -232,8 +232,8 @@
 }
 
 @if (activeTab === 'reports') {
-<div class="contenedor-principal">
-  <div class="controles">
+<div class="page-content contenedor-principal">
+  <div class="controls-bar controles">
     <select [(ngModel)]="reportRange" class="action-select" (ngModelChange)="loadReport()">
       @for (range of reportRanges; track range) {
       <option [value]="range">{{ translateRange(range) }}</option>
