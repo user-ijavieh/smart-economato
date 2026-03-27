@@ -86,8 +86,8 @@
 
 .close-btn:hover {
   background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #ff8a8a;
+  border-color: var(--color-danger-hover-border);
+  color: var(--color-danger-muted);
   transform: scale(1.05);
 }
 
@@ -129,7 +129,7 @@
   overflow-x: auto;
   border-radius: 12px;
   border: 1px solid var(--theme-border-glass);
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--theme-section-header-bg);
 }
 
 .details-table {
@@ -182,7 +182,7 @@
 .table-input:focus {
   outline: none;
   background: var(--theme-surface-glass-active);
-  border-color: rgba(16, 185, 129, 0.5);
+  border-color: var(--color-success-hover-border);
   box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
 }
 
@@ -233,7 +233,7 @@
 .btn-primary {
   background: rgba(16, 185, 129, 0.15) !important;
   border: 1px solid rgba(16, 185, 129, 0.3) !important;
-  color: #34d399 !important;
+  color: var(--color-success) !important;
   backdrop-filter: blur(8px);
 }
 

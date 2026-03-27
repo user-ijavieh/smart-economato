@@ -1,4 +1,4 @@
-main {
+﻿main {
   transition: margin-left 300ms ease-in-out;
   padding: min(30px, 7%);
   height: 100dvh;
@@ -43,7 +43,7 @@ main.main-expanded {
     height: 40px;
     border-radius: 12px;
     border: 1px solid var(--theme-border-light);
-    background: rgba(0, 0, 0, 0.4);
+    background: var(--theme-section-header-bg-strong);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     color: var(--theme-text-primary);
@@ -128,13 +128,13 @@ main.main-expanded {
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: rgba(239, 68, 68, 0.15);
+  background: var(--color-danger-bg);
   border: 1.5px solid rgba(239, 68, 68, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 20px;
-  color: #f87171;
+  color: var(--color-danger);
   backdrop-filter: blur(8px);
 }
 
@@ -181,8 +181,8 @@ main.main-expanded {
   flex: 1;
   padding: 12px 20px;
   border: 1px solid rgba(239, 68, 68, 0.35);
-  background: rgba(239, 68, 68, 0.15);
-  color: #f87171;
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
   border-radius: 12px;
   font-size: 0.95rem;
   font-weight: 600;
@@ -214,7 +214,7 @@ main.main-expanded {
 }
 
 :host-context([data-theme="light"]) .btn-logout-confirm:hover {
-  background: rgba(239, 68, 68, 0.15);
+  background: var(--color-danger-bg);
   border-color: rgba(239, 68, 68, 0.4);
 }
 

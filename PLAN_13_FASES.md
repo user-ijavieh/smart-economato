@@ -1,545 +1,773 @@
-# Plan de cambios en 13 fases
+Mejorar estilos del modo claro para calidad premium
+Contexto
+Repo: user-ijavieh/smart-economato (branch master)
+Estado actual: Light mode funcional pero plano — tokens centralizados cubren lo básico, pero 34 de 38 componentes no tienen overrides específicos de light mode
+Objetivo: Que el light mode se vea igual de premium que el dark mode, con glassmorphism claro, profundidad, y colores semánticos adaptados
+FASE 1 — Nuevos tokens semánticos y overrides faltantes en styles.css
+Archivo: src/styles.css
+1.1 Añadir tokens semánticos de color en :root (dark mode)
+Estos tokens representan colores semánticos que cambian entre temas:
 
-## Objetivo
-Documentar y ejecutar de forma ordenada los cambios de la aplicación en 13 fases.
 
-## Instrucciones generales
-- Este documento se irá completando de forma incremental.
-- Cada fase debe incluir: objetivo, tareas, archivos afectados, criterios de aceptación y notas.
-- El orden de ejecución será secuencial (Fase 1 -> Fase 13), salvo que se indique lo contrario.
+:root {  
+  /* ... tokens existentes ... */  
+  
+  /* Semantic colors — dark mode variants (designed for dark backgrounds) */  
+  --color-success: #34d399;  
+  --color-success-muted: #a7f3d0;  
+  --color-success-bg: rgba(16, 185, 129, 0.15);  
+  --color-success-border: rgba(16, 185, 129, 0.3);  
+  --color-success-hover-bg: rgba(16, 185, 129, 0.25);  
+  --color-success-hover-border: rgba(16, 185, 129, 0.5);  
+  
+  --color-danger: #f87171;  
+  --color-danger-muted: #ff8a8a;  
+  --color-danger-bg: rgba(239, 68, 68, 0.15);  
+  --color-danger-border: rgba(239, 68, 68, 0.3);  
+  --color-danger-hover-bg: rgba(239, 68, 68, 0.25);  
+  --color-danger-hover-border: rgba(239, 68, 68, 0.5);  
+  
+  --color-warning: #fde047;  
+  --color-warning-muted: #facc15;  
+  --color-warning-bg: rgba(250, 204, 21, 0.15);  
+  --color-warning-border: rgba(250, 204, 21, 0.3);  
+  
+  --color-info: #93c5fd;  
+  --color-info-bg: rgba(59, 130, 246, 0.15);  
+  --color-info-border: rgba(59, 130, 246, 0.3);  
+  
+  --color-accent-admin: #9DB5FF;  
+  --color-accent-admin-bg: rgba(90, 120, 220, 0.15);  
+  --color-accent-admin-border: rgba(90, 120, 220, 0.3);  
+  --color-accent-admin-hover-bg: rgba(90, 120, 220, 0.25);  
+  --color-accent-admin-hover-border: rgba(90, 120, 220, 0.4);  
+  
+  /* Section headers (table headers, modal headers, card headers) */  
+  --theme-section-header-bg: rgba(0, 0, 0, 0.3);  
+  --theme-section-header-bg-strong: rgba(0, 0, 0, 0.4);  
+  
+  /* Native inputs */  
+  --theme-option-bg: #1e1e1e;  
+  --theme-color-scheme: dark;  
+  
+  /* Text glow */  
+  --theme-heading-glow: 0 0 10px var(--brand-glow);  
+  --theme-heading-glow-admin: 0 0 10px rgba(90, 120, 220, 0.4);  
+}
+1.2 Overrides en [data-theme="light"]
+Añadir al bloque [data-theme="light"] existente:
 
----
 
-## Fase 1
-### Titulo
-Crear tokens adicionales en `styles.css`.
+[data-theme="light"] {  
+  /* ... overrides existentes ... */  
+  
+  /* Semantic colors — light mode (darker/more saturated for light backgrounds) */  
+  --color-success: #059669;  
+  --color-success-muted: #10b981;  
+  --color-success-bg: rgba(5, 150, 105, 0.08);  
+  --color-success-border: rgba(5, 150, 105, 0.20);  
+  --color-success-hover-bg: rgba(5, 150, 105, 0.12);  
+  --color-success-hover-border: rgba(5, 150, 105, 0.35);  
+  
+  --color-danger: #dc2626;  
+  --color-danger-muted: #ef4444;  
+  --color-danger-bg: rgba(220, 38, 38, 0.06);  
+  --color-danger-border: rgba(220, 38, 38, 0.18);  
+  --color-danger-hover-bg: rgba(220, 38, 38, 0.10);  
+  --color-danger-hover-border: rgba(220, 38, 38, 0.30);  
+  
+  --color-warning: #d97706;  
+  --color-warning-muted: #f59e0b;  
+  --color-warning-bg: rgba(217, 119, 6, 0.06);  
+  --color-warning-border: rgba(217, 119, 6, 0.18);  
+  
+  --color-info: #2563eb;  
+  --color-info-bg: rgba(37, 99, 235, 0.06);  
+  --color-info-border: rgba(37, 99, 235, 0.18);  
+  
+  --color-accent-admin: #3B82F6;  
+  --color-accent-admin-bg: rgba(59, 130, 246, 0.06);  
+  --color-accent-admin-border: rgba(59, 130, 246, 0.15);  
+  --color-accent-admin-hover-bg: rgba(59, 130, 246, 0.10);  
+  --color-accent-admin-hover-border: rgba(59, 130, 246, 0.25);  
+  
+  /* Section headers — light frosted instead of dark */  
+  --theme-section-header-bg: rgba(0, 0, 0, 0.02);  
+  --theme-section-header-bg-strong: rgba(0, 0, 0, 0.04);  
+  
+  /* Native inputs */  
+  --theme-option-bg: #ffffff;  
+  --theme-color-scheme: light;  
+  
+  /* Text glow — subtle or none in light mode */  
+  --theme-heading-glow: none;  
+  --theme-heading-glow-admin: none;  
+  
+  /* Missing overrides */  
+  --theme-text-muted: rgba(0, 0, 0, 0.30);  
+  --theme-border-subtle: rgba(0, 0, 0, 0.04);  
+  
+  /* Premium depth — multi-layer shadows for light mode */  
+  --theme-shadow-card: 0 1px 3px rgba(15, 23, 42, 0.04), 0 4px 16px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.03);  
+  --theme-shadow-hover: 0 4px 12px rgba(15, 23, 42, 0.06), 0 12px 40px rgba(15, 23, 42, 0.10), 0 0 0 1px rgba(0, 0, 0, 0.04);  
+}
+1.3 Admin light mode overrides
+Añadir al bloque [data-theme="light"] body.admin-theme existente:
 
-### Archivo
-- `src/styles.css`
 
-### Instrucciones
-Anadir nuevos tokens en `:root` (dark mode) y en `[data-theme="light"]` para cubrir los patrones hardcodeados mas comunes.
+[data-theme="light"] body.admin-theme,  
+body.admin-theme[data-theme="light"],  
+[data-theme="light"] .admin-theme {  
+  /* ... overrides existentes ... */  
+  
+  --color-accent-admin: #2563eb;  
+  --color-accent-admin-bg: rgba(37, 99, 235, 0.06);  
+  --color-accent-admin-border: rgba(37, 99, 235, 0.12);  
+  --theme-section-header-bg: rgba(37, 99, 235, 0.03);  
+  --theme-section-header-bg-strong: rgba(37, 99, 235, 0.05);  
+  --theme-heading-glow-admin: none;  
+}
+FASE 2 — Migrar fondos oscuros de secciones a tokens
+Patrón a reemplazar en TODOS los componentes:
+Valor hardcodeado	Token de reemplazo
+background: rgba(0, 0, 0, 0.3) (modal/section headers)	background: var(--theme-section-header-bg)
+background: rgba(0, 0, 0, 0.4) (table headers th)	background: var(--theme-section-header-bg-strong)
+background: rgba(0, 0, 0, 0.2) (card headers, overlays ligeros)	background: var(--theme-section-header-bg)
+background: rgba(0, 0, 0, 0.7) (modal overlays)	background: var(--theme-overlay-bg) (ya existe)
+Archivos afectados (buscar y reemplazar):
+Páginas admin (12 archivos — th con rgba(0,0,0,0.4) y modal headers con rgba(0,0,0,0.3)):
 
-Ubicacion: anadir DESPUES de los tokens existentes (despues de la linea 43, antes de los legacy tokens).
+allergens-management.component.css — líneas 306, 553
+products-management.component.css — líneas 403, 713, 754, 871, 878
+recipes-management.component.css — buscar rgba(0, 0, 0, 0.3) y rgba(0, 0, 0, 0.4)
+kitchen-management.component.css
+stock-management.component.css
+traceability-management.component.css
+users-management.component.css
+orders-management.component.css
+batches-management.component.css
+suppliers-management.component.css
+user-form-modal.component.css
+supplier-form-modal.component.css
+Páginas general (8 archivos):
 
-Nuevos tokens dark mode en `:root`:
+inventory.component.css — línea 423 (.panel-header)
+orders.component.css — línea 202 (.order-card-header)
+profile.component.css — línea 131, 168
+reception.component.css
+recipes.component.css
+Modales: product-detail-modal, recipe-detail-modal, order-details-modal, etc.
+Nota: NO reemplazar rgba(0, 0, 0, 0.7) en overlays de modales — usar var(--theme-overlay-bg) que ya tiene override en light mode.
+
+FASE 3 — Migrar colores semánticos hardcodeados a tokens
+3.1 Colores de texto/badges semánticos
+Buscar y reemplazar en TODOS los archivos CSS:
+
+Valor hardcodeado	Token	Contexto
+color: #ff8a8a	color: var(--color-danger-muted)	Texto de peligro/error
+color: #f87171	color: var(--color-danger)	Texto de peligro/acción
+color: #fca5a5	color: var(--color-danger-muted)	Stock bajo
+color: #34d399	color: var(--color-success)	Texto de éxito
+color: #a7f3d0	color: var(--color-success-muted)	Texto de éxito suave
+color: #6ee7b7	color: var(--color-success-muted)	Excel/export
+color: #86efac	color: var(--color-success-muted)	Cantidad positiva
+color: #fde047	color: var(--color-warning)	Advertencia
+color: #facc15	color: var(--color-warning-muted)	Caducidad próxima
+color: #fbbf24	color: var(--color-warning-muted)	Badge elevated
+color: #9DB5FF	color: var(--color-accent-admin)	Precio, iconos admin
+color: #93c5fd	color: var(--color-info)	Badge info/role
+3.2 Fondos de badges semánticos
+Valor hardcodeado	Token
+background: rgba(16, 185, 129, 0.15)	background: var(--color-success-bg)
+border-color: rgba(16, 185, 129, 0.3)	border-color: var(--color-success-border)
+background: rgba(239, 68, 68, 0.15)	background: var(--color-danger-bg)
+border-color: rgba(239, 68, 68, 0.3)	border-color: var(--color-danger-border)
+background: rgba(250, 204, 21, 0.15)	background: var(--color-warning-bg)
+border-color: rgba(250, 204, 21, 0.3)	border-color: var(--color-warning-border)
+background: rgba(90, 120, 220, 0.15)	background: var(--color-accent-admin-bg)
+border-color: rgba(90, 120, 220, 0.3)	border-color: var(--color-accent-admin-border)
+background: rgba(90, 120, 220, 0.2)	background: var(--color-accent-admin-bg)
+border-color: rgba(90, 120, 220, 0.4)	border-color: var(--color-accent-admin-border)
+3.3 Hover states de badges
+Valor hardcodeado	Token
+background: rgba(16, 185, 129, 0.25)	background: var(--color-success-hover-bg)
+border-color: rgba(16, 185, 129, 0.5)	border-color: var(--color-success-hover-border)
+background: rgba(239, 68, 68, 0.25)	background: var(--color-danger-hover-bg)
+border-color: rgba(239, 68, 68, 0.5)	border-color: var(--color-danger-hover-border)
+background: rgba(90, 120, 220, 0.25)	background: var(--color-accent-admin-hover-bg)
+border-color: rgba(90, 120, 220, 0.4)	border-color: var(--color-accent-admin-hover-border)
+IMPORTANTE: Hay ~500 ocurrencias en 33 archivos. Hacer el reemplazo con cuidado — algunos colores como #4caf50 y #ef4444 en sort indicators (th.sortable::after) son puramente decorativos y pueden mantenerse, ya que son pequeños indicadores que funcionan en ambos temas.
+
+FASE 4 — Dropdowns nativos y date inputs
+4.1 Select option backgrounds
+Buscar option { background: #1e1e1e en todos los archivos y reemplazar por:
+
+
+option { background: var(--theme-option-bg); color: var(--theme-text-primary); }
+Archivos afectados:
+
+products-management.component.css (línea 182)
+inventory.component.css (línea 382)
+Cualquier otro componente con <select>
+4.2 Date inputs color-scheme
+Buscar color-scheme: dark y reemplazar por:
+
+
+color-scheme: var(--theme-color-scheme);
+Archivos afectados:
+
+products-management.component.css (línea 207)
+recipes-management.component.css
+batch-expiration-modal.component.css
+FASE 5 — Text shadows y glows de headings
+5.1 Páginas general (glow rojo)
+Buscar text-shadow: 0 0 10px var(--brand-glow) en:
+
+inventory.component.css
+orders.component.css
+reception.component.css
+recipes.component.css
+profile.component.css
+Reemplazar por:
+
+
+text-shadow: var(--theme-heading-glow);
+5.2 Páginas admin (glow azul)
+Buscar text-shadow: 0 0 10px rgba(90, 120, 220, 0.4) en:
+
+products-management.component.css
+allergens-management.component.css
+Todos los demás componentes admin
+Reemplazar por:
+
+
+text-shadow: var(--theme-heading-glow-admin);
+FASE 6 — Profundidad premium en light mode
+6.1 Glassmorphism claro para cards y contenedores
+Añadir al final de styles.css un bloque global de overrides para light mode que aplique a todos los componentes a través de la herencia de tokens:
+
+
+/* Premium light mode depth enhancements */  
+[data-theme="light"] {  
+  /* Glass surfaces get a subtle inner glow */  
+  --theme-surface-glass: rgba(255, 255, 255, 0.80);  
+  /* Slightly stronger blur for frosted glass effect */  
+  --theme-effect-glass: blur(28px);  
+}
+6.2 Stat cards con borde superior coloreado
+Los stat cards usan border-top: 2px solid var(--theme-border-medium). En light mode, --theme-border-medium es rgba(0,0,0,0.12) que es gris. Esto está bien — los bordes de color semántico (.stat-card.stat-visible { border-top-color: rgba(74, 222, 128, 0.8); }) necesitan adaptarse:
+
+Crear tokens:
+
+
+:root {  
+  --color-success-accent: rgba(74, 222, 128, 0.8);  
+  --color-warning-accent: rgba(250, 204, 21, 0.8);  
+  --color-admin-accent: rgba(90, 120, 220, 0.8);  
+}  
+  
+[data-theme="light"] {  
+  --color-success-accent: rgba(5, 150, 105, 0.6);  
+  --color-warning-accent: rgba(217, 119, 6, 0.6);  
+  --color-admin-accent: rgba(37, 99, 235, 0.6);  
+}
+Y reemplazar en los componentes:
+
+.stat-card.stat-visible { border-top-color: var(--color-success-accent); }
+.stat-card.stat-value { border-top-color: var(--color-warning-accent); }
+.stat-card.stat-cost { border-top-color: var(--color-admin-accent); }
+6.3 Modal overlay más suave en light mode
+El token --theme-overlay-bg ya se overridea a rgba(0, 0, 0, 0.45) en light mode. Verificar que TODOS los modal overlays usen var(--theme-overlay-bg) en vez de rgba(0, 0, 0, 0.7) hardcodeado.
+
+Archivos con rgba(0, 0, 0, 0.7) en overlays:
+
+products-management.component.css (.audit-modal-overlay)
+allergens-management.component.css (.allergen-modal-overlay)
+Todos los demás modales admin y general
+Reemplazar por var(--theme-overlay-bg).
+
+## FASE 7 (continuación) — Overrides por componente
+
+### 7.3 Aplicar patrón repetible a TODAS las páginas admin
+
+Los 10 componentes admin (`allergens`, `batches`, `kitchen`, `orders`, `products`, `recipes`, `stock`, `suppliers`, `traceability`, `users`) comparten exactamente el mismo patrón de estilos. Para cada uno, añadir al final de su `.component.css`:
 
 ```css
---theme-input-bg: rgba(255, 255, 255, 0.04);
---theme-border-hover: rgba(255, 255, 255, 0.3);
---theme-border-medium: rgba(255, 255, 255, 0.2);
---theme-border-light: rgba(255, 255, 255, 0.12);
---theme-border-card: rgba(255, 255, 255, 0.14);
---theme-overlay-bg: rgba(0, 0, 0, 0.75);
---theme-overlay-light: rgba(0, 0, 0, 0.15);
---theme-shadow-deep: 0 24px 60px rgba(0, 0, 0, 0.55);
---theme-text-link-inactive: rgba(255, 255, 255, 0.58);
---theme-text-link-hover: rgba(255, 255, 255, 0.90);
---theme-svg-inactive: rgba(255, 255, 255, 0.45);
---theme-svg-hover: rgba(255, 255, 255, 0.75);
---theme-modal-glass: rgba(12, 12, 12, 0.75);
---theme-modal-glass-alt: rgba(8, 3, 3, 0.7);
-```
-
-Overrides light mode en `[data-theme="light"]`:
-
-```css
---theme-input-bg: rgba(0, 0, 0, 0.03);
---theme-border-hover: rgba(0, 0, 0, 0.15);
---theme-border-medium: rgba(0, 0, 0, 0.12);
---theme-border-light: rgba(0, 0, 0, 0.06);
---theme-border-card: rgba(0, 0, 0, 0.08);
---theme-overlay-bg: rgba(0, 0, 0, 0.45);
---theme-overlay-light: rgba(0, 0, 0, 0.04);
---theme-shadow-deep: 0 24px 60px rgba(15, 23, 42, 0.12);
---theme-text-link-inactive: #64748B;
---theme-text-link-hover: #1E293B;
---theme-svg-inactive: #94A3B8;
---theme-svg-hover: #475569;
---theme-modal-glass: rgba(255, 255, 255, 0.85);
---theme-modal-glass-alt: rgba(255, 255, 255, 0.80);
-```
-
-Tambien anadir overrides para `body.admin-theme` en light mode para los tokens que difieran (ejemplo: `--theme-input-bg` con un tint azul sutil).
-
-## Fase 2
-### Titulo
-Corregir `var(--color-*)` en `users-management.component.css`.
-
-### Archivo
-- `src/app/features/admin/users-management/users-management.component.css`
-
-### Instrucciones
-Buscar y reemplazar las 22 ocurrencias de `var(--color-*)` por sus equivalentes `var(--theme-*)`:
-
-- `var(--color-text-secondary)` -> `var(--theme-text-secondary)` (lineas 736, 763 y todas las demas)
-- `var(--color-surface-glass)` -> `var(--theme-surface-glass)` (si existe)
-- `var(--color-border-glass)` -> `var(--theme-border-glass)` (si existe)
-
-Verificar que no quede ninguna ocurrencia de `var(--color-` en el archivo.
-
-## Fase 3
-### Titulo
-Corregir `color: white` residuales.
-
-### Archivos
-- `src/styles.css`
-- `src/app/shared/components/layout/confirm-dialog/confirm-dialog.component.css`
-
-### Instrucciones
-1. En `src/styles.css`:
-	- Linea 319: `.modal-header-base` -> cambiar `color: white` a `color: var(--theme-text-on-brand)`.
-	- Nota: este es texto sobre fondo de marca, siempre blanco, asi que `--theme-text-on-brand: #FFFFFF` es correcto y no necesita cambiar en light mode.
-
-2. En `src/app/shared/components/layout/confirm-dialog/confirm-dialog.component.css`:
-	- Linea 96: `.btn-confirm { color: white !important; }` -> cambiar a `color: var(--theme-text-on-brand) !important;`.
-	- Nota: tambien es texto sobre fondo de marca.
-
-## Fase 4
-### Titulo
-Migrar `rgba(255, 255, 255, 0.XX)` semanticos en componentes.
-
-### Descripcion
-Esta es la fase mas grande. Reemplazar los valores `rgba(255, 255, 255, ...)` que son semanticos (bordes, fondos de inputs, hovers) por los tokens creados en Fase 1.
-
-No reemplazar los valores decorativos.
-
-### Patrones de reemplazo (aplicar en todos los CSS de componente)
-
-| Patron actual | Token de reemplazo | Contexto |
-|---|---|---|
-| `rgba(255, 255, 255, 0.04)` en background de inputs | `var(--theme-input-bg)` | Fondos de campos de texto |
-| `rgba(255, 255, 255, 0.3)` en border-color hover | `var(--theme-border-hover)` | Bordes en estado hover |
-| `rgba(255, 255, 255, 0.2)` en border | `var(--theme-border-medium)` | Bordes medios |
-| `rgba(255, 255, 255, 0.12)` en border | `var(--theme-border-light)` | Bordes sutiles |
-| `rgba(255, 255, 255, 0.14)` en border de cards | `var(--theme-border-card)` | Bordes de tarjetas/modales |
-| `rgba(255, 255, 255, 0.06)` en border | `var(--theme-border-subtle)` | Ya existe este token |
-| `rgba(255, 255, 255, 0.05)` en background hover | `var(--theme-surface-glass-hover)` | Ya existe |
-| `rgba(255, 255, 255, 0.08)` en background active | `var(--theme-surface-glass-active)` | Ya existe |
-| `rgba(255, 255, 255, 0.58)` en color de links | `var(--theme-text-link-inactive)` | Color de links inactivos |
-| `rgba(255, 255, 255, 0.90)` en color hover | `var(--theme-text-link-hover)` | Color de links en hover |
-| `rgba(255, 255, 255, 0.45)` en fill de SVGs | `var(--theme-svg-inactive)` | Color de iconos inactivos |
-| `rgba(255, 255, 255, 0.75)` en fill hover | `var(--theme-svg-hover)` | Color de iconos en hover |
-| `rgba(255, 255, 255, 0.6)` en color | `var(--theme-text-secondary)` | Ya existe |
-| `rgba(255, 255, 255, 0.28)` en color | `var(--theme-text-muted)` | Ya existe |
-
-### Archivos a procesar (orden de prioridad)
-
-Admin pages (12 archivos):
-1. `src/app/features/admin/users-management/users-management.component.css` (52)
-2. `src/app/features/admin/orders-management/orders-management.component.css` (28)
-3. `src/app/features/admin/kitchen-management/kitchen-management.component.css` (26)
-4. `src/app/features/admin/stock-management/stock-management.component.css` (24)
-5. `src/app/features/admin/allergens-management/allergens-management.component.css` (22)
-6. `src/app/features/admin/batches-management/batches-management.component.css` (22)
-7. `src/app/features/admin/products-management/products-management.component.css` (22)
-8. `src/app/features/admin/recipes-management/recipes-management.component.css` (22)
-9. `src/app/features/admin/traceability-management/traceability-management.component.css` (16)
-10. `src/app/features/admin/suppliers-management/suppliers-management.component.css` (8)
-11. `src/app/features/admin/admin-panel/admin-panel.component.css` (6)
-12. `src/app/features/admin/users-management/user-form-modal/user-form-modal.component.css` (9)
-
-General pages (13 archivos):
-13. `src/app/features/general/inventory/inventory.component.css` (21)
-14. `src/app/features/general/recipes/recipes.component.css` (21)
-15. `src/app/features/general/reception/reception.component.css` (19)
-16. `src/app/features/general/welcome/welcome.component.css` (16)
-17. `src/app/features/general/profile/profile.component.css` (16)
-18. `src/app/features/general/orders/order-details-modal/order-details-modal.component.css` (15)
-19. `src/app/features/general/orders/order-modal/order-modal.component.css` (15)
-20. `src/app/features/general/orders/orders.component.css` (14)
-21. `src/app/features/general/recipes/recipe-create-modal/recipe-create-modal.component.css` (13)
-22. `src/app/features/general/recipes/recipe-edit-modal/recipe-edit-modal.component.css` (13)
-23. `src/app/features/general/login/login.component.css` (12)
-24. `src/app/features/general/inventory/product-create-modal/product-create-modal.component.css` (9)
-25. `src/app/features/general/inventory/product-edit-modal/product-edit-modal.component.css` (9)
-
-Modales y shared (8 archivos):
-26. `src/app/features/admin/stock-management/batch-expiration-modal/batch-expiration-modal.component.css` (10)
-27. `src/app/features/admin/suppliers-management/supplier-form-modal/supplier-form-modal.component.css` (8)
-28. `src/app/features/general/reception/order-reception-modal/order-reception-modal.component.css` (7)
-29. `src/app/features/general/recipes/recipe-detail-modal/recipe-detail-modal.component.css` (7)
-30. `src/app/features/general/inventory/product-detail-modal/product-detail-modal.component.css` (5)
-31. `src/app/features/general/inventory/stock-update-modal/stock-update-modal.component.css` (4)
-32. `src/app/shared/components/layout/alert-notification/alert-notification.component.css` (4)
-33. `src/app/shared/components/layout/toast/toast.component.css` (2)
-
-### Importante (exclusiones)
-NO reemplazar `rgba(255, 255, 255, ...)` que aparezcan en:
-
-- `text-shadow` (efecto decorativo)
-- `inset box-shadow` para efecto glass
-- `linear-gradient` para efecto de brillo/shimmer
-- `::after` pseudo-elementos decorativos (como el shimmer del boton submit)
-
-## Fase 5
-### Titulo
-Migrar `rgba(0, 0, 0, 0.XX)` semanticos.
-
-### Patrones de reemplazo
-
-| Patron actual | Token de reemplazo | Contexto |
-|---|---|---|
-| `rgba(0, 0, 0, 0.75)` en overlay de modales | `var(--theme-overlay-bg)` | Backdrop de modales |
-| `rgba(0, 0, 0, 0.15)` en footer de modales | `var(--theme-overlay-light)` | Fondos sutiles |
-| `rgba(0, 0, 0, 0.4)` en box-shadow | `var(--theme-shadow-card)` | Ya existe como token compuesto |
-| `rgba(12, 12, 12, 0.75)` en modal glass | `var(--theme-modal-glass)` | Fondo de modales glass |
-| `rgba(8, 3, 3, 0.7)` en dialog glass | `var(--theme-modal-glass-alt)` | Fondo de dialogos glass |
-
-### Archivos principales a procesar
-- `src/app/shared/components/layout/layout.component.css` - logout modal (lineas 100-112)
-- `src/app/shared/components/layout/confirm-dialog/confirm-dialog.component.css` - dialog (lineas 18-67)
-- `src/app/features/admin/users-management/users-management.component.css` - assignments actions bar (linea 1160)
-- Todos los modales que tengan overlay con `rgba(0, 0, 0, 0.75)` o similar
-
-### Importante (exclusiones)
-NO reemplazar `rgba(0, 0, 0, ...)` que aparezcan en:
-
-- `box-shadow` de profundidad (estos son correctos en ambos modos, solo mas sutiles en light)
-- `text-shadow` decorativo
-- Gradientes de overlay sobre imagenes (como el login background)
-
-## Fase 6
-### Titulo
-Light mode para componentes shared.
-
-### Archivo
-- `src/app/shared/components/layout/layout.component.css`
-
-### Instrucciones
-Anadir bloque `:host-context([data-theme="light"])` para el logout modal:
-
-- `.logout-modal`: `background` -> `var(--theme-modal-glass)`, `border` -> `var(--theme-border-card)`, shadow mas suave
-- `.logout-modal p`: `color` -> `var(--theme-text-secondary)`
-- `.btn-logout-cancel`: `color` -> `var(--theme-text-primary)`, border y background usando tokens
-- `.btn-logout-confirm`: mantener colores de peligro (rojo) pero ajustar opacidades para fondo claro
-
-### Archivo
-- `src/app/shared/components/layout/confirm-dialog/confirm-dialog.component.css`
-
-### Instrucciones
-Anadir bloque `:host-context([data-theme="light"])`:
-
-- `.dialog-content`: `background` -> `var(--theme-modal-glass-alt)`, `border` -> `var(--theme-border-card)`
-- `.dialog-body p`: `color` -> `var(--theme-text-secondary)` (actualmente `#E0E0E0` hardcodeado)
-- `.dialog-footer`: `background` -> `var(--theme-overlay-light)`
-- `.btn-cancel:hover`: `background` -> `var(--theme-surface-glass-active)` en vez de `rgba(255,255,255,0.2)`
-
-### Archivo
-- `src/app/shared/components/layout/toast/toast.component.css`
-
-### Instrucciones
-Verificar si los toasts necesitan ajustes. El fondo `rgba(15, 15, 15, 0.85)` sera muy oscuro en light mode. Anadir override:
-
-- `.toast`: `background` -> `rgba(255, 255, 255, 0.92)` en light mode, `border` -> `rgba(0, 0, 0, 0.08)`, shadow mas suave
-
-### Archivo
-- `src/app/shared/components/layout/alert-notification/alert-notification.component.css`
-
-### Instrucciones
-Verificar y anadir overrides si tiene fondos oscuros hardcodeados.
-
-## Fase 7
-### Titulo
-Light mode para login.
-
-### Archivo
-- `src/app/features/general/login/login.component.css`
-
-### Instrucciones
-Anadir bloque `:host-context([data-theme="light"])`:
-
-- `.login-wrapper::before` (overlay): cambiar gradiente oscuro a uno mas claro/translucido para que la imagen de fondo se vea mas clara.
-	Ejemplo:
-
-```css
-background: linear-gradient(
-	155deg,
-	rgba(255,255,255,0.65) 0%,
-	rgba(184,75,68,0.15) 48%,
-	rgba(255,255,255,0.70) 100%
-);
-```
-
-- `.card`: ya usa `var(--theme-surface-glass)` asi que cambiara automaticamente. Verificar que el contraste del texto sea suficiente.
-- `.form-input`: `background rgba(255, 255, 255, 0.04)` -> `var(--theme-input-bg)` (ya migrado en Fase 4)
-- `.form-input:-webkit-autofill`: cambiar `rgba(8, 3, 3, 0.95)` a un color claro para que el autofill no sea un parche oscuro
-- `.form-input:focus`: verificar que el glow de `--brand-glow` sea visible en fondo claro
-
-## Fase 8
-### Titulo
-Light mode para sidebar dark mode residual.
-
-### Archivo
-- `src/app/shared/components/layout/sidebar/sidebar.component.css`
-
-### Instrucciones
-El sidebar dark mode (lineas 3-22) aun usa colores hardcodeados. Migrar a tokens:
-
-- Linea 10: `rgba(184, 75, 68, 0.07)` -> `var(--theme-sidebar-tint)`
-- Linea 11: `#160C0B` y `#1E100E` -> `var(--theme-sidebar-bg)` (necesitara un gradiente con variante, o simplificar a un solo color con tint)
-- Linea 12: `rgba(184, 75, 68, 0.18)` -> `var(--theme-sidebar-border)`
-- Lineas 39-44 (admin mode): `rgba(90, 120, 220, 0.07)`, `#080D1C`, `#0D1228` -> usar tokens admin equivalentes
-
-Tambien migrar los valores hardcodeados restantes en el sidebar:
-
-- Linea 174: `.nav-section-label span { color: rgba(255, 255, 255, 0.28); }` -> `var(--theme-text-muted)`
-- Linea 212: `#sidebar a { color: rgba(255, 255, 255, 0.58); }` -> `var(--theme-text-link-inactive)`
-- Linea 223: `#sidebar svg { fill: rgba(255, 255, 255, 0.45); }` -> `var(--theme-svg-inactive)`
-- Linea 236: hover color `rgba(255, 255, 255, 0.90)` -> `var(--theme-text-link-hover)`
-- Linea 241: hover fill `rgba(255, 255, 255, 0.75)` -> `var(--theme-svg-hover)`
-- Linea 257: `.theme-toggle-item { border-top: 1px solid rgba(255, 255, 255, 0.06); }` -> `var(--theme-border-subtle)`
-- Linea 267: `.logout-item a { color: rgba(255, 255, 255, 0.35) !important; }` -> necesita token o override
-- Linea 297: `#toggle-btn svg { fill: rgba(255, 255, 255, 0.40); }` -> `var(--theme-svg-inactive)`
-- Linea 340: mobile `border-top: 1px solid rgba(255, 255, 255, 0.12)` -> `var(--theme-border-light)`
-
-## Fase 9
-### Titulo
-Validacion visual completa (continuacion).
-
-### Proceso de verificacion
-1. Abrir la app en dark mode y verificar que nada cambio visualmente respecto al estado anterior.
-2. Cambiar a light mode y verificar cada pagina una por una:
-	- Login
-	- Welcome
-	- Inventario, Pedidos, Recepcion, Recetas, Perfil, Barcode Scanner (general)
-	- Admin Panel, Alergenos, Lotes, Cocina, Pedidos, Productos, Recetas, Stock, Proveedores, Trazabilidad, Usuarios (admin)
-	- Modales: crear/editar/detalle de producto, receta, pedido, stock, lote, proveedor, usuario, alergeno
-	- Confirm dialog, toast notifications, alert notifications
-
-3. En cada pagina, verificar:
-	- Texto legible: ningun texto blanco sobre fondo claro ni texto oscuro sobre fondo oscuro
-	- Bordes visibles: los bordes `rgba(255,255,255,...)` deben haberse convertido a bordes oscuros sutiles
-	- Hovers funcionales: pasar el raton por botones, filas de tabla, links; deben tener feedback visual
-	- Inputs visibles: campos de formulario con fondo, borde y placeholder distinguibles
-	- SVGs visibles: todos los iconos deben ser visibles en ambos modos
-	- Scrollbars: deben adaptarse al tema (no scrollbar blanco sobre fondo blanco)
-	- Sombras: en dark mode sombras pesadas, en light mode sombras difuminadas suaves
-	- Glassmorphism: el efecto blur debe verse elegante en ambos modos
-
-### Checklist de elementos criticos por pagina
-Login:
-- Overlay sobre imagen de fondo: oscuro en dark, claro/translucido en light
-- Card glass: contraste suficiente en ambos modos
-- Inputs: fondo, borde, placeholder, texto, autofill
-- Boton submit: visible y con contraste
-- Logos institucionales: visibles en ambos fondos
-- Toggle de tema: icono correcto (sol/luna), posicion correcta
-
-Welcome:
-- Fondo animado: gradientes adaptados
-- Cards de navegacion: glass effect visible, texto legible
-- Titulo con efecto typewriter: color adaptado
-- Hover en cards: efecto visible
-
-Sidebar (desktop):
-- Fondo cambia de oscuro a claro
-- Iconos SVG visibles en ambos modos
-- Item activo: indicador visible
-- Hover: feedback visual
-- Toggle de tema: icono correcto, tooltip
-- Logout: texto y icono visibles
-- Avatar: contraste del texto de iniciales
-- Modo colapsado: todo sigue funcionando
-- Admin mode: colores azules adaptados
-
-Sidebar (mobile):
-- Bottom bar: fondo adaptado
-- Iconos visibles
-- Item activo: borde inferior visible
-- Toggle mobile (top-right): visible y funcional
-
-Tablas (inventario, pedidos, productos, etc.):
-- Header de tabla: fondo distinguible
-- Filas alternas: diferencia sutil visible
-- Hover en filas: feedback visual
-- Texto en celdas: legible
-- Badges de estado: colores correctos
-- Paginacion: botones visibles
-
-Modales:
-- Overlay: oscurece/aclara el fondo
-- Card del modal: glass effect, bordes, sombra
-- Inputs dentro del modal: visibles y funcionales
-- Botones: confirm (azul/brand), cancel (neutro), danger (rojo)
-
-Toasts:
-- Fondo glass adaptado
-- Barra lateral de color por tipo (success, error, warning, info)
-- Texto legible
-- Barra de progreso visible
-
-### Herramientas de verificacion
-- Usar DevTools -> Elements -> buscar `data-theme` en `<html>` para confirmar que el toggle funciona
-- Usar DevTools -> Computed Styles para verificar que las variables se resuelven correctamente
-- Usar Lighthouse para verificar contraste WCAG AA en ambos modos
-
-## Fase 10
-### Titulo
-Welcome page light mode.
-
-### Archivo
-- `src/app/features/general/welcome/welcome.component.css`
-
-### Descripcion
-El welcome es el componente mas especial. Tiene su propia paleta de tokens internos (`--accent`, `--white-08`, etc.) y animaciones complejas, por lo que necesita tratamiento individual.
-
-### Instrucciones
-Anadir bloque `:host-context([data-theme="light"])` al final del archivo.
-
-Fondo de pagina:
-- `.welcome-container`: el fondo actual usa gradientes oscuros (`radial-gradient(... rgba(184, 75, 68, 0.08) ...)` sobre `var(--theme-bg-page)`).
-- En light mode, cambiar los gradientes decorativos a versiones mas sutiles con opacidades menores, o reemplazar por un gradiente claro suave.
-- Ejemplo: `radial-gradient(ellipse at 20% 50%, rgba(184, 75, 68, 0.06), transparent 60%)`
-
-Cards de navegacion:
-- `.card-glass`: actualmente usa `var(--theme-surface-glass)` (ya migrado), pero verificar que el hover (`translateY(-9px) scale(1.03)`) siga viendose bien con sombras claras
-- `.card-glass::before` (shimmer/glow effect): en dark mode es un brillo blanco sutil; en light mode deberia ser un brillo mas tenue o desactivarse
-- `.card-icon`: si usa `color: white` o similar, migrar a `var(--theme-text-primary)`
-
-Titulo con typewriter:
-- `.typing-title`: verificar que color use `var(--theme-text-primary)` y que el `text-shadow` con `var(--brand-glow)` sea visible pero no excesivo en fondo claro
-- `.typing-title .caret`: el borde del cursor debe ser visible en ambos modos
-
-Header:
-- `.welcome-header`: verificar gradientes y shimmer animation (`shimmerRed`). En light mode el shimmer puede ser demasiado sutil o invisible; ajustar opacidad
-
-Subtitulo y textos:
-- Verificar que todos los textos secundarios usen `var(--theme-text-secondary)` y no `rgba(255,255,255,...)`
-
-Logo:
-- `.logo-container img`: verificar que el logo sea visible en fondo claro (si es un logo blanco, necesitara un `filter: invert()` o una version alternativa)
-
-## Fase 11
-### Titulo
-Modales de features (light mode overrides).
-
-### Descripcion
-Los modales de features (`product-create`, `product-edit`, `product-detail`, `recipe-create`, `recipe-edit`, `recipe-detail`, `order-detail`, `order-modal`, `stock-update`, `batch-expiration`, `supplier-form`, `user-form`) comparten un patron similar.
-
-Objetivo: verificar que todos usen tokens centralizados y anadir overrides donde sea necesario.
-
-### Archivos a verificar (todos en `src/app/features/`)
-General:
-- `general/inventory/product-create-modal/product-create-modal.component.css`
-- `general/inventory/product-detail-modal/product-detail-modal.component.css`
-- `general/inventory/product-edit-modal/product-edit-modal.component.css`
-- `general/inventory/stock-update-modal/stock-update-modal.component.css`
-- `general/orders/order-detail-modal/order-detail-modal.component.css`
-- `general/orders/order-modal/order-modal.component.css`
-- `general/reception/order-reception-modal/order-reception-modal.component.css`
-- `general/recipes/recipe-create-modal/recipe-create-modal.component.css`
-- `general/recipes/recipe-detail-modal/recipe-detail-modal.component.css`
-- `general/recipes/recipe-edit-modal/recipe-edit-modal.component.css`
-
-Admin:
-- `admin/batches-management/batch-expiration-modal/batch-expiration-modal.component.css`
-- `admin/suppliers-management/supplier-form-modal/supplier-form-modal.component.css`
-- `admin/users-management/user-form-modal/user-form-modal.component.css`
-
-### Patron de verificacion para cada modal
-- Overlay (`.modal-overlay` o similar): debe usar `var(--theme-surface-glass)` o un overlay adaptativo.
-- Overlay esperado: en dark mode `rgba(0,0,0,0.5)`; en light mode `rgba(0,0,0,0.3)` o similar.
-- Card del modal: `background` debe usar `var(--theme-surface-glass)` con `backdrop-filter: var(--theme-effect-glass)`.
-- Verificar que no haya `rgba(8, 3, 3, ...)` o `rgba(12, 12, 12, ...)` hardcodeado.
-- Bordes: deben usar `var(--theme-border-glass)`.
-- Inputs: `background` -> `var(--theme-input-bg)` (token nuevo de Fase 1), `border` -> `var(--theme-input-border)`, `color` -> `var(--theme-text-primary)`.
-- Botones: verificar que las acciones (`guardar`, `cancelar`, `eliminar`) tengan contraste suficiente en ambos modos.
-- Textos: todo `color: white` y `color: rgba(255,255,255,...)` debe migrarse a `var(--theme-text-primary)` o `var(--theme-text-secondary)`.
-- Scrollbar dentro del modal: si hay scroll interno, verificar adaptacion por tema.
-
-### Si hay hardcodeados residuales
-- Reemplazar siguiendo la tabla de mapeo de Fases 2-4.
-- NO anadir `:host-context([data-theme="light"])` a cada modal.
-- Los tokens centralizados deben ser suficientes si todos los valores estan migrados.
-
-## Fase 12
-### Titulo
-Toast y Alert Notification light mode.
-
-### Archivo
-- `src/app/shared/components/layout/toast/toast.component.css`
-
-### Contexto
-El toast usa `background: rgba(15, 15, 15, 0.85)` con blur. En light mode seguira siendo oscuro, lo cual puede ser intencional.
-
-### Decision de diseno
-Opcion A (recomendada): mantener toasts oscuros en ambos modos.
-- Es un patron comun (Vercel, Linear, GitHub).
-- No requiere cambios estructurales.
-
-Opcion B: adaptar toasts a light mode.
-- Requiere anadir:
-
-```css
-:host-context([data-theme="light"]) .toast {
-	background: rgba(255, 255, 255, 0.92);
-	color: #1E293B;
-	border-color: rgba(0, 0, 0, 0.08);
+/* ===== LIGHT MODE ===== */
+:host-context([data-theme="light"]) .header-recetas h1,
+:host-context([data-theme="light"]) .header-stock h1 {
+  text-shadow: none;
+  color: #1E293B;
+}
+
+:host-context([data-theme="light"]) .tab-btn.active::after {
+  background: linear-gradient(135deg, #3B82F6, #60A5FA);
+}
+
+:host-context([data-theme="light"]) th {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+:host-context([data-theme="light"]) tfoot td {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+:host-context([data-theme="light"]) th.sortable[data-sort-dir='asc']::after {
+  color: #059669;
+}
+
+:host-context([data-theme="light"]) th.sortable[data-sort-dir='desc']::after {
+  color: #DC2626;
 }
 ```
 
-- Cambiar colores de la barra lateral por tipo a versiones mas saturadas para contraste sobre blanco.
-- Cambiar `fill` de iconos SVG a colores mas oscuros.
+**Archivos** (añadir al final de cada uno):
+- `src/app/features/admin/allergens-management/allergens-management.component.css`
+- `src/app/features/admin/batches-management/batches-management.component.css`
+- `src/app/features/admin/kitchen-management/kitchen-management.component.css`
+- `src/app/features/admin/orders-management/orders-management.component.css`
+- `src/app/features/admin/products-management/products-management.component.css`
+- `src/app/features/admin/recipes-management/recipes-management.component.css`
+- `src/app/features/admin/stock-management/stock-management.component.css`
+- `src/app/features/admin/suppliers-management/suppliers-management.component.css`
+- `src/app/features/admin/traceability-management/traceability-management.component.css`
+- `src/app/features/admin/users-management/users-management.component.css`
 
-### Nota critica si se elige Opcion A
-Verificar que el toast no use textos internos ligados a tokens que cambian en light mode y que podrian quedar oscuros sobre fondo oscuro.
+### 7.4 Colores semánticos — Crear tokens en `styles.css`
 
-Solucion recomendada:
-- Dentro del toast, usar `color: #ffffff` hardcodeado; o
-- Crear token especifico `--toast-text: #ffffff` que NO cambie con el tema.
+Antes de los overrides por componente, añadir estos tokens semánticos en `:root` y `[data-theme="light"]` de `styles.css`:
 
-### Archivo
-- `src/app/shared/components/layout/alert-notification/alert-notification.component.css`
-
-### Instrucciones
-Aplicar el mismo analisis que en toast.
-- Verificar si el alert usa tokens de tema que cambian en light mode y causan problemas de contraste.
-
-## Fase 13
-### Titulo
-Grep final y limpieza.
-
-### Verificaciones con grep (ejecutar en raiz del proyecto)
-
-```bash
-# 1. Buscar rgba(255, 255, 255) residuales (excluyendo comentarios y text-shadow decorativos)
-grep -rn "rgba(255" src/ --include="*.css" | grep -v "text-shadow" | grep -v "/\*"
-
-# 2. Buscar color: white residuales
-grep -rn "color: white" src/ --include="*.css"
-grep -rn "color: #fff" src/ --include="*.css"
-
-# 3. Buscar fondos oscuros hardcodeados
-grep -rn "rgba(8, 3, 3" src/ --include="*.css"
-grep -rn "rgba(12, 12, 12" src/ --include="*.css"
-grep -rn "rgba(12, 16, 28" src/ --include="*.css"
-grep -rn "#0c0808" src/ --include="*.css"
-grep -rn "#160C0B" src/ --include="*.css"
-
-# 4. Buscar var(--color-*) antiguas (regresiones)
-grep -rn "var(--color-" src/ --include="*.css"
-
-# 5. Buscar fill="#e3e3e3" en HTMLs (SVGs no migrados)
-grep -rn 'fill="#e3e3e3"' src/ --include="*.html"
-grep -rn 'fill="#fff"' src/ --include="*.html"
-grep -rn 'fill="white"' src/ --include="*.html"
-
-# 6. Buscar residuos fff del find-and-replace anterior
-grep -rn "theme-text-primary)f" src/ --include="*.css"
+**En `:root` (dark mode):**
+```css
+/* Semantic status colors */
+--color-success: #34d399;
+--color-success-soft: #a7f3d0;
+--color-success-bg: rgba(52, 211, 153, 0.12);
+--color-success-border: rgba(52, 211, 153, 0.3);
+--color-danger: #ff8a8a;
+--color-danger-soft: #fca5a5;
+--color-danger-bg: rgba(239, 68, 68, 0.12);
+--color-warning: #fbbf24;
+--color-warning-soft: #fde68a;
+--color-warning-bg: rgba(251, 191, 36, 0.12);
+--color-warning-border: rgba(251, 191, 36, 0.3);
+--color-info: #60a5fa;
+--color-info-bg: rgba(96, 165, 250, 0.12);
+--color-accent-admin: #9DB5FF;
+--color-accent-admin-bg: rgba(90, 120, 220, 0.12);
+--color-accent-admin-border: rgba(90, 120, 220, 0.3);
 ```
 
-### Accion para cada resultado de grep
-- Si es valor semantico (fondo, borde, color de texto, hover): reemplazar por el token `var(--theme-*)` correspondiente.
-- Si es valor decorativo (`text-shadow` glow, `inset box-shadow` para glass, gradiente de brillo): dejar como esta o crear token especifico si se repite mucho.
-- Si esta dentro de toast/alert y se decidio mantener oscuro: dejar como esta y documentar la decision.
+**En `[data-theme="light"]`:**
+```css
+/* Semantic status colors — light mode */
+--color-success: #059669;
+--color-success-soft: #10b981;
+--color-success-bg: rgba(5, 150, 105, 0.08);
+--color-success-border: rgba(5, 150, 105, 0.2);
+--color-danger: #DC2626;
+--color-danger-soft: #EF4444;
+--color-danger-bg: rgba(220, 38, 38, 0.06);
+--color-warning: #D97706;
+--color-warning-soft: #F59E0B;
+--color-warning-bg: rgba(217, 119, 6, 0.08);
+--color-warning-border: rgba(217, 119, 6, 0.2);
+--color-info: #2563EB;
+--color-info-bg: rgba(37, 99, 235, 0.06);
+--color-accent-admin: #3B82F6;
+--color-accent-admin-bg: rgba(59, 130, 246, 0.06);
+--color-accent-admin-border: rgba(59, 130, 246, 0.15);
+```
 
-### Limpieza final
-- Eliminar variables antiguas de `styles.css` que ya no se usen.
-	Ejemplos: `--primary-color`, `--secondary-color`, `--login-background-color`, `--base-clr`, `--line-clr`, `--hover-clr`, `--text-clr`, `--accent-clr`, `--secondary-text-clr`, `--content-bg`.
-- Verificar primero que ningun archivo las referencie.
-- Verificar que `body.admin-theme` en `styles.css` no tenga tokens que ya no existan.
-- Verificar que `[data-theme="light"]` y `[data-theme="light"] body.admin-theme` cubran TODOS los tokens definidos en `:root`.
+### 7.5 Migrar colores semánticos hardcodeados en los 10 componentes admin
 
-### Commit final
-- `fix(styles): complete CSS token migration and light mode compatibility`
+En CADA componente admin, buscar y reemplazar:
+
+| Valor hardcodeado | Reemplazo |
+|---|---|
+| `color: #34d399` | `color: var(--color-success)` |
+| `color: #a7f3d0` | `color: var(--color-success-soft)` |
+| `color: #86efac` | `color: var(--color-success)` |
+| `color: #ff8a8a` | `color: var(--color-danger)` |
+| `color: #f87171` | `color: var(--color-danger)` |
+| `color: #fca5a5` | `color: var(--color-danger-soft)` |
+| `color: #fbbf24` | `color: var(--color-warning)` |
+| `color: #fde68a` | `color: var(--color-warning-soft)` |
+| `color: #9DB5FF` | `color: var(--color-accent-admin)` |
+| `background: rgba(52, 211, 153, 0.1X)` | `background: var(--color-success-bg)` |
+| `background: rgba(239, 68, 68, 0.1X)` | `background: var(--color-danger-bg)` |
+| `background: rgba(251, 191, 36, 0.1X)` | `background: var(--color-warning-bg)` |
+
+**Archivos afectados** (los mismos 10 admin + sus sub-modales):
+- `stock-management.component.css` (56 ocurrencias — el más afectado)
+- `recipes-management.component.css` (30)
+- `products-management.component.css` (28)
+- `traceability-management.component.css` (26)
+- `kitchen-management.component.css` (20)
+- `orders-management.component.css` (20)
+- `batches-management.component.css` (18)
+- `users-management.component.css` (14)
+- `allergens-management.component.css` (10)
+- `suppliers-management.component.css` (10)
+
+### 7.6 Migrar colores semánticos en componentes general
+
+Misma tabla de reemplazos para:
+- `inventory.component.css` (12 ocurrencias)
+- `product-detail-modal.component.css` (18)
+- `orders.component.css` (7)
+- `order-modal.component.css` (14)
+- `order-details-modal.component.css` (6)
+- `recipes.component.css` (4)
+- `recipe-create-modal.component.css` (12)
+- `recipe-detail-modal.component.css` (12)
+- `recipe-edit-modal.component.css` (11)
+- `reception.component.css` (6)
+- `order-reception-modal.component.css` (4)
+- `barcode-scanner.component.css` (6)
+- `profile.component.css` (6)
+- `product-create-modal.component.css` (10)
+- `product-edit-modal.component.css` (8)
+
+---
+
+## FASE 8 — `select option` y `color-scheme`
+
+### 8.1 Migrar `select option { background: #1e1e1e }`
+
+En los 10 archivos que tienen este patrón, añadir un override light mode:
+
+```css
+:host-context([data-theme="light"]) .action-select option,
+:host-context([data-theme="light"]) select option {
+  background: #FFFFFF;
+  color: #1E293B;
+}
+```
+
+**Archivos**: `products-management`, `recipes-management`, `batches-management`, `kitchen-management`, `orders-management`, `users-management`, `user-form-modal`, `inventory/product-create-modal`, `inventory/product-edit-modal`, `recipes/recipes.component.css`
+
+### 8.2 Migrar `color-scheme: dark`
+
+En los 3 archivos que tienen `color-scheme: dark`, añadir:
+
+```css
+:host-context([data-theme="light"]) input[type="date"],
+:host-context([data-theme="light"]) input[type="number"],
+:host-context([data-theme="light"]) select {
+  color-scheme: light;
+}
+```
+
+**Archivos**: `products-management.component.css`, `recipes-management.component.css`, `batch-expiration-modal.component.css`
+
+---
+
+## FASE 9 — `text-shadow` glow
+
+### 9.1 Admin headers
+
+Los 10 componentes admin tienen `text-shadow: 0 0 10px rgba(90, 120, 220, 0.4)` en sus `h1`. Ya cubierto en 7.3 con `text-shadow: none` en light mode.
+
+### 9.2 General headers
+
+Los 5 componentes general (`inventory`, `orders`, `reception`, `recipes`, `profile`) tienen `text-shadow: 0 0 10px var(--brand-glow)`. Añadir al final de cada uno:
+
+```css
+:host-context([data-theme="light"]) .header-inventario h1,
+:host-context([data-theme="light"]) .header-pedidos h1,
+:host-context([data-theme="light"]) .reception-header h1,
+:host-context([data-theme="light"]) .header-recetas h1,
+:host-context([data-theme="light"]) .header-perfil h1 {
+  text-shadow: none;
+  color: #1E293B;
+}
+```
+
+(Usar el selector correcto de cada componente — `.header-inventario`, `.header-pedidos`, `.reception-header`, `.header-recetas`, `.header-perfil`)
+
+---
+
+## FASE 10 — Admin Panel (caso especial)
+
+### Archivo: `src/app/features/admin/admin-panel/admin-panel.component.css`
+
+Este componente tiene un diseño completamente diferente (welcome card con gradientes azules). Tiene 12 ocurrencias de `rgba(30, 40, 80, ...)` y `#1a1a2e` hardcodeados.
+
+Añadir al final:
+
+```css
+/* ===== LIGHT MODE ===== */
+:host-context([data-theme="light"]) .welcome-card {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(59, 130, 246, 0.12);
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+}
+
+:host-context([data-theme="light"]) .admin-icon {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.15));
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.12);
+}
+
+@keyframes pulse-light {
+  0%, 100% { box-shadow: 0 4px 20px rgba(59, 130, 246, 0.12); }
+  50% { box-shadow: 0 4px 30px rgba(59, 130, 246, 0.25); }
+}
+
+:host-context([data-theme="light"]) .admin-icon {
+  animation-name: pulse-light;
+}
+
+:host-context([data-theme="light"]) .welcome-title {
+  color: #1E293B;
+}
+
+:host-context([data-theme="light"]) .welcome-subtitle {
+  color: #64748B;
+}
+
+:host-context([data-theme="light"]) .master-data-header {
+  color: #94A3B8;
+}
+
+:host-context([data-theme="light"]) .master-data-header svg {
+  color: #94A3B8;
+}
+
+:host-context([data-theme="light"]) .master-card {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(59, 130, 246, 0.10);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+
+:host-context([data-theme="light"]) a.master-card:hover {
+  background: rgba(255, 255, 255, 0.90);
+  border-color: rgba(59, 130, 246, 0.20);
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+}
+
+:host-context([data-theme="light"]) .master-card--disabled {
+  background: rgba(0, 0, 0, 0.03) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+:host-context([data-theme="light"]) .master-card-badge {
+  background: rgba(245, 158, 11, 0.08);
+  color: #D97706;
+  border-color: rgba(245, 158, 11, 0.15);
+}
+```
+
+---
+
+## FASE 11 — Stock Update Modal (caso especial)
+
+### Archivo: `src/app/features/general/inventory/stock-update-modal/stock-update-modal.component.css`
+
+Este modal usa un diseño completamente diferente al resto — tiene `background: white`, colores como `#f9fafb`, `#e5e7eb`, `#374151`, `#4b5563`, `#6b7280`. Irónicamente, este modal ya se ve bien en light mode pero MAL en dark mode (texto oscuro sobre fondo blanco dentro de una app oscura).
+
+**Decisión de diseño**: Este modal debería adaptarse al tema. Hay dos opciones:
+1. Convertirlo al estilo glassmorphism como el resto de modales (más trabajo, más consistente)
+2. Dejarlo como está (ya funciona en light mode, se ve raro en dark mode)
+
+**Recomendación**: Opción 1 — convertirlo al estilo glassmorphism. Reemplazar:
+
+```css
+/* Cambiar valores hardcodeados a tokens */
+.modal-content {
+  background: var(--theme-modal-glass);  /* era: white */
+  backdrop-filter: var(--theme-effect-glass);
+  border: 1px solid var(--theme-border-glass);
+}
+
+.product-info {
+  background: var(--theme-surface-glass-hover);  /* era: #f9fafb */
+  border-color: var(--theme-border-glass);  /* era: #e5e7eb */
+}
+
+.product-info p { color: var(--theme-text-secondary); }  /* era: #4b5563 */
+.product-info strong { color: var(--theme-text-primary); }  /* era: #374151 */
+.form-group label { color: var(--theme-text-primary); }  /* era: #374151 */
+.unit-label { color: var(--theme-text-secondary); }  /* era: #6b7280 */
+.hint { color: var(--theme-text-secondary); }  /* era: #6b7280 */
+
+input {
+  border-color: var(--theme-border-glass);  /* era: #e5e7eb */
+  background: var(--theme-input-bg);
+  color: var(--theme-text-primary);
+}
+
+.modal-footer {
+  border-top-color: var(--theme-border-glass);  /* era: #e5e7eb */
+  background: var(--theme-surface-glass-hover);  /* era: #f9fafb */
+}
+
+.btn-cancel {
+  background: var(--theme-surface-glass-active);  /* era: #6b7280 */
+  color: var(--theme-text-primary);
+}
+
+.btn-save:disabled {
+  background: var(--theme-surface-glass-hover);  /* era: #ccc */
+  color: var(--theme-text-secondary);
+}
+```
+
+También migrar los `.admin-mode` overrides de `rgba(30, 40, 80, ...)` a tokens admin.
+
+---
+
+## FASE 12 — Scrollbars en light mode
+
+### 12.1 Admin scrollbars en componentes
+
+Los 10 componentes admin definen sus propios scrollbar styles con `var(--admin-scrollbar-*)` y fallbacks hardcodeados. Añadir overrides light mode:
+
+**En `styles.css`**, dentro de `[data-theme="light"]`:
+```css
+--admin-scrollbar-track: rgba(0, 0, 0, 0.03);
+--admin-scrollbar-thumb: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(96, 165, 250, 0.25));
+--admin-scrollbar-thumb-hover: linear-gradient(135deg, rgba(59, 130, 246, 0.45), rgba(96, 165, 250, 0.45));
+```
+
+### 12.2 General scrollbars
+
+En `reception.component.css`, el scrollbar thumb usa `rgba(184, 75, 68, 0.3)` hardcodeado. Añadir:
+
+```css
+:host-context([data-theme="light"]) ::-webkit-scrollbar-thumb {
+  background: rgba(184, 75, 68, 0.2);
+}
+:host-context([data-theme="light"]) ::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 75, 68, 0.35);
+}
+```
+
+---
+
+## FASE 13 — Change Password (caso especial)
+
+### Archivo: `src/app/features/general/change-password/change-password.component.css`
+
+Este componente tiene un `:host` que redefine tokens con valores hardcodeados:
+```css
+--theme-text-primary: #FFFFFF;
+--theme-text-secondary: #A1A1A1;
+```
+
+Esto sobreescribe los tokens centralizados y rompe el light mode. **Eliminar** estas líneas del `:host` — los tokens heredados de `:root` / `[data-theme="light"]` son suficientes.
+
+También tiene `background-image` con overlay oscuro hardcodeado. Añadir:
+
+```css
+:host-context([data-theme="light"]) .change-password-wrapper {
+  background-image: linear-gradient(155deg, rgba(255,255,255,0.85) 0%, rgba(184,75,68,0.12) 48%, rgba(255,255,255,0.88) 100%), url('/assets/img/loginBackground.jpg');
+}
+
+:host-context([data-theme="light"]) .lock-icon {
+  background: rgba(184, 75, 68, 0.08);
+}
+
+:host-context([data-theme="light"]) .req-list li.valid {
+  color: #059669;
+}
+
+:host-context([data-theme="light"]) .req-list li.valid svg {
+  color: #059669;
+}
+```
+
+---
+
+## FASE 14 — `rgba(30, 40, 80, ...)` hardcodeados
+
+Estos valores aparecen en 15 archivos y son colores admin oscuros. Migrar a tokens:
+
+| Valor | Reemplazo |
+|---|---|
+| `background: rgba(30, 40, 80, 0.55)` | `background: var(--theme-surface-glass)` |
+| `background: rgba(30, 40, 80, 0.7)` (hover) | `background: var(--theme-surface-glass-active)` |
+| `border: ... rgba(100, 140, 255, 0.15)` | `border: ... var(--theme-border-glass)` |
+| `border: ... rgba(100, 140, 255, 0.3)` (hover) | `border: ... var(--theme-border-hover)` |
+| `box-shadow: ... rgba(100, 140, 255, 0.3)` | `box-shadow: ... var(--color-accent-admin-bg)` |
+
+**Archivos principales**: `admin-panel.component.css`, `stock-update-modal.component.css`, `orders-management.component.css`, `kitchen-management.component.css`, `allergens-management.component.css`, `batch-expiration-modal.component.css`, `supplier-form-modal.component.css`, y todos los modales de general (product-create, product-edit, product-detail, order-modal, recipe-create, recipe-detail, recipe-edit).
+
+---
+
+## FASE 15 — `rgba(0, 0, 0, 0.2-0.5)` para fondos
+
+Estos valores se usan para table headers, footers, y fondos de secciones. En dark mode se ven bien (oscurecen el fondo), pero en light mode crean manchas oscuras.
+
+### 15.1 Table headers: `background: rgba(0, 0, 0, 0.4)` → `var(--theme-table-header-bg)`
+
+Ya existe el token `--theme-table-header-bg` (dark: `rgba(0,0,0,0.4)`, light: `rgba(0,0,0,0.03)`). Buscar y reemplazar en todos los componentes que tengan `th { background: rgba(0, 0, 0, 0.4) }`:
+
+**Archivos**: `allergens-management`, `batches-management`, `kitchen-management`, `orders-management`, `products-management`, `recipes-management`, `stock-management`, `suppliers-management`, `traceability-management`, `users-management`, `inventory`
+
+### 15.2 Table footers: `background: rgba(0, 0, 0, 0.2-0.3)` → `var(--theme-table-header-bg)`
+
+**Archivos**: `inventory.component.css` (tfoot td), `allergens-management.component.css`
+
+### 15.3 Modal overlays: `background: rgba(0, 0, 0, 0.5-0.7)` → `var(--theme-overlay-bg)`
+
+Ya existe el token. Buscar en todos los modales.
+
+---
+
+## FASE 16 — Validación y QA
+
+### 16.1 Grep de verificación
+
+Ejecutar estos greps y verificar que los resultados restantes son intencionales:
+
+```bash
+# Colores semánticos hardcodeados (debería ser 0 o solo en definiciones de tokens)
+grep -rn "#ff8a8a\|#f87171\|#34d399\|#a7f3d0\|#9DB5FF\|#fca5a5\|#86efac" src/ --include="*.css" | grep -v "styles.css"
+
+# Fondos oscuros hardcodeados
+grep -rn "rgba(30, 40, 80" src/ --include="*.css" | grep -v "styles.css"
+grep -rn "#1a1a2e" src/ --include="*.css"
+
+# select option con fondo oscuro
+grep -rn "background: #1e1e1e" src/ --include="*.css"
+
+# color-scheme: dark sin override light
+grep -rn "color-scheme: dark" src/ --include="*.css"
+
+# text-shadow glow sin override
+grep -rn "text-shadow: 0 0 10px" src/ --include="*.css"
+
+# th con background rgba(0,0,0,0.4) sin token
+grep -rn "background: rgba(0, 0, 0, 0.4)" src/ --include="*.css" | grep -v "styles.css"
+```
+
+### 16.2 Test visual completo
+
+Verificar CADA página en ambos modos:
+
+**Light mode checklist por página:**
+- [ ] Login — fondo claro, card legible, inputs visibles
+- [ ] Welcome — typewriter legible, fondo adaptado
+- [ ] Inventario — tabla legible, headers claros, badges de stock visibles
+- [ ] Pedidos — cards de pedido legibles, badges de estado con colores correctos
+- [ ] Recepción — formulario legible, estados de pedido visibles
+- [ ] Recetas — cards legibles, ingredientes visibles
+- [ ] Perfil — card de usuario legible, lista de alumnos visible
+- [ ] Barcode Scanner — viewport oscuro (correcto), resultado legible
+- [ ] Admin Panel — welcome card elegante, master cards legibles
+- [ ] Alérgenos — tabla legible, formulario visible
+- [ ] Lotes — tabla legible, fechas de expiración con colores correctos
+- [ ] Cocina — cards de recetas legibles
+- [ ] Pedidos Admin — tabla legible, estados con colores correctos
+- [ ] Productos — tabla legible, auditorías legibles, diff highlights visibles
+- [ ] Recetas Admin — tabla legible
+- [ ] Stock — alertas legibles, predicciones visibles, gráficos legibles
+- [ ] Proveedores — tabla legible
+- [ ] Trazabilidad — timeline legible
+- [ ] Usuarios — tabla legible, modal de edición legible
+- [ ] Change Password — formulario legible sobre fondo claro
+
+**Dark mode checklist:**
+- [ ] Verificar que NADA cambió visualmente respecto al estado anterior
+- [ ] Stock Update Modal — si se migró a glassmorphism, verificar que se ve bien en dark mode

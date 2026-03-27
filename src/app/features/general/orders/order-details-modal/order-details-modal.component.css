@@ -104,8 +104,8 @@
 
 .close-btn:hover {
   background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #ff8a8a;
+  border-color: var(--color-danger-hover-border);
+  color: var(--color-danger-muted);
   transform: scale(1.05);
 }
 
@@ -162,7 +162,7 @@
   overflow-x: auto;
   border-radius: 12px;
   border: 1px solid var(--theme-border-glass);
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--theme-section-header-bg);
 }
 
 .details-table {
@@ -193,7 +193,7 @@
 }
 
 .details-table tfoot td {
-  color: #ff8a8a;
+  color: var(--color-danger-muted);
   font-size: 1.1rem;
   font-weight: bold;
   background: rgba(184, 75, 68, 0.1);
@@ -272,7 +272,7 @@
 .btn-delete {
   background: rgba(239, 68, 68, 0.2) !important;
   border: 1px solid rgba(239, 68, 68, 0.5) !important;
-  color: #f87171 !important;
+  color: var(--color-danger) !important;
 }
 
 .btn-delete:hover:not(:disabled) {

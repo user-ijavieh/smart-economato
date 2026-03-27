@@ -9,7 +9,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--theme-overlay-bg);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -51,7 +51,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 28px;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--theme-section-header-bg);
   border-bottom: 1px solid var(--theme-surface-glass-hover);
   flex-shrink: 0;
 }
@@ -82,8 +82,8 @@
 
 .modal-close:hover {
   background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #ff8a8a;
+  border-color: var(--color-danger-hover-border);
+  color: var(--color-danger-muted);
   transform: scale(1.05);
 }
 
@@ -151,7 +151,7 @@ input {
   color: var(--theme-text-primary);
   transition: all 0.25s;
   font-family: inherit;
-  color-scheme: dark;
+  color-scheme: var(--theme-color-scheme);
 }
 
 input:focus {
@@ -205,14 +205,14 @@ input:focus {
 }
 
 .btn-confirm {
-  background: linear-gradient(135deg, rgba(30, 40, 80, 0.95) 0%, rgba(20, 30, 60, 0.95) 100%);
+  background: var(--theme-surface-glass-active);
   color: var(--theme-text-primary);
   box-shadow: 0 4px 18px rgba(90, 120, 220, 0.2);
   border: 1px solid rgba(90, 120, 220, 0.3);
 }
 
 .btn-confirm:hover:not(:disabled) {
-  background: rgba(30, 40, 80, 0.95);
+  background: var(--theme-surface-glass-active);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(90, 120, 220, 0.4);
 }

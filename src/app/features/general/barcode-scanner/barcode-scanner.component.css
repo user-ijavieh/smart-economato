@@ -1,4 +1,4 @@
-:host {
+﻿:host {
   display: block;
 }
 
@@ -204,7 +204,7 @@
 }
 
 .error-icon {
-  color: #ff8a8a;
+  color: var(--color-danger-muted);
   margin-bottom: 1rem;
 }
 
@@ -232,7 +232,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1.5rem;
-  background: rgba(16, 185, 129, 0.15);
+  background: var(--color-success-bg);
   border-bottom: 1px solid rgba(16, 185, 129, 0.3);
   flex-wrap: wrap;
   gap: 0.5rem;
@@ -252,7 +252,7 @@
 
 .barcode-badge {
   padding: 0.3rem 0.75rem;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--theme-section-header-bg);
   color: var(--theme-text-secondary);
   border-radius: 8px;
   font-size: 0.8rem;
@@ -297,12 +297,12 @@
 }
 
 .info-value.price {
-  color: #ff8a8a;
+  color: var(--color-danger-muted);
   font-size: 1.15rem;
 }
 
 .info-value.low-stock {
-  color: #ff8a8a;
+  color: var(--color-danger-muted);
 }
 
 .product-description {

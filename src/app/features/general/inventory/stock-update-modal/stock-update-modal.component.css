@@ -1,4 +1,4 @@
-/** ===== MODAL OVERLAY ===== */
+﻿/** ===== MODAL OVERLAY ===== */
 
 .modal-overlay {
   position: fixed;
@@ -6,7 +6,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--theme-overlay-bg);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -17,9 +17,11 @@
 }
 
 .modal-content {
-  background: white;
+  background: var(--theme-modal-glass);
+  backdrop-filter: var(--theme-effect-glass);
   border-radius: 16px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--theme-border-glass);
   max-width: 500px;
   width: 100%;
   max-height: 75vh;
@@ -79,19 +81,19 @@
 .product-info {
   margin-bottom: 20px;
   padding: 16px;
-  background: #f9fafb;
+  background: var(--theme-surface-glass-hover);
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--theme-border-glass);
 }
 
 .product-info p {
   margin: 6px 0;
-  color: #4b5563;
+  color: var(--theme-text-secondary);
   font-size: 0.95rem;
 }
 
 .product-info strong {
-  color: #374151;
+  color: var(--theme-text-primary);
 }
 
 .form-group {
@@ -102,7 +104,7 @@
 .form-group label {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--theme-text-primary);
   margin-bottom: 8px;
 }
 
@@ -118,18 +120,20 @@
 
 .unit-label {
   font-weight: 600;
-  color: #6b7280;
+  color: var(--theme-text-secondary);
   min-width: 40px;
 }
 
 input {
   width: 100%;
   padding: 10px 14px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--theme-border-glass);
   border-radius: 8px;
   font-size: 0.95rem;
   transition: border-color 0.2s;
   font-family: inherit;
+  background: var(--theme-input-bg);
+  color: var(--theme-text-primary);
 }
 
 input:focus {
@@ -142,7 +146,7 @@ input:focus {
   display: block;
   margin-top: 8px;
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--theme-text-secondary);
   font-style: italic;
 }
 
@@ -150,8 +154,8 @@ input:focus {
 
 .modal-footer {
   padding: 20px 30px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+  border-top: 1px solid var(--theme-border-glass);
+  background: var(--theme-surface-glass-hover);
   border-radius: 0 0 16px 16px;
   display: flex;
   flex-direction: column;
@@ -173,7 +177,7 @@ input:focus {
 }
 
 .btn-cancel {
-  background: #6b7280;
+  background: var(--theme-surface-glass-active);
   color: var(--theme-text-primary);
   box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3);
 }
@@ -197,7 +201,8 @@ input:focus {
 }
 
 .btn-save:disabled {
-  background: #ccc;
+  background: var(--theme-surface-glass-hover);
+  color: var(--theme-text-secondary);
   cursor: not-allowed;
   box-shadow: none;
   transform: none;
@@ -227,22 +232,22 @@ input:focus {
 /** ===== ADMIN MODE OVERRIDES ===== */
 
 .modal-content.admin-mode .modal-header {
-  background: linear-gradient(135deg, rgba(30, 40, 80, 0.95) 0%, rgba(20, 30, 60, 0.95) 100%);
+  background: linear-gradient(135deg, var(--theme-surface-glass), var(--theme-surface-glass-active));
 }
 
 .modal-content.admin-mode input:focus {
-  border-color: rgba(30, 40, 80, 0.95);
-  box-shadow: 0 0 0 3px rgba(30, 40, 80, 0.1);
+  border-color: var(--theme-border-hover);
+  box-shadow: 0 0 0 3px var(--theme-input-border-focus-glow);
 }
 
 .modal-content.admin-mode .btn-save {
-  background: rgba(30, 40, 80, 0.95);
-  box-shadow: 0 2px 8px rgba(30, 40, 80, 0.3);
+  background: var(--theme-surface-glass-active);
+  box-shadow: 0 2px 8px var(--color-accent-admin-bg);
 }
 
 .modal-content.admin-mode .btn-save:hover {
-  background: rgba(20, 30, 60, 0.95);
-  box-shadow: 0 4px 12px rgba(30, 40, 80, 0.4);
+  background: var(--theme-surface-glass-hover);
+  box-shadow: 0 4px 12px var(--color-accent-admin-bg);
 }
 
 /** ===== ANIMATIONS ===== */
