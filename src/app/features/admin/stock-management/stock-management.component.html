@@ -1,4 +1,4 @@
-<div class="header-stock">
+<div class="page-header header-stock">
   <h1>Gestión de Stock</h1>
 </div>
 
@@ -27,9 +27,9 @@
 
 <!-- ===== ALERTS TAB ===== -->
 @if (activeTab === 'alerts') {
-<div class="contenedor-principal">
+<div class="page-content contenedor-principal">
   <!-- Controls -->
-  <div class="controles">
+  <div class="controls-bar controles">
     <button type="button" class="btn-crear-orden" (click)="openOrderModal()" [disabled]="loadingOrderData">
       <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
         <path d="M160-160v-516L82-846l72-34 94 202h464l94-202 72 34-78 170v516H160Zm240-280h160q17 0 28.5-11.5T600-480q0-17-11.5-28.5T560-520H400q-17 0-28.5 11.5T360-480q0 17 11.5 28.5T400-440ZM240-240h480v-358H240v358Z"/>
@@ -48,7 +48,7 @@
   </div>
 
   <!-- Table -->
-  <div class="tabla-contenedor">
+  <div class="table-container tabla-contenedor">
     <table>
       <thead>
         <tr>

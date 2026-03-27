@@ -1,4 +1,4 @@
-/** ===== MODAL OVERLAY ===== */
+﻿/** ===== MODAL OVERLAY ===== */
 :host {
   display: block;
 }
@@ -11,11 +11,11 @@
   background: var(--theme-surface-glass-hover);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(184, 75, 68, 0.3);
+  background: color-mix(in srgb, var(--brand-primary) 30%, transparent);
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(184, 75, 68, 0.5);
+  background: color-mix(in srgb, var(--brand-primary) 50%, transparent);
 }
 
 .modal-overlay {
@@ -213,8 +213,8 @@
   letter-spacing: 0.3px;
 }
 .availability-high {
-  background: rgba(76, 175, 80, 0.15);
-  color: #4caf50;
+  background: var(--color-success-bg);
+  color: var(--color-success);
 }
 .availability-medium {
   background: rgba(255, 152, 0, 0.15);
@@ -222,7 +222,7 @@
 }
 .availability-low {
   background: rgba(244, 67, 54, 0.15);
-  color: #f44336;
+  color: var(--color-danger);
 }
 
 /** ===== ALERT BANNER ===== */
@@ -281,16 +281,16 @@
 }
 
 .btn-editar {
-  background: rgba(184, 75, 68, 0.15) !important;
+  background: color-mix(in srgb, var(--brand-primary) 15%, transparent) !important;
   color: var(--color-danger-muted) !important;
-  border: 1px solid rgba(184, 75, 68, 0.3) !important;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 30%, transparent) !important;
   backdrop-filter: blur(4px);
 }
 
 .btn-editar:hover {
-  background: rgba(184, 75, 68, 0.25) !important;
+  background: color-mix(in srgb, var(--brand-primary) 25%, transparent) !important;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(184, 75, 68, 0.15);
+  box-shadow: 0 8px 25px color-mix(in srgb, var(--brand-primary) 15%, transparent);
 }
 
 /** ===== ANIMATIONS ===== */
@@ -373,3 +373,4 @@
   background: rgba(239, 68, 68, 0.25) !important;
   box-shadow: 0 8px 25px rgba(239, 68, 68, 0.15) !important;
 }
+

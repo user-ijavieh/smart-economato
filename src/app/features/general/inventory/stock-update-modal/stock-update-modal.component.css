@@ -139,7 +139,7 @@ input {
 input:focus {
   outline: none;
   border-color: var(--brand-primary);
-  box-shadow: 0 0 0 3px rgba(184, 75, 68, 0.1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 10%, transparent);
 }
 
 .hint {
@@ -216,7 +216,7 @@ input:focus {
 
 .modal-content.general-mode input:focus {
   border-color: var(--brand-primary);
-  box-shadow: 0 0 0 3px rgba(184, 75, 68, 0.1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 10%, transparent);
 }
 
 /** ===== ADMIN MODE OVERRIDES ===== */
@@ -282,3 +282,4 @@ input:focus {
     padding: 14px 20px;
   }
 }
+

@@ -1,4 +1,4 @@
-.dialog-backdrop {
+﻿.dialog-backdrop {
   position: fixed;
   inset: 0;
   background: var(--theme-overlay-bg);
@@ -36,7 +36,7 @@
 .dialog-header {
   padding: 24px 30px;
   border-bottom: 1px solid var(--theme-surface-glass-hover);
-  background: linear-gradient(to right, rgba(184, 75, 68, 0.15), transparent);
+  background: linear-gradient(to right, color-mix(in srgb, var(--brand-primary) 15%, transparent), transparent);
 }
 
 .dialog-header h2 {
@@ -91,15 +91,15 @@
 }
 
 .btn-confirm {
-  background: rgba(184, 75, 68, 0.15) !important;
-  border: 1px solid rgba(184, 75, 68, 0.3) !important;
-  color: var(--theme-text-primary) !important;
+  background: var(--brand-glow);
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 55%, transparent);
+  color: var(--theme-text-primary);
   backdrop-filter: blur(8px);
 }
 
 .btn-confirm:hover {
-  background: rgba(184, 75, 68, 0.25) !important;
-  border-color: rgba(184, 75, 68, 0.5) !important;
+  background: color-mix(in srgb, var(--brand-primary) 25%, transparent);
+  border-color: color-mix(in srgb, var(--brand-primary) 70%, transparent);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(184, 75, 68, 0.35) !important;
+  box-shadow: 0 8px 25px color-mix(in srgb, var(--brand-primary) 35%, transparent);
 }
