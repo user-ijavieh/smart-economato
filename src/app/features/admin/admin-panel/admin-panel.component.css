@@ -49,7 +49,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 20px var(--color-accent-admin-bg);
+  box-shadow: 0 4px 20px rgba(var(--admin-rgb), 0.3);
   animation: pulse 2s ease-in-out infinite;
 }
 
@@ -57,11 +57,11 @@
 
   0%,
   100% {
-    box-shadow: 0 4px 20px var(--color-accent-admin-bg);
+    box-shadow: 0 4px 20px rgba(var(--admin-rgb), 0.3);
   }
 
   50% {
-    box-shadow: 0 4px 30px var(--color-accent-admin-hover-bg);
+    box-shadow: 0 4px 30px rgba(var(--admin-rgb), 0.6);
   }
 }
 
