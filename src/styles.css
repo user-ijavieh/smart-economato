@@ -3,7 +3,7 @@
    ============================================ */
 
 :root {
-  /* ===== THEME TOKENS (Dark Mode — General/User) ===== */
+  /* ===== THEME TOKENS (Dark Mode - General/User) ===== */
   --theme-bg-page: #0c0808;
   --theme-bg-base: rgba(8, 3, 3, 0.85);
   --theme-surface-glass: rgba(12, 12, 12, 0.65);
@@ -42,7 +42,7 @@
   --theme-radius-input: 12px;
   --theme-radius-btn: 12px;
 
-  /* Brand (invariante — no cambia con el tema) */
+  /* Brand (invariante - no cambia con el tema) */
   --brand-primary: #B84B44;
   --brand-dark: #8C2E28;
   --brand-light: #D4625A;
@@ -117,6 +117,10 @@
   --theme-sidebar-logout-color: rgba(255, 255, 255, 0.35);
   --theme-sidebar-toggle-svg-color: rgba(255, 255, 255, 0.40);
 
+  /* Welcome page tokens (minimal, non-redundant) */
+  --welcome-accent-rim: rgba(184, 75, 68, 0.55);
+  --welcome-white-20: rgba(255, 255, 255, 0.20);
+
   /* Toast / Alert Notification */
   --theme-toast-bg: rgba(15, 15, 15, 0.85);
   --theme-toast-border: rgba(255, 255, 255, 0.1);
@@ -161,7 +165,7 @@
   --modal-danger-bg: #ef4444;
   --modal-danger-hover: #dc2626;
 
-  /* Tipografía */
+  /* Tipografia */
   --font-heading: 'Sora', sans-serif;
   --font-heading-weight: 600;
   --font-subheading: 'Sora', sans-serif;
@@ -239,6 +243,9 @@
   --theme-sidebar-section-label-color: rgba(0, 0, 0, 0.35);
   --theme-sidebar-logout-color: rgba(0, 0, 0, 0.4);
   --theme-sidebar-toggle-svg-color: rgba(0, 0, 0, 0.35);
+
+  /* Welcome page tokens */
+  --welcome-white-20: rgba(0, 0, 0, 0.10);
 
   /* Toast / Alert Notification */
   --theme-toast-bg: rgba(255, 255, 255, 0.92);
@@ -355,7 +362,7 @@ body.admin-theme[data-theme="light"],
   font-style: normal;
 }
 
-/* Reset básico */
+/* Reset basico */
 * {
   margin: 0;
   padding: 0;

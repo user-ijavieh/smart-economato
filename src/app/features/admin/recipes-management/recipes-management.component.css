@@ -924,7 +924,7 @@ tr.clickable-row {
 .tag-added { background: rgba(74, 222, 128, 0.15); color: var(--color-success); border: 1px solid rgba(74, 222, 128, 0.3); }
 .tag-removed { background: var(--color-danger-bg); color: var(--color-danger-muted); border: 1px solid rgba(239, 68, 68, 0.3); }
 
-/** ===== PAGINACIÃ“N ===== */
+/** ===== PAGINACION ===== */
 .pagination-controls {
   display: flex;
   justify-content: center;

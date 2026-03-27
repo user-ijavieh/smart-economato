@@ -1,4 +1,4 @@
-/* Animations */
+/** ===== ANIMACIONES ===== */
 
 /* Entrada: desliza desde la derecha */
 @keyframes toastIn {
@@ -54,7 +54,7 @@
   }
 }
 
-/* Container */
+/** ===== CONTENEDOR ===== */
 .toast-container {
   position: fixed;
   top: 1.5rem;
@@ -68,7 +68,7 @@
   pointer-events: none;
 }
 
-/* Toast base */
+/** ===== TOAST BASE ===== */
 .toast {
   position: relative;
   display: flex;
@@ -109,13 +109,13 @@
   animation: toastOut 0.42s cubic-bezier(0.4, 0, 0.8, 0.6) forwards;
 }
 
-/* Type colors */
+/** ===== COLORES POR TIPO ===== */
 .toast-success { border-left: 3px solid #4ade80; }
 .toast-error { border-left: 3px solid var(--color-danger); }
 .toast-warning { border-left: 3px solid #fbbf24; }
 .toast-info { border-left: 3px solid #60a5fa; }
 
-/* Circular icon */
+/** ===== ICONO CIRCULAR ===== */
 .toast-icon {
   flex-shrink: 0;
   width: 32px;
@@ -131,7 +131,7 @@
 .toast-warning .toast-icon { color: var(--color-warning); background: var(--color-warning-bg); }
 .toast-info .toast-icon { color: var(--color-info); background: var(--color-info-bg); }
 
-/* Body: title + message */
+/** ===== CUERPO: TITULO + MENSAJE ===== */
 .toast-body {
   flex: 1;
   min-width: 0;
@@ -153,7 +153,7 @@
   color: var(--theme-toast-message);
 }
 
-/* â”€â”€â”€ BotÃ³n de cierre â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/** ===== BOTON DE CIERRE ===== */
 .toast-close {
   flex-shrink: 0;
   width: 26px;
@@ -186,7 +186,7 @@
 :host-context([data-theme="light"]) .toast-warning .toast-icon { background: rgba(251, 191, 36, 0.12); }
 :host-context([data-theme="light"]) .toast-info .toast-icon { background: rgba(96, 165, 250, 0.12); }
 
-/* â”€â”€â”€ Barra de progreso â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/** ===== BARRA DE PROGRESO ===== */
 .toast-progress {
   position: absolute;
   bottom: 0;
@@ -196,7 +196,7 @@
   height: 4px;
   border-radius: 0 0 10px 0;
   transform-origin: left center;
-  /* DuraciÃ³n hardcodeada â€” no usar binding de Angular para evitar resets */
+  /* Duracion hardcodeada no usar binding de Angular para evitar resets */
   animation: progress 3s linear both;
 }
 
@@ -216,7 +216,7 @@
   background: #3b82f6;
 }
 
-/* â”€â”€â”€ Responsive â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/** ===== RESPONSIVE ===== */
 @media (max-width: 480px) {
   .toast-container {
     width: calc(100vw - 2rem);

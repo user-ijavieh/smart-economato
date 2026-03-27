@@ -265,7 +265,7 @@
   background: rgba(184, 75, 68, 0.1);
 }
 
-/** ===== ALÃ‰RGENOS ===== */
+/** ===== ALERGENOS ===== */
 .allergens-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));

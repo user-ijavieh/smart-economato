@@ -303,7 +303,7 @@
   to { opacity: 0; }
 }
 
-/* RESPONSIVE */
+/** ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .modal-overlay { align-items: flex-end; padding: 0; }
   .modal-content {

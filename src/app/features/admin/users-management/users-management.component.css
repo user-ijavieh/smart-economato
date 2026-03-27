@@ -1,4 +1,4 @@
-﻿/** ===== SCROLLBAR PERSONALIZADO ===== */
+/** ===== SCROLLBAR PERSONALIZADO ===== */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -515,7 +515,7 @@ tr.row-hidden .user-avatar-small {
   border-bottom: 1px solid var(--theme-surface-glass-active);
 }
 
-/** ===== PAGINACIÃ“N ===== */
+/** ===== PAGINACION ===== */
 .pagination-controls {
   display: flex;
   justify-content: center;
