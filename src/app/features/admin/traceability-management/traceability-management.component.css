@@ -320,9 +320,9 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 
 .custom-dropdown-menu {
   position: absolute; top: 100%; left: 0; right: 0; margin-top: 8px;
-  background: rgba(20, 25, 40, 0.95); backdrop-filter: var(--theme-effect-glass);
+  background: var(--theme-modal-glass); backdrop-filter: var(--theme-effect-glass);
   border: 1px solid var(--theme-border-glass); border-radius: var(--theme-radius-card);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1001; overflow: hidden; animation: fadeIn 0.2s ease;
+  box-shadow: var(--theme-shadow-deep); z-index: 1001; overflow: hidden; animation: fadeIn 0.2s ease;
 }
 
 .dropdown-search { padding: 12px; border-bottom: 1px solid var(--theme-surface-glass-hover); }
@@ -330,10 +330,10 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 .dropdown-list { max-height: 200px; overflow-y: auto; }
 .dropdown-item, .dropdown-item-checkbox { padding: 12px 16px; cursor: pointer; color: var(--theme-text-secondary); transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
 .dropdown-item:hover, .dropdown-item-checkbox:hover { background: var(--theme-surface-glass-hover); color: var(--theme-text-primary); }
-.dropdown-item.selected { background: var(--color-accent-admin-bg); color: var(--color-accent-admin); font-weight: 600; }
+.dropdown-item.selected { background: rgba(var(--admin-rgb), 0.15); color: var(--theme-text-accent-light); font-weight: 600; }
 
-.dropdown-actions { padding: 8px 12px; display: flex; justify-content: space-between; background: var(--theme-section-header-bg); border-bottom: 1px solid var(--theme-surface-glass-hover); }
-.btn-text-only { background: transparent; color: var(--color-accent-admin); border: none; font-size: 0.8rem; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+.dropdown-actions { padding: 8px 12px; display: flex; justify-content: space-between; background: var(--theme-surface-glass-active); border-bottom: 1px solid var(--theme-surface-glass-hover); }
+.btn-text-only { background: transparent; color: var(--theme-text-accent-light); border: none; font-size: 0.8rem; font-weight: bold; cursor: pointer; text-transform: uppercase; }
 .btn-text-only:hover { color: var(--theme-text-primary); }
 .dropdown-overlay { position: fixed; inset: 0; z-index: 999; }
 
