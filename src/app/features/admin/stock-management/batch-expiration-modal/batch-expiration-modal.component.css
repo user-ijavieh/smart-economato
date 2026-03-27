@@ -212,7 +212,7 @@ input:focus {
 }
 
 .btn-confirm:hover:not(:disabled) {
-  background: var(--theme-surface-glass-active);
+  background: var(--color-accent-admin-hover-bg);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(90, 120, 220, 0.4);
 }
