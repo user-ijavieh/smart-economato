@@ -331,9 +331,9 @@
 
 <!-- ===== AUDIT DETAIL MODAL ===== -->
 @if (showAuditDetailModal && selectedAudit) {
-@if (showAuditDetailModal && selectedAudit) {
-<div class="audit-modal-overlay" (click)="onAuditOverlayClick($event)">
-    <div class="audit-modal" [class.audit-modal-wide]="hasDiffData">
+<div class="modal-overlay modal-overlay-base admin-theme" (click)="onAuditOverlayClick($event)">
+    <div class="modal-container" (click)="$event.stopPropagation()" style="max-width: 1100px;">
+    <div class="modal-dialog-base modal-content" [class.audit-modal-wide]="hasDiffData">
         <div class="audit-modal-header">
             <div class="audit-header-content">
                 <h2>Detalle de Auditoría</h2>
@@ -425,7 +425,7 @@
         }
     </div>
 </div>
-}
+</div>
 
 }
 

@@ -1,12 +1,12 @@
-/** ===== MODAL OVERLAY ===== */
+﻿/** ===== MODAL OVERLAY ===== */
 :host {
   display: block;
 }
 
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--theme-surface-glass-hover); }
-::-webkit-scrollbar-thumb { background: rgba(184, 75, 68, 0.3); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(184, 75, 68, 0.5); }
+::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--brand-primary) 30%, transparent); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--brand-primary) 50%, transparent); }
 
 .modal-overlay,
 .modal-overlay-base {
@@ -58,7 +58,7 @@
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
-  background: linear-gradient(to right, rgba(184, 75, 68, 0.15), transparent);
+  background: linear-gradient(to right, color-mix(in srgb, var(--brand-primary) 15%, transparent), transparent);
   border-radius: var(--theme-radius-card) var(--theme-radius-card) 0 0;
 }
 
@@ -116,7 +116,7 @@
   color: var(--theme-text-primary);
   margin-bottom: 15px;
   padding-bottom: 10px;
-  border-bottom: 2px solid rgba(184, 75, 68, 0.5);
+  border-bottom: 2px solid color-mix(in srgb, var(--brand-primary) 50%, transparent);
   font-weight: 600;
 }
 
@@ -163,8 +163,8 @@
 .form-control:focus {
   outline: none;
   background: var(--theme-surface-glass-active);
-  border-color: rgba(184, 75, 68, 0.6);
-  box-shadow: 0 0 0 4px rgba(184, 75, 68, 0.15);
+  border-color: color-mix(in srgb, var(--brand-primary) 60%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand-primary) 15%, transparent);
 }
 
 .price-display {
@@ -202,7 +202,7 @@
 
 .dropdown-trigger:hover,
 .dropdown-trigger.active {
-  border-color: rgba(184, 75, 68, 0.6);
+  border-color: color-mix(in srgb, var(--brand-primary) 60%, transparent);
   background: var(--theme-surface-glass-active);
 }
 
@@ -251,7 +251,7 @@
 
 .autocomplete-item:hover,
 .dropdown-item:hover {
-  background: rgba(184, 75, 68, 0.15);
+  background: color-mix(in srgb, var(--brand-primary) 15%, transparent);
 }
 
 .autocomplete-item-name,
@@ -281,8 +281,8 @@
 /** ===== ADD ITEM BUTTON ===== */
 .btn-add-item {
   padding: 12px 20px;
-  background: rgba(184, 75, 68, 0.15);
-  border: 1px solid rgba(184, 75, 68, 0.3);
+  background: color-mix(in srgb, var(--brand-primary) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 30%, transparent);
   color: var(--color-danger);
   border-radius: var(--theme-radius-btn);
   font-weight: 700;
@@ -294,11 +294,11 @@
 }
 
 .btn-add-item:hover {
-  background: rgba(184, 75, 68, 0.25);
-  border-color: rgba(184, 75, 68, 0.5);
+  background: color-mix(in srgb, var(--brand-primary) 25%, transparent);
+  border-color: color-mix(in srgb, var(--brand-primary) 50%, transparent);
   color: var(--theme-text-primary);
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(184, 75, 68, 0.3);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--brand-primary) 30%, transparent);
 }
 
 /** ===== ORDER ITEMS LIST ===== */
@@ -373,8 +373,8 @@
 .order-summary {
   margin-top: 16px;
   padding: 16px 20px;
-  background: rgba(184, 75, 68, 0.12);
-  border: 1px solid rgba(184, 75, 68, 0.25);
+  background: color-mix(in srgb, var(--brand-primary) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 25%, transparent);
   border-radius: 12px;
 }
 
@@ -444,18 +444,18 @@
 }
 
 .btn-submit {
-  background: rgba(184, 75, 68, 0.15);
-  border: 1px solid rgba(184, 75, 68, 0.3);
+  background: color-mix(in srgb, var(--brand-primary) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 30%, transparent);
   color: var(--color-danger);
   backdrop-filter: blur(8px);
 }
 
 .btn-submit:hover:not(:disabled) {
-  background: rgba(184, 75, 68, 0.25);
-  border-color: rgba(184, 75, 68, 0.5);
+  background: color-mix(in srgb, var(--brand-primary) 25%, transparent);
+  border-color: color-mix(in srgb, var(--brand-primary) 50%, transparent);
   color: var(--theme-text-primary);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(184, 75, 68, 0.35);
+  box-shadow: 0 8px 25px color-mix(in srgb, var(--brand-primary) 35%, transparent);
 }
 
 .btn-submit:disabled {
@@ -505,3 +505,4 @@
   .btn-cancel, .btn-submit { width: 100%; justify-content: center; height: 50px; }
   .btn-submit { order: -1; }
 }
+

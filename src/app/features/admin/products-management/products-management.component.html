@@ -1,4 +1,4 @@
-<div class="header-productos">
+<div class="page-header header-productos">
     <h1>Gestión de Productos</h1>
 </div>
 
@@ -20,8 +20,8 @@
 
 <!-- ===== PRODUCTS TAB ===== -->
 @if (activeTab === 'products') {
-<div class="contenedor-principal">
-    <div class="controles">
+<div class="page-content contenedor-principal">
+    <div class="controls-bar controles">
         <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por nombre..." (ngModelChange)="onSearch()" />
         <button id="btnAgregarProducto" (click)="openCreateModal()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -72,7 +72,7 @@
         </div>
     </div>
 
-    <div class="tabla-contenedor">
+    <div class="table-container tabla-contenedor">
         <table>
             <thead>
                 <tr>
@@ -176,8 +176,8 @@
 
 <!-- ===== AUDITS TAB ===== -->
 @if (activeTab === 'audits') {
-<div class="contenedor-principal">
-    <div class="controles">
+<div class="page-content contenedor-principal">
+    <div class="controls-bar controles">
         <input type="text" [(ngModel)]="auditSearchTerm" placeholder="Buscar en auditorías..." (ngModelChange)="onAuditSearch()" />
         <select [(ngModel)]="auditMovementTypeFilter" (ngModelChange)="onAuditMovementTypeFilterChange()" class="action-select">
             <option value="">Todos los movimientos</option>
