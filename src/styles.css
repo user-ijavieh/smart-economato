@@ -191,7 +191,6 @@
 [data-theme="light"] {
   /* Fondos */
   --theme-bg-page: #F1F5F9;
-  --theme-surface-glass: rgba(255, 255, 255, 0.75);
   --theme-surface-glass-hover: rgba(0, 0, 0, 0.04);
   --theme-surface-glass-active: rgba(0, 0, 0, 0.07);
   --theme-input-bg: rgba(0, 0, 0, 0.03);
@@ -216,8 +215,6 @@
   --theme-svg-hover: #475569;
 
   /* Sombras */
-  --theme-shadow-card: 0 4px 20px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
-  --theme-shadow-hover: 0 12px 40px rgba(15, 23, 42, 0.10);
   --theme-shadow-deep: 0 24px 60px rgba(15, 23, 42, 0.12);
   --theme-overlay-bg: rgba(0, 0, 0, 0.4);
   --theme-overlay-light: rgba(0, 0, 0, 0.04);
@@ -316,9 +313,6 @@
   --admin-scrollbar-track: rgba(0, 0, 0, 0.03);
   --admin-scrollbar-thumb: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(96, 165, 250, 0.25));
   --admin-scrollbar-thumb-hover: linear-gradient(135deg, rgba(59, 130, 246, 0.45), rgba(96, 165, 250, 0.45));
-
-  /* Efectos */
-  --theme-effect-glass: blur(28px);
 }
 
 [data-theme="light"] body.admin-theme,
