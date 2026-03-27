@@ -1,4 +1,4 @@
-:host {
+﻿:host {
   display: block;
 }
 
@@ -31,7 +31,7 @@
   text-align: center;
   font-family: var(--font-heading);
   font-weight: var(--font-heading-weight);
-  text-shadow: 0 0 10px var(--brand-glow);
+  text-shadow: var(--theme-heading-glow);
 }
 
 /** ===== CONTENEDOR PRINCIPAL ===== */
@@ -114,7 +114,7 @@
 }
 
 .filter-group select option {
-  background: #1e1e1e;
+  background: var(--theme-option-bg);
   color: var(--theme-text-primary);
 }
 
@@ -231,7 +231,7 @@ button:active {
   border-left-color: rgba(16, 185, 129, 1);
 }
 
-/** ===== BADGE ALÉRGENOS ===== */
+/** ===== BADGE ALÃ‰RGENOS ===== */
 .allergen-badge {
   display: inline-flex;
   align-items: center;
@@ -251,7 +251,7 @@ button:active {
 
 .allergen-badge.safe {
   background: rgba(16, 185, 129, 0.2);
-  color: #6ee7b7;
+  color: var(--color-success-soft);
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
@@ -288,14 +288,14 @@ button:active {
   justify-content: space-between;
   align-items: center;
   padding: 14px 20px;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--theme-section-header-bg);
   border-top: 1px solid var(--theme-border-glass);
 }
 
 .card-price {
   font-size: 1.2rem;
   font-weight: 800;
-  color: #ff8a8a;
+  color: var(--color-danger-muted);
   font-family: var(--font-heading);
 }
 
@@ -316,7 +316,7 @@ button:active {
   font-family: var(--font-body);
 }
 
-/** ===== PAGINACIÓN ===== */
+/** ===== PAGINACIÃ“N ===== */
 .pagination-container {
   display: flex;
   justify-content: center;
@@ -343,7 +343,7 @@ button:active {
   background: var(--theme-surface-glass-hover);
   border: 1px solid rgba(184, 75, 68, 0.2);
   border-radius: 12px;
-  color: #ff8a8a;
+  color: var(--color-danger-muted);
   font-weight: 600;
   font-size: 14px;
   backdrop-filter: blur(8px);
@@ -411,7 +411,7 @@ button:active {
 }
 
 .size-selector option {
-  background: #1e1e1e;
+  background: var(--theme-option-bg);
   color: var(--theme-text-primary);
 }
 

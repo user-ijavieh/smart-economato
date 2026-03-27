@@ -27,7 +27,7 @@
   color: var(--theme-text-primary);
   letter-spacing: 2px;
   margin: 0;
-  text-shadow: 0 0 10px var(--brand-glow);
+  text-shadow: var(--theme-heading-glow);
   font-family: var(--font-heading);
   font-weight: var(--font-heading-weight);
 }
@@ -91,7 +91,7 @@
 
 .user-role {
   font-size: 0.9rem;
-  color: #f87171;
+  color: var(--color-danger);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -128,7 +128,7 @@
   align-items: center;
   padding: 20px 24px;
   border-bottom: 1px solid var(--theme-border-glass);
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--theme-section-header-bg);
 }
 
 .section-header h2 {
@@ -217,14 +217,14 @@ tr:hover td {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   background: rgba(59, 130, 246, 0.15);
-  color: #93c5fd;
+  color: var(--color-info);
   border: 1px solid rgba(59, 130, 246, 0.3);
   backdrop-filter: blur(6px);
 }
 
 .role-badge.elevated {
   background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
+  color: var(--color-warning);
   border-color: rgba(245, 158, 11, 0.3);
 }
 
@@ -256,7 +256,7 @@ button,
 .btn-success {
   background: rgba(16, 185, 129, 0.15) !important;
   border-color: rgba(16, 185, 129, 0.3) !important;
-  color: #34d399 !important;
+  color: var(--color-success) !important;
 }
 
 .btn-success:hover:not(:disabled) {
@@ -270,7 +270,7 @@ button,
 .btn-danger {
   background: rgba(239, 68, 68, 0.15) !important;
   border-color: rgba(239, 68, 68, 0.3) !important;
-  color: #f87171 !important;
+  color: var(--color-danger) !important;
 }
 
 .btn-danger:hover:not(:disabled) {
@@ -386,7 +386,7 @@ button:disabled {
 
 .modal-close-btn:hover {
   background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.5);
+  border-color: var(--color-danger-hover-border);
   transform: scale(1.05);
 }
 

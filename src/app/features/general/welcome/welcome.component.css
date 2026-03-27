@@ -1,5 +1,5 @@
-/* ============================================================
-   WELCOME PAGE — Premium · Red Palette Edition
+﻿/* ============================================================
+   WELCOME PAGE â€” Premium Â· Red Palette Edition
    Smart Economato
    ============================================================ */
 
@@ -177,7 +177,7 @@
       rgba(10, 3, 3, 0.82) 100%);
 }
 
-/* Viñeta de bordes */
+/* ViÃ±eta de bordes */
 .overlay::after {
   content: '';
   position: absolute;
@@ -202,7 +202,7 @@
   animation: fadeDown 0.65s var(--ease-out) both;
 }
 
-/* Línea decorativa roja que recorre el borde inferior */
+/* LÃ­nea decorativa roja que recorre el borde inferior */
 .header::after {
   content: '';
   position: absolute;
@@ -220,11 +220,11 @@
   animation: shimmerRed 5s linear infinite;
 }
 
-/* ===== LOGO — protagonista ===== */
+/* ===== LOGO â€” protagonista ===== */
 
 .header-logo {
   width: 96px;
-  /* más grande y con peso real */
+  /* mÃ¡s grande y con peso real */
   height: auto;
   max-width: 100%;
   animation:
@@ -269,13 +269,13 @@
   animation: fadeUp 0.65s 0.18s var(--ease-out) both;
 }
 
-/* ===== TÍTULO — Typewriter ===== */
+/* ===== TÃTULO â€” Typewriter ===== */
 
 .welcome-title {
   font-family: var(--font-heading);
   font-weight: var(--font-heading-weight);
   font-size: 2.3rem;
-  /* Contraste máximo: blanco con múltiples capas de sombra */
+  /* Contraste mÃ¡ximo: blanco con mÃºltiples capas de sombra */
   color: var(--theme-text-primary);
   text-shadow:
     0 0 2px rgba(0, 0, 0, 0.9),
@@ -312,7 +312,7 @@
   justify-items: center;
 }
 
-/* ===== CARD — sin fondo sólido, completamente cristal ===== */
+/* ===== CARD â€” sin fondo sÃ³lido, completamente cristal ===== */
 
 .btn-card {
   width: 172px;
@@ -322,7 +322,7 @@
   align-items: center;
   justify-content: center;
   gap: 14px;
-  /* Glass oscuro — contraste claro sobre cualquier fondo fotográfico */
+  /* Glass oscuro â€” contraste claro sobre cualquier fondo fotogrÃ¡fico */
   background: var(--theme-surface-glass);
   backdrop-filter: var(--blur-md);
   -webkit-backdrop-filter: var(--blur-md);
@@ -351,7 +351,7 @@
   animation: cardReveal 0.55s var(--ease-out) both;
 }
 
-/* Etiqueta de texto de cada card — ligeramente engrosada */
+/* Etiqueta de texto de cada card â€” ligeramente engrosada */
 .btn-card span {
   font-weight: 600;
   letter-spacing: 0.4px;
@@ -404,7 +404,7 @@
   pointer-events: none;
 }
 
-/* Efecto Reflex Metálico — barrido diagonal */
+/* Efecto Reflex MetÃ¡lico â€” barrido diagonal */
 .btn-card::after {
   content: '';
   position: absolute;
@@ -565,13 +565,13 @@
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: rgba(239, 68, 68, 0.15);
+  background: var(--color-danger-bg);
   border: 1.5px solid rgba(239, 68, 68, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 20px;
-  color: #f87171;
+  color: var(--color-danger);
   backdrop-filter: blur(8px);
 }
 
@@ -622,8 +622,8 @@
   flex: 1;
   padding: 12px 20px;
   border: 1px solid rgba(239, 68, 68, 0.35);
-  background: rgba(239, 68, 68, 0.15);
-  color: #f87171;
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
   border-radius: 12px;
   font-family: var(--font-body);
   font-size: 0.92rem;
@@ -646,7 +646,7 @@
   transform: translateY(0);
 }
 
-/* ===== RESPONSIVE — 1024px ===== */
+/* ===== RESPONSIVE â€” 1024px ===== */
 
 @media (max-width: 1024px) {
   .header {
@@ -695,7 +695,7 @@
   }
 }
 
-/* ===== RESPONSIVE — 768px ===== */
+/* ===== RESPONSIVE â€” 768px ===== */
 
 @media (max-width: 768px) {
   .mainContent {
@@ -757,7 +757,7 @@
   }
 }
 
-/* ===== RESPONSIVE — 480px ===== */
+/* ===== RESPONSIVE â€” 480px ===== */
 
 @media (max-width: 480px) {
   .header {
@@ -771,7 +771,7 @@
 
   .header-logo {
     width: 48px;
-    /* Mantiene animación sólo pulso, quita float en móvil */
+    /* Mantiene animaciÃ³n sÃ³lo pulso, quita float en mÃ³vil */
     animation: logoPulse 3.5s ease-in-out infinite;
   }
 
@@ -922,3 +922,4 @@
 :host-context([data-theme="light"]) .logout-modal h2 {
     color: var(--theme-text-primary);
 }
+

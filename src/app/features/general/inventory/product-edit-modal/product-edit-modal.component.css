@@ -21,7 +21,7 @@
 .modal-overlay-base {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--theme-overlay-bg);
   backdrop-filter: blur(8px);
   z-index: 10000;
   display: flex;
@@ -81,8 +81,8 @@
 
 .modal-close:hover {
   background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #ff8a8a;
+  border-color: var(--color-danger-hover-border);
+  color: var(--color-danger-muted);
   transform: scale(1.05);
 }
 
@@ -128,7 +128,7 @@
 }
 
 .form-group select option {
-  background: #1e1e1e;
+  background: var(--theme-option-bg);
   color: var(--theme-text-primary);
 }
 
@@ -209,11 +209,11 @@
 .btn-delete {
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #ff8a8a;
+  color: var(--color-danger-muted);
 }
 
 .btn-delete:hover {
-  background: rgba(239, 68, 68, 0.25);
+  background: var(--color-danger-hover-bg);
   color: var(--theme-text-primary);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
@@ -256,7 +256,7 @@
 }
 :host-context(.admin-theme) .btn-save,
 :host-context(.admin-theme) .btn-cocinar {
-  background: linear-gradient(135deg, rgba(30, 40, 80, 0.95) 0%, rgba(20, 30, 60, 0.95) 100%) !important;
+  background: var(--theme-surface-glass-active) !important;
   border: none !important;
   box-shadow: 0 4px 18px rgba(90, 120, 220, 0.2) !important;
   color: var(--theme-text-primary)!important;
@@ -268,7 +268,7 @@
 }
 :host-context(.admin-theme) .btn-editar {
   background: rgba(90, 120, 220, 0.15) !important;
-  color: #9DB5FF !important;
+  color: var(--color-accent-admin) !important;
   border: 1px solid rgba(90, 120, 220, 0.3) !important;
 }
 :host-context(.admin-theme) .btn-editar:hover {
@@ -276,17 +276,17 @@
   box-shadow: 0 8px 25px rgba(90, 120, 220, 0.15) !important;
 }
 :host-context(.admin-theme) .product-option.selected {
-  background: rgba(90, 120, 220, 0.2);
-  color: #9DB5FF;
+  background: var(--color-accent-admin-bg);
+  color: var(--color-accent-admin);
 }
 :host-context(.admin-theme) .btn-add-component:hover {
   border-color: rgba(90, 120, 220, 0.95);
-  color: #9DB5FF;
+  color: var(--color-accent-admin);
   background: rgba(90, 120, 220, 0.1);
 }
 :host-context(.admin-theme) .btn-eliminar {
   background: rgba(239, 68, 68, 0.15) !important;
-  color: #ff8a8a !important;
+  color: var(--color-danger-muted) !important;
   border: 1px solid rgba(239, 68, 68, 0.3) !important;
 }
 :host-context(.admin-theme) .btn-eliminar:hover {

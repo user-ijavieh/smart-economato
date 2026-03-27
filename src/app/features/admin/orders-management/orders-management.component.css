@@ -4,9 +4,9 @@
 
 /** ===== SCROLLBAR PERSONALIZADO ===== */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: var(--admin-scrollbar-track, rgba(30, 40, 80, 0.05)); border-radius: 10px; }
-::-webkit-scrollbar-thumb { background: var(--admin-scrollbar-thumb, linear-gradient(135deg, rgba(30, 40, 80, 0.6), rgba(50, 60, 120, 0.6))); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--admin-scrollbar-thumb-hover, linear-gradient(135deg, rgba(30, 40, 80, 0.8), rgba(50, 60, 120, 0.8))); }
+::-webkit-scrollbar-track { background: var(--admin-scrollbar-track, var(--theme-section-header-bg)); border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: var(--admin-scrollbar-thumb, var(--theme-accent-gradient)); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--admin-scrollbar-thumb-hover, var(--theme-accent-gradient)); }
 
 /** ===== HEADER ===== */
 .header-recetas {
@@ -31,7 +31,7 @@
   text-align: center;
   margin: 0;
   font-family: var(--font-heading);
-  text-shadow: 0 0 10px rgba(90, 120, 220, 0.4);
+  text-shadow: var(--theme-heading-glow-admin);
 }
 
 /** ===== TAB BAR ===== */
@@ -225,7 +225,7 @@ th, td {
 }
 
 th {
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--theme-section-header-bg-strong);
   color: var(--theme-text-secondary);
   font-weight: 600;
   letter-spacing: 1px;
@@ -260,9 +260,9 @@ tbody tr:hover {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: rgba(90, 120, 220, 0.2);
+  background: var(--color-accent-admin-bg);
   border: 1px solid rgba(90, 120, 220, 0.4);
-  color: #9DB5FF;
+  color: var(--color-accent-admin);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -275,8 +275,8 @@ tbody tr:hover {
   border-radius: 6px;
   font-size: 0.85rem;
   font-weight: 600;
-  background: rgba(90, 120, 220, 0.15);
-  color: #9DB5FF;
+  background: var(--color-accent-admin-bg);
+  color: var(--color-accent-admin);
   font-family: monospace;
 }
 
@@ -301,11 +301,11 @@ tbody tr:hover {
   text-transform: uppercase;
 }
 
-.status-confirmed, .badge-confirm { background: rgba(76, 175, 80, 0.15); color: #a7f3d0; border: 1px solid rgba(76, 175, 80, 0.3); }
+.status-confirmed, .badge-confirm { background: rgba(76, 175, 80, 0.15); color: var(--color-success-soft); border: 1px solid rgba(76, 175, 80, 0.3); }
 .status-pending { background: rgba(245, 158, 11, 0.15); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.3); }
-.status-created, .badge-create, .badge-default { background: rgba(90, 120, 220, 0.15); color: #9DB5FF; border: 1px solid rgba(90, 120, 220, 0.3); }
+.status-created, .badge-create, .badge-default { background: var(--color-accent-admin-bg); color: var(--color-accent-admin); border: 1px solid rgba(90, 120, 220, 0.3); }
 .status-review { background: rgba(56, 189, 248, 0.15); color: #7dd3fc; border: 1px solid rgba(56, 189, 248, 0.3); }
-.status-incomplete, .badge-delete { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+.status-incomplete, .badge-delete { background: var(--color-danger-bg); color: var(--color-danger-soft); border: 1px solid rgba(239, 68, 68, 0.3); }
 .status-cancelled { background: rgba(156, 163, 175, 0.15); color: #d1d5db; border: 1px solid rgba(156, 163, 175, 0.3); }
 .badge-update { background: rgba(168, 85, 247, 0.15); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3); }
 
@@ -330,14 +330,14 @@ tbody tr:hover {
   color: var(--theme-text-primary);
 }
 
-.btn-ver { background: rgba(90, 120, 220, 0.15); color: #9DB5FF; }
-.btn-ver:hover { background: rgba(90, 120, 220, 0.25); color: var(--theme-text-primary); transform: translateY(-2px); }
+.btn-ver { background: var(--color-accent-admin-bg); color: var(--color-accent-admin); }
+.btn-ver:hover { background: var(--color-accent-admin-hover-bg); color: var(--theme-text-primary); transform: translateY(-2px); }
 
 .btn-pdf, .btn-edit-status { background: rgba(245, 158, 11, 0.15); color: #fcd34d; }
 .btn-pdf:hover, .btn-edit-status:hover { background: rgba(245, 158, 11, 0.25); color: var(--theme-text-primary); transform: translateY(-2px); }
 
-.btn-revert { background: rgba(239, 68, 68, 0.15); color: #ff8a8a; }
-.btn-revert:hover { background: rgba(239, 68, 68, 0.25); color: var(--theme-text-primary); transform: translateY(-2px); }
+.btn-revert { background: var(--color-danger-bg); color: var(--color-danger-muted); }
+.btn-revert:hover { background: var(--color-danger-hover-bg); color: var(--theme-text-primary); transform: translateY(-2px); }
 
 .btn-textual {
   padding: 8px 12px;
@@ -347,7 +347,7 @@ tbody tr:hover {
 
 .btn-imprimir {
   background: rgba(76, 175, 80, 0.15);
-  color: #a7f3d0;
+  color: var(--color-success-soft);
   padding: 10px 20px;
   font-weight: 600;
   gap: 8px;
@@ -382,8 +382,8 @@ tbody tr:hover {
 }
 
 .btn-page:hover:not(:disabled) {
-  background: rgba(90, 120, 220, 0.15);
-  border-color: rgba(90, 120, 220, 0.3);
+  background: var(--color-accent-admin-bg);
+  border-color: var(--color-accent-admin-border);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
@@ -429,7 +429,7 @@ tbody tr:hover {
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--theme-overlay-bg);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -467,7 +467,7 @@ tbody tr:hover {
   justify-content: space-between;
   align-items: center;
   padding: 20px 28px;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--theme-section-header-bg);
   border-bottom: 1px solid var(--theme-surface-glass-hover);
 }
 
@@ -494,8 +494,8 @@ tbody tr:hover {
 
 .modal-close:hover {
   background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #ff8a8a;
+  border-color: var(--color-danger-hover-border);
+  color: var(--color-danger-muted);
 }
 
 .modal-body {
@@ -507,7 +507,7 @@ tbody tr:hover {
 .modal-footer {
   padding: 20px 28px;
   border-top: 1px solid var(--theme-surface-glass-hover);
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--theme-section-header-bg);
 }
 
 .modal-actions {
@@ -533,7 +533,7 @@ tbody tr:hover {
 }
 
 .btn-editar {
-  background: linear-gradient(135deg, rgba(30, 40, 80, 0.95), rgba(20, 30, 60, 0.95));
+  background: var(--theme-surface-glass-active);
   color: var(--theme-text-primary);
   padding: 10px 20px;
   border-radius: var(--theme-radius-btn);
@@ -548,7 +548,7 @@ tbody tr:hover {
 }
 
 .btn-editar:hover:not(:disabled) {
-  background: rgba(30, 40, 80, 0.95);
+  background: var(--theme-surface-glass-active);
   box-shadow: 0 8px 25px rgba(90, 120, 220, 0.4);
   transform: translateY(-2px);
 }
@@ -630,7 +630,7 @@ tbody tr:hover {
 
 .total-price-large {
   font-size: 1.4rem;
-  color: #a7f3d0;
+  color: var(--color-success-soft);
   font-family: var(--font-heading);
 }
 

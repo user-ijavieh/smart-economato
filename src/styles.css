@@ -52,6 +52,53 @@
   --theme-danger-bg: rgba(239, 68, 68, 0.08);
   --theme-danger-border: rgba(239, 68, 68, 0.35);
 
+  /* Semantic colors - dark mode */
+  --color-success: #34d399;
+  --color-success-muted: #a7f3d0;
+  --color-success-soft: #a7f3d0;
+  --color-success-bg: rgba(16, 185, 129, 0.15);
+  --color-success-border: rgba(16, 185, 129, 0.3);
+  --color-success-hover-bg: rgba(16, 185, 129, 0.25);
+  --color-success-hover-border: rgba(16, 185, 129, 0.5);
+
+  --color-danger: #f87171;
+  --color-danger-muted: #ff8a8a;
+  --color-danger-soft: #fca5a5;
+  --color-danger-bg: rgba(239, 68, 68, 0.15);
+  --color-danger-border: rgba(239, 68, 68, 0.3);
+  --color-danger-hover-bg: rgba(239, 68, 68, 0.25);
+  --color-danger-hover-border: rgba(239, 68, 68, 0.5);
+
+  --color-warning: #fde047;
+  --color-warning-muted: #facc15;
+  --color-warning-soft: #fde68a;
+  --color-warning-bg: rgba(250, 204, 21, 0.15);
+  --color-warning-border: rgba(250, 204, 21, 0.3);
+
+  --color-info: #93c5fd;
+  --color-info-bg: rgba(59, 130, 246, 0.15);
+  --color-info-border: rgba(59, 130, 246, 0.3);
+
+  --color-accent-admin: #9DB5FF;
+  --color-accent-admin-bg: rgba(90, 120, 220, 0.15);
+  --color-accent-admin-border: rgba(90, 120, 220, 0.3);
+  --color-accent-admin-hover-bg: rgba(90, 120, 220, 0.25);
+  --color-accent-admin-hover-border: rgba(90, 120, 220, 0.4);
+
+  --color-success-accent: rgba(74, 222, 128, 0.8);
+  --color-warning-accent: rgba(250, 204, 21, 0.8);
+  --color-admin-accent: rgba(90, 120, 220, 0.8);
+
+  /* Section headers and native controls */
+  --theme-section-header-bg: rgba(0, 0, 0, 0.3);
+  --theme-section-header-bg-strong: rgba(0, 0, 0, 0.4);
+  --theme-option-bg: #1e1e1e;
+  --theme-color-scheme: dark;
+
+  /* Heading glow */
+  --theme-heading-glow: 0 0 10px var(--brand-glow);
+  --theme-heading-glow-admin: 0 0 10px rgba(90, 120, 220, 0.4);
+
   /* Table-specific */
   --theme-table-header-bg: rgba(0, 0, 0, 0.4);
   --theme-table-row-hover: rgba(255, 255, 255, 0.03);
@@ -69,6 +116,16 @@
   --theme-sidebar-section-label-color: rgba(255, 255, 255, 0.28);
   --theme-sidebar-logout-color: rgba(255, 255, 255, 0.35);
   --theme-sidebar-toggle-svg-color: rgba(255, 255, 255, 0.40);
+
+  /* Toast / Alert Notification */
+  --theme-toast-bg: rgba(15, 15, 15, 0.85);
+  --theme-toast-border: rgba(255, 255, 255, 0.1);
+  --theme-toast-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --theme-toast-title: #ffffff;
+  --theme-toast-message: rgba(255, 255, 255, 0.7);
+  --theme-toast-close: #9ca3af;
+  --theme-toast-close-hover-bg: rgba(255, 255, 255, 0.1);
+  --theme-toast-close-hover-color: #ffffff;
 
   /* Notifications (kept dark in both themes) */
   --theme-notification-border: rgba(255, 255, 255, 0.1);
@@ -183,12 +240,78 @@
   --theme-sidebar-logout-color: rgba(0, 0, 0, 0.4);
   --theme-sidebar-toggle-svg-color: rgba(0, 0, 0, 0.35);
 
+  /* Toast / Alert Notification */
+  --theme-toast-bg: rgba(255, 255, 255, 0.92);
+  --theme-toast-border: rgba(0, 0, 0, 0.08);
+  --theme-toast-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+  --theme-toast-title: #1E293B;
+  --theme-toast-message: #64748B;
+  --theme-toast-close: #94A3B8;
+  --theme-toast-close-hover-bg: rgba(0, 0, 0, 0.06);
+  --theme-toast-close-hover-color: #1E293B;
+
   /* Danger */
   --theme-danger-bg: rgba(239, 68, 68, 0.06);
   --theme-danger-border: rgba(239, 68, 68, 0.20);
 
+  /* Semantic colors - light mode */
+  --color-success: #059669;
+  --color-success-muted: #10b981;
+  --color-success-soft: #10b981;
+  --color-success-bg: rgba(5, 150, 105, 0.08);
+  --color-success-border: rgba(5, 150, 105, 0.20);
+  --color-success-hover-bg: rgba(5, 150, 105, 0.12);
+  --color-success-hover-border: rgba(5, 150, 105, 0.35);
+
+  --color-danger: #dc2626;
+  --color-danger-muted: #ef4444;
+  --color-danger-soft: #ef4444;
+  --color-danger-bg: rgba(220, 38, 38, 0.06);
+  --color-danger-border: rgba(220, 38, 38, 0.18);
+  --color-danger-hover-bg: rgba(220, 38, 38, 0.10);
+  --color-danger-hover-border: rgba(220, 38, 38, 0.30);
+
+  --color-warning: #d97706;
+  --color-warning-muted: #f59e0b;
+  --color-warning-soft: #f59e0b;
+  --color-warning-bg: rgba(217, 119, 6, 0.08);
+  --color-warning-border: rgba(217, 119, 6, 0.20);
+
+  --color-info: #2563eb;
+  --color-info-bg: rgba(37, 99, 235, 0.06);
+  --color-info-border: rgba(37, 99, 235, 0.18);
+
+  --color-accent-admin: #3B82F6;
+  --color-accent-admin-bg: rgba(59, 130, 246, 0.06);
+  --color-accent-admin-border: rgba(59, 130, 246, 0.15);
+  --color-accent-admin-hover-bg: rgba(59, 130, 246, 0.10);
+  --color-accent-admin-hover-border: rgba(59, 130, 246, 0.25);
+
+  --color-success-accent: rgba(5, 150, 105, 0.6);
+  --color-warning-accent: rgba(217, 119, 6, 0.6);
+  --color-admin-accent: rgba(37, 99, 235, 0.6);
+
+  --theme-section-header-bg: rgba(0, 0, 0, 0.02);
+  --theme-section-header-bg-strong: rgba(0, 0, 0, 0.04);
+  --theme-option-bg: #ffffff;
+  --theme-color-scheme: light;
+  --theme-heading-glow: none;
+  --theme-heading-glow-admin: none;
+  --theme-text-muted: rgba(0, 0, 0, 0.30);
+  --theme-border-subtle: rgba(0, 0, 0, 0.04);
+
+  /* Premium light mode depth enhancements */
+  --theme-surface-glass: rgba(255, 255, 255, 0.80);
+  --theme-effect-glass: blur(28px);
+  --theme-shadow-card: 0 1px 3px rgba(15, 23, 42, 0.04), 0 4px 16px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.03);
+  --theme-shadow-hover: 0 4px 12px rgba(15, 23, 42, 0.06), 0 12px 40px rgba(15, 23, 42, 0.10), 0 0 0 1px rgba(0, 0, 0, 0.04);
+
+  --admin-scrollbar-track: rgba(0, 0, 0, 0.03);
+  --admin-scrollbar-thumb: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(96, 165, 250, 0.25));
+  --admin-scrollbar-thumb-hover: linear-gradient(135deg, rgba(59, 130, 246, 0.45), rgba(96, 165, 250, 0.45));
+
   /* Efectos */
-  --theme-effect-glass: blur(24px);
+  --theme-effect-glass: blur(28px);
 }
 
 [data-theme="light"] body.admin-theme,
@@ -202,6 +325,12 @@ body.admin-theme[data-theme="light"],
   --theme-sidebar-bg: #FFFFFF;
   --theme-sidebar-border: rgba(59, 130, 246, 0.10);
   --theme-sidebar-tint: rgba(59, 130, 246, 0.03);
+  --color-accent-admin: #2563eb;
+  --color-accent-admin-bg: rgba(37, 99, 235, 0.06);
+  --color-accent-admin-border: rgba(37, 99, 235, 0.12);
+  --theme-section-header-bg: rgba(37, 99, 235, 0.03);
+  --theme-section-header-bg-strong: rgba(37, 99, 235, 0.05);
+  --theme-heading-glow-admin: none;
 }
 
 /* Fuentes Sora */
