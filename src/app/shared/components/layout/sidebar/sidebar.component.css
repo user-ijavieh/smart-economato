@@ -7,7 +7,8 @@
   padding: 6px 12px;
   /* Deep warm-dark base — brand color surfaces only in accents */
   background:
-    linear-gradient(135deg, var(--theme-sidebar-tint) 0%, transparent 55%), var(--theme-sidebar-bg);
+    linear-gradient(135deg, var(--theme-sidebar-tint) 0%, transparent 55%),
+    linear-gradient(180deg, var(--theme-sidebar-bg) 0%, var(--theme-sidebar-bg-mid) 50%, var(--theme-sidebar-bg) 100%);
   border-right: 1px solid var(--theme-sidebar-border);
   box-shadow: 1px 0 0 rgba(184, 75, 68, 0.08), 6px 0 40px rgba(0, 0, 0, 0.65);
   position: fixed;
@@ -37,7 +38,8 @@
 
 #sidebar.admin-mode {
   background:
-    linear-gradient(135deg, var(--theme-sidebar-tint) 0%, transparent 55%), var(--theme-sidebar-bg);
+    linear-gradient(135deg, var(--theme-sidebar-tint) 0%, transparent 55%),
+    linear-gradient(180deg, var(--theme-sidebar-bg) 0%, var(--theme-sidebar-bg-mid) 50%, var(--theme-sidebar-bg) 100%);
   border-right-color: var(--theme-sidebar-border);
   box-shadow: 1px 0 0 rgba(90, 120, 220, 0.08), 6px 0 40px rgba(0, 0, 0, 0.65);
 }
@@ -169,7 +171,7 @@
   font-weight: 600;
   letter-spacing: 1.8px;
   text-transform: uppercase;
-  color: var(--theme-text-muted);
+  color: var(--theme-sidebar-section-label-color);
   white-space: nowrap;
   overflow: hidden;
   transition: opacity 0.2s ease;
@@ -207,7 +209,7 @@
   border-radius: 10px;
   padding: 9px 10px;
   text-decoration: none;
-  color: var(--theme-text-link-inactive);
+  color: var(--theme-sidebar-link-color);
   display: flex;
   align-items: center;
   gap: 11px;
@@ -218,7 +220,7 @@
 
 #sidebar svg {
   flex-shrink: 0;
-  fill: var(--theme-svg-inactive);
+  fill: var(--theme-sidebar-svg-color);
   transition: fill 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -231,12 +233,12 @@
 
 #sidebar a:hover {
   background: var(--theme-surface-glass-hover);
-  color: var(--theme-text-link-hover);
+  color: var(--theme-sidebar-link-hover-color);
   border-left-color: rgba(184, 75, 68, 0.40);
 }
 
 #sidebar a:hover svg {
-  fill: var(--theme-svg-hover);
+  fill: var(--theme-sidebar-svg-hover-color);
 }
 
 #sidebar.admin-mode a:hover {
@@ -262,11 +264,11 @@
 }
 
 .logout-item a {
-  color: var(--theme-text-muted) !important;
+  color: var(--theme-sidebar-logout-color) !important;
 }
 
 .logout-item a svg {
-  fill: var(--theme-svg-inactive) !important;
+  fill: var(--theme-sidebar-svg-color) !important;
 }
 
 .logout-item a:hover {
@@ -292,7 +294,7 @@
 
 #toggle-btn svg {
   transition: rotate 220ms cubic-bezier(0.4, 0, 0.2, 1);
-  fill: var(--theme-svg-inactive);
+  fill: var(--theme-sidebar-toggle-svg-color);
 }
 
 #toggle-btn.rotate svg {
@@ -304,7 +306,7 @@
 }
 
 #toggle-btn:hover svg {
-  fill: var(--theme-svg-hover);
+  fill: var(--theme-sidebar-svg-hover-color);
 }
 
 /** ===== SCROLLBAR ===== */

@@ -73,7 +73,7 @@ main.main-expanded {
   :host-context([data-theme="light"]) .mobile-theme-toggle {
     background: rgba(255, 255, 255, 0.8);
     border-color: rgba(0, 0, 0, 0.08);
-    color: #475569;
+    color: var(--theme-svg-hover);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   }
 

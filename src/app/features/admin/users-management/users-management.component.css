@@ -976,7 +976,7 @@ tr.row-hidden .user-avatar-small {
   border-radius: 10px;
   background: rgba(var(--admin-rgb, 90, 120, 220), 0.08);
   padding: 8px 10px;
-  color: #dce6ff;
+  color: var(--theme-text-accent-light);
   font-size: 0.82rem;
   font-weight: 600;
 }
@@ -1002,7 +1002,7 @@ tr.row-hidden .user-avatar-small {
   height: 36px;
   background: rgba(90, 120, 220, 0.3);
   border: 1px solid rgba(90, 120, 220, 0.45);
-  color: #dbe5ff;
+  color: var(--theme-text-accent-light);
 }
 
 .student-info,
@@ -1014,7 +1014,7 @@ tr.row-hidden .user-avatar-small {
 
 .student-name,
 .teacher-name {
-  color: #f4f6ff;
+  color: var(--theme-text-bright);
   font-size: 0.92rem;
   font-weight: 600;
   white-space: nowrap;
@@ -1063,7 +1063,7 @@ tr.row-hidden .user-avatar-small {
   border: 1px solid rgba(90, 120, 220, 0.35);
   background: rgba(90, 120, 220, 0.15);
   padding: 6px 8px 6px 6px;
-  color: #e6ecff;
+  color: var(--theme-text-accent-lighter);
   cursor: grab;
   animation: chipIn 0.2s ease-out;
 }
@@ -1170,7 +1170,7 @@ tr.row-hidden .user-avatar-small {
 }
 
 .actions-summary {
-  color: #e6ecff;
+  color: var(--theme-text-accent-lighter);
   font-size: 0.95rem;
   font-weight: 600;
 }
