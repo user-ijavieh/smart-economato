@@ -179,8 +179,8 @@
         <input type="text" [(ngModel)]="auditSearchTerm" placeholder="Buscar en auditorías..." (ngModelChange)="onAuditSearch()" />
         <select [(ngModel)]="auditMovementTypeFilter" (ngModelChange)="onAuditMovementTypeFilterChange()" class="action-select">
             <option value="">Todos los movimientos</option>
-            @for (type of movementTypes; track type) {
-            <option [value]="type">{{ type }}</option>
+            @for (type of movementTypeOptions; track type.value) {
+            <option [value]="type.value">{{ type.label }}</option>
             }
         </select>
         <div class="date-range-group">
