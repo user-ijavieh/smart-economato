@@ -37,6 +37,7 @@
   padding: 24px 30px;
   border-bottom: 1px solid var(--theme-surface-glass-hover);
   background: linear-gradient(to right, color-mix(in srgb, var(--brand-primary) 15%, transparent), transparent);
+  border-radius: 17px 17px 0 0;
 }
 
 .dialog-header h2 {

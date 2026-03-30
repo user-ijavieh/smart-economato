@@ -422,11 +422,17 @@ export class KitchenManagementComponent implements OnInit {
       });
   }
 
-  downloadReportPdf(): void {
+  async downloadReportPdf(): Promise<void> {
     if (this.reportRange === 'CUSTOM' && (!this.reportStartDate || !this.reportEndDate)) {
       this.messageService.showWarning('Debes indicar fecha de inicio y fin para rango personalizado');
       return;
     }
+
+    const confirmed = await this.messageService.confirm(
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo PDF?'
+    );
+    if (!confirmed) return;
 
     this.kitchenService.downloadKitchenReportPdf(this.reportRange, this.reportStartDate, this.reportEndDate)
       .subscribe({

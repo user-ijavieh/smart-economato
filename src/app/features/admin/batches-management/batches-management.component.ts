@@ -34,7 +34,7 @@ export class BatchesManagementComponent implements OnInit {
   
   // Filters & Search
   searchTerm = '';
-  statusFilter: 'all' | 'active' | 'depleted' | 'expired' = 'all';
+  statusFilter: 'all' | 'active' | 'depleted' | 'expired' = 'active';
   expiringDays = 7;
 
   // Pagination
@@ -167,7 +167,7 @@ export class BatchesManagementComponent implements OnInit {
 
   clearFilters(): void {
     this.searchTerm = '';
-    this.statusFilter = 'all';
+    this.statusFilter = 'active';
     this.loadBatches(0);
   }
 

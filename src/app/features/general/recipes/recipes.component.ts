@@ -242,8 +242,14 @@ export class RecipesComponent implements OnInit {
     return Array.from({ length: this.totalPages }, (_, i) => i);
   }
 
-  printRecipe(): void {
+  async printRecipe(): Promise<void> {
     if (!this.selectedRecipe) return;
+
+    const confirmed = await this.messageService.confirm(
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo PDF?'
+    );
+    if (!confirmed) return;
 
     this.recipeService.getPdf(this.selectedRecipe.id).subscribe({
       next: (blob) => {

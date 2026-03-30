@@ -153,12 +153,18 @@ export class OrdersComponent implements OnInit {
     this.selectedOrder = null;
   }
 
-  public printOrder(order: Order, event?: Event): void {
+  public async printOrder(order: Order, event?: Event): Promise<void> {
     if (event) {
       event.stopPropagation();
     }
 
     if (!order?.id) return;
+
+    const confirmed = await this.messageService.confirm(
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo PDF?'
+    );
+    if (!confirmed) return;
 
     this.orderService.downloadPdf(order.id).subscribe({
       next: (blob) => {

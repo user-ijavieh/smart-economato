@@ -178,7 +178,10 @@ export class ProductsManagementComponent implements OnInit {
     this.products = []; // Limpiar productos anteriores
     this.filteredProducts = [];
     this.cdr.detectChanges();
-    this.loadProducts();
+
+    setTimeout(() => {
+      this.loadProducts();
+    });
   }
 
   loadSuppliers(): void {
@@ -564,7 +567,13 @@ export class ProductsManagementComponent implements OnInit {
   }
 
 
-  exportToExcel(): void {
+  async exportToExcel(): Promise<void> {
+    const confirmed = await this.messageService.confirm(
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo Excel?'
+    );
+    if (!confirmed) return;
+
     this.productService.exportToExcel().subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);
