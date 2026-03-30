@@ -108,7 +108,12 @@ export class ProductsManagementComponent implements OnInit {
   // Cache for audits by page + filters
   auditCache = new Map<string, any>();
 
-  movementTypes = ['ENTRADA', 'SALIDA', 'AJUSTE', 'RECEPCION', 'PRODUCCION'];
+  movementTypeOptions = [
+    { value: 'MOSTRAR', label: 'Mostrar' },
+    { value: 'OCULTAR', label: 'Ocultar' },
+    { value: 'MODIFICACION', label: 'Modificación' },
+    { value: 'CREACION', label: 'Creación' }
+  ];
 
   ngOnInit(): void {
     this.loadProducts();
