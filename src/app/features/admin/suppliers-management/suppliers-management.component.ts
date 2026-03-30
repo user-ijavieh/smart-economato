@@ -9,6 +9,7 @@ import { Supplier, SupplierRequest } from '../../../shared/models/supplier.model
 import { SupplierFormModalComponent } from './supplier-form-modal/supplier-form-modal.component';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
+import { ScrollService } from '../../../core/services/scroll.service';
 
 @Component({
     selector: 'app-suppliers-management',
@@ -26,6 +27,7 @@ import { ToastComponent } from '../../../shared/components/layout/toast/toast.co
 export class SuppliersManagementComponent implements OnInit {
     private supplierService = inject(SupplierService);
     private cdr = inject(ChangeDetectorRef);
+    private scrollService = inject(ScrollService);
     messageService = inject(MessageService);
 
     suppliers: Supplier[] = [];
@@ -167,16 +169,8 @@ export class SuppliersManagementComponent implements OnInit {
     changePage(delta: number): void {
         const newPage = this.currentPage + delta;
         if (newPage >= 0 && newPage < this.totalPages) {
-            this.scrollToTop();
+            this.scrollService.scrollToTop();
             this.loadSuppliers(newPage);
-        }
-    }
-
-    private scrollToTop(): void {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        const container = document.querySelector('.contenedor-principal');
-        if (container) {
-            container.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 

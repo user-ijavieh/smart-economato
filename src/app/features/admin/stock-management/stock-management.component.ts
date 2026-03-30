@@ -25,6 +25,7 @@ import { StockLedgerService } from '../../../core/services/stock-ledger.service'
 import { StockLedgerResponseDTO, IntegrityCheckResponseDTO, StockSnapshotResponseDTO, ConsumptionBreakdownDTO } from '../../../shared/models/stock-ledger.model';
 import { Product } from '../../../shared/models/product.model';
 import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.model';
+import { ScrollService } from '../../../core/services/scroll.service';
 
 
 type Tab = 'alerts' | 'predictions' | 'ledger';
@@ -45,6 +46,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     private authService = inject(AuthService);
     private stockLedgerService = inject(StockLedgerService);
     private productBatchService = inject(ProductBatchService);
+    private scrollService = inject(ScrollService);
     messageService = inject(MessageService);
 
     loadingAlerts = true;
@@ -449,18 +451,10 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         this.ngZone.run(() => {
             const next = this.currentPage + delta;
             if (next >= 0 && next < this.totalPages) {
-                this.scrollToTop();
+                this.scrollService.scrollToTop();
                 this.loadPredictions(next);
             }
         });
-    }
-
-    private scrollToTop(): void {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        const container = document.querySelector('.contenedor-principal');
-        if (container) {
-            container.scrollTo({ top: 0, behavior: 'smooth' });
-        }
     }
 
     openPredictionMobileModal(prediction: StockPredictionResponseDTO): void {
@@ -731,7 +725,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     onLedgerPageChange(delta: number): void {
         if (!this.selectedProductId) return;
         this.ledgerPage += delta;
-        this.scrollToTop();
+        this.scrollService.scrollToTop();
         this.loadLedgerHistory(this.selectedProductId);
     }
 

@@ -5,6 +5,7 @@ import { ProductBatchService } from '../../../core/services/product-batch.servic
 import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.model';
 import { BatchExpirationModalComponent } from '../stock-management/batch-expiration-modal/batch-expiration-modal.component';
 import { MessageService } from '../../../core/services/message.service';
+import { ScrollService } from '../../../core/services/scroll.service';
 
 type ManagementTab = 'all' | 'control';
 type ControlSubTab = 'expiring' | 'expired';
@@ -20,6 +21,7 @@ export class BatchesManagementComponent implements OnInit {
   private batchService = inject(ProductBatchService);
   private cdr = inject(ChangeDetectorRef);
   private messageService = inject(MessageService);
+  private scrollService = inject(ScrollService);
 
   // Tabs
   activeTab: ManagementTab = 'all';
@@ -144,7 +146,7 @@ export class BatchesManagementComponent implements OnInit {
       } else {
         this.loadControlBatches(next);
       }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      this.scrollService.scrollToTop();
     }
   }
 

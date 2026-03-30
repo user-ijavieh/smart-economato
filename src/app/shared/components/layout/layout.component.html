@@ -12,7 +12,7 @@
   }
 </button>
 
-<main [class.main-expanded]="!sidebarOpen" [class.main-collapsed]="sidebarOpen">
+<main class="scrollable-content" [class.main-expanded]="!sidebarOpen" [class.main-collapsed]="sidebarOpen">
   <div class="route-animation-wrapper" [@routeAnimations]="prepareRoute(outlet)">
     <router-outlet #outlet="outlet"></router-outlet>
   </div>
