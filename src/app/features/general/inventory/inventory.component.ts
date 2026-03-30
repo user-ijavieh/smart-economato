@@ -17,6 +17,7 @@ import { ProductDetailModalComponent } from './product-detail-modal/product-deta
 import { BarcodeScannerComponent } from '../barcode-scanner/barcode-scanner.component';
 import { ProductBatchService } from '../../../core/services/product-batch.service';
 import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.model';
+import { ScrollService } from '../../../core/services/scroll.service';
 import { finalize, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
@@ -53,6 +54,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private productBatchService = inject(ProductBatchService);
   private cdr = inject(ChangeDetectorRef);
+  private scrollService = inject(ScrollService);
 
   // Listas de datos
   products: Product[] = [];
@@ -132,37 +134,12 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   onPageChange(newPage: number): void {
     this.page = newPage;
-    this.scrollToTop();
+    this.scrollService.scrollToTop();
     this.cdr.detectChanges();
     // Delay loading to let the scroll start smoothly and button animation finish
     setTimeout(() => {
       this.loadProducts();
     }, 100);
-  }
-
-  private scrollToTop(): void {
-    const container = document.querySelector('.contenedor-principal');
-    if (container) {
-      // Much smoother and more deliberate scroll behavior (800ms)
-      let start = container.scrollTop;
-      let startWindow = window.scrollY;
-      let startTime = performance.now();
-      const duration = 800; 
-      const animateScroll = (currentTime: number) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        // Using a more eased cubic bezier for smoothness
-        const easeInOutCubic = (t: number) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-        container.scrollTop = start * (1 - easeInOutCubic(progress));
-        window.scrollTo(0, startWindow * (1 - easeInOutCubic(progress)));
-        if (progress < 1) {
-          requestAnimationFrame(animateScroll);
-        }
-      };
-      requestAnimationFrame(animateScroll);
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
   }
 
   // --- Expirations & Batches ---
@@ -228,7 +205,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
       this.sortDir = 'asc';
     }
     this.page = 0;
-    this.scrollToTop();
+    this.scrollService.scrollToTop();
     this.cdr.detectChanges(); // Fix freeze on sort
     setTimeout(() => {
       this.loadProducts();

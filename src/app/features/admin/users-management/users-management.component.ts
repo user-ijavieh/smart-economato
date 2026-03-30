@@ -8,6 +8,7 @@ import { User, UserRequest, BatchAssignResponse } from '../../../shared/models/u
 import { UserFormModalComponent } from './user-form-modal/user-form-modal.component';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
+import { ScrollService } from '../../../core/services/scroll.service';
 
 @Component({
     selector: 'app-users-management',
@@ -25,6 +26,7 @@ import { ToastComponent } from '../../../shared/components/layout/toast/toast.co
 export class UsersManagementComponent implements OnInit {
     private userService = inject(UserService);
     private cdr = inject(ChangeDetectorRef);
+    private scrollService = inject(ScrollService);
     messageService = inject(MessageService);
 
     users: User[] = [];
@@ -250,16 +252,8 @@ export class UsersManagementComponent implements OnInit {
     changePage(delta: number): void {
         const newPage = this.currentPage + delta;
         if (newPage >= 0 && newPage < this.totalPages) {
-            this.scrollToTop();
+            this.scrollService.scrollToTop();
             this.loadUsers(newPage);
-        }
-    }
-
-    private scrollToTop(): void {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        const container = document.querySelector('.contenedor-principal');
-        if (container) {
-            container.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 
@@ -269,7 +263,7 @@ export class UsersManagementComponent implements OnInit {
         if (this.activeTab === tab) return;
         this.clearSelection();
         this.activeTab = tab;
-        this.scrollToTop();
+        this.scrollService.scrollToTop();
         if (tab === 'assignments' && !this.assignmentsLoaded) {
             this.loadAssignmentData();
         }

@@ -9,6 +9,7 @@ import { Recipe, RecipeRequest } from '../../../shared/models/recipe.model';
 import { RecipeDetailModalComponent } from './recipe-detail-modal/recipe-detail-modal.component';
 import { RecipeEditModalComponent } from './recipe-edit-modal/recipe-edit-modal.component';
 import { RecipeCreateModalComponent } from './recipe-create-modal/recipe-create-modal.component';
+import { ScrollService } from '../../../core/services/scroll.service';
 import { finalize, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
@@ -44,6 +45,7 @@ export class RecipesComponent implements OnInit {
   private messageService = inject(MessageService);
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
+  private scrollService = inject(ScrollService);
 
   recipes: Recipe[] = [];
   // filteredRecipes no longer needed as we filter on backend or just show current page
@@ -217,7 +219,7 @@ export class RecipesComponent implements OnInit {
   onPageChange(newPage: number): void {
     if (newPage >= 0 && newPage < this.totalPages) {
       this.currentPage = newPage;
-      this.scrollToTop();
+      this.scrollService.scrollToTop();
       this.cdr.detectChanges();
       // Delay loading to let the scroll start smoothly and button animation finish
       setTimeout(() => {
@@ -234,31 +236,6 @@ export class RecipesComponent implements OnInit {
     this.pageSize = Number(event.target.value);
     this.currentPage = 0; // Reset to first page
     this.loadRecipes();
-  }
-
-  private scrollToTop(): void {
-    const container = document.querySelector('.contenedor-principal');
-    if (container) {
-      // Much smoother and more deliberate scroll behavior (800ms)
-      let start = container.scrollTop;
-      let startWindow = window.scrollY;
-      let startTime = performance.now();
-      const duration = 800; 
-      const animateScroll = (currentTime: number) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        // Using a more eased cubic bezier for smoothness
-        const easeInOutCubic = (t: number) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-        container.scrollTop = start * (1 - easeInOutCubic(progress));
-        window.scrollTo(0, startWindow * (1 - easeInOutCubic(progress)));
-        if (progress < 1) {
-          requestAnimationFrame(animateScroll);
-        }
-      };
-      requestAnimationFrame(animateScroll);
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
   }
 
   get pages(): number[] {
