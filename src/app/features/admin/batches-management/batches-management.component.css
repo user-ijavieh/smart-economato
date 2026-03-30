@@ -357,7 +357,7 @@ tr:hover { background: var(--theme-surface-glass-hover); }
 tr.expired-row td { background: rgba(239, 68, 68, 0.05); }
 tr.expired-row:hover td { background: rgba(239, 68, 68, 0.1); }
 
-tr.depleted-row td { background: var(--theme-surface-glass-hover); opacity: 0.7; }
+tr.depleted-row td { opacity: 1; }
 tr.depleted-row:hover td { background: var(--theme-surface-glass-hover); }
 
 .id-badge {
@@ -475,8 +475,16 @@ tr.depleted-row:hover td { background: var(--theme-surface-glass-hover); }
 
 /** ===== ACCIONES ===== */
 .actions-cell {
-  display: flex;
-  gap: 6px;
+  white-space: nowrap;
+}
+
+.actions-cell > * + * {
+  margin-left: 6px;
+}
+
+.actions-cell > button {
+  display: inline-flex;
+  vertical-align: middle;
 }
 
 .btn-editar,

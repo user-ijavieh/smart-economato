@@ -214,7 +214,14 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 .badge-depleted { background: rgba(156, 163, 175, 0.15); color: #d1d5db; border: 1px solid rgba(156, 163, 175, 0.3); }
 
 /** ===== ACTIONS CELL ===== */
-.actions-cell { display: flex; gap: 8px; }
+.actions-cell { white-space: nowrap; }
+
+.actions-cell > * + * { margin-left: 8px; }
+
+.actions-cell > button {
+  display: inline-flex;
+  vertical-align: middle;
+}
 
 .btn-ver, .btn-edit-status {
   padding: 8px;
