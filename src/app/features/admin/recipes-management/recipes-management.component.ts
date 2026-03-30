@@ -689,7 +689,13 @@ export class RecipesManagementComponent implements OnInit {
 
     // ── PDF ──
 
-    downloadPdf(recipe: Recipe): void {
+    async downloadPdf(recipe: Recipe): Promise<void> {
+        const confirmed = await this.messageService.confirm(
+            'Confirmar descarga',
+            '¿Deseas descargar este archivo PDF?'
+        );
+        if (!confirmed) return;
+
         this.recipeService.getPdf(recipe.id).subscribe({
             next: (blob) => {
                 const url = window.URL.createObjectURL(blob);

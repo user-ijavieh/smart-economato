@@ -38,7 +38,9 @@ export class OrderReceptionModalComponent implements OnInit {
   async confirmCancel() {
     const confirmed = await this.messageService.confirm(
       'Cancelar Recepción',
-      '¿Estás seguro de que deseas cancelar? Los datos introducidos no se guardarán.'
+      '¿Estás seguro de que deseas cancelar? Los datos introducidos no se guardarán.',
+      'Cancelar',
+      'Volver'
     );
     if (confirmed) {
       this.close();

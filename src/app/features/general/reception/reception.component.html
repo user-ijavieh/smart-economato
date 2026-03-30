@@ -97,7 +97,7 @@
               @for (detail of (order.details || []).slice(0, 2); track $index) {
               <div class="item-preview">
                 <span>{{ detail.productName }}</span>
-                <span>{{ detail.quantity }} uds</span>
+                <span>{{ detail.quantityReceived ?? detail.quantity }} uds</span>
               </div>
               }
               @if ((order.details?.length || 0) > 2) {
@@ -107,14 +107,14 @@
           </div>
 
           <div class="order-actions">
+            <button class="btn-action btn-secondary" (click)="cancelOrder(order)">
+              Cancelar
+            </button>
             <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
               Ver Detalles
             </button>
             <button class="btn-action btn-primary" (click)="reviewOrder(order)">
-              Revisar Orden
-            </button>
-            <button class="btn-action btn-secondary" (click)="cancelOrder(order)">
-              Cancelar
+              Mover a Revisión
             </button>
           </div>
         </div>
@@ -173,7 +173,7 @@
               @for (detail of (order.details || []).slice(0, 2); track $index) {
               <div class="item-preview">
                 <span>{{ detail.productName }}</span>
-                <span>{{ detail.quantity }} uds</span>
+                <span>{{ detail.quantityReceived ?? detail.quantity }} uds</span>
               </div>
               }
               @if ((order.details?.length || 0) > 2) {
@@ -331,9 +331,6 @@
             </button>
             <button class="btn-action btn-primary" (click)="reclamarFaltantes(order)">
               Reclamar Faltantes
-            </button>
-            <button class="btn-action btn-delete" (click)="deleteOrder(order)">
-              Eliminar
             </button>
           </div>
         </div>

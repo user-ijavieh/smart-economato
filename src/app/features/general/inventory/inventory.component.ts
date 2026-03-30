@@ -270,7 +270,13 @@ export class InventoryComponent implements OnInit, OnDestroy {
     return this.sortColumn !== 'id' || this.sortDir !== 'asc';
   }
 
-  exportToExcel(): void {
+  async exportToExcel(): Promise<void> {
+    const confirmed = await this.messageService.confirm(
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo Excel?'
+    );
+    if (!confirmed) return;
+
     this.productService.exportToExcel().subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);

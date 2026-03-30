@@ -803,7 +803,13 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         });
     }
 
-    downloadPdfById(productId: number): void {
+    async downloadPdfById(productId: number): Promise<void> {
+        const confirmed = await this.messageService.confirm(
+            'Confirmar descarga',
+            '¿Deseas descargar este archivo PDF?'
+        );
+        if (!confirmed) return;
+
         this.downloadingPdf = true;
         this.stockLedgerService.downloadLedgerPdf(productId).pipe(
             finalize(() => { this.downloadingPdf = false; this.cdr.detectChanges(); })
@@ -833,7 +839,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
 
     downloadPdf(): void {
         if (!this.selectedProductId) return;
-        this.downloadPdfById(this.selectedProductId);
+        void this.downloadPdfById(this.selectedProductId);
     }
 
     async resetProductHistory(): Promise<void> {

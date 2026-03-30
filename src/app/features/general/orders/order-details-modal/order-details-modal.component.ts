@@ -102,8 +102,14 @@ export class OrderDetailsModalComponent {
     }
   }
 
-  printOrder(): void {
+  async printOrder(): Promise<void> {
     if (!this.order?.id) return;
+
+    const confirmed = await this.messageService.confirm(
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo PDF?'
+    );
+    if (!confirmed) return;
 
     this.isDownloading = true;
     this.orderService.downloadPdf(this.order.id).subscribe({
