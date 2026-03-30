@@ -188,7 +188,7 @@
         </div>
 
         <div class="form-item">
-          <label>Productos Afectados</label>
+          <label class="products-affected-title">Productos Afectados</label>
           <div class="custom-select-container">
             <div class="custom-select-trigger" (click)="toggleProductDropdown()" [class.active]="showProductDropdown">
               <span class="selected-value">
@@ -219,7 +219,7 @@
           </div>
         </div>
 
-        <div class="form-item">
+        <div class="form-item reason-form-item">
           <label>Motivo de la Alerta</label>
           <textarea [(ngModel)]="reason" class="reason-textarea" placeholder="Escribe el motivo detallado..."></textarea>
         </div>

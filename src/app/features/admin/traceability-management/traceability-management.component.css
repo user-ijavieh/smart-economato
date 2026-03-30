@@ -348,6 +348,44 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 .form-row { display: flex; gap: 16px; }
 .form-row .form-item { flex: 1; margin-bottom: 0; }
 .form-item label { color: var(--theme-text-secondary); font-weight: 600; font-size: 0.9rem; }
+.products-affected-title { display: inline-block; margin-top: 6px; }
+.reason-form-item { margin-top: -6px; }
+
+.date-input-full {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: var(--theme-radius-input);
+  border: 1.5px solid var(--theme-border-glass);
+  background: var(--theme-input-bg);
+  color: var(--theme-text-primary);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.date-input-full:focus {
+  outline: none;
+  border-color: rgba(90, 120, 220, 0.6);
+  background: var(--theme-surface-glass-active);
+  box-shadow: 0 0 0 3px rgba(90, 120, 220, 0.2);
+}
+
+.date-input-full::-webkit-calendar-picker-indicator {
+  filter: invert(1) opacity(0.7);
+  cursor: pointer;
+}
+
+.date-input-full::-webkit-datetime-edit,
+.date-input-full::-webkit-datetime-edit-fields-wrapper,
+.date-input-full::-webkit-datetime-edit-text,
+.date-input-full::-webkit-datetime-edit-month-field,
+.date-input-full::-webkit-datetime-edit-day-field,
+.date-input-full::-webkit-datetime-edit-year-field,
+.date-input-full::-webkit-datetime-edit-hour-field,
+.date-input-full::-webkit-datetime-edit-minute-field {
+  color: var(--theme-text-primary);
+}
+
 .reason-textarea {
   width: 100%; padding: 12px 15px; border-radius: var(--theme-radius-input);
   border: 1.5px solid var(--theme-border-glass); background: var(--theme-input-bg);
