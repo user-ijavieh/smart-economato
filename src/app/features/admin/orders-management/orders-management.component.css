@@ -312,9 +312,17 @@ tbody tr:hover {
 /** ===== ACTIONS ===== */
 .actions-col { text-align: center; }
 .actions-cell {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.actions-cell > * + * {
+  margin-left: 8px;
+}
+
+.actions-cell > button {
+  display: inline-flex;
+  vertical-align: middle;
 }
 
 .btn-ver, .btn-pdf, .btn-edit-status, .btn-revert, .btn-imprimir {

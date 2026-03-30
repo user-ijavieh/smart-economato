@@ -460,9 +460,16 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 }
 
 .actions-cell {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-start;
+  white-space: nowrap;
+}
+
+.actions-cell > * + * {
+  margin-left: 8px;
+}
+
+.actions-cell > button {
+  display: inline-flex;
+  vertical-align: middle;
 }
 
 .empty-row {
