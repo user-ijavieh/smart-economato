@@ -16,18 +16,6 @@
   color: var(--theme-text-primary);
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--theme-text-primary);
-  margin-bottom: 8px;
-}
-
 .input-group {
   display: flex;
   align-items: center;

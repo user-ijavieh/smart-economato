@@ -39,38 +39,6 @@ form {
   gap: 15px;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.form-group label {
-  font-weight: bold;
-  color: #333;
-  font-size: 0.9rem;
-  font-family: var(--font-subheading);
-  font-weight: var(--font-subheading-weight);
-}
-
-.form-group input,
-.form-group select {
-  padding: 12px 15px;
-  border-radius: 8px;
-  border: 2px solid var(--theme-border-glass);
-  font-size: 0.9rem;
-  font-family: var(--font-body);
-  font-weight: var(--font-body-weight);
-  transition: all 0.3s ease;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: var(--brand-primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 10%, transparent);
-}
-
 .form-actions {
   display: flex;
   gap: 10px;

@@ -1,15 +1,15 @@
-<div class="header-recetas">
+<div class="admin-page-header">
   <h1>Trazabilidad y Crisis</h1>
 </div>
 
-<div class="tab-bar">
-  <button type="button" class="tab-btn" [class.active]="activeView === 'active'" (click)="activeView = 'active'">
+<div class="admin-tab-bar">
+  <button type="button" class="admin-tab-btn" [class.active]="activeView === 'active'" (click)="activeView = 'active'">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
       <path d="M12 2L1 21h22L12 2zm1 14h-2v-2h2v2zm0-4h-2V8h2v4z"/>
     </svg>
     Crisis Activas ({{ activeCrises.length }})
   </button>
-  <button type="button" class="tab-btn" [class.active]="activeView === 'history'" (click)="activeView = 'history'">
+  <button type="button" class="admin-tab-btn" [class.active]="activeView === 'history'" (click)="activeView = 'history'">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
       <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 1 1-8 8h1a7 7 0 1 0 7.515-6.981z"/>
       <path d="M8.5 4.5a.5.5 0 0 0-1 0v4h-3a.5.5 0 0 0 0 1h4a.5.5 0 0 0 .5-.5v-4z"/>
@@ -51,7 +51,7 @@
             <td><div class="id-badge">{{ crisis.crisisCode || ('CRISIS-' + crisis.crisisId) }}</div></td>
             <td>{{ crisis.supplierName }}</td>
             <td class="hide-on-mobile">{{ crisis.timestamp | date:'dd/MM/yyyy HH:mm' }}</td>
-            <td class="hide-on-mobile"><span class="status-badge badge-active">CUARENTENA</span></td>
+            <td class="hide-on-mobile"><span class="status-badge danger badge-active">CUARENTENA</span></td>
             <td class="actions-cell">
               <button class="btn-ver" (click)="openCrisisDetail(crisis)" title="Ver Detalle">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -100,7 +100,7 @@
             <td><div class="id-badge">{{ crisis.crisisCode || ('CRISIS-' + crisis.crisisId) }}</div></td>
             <td>{{ crisis.supplierName }}</td>
             <td class="hide-on-mobile">{{ crisis.timestamp | date:'dd/MM/yyyy HH:mm' }}</td>
-            <td class="hide-on-mobile"><span class="status-badge badge-lifted">LEVANTADA</span></td>
+            <td class="hide-on-mobile"><span class="status-badge success badge-lifted">LEVANTADA</span></td>
             <td class="actions-cell">
               <button class="btn-ver" (click)="openCrisisDetail(crisis)" title="Ver Detalle">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -258,8 +258,8 @@
                 <div class="batch-card-header">
                   <span class="batch-id">#{{ batch.batchId }}</span>
                   <div class="batch-badges">
-                    @if (batch.depleted) { <span class="status-badge badge-depleted">RETIRADO</span> }
-                    @if (batch.expired) { <span class="status-badge badge-expired">CADUCADO</span> }
+                    @if (batch.depleted) { <span class="status-badge admin badge-depleted">RETIRADO</span> }
+                    @if (batch.expired) { <span class="status-badge warning badge-expired">CADUCADO</span> }
                   </div>
                 </div>
                 <div class="batch-product-name">{{ batch.productName }}</div>
@@ -285,7 +285,7 @@
                   <tr>
                     <td><span class="id-badge">#{{ ord.orderId }}</span></td>
                     <td>{{ ord.supplierName }}</td>
-                    <td><span class="status-badge badge-lifted">{{ ord.status }}</span></td>
+                    <td><span class="status-badge success badge-lifted">{{ ord.status }}</span></td>
                     <td>{{ ord.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
                     <td>{{ ord.totalItems }} líneas</td>
                   </tr>
