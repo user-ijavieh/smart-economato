@@ -1,12 +1,13 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Recipe } from '../../../../shared/models/recipe.model';
+import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 
 @Component({
   selector: 'app-recipe-detail-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule, BaseModalComponent, DecimalPipe],
   templateUrl: './recipe-detail-modal.component.html',
   styleUrl: './recipe-detail-modal.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -24,12 +25,6 @@ export class RecipeDetailModalComponent {
 
   cookQuantity = 1;
   cookDetails = '';
-
-  onOverlayClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
-      this.close.emit();
-    }
-  }
 
   closeModal(): void {
     this.close.emit();

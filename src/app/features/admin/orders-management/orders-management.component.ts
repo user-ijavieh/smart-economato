@@ -13,6 +13,7 @@ import { Supplier } from '../../../shared/models/supplier.model';
 import { User } from '../../../shared/models/user.model';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { finalize } from 'rxjs';
 
 const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
@@ -27,7 +28,7 @@ const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
 @Component({
   selector: 'app-orders-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, ConfirmDialogComponent, ToastComponent],
+  imports: [CommonModule, FormsModule, ConfirmDialogComponent, ToastComponent, BaseModalComponent],
   templateUrl: './orders-management.component.html',
   styleUrl: './orders-management.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -474,12 +475,6 @@ export class OrdersManagementComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  onAuditOverlayClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
-      this.closeAuditDetail();
-    }
-  }
-
   // ── Order Detail Modal ──
   openOrderDetail(order: Order): void {
     this.selectedOrder = order;
@@ -598,12 +593,6 @@ export class OrdersManagementComponent implements OnInit {
     this.showOrderDetailModal = false;
     this.selectedOrder = null;
     this.cdr.markForCheck();
-  }
-
-  onOrderDetailOverlayClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
-      this.closeOrderDetail();
-    }
   }
 
 

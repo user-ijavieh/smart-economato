@@ -23,7 +23,7 @@
 
 <!-- Logout Confirmation Modal -->
 @if (showLogoutModal) {
-<div class="logout-modal-overlay modal-overlay-base" (click)="onLogoutOverlayClick($event)">
+<app-base-modal [showHeader]="false" size="sm" (closed)="cancelLogout()">
   <div class="logout-modal">
     <div class="logout-modal-icon">
       <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
@@ -35,10 +35,11 @@
     </div>
     <h2>¿Cerrar sesión?</h2>
     <p>Estás a punto de salir de tu cuenta. ¿Deseas continuar?</p>
-    <div class="logout-modal-actions">
-      <button class="btn-logout-cancel" (click)="cancelLogout()">Cancelar</button>
-      <button class="btn-logout-confirm" (click)="confirmLogout()">Cerrar Sesión</button>
-    </div>
   </div>
-</div>
+
+  <div modal-footer class="logout-modal-actions">
+    <button class="btn-logout-cancel" (click)="cancelLogout()">Cancelar</button>
+    <button class="btn-logout-confirm" (click)="confirmLogout()">Cerrar Sesión</button>
+  </div>
+</app-base-modal>
 }

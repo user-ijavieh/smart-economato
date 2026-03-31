@@ -1,13 +1,14 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { Order } from '../../../../shared/models/order.model';
 import { OrderService } from '../../../../core/services/order.service';
 import { MessageService } from '../../../../core/services/message.service';
+import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 
 @Component({
   selector: 'app-order-details-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BaseModalComponent, DecimalPipe],
   templateUrl: './order-details-modal.component.html',
   styleUrl: './order-details-modal.component.css'
 })
@@ -20,13 +21,9 @@ export class OrderDetailsModalComponent {
   private orderService = inject(OrderService);
   private messageService = inject(MessageService);
   isDownloading = false;
-  isClosing = false;
 
   close(): void {
-    this.isClosing = true;
-    setTimeout(() => {
-      this.closeModal.emit();
-    }, 280);
+    this.closeModal.emit();
   }
 
   getOrderTotal(): number {
