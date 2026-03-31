@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize, Observable, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -17,11 +17,12 @@ import { ReverseTraceabilityDTO } from '../../../shared/models/traceability.mode
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { ScrollService } from '../../../core/services/scroll.service';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 
 @Component({
   selector: 'app-kitchen-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, ConfirmDialogComponent, ToastComponent],
+  imports: [FormsModule, ConfirmDialogComponent, ToastComponent, BaseModalComponent, DatePipe, DecimalPipe, CurrencyPipe, AsyncPipe],
   templateUrl: './kitchen-management.component.html',
   styleUrl: './kitchen-management.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
