@@ -751,15 +751,8 @@
 
 
 @if (showManualAdjustmentModal) {
-<div class="modal-overlay" (click)="closeManualAdjustmentModal()">
-  <div class="modal-container" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2>Ajuste de Stock Manual</h2>
-      <button type="button" class="btn-close" (click)="closeManualAdjustmentModal()">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
-      </button>
-    </div>
-    
+<app-base-modal title="Ajuste de Stock Manual" size="lg" (closed)="closeManualAdjustmentModal()">
+  <div class="modal-container">
     <div class="modal-body">
       <div class="adjustment-type-toggle">
         <button type="button" class="toggle-btn" [class.active]="adjustmentDirection === 'ENTRY'" (click)="adjustmentDirection = 'ENTRY'">
@@ -813,15 +806,15 @@
         <textarea [(ngModel)]="adjustmentDescription" rows="3" placeholder="Ej. Corrección de inventario, merma no registrada, rotura..." class="input-standard textarea-standard"></textarea>
       </div>
     </div>
-    
-    <div class="modal-footer">
-      <button type="button" class="btn-cancel" (click)="closeManualAdjustmentModal()">Cancelar</button>
-      <button type="button" class="btn-confirm adjustment-confirm-btn" (click)="submitManualAdjustment()" [disabled]="submittingAdjustment || !absoluteAdjustmentQuantity || absoluteAdjustmentQuantity <= 0 || !adjustmentDescription">
-        {{ submittingAdjustment ? 'Registrando...' : 'Registrar Ajuste' }}
-      </button>
-    </div>
   </div>
-</div>
+
+  <div modal-footer class="modal-footer">
+    <button type="button" class="btn-cancel" (click)="closeManualAdjustmentModal()">Cancelar</button>
+    <button type="button" class="btn-confirm adjustment-confirm-btn" (click)="submitManualAdjustment()" [disabled]="submittingAdjustment || !absoluteAdjustmentQuantity || absoluteAdjustmentQuantity <= 0 || !adjustmentDescription">
+      {{ submittingAdjustment ? 'Registrando...' : 'Registrar Ajuste' }}
+    </button>
+  </div>
+</app-base-modal>
 }
 
 <app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>

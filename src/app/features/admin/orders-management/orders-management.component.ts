@@ -13,6 +13,7 @@ import { Supplier } from '../../../shared/models/supplier.model';
 import { User } from '../../../shared/models/user.model';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { finalize } from 'rxjs';
 
 const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
@@ -27,7 +28,7 @@ const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
 @Component({
   selector: 'app-orders-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, ConfirmDialogComponent, ToastComponent],
+  imports: [CommonModule, FormsModule, ConfirmDialogComponent, ToastComponent, BaseModalComponent],
   templateUrl: './orders-management.component.html',
   styleUrl: './orders-management.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
