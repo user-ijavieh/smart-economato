@@ -24,45 +24,13 @@
   gap: 16px;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
 .form-group.full-width {
   grid-column: 1 / -1;
-}
-
-.form-group label {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--theme-text-secondary);
-  margin-bottom: 8px;
-}
-
-.form-group input,
-.form-group select {
-  padding: 10px 14px;
-  border: 1.5px solid var(--theme-border-glass);
-  border-radius: var(--theme-radius-input);
-  background: var(--theme-input-bg);
-  color: var(--theme-text-primary);
-  font-size: 0.95rem;
-  transition: all 0.25s ease;
-  font-family: inherit;
 }
 
 .form-group select option {
   background: var(--theme-option-bg);
   color: var(--theme-text-primary);
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  background: var(--theme-surface-glass-active);
-  border-color: var(--brand-primary);
-  box-shadow: 0 0 0 4px var(--brand-glow);
 }
 
 /** ===== MODAL FOOTER ===== */

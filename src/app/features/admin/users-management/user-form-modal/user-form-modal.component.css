@@ -24,19 +24,6 @@ form {
     padding: 0;
 }
 
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 6px;
-    font-family: var(--font-body);
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--theme-text-primary);
-}
-
 .optional-label {
     font-weight: 400;
     font-size: 0.8rem;
@@ -44,30 +31,8 @@ form {
     margin-left: 4px;
 }
 
-.form-group input,
-.form-group select {
-    width: 100%;
-    padding: 10px 14px;
-    border-radius: 8px;
-    border: 1.5px solid var(--theme-border-glass);
-    background: var(--theme-input-bg);
-    color: var(--theme-text-primary);
-    font-family: var(--font-body);
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
-}
-
 .form-group input::placeholder {
     color: var(--theme-text-secondary);
-}
-
-.form-group input:focus,
-.form-group select:focus {
-    outline: none;
-    border-color: rgba(90, 120, 220, 0.6);
-    background: var(--theme-surface-glass-active);
-    box-shadow: 0 0 0 3px rgba(90, 120, 220, 0.2);
 }
 
 .form-group input.input-error,

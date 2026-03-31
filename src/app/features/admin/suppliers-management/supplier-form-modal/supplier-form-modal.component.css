@@ -11,26 +11,12 @@ form {
   overflow-y: auto;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 16px;
-  padding: 0;
-}
-
 form > .form-group:first-child {
   margin-top: 0;
 }
 
 form > .form-group-last {
   margin-bottom: 28px;
-}
-
-.form-group label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--theme-text-secondary);
 }
 
 .field-error {
@@ -132,10 +118,6 @@ input.input-error:focus {
 
 /** ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .form-group {
-    padding: 0;
-  }
-
   form > .form-group:first-child {
     margin-top: 0;
   }

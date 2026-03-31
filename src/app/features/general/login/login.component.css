@@ -127,18 +127,6 @@
   to { opacity: 1; transform: translateY(0); }
 }
 /** ===== Formulario ===== */
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px; /* space-xs */
-  margin-bottom: 24px; /* space-md */
-  animation: fadeUp 0.5s 0.26s both;
-}
-
-.form-group:last-of-type {
-  animation-delay: 0.32s;
-}
-
 .form-label {
   font-family: var(--font-body);
   font-weight: 300;

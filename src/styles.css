@@ -2,6 +2,14 @@
    TEMA PERSONALIZADO - Smart Economato
    ============================================ */
 
+@import 'styles/_animations.css';
+@import 'styles/_buttons.css';
+@import 'styles/_forms.css';
+@import 'styles/_badges.css';
+@import 'styles/_admin-layout.css';
+@import 'styles/_skeletons.css';
+@import 'styles/_empty-states.css';
+
 :root {
   /* ===== THEME TOKENS (Dark Mode - General/User) ===== */
   --theme-bg-page: #0c0808;
@@ -464,85 +472,6 @@ body::-webkit-scrollbar {
   background: var(--scrollbar-thumb-hover) !important;
 }
 
-/* ===== ANIMACIONES COMUNES ===== */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pageEntry {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInOverlay {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeInStaggered {
-  from {
-    opacity: 0;
-    transform: translateY(15px) scale(0.98);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes skeleton-loading {
-  0% {
-    background-position: 200% 0;
-  }
-
-  100% {
-    background-position: -200% 0;
-  }
-}
-
 /* ===== PAGE LAYOUT PRIMITIVES ===== */
 .page-header {
   display: flex;
@@ -675,108 +604,6 @@ body::-webkit-scrollbar {
 .size-selector option {
   background: var(--theme-option-bg);
   color: var(--theme-text-primary);
-}
-
-.skeleton,
-.skeleton-text,
-.skeleton-row .skeleton-line,
-.skeleton-line,
-.skeleton-badge {
-  background: linear-gradient(
-    90deg,
-    var(--theme-surface-glass-hover) 25%,
-    var(--theme-border-light) 50%,
-    var(--theme-surface-glass-hover) 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-}
-
-.skeleton {
-  border-radius: 4px;
-}
-
-.skeleton-text,
-.skeleton-line {
-  border-radius: 6px;
-}
-
-.skeleton-row td {
-  padding: 16px;
-}
-
-.skeleton-badge {
-  width: 70px;
-  height: 22px;
-  border-radius: 20px;
-}
-
-.btn-success,
-.btn-danger,
-.btn-warning,
-.btn-details,
-.btn-primary {
-  border-radius: var(--theme-radius-btn);
-  border: 1px solid var(--theme-border-medium);
-  font-weight: 600;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-primary {
-  background: var(--theme-surface-glass-hover);
-  color: var(--theme-text-primary);
-}
-
-.btn-primary:hover {
-  background: var(--theme-surface-glass-active);
-  border-color: var(--theme-text-secondary);
-}
-
-.btn-success {
-  background: var(--color-success-bg);
-  border-color: var(--color-success-border);
-  color: var(--color-success);
-}
-
-.btn-success:hover {
-  background: var(--color-success-hover-bg);
-  border-color: var(--color-success-hover-border);
-  color: var(--theme-text-primary);
-}
-
-.btn-danger {
-  background: var(--color-danger-bg);
-  border-color: var(--color-danger-border);
-  color: var(--color-danger-muted);
-}
-
-.btn-danger:hover {
-  background: var(--color-danger-hover-bg);
-  border-color: var(--color-danger-hover-border);
-  color: var(--theme-text-primary);
-}
-
-.btn-warning {
-  background: var(--color-warning-bg);
-  border-color: var(--color-warning-border);
-  color: var(--color-warning);
-}
-
-.btn-warning:hover {
-  background: color-mix(in srgb, var(--color-warning-bg) 70%, var(--theme-surface-glass-active));
-  border-color: var(--color-warning-muted);
-  color: var(--theme-text-primary);
-}
-
-.btn-details {
-  background: var(--theme-surface-glass-hover);
-  border-color: var(--theme-border-medium);
-  color: var(--theme-text-primary);
-}
-
-.btn-details:hover {
-  background: var(--theme-surface-glass-active);
-  border-color: var(--theme-text-secondary);
 }
 
 /* ============================================

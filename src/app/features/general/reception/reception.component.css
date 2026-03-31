@@ -337,75 +337,17 @@
   transform: translateY(0);
 }
 
-.btn-primary {
-  background: color-mix(in srgb, var(--brand-primary) 15%, transparent);
-  border-color: color-mix(in srgb, var(--brand-primary) 35%, transparent);
-  color: var(--theme-text-primary);
-}
-
-.btn-primary:hover {
-  background: color-mix(in srgb, var(--brand-primary) 25%, transparent);
-  border-color: color-mix(in srgb, var(--brand-primary) 55%, transparent);
-  box-shadow: 0 8px 25px var(--brand-glow);
-}
-
-.btn-secondary {
-  background: var(--theme-surface-glass-active);
-  color: var(--theme-text-primary);
-}
-
-.btn-secondary:hover {
-  background: var(--theme-border-glass);
-  border-color: var(--theme-border-hover);
-}
-
-.btn-success {
-  background: var(--color-success-bg);
-  border-color: var(--color-success-border);
-  color: var(--color-success);
-}
-
-.btn-success:hover {
-  background: var(--color-success-hover-bg);
-  border-color: var(--color-success-hover-border);
-  color: var(--theme-text-primary);
-  box-shadow: 0 8px 25px color-mix(in srgb, var(--color-success) 20%, transparent);
-}
-
-.btn-danger, .btn-delete {
+.btn-delete {
   background: var(--color-danger-bg);
   border-color: var(--color-danger-border);
   color: var(--color-danger-muted);
 }
 
-.btn-danger:hover, .btn-delete:hover {
+.btn-delete:hover {
   background: var(--color-danger-hover-bg);
   border-color: var(--color-danger-hover-border);
   color: var(--theme-text-primary);
   box-shadow: 0 8px 25px color-mix(in srgb, var(--color-danger) 20%, transparent);
-}
-
-.btn-warning {
-  background: var(--color-warning-bg);
-  border-color: var(--color-warning-border);
-  color: var(--color-warning-muted);
-}
-
-.btn-warning:hover {
-  background: color-mix(in srgb, var(--color-warning-bg) 70%, var(--theme-surface-glass-active));
-  border-color: var(--color-warning-muted);
-  color: var(--theme-text-primary);
-}
-
-.btn-details {
-  background: var(--theme-surface-glass-hover);
-  border-color: var(--theme-border-medium);
-  color: var(--theme-text-primary);
-}
-
-.btn-details:hover {
-  background: var(--theme-surface-glass-active);
-  border-color: var(--theme-text-secondary);
 }
 
 /** ===== LOAD MORE ===== */

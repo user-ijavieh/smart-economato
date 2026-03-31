@@ -51,7 +51,7 @@
 
   <div modal-footer class="modal-footer">
     <button class="btn btn-secondary" (click)="confirmCancel()" [disabled]="isProcessing">Cancelar</button>
-    <button class="btn btn-primary" (click)="processReception()" [disabled]="isProcessing">
+    <button class="btn btn-success" (click)="processReception()" [disabled]="isProcessing">
       @if (isProcessing) {
         <span>Procesando...</span>
       } @else {

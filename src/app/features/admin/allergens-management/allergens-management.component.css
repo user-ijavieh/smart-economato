@@ -23,95 +23,6 @@
   background: var(--admin-scrollbar-thumb-hover);
 }
 
-/** ===== HEADER ===== */
-.header-recetas {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  height: 80px;
-  padding: 0 40px;
-  box-sizing: border-box;
-  background: var(--theme-surface-glass);
-  backdrop-filter: var(--theme-effect-glass);
-  border-bottom: 1px solid var(--theme-border-glass);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-recetas h1 {
-  font-size: 1.8rem;
-  color: var(--theme-text-primary);
-  letter-spacing: 2px;
-  flex: 1;
-  text-align: center;
-  margin: 0;
-  padding: 0;
-  line-height: 1;
-  font-family: var(--font-heading);
-  font-weight: var(--font-heading-weight);
-  text-shadow: var(--theme-heading-glow-admin);
-}
-
-/** ===== TAB BAR ===== */
-.tab-bar {
-  display: flex;
-  justify-content: center;
-  background: var(--theme-surface-glass);
-  backdrop-filter: var(--theme-effect-glass);
-  height: 54px;
-  padding: 0 24px;
-  box-sizing: border-box;
-  border-bottom: 1px solid var(--theme-border-glass);
-  z-index: 99;
-}
-
-.tab-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: auto;
-  padding: 0 24px;
-  box-sizing: border-box;
-  border: none;
-  background: transparent;
-  color: var(--theme-text-secondary);
-  font-size: 0.95rem;
-  font-family: var(--font-body);
-  font-weight: 600;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.3s ease;
-  border-radius: 0;
-  box-shadow: none;
-}
-
-.tab-btn::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: transparent;
-  border-radius: 3px 3px 0 0;
-  transition: background 0.3s ease;
-}
-
-.tab-btn:hover {
-  color: var(--theme-text-primary);
-  background: var(--theme-surface-glass-hover);
-}
-
-.tab-btn.active {
-  color: var(--theme-text-primary);
-  background: transparent;
-}
-
-.tab-btn.active::after {
-  background: linear-gradient(135deg, rgba(90, 120, 220, 0.95), rgba(122, 150, 240, 0.95));
-}
-
 /** ===== CONTENEDOR PRINCIPAL ===== */
 .contenedor-principal {
   flex: 1;
@@ -440,11 +351,6 @@ tr:hover { background: var(--theme-surface-glass-hover); }
   display: block;
 }
 
-@keyframes skeleton-loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
 .skeleton-row td {
   padding: 16px;
   border-bottom: 1px solid var(--theme-surface-glass-active);
@@ -596,12 +502,6 @@ tr:hover { background: var(--theme-surface-glass-hover); }
   padding: 28px;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
 .form-label {
   font-size: 0.82rem;
   font-weight: 600;
@@ -677,20 +577,12 @@ tr:hover { background: var(--theme-surface-glass-hover); }
 
 /** ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
-  .header-recetas { height: 70px; padding: 0 20px; }
-  .header-recetas h1 { font-size: 1.3rem; }
-  .tab-bar { padding: 0 20px; }
   .contenedor-principal { padding: 20px; }
   th, td { padding: 12px 8px; font-size: 0.85rem; min-width: auto !important; }
   button { font-size: 0.85rem; padding: 8px 16px; }
 }
 
 @media (max-width: 768px) {
-  .header-recetas { height: 60px; padding: 0 15px; }
-  .header-recetas h1 { font-size: 1.3rem; letter-spacing: 1px; }
-  .tab-bar { height: 48px; padding: 0 15px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
-  .tab-bar::-webkit-scrollbar { display: none; }
-  .tab-btn { padding: 0 16px; font-size: 0.85rem; }
   .contenedor-principal { padding: 15px; }
   .controles { padding: 15px; }
   .stats-row { grid-template-columns: repeat(2, 1fr); }

@@ -263,11 +263,6 @@ tr:hover { background: var(--theme-surface-glass-hover); }
   display: block;
 }
 
-@keyframes skeleton-loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
 .skeleton-row td { border-bottom: 1px solid var(--theme-surface-glass-active); }
 .skeleton-text { height: 16px; }
 
@@ -342,11 +337,6 @@ tr:hover { background: var(--theme-surface-glass-hover); }
     align-self: center;
     margin-bottom: 2rem;
   }
-}
-
-@keyframes slideUpModal {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
 }
 
 .mobile-detail-modal-header {

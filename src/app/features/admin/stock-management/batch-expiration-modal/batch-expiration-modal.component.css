@@ -22,18 +22,6 @@
   font-weight: 600;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-group label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--theme-text-secondary);
-}
-
 .required-asterisk {
   color: #ef4444;
   margin-left: 2px;

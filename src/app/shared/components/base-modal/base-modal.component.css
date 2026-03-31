@@ -133,50 +133,6 @@
   animation: slideDownModal 0.3s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
 }
 
-@keyframes fadeInModal {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUpModal {
-  from {
-    opacity: 0;
-    transform: translateY(40px) scale(0.95);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes fadeOutModal {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes slideDownModal {
-  from {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-
-  to {
-    opacity: 0;
-    transform: translateY(40px) scale(0.95);
-  }
-}
-
 @media (max-width: 768px) {
   .modal-overlay {
     padding: 0;
