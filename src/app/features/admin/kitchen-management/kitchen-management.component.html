@@ -146,7 +146,7 @@
   
   <!-- Mobile Detail Modal para History -->
   @if (showMobileModal && selectedAuditForMobile) {
-  <div class="mobile-detail-modal-overlay" (click)="closeMobileModal()">
+  <app-base-modal [showHeader]="false" size="md" (closed)="closeMobileModal()">
       <div class="mobile-detail-modal" (click)="$event.stopPropagation()">
           <div class="mobile-detail-modal-header">
               <div class="title-cell">
@@ -226,7 +226,7 @@
               </div>
           </div>
       </div>
-  </div>
+  </app-base-modal>
   }
 </div>
 }
