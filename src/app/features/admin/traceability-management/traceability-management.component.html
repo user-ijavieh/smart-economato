@@ -140,16 +140,8 @@
 }
 
 @if (showActivationModal) {
-<div class="modal-overlay" (click)="closeActivationModal()">
-  <div class="modal-container" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2>Declarar Alerta de Trazabilidad</h2>
-      <button class="btn-close" (click)="closeActivationModal()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-        </svg>
-      </button>
-    </div>
+<app-base-modal title="Declarar Alerta de Trazabilidad" size="lg" (closed)="closeActivationModal()">
+  <div class="modal-container">
     
     <div class="modal-body">
       <div class="activation-form-grid">
@@ -226,30 +218,21 @@
       </div>
     </div>
     
-    <div class="modal-footer">
+    <div modal-footer class="modal-footer">
       <button class="btn-cancel" (click)="closeActivationModal()">Cancelar</button>
       <button class="btn-activate-modal" (click)="activateCrisis()" [disabled]="activating">
         {{ activating ? 'Declarando...' : 'Declarar Alerta' }}
       </button>
     </div>
   </div>
-  <div class="dropdown-overlay" (click)="closeActivationModal()" style="z-index: 1000;"></div>
-</div>
+</app-base-modal>
 }
 
 <app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
 
 @if (showCrisisDetailModal && selectedCrisis) {
-<div class="modal-overlay" (click)="closeCrisisDetail()">
-  <div class="modal-container traceability-modal-container" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2>Crisis / {{ selectedCrisis.crisisCode || ('CRISIS-' + selectedCrisis.crisisId) }}</h2>
-      <button class="btn-close" (click)="closeCrisisDetail()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-        </svg>
-      </button>
-    </div>
+<app-base-modal [title]="'Crisis / ' + (selectedCrisis.crisisCode || ('CRISIS-' + selectedCrisis.crisisId))" size="fullscreen" (closed)="closeCrisisDetail()">
+  <div class="modal-container traceability-modal-container">
     
     <div class="modal-body">
       <div class="crisis-detail-content" style="border-left: none; padding: 0;">
@@ -337,7 +320,8 @@
       </div>
     </div>
     
-    <div class="modal-footer" *ngIf="selectedCrisis.status === 'ACTIVE'">
+    @if (selectedCrisis.status === 'ACTIVE') {
+    <div modal-footer class="modal-footer">
       <div class="lift-crisis-actions" style="margin-top: 0; padding-top: 0; border: none; width: 100%; display: flex; justify-content: flex-end;">
         <div style="display: flex; gap: 10px;">
           <input type="number" min="0" max="100" [(ngModel)]="liftAvailabilityByCrisis[selectedCrisis.crisisId]" placeholder="Disp. %" class="input-standard" style="width: 120px;" />
@@ -345,6 +329,7 @@
         </div>
       </div>
     </div>
+    }
   </div>
-</div>
+</app-base-modal>
 }
