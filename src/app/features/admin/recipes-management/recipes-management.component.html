@@ -333,7 +333,7 @@
 
 <!-- Audit Detail / Diff Modal -->
 @if (showAuditDetailModal && selectedAudit) {
-<div class="audit-modal-overlay" (click)="onAuditOverlayClick($event)">
+<app-base-modal [showHeader]="false" size="fullscreen" (closed)="closeAuditDetail()">
     <div class="audit-modal" [class.audit-modal-wide]="hasDiffData">
         <div class="audit-modal-header">
             <div class="audit-header-content">
@@ -427,7 +427,7 @@
         </div>
         }
     </div>
-</div>
+</app-base-modal>
 }
 
 <!-- Confirm Dialog -->

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AllergenService } from '../../../core/services/allergen.service';
 import { MessageService } from '../../../core/services/message.service';
 import { Allergen, AllergenRequest } from '../../../shared/models/allergen.model';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { SuppliersManagementComponent } from '../suppliers-management/suppliers-management.component';
@@ -18,6 +19,7 @@ import { catchError, map } from 'rxjs/operators';
     imports: [
         CommonModule,
         FormsModule,
+        BaseModalComponent,
         ConfirmDialogComponent,
         ToastComponent,
         SuppliersManagementComponent
@@ -234,12 +236,6 @@ export class AllergensManagementComponent implements OnInit {
         this.modalName = '';
         this.modalSaving = false;
         this.cdr.markForCheck();
-    }
-
-    onModalOverlayClick(event: MouseEvent): void {
-        if ((event.target as HTMLElement).classList.contains('allergen-modal-overlay')) {
-            this.closeModal();
-        }
     }
 
     saveModal(): void {
