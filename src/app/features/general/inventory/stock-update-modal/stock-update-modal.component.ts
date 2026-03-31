@@ -2,11 +2,12 @@ import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ViewC
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Product, ProductRequest } from '../../../../shared/models/product.model';
+import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 
 @Component({
   selector: 'app-stock-update-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, BaseModalComponent],
   templateUrl: './stock-update-modal.component.html',
   styleUrl: './stock-update-modal.component.css'
 })
@@ -69,9 +70,5 @@ export class StockUpdateModalComponent implements OnChanges {
 
   onClose(): void {
     this.close.emit();
-  }
-
-  onOverlayClick(event: MouseEvent): void {
-    // Optional: close on backdrop click if desired
   }
 }
