@@ -1,12 +1,12 @@
 import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 
 @Component({
   selector: 'app-welcome',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule, BaseModalComponent],
   templateUrl: './welcome.component.html',
   styleUrl: './welcome.component.css'
 })
@@ -74,11 +74,5 @@ export class WelcomeComponent implements OnInit, OnDestroy {
 
   cancelLogout(): void {
     this.showLogoutModal = false;
-  }
-
-  onLogoutOverlayClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('logout-modal-overlay')) {
-      this.cancelLogout();
-    }
   }
 }

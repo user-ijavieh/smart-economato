@@ -8,12 +8,6 @@
 ::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--brand-primary) 30%, transparent); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--brand-primary) 50%, transparent); }
 
-.modal-overlay {
-}
-
-.modal-content {
-}
-
 /** ===== MODAL HEADER ===== */
 .modal-header-base {
   padding: 24px 30px;
@@ -32,16 +26,7 @@
   font-weight: 700;
 }
 
-.close-btn {
-}
-
-.close-btn:hover {
-}
-
 /** ===== MODAL BODY ===== */
-.modal-body {
-}
-
 .detail-group {
   margin-bottom: 2rem;
   display: grid;
