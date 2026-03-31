@@ -83,19 +83,13 @@ main.main-expanded {
 }
 
 /** ===== LOGOUT CONFIRMATION MODAL ===== */
-.logout-modal-overlay {
-  animation: fadeInOverlay 0.3s ease forwards;
-}
-
 .logout-modal {
   background: var(--theme-modal-glass);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
   border: 1px solid var(--theme-border-card);
   border-radius: 22px;
-  padding: 40px 36px 32px;
-  max-width: 420px;
-  width: 90%;
+  padding: 40px 28px 10px;
   text-align: center;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
   animation: logoutSlideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.1);
@@ -145,6 +139,7 @@ main.main-expanded {
 .logout-modal-actions {
   display: flex;
   gap: 12px;
+  padding: 0 28px 24px;
 }
 
 .btn-logout-cancel {
@@ -210,10 +205,11 @@ main.main-expanded {
 
 @media (max-width: 480px) {
   .logout-modal {
-    padding: 30px 24px 24px;
+    padding: 30px 20px 8px;
   }
 
   .logout-modal-actions {
     flex-direction: column;
+    padding: 0 20px 20px;
   }
 }
