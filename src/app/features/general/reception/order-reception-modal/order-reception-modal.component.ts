@@ -1,14 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Order, OrderReceptionRequest } from '../../../../shared/models/order.model';
 import { OrderService } from '../../../../core/services/order.service';
 import { MessageService } from '../../../../core/services/message.service';
+import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 
 @Component({
   selector: 'app-order-reception-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule, BaseModalComponent, DatePipe],
   templateUrl: './order-reception-modal.component.html',
   styleUrl: './order-reception-modal.component.css'
 })
@@ -33,8 +34,6 @@ export class OrderReceptionModalComponent implements OnInit {
     }
   }
 
-  isClosing = false;
-
   async confirmCancel() {
     const confirmed = await this.messageService.confirm(
       'Cancelar Recepción',
@@ -48,10 +47,7 @@ export class OrderReceptionModalComponent implements OnInit {
   }
 
   close(): void {
-    this.isClosing = true;
-    setTimeout(() => {
-      this.closeModal.emit();
-    }, 280);
+    this.closeModal.emit();
   }
 
   async processReception(): Promise<void> {

@@ -1,17 +1,18 @@
 import { Component, inject, HostListener, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { RouterModule, RouterOutlet, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { MessageService, Toast } from '../../../core/services/message.service';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { ToastComponent } from './toast/toast.component';
 import { ThemeService } from '../../../core/services/theme.service';
+import { BaseModalComponent } from '../base-modal/base-modal.component';
 import { slideInAnimation } from '../../animations/route-animations';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule, SidebarComponent, ToastComponent],
+  imports: [AsyncPipe, RouterModule, SidebarComponent, ToastComponent, BaseModalComponent],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.css',
   animations: [slideInAnimation]
@@ -81,12 +82,6 @@ export class LayoutComponent {
 
   cancelLogout(): void {
     this.showLogoutModal = false;
-  }
-
-  onLogoutOverlayClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('logout-modal-overlay')) {
-      this.cancelLogout();
-    }
   }
 
   prepareRoute(outlet: RouterOutlet) {

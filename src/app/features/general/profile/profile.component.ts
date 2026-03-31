@@ -4,12 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../core/services/user.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../shared/models/user.model';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, BaseModalComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
