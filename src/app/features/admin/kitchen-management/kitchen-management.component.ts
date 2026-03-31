@@ -16,6 +16,7 @@ import { TraceabilityService } from '../../../core/services/traceability.service
 import { ReverseTraceabilityDTO } from '../../../shared/models/traceability.model';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
+import { ScrollService } from '../../../core/services/scroll.service';
 
 @Component({
   selector: 'app-kitchen-management',
@@ -31,6 +32,7 @@ export class KitchenManagementComponent implements OnInit {
   private traceabilityService = inject(TraceabilityService);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
+  private scrollService = inject(ScrollService);
   messageService = inject(MessageService);
 
   activeTab: 'history' | 'reports' = 'history';
@@ -261,16 +263,8 @@ export class KitchenManagementComponent implements OnInit {
   changePage(delta: number): void {
     const newPage = this.currentPage + delta;
     if (newPage >= 0 && newPage < this.totalPages) {
-      this.scrollToTop();
+      this.scrollService.scrollToTop();
       this.loadHistory(newPage);
-    }
-  }
-
-  private scrollToTop(): void {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    const container = document.querySelector('.contenedor-principal');
-    if (container) {
-      container.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
@@ -428,11 +422,17 @@ export class KitchenManagementComponent implements OnInit {
       });
   }
 
-  downloadReportPdf(): void {
+  async downloadReportPdf(): Promise<void> {
     if (this.reportRange === 'CUSTOM' && (!this.reportStartDate || !this.reportEndDate)) {
       this.messageService.showWarning('Debes indicar fecha de inicio y fin para rango personalizado');
       return;
     }
+
+    const confirmed = await this.messageService.confirm(
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo PDF?'
+    );
+    if (!confirmed) return;
 
     this.kitchenService.downloadKitchenReportPdf(this.reportRange, this.reportStartDate, this.reportEndDate)
       .subscribe({

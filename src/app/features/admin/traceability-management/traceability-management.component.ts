@@ -387,7 +387,13 @@ export class TraceabilityManagementComponent implements OnInit {
     });
   }
 
-  downloadReport(crisis: CrisisResponseDTO): void {
+  async downloadReport(crisis: CrisisResponseDTO): Promise<void> {
+    const confirmed = await this.messageService.confirm(
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo PDF?'
+    );
+    if (!confirmed) return;
+
     this.traceabilityService.downloadCrisisReport(crisis.crisisId).subscribe({
       next: blob => {
         const url = window.URL.createObjectURL(blob);
