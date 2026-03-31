@@ -567,8 +567,15 @@ export class OrdersManagementComponent implements OnInit {
     });
   }
 
-  onDownloadPdf(order: Order): void {
+  async onDownloadPdf(order: Order): Promise<void> {
     if (!order || !order.id) return;
+
+    const confirmed = await this.messageService.confirm(
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo PDF?'
+    );
+    if (!confirmed) return;
+
     this.orderService.downloadPdf(order.id).subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);

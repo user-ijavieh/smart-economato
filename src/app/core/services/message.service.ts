@@ -49,8 +49,8 @@ export class MessageService {
     this.addToast(message, 'info', duration);
   }
 
-  confirm(title: string, message: string): Promise<boolean> {
-    this.confirmDialog$.next({ title, message });
+  confirm(title: string, message: string, confirmText?: string, cancelText?: string): Promise<boolean> {
+    this.confirmDialog$.next({ title, message, confirmText, cancelText });
     return new Promise(resolve => {
       this.confirmResolve = resolve;
     });
