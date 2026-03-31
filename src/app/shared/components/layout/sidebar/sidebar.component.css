@@ -102,6 +102,7 @@
   align-items: center;
   gap: 12px;
   padding: 10px 8px;
+  box-sizing: border-box;
 }
 
 .user-avatar {
@@ -156,6 +157,18 @@
   pointer-events: none;
   width: 0;
   overflow: hidden;
+}
+
+#sidebar.close .avatar-item {
+  display: flex;
+  justify-content: center;
+}
+
+#sidebar.close .user-info {
+  width: 100%;
+  justify-content: center;
+  gap: 0;
+  padding: 10px 0;
 }
 
 /** ===== SECTION LABELS ===== */
