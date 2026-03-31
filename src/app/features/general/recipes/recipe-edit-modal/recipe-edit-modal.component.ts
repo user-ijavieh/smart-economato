@@ -7,6 +7,7 @@ import { Allergen } from '../../../../shared/models/allergen.model';
 import { ProductService } from '../../../../core/services/product.service';
 import { AllergenService } from '../../../../core/services/allergen.service';
 import { MessageService } from '../../../../core/services/message.service';
+import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 interface FormComponent {
@@ -18,7 +19,7 @@ interface FormComponent {
 @Component({
   selector: 'app-recipe-edit-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, BaseModalComponent],
   templateUrl: './recipe-edit-modal.component.html',
   styleUrl: './recipe-edit-modal.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -161,12 +162,6 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       }
     });
-  }
-
-  onOverlayClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
-      this.close.emit();
-    }
   }
 
   closeModal(): void {
