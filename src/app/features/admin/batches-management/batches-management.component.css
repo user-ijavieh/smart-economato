@@ -527,6 +527,15 @@ tr.depleted-row:hover td { background: var(--theme-surface-glass-hover); }
 
 /* Sub-tab adjustments */
 .sub-tab-bar {
+  display: flex;
+  justify-content: center;
+  background: var(--theme-surface-glass);
+  backdrop-filter: var(--theme-effect-glass);
+  height: 54px;
+  padding: 0 24px;
+  box-sizing: border-box;
+  border-bottom: 1px solid var(--theme-border-glass);
+  z-index: 99;
   border-radius: 12px;
 }
 .sub-tab-bar .tab-btn {
@@ -686,16 +695,15 @@ tr.depleted-row:hover td { background: var(--theme-surface-glass-hover); }
 
 /* Empty State Styling */
 @media (max-width: 1024px) {
-  .tab-bar, .sub-tab-bar { padding: 0 20px; }
+  .sub-tab-bar { padding: 0 20px; }
   .contenedor-principal { padding: 20px; }
   th, td { padding: 12px 8px; font-size: 0.85rem; min-width: auto !important; }
   button { font-size: 0.85rem; padding: 8px 16px; }
 }
 
 @media (max-width: 768px) {
-  .tab-bar, .sub-tab-bar { height: 48px; padding: 0 15px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-  .tab-bar::-webkit-scrollbar, .sub-tab-bar::-webkit-scrollbar { display: none; }
-  .tab-btn { padding: 0 16px; font-size: 0.85rem; }
+  .sub-tab-bar { height: 48px; padding: 0 15px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .sub-tab-bar::-webkit-scrollbar { display: none; }
   .contenedor-principal { padding: 15px; }
   .controles, .controles-caducidad { padding: 15px; gap: 10px; }
   .controles input[type='text'] { min-width: 150px; width: 100%; }
@@ -711,6 +719,6 @@ tr.depleted-row:hover td { background: var(--theme-surface-glass-hover); }
   .contenedor-principal { padding: 10px; }
   .controles, .controles-caducidad { padding: 12px; }
   button { width: 100%; font-size: 0.8rem; padding: 10px; }
-  .tab-btn, .btn-editar, .btn-eliminar, .btn-ver, .btn-refresh-icon { width: auto; }
+  .btn-editar, .btn-eliminar, .btn-ver, .btn-refresh-icon { width: auto; }
   th, td { padding: 8px 6px; font-size: 0.78rem; }
 }

@@ -52,3 +52,11 @@
 		grid-template-columns: 1fr;
 	}
 }
+
+/* Admin theme override: keep blue focus style for admin forms */
+.admin-theme .form-group input:focus,
+.admin-theme .form-group select:focus,
+.admin-theme .form-group textarea:focus {
+	border-color: rgba(90, 120, 220, 0.6);
+	box-shadow: 0 0 0 3px rgba(90, 120, 220, 0.2);
+}
