@@ -1,14 +1,14 @@
 import { Component, Input, Output, EventEmitter, OnInit, DestroyRef, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { User } from '../../../../shared/models/user.model';
 import { generateUsername, generatePassword } from '../../../../core/utils/credentials-generator';
+import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 
 @Component({
     selector: 'app-user-form-modal',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [ReactiveFormsModule, BaseModalComponent],
     templateUrl: './user-form-modal.component.html',
     styleUrl: './user-form-modal.component.css'
 })
@@ -39,7 +39,11 @@ export class UserFormModalComponent implements OnInit {
     }
 
     get showTeacherField(): boolean {
-        const role = this.userForm?.get('role')?.value;
+        if (this.isEditMode) {
+            return true;
+        }
+
+        const role = String(this.userForm?.get('role')?.value ?? '').toUpperCase();
         return role === 'USER' || role === 'ELEVATED';
     }
 
@@ -65,7 +69,9 @@ export class UserFormModalComponent implements OnInit {
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(role => {
                 const teacherCtrl = this.userForm.get('teacherId');
-                if (teacherCtrl && role !== 'USER' && role !== 'ELEVATED') {
+                const normalizedRole = String(role ?? '').toUpperCase();
+
+                if (teacherCtrl && !this.isEditMode && normalizedRole !== 'USER' && normalizedRole !== 'ELEVATED') {
                     teacherCtrl.setValue(null);
                 }
             });
@@ -136,12 +142,6 @@ export class UserFormModalComponent implements OnInit {
 
     onClose(): void {
         this.close.emit();
-    }
-
-    onBackdropClick(event: MouseEvent): void {
-        if (event.target === event.currentTarget) {
-            this.onClose();
-        }
     }
 
 }
