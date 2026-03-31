@@ -475,12 +475,6 @@ export class OrdersManagementComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  onAuditOverlayClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
-      this.closeAuditDetail();
-    }
-  }
-
   // ── Order Detail Modal ──
   openOrderDetail(order: Order): void {
     this.selectedOrder = order;
@@ -599,12 +593,6 @@ export class OrdersManagementComponent implements OnInit {
     this.showOrderDetailModal = false;
     this.selectedOrder = null;
     this.cdr.markForCheck();
-  }
-
-  onOrderDetailOverlayClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
-      this.closeOrderDetail();
-    }
   }
 
 
