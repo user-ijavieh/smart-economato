@@ -149,7 +149,7 @@
 
   <!-- Mobile Detail Modal para Alertas -->
   @if (showMobileModal && selectedAlertForMobile) {
-  <div class="mobile-detail-modal-overlay" (click)="closeMobileModal()">
+  <app-base-modal [showHeader]="false" size="md" (closed)="closeMobileModal()">
       <div class="mobile-detail-modal" (click)="$event.stopPropagation()">
           <div class="mobile-detail-modal-header">
               <div class="title-cell">
@@ -220,7 +220,7 @@
               </div>
           </div>
       </div>
-  </div>
+  </app-base-modal>
   }
 </div>
 }
@@ -313,7 +313,7 @@
 
   <!-- Mobile Detail Modal para Predictions -->
   @if (showPredictionMobileModal && selectedPredictionForMobile) {
-  <div class="mobile-detail-modal-overlay" (click)="closePredictionMobileModal()">
+  <app-base-modal [showHeader]="false" size="md" (closed)="closePredictionMobileModal()">
       <div class="mobile-detail-modal" (click)="$event.stopPropagation()">
           <div class="mobile-detail-modal-header">
               <div class="title-cell">
@@ -378,7 +378,7 @@
               </div>
           </div>
       </div>
-  </div>
+  </app-base-modal>
   }
 </div>
 }
@@ -611,14 +611,8 @@
 
 <!-- Order Modal -->
 @if (showOrderModal) {
-<div class="modal-overlay" (click)="closeOrderModal()">
-  <div class="modal-container" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2>Generar una Orden de Reposición</h2>
-      <button type="button" class="btn-close" (click)="closeOrderModal()">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
-      </button>
-    </div>
+<app-base-modal title="Generar una Orden de Reposición" size="lg" (closed)="closeOrderModal()">
+  <div class="modal-container">
     <div class="modal-body">
       <div class="days-control">
         <label>¿Para cuántos días deseas cubrir el stock estimado?</label>
@@ -651,7 +645,7 @@
         </table>
       </div>
     </div>
-    <div class="modal-footer" style="justify-content: space-between; align-items: center;">
+    <div modal-footer class="modal-footer" style="justify-content: space-between; align-items: center;">
       <div class="order-total" style="font-size: 1.1rem; color: #1e2850;">
         Total estimado: <strong style="font-size: 1.3rem;">{{ getOrderTotal() | currency:'EUR' }}</strong>
       </div>
@@ -663,20 +657,14 @@
       </div>
     </div>
   </div>
-</div>
+</app-base-modal>
 }
 
 
 <!-- Ledger Transaction Detail Modal (Mobile) -->
 @if (showLedgerMobileModal && selectedLedgerTx) {
-<div class="modal-overlay" (click)="closeLedgerMobileModal()">
-  <div class="modal-container ledger-detail-modal" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2>Detalle de Transacción</h2>
-      <button type="button" class="btn-close" (click)="closeLedgerMobileModal()">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
-      </button>
-    </div>
+<app-base-modal title="Detalle de Transacción" size="lg" (closed)="closeLedgerMobileModal()">
+  <div class="modal-container ledger-detail-modal">
     <div class="modal-body ledger-detail-body">
 
       <!-- Status banner -->
@@ -745,21 +733,14 @@
       </div>
     </div>
   </div>
-</div>
+</app-base-modal>
 }
 
 
 
 @if (showManualAdjustmentModal) {
-<div class="modal-overlay" (click)="closeManualAdjustmentModal()">
-  <div class="modal-container" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2>Ajuste de Stock Manual</h2>
-      <button type="button" class="btn-close" (click)="closeManualAdjustmentModal()">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
-      </button>
-    </div>
-    
+<app-base-modal title="Ajuste de Stock Manual" size="lg" (closed)="closeManualAdjustmentModal()">
+  <div class="modal-container">
     <div class="modal-body">
       <div class="adjustment-type-toggle">
         <button type="button" class="toggle-btn" [class.active]="adjustmentDirection === 'ENTRY'" (click)="adjustmentDirection = 'ENTRY'">
@@ -813,15 +794,15 @@
         <textarea [(ngModel)]="adjustmentDescription" rows="3" placeholder="Ej. Corrección de inventario, merma no registrada, rotura..." class="input-standard textarea-standard"></textarea>
       </div>
     </div>
-    
-    <div class="modal-footer">
-      <button type="button" class="btn-cancel" (click)="closeManualAdjustmentModal()">Cancelar</button>
-      <button type="button" class="btn-confirm adjustment-confirm-btn" (click)="submitManualAdjustment()" [disabled]="submittingAdjustment || !absoluteAdjustmentQuantity || absoluteAdjustmentQuantity <= 0 || !adjustmentDescription">
-        {{ submittingAdjustment ? 'Registrando...' : 'Registrar Ajuste' }}
-      </button>
-    </div>
   </div>
-</div>
+
+  <div modal-footer class="modal-footer">
+    <button type="button" class="btn-cancel" (click)="closeManualAdjustmentModal()">Cancelar</button>
+    <button type="button" class="btn-confirm adjustment-confirm-btn" (click)="submitManualAdjustment()" [disabled]="submittingAdjustment || !absoluteAdjustmentQuantity || absoluteAdjustmentQuantity <= 0 || !adjustmentDescription">
+      {{ submittingAdjustment ? 'Registrando...' : 'Registrar Ajuste' }}
+    </button>
+  </div>
+</app-base-modal>
 }
 
 <app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>

@@ -18,82 +18,6 @@
   background: color-mix(in srgb, var(--brand-primary) 50%, transparent);
 }
 
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--theme-overlay-bg);
-  backdrop-filter: blur(8px);
-  z-index: 10000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
-
-.modal-container {
-  width: 100%;
-  max-width: 900px;
-  animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-}
-
-.modal-content {
-  background: var(--theme-surface-glass);
-  backdrop-filter: var(--theme-effect-glass);
-  -webkit-backdrop-filter: var(--theme-effect-glass);
-  border: 1px solid var(--theme-border-glass);
-  border-radius: var(--theme-radius-card);
-  max-height: 85vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: var(--theme-shadow-card);
-  color: var(--theme-text-primary);
-}
-
-/** ===== MODAL HEADER ===== */
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px 30px;
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
-  flex-shrink: 0;
-}
-
-.modal-header h2 {
-  font-size: 1.6rem;
-  color: var(--theme-text-primary);
-  margin: 0;
-  font-weight: 700;
-}
-
-.modal-close {
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--theme-border-medium);
-  background: var(--theme-surface-glass-hover);
-  border-radius: 8px;
-  color: var(--theme-text-primary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-}
-
-.modal-close:hover {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: var(--color-danger-hover-border);
-  color: var(--color-danger-muted);
-  transform: scale(1.05);
-}
-
-/** ===== MODAL BODY ===== */
-.modal-body {
-  padding: 30px;
-  overflow-y: auto;
-  flex: 1;
-}
-
 .modal-section {
   margin-bottom: 30px;
 }
@@ -293,23 +217,8 @@
   box-shadow: 0 8px 25px color-mix(in srgb, var(--brand-primary) 15%, transparent);
 }
 
-/** ===== ANIMATIONS ===== */
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 /** ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .modal-content {
-    max-height: 90vh;
-  }
-  .modal-header {
-    padding: 18px 20px;
-  }
-  .modal-body {
-    padding: 20px;
-  }
   .modal-footer {
     padding: 14px 20px;
   }

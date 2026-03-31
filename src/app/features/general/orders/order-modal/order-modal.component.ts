@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Output, Input, EventEmitter, inject, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OrderService } from '../../../../core/services/order.service';
 import { ProductService } from '../../../../core/services/product.service';
@@ -10,6 +10,7 @@ import { Product } from '../../../../shared/models/product.model';
 import { User } from '../../../../shared/models/user.model';
 import { Supplier } from '../../../../shared/models/supplier.model';
 import { Order, OrderRequest } from '../../../../shared/models/order.model';
+import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 interface OrderItem {
@@ -23,7 +24,7 @@ interface OrderItem {
 @Component({
   selector: 'app-order-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule, BaseModalComponent, DecimalPipe],
   templateUrl: './order-modal.component.html',
   styleUrl: './order-modal.component.css'
 })
@@ -250,13 +251,8 @@ export class OrderModalComponent implements OnInit, OnDestroy {
     return this.orderItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
   }
 
-  isClosing = false;
-
   close(): void {
-    this.isClosing = true;
-    setTimeout(() => {
-      this.closeModal.emit();
-    }, 280);
+    this.closeModal.emit();
   }
 
   async submitOrder(): Promise<void> {
@@ -305,7 +301,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
         this.messageService.showSuccess(this.editOrder ? 'Pedido actualizado exitosamente' : 'Pedido creado exitosamente');
         this.isSubmitting = false;
         this.orderCreated.emit();
-        this.close();
+        this.closeModal.emit();
       },
       error: (error) => {
         console.error('Error submitting order:', error);

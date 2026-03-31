@@ -1,12 +1,12 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Supplier } from '../../../../shared/models/supplier.model';
+import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 
 @Component({
     selector: 'app-supplier-form-modal',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [ReactiveFormsModule, BaseModalComponent],
     templateUrl: './supplier-form-modal.component.html',
     styleUrl: './supplier-form-modal.component.css'
 })
@@ -46,11 +46,5 @@ export class SupplierFormModalComponent implements OnInit {
 
     onClose(): void {
         this.close.emit();
-    }
-
-    onBackdropClick(event: MouseEvent): void {
-        if (event.target === event.currentTarget) {
-            this.onClose();
-        }
     }
 }

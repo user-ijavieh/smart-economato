@@ -3,97 +3,6 @@
   display: block;
 }
 
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--theme-overlay-bg);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-  animation: fadeInOverlay 0.2s ease;
-}
-
-@keyframes fadeInOverlay {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.modal-container {
-  background: var(--theme-surface-glass);
-  backdrop-filter: var(--theme-effect-glass);
-  border: 1px solid var(--theme-border-glass);
-  border-radius: var(--theme-radius-card);
-  box-shadow: var(--theme-shadow-card);
-  max-width: 500px;
-  width: 100%;
-  max-height: 85vh;
-  display: flex;
-  flex-direction: column;
-  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-  color: var(--theme-text-primary);
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/** ===== MODAL HEADER ===== */
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 28px;
-  background: var(--theme-section-header-bg);
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
-  flex-shrink: 0;
-}
-
-.modal-header h2 {
-  font-size: 1.3rem;
-  color: var(--theme-text-primary);
-  margin: 0;
-  font-family: var(--font-heading);
-  letter-spacing: 0.5px;
-}
-
-.modal-close {
-  background: var(--theme-surface-glass-hover);
-  border: 1px solid var(--theme-border-medium);
-  color: var(--theme-text-primary);
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  box-shadow: none;
-  transition: all 0.2s ease;
-}
-
-.modal-close:hover {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: var(--color-danger-hover-border);
-  color: var(--color-danger-muted);
-  transform: scale(1.05);
-}
-
-/** ===== MODAL BODY ===== */
-.modal-body {
-  padding: 28px;
-  overflow-y: auto;
-  flex: 1;
-}
-
 .product-info {
   margin-bottom: 24px;
   padding: 16px 20px;
@@ -228,19 +137,6 @@ input:focus {
 
 /** ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .modal-container {
-    width: 95%;
-    max-height: 90vh;
-  }
-
-  .modal-header {
-    padding: 18px 20px;
-  }
-
-  .modal-body {
-    padding: 20px;
-  }
-
   .modal-footer {
     padding: 16px 20px;
     flex-direction: column;

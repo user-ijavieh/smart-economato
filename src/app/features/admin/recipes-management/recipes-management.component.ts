@@ -11,6 +11,7 @@ import { RecipeAudit } from '../../../shared/models/recipe-audit.model';
 import { RecipeCreateModalComponent } from '../../general/recipes/recipe-create-modal/recipe-create-modal.component';
 import { RecipeEditModalComponent } from '../../general/recipes/recipe-edit-modal/recipe-edit-modal.component';
 import { RecipeDetailModalComponent } from '../../general/recipes/recipe-detail-modal/recipe-detail-modal.component';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { ScrollService } from '../../../core/services/scroll.service';
@@ -26,6 +27,7 @@ import { of } from 'rxjs';
         RecipeCreateModalComponent,
         RecipeEditModalComponent,
         RecipeDetailModalComponent,
+        BaseModalComponent,
         ConfirmDialogComponent,
         ToastComponent
     ],
@@ -554,12 +556,6 @@ export class RecipesManagementComponent implements OnInit {
         this.showAuditDetailModal = false;
         this.selectedAudit = null;
         this.cdr.markForCheck();
-    }
-
-    onAuditOverlayClick(event: MouseEvent): void {
-        if ((event.target as HTMLElement).classList.contains('audit-modal-overlay')) {
-            this.closeAuditDetail();
-        }
     }
 
     formatDate(dateStr: string): string {

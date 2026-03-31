@@ -118,18 +118,8 @@
 
 <!-- ===== CREATE / EDIT MODAL ===== -->
 @if (showModal) {
-<div class="allergen-modal-overlay" (click)="onModalOverlayClick($event)">
+<app-base-modal [title]="modalMode === 'create' ? 'Nuevo Alérgeno' : 'Editar Alérgeno'" size="sm" (closed)="closeModal()">
     <div class="allergen-modal">
-        <div class="allergen-modal-header">
-            <h2>{{ modalMode === 'create' ? 'Nuevo Alérgeno' : 'Editar Alérgeno' }}</h2>
-            <button class="allergen-modal-close" (click)="closeModal()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-            </button>
-        </div>
         <div class="allergen-modal-body">
             <div class="form-group">
                 <label for="allergenName" class="form-label">Nombre del alérgeno</label>
@@ -137,7 +127,7 @@
                     placeholder="Ej: Gluten, Lactosa, Cacahuetes..." (keyup.enter)="saveModal()" autofocus />
             </div>
         </div>
-        <div class="allergen-modal-footer">
+        <div modal-footer class="allergen-modal-footer">
             <button class="btn-cancel" (click)="closeModal()" [disabled]="modalSaving">Cancelar</button>
             <button class="btn-save" (click)="saveModal()" [disabled]="modalSaving || !modalName.trim()">
                 @if (modalSaving) {
@@ -153,7 +143,7 @@
             </button>
         </div>
     </div>
-</div>
+</app-base-modal>
 }
 
 <!-- Confirm Dialog -->

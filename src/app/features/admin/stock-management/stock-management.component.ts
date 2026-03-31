@@ -26,6 +26,7 @@ import { StockLedgerResponseDTO, IntegrityCheckResponseDTO, StockSnapshotRespons
 import { Product } from '../../../shared/models/product.model';
 import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.model';
 import { ScrollService } from '../../../core/services/scroll.service';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 
 
 type Tab = 'alerts' | 'predictions' | 'ledger';
@@ -33,7 +34,7 @@ type Tab = 'alerts' | 'predictions' | 'ledger';
 @Component({
     selector: 'app-stock-management',
     standalone: true,
-    imports: [CommonModule, FormsModule, ToastComponent, BaseChartDirective],
+    imports: [CommonModule, FormsModule, ToastComponent, BaseChartDirective, BaseModalComponent],
     templateUrl: './stock-management.component.html',
     styleUrl: './stock-management.component.css'
 })

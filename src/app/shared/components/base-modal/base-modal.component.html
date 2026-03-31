@@ -1,0 +1,31 @@
+<div
+  class="modal-overlay"
+  [class.closing]="isClosing"
+  [class.modal-overlay-fullscreen]="size === 'fullscreen'"
+  (click)="onOverlayClick($event)"
+>
+  <div class="modal-dialog" [class]="'modal-dialog modal-' + size" (click)="$event.stopPropagation()">
+    @if (showHeader) {
+      <div class="modal-header">
+        <ng-content select="[modal-header]">
+          <h2>{{ title }}</h2>
+        </ng-content>
+
+        @if (showCloseButton) {
+          <button class="modal-close-btn" type="button" (click)="close()" aria-label="Cerrar modal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        }
+      </div>
+    }
+
+    <div class="modal-body">
+      <ng-content></ng-content>
+    </div>
+
+    <ng-content select="[modal-footer]"></ng-content>
+  </div>
+</div>
