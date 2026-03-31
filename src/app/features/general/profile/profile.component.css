@@ -299,24 +299,6 @@ button:disabled {
 }
 
 /** ===== MODAL OVERLAY ===== */
-.modal-overlay {
-}
-
-.modal-content {
-}
-
-.modal-header {
-}
-
-.modal-header h2 {
-}
-
-.modal-close-btn {
-}
-
-.modal-close-btn:hover {
-}
-
 .escalate-modal-content {
   padding: 24px;
   display: flex;

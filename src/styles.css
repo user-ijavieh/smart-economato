@@ -424,7 +424,6 @@ body::-webkit-scrollbar {
 
 /* Show scrollbar ONLY in modals/dialogs or specific scrollable areas */
 .modal-overlay ::-webkit-scrollbar,
-.modal-overlay-base ::-webkit-scrollbar,
 [class*="modal"] ::-webkit-scrollbar,
 .modal-dialog ::-webkit-scrollbar,
 .modal-body ::-webkit-scrollbar {
@@ -463,43 +462,6 @@ body::-webkit-scrollbar {
 
 .admin-theme ::-webkit-scrollbar-thumb:hover {
   background: var(--scrollbar-thumb-hover) !important;
-}
-
-/* ===== MODAL BASE ===== */
-.modal-overlay-base {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-  padding: 20px;
-}
-
-.modal-dialog-base {
-  background: var(--theme-surface-glass);
-  border-radius: 16px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-  max-height: 85vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.modal-header-base {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px 30px;
-  background: linear-gradient(135deg, var(--brand-primary) 0%, #a03d37 100%);
-  border-radius: 16px 16px 0 0;
-  color: var(--theme-text-on-brand);
-  flex-shrink: 0;
 }
 
 /* ===== ANIMACIONES COMUNES ===== */

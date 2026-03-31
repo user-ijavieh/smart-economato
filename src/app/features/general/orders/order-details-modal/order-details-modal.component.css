@@ -8,12 +8,6 @@
 ::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--brand-primary) 30%, transparent); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--brand-primary) 50%, transparent); }
 
-.modal-overlay {
-}
-
-.modal-content {
-}
-
 /** ===== MODAL HEADER ===== */
 .modal-header-base {
   padding: 24px 30px;
@@ -53,16 +47,7 @@
   backdrop-filter: blur(8px);
 }
 
-.close-btn {
-}
-
-.close-btn:hover {
-}
-
 /** ===== MODAL BODY ===== */
-.modal-body {
-}
-
 .info-section {
   margin-bottom: 30px;
 }
