@@ -24,14 +24,29 @@ export class OrderReceptionModalComponent implements OnInit {
   isProcessing = false;
 
   ngOnInit(): void {
-    // Inicializar quantityReceived con la original quantity para facilitar la recepción
     if (this.order && this.order.details) {
       this.order.details.forEach(detail => {
-        if (detail.quantityReceived === undefined) {
-          detail.quantityReceived = detail.quantity;
+        if (!detail.lots || detail.lots.length === 0) {
+          detail.lots = [{ quantity: detail.quantity, expirationDate: null }];
         }
       });
     }
+  }
+
+  addLot(detail: any): void {
+    if (!detail.lots) detail.lots = [];
+    detail.lots.push({ quantity: 0, expirationDate: null });
+  }
+
+  removeLot(detail: any, index: number): void {
+    if (detail.lots && detail.lots.length > 1) {
+      detail.lots.splice(index, 1);
+    }
+  }
+
+  getTotalReceived(detail: any): number {
+    if (!detail.lots) return 0;
+    return detail.lots.reduce((acc: number, lot: any) => acc + (lot.quantity || 0), 0);
   }
 
   async confirmCancel() {
@@ -56,22 +71,27 @@ export class OrderReceptionModalComponent implements OnInit {
       return;
     }
 
-    // Validar cantidades negativas o nulas (opcional pero recomendado)
-    const hasInvalidQuantities = this.order.details.some(d => d.quantityReceived === undefined || d.quantityReceived === null || d.quantityReceived < 0);
+    // Validar cantidades negativas o nulas
+    const hasInvalidQuantities = this.order.details.some(d => {
+      const total = this.getTotalReceived(d);
+      return total < 0 || d.lots?.some(lot => lot.quantity < 0 || lot.quantity === null || lot.quantity === undefined);
+    });
     if (hasInvalidQuantities) {
-      this.messageService.showError('Por favor revisa que todas las cantidades recibidas sean números válidos o 0.');
+      this.messageService.showError('Por favor revisa que todas las cantidades de los lotes sean números válidos o 0.');
       return;
     }
 
     const missingExpiration = this.order.details.some(d => 
-      (d.quantityReceived ?? 0) > 0 && !d.expirationDate
+      d.lots && d.lots.some(lot => lot.quantity > 0 && !lot.expirationDate)
     );
     if (missingExpiration) {
-      this.messageService.showError('La fecha de caducidad es obligatoria para los productos recibidos.');
+      this.messageService.showError('La fecha de caducidad es obligatoria para los lotes con cantidad recibida.');
       return;
     }
 
-    const hasInvalidExpirationDate = this.order.details.some(d => d.expirationDate !== undefined && d.expirationDate !== null && d.expirationDate !== '' && !/^\d{4}-\d{2}-\d{2}$/.test(d.expirationDate));
+    const hasInvalidExpirationDate = this.order.details.some(d => 
+      d.lots && d.lots.some(lot => lot.expirationDate && !/^\d{4}-\d{2}-\d{2}$/.test(lot.expirationDate))
+    );
     if (hasInvalidExpirationDate) {
       this.messageService.showError('Revisa el formato de fecha de caducidad.');
       return;
@@ -92,8 +112,8 @@ export class OrderReceptionModalComponent implements OnInit {
       orderId: this.order.id,
       items: this.order.details.map(d => ({
         productId: d.productId,
-        quantityReceived: d.quantityReceived ?? 0,
-        expirationDate: d.expirationDate ?? null
+        quantityReceived: this.getTotalReceived(d),
+        lots: d.lots?.map(l => ({ quantity: l.quantity, expirationDate: l.expirationDate || null })) || []
       }))
     };
 
