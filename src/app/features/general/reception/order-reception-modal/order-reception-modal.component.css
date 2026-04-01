@@ -131,34 +131,6 @@
   background: var(--theme-overlay-light);
 }
 
-.btn {
-  padding: 12px 24px;
-  border-radius: var(--theme-radius-btn);
-  border: none;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  letter-spacing: 0.5px;
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-.btn-secondary {
-  background: var(--theme-surface-glass-hover);
-  color: var(--theme-text-primary);
-  border: 1px solid var(--theme-border-glass);
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background: var(--theme-border-medium);
-  transform: translateY(-2px);
-}
-
 /** ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .modal-header-base { padding: 16px; }
@@ -169,7 +141,7 @@
   .expiry-col { width: 95px; }
   .quantity-input, .table-input { padding: 4px; font-size: 0.75rem; }
   .modal-footer { padding: 15px; flex-direction: column; gap: 1rem; }
-  .btn { width: 100%; justify-content: center; }
+  .modal-footer button { width: 100%; justify-content: center; }
   .btn-success { order: -1; }
 }
 

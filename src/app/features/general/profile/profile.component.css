@@ -209,28 +209,6 @@ tr:hover td {
   gap: 8px;
 }
 
-button {
-  padding: 9px 18px;
-  border-radius: var(--theme-radius-btn);
-  border: 1px solid var(--theme-border-glass);
-  background: var(--theme-surface-glass-active);
-  color: var(--theme-text-primary);
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-family: var(--font-body);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
 /** ===== SKELETON ===== */
 .skeleton-circle {
   border-radius: 50%;

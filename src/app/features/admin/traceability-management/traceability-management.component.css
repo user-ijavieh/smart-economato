@@ -196,14 +196,9 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 
 /** ===== MODALS ===== */
 .modal-container {
-  background: var(--theme-surface-glass);
-  backdrop-filter: var(--theme-effect-glass);
-  border: 1px solid var(--theme-border-glass);
-  border-radius: var(--theme-radius-card);
-  box-shadow: var(--theme-shadow-card);
   width: 100%; max-width: 650px;
   display: flex; flex-direction: column;
-  animation: slideUp 0.3s ease;
+  overflow: auto;
   color: var(--theme-text-primary);
 }
 .traceability-modal-container { max-width: 800px; }

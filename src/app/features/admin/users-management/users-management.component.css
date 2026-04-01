@@ -53,7 +53,7 @@
   color: var(--theme-text-primary);
 }
 
-button {
+button:not(.admin-tab-btn) {
   padding: 12px 20px;
   border-radius: var(--theme-radius-btn);
   border: 1px solid var(--theme-surface-glass-hover);
@@ -72,14 +72,14 @@ button {
   backdrop-filter: blur(8px);
 }
 
-button:hover {
+button:not(.admin-tab-btn):hover {
   background: var(--theme-border-glass);
   border-color: var(--theme-border-hover);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
-button:active {
+button:not(.admin-tab-btn):active {
   transform: translateY(0);
 }
 

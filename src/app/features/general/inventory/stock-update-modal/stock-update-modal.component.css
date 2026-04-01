@@ -32,24 +32,6 @@
   min-width: 40px;
 }
 
-input {
-  width: 100%;
-  padding: 10px 14px;
-  border: 2px solid var(--theme-border-glass);
-  border-radius: 8px;
-  font-size: 0.95rem;
-  transition: border-color 0.2s;
-  font-family: inherit;
-  background: var(--theme-input-bg);
-  color: var(--theme-text-primary);
-}
-
-input:focus {
-  outline: none;
-  border-color: var(--brand-primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 10%, transparent);
-}
-
 .hint {
   display: block;
   margin-top: 8px;
@@ -114,13 +96,6 @@ input:focus {
   cursor: not-allowed;
   box-shadow: none;
   transform: none;
-}
-
-/** ===== GENERAL MODE (Default red theme) ===== */
-
-.general-mode input:focus {
-  border-color: var(--brand-primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 10%, transparent);
 }
 
 /** ===== ADMIN MODE OVERRIDES ===== */

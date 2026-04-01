@@ -337,19 +337,6 @@
   transform: translateY(0);
 }
 
-.btn-delete {
-  background: var(--color-danger-bg);
-  border-color: var(--color-danger-border);
-  color: var(--color-danger-muted);
-}
-
-.btn-delete:hover {
-  background: var(--color-danger-hover-bg);
-  border-color: var(--color-danger-hover-border);
-  color: var(--theme-text-primary);
-  box-shadow: 0 8px 25px color-mix(in srgb, var(--color-danger) 20%, transparent);
-}
-
 /** ===== LOAD MORE ===== */
 .load-more-container {
   display: flex;

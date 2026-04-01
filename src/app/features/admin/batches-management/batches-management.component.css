@@ -90,7 +90,7 @@
   box-shadow: 0 0 0 3px rgba(90, 120, 220, 0.2);
 }
 
-button {
+button:not(.admin-tab-btn) {
   padding: 10px 20px;
   border-radius: 8px;
   border: 1px solid var(--theme-surface-glass-hover);
@@ -105,14 +105,14 @@ button {
   backdrop-filter: blur(8px);
 }
 
-button:hover:not(:disabled) {
+button:not(.admin-tab-btn):hover:not(:disabled) {
   background: var(--theme-border-glass);
   border-color: var(--theme-border-hover);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
-button:active {
+button:not(.admin-tab-btn):active {
   transform: translateY(0);
 }
 

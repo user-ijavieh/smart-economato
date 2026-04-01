@@ -134,9 +134,6 @@
   --color-surface-glass: var(--theme-surface-glass);
   --color-border-glass: rgba(90, 120, 220, 0.15);
 }
-:host-context(.admin-theme) .modal-header-base {
-  background: linear-gradient(to right, rgba(90, 120, 220, 0.15), transparent);
-}
 :host-context(.admin-theme) .btn-save,
 :host-context(.admin-theme) .btn-cocinar {
   background: var(--theme-surface-glass-active) !important;
