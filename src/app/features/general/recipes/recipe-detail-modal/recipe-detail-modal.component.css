@@ -8,27 +8,6 @@
 ::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--brand-primary) 30%, transparent); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--brand-primary) 50%, transparent); }
 
-.modal-container {
-  display: block;
-}
-
-/** ===== MODAL HEADER ===== */
-.modal-header {
-  display: block;
-}
-
-.modal-header h2 {
-  display: none;
-}
-
-.modal-close {
-  display: none;
-}
-
-.modal-close:hover {
-  display: none;
-}
-
 /** ===== MODAL BODY ===== */
 .modal-body {
   padding: 30px;
@@ -254,9 +233,6 @@
   --color-brand-glow: rgba(90, 120, 220, 0.35);
   --color-surface-glass: var(--theme-surface-glass);
   --color-border-glass: rgba(90, 120, 220, 0.15);
-}
-:host-context(.admin-theme) .modal-header-base {
-  background: linear-gradient(to right, rgba(90, 120, 220, 0.15), transparent);
 }
 :host-context(.admin-theme) .btn-save,
 :host-context(.admin-theme) .btn-cocinar {
