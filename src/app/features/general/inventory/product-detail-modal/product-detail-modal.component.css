@@ -3,21 +3,6 @@
   display: block;
 }
 
-/* Custom Scrollbar Styles */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--theme-surface-glass-hover);
-}
-::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--brand-primary) 30%, transparent);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in srgb, var(--brand-primary) 50%, transparent);
-}
-
 .modal-section {
   margin-bottom: 30px;
 }
@@ -166,13 +151,6 @@
   flex-shrink: 0;
 }
 
-/** ===== MODAL FOOTER ===== */
-.modal-footer {
-  padding: 20px 30px;
-  border-top: 1px solid var(--theme-surface-glass-hover);
-  border-radius: 0 0 calc(var(--theme-radius-card) - 2px) calc(var(--theme-radius-card) - 2px);
-}
-
 .modal-actions {
   display: flex;
   gap: 12px;
@@ -219,9 +197,6 @@
 
 /** ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .modal-footer {
-    padding: 14px 20px;
-  }
   .modal-actions {
     flex-direction: column;
   }
