@@ -203,26 +203,6 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 }
 .traceability-modal-container { max-width: 800px; }
 
-.modal-header {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 20px 28px; background: var(--theme-section-header-bg); border-bottom: 1px solid var(--theme-surface-glass-hover);
-}
-.modal-header h2 { font-size: 1.3rem; margin: 0; font-family: var(--font-heading); color: var(--theme-text-primary); }
-
-.btn-close {
-  background: var(--theme-surface-glass-hover); border: 1px solid var(--theme-border-medium);
-  color: var(--theme-text-primary); width: 36px; height: 36px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;
-}
-.btn-close:hover { background: rgba(239, 68, 68, 0.2); border-color: var(--color-danger-hover-border); color: var(--color-danger-muted); }
-
-.modal-body { padding: 28px; max-height: 70vh; overflow-y: auto; overflow-x: hidden; }
-
-.modal-footer {
-  padding: 20px 28px; border-top: 1px solid var(--theme-surface-glass-hover); background: var(--theme-section-header-bg);
-  display: flex; justify-content: flex-end; gap: 12px;
-}
-
 .btn-activate-modal {
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.8), rgba(185, 28, 28, 0.8));
   color: var(--theme-text-primary); border: 1px solid rgba(239, 68, 68, 0.5);
