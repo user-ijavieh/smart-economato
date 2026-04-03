@@ -135,7 +135,7 @@
   background: var(--theme-overlay-light);
 }
 
-.modal-footer:empty {
+.modal-footer:not(:has(*)) {
   display: none;
 }
 

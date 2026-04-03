@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ContentChild, ElementRef, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-base-modal',
@@ -17,7 +17,6 @@ export class BaseModalComponent {
   @Input() showCloseButton = true;
   @Input() showHeader = true;
   @Output() closed = new EventEmitter<void>();
-  @ContentChild('[modal-footer]', { descendants: true, read: ElementRef }) footerContent?: ElementRef<HTMLElement>;
 
   isClosing = false;
 
