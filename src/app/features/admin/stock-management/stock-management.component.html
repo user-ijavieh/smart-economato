@@ -30,7 +30,7 @@
 <div class="page-content contenedor-principal">
   <!-- Controls -->
   <div class="controls-bar controles">
-    <button type="button" class="btn-crear-orden" (click)="openOrderModal()" [disabled]="loadingOrderData">
+    <button type="button" class="toolbar-btn btn-crear-orden" (click)="openOrderModal()" [disabled]="loadingOrderData">
       <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
         <path d="M160-160v-516L82-846l72-34 94 202h464l94-202 72 34-78 170v516H160Zm240-280h160q17 0 28.5-11.5T600-480q0-17-11.5-28.5T560-520H400q-17 0-28.5 11.5T360-480q0 17 11.5 28.5T400-440ZM240-240h480v-358H240v358Z"/>
       </svg>
@@ -289,12 +289,12 @@
 
   @if (totalPages > 1) {
   <div class="pagination-controls">
-    <button class="btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
+    <button class="toolbar-btn btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
       Anterior
     </button>
     <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }} <span class="total-info">({{ totalElements }} productos)</span></span>
-    <button class="btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
+    <button class="toolbar-btn btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
       Siguiente
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
     </button>
@@ -409,27 +409,27 @@
     </div>
 
     <div class="ledger-actions">
-      <button class="btn-verify btn-verify-all" (click)="verifyAll()" [disabled]="verifyingIntegrity">
+      <button class="toolbar-btn btn-verify btn-verify-all" (click)="verifyAll()" [disabled]="verifyingIntegrity">
         <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-80q105-30 172.5-115.5T720-474v-181l-240-90-240 90v181q0 113 67.5 198.5T480-160Zm0-320Z"/></svg>
         Verificar Todo
       </button>
 
       @if (selectedProductId) {
-        <button class="btn-pdf" (click)="downloadPdf()" [disabled]="downloadingPdf">
+        <button class="toolbar-btn btn-pdf" (click)="downloadPdf()" [disabled]="downloadingPdf">
           <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M320-240h320v-80H320v80Zm0-160h320v-80H320v80ZM240-80q-33 0-56.5-23.5T160-200v-560q0-33 23.5-56.5T240-840h320l240 240v400q0 33-23.5 56.5T720-80H240Zm280-520v-160H240v560h480v-400H520Z"/></svg>
           PDF
         </button>
 
-        <button class="btn-verify" (click)="verifyIntegrity()" [disabled]="verifyingIntegrity">
+        <button class="toolbar-btn btn-verify" (click)="verifyIntegrity()" [disabled]="verifyingIntegrity">
           <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-80q105-30 172.5-115.5T720-474v-181l-240-90-240 90v181q0 113 67.5 198.5T480-160Zm0-320Z"/></svg>
           {{ verifyingIntegrity ? 'Verificando...' : 'Verificar Integridad' }}
         </button>
-        <button class="btn-reset" (click)="resetProductHistory()" [disabled]="resettingHistory">
+        <button class="toolbar-btn btn-reset" (click)="resetProductHistory()" [disabled]="resettingHistory">
           <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T760-120H280Zm480-600H280v520h480v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
           Limpiar Historial
         </button>
 
-        <button class="btn-adjust" (click)="openManualAdjustmentModal()" [disabled]="!selectedProductId || submittingAdjustment">
+        <button class="toolbar-btn btn-adjust" (click)="openManualAdjustmentModal()" [disabled]="!selectedProductId || submittingAdjustment">
           <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
           Ajuste Manual
         </button>
@@ -536,12 +536,12 @@
 
     @if (ledgerTotalPages > 1) {
     <div class="pagination-controls">
-      <button class="btn-page" [disabled]="ledgerPage === 0" (click)="onLedgerPageChange(-1)">
+      <button class="toolbar-btn btn-page" [disabled]="ledgerPage === 0" (click)="onLedgerPageChange(-1)">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
         Anterior
       </button>
       <span class="page-info">Página {{ ledgerPage + 1 }} de {{ ledgerTotalPages }} <span class="total-info">({{ ledgerTotalElements }} mov.)</span></span>
-      <button class="btn-page" [disabled]="ledgerPage === ledgerTotalPages - 1" (click)="onLedgerPageChange(1)">
+      <button class="toolbar-btn btn-page" [disabled]="ledgerPage === ledgerTotalPages - 1" (click)="onLedgerPageChange(1)">
         Siguiente
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
       </button>
@@ -593,7 +593,6 @@
 @if (showOrderModal) {
 <app-base-modal title="Generar una Orden de Reposición" size="lg" (closed)="closeOrderModal()">
   <div class="modal-container">
-    <div class="modal-body">
       <div class="days-control">
         <label>¿Para cuántos días deseas cubrir el stock estimado?</label>
         <div class="days-input-group">
@@ -624,17 +623,16 @@
           </tbody>
         </table>
       </div>
+  </div>
+  <div modal-footer class="order-modal-footer">
+    <div class="order-total">
+      Total estimado: <strong>{{ getOrderTotal() | currency:'EUR' }}</strong>
     </div>
-    <div modal-footer style="justify-content: space-between; align-items: center;">
-      <div class="order-total" style="font-size: 1.1rem; color: #1e2850;">
-        Total estimado: <strong style="font-size: 1.3rem;">{{ getOrderTotal() | currency:'EUR' }}</strong>
-      </div>
-      <div style="display: flex; gap: 12px;">
-        <button type="button" class="btn-cancel" (click)="closeOrderModal()">Cancelar</button>
-        <button type="button" class="btn-confirm" (click)="confirmCreateOrder()" [disabled]="creatingOrder || getOrderTotal() === 0">
-          {{ creatingOrder ? 'Creando...' : 'Confirmar Orden' }}
-        </button>
-      </div>
+    <div class="order-actions">
+      <button type="button" class="btn-cancel" (click)="closeOrderModal()">Cancelar</button>
+      <button type="button" class="btn-confirm" (click)="confirmCreateOrder()" [disabled]="creatingOrder || getOrderTotal() === 0">
+        {{ creatingOrder ? 'Creando...' : 'Confirmar Orden' }}
+      </button>
     </div>
   </div>
 </app-base-modal>
@@ -643,10 +641,8 @@
 
 <!-- Ledger Transaction Detail Modal (Mobile) -->
 @if (showLedgerMobileModal && selectedLedgerTx) {
-<app-base-modal title="Detalle de Transacción" size="lg" (closed)="closeLedgerMobileModal()">
+<app-base-modal title="Detalle de Transacción" size="md" (closed)="closeLedgerMobileModal()">
   <div class="modal-container ledger-detail-modal">
-    <div class="modal-body ledger-detail-body">
-
       <!-- Status banner -->
       <div class="ledger-detail-status" [class.status-ok]="selectedLedgerTx.verified" [class.status-err]="!selectedLedgerTx.verified">
         @if (selectedLedgerTx.verified) {
@@ -711,7 +707,6 @@
           <span class="detail-val hash-val">{{ selectedLedgerTx.previousHash }}</span>
         </div>
       </div>
-    </div>
   </div>
 </app-base-modal>
 }
@@ -721,7 +716,6 @@
 @if (showManualAdjustmentModal) {
 <app-base-modal title="Ajuste de Stock Manual" size="lg" (closed)="closeManualAdjustmentModal()">
   <div class="modal-container">
-    <div class="modal-body">
       <div class="adjustment-type-toggle">
         <button type="button" class="toggle-btn" [class.active]="adjustmentDirection === 'ENTRY'" (click)="adjustmentDirection = 'ENTRY'">
           <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
@@ -773,7 +767,6 @@
         <label>Motivo del Ajuste *</label>
         <textarea [(ngModel)]="adjustmentDescription" rows="3" placeholder="Ej. Corrección de inventario, merma no registrada, rotura..." class="input-standard textarea-standard"></textarea>
       </div>
-    </div>
   </div>
 
   <div modal-footer>

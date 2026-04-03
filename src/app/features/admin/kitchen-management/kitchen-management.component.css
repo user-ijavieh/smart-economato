@@ -489,56 +489,11 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
   width: 100%;
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  overflow: visible;
   color: var(--theme-text-primary);
 }
 .traceability-modal-container {
   max-width: 800px;
-  max-height: 90vh;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 28px;
-  background: var(--theme-section-header-bg);
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
-}
-
-.modal-header h2 {
-  font-size: 1.3rem;
-  color: var(--theme-text-primary);
-  margin: 0;
-  font-family: var(--font-heading);
-}
-
-.btn-close {
-  background: var(--theme-surface-glass-hover);
-  border: 1px solid var(--theme-border-medium);
-  color: var(--theme-text-primary);
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  transition: all 0.2s ease;
-}
-
-.btn-close:hover {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: var(--color-danger-hover-border);
-  color: var(--color-danger-muted);
-  transform: scale(1.05);
-}
-
-.modal-body {
-  padding: 28px;
-  overflow-y: auto;
-  flex: 1;
 }
 
 .loading-traceability {
@@ -749,7 +704,7 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 
 .mobile-detail-modal-body {
   padding: 24px;
-  overflow-y: auto;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   gap: 16px;
