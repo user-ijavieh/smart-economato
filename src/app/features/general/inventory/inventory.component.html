@@ -286,7 +286,6 @@
 <!-- Modal de creación -->
 @if (showCreateModal) {
   <app-product-create-modal
-    [@modalAnimation]
     [suppliers]="suppliers"
     (save)="onSaveProduct($event)"
     (close)="onCloseCreateModal()"
@@ -296,7 +295,6 @@
 <!-- Modal de edición -->
 @if (showEditModal && selectedProduct) {
   <app-product-edit-modal
-    [@modalAnimation]
     [product]="selectedProduct"
     [suppliers]="suppliers"
     (save)="onSaveEditedProduct($event)"
@@ -320,7 +318,6 @@
 <!-- Modal de detalles del producto -->
 @if (showDetailModal && selectedProduct) {
   <app-product-detail-modal
-    [@modalAnimation]
     [product]="selectedProduct"
     [isAdmin]="false"
     [showActions]="canManageProducts"
@@ -331,7 +328,7 @@
 
 <!-- Modal de escáner de código de barras -->
 @if (showScannerModal) {
-  <div class="scanner-modal-overlay" (click)="closeBarcodeScanner()" [@modalAnimation]>
+  <div class="scanner-modal-overlay" (click)="closeBarcodeScanner()">
     <div class="scanner-modal" (click)="$event.stopPropagation()">
       <div class="scanner-modal-header">
         <h2>Escanear Código de Barras</h2>

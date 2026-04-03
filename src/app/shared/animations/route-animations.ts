@@ -21,7 +21,7 @@ export const slideInAnimation = trigger('routeAnimations', [
         animate('500ms cubic-bezier(0.25, 0.8, 0.25, 1)', style({ transform: '{{leaveTransform}}', opacity: 0, scale: 0.95 }))
       ], { optional: true }),
       query(':enter', [
-        animate('500ms cubic-bezier(0.25, 0.8, 0.25, 1)', style({ transform: 'translate(0, 0)', opacity: 1, scale: 1 }))
+        animate('500ms cubic-bezier(0.25, 0.8, 0.25, 1)', style({ transform: 'none', opacity: 1 }))
       ], { optional: true })
     ]),
     query(':enter', animateChild(), { optional: true })
@@ -47,7 +47,7 @@ export const slideInAnimation = trigger('routeAnimations', [
         animate('500ms cubic-bezier(0.25, 0.8, 0.25, 1)', style({ transform: '{{leaveTransformDec}}', opacity: 0, scale: 0.95 }))
       ], { optional: true }),
       query(':enter', [
-        animate('500ms cubic-bezier(0.25, 0.8, 0.25, 1)', style({ transform: 'translate(0, 0)', opacity: 1, scale: 1 }))
+        animate('500ms cubic-bezier(0.25, 0.8, 0.25, 1)', style({ transform: 'none', opacity: 1 }))
       ], { optional: true })
     ]),
     query(':enter', animateChild(), { optional: true })
