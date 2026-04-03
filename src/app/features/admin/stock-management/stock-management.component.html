@@ -624,15 +624,17 @@
         </table>
       </div>
   </div>
-  <div modal-footer class="order-modal-footer">
-    <div class="order-total">
-      Total estimado: <strong>{{ getOrderTotal() | currency:'EUR' }}</strong>
-    </div>
-    <div class="order-actions">
-      <button type="button" class="btn-cancel" (click)="closeOrderModal()">Cancelar</button>
-      <button type="button" class="btn-confirm" (click)="confirmCreateOrder()" [disabled]="creatingOrder || getOrderTotal() === 0">
-        {{ creatingOrder ? 'Creando...' : 'Confirmar Orden' }}
-      </button>
+  <div modal-footer>
+    <div class="order-modal-footer">
+      <div class="order-total">
+        Total estimado: <strong>{{ getOrderTotal() | currency:'EUR' }}</strong>
+      </div>
+      <div class="order-actions">
+        <button type="button" class="btn-cancel" (click)="closeOrderModal()">Cancelar</button>
+        <button type="button" class="btn-confirm" (click)="confirmCreateOrder()" [disabled]="creatingOrder || getOrderTotal() === 0">
+          {{ creatingOrder ? 'Creando...' : 'Confirmar Orden' }}
+        </button>
+      </div>
     </div>
   </div>
 </app-base-modal>
