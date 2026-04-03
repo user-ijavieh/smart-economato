@@ -18,105 +18,10 @@
   color: var(--theme-text-primary);
 }
 
-.btn-cancel,
-.btn-save {
-  padding: 12px 24px;
-  border-radius: var(--theme-radius-btn);
-  border: none;
-  font-size: 0.95rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: 100%;
-  text-align: center;
-}
-
-.btn-cancel {
-  background: var(--theme-surface-glass-hover);
-  color: var(--theme-text-secondary);
-  border: 1px solid var(--theme-border-glass);
-}
-
-.btn-cancel:hover {
-  background: var(--theme-border-medium);
-  color: var(--theme-text-primary);
-  transform: translateY(-2px);
-}
-
-.btn-save {
-  background: color-mix(in srgb, var(--brand-primary) 15%, transparent) !important;
-  border: 1px solid color-mix(in srgb, var(--brand-primary) 30%, transparent) !important;
-  color: var(--theme-text-primary)!important;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2) !important;
-  backdrop-filter: blur(8px);
-}
-
-.btn-save:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--brand-primary) 25%, transparent) !important;
-  border-color: color-mix(in srgb, var(--brand-primary) 50%, transparent) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px var(--brand-glow) !important;
-}
-
-.btn-save:disabled {
-  background: var(--theme-surface-glass-hover);
-  color: var(--theme-border-hover);
-  cursor: not-allowed;
-  box-shadow: none;
-  transform: none;
-}
-
 /** ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .form-grid {
     grid-template-columns: 1fr;
   }
-}
-/** ===== ADMIN THEME OVERRIDES ===== */
-:host-context(.admin-theme) {
-  --color-brand-primary: rgba(90, 120, 220, 0.95);
-  --color-brand-dark: rgba(90, 120, 220, 0.8);
-  --color-brand-glow: rgba(90, 120, 220, 0.35);
-  --color-surface-glass: var(--theme-surface-glass);
-  --color-border-glass: rgba(90, 120, 220, 0.15);
-}
-:host-context(.admin-theme) .btn-save,
-:host-context(.admin-theme) .btn-cocinar {
-  background: var(--theme-surface-glass-active) !important;
-  border: none !important;
-  box-shadow: 0 4px 18px rgba(90, 120, 220, 0.2) !important;
-  color: var(--theme-text-primary)!important;
-}
-:host-context(.admin-theme) .btn-save:hover:not(:disabled),
-:host-context(.admin-theme) .btn-cocinar:hover:not(:disabled) {
-  background: rgba(90, 120, 220, 0.8) !important;
-  box-shadow: 0 8px 25px rgba(90, 120, 220, 0.4) !important;
-}
-:host-context(.admin-theme) .btn-editar {
-  background: rgba(90, 120, 220, 0.15) !important;
-  color: var(--color-accent-admin) !important;
-  border: 1px solid rgba(90, 120, 220, 0.3) !important;
-}
-:host-context(.admin-theme) .btn-editar:hover {
-  background: rgba(90, 120, 220, 0.25) !important;
-  box-shadow: 0 8px 25px rgba(90, 120, 220, 0.15) !important;
-}
-:host-context(.admin-theme) .product-option.selected {
-  background: var(--color-accent-admin-bg);
-  color: var(--color-accent-admin);
-}
-:host-context(.admin-theme) .btn-add-component:hover {
-  border-color: rgba(90, 120, 220, 0.95);
-  color: var(--color-accent-admin);
-  background: rgba(90, 120, 220, 0.1);
-}
-:host-context(.admin-theme) .btn-eliminar {
-  background: rgba(239, 68, 68, 0.15) !important;
-  color: var(--color-danger-muted) !important;
-  border: 1px solid rgba(239, 68, 68, 0.3) !important;
-}
-:host-context(.admin-theme) .btn-eliminar:hover {
-  background: rgba(239, 68, 68, 0.25) !important;
-  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.15) !important;
 }
 

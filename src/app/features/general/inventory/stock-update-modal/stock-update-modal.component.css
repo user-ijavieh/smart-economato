@@ -40,51 +40,6 @@
   font-style: italic;
 }
 
-.btn-cancel,
-.btn-save {
-  padding: 10px 24px;
-  border-radius: 8px;
-  border: none;
-  font-size: 0.9rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: 100%;
-  text-align: center;
-}
-
-.btn-cancel {
-  background: #6b7280;
-  color: var(--theme-text-on-brand);
-  box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3);
-}
-
-.btn-cancel:hover {
-  background: #4b5563;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
-}
-
-.btn-save {
-  background: var(--brand-primary);
-  color: var(--theme-text-on-brand);
-  box-shadow: 0 2px 8px var(--brand-glow);
-}
-
-.btn-save:hover {
-  background: var(--brand-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px var(--brand-glow);
-}
-
-.btn-save:disabled {
-  background: #ccc;
-  color: #6b7280;
-  cursor: not-allowed;
-  box-shadow: none;
-  transform: none;
-}
-
 /** ===== ADMIN MODE OVERRIDES ===== */
 
 .admin-mode input:focus {
@@ -92,28 +47,7 @@
   box-shadow: 0 0 0 3px var(--theme-input-border-focus-glow);
 }
 
-.admin-mode .btn-save {
-  background: var(--admin-primary);
-  box-shadow: 0 2px 8px rgba(var(--admin-rgb), 0.3);
-}
-
-.admin-mode .btn-save:hover {
-  background: var(--admin-primary-hover);
-  box-shadow: 0 4px 12px rgba(var(--admin-rgb), 0.4);
-}
-
 /** ===== ANIMATIONS ===== */
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 /** ===== RESPONSIVE ===== */
 

@@ -105,7 +105,5 @@
   .received-col { width: 65px; }
   .expiry-col { width: 95px; }
   .quantity-input, .table-input { padding: 4px; font-size: 0.75rem; }
-  [modal-footer] button { width: 100%; justify-content: center; }
-  .btn-success { order: -1; }
 }
 
