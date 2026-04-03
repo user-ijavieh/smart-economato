@@ -382,8 +382,6 @@
 @if (showTraceabilityModal) {
 <app-base-modal title="Trazabilidad de Ingredientes" size="lg" (closed)="closeTraceabilityModal()">
     <div class="modal-container traceability-modal-container">
-
-      <div class="modal-body">
         @if (loadingTraceability) {
           <div class="loading-traceability">
             <div class="spinner"></div>
@@ -467,8 +465,6 @@
             </div>
           </div>
         }
-      </div>
-
     </div>
 </app-base-modal>
 }
