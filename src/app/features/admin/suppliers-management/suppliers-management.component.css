@@ -1,4 +1,4 @@
-﻿:host {
+:host {
   display: block;
 }
 
@@ -62,7 +62,7 @@
   box-shadow: 0 0 0 3px rgba(90, 120, 220, 0.2);
 }
 
-button:not(.admin-tab-btn):not(.btn-editar):not(.btn-eliminar):not(.btn-ver):not(.btn-pdf):not(.btn-ocultar):not(.btn-mostrar) {
+.toolbar-btn {
   padding: 10px 20px;
   border-radius: var(--theme-radius-btn);
   border: 1px solid var(--theme-surface-glass-hover);
@@ -77,14 +77,14 @@ button:not(.admin-tab-btn):not(.btn-editar):not(.btn-eliminar):not(.btn-ver):not
   backdrop-filter: blur(8px);
 }
 
-button:not(.admin-tab-btn):not(.btn-editar):not(.btn-eliminar):not(.btn-ver):not(.btn-pdf):not(.btn-ocultar):not(.btn-mostrar):hover:not(:disabled) {
+.toolbar-btn:hover:not(:disabled) {
   background: var(--theme-border-glass);
   border-color: var(--theme-border-hover);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
-button:not(.admin-tab-btn):not(.btn-editar):not(.btn-eliminar):not(.btn-ver):not(.btn-pdf):not(.btn-ocultar):not(.btn-mostrar):active { transform: translateY(0); }
+.toolbar-btn:active { transform: translateY(0); }
 
 #btnAgregarProveedor {
   background: rgba(76, 175, 80, 0.15);

@@ -10,6 +10,10 @@
 @import 'styles/_skeletons.css';
 @import 'styles/_empty-states.css';
 
+.reception-header {
+  background: linear-gradient(to right, rgba(16, 185, 129, 0.15), transparent) !important;
+}
+
 :root {
   /* ===== THEME TOKENS (Dark Mode - General/User) ===== */
   --theme-bg-page: #0c0808;

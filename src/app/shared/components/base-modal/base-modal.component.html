@@ -6,7 +6,7 @@
 >
   <div class="modal-dialog" [class]="'modal-dialog modal-' + size" (click)="$event.stopPropagation()">
     @if (showHeader) {
-      <div class="modal-header">
+      <div [class]="'modal-header' + (headerClass ? ' ' + headerClass : '')">
         <ng-content select="[modal-header]">
           <h2>{{ title }}</h2>
         </ng-content>

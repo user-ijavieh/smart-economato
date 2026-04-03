@@ -747,33 +747,6 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
   }
 }
 
-.mobile-detail-modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 24px;
-  background: var(--theme-section-header-bg);
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
-}
-
-.title-cell h2 { margin: 0; font-size: 1.25rem; font-family: var(--font-heading); font-weight: 700; color: var(--theme-text-primary); }
-
-.modal-close-btn {
-  background: var(--theme-surface-glass-hover);
-  border: 1px solid var(--theme-border-medium);
-  color: var(--theme-text-primary);
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  transition: all 0.2s ease;
-}
-.modal-close-btn:hover { background: rgba(239, 68, 68, 0.2); border-color: var(--color-danger-hover-border); color: var(--color-danger-muted); }
-
 .mobile-detail-modal-body {
   padding: 24px;
   overflow-y: auto;

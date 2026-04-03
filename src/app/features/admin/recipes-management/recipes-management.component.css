@@ -109,7 +109,7 @@
   box-shadow: none;
 }
 
-button:not(.admin-tab-btn):not(.btn-editar):not(.btn-eliminar):not(.btn-ver):not(.btn-pdf):not(.btn-ocultar):not(.btn-mostrar) {
+.toolbar-btn {
   padding: 10px 20px;
   border-radius: 8px;
   border: 1px solid var(--theme-surface-glass-hover);
@@ -124,14 +124,14 @@ button:not(.admin-tab-btn):not(.btn-editar):not(.btn-eliminar):not(.btn-ver):not
   backdrop-filter: blur(8px);
 }
 
-button:not(.admin-tab-btn):not(.btn-editar):not(.btn-eliminar):not(.btn-ver):not(.btn-pdf):not(.btn-ocultar):not(.btn-mostrar):hover:not(:disabled) {
+.toolbar-btn:hover:not(:disabled) {
   background: var(--theme-border-glass);
   border-color: var(--theme-border-hover);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
-button:not(.admin-tab-btn):not(.btn-editar):not(.btn-eliminar):not(.btn-ver):not(.btn-pdf):not(.btn-ocultar):not(.btn-mostrar):active {
+.toolbar-btn:active {
   transform: translateY(0);
 }
 
@@ -616,23 +616,13 @@ tr.clickable-row {
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.audit-modal-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 20px 28px;
-  background: var(--theme-section-header-bg);
-  color: var(--theme-text-primary);
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
-}
-
 .audit-header-content {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.audit-modal-header h2 {
+.audit-header-content h2 {
   margin: 0;
   font-size: 1.2rem;
   font-family: var(--font-heading);
@@ -649,28 +639,6 @@ tr.clickable-row {
 .audit-header-date, .audit-header-user {
   font-size: 0.85rem;
   color: var(--theme-text-secondary);
-}
-
-.audit-modal-close {
-  background: var(--theme-surface-glass-hover);
-  border: 1px solid var(--theme-border-medium);
-  color: var(--theme-text-primary);
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  box-shadow: none;
-  transition: all 0.2s ease;
-}
-
-.audit-modal-close:hover {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: var(--color-danger-hover-border);
-  color: var(--color-danger-muted);
 }
 
 .audit-modal-body {
