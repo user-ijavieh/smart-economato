@@ -12,6 +12,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 })
 export class BaseModalComponent {
   @Input() title = '';
+  @Input() headerClass = '';
   @Input() size: 'sm' | 'md' | 'lg' | 'fullscreen' = 'md';
   @Input() closeOnBackdrop = true;
   @Input() showCloseButton = true;

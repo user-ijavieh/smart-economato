@@ -365,16 +365,7 @@ tbody tr:hover {
 
 .modal-status-change { max-width: 450px; }
 
-.modal-header-base {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 20px 28px;
-  background: var(--theme-section-header-bg);
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
-}
-
-.modal-header-base h2 {
+.modal-header-content h2 {
   font-size: 2rem;
   color: var(--theme-text-primary);
   margin: 0;
@@ -414,36 +405,10 @@ tbody tr:hover {
   vertical-align: middle;
 }
 
-.modal-close {
-  background: var(--theme-surface-glass-hover);
-  border: 1px solid var(--theme-border-medium);
-  color: var(--theme-text-primary);
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.modal-close:hover {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: var(--color-danger-hover-border);
-  color: var(--color-danger-muted);
-}
-
 .modal-body {
   padding: 28px;
   overflow-y: auto;
   flex: 1;
-}
-
-.modal-footer {
-  padding: 20px 28px;
-  border-top: 1px solid var(--theme-surface-glass-hover);
-  background: var(--theme-section-header-bg);
 }
 
 .modal-actions {
@@ -557,16 +522,6 @@ tbody tr:hover {
 /* ===== AUDIT DETAIL MODAL ===== */
 .audit-modal-wide {
   max-width: 1100px;
-}
-
-.audit-modal-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 22px 28px;
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
-  background: var(--theme-section-header-bg);
 }
 
 .audit-header-content {
@@ -795,7 +750,6 @@ tbody tr:hover {
   .controles input, .action-select { width: 100%; box-sizing: border-box; }
   .stats-row { flex-direction: column; }
   .stat-card { max-width: none; }
-  .modal-header-base h2,
   .audit-header-content h2,
   .modal-section h4 { font-size: 1.55rem; }
   .modal-header-date::after,

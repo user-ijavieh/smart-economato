@@ -23,16 +23,16 @@
 <div class="page-content contenedor-principal">
     <div class="controls-bar controles">
         <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por nombre..." (ngModelChange)="onSearch()" />
-        <button id="btnAgregarProducto" (click)="openCreateModal()">
+        <button id="btnAgregarProducto" class="toolbar-btn" (click)="openCreateModal()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
             </svg>
             Agregar Producto
         </button>
         @if (hasActiveFilters()) {
-        <button class="btn-clear" (click)="clearFilters()">Limpiar Filtros</button>
+        <button class="toolbar-btn btn-clear" (click)="clearFilters()">Limpiar Filtros</button>
         }
-        <button class="btn-toggle-hidden" (click)="toggleShowHidden()" [class.active]="showHiddenProducts" title="Ver productos desactivados">
+        <button class="toolbar-btn btn-toggle-hidden" (click)="toggleShowHidden()" [class.active]="showHiddenProducts" title="Ver productos desactivados">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 @if (showHiddenProducts) {
                 <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
@@ -45,7 +45,7 @@
             </svg>
             {{ showHiddenProducts ? 'Ver Activos' : 'Ver Desactivados' }}
         </button>
-        <button class="btn-excel" (click)="exportToExcel()" title="Exportar a Excel">
+        <button class="toolbar-btn btn-excel" (click)="exportToExcel()" title="Exportar a Excel">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
                 <path d="M5.75 6.75a.5.5 0 0 1 .71 0L8 8.29l1.54-1.54a.5.5 0 1 1 .71.71L8.71 9l1.54 1.54a.5.5 0 0 1-.71.71L8 9.71l-1.54 1.54a.5.5 0 0 1-.71-.71L7.29 9 5.75 7.46a.5.5 0 0 1 0-.71z"/>
@@ -158,12 +158,12 @@
 
     @if (totalPages > 1) {
     <div class="pagination-controls">
-        <button class="btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
+        <button class="toolbar-btn btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
             Anterior
         </button>
         <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }} <span class="total-info">({{ totalElements }} productos)</span></span>
-        <button class="btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
+        <button class="toolbar-btn btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
             Siguiente
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
         </button>
@@ -187,7 +187,7 @@
             <input type="date" [(ngModel)]="auditStartDate" class="date-input" placeholder="Desde" />
             <span class="date-separator">—</span>
             <input type="date" [(ngModel)]="auditEndDate" class="date-input" placeholder="Hasta" />
-            <button class="btn-date-filter" (click)="onAuditDateFilterChange()" [disabled]="!auditStartDate || !auditEndDate">
+            <button class="toolbar-btn btn-date-filter" (click)="onAuditDateFilterChange()" [disabled]="!auditStartDate || !auditEndDate">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
                 </svg>
@@ -195,7 +195,7 @@
             </button>
         </div>
         @if (hasActiveAuditFilters()) {
-        <button class="btn-clear" (click)="clearAuditFilters()">Limpiar Filtros</button>
+        <button class="toolbar-btn btn-clear" (click)="clearAuditFilters()">Limpiar Filtros</button>
         }
     </div>
 
@@ -274,12 +274,12 @@
 
     @if (totalAuditPages > 1) {
     <div class="pagination-controls">
-        <button class="btn-page" [disabled]="currentAuditPage === 0" (click)="changeAuditPage(-1)">
+        <button class="toolbar-btn btn-page" [disabled]="currentAuditPage === 0" (click)="changeAuditPage(-1)">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
             Anterior
         </button>
         <span class="page-info">Página {{ currentAuditPage + 1 }} de {{ totalAuditPages }} <span class="total-info">({{ totalAuditsCount }} auditorías)</span></span>
-        <button class="btn-page" [disabled]="currentAuditPage === totalAuditPages - 1" (click)="changeAuditPage(1)">
+        <button class="toolbar-btn btn-page" [disabled]="currentAuditPage === totalAuditPages - 1" (click)="changeAuditPage(1)">
             Siguiente
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
         </button>

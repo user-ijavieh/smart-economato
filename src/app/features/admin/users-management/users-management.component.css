@@ -53,7 +53,7 @@
   color: var(--theme-text-primary);
 }
 
-button:not(.admin-tab-btn):not(.btn-editar):not(.btn-eliminar):not(.btn-ver):not(.btn-pdf):not(.btn-ocultar):not(.btn-mostrar) {
+.toolbar-btn {
   padding: 12px 20px;
   border-radius: var(--theme-radius-btn);
   border: 1px solid var(--theme-surface-glass-hover);
@@ -72,14 +72,14 @@ button:not(.admin-tab-btn):not(.btn-editar):not(.btn-eliminar):not(.btn-ver):not
   backdrop-filter: blur(8px);
 }
 
-button:not(.admin-tab-btn):not(.btn-editar):not(.btn-eliminar):not(.btn-ver):not(.btn-pdf):not(.btn-ocultar):not(.btn-mostrar):hover {
+.toolbar-btn:hover {
   background: var(--theme-border-glass);
   border-color: var(--theme-border-hover);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
-button:not(.admin-tab-btn):not(.btn-editar):not(.btn-eliminar):not(.btn-ver):not(.btn-pdf):not(.btn-ocultar):not(.btn-mostrar):active {
+.toolbar-btn:active {
   transform: translateY(0);
 }
 
