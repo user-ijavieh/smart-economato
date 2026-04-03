@@ -13,7 +13,6 @@
   justify-content: center;
   padding: 24px;
   overflow: hidden;
-  animation: fadeInModal 0.3s ease forwards;
 }
 
 .modal-overlay-fullscreen {
