@@ -304,7 +304,6 @@
         </div>
         <div modal-footer>
             <div class="modal-actions">
-                <button class="btn-cancel" (click)="closeChangeStatusModal()" [disabled]="savingStatus">Cancelar</button>
                 <button class="btn-editar" (click)="confirmStatusChange()"
                     [disabled]="savingStatus || newStatusValue === orderForStatusChange.status">
                     @if (savingStatus) {
@@ -498,7 +497,6 @@
                 Revertir
             </button>
             }
-            <button class="btn-cancel" (click)="closeOrderDetail()">Cerrar</button>
         </div>
     </div>
 </app-base-modal>

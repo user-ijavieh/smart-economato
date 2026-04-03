@@ -59,25 +59,6 @@ form {
   box-shadow: 0 4px 12px color-mix(in srgb, var(--color-success) 40%, transparent);
 }
 
-.btn-cancelar {
-  padding: 12px 30px;
-  background: rgb(160, 61, 55);
-  color: var(--theme-text-primary);
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-family: var(--font-body);
-  font-weight: var(--font-body-weight);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-cancelar:hover {
-  background: var(--color-danger);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-danger) 40%, transparent);
-}
-
 .btn-eliminar {
   padding: 12px 30px;
   background: var(--color-danger);

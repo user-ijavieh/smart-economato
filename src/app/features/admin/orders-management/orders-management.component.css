@@ -411,22 +411,6 @@ tbody tr:hover {
   justify-content: flex-end;
 }
 
-.btn-cancel {
-  background: var(--theme-surface-glass-hover);
-  color: var(--theme-text-secondary);
-  border: 1px solid var(--theme-border-glass);
-  padding: 10px 20px;
-  border-radius: var(--theme-radius-btn);
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-cancel:hover {
-  background: var(--theme-border-medium);
-  color: var(--theme-text-primary);
-}
-
 .btn-editar {
   background: var(--theme-surface-glass-active);
   color: var(--theme-text-primary);

@@ -39,15 +39,13 @@
   box-shadow: none !important;
 }
 
-/* Secondary / Cancel */
-.modal-btn-cancel,
+/* Secondary */
 .modal-btn-secondary {
   background: var(--theme-surface-glass-hover);
   color: var(--theme-text-primary);
   border: 1px solid var(--theme-border-glass);
 }
 
-.modal-btn-cancel:hover:not(:disabled),
 .modal-btn-secondary:hover:not(:disabled) {
   background: var(--theme-border-medium);
   transform: translateY(-1px);

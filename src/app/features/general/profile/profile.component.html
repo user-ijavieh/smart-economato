@@ -121,7 +121,6 @@
     </div>
 
     <div modal-footer>
-      <button class="modal-btn modal-btn-cancel" (click)="closeEscalateModal()">Cancelar</button>
       <button class="modal-btn modal-btn-primary" (click)="confirmEscalate()" [disabled]="isProcessing(selectedStudent.id)">
         {{ isProcessing(selectedStudent.id) ? 'Aplicando...' : 'Confirmar' }}
       </button>

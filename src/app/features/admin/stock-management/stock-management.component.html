@@ -630,7 +630,6 @@
         Total estimado: <strong>{{ getOrderTotal() | currency:'EUR' }}</strong>
       </div>
       <div class="order-actions">
-        <button type="button" class="btn-cancel" (click)="closeOrderModal()">Cancelar</button>
         <button type="button" class="btn-confirm" (click)="confirmCreateOrder()" [disabled]="creatingOrder || getOrderTotal() === 0">
           {{ creatingOrder ? 'Creando...' : 'Confirmar Orden' }}
         </button>
@@ -772,7 +771,6 @@
   </div>
 
   <div modal-footer>
-    <button type="button" class="btn-cancel" (click)="closeManualAdjustmentModal()">Cancelar</button>
     <button type="button" class="btn-confirm adjustment-confirm-btn" (click)="submitManualAdjustment()" [disabled]="submittingAdjustment || !absoluteAdjustmentQuantity || absoluteAdjustmentQuantity <= 0 || !adjustmentDescription">
       {{ submittingAdjustment ? 'Registrando...' : 'Registrar Ajuste' }}
     </button>
