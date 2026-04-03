@@ -142,9 +142,7 @@
 @if (showActivationModal) {
 <app-base-modal title="Declarar Alerta de Trazabilidad" size="lg" (closed)="closeActivationModal()">
   <div class="modal-container">
-    
-    <div class="modal-body">
-      <div class="activation-form-grid">
+    <div class="activation-form-grid">
         <div class="form-item">
           <label>Proveedor Responsable</label>
           <div class="custom-select-container">
@@ -216,14 +214,13 @@
           <textarea [(ngModel)]="reason" class="reason-textarea" placeholder="Escribe el motivo detallado..."></textarea>
         </div>
       </div>
-    </div>
-    
-    <div modal-footer class="modal-footer">
+  </div>
+
+  <div modal-footer>
       <button class="btn-cancel" (click)="closeActivationModal()">Cancelar</button>
       <button class="btn-activate-modal" (click)="activateCrisis()" [disabled]="activating">
         {{ activating ? 'Declarando...' : 'Declarar Alerta' }}
       </button>
-    </div>
   </div>
 </app-base-modal>
 }
@@ -233,9 +230,7 @@
 @if (showCrisisDetailModal && selectedCrisis) {
 <app-base-modal [title]="'Crisis / ' + (selectedCrisis.crisisCode || ('CRISIS-' + selectedCrisis.crisisId))" size="fullscreen" (closed)="closeCrisisDetail()">
   <div class="modal-container traceability-modal-container">
-    
-    <div class="modal-body">
-      <div class="crisis-detail-content" style="border-left: none; padding: 0;">
+    <div class="crisis-detail-content" style="border-left: none; padding: 0;">
         <div class="detail-grid-standard">
           <div class="detail-col"><strong>Motivo:</strong><p>{{ selectedCrisis.reason }}</p></div>
           <div class="detail-col"><strong>Impacto:</strong><ul><li>Lotes afectados: {{ selectedCrisis.affectedBatches?.length || 0 }}</li><li>Pedidos implicados: {{ selectedCrisis.affectedOrders?.length || 0 }}</li><li>Cocinados implicados: {{ selectedCrisis.affectedCookings?.length || 0 }}</li></ul></div>
@@ -318,10 +313,10 @@
         </div>
         }
       </div>
-    </div>
-    
-    @if (selectedCrisis.status === 'ACTIVE') {
-    <div modal-footer class="modal-footer">
+  </div>
+
+  @if (selectedCrisis.status === 'ACTIVE') {
+    <div modal-footer>
       <div class="lift-crisis-actions" style="margin-top: 0; padding-top: 0; border: none; width: 100%; display: flex; justify-content: flex-end;">
         <div style="display: flex; gap: 10px;">
           <input type="number" min="0" max="100" [(ngModel)]="liftAvailabilityByCrisis[selectedCrisis.crisisId]" placeholder="Disp. %" class="input-standard" style="width: 120px;" />
@@ -329,7 +324,6 @@
         </div>
       </div>
     </div>
-    }
-  </div>
+  }
 </app-base-modal>
 }

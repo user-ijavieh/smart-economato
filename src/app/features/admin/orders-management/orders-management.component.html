@@ -273,8 +273,6 @@
 @if (showChangeStatusModal && orderForStatusChange) {
 <app-base-modal title="Cambiar Estado" size="md" (closed)="closeChangeStatusModal()">
         <div class="modal-content modal-status-change">
-
-            <div class="modal-body">
                 <div class="modal-section" style="margin-bottom: 20px;">
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
                         <span class="id-badge">#{{ orderForStatusChange.id }}</span>
@@ -302,7 +300,6 @@
                         </span>
                     </div>
                 </div>
-            </div>
 
         </div>
         <div modal-footer>
@@ -434,7 +431,6 @@
     </div>
     <div class="modal-container" style="max-width: 950px;">
         <div class="modal-content">
-            <div class="modal-body" style="padding: 35px 40px;">
                 <!-- Información General -->
                 <div class="modal-section">
                     <div class="order-info-grid">
@@ -481,7 +477,6 @@
                     </table>
                 </div>
                 }
-            </div>
 
         </div>
     </div>
