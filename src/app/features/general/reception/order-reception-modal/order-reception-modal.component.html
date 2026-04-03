@@ -1,4 +1,4 @@
-<app-base-modal [title]="'Procesar Recepción de Orden #' + order.id" size="fullscreen" [closeOnBackdrop]="false" headerClass="reception-header" (closed)="close()">
+<app-base-modal [title]="'Procesar Recepción de Orden #' + order.id" size="lg" [closeOnBackdrop]="false" headerClass="reception-header" [beforeClose]="beforeCloseHandler" (closed)="close()">
 
   <div class="order-reception-content">
       <div class="detail-group">
@@ -47,7 +47,6 @@
   </div>
 
   <div modal-footer>
-    <button class="modal-btn modal-btn-secondary" (click)="confirmCancel()" [disabled]="isProcessing">Cancelar</button>
     <button class="modal-btn modal-btn-success" (click)="processReception()" [disabled]="isProcessing">
       @if (isProcessing) {
         <span>Procesando...</span>

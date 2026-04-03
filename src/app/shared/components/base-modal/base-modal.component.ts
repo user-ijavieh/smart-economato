@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output, inject } from '@angular/core';
 
 @Component({
   selector: 'app-base-modal',
@@ -17,8 +17,10 @@ export class BaseModalComponent {
   @Input() closeOnBackdrop = true;
   @Input() showCloseButton = true;
   @Input() showHeader = true;
+  @Input() beforeClose?: () => Promise<boolean> | boolean;
   @Output() closed = new EventEmitter<void>();
 
+  private cdr = inject(ChangeDetectorRef);
   isClosing = false;
 
   onOverlayClick(event: MouseEvent): void {
@@ -37,12 +39,20 @@ export class BaseModalComponent {
     }
   }
 
-  close(): void {
+  async close(): Promise<void> {
     if (this.isClosing) {
       return;
     }
 
+    if (this.beforeClose) {
+      const canClose = await this.beforeClose();
+      if (!canClose) {
+        return;
+      }
+    }
+
     this.isClosing = true;
+    this.cdr.markForCheck();
 
     window.setTimeout(() => {
       this.closed.emit();
