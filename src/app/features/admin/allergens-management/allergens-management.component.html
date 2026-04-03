@@ -128,7 +128,6 @@
             </div>
         </div>
         <div modal-footer class="allergen-modal-footer">
-            <button class="btn-cancel" (click)="closeModal()" [disabled]="modalSaving">Cancelar</button>
             <button class="btn-save" (click)="saveModal()" [disabled]="modalSaving || !modalName.trim()">
                 @if (modalSaving) {
                 <span class="saving-spinner"></span>

@@ -551,14 +551,6 @@ tr:hover { background: var(--theme-surface-glass-hover); }
   padding: 16px 28px 24px;
 }
 
-.allergen-modal-footer .btn-cancel {
-  background: var(--theme-surface-glass-hover);
-  color: var(--theme-text-secondary);
-  box-shadow: none;
-  border: 1px solid var(--theme-border-glass);
-}
-.allergen-modal-footer .btn-cancel:hover { background: var(--theme-border-medium); color: var(--theme-text-primary); transform: translateY(-2px); }
-
 .allergen-modal-footer .btn-save {
   background: var(--theme-surface-glass-active);
   color: var(--theme-text-primary);
@@ -609,5 +601,5 @@ tr:hover { background: var(--theme-surface-glass-hover); }
   .stat-card { padding: 12px; }
   .stat-number { font-size: 1.4rem; }
   .allergen-modal-footer { flex-direction: column; }
-  .allergen-modal-footer .btn-save, .allergen-modal-footer .btn-cancel { width: 100%; justify-content: center; }
+  .allergen-modal-footer .btn-save { width: 100%; justify-content: center; }
 }

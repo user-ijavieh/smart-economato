@@ -28,7 +28,6 @@
     </form>
 
     <div modal-footer>
-        <button type="button" class="modal-btn modal-btn-cancel" (click)="onClose()">Cancelar</button>
         <button type="button" class="modal-btn modal-btn-primary" (click)="onSubmit()" [disabled]="supplierForm.invalid">
             {{ isEditMode ? 'Guardar Cambios' : 'Crear Proveedor' }}
         </button>
