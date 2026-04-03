@@ -135,104 +135,6 @@
   background: var(--theme-overlay-light);
 }
 
-/* ===== MODAL BUTTON SHARED STYLES ===== */
-.modal-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 24px;
-  border-radius: var(--theme-radius-btn);
-  border: none;
-  font-size: 0.95rem;
-  font-weight: 600;
-  font-family: var(--font-body);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  letter-spacing: 0.3px;
-}
-
-.modal-btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-/* Cancel / Secondary */
-.modal-btn-cancel {
-  background: var(--theme-surface-glass-hover);
-  color: var(--theme-text-primary);
-  border: 1px solid var(--theme-border-glass);
-}
-
-.modal-btn-cancel:hover:not(:disabled) {
-  background: var(--theme-border-medium);
-  color: var(--theme-text-primary);
-  transform: translateY(-2px);
-}
-
-/* Primary / Save / Submit / Confirm */
-.modal-btn-primary {
-  background: color-mix(in srgb, var(--brand-primary) 15%, transparent);
-  border: 1px solid color-mix(in srgb, var(--brand-primary) 30%, transparent);
-  color: var(--theme-text-primary);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(8px);
-}
-
-.modal-btn-primary:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--brand-primary) 25%, transparent);
-  border-color: color-mix(in srgb, var(--brand-primary) 50%, transparent);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px var(--brand-glow);
-}
-
-/* Danger / Delete */
-.modal-btn-danger {
-  background: var(--color-danger-bg);
-  border: 1px solid var(--color-danger-border);
-  color: var(--color-danger-muted);
-}
-
-.modal-btn-danger:hover:not(:disabled) {
-  background: var(--color-danger-hover-bg);
-  color: var(--theme-text-primary);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
-}
-
-/* Success / Cook */
-.modal-btn-success {
-  background: var(--color-success-bg);
-  color: var(--color-success-soft);
-  border: 1px solid var(--color-success-border);
-}
-
-.modal-btn-success:hover:not(:disabled) {
-  background: var(--color-success-hover-bg);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15);
-}
-
-/* Neutral / Print / Stock */
-.modal-btn-neutral {
-  background: var(--theme-surface-glass-hover);
-  color: var(--theme-text-primary);
-  border: 1px solid var(--theme-border-glass);
-}
-
-.modal-btn-neutral:hover:not(:disabled) {
-  background: var(--theme-border-medium);
-  transform: translateY(-2px);
-}
-
-/* Full-width variant for small modals */
-.modal-btn-full {
-  width: 100%;
-  text-align: center;
-}
-
 .modal-footer:not(:has(*)) {
   display: none;
 }
@@ -278,10 +180,5 @@
   .modal-footer {
     padding: 16px 20px;
     flex-direction: column;
-  }
-
-  .modal-btn {
-    width: 100%;
-    justify-content: center;
   }
 }
