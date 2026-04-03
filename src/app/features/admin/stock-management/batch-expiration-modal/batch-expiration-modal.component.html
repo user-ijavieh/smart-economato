@@ -37,7 +37,7 @@
   </form>
 
   <div modal-footer>
-    <button type="button" class="btn-cancel" (click)="onClose()">Cancelar</button>
-    <button type="button" class="btn-confirm" (click)="onSubmit()" [disabled]="!expirationDate">Guardar Cambios</button>
+    <button type="button" class="modal-btn modal-btn-cancel" (click)="onClose()">Cancelar</button>
+    <button type="button" class="modal-btn modal-btn-primary" (click)="onSubmit()" [disabled]="!expirationDate">Guardar Cambios</button>
   </div>
 </app-base-modal>

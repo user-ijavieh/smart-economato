@@ -146,103 +146,10 @@
   flex-wrap: wrap;
 }
 
-.btn-imprimir,
-.btn-editar,
-.btn-cocinar {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 28px;
-  border-radius: 12px;
-  border: none;
-  font-size: 0.9rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-imprimir {
-  background: var(--theme-surface-glass-hover);
-  color: var(--theme-text-primary);
-  border: 1px solid var(--theme-border-glass);
-}
-.btn-imprimir:hover {
-  background: var(--theme-border-medium);
-  transform: translateY(-2px);
-}
-
-.btn-editar {
-  background: color-mix(in srgb, var(--brand-primary) 15%, transparent) !important;
-  color: var(--color-danger-muted) !important;
-  border: 1px solid color-mix(in srgb, var(--brand-primary) 30%, transparent) !important;
-  backdrop-filter: blur(4px);
-}
-.btn-editar:hover {
-  background: color-mix(in srgb, var(--brand-primary) 25%, transparent) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px color-mix(in srgb, var(--brand-primary) 15%, transparent);
-}
-
-.btn-cocinar {
-  background: var(--color-success-bg);
-  color: var(--color-success-soft);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  backdrop-filter: blur(4px);
-}
-.btn-cocinar:hover {
-  background: var(--color-success-hover-bg);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15);
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 /** ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .cook-form { flex-direction: column; }
   .cook-field, .cook-field-detail { flex: 1; width: 100%; min-width: 0; }
   .footer-actions { flex-direction: column; }
-  .btn-imprimir, .btn-editar, .btn-cocinar { width: 100%; justify-content: center; }
-}
-/** ===== ADMIN THEME OVERRIDES ===== */
-:host-context(.admin-theme) {
-  --color-brand-primary: rgba(90, 120, 220, 0.95);
-  --color-brand-dark: rgba(90, 120, 220, 0.8);
-  --color-brand-glow: rgba(90, 120, 220, 0.35);
-  --color-surface-glass: var(--theme-surface-glass);
-  --color-border-glass: rgba(90, 120, 220, 0.15);
-}
-:host-context(.admin-theme) .btn-save,
-:host-context(.admin-theme) .btn-cocinar {
-  background: var(--theme-surface-glass-active) !important;
-  border: none !important;
-  box-shadow: 0 4px 18px rgba(90, 120, 220, 0.2) !important;
-  color: var(--theme-text-primary)!important;
-}
-:host-context(.admin-theme) .btn-save:hover:not(:disabled),
-:host-context(.admin-theme) .btn-cocinar:hover:not(:disabled) {
-  background: rgba(90, 120, 220, 0.8) !important;
-  box-shadow: 0 8px 25px rgba(90, 120, 220, 0.4) !important;
-}
-:host-context(.admin-theme) .btn-editar {
-  background: rgba(90, 120, 220, 0.15) !important;
-  color: var(--color-accent-admin) !important;
-  border: 1px solid rgba(90, 120, 220, 0.3) !important;
-}
-:host-context(.admin-theme) .btn-editar:hover {
-  background: rgba(90, 120, 220, 0.25) !important;
-  box-shadow: 0 8px 25px rgba(90, 120, 220, 0.15) !important;
-}
-:host-context(.admin-theme) .product-option.selected {
-  background: var(--color-accent-admin-bg);
-  color: var(--color-accent-admin);
-}
-:host-context(.admin-theme) .btn-add-component:hover {
-  border-color: rgba(90, 120, 220, 0.95);
-  color: var(--color-accent-admin);
-  background: rgba(90, 120, 220, 0.1);
 }
 
