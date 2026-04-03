@@ -1,5 +1,4 @@
 <app-base-modal [title]="recipe.name" size="lg" (closed)="closeModal()">
-      <div class="modal-body">
 
         <!-- Presentación -->
         @if (recipe.presentation) {
@@ -65,9 +64,8 @@
           <p class="no-allergens">Esta receta no contiene alérgenos conocidos.</p>
           }
         </div>
-      </div>
 
-  <div modal-footer class="modal-footer">
+  <div modal-footer>
     @if (canCook) {
     <div class="cook-form">
       <div class="cook-field">
@@ -80,7 +78,7 @@
       </div>
     </div>
     }
-    <div class="modal-actions">
+    <div class="footer-actions">
       <button class="btn-imprimir" (click)="printRecipe()">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

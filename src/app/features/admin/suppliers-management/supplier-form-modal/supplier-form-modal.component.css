@@ -54,17 +54,6 @@ input.input-error:focus {
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
 }
 
-/** ===== MODAL ACTIONS ===== */
-.modal-actions {
-  padding: 20px 28px;
-  border-top: 1px solid var(--theme-surface-glass-hover);
-  display: flex;
-  gap: 12px;
-  flex-shrink: 0;
-  justify-content: flex-end;
-  background: var(--theme-section-header-bg);
-}
-
 .btn-cancel,
 .btn-save {
   padding: 12px 24px;
@@ -126,8 +115,4 @@ input.input-error:focus {
     margin-bottom: 20px;
   }
 
-  .modal-actions {
-    padding: 16px 20px;
-    flex-direction: column;
-  }
 }

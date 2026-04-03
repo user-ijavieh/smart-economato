@@ -3,17 +3,7 @@
   display: block;
 }
 
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--theme-surface-glass-hover); }
-::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--brand-primary) 30%, transparent); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--brand-primary) 50%, transparent); }
-
 /** ===== MODAL BODY ===== */
-.modal-body {
-  padding: 30px;
-  overflow-y: auto;
-  flex: 1;
-}
 
 .modal-section {
   margin-bottom: 30px;
@@ -108,13 +98,6 @@
   font-size: 0.95rem;
 }
 
-/** ===== MODAL FOOTER ===== */
-.modal-footer {
-  padding: 20px 30px;
-  border-top: 1px solid var(--theme-surface-glass-hover);
-  border-radius: 0 0 calc(var(--theme-radius-card) - 2px) calc(var(--theme-radius-card) - 2px);
-}
-
 .cook-form {
   display: flex;
   gap: 16px;
@@ -156,7 +139,7 @@
   box-shadow: 0 0 0 3px var(--brand-glow);
 }
 
-.modal-actions {
+.footer-actions {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
@@ -219,11 +202,9 @@
 
 /** ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .modal-body { padding: 20px; }
-  .modal-footer { padding: 14px 20px; }
   .cook-form { flex-direction: column; }
   .cook-field, .cook-field-detail { flex: 1; width: 100%; min-width: 0; }
-  .modal-actions { flex-direction: column; }
+  .footer-actions { flex-direction: column; }
   .btn-imprimir, .btn-editar, .btn-cocinar { width: 100%; justify-content: center; }
 }
 /** ===== ADMIN THEME OVERRIDES ===== */

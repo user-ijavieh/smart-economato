@@ -26,6 +26,10 @@
       <ng-content></ng-content>
     </div>
 
-    <ng-content select="[modal-footer]"></ng-content>
+    @if (footerContent) {
+      <div class="modal-footer">
+        <ng-content select="[modal-footer]"></ng-content>
+      </div>
+    }
   </div>
 </div>

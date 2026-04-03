@@ -3,21 +3,6 @@
   display: block;
 }
 
-/* Custom Scrollbar Styles */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--theme-surface-glass-hover);
-}
-::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--brand-primary) 30%, transparent);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in srgb, var(--brand-primary) 50%, transparent);
-}
-
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -31,16 +16,6 @@
 .form-group select option {
   background: var(--theme-option-bg);
   color: var(--theme-text-primary);
-}
-
-/** ===== MODAL FOOTER ===== */
-.modal-footer {
-  padding: 20px 30px;
-  border-top: 1px solid var(--theme-surface-glass-hover);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  flex-shrink: 0;
 }
 
 .btn-cancel,
@@ -93,9 +68,6 @@
 
 /** ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .modal-footer {
-    padding: 14px 20px;
-  }
   .form-grid {
     grid-template-columns: 1fr;
   }
