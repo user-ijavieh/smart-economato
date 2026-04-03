@@ -40,19 +40,6 @@
   font-style: italic;
 }
 
-/** ===== MODAL FOOTER ===== */
-
-.modal-footer {
-  padding: 20px 30px;
-  border-top: 1px solid var(--theme-border-glass);
-  background: var(--theme-surface-glass-hover);
-  border-radius: 0 0 16px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  flex-shrink: 0;
-}
-
 .btn-cancel,
 .btn-save {
   padding: 10px 24px;
@@ -131,8 +118,5 @@
 /** ===== RESPONSIVE ===== */
 
 @media (max-width: 768px) {
-  .modal-footer {
-    padding: 14px 20px;
-  }
 }
 

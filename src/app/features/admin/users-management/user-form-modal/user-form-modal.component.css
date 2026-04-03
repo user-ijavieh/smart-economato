@@ -3,21 +3,6 @@
 }
 
 /** ===== SCROLLBAR PERSONALIZADO ===== */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-::-webkit-scrollbar-thumb {
-    background: var(--theme-surface-glass-hover);
-    border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: var(--theme-border-medium);
-}
-
 /** ===== MODAL BACKDROP ===== */
 /** ===== FORM ===== */
 form {
@@ -51,18 +36,6 @@ form {
 .form-group select option {
     background: var(--theme-option-bg);
     color: var(--theme-text-primary);
-}
-
-/** ===== ACTIONS ===== */
-.modal-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    justify-content: flex-end;
-    width: 100%;
-    padding: 20px 30px;
-    border-top: 1px solid var(--theme-surface-glass-hover);
-    background: var(--theme-overlay-light);
 }
 
 .btn-cancel {
@@ -120,10 +93,6 @@ form {
 @media (max-width: 480px) {
     form {
         padding: 0;
-    }
-    .modal-actions {
-        flex-direction: column;
-        padding: 16px 20px;
     }
     .btn-cancel,
     .btn-save {

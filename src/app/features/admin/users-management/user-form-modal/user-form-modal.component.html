@@ -115,7 +115,7 @@
     }
 
     @if (!showCredentials) {
-    <div modal-footer class="modal-actions">
+    <div modal-footer>
         <button type="button" class="btn-cancel" (click)="onClose()">Cancelar</button>
         <button type="button" class="btn-save" (click)="onSubmit()" [disabled]="userForm.invalid">
             {{ isEditMode ? 'Guardar Cambios' : 'Crear Usuario' }}

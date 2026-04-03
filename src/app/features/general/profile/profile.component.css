@@ -257,15 +257,6 @@ tr:hover td {
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand-primary) 15%, transparent);
 }
 
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  padding: 16px 24px;
-  border-top: 1px solid var(--theme-surface-glass-active);
-  background: var(--theme-overlay-light);
-}
-
 /** ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .header-perfil { padding: 15px 20px; }
