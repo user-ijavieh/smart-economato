@@ -23,6 +23,19 @@ export class OrderReceptionModalComponent implements OnInit {
 
   isProcessing = false;
 
+  beforeCloseHandler = async (): Promise<boolean> => {
+    if (this.isProcessing) {
+      return false;
+    }
+
+    return await this.messageService.confirm(
+      'Cancelar Recepción',
+      '¿Estás seguro de que deseas cancelar? Los datos introducidos no se guardarán.',
+      'Cancelar',
+      'Volver'
+    );
+  };
+
   ngOnInit(): void {
     // Inicializar quantityReceived con la original quantity para facilitar la recepción
     if (this.order && this.order.details) {
@@ -31,18 +44,6 @@ export class OrderReceptionModalComponent implements OnInit {
           detail.quantityReceived = detail.quantity;
         }
       });
-    }
-  }
-
-  async confirmCancel() {
-    const confirmed = await this.messageService.confirm(
-      'Cancelar Recepción',
-      '¿Estás seguro de que deseas cancelar? Los datos introducidos no se guardarán.',
-      'Cancelar',
-      'Volver'
-    );
-    if (confirmed) {
-      this.close();
     }
   }
 
