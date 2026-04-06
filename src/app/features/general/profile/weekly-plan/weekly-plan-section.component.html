@@ -1,0 +1,135 @@
+<div class="weekly-plan-section">
+  <div class="section-header">
+    <div>
+      <h2>Plan Semanal</h2>
+      <p>
+        @if (role === 'ADMIN') {
+          Vista administrativa de todos los planes.
+        } @else if (role === 'CHEF') {
+          Gestión del plan de la semana actual.
+        } @else if (role === 'ELEVATED') {
+          Gestión temporal del plan asociado a tu profesor.
+        }
+      </p>
+    </div>
+
+    <div class="section-actions">
+      @if (canCreatePlan && activeTab === 'current' && !detailPlan) {
+        <button class="btn-success" (click)="openCreateForm()">Nuevo plan</button>
+      }
+      @if (canViewSensitivePanels && (detailPlan || currentPlan)) {
+        <button class="btn-secondary" (click)="openStockRequirements(detailPlan || currentPlan)">Stock</button>
+        <button class="btn-secondary" (click)="openMetrics()">Métricas</button>
+      }
+    </div>
+  </div>
+
+  @if (accessMessage) {
+    <div class="access-message">{{ accessMessage }}</div>
+  } @else if (detailPlan) {
+    <div class="detail-backbar">
+      <button class="btn-secondary" (click)="closeDetail()">Volver</button>
+      @if (canEditPlan && detailReadOnly === false) {
+        <button class="btn-secondary" (click)="openEditForm(detailPlan)">Editar</button>
+      }
+    </div>
+
+    <app-weekly-plan-calendar-view
+      [plan]="detailPlan"
+      [readOnly]="true"
+      (confirmSlot)="confirmSlot($event)"
+      (cancelSlot)="cancelSlot($event)"
+      (confirmDay)="confirmDay($event)"
+      (cancelStudent)="cancelStudent($event)"
+    />
+  } @else {
+    @if (role !== 'ADMIN') {
+      <div class="tab-bar">
+        <button class="tab-btn" [class.active]="activeTab === 'current'" (click)="switchTab('current')">Actual</button>
+        <button class="tab-btn" [class.active]="activeTab === 'history'" (click)="switchTab('history')">Historial</button>
+      </div>
+    }
+
+    @if (role === 'ADMIN' || activeTab === 'history') {
+      <app-weekly-plan-history
+        [plans]="historyPlans"
+        [loading]="historyLoading"
+        [page]="historyPage"
+        [totalPages]="historyTotalPages"
+        [totalElements]="historyTotalElements"
+        [statusFilter]="historyStatusFilter"
+        [showChefColumn]="role === 'ADMIN'"
+        (pageChange)="onHistoryPageChange($event)"
+        (statusFilterChange)="onHistoryFilterChange($event)"
+        (selectPlan)="openDetail($event)"
+         (editPlan)="openEditForm($event)"
+      />
+    } @else {
+      @if (loadingCurrent) {
+        <div class="loading-state">Cargando plan actual...</div>
+      } @else if (currentPlan) {
+        <div class="current-summary">
+          <span class="summary-label">Estado</span>
+          <span class="summary-badge" [ngClass]="currentStatusClass">{{ currentStatusLabel }}</span>
+          <span class="summary-range">{{ currentPlan.weekStartDate }} - {{ currentPlan.weekEndDate }}</span>
+          @if (canEditPlan) {
+            <button class="btn-secondary" (click)="openEditForm(currentPlan)">Editar</button>
+          }
+        </div>
+
+        <app-weekly-plan-calendar-view
+          [plan]="currentPlan"
+          [readOnly]="false"
+          (confirmSlot)="confirmSlot($event)"
+          (cancelSlot)="cancelSlot($event)"
+          (confirmDay)="confirmDay($event)"
+          (cancelStudent)="cancelStudent($event)"
+        />
+      } @else {
+        <div class="empty-state-box">No hay plan activo para esta semana.</div>
+      }
+    }
+  }
+</div>
+
+@if (showFormModal) {
+  <app-weekly-plan-form
+    [open]="showFormModal"
+    [mode]="formMode"
+    [role]="role"
+    [plan]="formPlan"
+    [recipes]="recipes"
+    [students]="students"
+    [teachers]="teachers"
+    [defaultChefId]="currentUser?.teacher?.id || currentUser?.id || null"
+    [saving]="formSaving"
+    [activating]="formActivating"
+    (closed)="closeForm()"
+    (saveDraft)="saveDraft($event)"
+    (activatePlan)="activatePlan($event)"
+  />
+}
+
+@if (showStockModal) {
+  <app-weekly-plan-stock-requirements-panel
+    [requirements]="stockRequirements"
+    [loading]="stockLoading"
+    (closed)="showStockModal = false"
+  />
+}
+
+@if (showMetricsModal) {
+  <app-weekly-plan-student-metrics-panel
+    [metrics]="metrics"
+    [loading]="metricsLoading"
+    [page]="metricsPage"
+    [totalPages]="metricsTotalPages"
+    [totalElements]="metricsTotalElements"
+    [selectedChefId]="selectedChefId"
+    [showChefFilter]="role === 'ADMIN'"
+    [chefs]="chefOptions"
+    (closed)="showMetricsModal = false"
+    (pageChange)="onMetricsPageChange($event)"
+    (chefChange)="onMetricsChefChange($event)"
+  />
+}

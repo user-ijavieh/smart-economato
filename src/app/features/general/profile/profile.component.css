@@ -287,6 +287,10 @@ button:disabled {
   font-style: italic;
 }
 
+.weekly-plan-wrapper {
+  margin-top: 10px;
+}
+
 /** ===== SKELETON ===== */
 .skeleton-circle {
   border-radius: 50%;

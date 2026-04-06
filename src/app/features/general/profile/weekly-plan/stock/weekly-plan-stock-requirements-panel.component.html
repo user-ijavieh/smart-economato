@@ -1,0 +1,40 @@
+<app-base-modal title="Requisitos de stock" size="lg" (closed)="closed.emit()">
+  <div class="panel-content">
+    @if (loading) {
+      <p class="empty-state">Cargando requisitos...</p>
+    } @else {
+      <div class="table-container tabla-contenedor">
+        <table>
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Requerido</th>
+              <th>Disponible</th>
+              <th>Reservado</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of requirements; track item.productId) {
+              <tr>
+                <td>{{ item.productName }}</td>
+                <td>{{ item.requiredQuantity }}</td>
+                <td>{{ item.availableStock }}</td>
+                <td>{{ item.reservedByOtherPlans }}</td>
+                <td>
+                  <span class="stock-badge" [class.ok]="item.sufficient" [class.bad]="!item.sufficient">
+                    {{ item.sufficient ? 'Suficiente' : 'Insuficiente' }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+  <div modal-footer class="panel-footer">
+    <button class="btn-secondary" (click)="closed.emit()">Cerrar</button>
+  </div>
+</app-base-modal>
