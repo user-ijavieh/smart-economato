@@ -15,6 +15,7 @@ import { ProductEditModalComponent } from '../../general/inventory/product-edit-
 import { ProductDetailModalComponent } from '../../general/inventory/product-detail-modal/product-detail-modal.component';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
+import { ScrollService } from '../../../core/services/scroll.service';
 import { finalize, catchError, forkJoin } from 'rxjs';
 import { of } from 'rxjs';
 
@@ -41,6 +42,7 @@ export class ProductsManagementComponent implements OnInit {
   private userService = inject(UserService);
   private statsService = inject(StatsService);
   private cdr = inject(ChangeDetectorRef);
+  private scrollService = inject(ScrollService);
   messageService = inject(MessageService);
 
   // ── Tab state ──
@@ -106,7 +108,12 @@ export class ProductsManagementComponent implements OnInit {
   // Cache for audits by page + filters
   auditCache = new Map<string, any>();
 
-  movementTypes = ['ENTRADA', 'SALIDA', 'AJUSTE', 'RECEPCION', 'PRODUCCION'];
+  movementTypeOptions = [
+    { value: 'MOSTRAR', label: 'Mostrar' },
+    { value: 'OCULTAR', label: 'Ocultar' },
+    { value: 'MODIFICACION', label: 'Modificación' },
+    { value: 'CREACION', label: 'Creación' }
+  ];
 
   ngOnInit(): void {
     this.loadProducts();
@@ -119,18 +126,10 @@ export class ProductsManagementComponent implements OnInit {
   switchTab(tab: 'products' | 'audits'): void {
     if (this.activeTab === tab) return;
     this.activeTab = tab;
-    this.scrollToTop();
+    this.scrollService.scrollToTop();
 
     if (tab === 'audits' && !this.auditsLoaded) {
       this.loadAudits();
-    }
-  }
-
-  scrollToTop(): void {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    const container = document.querySelector('.contenedor-principal');
-    if (container) {
-      container.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
@@ -184,7 +183,10 @@ export class ProductsManagementComponent implements OnInit {
     this.products = []; // Limpiar productos anteriores
     this.filteredProducts = [];
     this.cdr.detectChanges();
-    this.loadProducts();
+
+    setTimeout(() => {
+      this.loadProducts();
+    });
   }
 
   loadSuppliers(): void {
@@ -244,7 +246,7 @@ export class ProductsManagementComponent implements OnInit {
   changePage(delta: number): void {
     const newPage = this.currentPage + delta;
     if (newPage >= 0 && newPage < this.totalPages) {
-      this.scrollToTop();
+      this.scrollService.scrollToTop();
       this.loadProducts(newPage);
     }
   }
@@ -381,7 +383,7 @@ export class ProductsManagementComponent implements OnInit {
   changeAuditPage(delta: number): void {
     const newPage = this.currentAuditPage + delta;
     if (newPage >= 0 && newPage < this.totalAuditPages) {
-      this.scrollToTop();
+      this.scrollService.scrollToTop();
       this.loadAudits(newPage);
     }
   }
@@ -570,7 +572,13 @@ export class ProductsManagementComponent implements OnInit {
   }
 
 
-  exportToExcel(): void {
+  async exportToExcel(): Promise<void> {
+    const confirmed = await this.messageService.confirm(
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo Excel?'
+    );
+    if (!confirmed) return;
+
     this.productService.exportToExcel().subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);
@@ -627,14 +635,6 @@ export class ProductsManagementComponent implements OnInit {
       prev: prev.codigoProducto ?? '',
       next: next.codigoProducto ?? '',
       changed: prev.codigoProducto !== next.codigoProducto
-    });
-
-    // Tipo
-    fields.push({
-      label: 'Tipo',
-      prev: prev.tipo ?? '',
-      next: next.tipo ?? '',
-      changed: prev.tipo !== next.tipo
     });
 
     // Unidad

@@ -1,13 +1,14 @@
 import { Component, Input, Output, EventEmitter, inject, OnInit, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { Product } from '../../../../shared/models/product.model';
 import { ProductBatchService } from '../../../../core/services/product-batch.service';
 import { ProductBatchResponseDTO } from '../../../../shared/models/product-batch.model';
+import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 
 @Component({
   selector: 'app-product-detail-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [BaseModalComponent, DatePipe, DecimalPipe],
   templateUrl: './product-detail-modal.component.html',
   styleUrl: './product-detail-modal.component.css'
 })
@@ -53,12 +54,6 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
   shouldShowActions(): boolean {
     // Since showActions input is restored, this method will now depend on it
     return this.showActions ?? this.isAdmin;
-  }
-
-  onOverlayClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
-      this.close.emit();
-    }
   }
 
   onClose(): void {

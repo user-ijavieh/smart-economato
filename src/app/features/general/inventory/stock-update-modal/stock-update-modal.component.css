@@ -1,97 +1,19 @@
-/** ===== MODAL OVERLAY ===== */
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-  padding: 20px;
-  animation: fadeIn 0.2s ease;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-  max-width: 500px;
-  width: 100%;
-  max-height: 75vh;
-  display: flex;
-  flex-direction: column;
-  animation: slideUp 0.3s ease;
-}
-
-/** ===== MODAL HEADER ===== */
-
-/* Color por defecto (general/inventory) */
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px 30px;
-  background: linear-gradient(135deg, #b84b44 0%, #a03d37 100%);
-  border-radius: 16px 16px 0 0;
-  flex-shrink: 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.modal-header h2 {
-  font-size: 1.5rem;
-  color: white;
-  margin: 0;
-  font-weight: 700;
-}
-
-.modal-close {
-  width: 36px;
-  height: 36px;
-  border: none;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  color: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-}
-
-.modal-close:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
-}
-
-/** ===== MODAL BODY ===== */
-
-.modal-body {
-  padding: 30px;
-  overflow-y: auto;
-  flex: 1;
-}
-
-.product-info {
+﻿.product-info {
   margin-bottom: 20px;
   padding: 16px;
-  background: #f9fafb;
+  background: var(--theme-surface-glass-hover);
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--theme-border-glass);
 }
 
 .product-info p {
   margin: 6px 0;
-  color: #4b5563;
+  color: var(--theme-text-secondary);
   font-size: 0.95rem;
 }
 
 .product-info strong {
-  color: #374151;
+  color: var(--theme-text-primary);
 }
 
 .form-group {
@@ -102,7 +24,7 @@
 .form-group label {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--theme-text-primary);
   margin-bottom: 8px;
 }
 
@@ -118,31 +40,33 @@
 
 .unit-label {
   font-weight: 600;
-  color: #6b7280;
+  color: var(--theme-text-secondary);
   min-width: 40px;
 }
 
 input {
   width: 100%;
   padding: 10px 14px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--theme-border-glass);
   border-radius: 8px;
   font-size: 0.95rem;
   transition: border-color 0.2s;
   font-family: inherit;
+  background: var(--theme-input-bg);
+  color: var(--theme-text-primary);
 }
 
 input:focus {
   outline: none;
-  border-color: #b84b44;
-  box-shadow: 0 0 0 3px rgba(184, 75, 68, 0.1);
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 10%, transparent);
 }
 
 .hint {
   display: block;
   margin-top: 8px;
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--theme-text-secondary);
   font-style: italic;
 }
 
@@ -150,8 +74,8 @@ input:focus {
 
 .modal-footer {
   padding: 20px 30px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+  border-top: 1px solid var(--theme-border-glass);
+  background: var(--theme-surface-glass-hover);
   border-radius: 0 0 16px 16px;
   display: flex;
   flex-direction: column;
@@ -174,7 +98,7 @@ input:focus {
 
 .btn-cancel {
   background: #6b7280;
-  color: white;
+  color: var(--theme-text-on-brand);
   box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3);
 }
 
@@ -185,19 +109,20 @@ input:focus {
 }
 
 .btn-save {
-  background: #b84b44;
-  color: white;
-  box-shadow: 0 2px 8px rgba(184, 75, 68, 0.3);
+  background: var(--brand-primary);
+  color: var(--theme-text-on-brand);
+  box-shadow: 0 2px 8px var(--brand-glow);
 }
 
 .btn-save:hover {
-  background: #a03d37;
+  background: var(--brand-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(184, 75, 68, 0.4);
+  box-shadow: 0 4px 12px var(--brand-glow);
 }
 
 .btn-save:disabled {
   background: #ccc;
+  color: #6b7280;
   cursor: not-allowed;
   box-shadow: none;
   transform: none;
@@ -205,56 +130,29 @@ input:focus {
 
 /** ===== GENERAL MODE (Default red theme) ===== */
 
-.modal-content.general-mode .modal-header {
-  background: linear-gradient(135deg, #b84b44 0%, #a03d37 100%) !important;
-}
-
-.modal-content.general-mode input:focus {
-  border-color: #b84b44;
-  box-shadow: 0 0 0 3px rgba(184, 75, 68, 0.1);
-}
-
-.modal-content.general-mode .btn-save {
-  background: #b84b44;
-  box-shadow: 0 2px 8px rgba(184, 75, 68, 0.3);
-}
-
-.modal-content.general-mode .btn-save:hover {
-  background: #a03d37;
-  box-shadow: 0 4px 12px rgba(184, 75, 68, 0.4);
+.general-mode input:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 10%, transparent);
 }
 
 /** ===== ADMIN MODE OVERRIDES ===== */
 
-.modal-content.admin-mode .modal-header {
-  background: linear-gradient(135deg, rgba(30, 40, 80, 0.95) 0%, rgba(20, 30, 60, 0.95) 100%);
+.admin-mode input:focus {
+  border-color: var(--admin-primary);
+  box-shadow: 0 0 0 3px var(--theme-input-border-focus-glow);
 }
 
-.modal-content.admin-mode input:focus {
-  border-color: rgba(30, 40, 80, 0.95);
-  box-shadow: 0 0 0 3px rgba(30, 40, 80, 0.1);
+.admin-mode .btn-save {
+  background: var(--admin-primary);
+  box-shadow: 0 2px 8px rgba(var(--admin-rgb), 0.3);
 }
 
-.modal-content.admin-mode .btn-save {
-  background: rgba(30, 40, 80, 0.95);
-  box-shadow: 0 2px 8px rgba(30, 40, 80, 0.3);
-}
-
-.modal-content.admin-mode .btn-save:hover {
-  background: rgba(20, 30, 60, 0.95);
-  box-shadow: 0 4px 12px rgba(30, 40, 80, 0.4);
+.admin-mode .btn-save:hover {
+  background: var(--admin-primary-hover);
+  box-shadow: 0 4px 12px rgba(var(--admin-rgb), 0.4);
 }
 
 /** ===== ANIMATIONS ===== */
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
 
 @keyframes slideUp {
   from {
@@ -270,20 +168,8 @@ input:focus {
 /** ===== RESPONSIVE ===== */
 
 @media (max-width: 768px) {
-  .modal-content {
-    width: 95%;
-    max-height: 80vh;
-  }
-
-  .modal-header {
-    padding: 18px 20px;
-  }
-
-  .modal-body {
-    padding: 20px;
-  }
-
   .modal-footer {
     padding: 14px 20px;
   }
 }
+

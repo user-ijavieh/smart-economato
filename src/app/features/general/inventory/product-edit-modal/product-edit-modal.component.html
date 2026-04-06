@@ -1,74 +1,60 @@
-<div class="modal-overlay modal-overlay-base" (click)="onOverlayClick($event)">
-  <form #editForm="ngForm" (ngSubmit)="onSubmit()" class="modal-dialog-base modal-content" [class.admin-mode]="isAdmin" [class.general-mode]="!isAdmin">
-    <div class="modal-header-base">
-      <h2>Editar Producto</h2>
-      <button type="button" class="modal-close" (click)="onClose()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
-      </button>
-    </div>
-
-    <div class="modal-body">
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="name">Nombre *</label>
-          <input type="text" id="name" [(ngModel)]="formData.name" name="name" required
-            placeholder="Nombre del producto" />
-        </div>
-
-        <div class="form-group">
-          <label for="productCode">Código de Producto *</label>
-          <input type="text" id="productCode" [(ngModel)]="formData.productCode" name="productCode" required
-            placeholder="Ej: HAR002" />
-        </div>
-
-        <div class="form-group">
-          <label for="unit">Unidad *</label>
-          <select id="unit" [(ngModel)]="formData.unit" name="unit" required>
-            @for (unit of allowedUnits; track unit) {
-            <option [value]="unit">{{ unit }}</option>
-            }
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="unitPrice">Precio Unitario (€) *</label>
-          <input type="number" id="unitPrice" [(ngModel)]="formData.unitPrice" name="unitPrice" required min="0"
-            step="0.01" placeholder="0.00" />
-        </div>
-
-        <div class="form-group">
-          <label for="availabilityPercentage">Disponibilidad (%)</label>
-          <input type="number" id="availabilityPercentage" [(ngModel)]="formData.availabilityPercentage" name="availabilityPercentage"
-            min="0" max="100" step="0.01" placeholder="0.00" />
-        </div>
-
-
-        <div class="form-group full-width">
-          <label for="supplierId">Proveedor</label>
-          <select id="supplierId" [(ngModel)]="formData.supplierId" name="supplierId">
-            <option [value]="undefined">Sin proveedor</option>
-            @for (supplier of suppliers; track supplier.id) {
-            <option [value]="supplier.id">{{ supplier.name }}</option>
-            }
-          </select>
-        </div>
+<app-base-modal title="Editar Producto" size="md" [closeOnBackdrop]="false" (closed)="onClose()">
+  <form #editForm="ngForm" (ngSubmit)="onSubmit()" [class.admin-mode]="isAdmin" [class.general-mode]="!isAdmin">
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="name">Nombre *</label>
+        <input type="text" id="name" [(ngModel)]="formData.name" name="name" required
+          placeholder="Nombre del producto" />
       </div>
-    </div>
 
-    <div class="modal-footer">
-      @if (isAdmin) {
-      <button type="button" class="btn-delete" (click)="onToggleHidden()">{{ getToggleButtonText() }}</button>
-      }
-      <div class="modal-footer-right">
-        <button type="button" class="btn-cancel" (click)="onClose()">Cancelar</button>
-        <button type="submit" class="btn-save" [disabled]="!editForm.valid">
-          Guardar Cambios
-        </button>
+      <div class="form-group">
+        <label for="productCode">Código de Producto *</label>
+        <input type="text" id="productCode" [(ngModel)]="formData.productCode" name="productCode" required
+          placeholder="Ej: HAR002" />
+      </div>
+
+      <div class="form-group">
+        <label for="unit">Unidad *</label>
+        <select id="unit" [(ngModel)]="formData.unit" name="unit" required>
+          @for (unit of allowedUnits; track unit) {
+          <option [value]="unit">{{ unit }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="unitPrice">Precio Unitario (€) *</label>
+        <input type="number" id="unitPrice" [(ngModel)]="formData.unitPrice" name="unitPrice" required min="0"
+          step="0.01" placeholder="0.00" />
+      </div>
+
+      <div class="form-group">
+        <label for="availabilityPercentage">Disponibilidad (%)</label>
+        <input type="number" id="availabilityPercentage" [(ngModel)]="formData.availabilityPercentage" name="availabilityPercentage"
+          min="0" max="100" step="0.01" placeholder="0.00" />
+      </div>
+
+      <div class="form-group full-width">
+        <label for="supplierId">Proveedor</label>
+        <select id="supplierId" [(ngModel)]="formData.supplierId" name="supplierId">
+          <option [value]="undefined">Sin proveedor</option>
+          @for (supplier of suppliers; track supplier.id) {
+          <option [value]="supplier.id">{{ supplier.name }}</option>
+          }
+        </select>
       </div>
     </div>
   </form>
-</div>
+
+  <div modal-footer class="modal-footer">
+    @if (isAdmin) {
+    <button type="button" class="btn-delete" (click)="onToggleHidden()">{{ getToggleButtonText() }}</button>
+    }
+    <div class="modal-footer-right">
+      <button type="button" class="btn-cancel" (click)="onClose()">Cancelar</button>
+      <button type="button" class="btn-save" (click)="onSubmit()" [disabled]="!editForm.valid">
+        Guardar Cambios
+      </button>
+    </div>
+  </div>
+</app-base-modal>

@@ -4,9 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { AllergenService } from '../../../core/services/allergen.service';
 import { MessageService } from '../../../core/services/message.service';
 import { Allergen, AllergenRequest } from '../../../shared/models/allergen.model';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { SuppliersManagementComponent } from '../suppliers-management/suppliers-management.component';
+import { ScrollService } from '../../../core/services/scroll.service';
 import { finalize, Observable, of } from 'rxjs';
 import { Page } from '../../../shared/models/page.model';
 import { catchError, map } from 'rxjs/operators';
@@ -17,6 +19,7 @@ import { catchError, map } from 'rxjs/operators';
     imports: [
         CommonModule,
         FormsModule,
+        BaseModalComponent,
         ConfirmDialogComponent,
         ToastComponent,
         SuppliersManagementComponent
@@ -28,6 +31,7 @@ import { catchError, map } from 'rxjs/operators';
 export class AllergensManagementComponent implements OnInit {
     private allergenService = inject(AllergenService);
     private cdr = inject(ChangeDetectorRef);
+    private scrollService = inject(ScrollService);
     messageService = inject(MessageService);
 
     // ── Allergens state ──
@@ -203,17 +207,8 @@ export class AllergensManagementComponent implements OnInit {
     changePage(delta: number): void {
         const newPage = this.currentPage + delta;
         if (newPage >= 0 && newPage < this.totalPages) {
-            this.scrollToTop();
+            this.scrollService.scrollToTop();
             this.loadAllergens(newPage);
-        }
-    }
-
-    private scrollToTop(): void {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        // Fallback for internal scrolling containers
-        const container = document.querySelector('.contenedor-principal');
-        if (container) {
-            container.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 
@@ -241,12 +236,6 @@ export class AllergensManagementComponent implements OnInit {
         this.modalName = '';
         this.modalSaving = false;
         this.cdr.markForCheck();
-    }
-
-    onModalOverlayClick(event: MouseEvent): void {
-        if ((event.target as HTMLElement).classList.contains('allergen-modal-overlay')) {
-            this.closeModal();
-        }
     }
 
     saveModal(): void {

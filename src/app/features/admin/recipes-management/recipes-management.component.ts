@@ -11,8 +11,10 @@ import { RecipeAudit } from '../../../shared/models/recipe-audit.model';
 import { RecipeCreateModalComponent } from '../../general/recipes/recipe-create-modal/recipe-create-modal.component';
 import { RecipeEditModalComponent } from '../../general/recipes/recipe-edit-modal/recipe-edit-modal.component';
 import { RecipeDetailModalComponent } from '../../general/recipes/recipe-detail-modal/recipe-detail-modal.component';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
+import { ScrollService } from '../../../core/services/scroll.service';
 import { finalize, catchError, forkJoin } from 'rxjs';
 import { of } from 'rxjs';
 
@@ -25,6 +27,7 @@ import { of } from 'rxjs';
         RecipeCreateModalComponent,
         RecipeEditModalComponent,
         RecipeDetailModalComponent,
+        BaseModalComponent,
         ConfirmDialogComponent,
         ToastComponent
     ],
@@ -38,6 +41,7 @@ export class RecipesManagementComponent implements OnInit {
     private userService = inject(UserService);
     private statsService = inject(StatsService);
     private cdr = inject(ChangeDetectorRef);
+    private scrollService = inject(ScrollService);
     messageService = inject(MessageService);
 
     // ── Tab state ──
@@ -256,7 +260,7 @@ export class RecipesManagementComponent implements OnInit {
     changePage(delta: number): void {
         const newPage = this.currentPage + delta;
         if (newPage >= 0 && newPage < this.totalPages) {
-            this.scrollToTop();
+            this.scrollService.scrollToTop();
             this.loadRecipes(newPage);
         }
     }
@@ -447,16 +451,8 @@ export class RecipesManagementComponent implements OnInit {
     changeAuditPage(delta: number): void {
         const newPage = this.currentAuditPage + delta;
         if (newPage >= 0 && newPage < this.totalAuditPages) {
-            this.scrollToTop();
+            this.scrollService.scrollToTop();
             this.loadAudits(newPage);
-        }
-    }
-
-    private scrollToTop(): void {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        const container = document.querySelector('.contenedor-principal');
-        if (container) {
-            container.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 
@@ -560,12 +556,6 @@ export class RecipesManagementComponent implements OnInit {
         this.showAuditDetailModal = false;
         this.selectedAudit = null;
         this.cdr.markForCheck();
-    }
-
-    onAuditOverlayClick(event: MouseEvent): void {
-        if ((event.target as HTMLElement).classList.contains('audit-modal-overlay')) {
-            this.closeAuditDetail();
-        }
     }
 
     formatDate(dateStr: string): string {
@@ -695,7 +685,13 @@ export class RecipesManagementComponent implements OnInit {
 
     // ── PDF ──
 
-    downloadPdf(recipe: Recipe): void {
+    async downloadPdf(recipe: Recipe): Promise<void> {
+        const confirmed = await this.messageService.confirm(
+            'Confirmar descarga',
+            '¿Deseas descargar este archivo PDF?'
+        );
+        if (!confirmed) return;
+
         this.recipeService.getPdf(recipe.id).subscribe({
             next: (blob) => {
                 const url = window.URL.createObjectURL(blob);

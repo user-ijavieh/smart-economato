@@ -1,10 +1,9 @@
-<div class="modal-overlay" [class.closing]="isClosing">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header-base">
+<app-base-modal [showHeader]="false" size="fullscreen" [closeOnBackdrop]="false" (closed)="close()">
+  <div modal-header class="modal-header-base">
       <h2>Procesar Recepción de Orden #{{ order.id }}</h2>
-    </div>
+  </div>
 
-    <div class="modal-body">
+  <div class="order-reception-content">
       <div class="detail-group">
         <p><strong>Usuario:</strong> {{ order.userName }}</p>
         <p><strong>Fecha Solicitud:</strong> {{ order.orderDate | date:'dd/MM/yyyy' }}</p>
@@ -15,47 +14,64 @@
           <thead>
             <tr>
               <th>Producto</th>
-
               <th class="text-center">Solicitado</th>
-              <th class="text-center received-col">Recibido</th>
+              <th class="text-center received-col">Recibido (Total)</th>
               <th class="text-center expiry-col">F. Caducidad <span class="required-asterisk">*</span></th>
             </tr>
           </thead>
           <tbody>
             @for (detail of order.details; track detail.productId) {
-            <tr>
-              <td>{{ detail.productName }}</td>
-
+            <tr class="product-base-row">
+              <td><strong>{{ detail.productName }}</strong></td>
               <td class="text-center">{{ detail.quantity }} {{ detail.unit || 'uds' }}</td>
+              <td class="text-center">
+                 <span class="total-badge" [class.total-match]="getTotalReceived(detail) === detail.quantity">
+                    {{ getTotalReceived(detail) }}
+                 </span>
+              </td>
+              <td class="text-right">
+                <button type="button" class="btn btn-sm btn-secondary add-lot-btn" (click)="addLot(detail)" [disabled]="isProcessing">+ Lote</button>
+              </td>
+            </tr>
+            @for (lot of detail.lots; track $index) {
+            <tr class="lot-row">
+              <td class="lot-indent" colspan="2">
+                <span class="lot-label">↳ Lote {{ $index + 1 }}</span>
+              </td>
               <td class="text-center received-col">
                 <input 
                   type="number" 
                   class="form-control quantity-input" 
-                  [(ngModel)]="detail.quantityReceived" 
+                  [(ngModel)]="lot.quantity" 
                   min="0"
-                  [max]="detail.quantity"
                   [disabled]="isProcessing" />
               </td>
-              <td class="text-center expiry-col">
+              <td class="text-center expiry-col lot-actions-cell">
                 <input
                   type="date"
                   class="form-control quantity-input"
-                  [(ngModel)]="detail.expirationDate"
+                  [(ngModel)]="lot.expirationDate"
                   [disabled]="isProcessing" />
+                @if (detail.lots!.length > 1) {
+                  <button type="button" class="btn-remove-lot" (click)="removeLot(detail, $index)" [disabled]="isProcessing" title="Eliminar lote">✕</button>
+                }
               </td>
             </tr>
+            }
             }
           </tbody>
         </table>
       </div>
-    </div>
-
-    <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="confirmCancel()" [disabled]="isProcessing">Cancelar</button>
-      <button class="btn btn-primary" (click)="processReception()" [disabled]="isProcessing">
-        <span *ngIf="isProcessing">Procesando...</span>
-        <span *ngIf="!isProcessing">Procesar Recepción</span>
-      </button>
-    </div>
   </div>
-</div>
+
+  <div modal-footer class="modal-footer">
+    <button class="btn btn-secondary" (click)="confirmCancel()" [disabled]="isProcessing">Cancelar</button>
+    <button class="btn btn-primary" (click)="processReception()" [disabled]="isProcessing">
+      @if (isProcessing) {
+        <span>Procesando...</span>
+      } @else {
+        <span>Procesar Recepción</span>
+      }
+    </button>
+  </div>
+</app-base-modal>

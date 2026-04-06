@@ -13,6 +13,7 @@ import { Supplier } from '../../../shared/models/supplier.model';
 import { User } from '../../../shared/models/user.model';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { finalize } from 'rxjs';
 
 const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
@@ -27,7 +28,7 @@ const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
 @Component({
   selector: 'app-orders-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, ConfirmDialogComponent, ToastComponent],
+  imports: [CommonModule, FormsModule, ConfirmDialogComponent, ToastComponent, BaseModalComponent],
   templateUrl: './orders-management.component.html',
   styleUrl: './orders-management.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -495,12 +496,6 @@ export class OrdersManagementComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  onAuditOverlayClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
-      this.closeAuditDetail();
-    }
-  }
-
   // ── Order Detail Modal ──
   openOrderDetail(order: Order): void {
     this.selectedOrder = order;
@@ -588,8 +583,15 @@ export class OrdersManagementComponent implements OnInit {
     });
   }
 
-  onDownloadPdf(order: Order): void {
+  async onDownloadPdf(order: Order): Promise<void> {
     if (!order || !order.id) return;
+
+    const confirmed = await this.messageService.confirm(
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo PDF?'
+    );
+    if (!confirmed) return;
+
     this.orderService.downloadPdf(order.id).subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);
@@ -614,40 +616,106 @@ export class OrdersManagementComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  onOrderDetailOverlayClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
-      this.closeOrderDetail();
-    }
-  }
-
 
   // ── Audit Diff Logic ──
   get hasDiffData(): boolean {
     return !!this.selectedAudit?.previousState || !!this.selectedAudit?.newState;
   }
 
+  private parseAuditState(state: string | null | undefined): Record<string, any> {
+    if (!state) return {};
+    try {
+      return typeof state === 'string' ? JSON.parse(state) : (state as unknown as Record<string, any>);
+    } catch {
+      return {};
+    }
+  }
+
+  private getAuditStateValue(state: Record<string, any>, keys: string[]): any {
+    for (const key of keys) {
+      if (state[key] !== undefined && state[key] !== null) {
+        return state[key];
+      }
+    }
+    return null;
+  }
+
+  private normalizeStatus(status: any): string {
+    if (!status) return '—';
+    const raw = String(status).toUpperCase().trim();
+    const map: Record<string, string> = {
+      CREADA: 'CREATED',
+      CREADO: 'CREATED',
+      PENDIENTE: 'PENDING',
+      REVISION: 'REVIEW',
+      'REVISIÓN': 'REVIEW',
+      CONFIRMADA: 'CONFIRMED',
+      CONFIRMADO: 'CONFIRMED',
+      INCOMPLETA: 'INCOMPLETE',
+      INCOMPLETO: 'INCOMPLETE',
+      CANCELADA: 'CANCELLED',
+      CANCELADO: 'CANCELLED'
+    };
+    return map[raw] || raw;
+  }
+
+  private formatCurrency(value: any): string {
+    if (value === undefined || value === null || value === '') return '—';
+    const n = Number(value);
+    return Number.isFinite(n) ? `${n.toFixed(2)} €` : '—';
+  }
+
+  private formatAuditDateValue(value: any): string {
+    if (!value) return '—';
+    try {
+      return this.formatDate(String(value));
+    } catch {
+      return String(value);
+    }
+  }
+
   getDiffFields(): { label: string; prev: string; next: string; changed: boolean }[] {
-    const prev = this.selectedAudit?.previousState ? JSON.parse(this.selectedAudit.previousState) : {};
-    const next = this.selectedAudit?.newState ? JSON.parse(this.selectedAudit.newState) : {};
+    const prev = this.parseAuditState(this.selectedAudit?.previousState);
+    const next = this.parseAuditState(this.selectedAudit?.newState);
     const fields: { label: string; prev: string; next: string; changed: boolean }[] = [];
 
-    const compare = (label: string, key: string, formatter?: (val: any) => string) => {
-      const v1 = prev[key];
-      const v2 = next[key];
+    const compareAliases = (label: string, keys: string[], formatter?: (val: any) => string) => {
+      const v1 = this.getAuditStateValue(prev, keys);
+      const v2 = this.getAuditStateValue(next, keys);
       const changed = v1 !== v2;
+      const prevValue = formatter ? formatter(v1) : String(v1 ?? '—');
+      const nextValue = formatter ? formatter(v2) : String(v2 ?? '—');
       fields.push({
         label,
-        prev: formatter ? formatter(v1) : String(v1 ?? '—'),
-        next: formatter ? formatter(v2) : String(v2 ?? '—'),
+        prev: prevValue || '—',
+        next: nextValue || '—',
         changed
       });
     };
 
-    compare('Estado', 'status', (val) => this.formatStatus(val));
-    compare('Proveedor', 'supplierName');
-    compare('Precio Total', 'totalPrice', (val) => val != null ? `${Number(val).toFixed(2)} €` : '—');
-    if (prev.receptionDate || next.receptionDate) {
-      compare('Fecha Recepción', 'receptionDate', (val) => val ? this.formatDate(val) : '—');
+    compareAliases('Estado', ['status', 'estado'], (val) => {
+      const normalized = this.normalizeStatus(val);
+      return normalized === '—' ? '—' : this.formatStatus(normalized);
+    });
+    compareAliases('Nº Detalles', ['numeroDetalles', 'detailsCount', 'detailCount', 'numDetails']);
+    compareAliases('ID Pedido', ['orderId', 'idPedido', 'id_order', 'id']);
+    compareAliases('ID Usuario', ['userId', 'usuarioId', 'idUsuario']);
+    compareAliases('Fecha Orden', ['orderDate', 'fechaOrden'], (val) => this.formatAuditDateValue(val));
+
+    const hasSupplier = this.getAuditStateValue(prev, ['supplierName', 'nombreProveedor']) !== null
+      || this.getAuditStateValue(next, ['supplierName', 'nombreProveedor']) !== null;
+    if (hasSupplier) {
+      compareAliases('Proveedor', ['supplierName', 'nombreProveedor']);
+    }
+
+    const hasTotalPrice = this.getAuditStateValue(prev, ['totalPrice', 'precioTotal']) !== null
+      || this.getAuditStateValue(next, ['totalPrice', 'precioTotal']) !== null;
+    if (hasTotalPrice) {
+      compareAliases('Precio Total', ['totalPrice', 'precioTotal'], (val) => this.formatCurrency(val));
+    }
+
+    if (this.getAuditStateValue(prev, ['receptionDate', 'fechaRecepcion']) || this.getAuditStateValue(next, ['receptionDate', 'fechaRecepcion'])) {
+      compareAliases('Fecha Recepción', ['receptionDate', 'fechaRecepcion'], (val) => this.formatAuditDateValue(val));
     }
 
     return fields;
@@ -655,11 +723,11 @@ export class OrdersManagementComponent implements OnInit {
 
   getDetailDiffs(): { product: string; status: 'added' | 'removed' | 'changed' | 'unchanged'; prevQty: string; nextQty: string }[] {
     if (!this.selectedAudit) return [];
-    const prev = this.selectedAudit.previousState ? JSON.parse(this.selectedAudit.previousState) : {};
-    const next = this.selectedAudit.newState ? JSON.parse(this.selectedAudit.newState) : {};
+    const prev = this.parseAuditState(this.selectedAudit.previousState);
+    const next = this.parseAuditState(this.selectedAudit.newState);
 
-    const prevDetails: any[] = prev.details || [];
-    const nextDetails: any[] = next.details || [];
+    const prevDetails: any[] = prev['details'] || [];
+    const nextDetails: any[] = next['details'] || [];
 
     const allProductIds = new Set([
       ...prevDetails.map(d => d.productId),

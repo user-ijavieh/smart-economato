@@ -1,11 +1,12 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, DatePipe, DecimalPipe, KeyValuePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize, debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { ProductService } from '../../../core/services/product.service';
 import { SupplierService } from '../../../core/services/supplier.service';
 import { TraceabilityService } from '../../../core/services/traceability.service';
 import { MessageService } from '../../../core/services/message.service';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import {
   CrisisActivationRequest,
@@ -19,7 +20,7 @@ type CrisisView = 'active' | 'history';
 @Component({
   selector: 'app-traceability-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, ToastComponent],
+  imports: [FormsModule, ToastComponent, BaseModalComponent, AsyncPipe, DatePipe, DecimalPipe, KeyValuePipe],
   templateUrl: './traceability-management.component.html',
   styleUrl: './traceability-management.component.css'
 })
@@ -387,7 +388,13 @@ export class TraceabilityManagementComponent implements OnInit {
     });
   }
 
-  downloadReport(crisis: CrisisResponseDTO): void {
+  async downloadReport(crisis: CrisisResponseDTO): Promise<void> {
+    const confirmed = await this.messageService.confirm(
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo PDF?'
+    );
+    if (!confirmed) return;
+
     this.traceabilityService.downloadCrisisReport(crisis.crisisId).subscribe({
       next: blob => {
         const url = window.URL.createObjectURL(blob);

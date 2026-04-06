@@ -1,24 +1,28 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, Output, EventEmitter, OnInit, DestroyRef, inject } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { User } from '../../../../shared/models/user.model';
 import { generateUsername, generatePassword } from '../../../../core/utils/credentials-generator';
+import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 
 @Component({
     selector: 'app-user-form-modal',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [ReactiveFormsModule, BaseModalComponent],
     templateUrl: './user-form-modal.component.html',
     styleUrl: './user-form-modal.component.css'
 })
 export class UserFormModalComponent implements OnInit {
+    private destroyRef = inject(DestroyRef);
+
     @Input() user: User | null = null;
+    @Input() teachers: User[] = [];
     @Input() existingUsers: string[] = [];
     @Output() save = new EventEmitter<any>();
     @Output() close = new EventEmitter<void>();
 
     userForm!: FormGroup;
-    roles = ['ADMIN', 'CHEF', 'USER'];
+    roles = ['ADMIN', 'CHEF', 'USER', 'ELEVATED'];
 
     // Auto-generated credentials (create mode only)
     generatedUser = '';
@@ -34,21 +38,43 @@ export class UserFormModalComponent implements OnInit {
         return this.isEditMode ? 'Editar Usuario' : 'Crear Usuario';
     }
 
+    get showTeacherField(): boolean {
+        if (this.isEditMode) {
+            return true;
+        }
+
+        const role = String(this.userForm?.get('role')?.value ?? '').toUpperCase();
+        return role === 'USER' || role === 'ELEVATED';
+    }
+
     ngOnInit(): void {
         if (this.isEditMode) {
             this.userForm = new FormGroup({
                 name: new FormControl(this.user?.name || '', [Validators.required, Validators.minLength(3)]),
                 user: new FormControl(this.user?.user || '', [Validators.required, Validators.minLength(3)]),
                 password: new FormControl(''),
-                role: new FormControl(this.user?.role || 'USER', [Validators.required])
+                role: new FormControl(this.user?.role || 'USER', [Validators.required]),
+                teacherId: new FormControl(this.user?.teacher?.id || null)
             });
         } else {
-            // Create mode: only name and role
+            // Create mode
             this.userForm = new FormGroup({
                 name: new FormControl('', [Validators.required, Validators.minLength(3)]),
-                role: new FormControl('USER', [Validators.required])
+                role: new FormControl('USER', [Validators.required]),
+                teacherId: new FormControl(null)
             });
         }
+
+        this.userForm.get('role')?.valueChanges
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(role => {
+                const teacherCtrl = this.userForm.get('teacherId');
+                const normalizedRole = String(role ?? '').toUpperCase();
+
+                if (teacherCtrl && !this.isEditMode && normalizedRole !== 'USER' && normalizedRole !== 'ELEVATED') {
+                    teacherCtrl.setValue(null);
+                }
+            });
     }
 
     onSubmit(): void {
@@ -56,24 +82,39 @@ export class UserFormModalComponent implements OnInit {
 
         if (this.isEditMode) {
             const formValue = this.userForm.value;
-            if (!formValue.password) {
-                const { password, ...dataWithoutPassword } = formValue;
-                this.save.emit(dataWithoutPassword);
-            } else {
-                this.save.emit(formValue);
+            const payload: any = {
+                name: formValue.name,
+                user: formValue.user,
+                role: formValue.role
+            };
+
+            if (formValue.password) {
+                payload.password = formValue.password;
             }
+
+            if (this.showTeacherField) {
+                payload.teacherId = formValue.teacherId === '' ? null : formValue.teacherId;
+            }
+
+            this.save.emit(payload);
         } else {
             // Generate unique credentials
             this.generatedUser = this.generateUniqueUser();
             this.generatedPassword = generatePassword();
 
             const formValue = this.userForm.value;
-            this.save.emit({
+            const payload: any = {
                 name: formValue.name,
                 user: this.generatedUser,
                 password: this.generatedPassword,
                 role: formValue.role
-            });
+            };
+
+            if (this.showTeacherField) {
+                payload.teacherId = formValue.teacherId === '' ? null : formValue.teacherId;
+            }
+
+            this.save.emit(payload);
 
             this.showCredentials = true;
         }
@@ -101,12 +142,6 @@ export class UserFormModalComponent implements OnInit {
 
     onClose(): void {
         this.close.emit();
-    }
-
-    onBackdropClick(event: MouseEvent): void {
-        if (event.target === event.currentTarget) {
-            this.onClose();
-        }
     }
 
 }

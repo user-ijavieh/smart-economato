@@ -1,12 +1,5 @@
-:host {
-  --color-brand-primary: #B84B44;
-  --color-brand-dark: #8C2E28;
-  --color-surface-glass: rgba(8, 3, 3, 0.58);
-  --color-border-glass: rgba(255, 255, 255, 0.14);
-  --color-text-primary: #FFFFFF;
-  --color-text-secondary: #A1A1A1;
-  --radius-card: 18px;
-  --effect-glass: blur(24px);
+﻿:host {
+  display: block;
 }
 
 /* ===== Page Layout ===== */
@@ -14,7 +7,7 @@
   max-width: 680px;
   margin: 0 auto;
   padding: 2rem 1.5rem;
-  color: var(--color-text-primary);
+  color: var(--theme-text-primary);
 }
 
 /* ===== Header ===== */
@@ -30,9 +23,9 @@
   width: 64px;
   height: 64px;
   border-radius: 16px;
-  background: rgba(184, 75, 68, 0.15) !important;
-  border: 1px solid rgba(184, 75, 68, 0.3) !important;
-  color: #fff;
+  background: color-mix(in srgb, var(--brand-primary) 15%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 30%, transparent) !important;
+  color: var(--theme-text-primary);
   margin-bottom: 1.5rem;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
   backdrop-filter: blur(8px);
@@ -41,12 +34,12 @@
 .scanner-header h1 {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--color-text-primary);
+  color: var(--theme-text-primary);
   margin: 0 0 0.5rem;
 }
 
 .scanner-header .subtitle {
-  color: var(--color-text-secondary);
+  color: var(--theme-text-secondary);
   font-size: 0.95rem;
   margin: 0;
 }
@@ -91,7 +84,7 @@
   position: absolute;
   width: 28px;
   height: 28px;
-  border-color: var(--color-brand-primary);
+  border-color: var(--brand-primary);
   border-style: solid;
   border-width: 0;
 }
@@ -106,8 +99,8 @@
   left: 4px;
   right: 4px;
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--color-brand-primary), transparent);
-  box-shadow: 0 0 12px rgba(184, 75, 68, 0.6);
+  background: linear-gradient(90deg, transparent, var(--brand-primary), transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--brand-primary) 60%, transparent);
   animation: scan-move 2.4s ease-in-out infinite;
 }
 
@@ -128,7 +121,7 @@
 .camera-selector label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--color-text-secondary);
+  color: var(--theme-text-secondary);
 }
 
 .camera-buttons {
@@ -141,9 +134,9 @@
   padding: 0.4rem 0.85rem;
   font-size: 0.8rem;
   border-radius: 8px;
-  border: 1.5px solid var(--color-border-glass);
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--color-text-primary);
+  border: 1.5px solid var(--theme-border-glass);
+  background: var(--theme-surface-glass-hover);
+  color: var(--theme-text-primary);
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
@@ -153,14 +146,14 @@
 }
 
 .camera-btn:hover {
-  border-color: var(--color-brand-primary);
-  background: rgba(184, 75, 68, 0.1);
+  border-color: var(--brand-primary);
+  background: color-mix(in srgb, var(--brand-primary) 10%, transparent);
 }
 
 .camera-btn.active {
-  background: var(--color-brand-primary);
-  border-color: var(--color-brand-primary);
-  color: #fff;
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: var(--theme-text-primary);
 }
 
 /* ===== Result Container ===== */
@@ -177,18 +170,18 @@
 .loading-card, .error-card {
   text-align: center;
   padding: 3rem 2rem;
-  background: var(--color-surface-glass);
-  backdrop-filter: var(--effect-glass);
-  -webkit-backdrop-filter: var(--effect-glass);
-  border-radius: var(--radius-card);
-  border: 1px solid var(--color-border-glass);
+  background: var(--theme-surface-glass);
+  backdrop-filter: var(--theme-effect-glass);
+  -webkit-backdrop-filter: var(--theme-effect-glass);
+  border-radius: var(--theme-radius-card);
+  border: 1px solid var(--theme-border-glass);
 }
 
 .spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid rgba(255, 255, 255, 0.1);
-  border-top-color: var(--color-brand-primary);
+  border: 4px solid var(--theme-surface-glass-hover);
+  border-top-color: var(--brand-primary);
   border-radius: 50%;
   margin: 0 auto 1rem;
   animation: spin 0.8s linear infinite;
@@ -201,36 +194,36 @@
 .loading-card p {
   font-size: 1.05rem;
   font-weight: 600;
-  color: var(--color-text-primary);
+  color: var(--theme-text-primary);
 }
 
 .scanned-code {
   font-size: 0.85rem;
-  color: var(--color-text-secondary);
+  color: var(--theme-text-secondary);
   font-family: 'Courier New', monospace;
 }
 
 .error-icon {
-  color: #ff8a8a;
+  color: var(--color-danger-muted);
   margin-bottom: 1rem;
 }
 
 .error-card h3 {
   font-size: 1.15rem;
-  color: var(--color-text-primary);
+  color: var(--theme-text-primary);
 }
 
 .error-card p {
-  color: var(--color-text-secondary);
+  color: var(--theme-text-secondary);
 }
 
 /* ===== Product Card ===== */
 .product-card {
-  background: var(--color-surface-glass);
-  backdrop-filter: var(--effect-glass);
-  -webkit-backdrop-filter: var(--effect-glass);
-  border-radius: var(--radius-card);
-  border: 1px solid var(--color-border-glass);
+  background: var(--theme-surface-glass);
+  backdrop-filter: var(--theme-effect-glass);
+  -webkit-backdrop-filter: var(--theme-effect-glass);
+  border-radius: var(--theme-radius-card);
+  border: 1px solid var(--theme-border-glass);
   overflow: hidden;
 }
 
@@ -239,7 +232,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1.5rem;
-  background: rgba(16, 185, 129, 0.15);
+  background: var(--color-success-bg);
   border-bottom: 1px solid rgba(16, 185, 129, 0.3);
   flex-wrap: wrap;
   gap: 0.5rem;
@@ -259,8 +252,8 @@
 
 .barcode-badge {
   padding: 0.3rem 0.75rem;
-  background: rgba(0, 0, 0, 0.2);
-  color: var(--color-text-secondary);
+  background: var(--theme-section-header-bg);
+  color: var(--theme-text-secondary);
   border-radius: 8px;
   font-size: 0.8rem;
   font-family: 'Courier New', monospace;
@@ -273,7 +266,7 @@
 .product-name {
   font-size: 1.4rem;
   font-weight: 700;
-  color: var(--color-text-primary);
+  color: var(--theme-text-primary);
   margin: 0 0 1.25rem;
 }
 
@@ -293,32 +286,32 @@
 .info-label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--color-text-secondary);
+  color: var(--theme-text-secondary);
   text-transform: uppercase;
 }
 
 .info-value {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--color-text-primary);
+  color: var(--theme-text-primary);
 }
 
 .info-value.price {
-  color: #ff8a8a;
+  color: var(--color-danger-muted);
   font-size: 1.15rem;
 }
 
 .info-value.low-stock {
-  color: #ff8a8a;
+  color: var(--color-danger-muted);
 }
 
 .product-description {
   padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--theme-surface-glass-hover);
 }
 
 .product-description p {
-  color: var(--color-text-secondary);
+  color: var(--theme-text-secondary);
   font-size: 0.9rem;
 }
 
@@ -332,8 +325,8 @@
   padding: 0.85rem 1.5rem;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #fff;
-  background: linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-dark));
+  color: var(--theme-text-primary);
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-dark));
   border: none;
   cursor: pointer;
   transition: all 0.25s;
@@ -346,11 +339,11 @@
 }
 
 .btn-scan-again:hover {
-  background: rgba(184, 75, 68, 0.25) !important;
-  border-color: rgba(184, 75, 68, 0.5) !important;
+  background: color-mix(in srgb, var(--brand-primary) 25%, transparent) !important;
+  border-color: color-mix(in srgb, var(--brand-primary) 50%, transparent) !important;
   filter: brightness(1.2);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px var(--color-brand-glow) !important;
+  box-shadow: 0 8px 25px var(--brand-glow) !important;
 }
 
 /* ===== Responsive ===== */
@@ -369,3 +362,4 @@
     align-items: flex-start;
   }
 }
+
