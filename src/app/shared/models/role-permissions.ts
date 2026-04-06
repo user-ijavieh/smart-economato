@@ -1,8 +1,8 @@
 // 1. Definición de tipos para mayor seguridad
-export type Role = 'ADMIN' | 'CHEF' | 'USER';
+export type Role = 'ADMIN' | 'CHEF' | 'ELEVATED' | 'USER';
 
 // 2. Estructura de permisos centralizada (by GPT)
-export const ROLE_PERMISSIONS: Record<Role, string[]> = {
+export const ROLE_PERMISSIONS: Record<Exclude<Role, 'ELEVATED'>, string[]> = {
   CHEF: [
     "GET /api/products/ledger-integrity",
     "GET /api/products/{id}/ledger/pdf",
@@ -78,7 +78,20 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "GET /api/traceability/crisis",
     "GET /api/traceability/crisis/{crisisId}",
     "GET /api/traceability/forward",
-    "GET /api/traceability/reverse/{cookingAuditId}"
+    "GET /api/traceability/reverse/{cookingAuditId}",
+    "POST /api/weekly-plans",
+    "PUT /api/weekly-plans/{id}",
+    "PATCH /api/weekly-plans/{id}/activate",
+    "PATCH /api/weekly-plans/{id}/slots/{slotId}/confirm",
+    "PATCH /api/weekly-plans/{id}/days/{dayOfWeek}/confirm",
+    "GET /api/weekly-plans/{id}",
+    "GET /api/weekly-plans",
+    "GET /api/weekly-plans/current",
+    "GET /api/weekly-plans/{id}/stock-requirements",
+    "PATCH /api/weekly-plans/{id}/slots/{slotId}/cancel",
+    "PATCH /api/weekly-plans/{id}/slots/{slotId}/students/{studentId}/cancel",
+    "PATCH /api/weekly-plans/{id}/days/{dayOfWeek}/students/{studentId}/cancel",
+    "GET /api/weekly-plans/metrics/students"
   ],
   ADMIN: [
     "GET /api/products/with-ledger",
@@ -217,7 +230,20 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "GET /api/inventory-audits",
     "GET /api/inventory-audits/{id}",
     "GET /api/inventory-audits/type/{type}",
-    "GET /api/inventory-audits/by-date-range"
+    "GET /api/inventory-audits/by-date-range",
+    "POST /api/weekly-plans",
+    "PUT /api/weekly-plans/{id}",
+    "PATCH /api/weekly-plans/{id}/activate",
+    "PATCH /api/weekly-plans/{id}/slots/{slotId}/confirm",
+    "PATCH /api/weekly-plans/{id}/days/{dayOfWeek}/confirm",
+    "GET /api/weekly-plans/{id}",
+    "GET /api/weekly-plans",
+    "GET /api/weekly-plans/current",
+    "GET /api/weekly-plans/{id}/stock-requirements",
+    "PATCH /api/weekly-plans/{id}/slots/{slotId}/cancel",
+    "PATCH /api/weekly-plans/{id}/slots/{slotId}/students/{studentId}/cancel",
+    "PATCH /api/weekly-plans/{id}/days/{dayOfWeek}/students/{studentId}/cancel",
+    "GET /api/weekly-plans/metrics/students"
   ],
   USER: [
     "GET /api/products/with-ledger",
@@ -323,7 +349,7 @@ class PermissionTrie {
 const roleTries = new Map<Role, PermissionTrie>();
 
 export function initPermissions() {
-  for (const [role, permissions] of Object.entries(ROLE_PERMISSIONS) as [Role, string[]][]) {
+  for (const [role, permissions] of Object.entries(ROLE_PERMISSIONS) as [Exclude<Role, 'ELEVATED'>, string[]][]) {
     const trie = new PermissionTrie();
     for (const p of permissions) {
       trie.add(p);
@@ -337,7 +363,8 @@ initPermissions();
 
 // 5. Funciones de utilidad para el interceptor
 export function hasPermission(userRole: Role, method: string, url: string): boolean {
-  const trie = roleTries.get(userRole);
+  const normalizedRole = userRole === 'ELEVATED' ? 'CHEF' : userRole;
+  const trie = roleTries.get(normalizedRole as Role);
   if (!trie) return false;
 
   return trie.check(method, url);

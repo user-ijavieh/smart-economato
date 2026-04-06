@@ -1,4 +1,4 @@
-import { Component, inject, HostListener, ViewChild } from '@angular/core';
+import { Component, inject, HostListener, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { RouterModule, RouterOutlet, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
@@ -15,7 +15,8 @@ import { slideInAnimation } from '../../animations/route-animations';
   imports: [AsyncPipe, RouterModule, SidebarComponent, ToastComponent, BaseModalComponent],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.css',
-  animations: [slideInAnimation]
+  animations: [slideInAnimation],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayoutComponent {
   private authService = inject(AuthService);
@@ -29,6 +30,21 @@ export class LayoutComponent {
   showLogoutModal = false;
 
   isAuthenticated$ = this.authService.authStatus$;
+
+  // Cache para evitar crear nuevos objetos en cada detección de cambios
+  private isMobile = window.innerWidth <= 768;
+  private mobileAnimParams = {
+    enterTransform: 'translateX(100%)',
+    leaveTransform: 'translateX(-10%)',
+    enterTransformDec: 'translateX(-100%)',
+    leaveTransformDec: 'translateX(10%)'
+  };
+  private desktopAnimParams = {
+    enterTransform: 'translateY(100%)',
+    leaveTransform: 'translateY(-10%)',
+    enterTransformDec: 'translateY(-100%)',
+    leaveTransformDec: 'translateY(10%)'
+  };
 
   @HostListener('window:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
@@ -85,31 +101,13 @@ export class LayoutComponent {
   }
 
   prepareRoute(outlet: RouterOutlet) {
-    const animation = outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
+    const animation = outlet?.activatedRouteData?.['animation'];
     if (!animation) return null;
     
-    // Si estamos en móvil, animamos en el eje X (horizontal) en vez de Y (vertical)
-    if (window.innerWidth <= 768) {
-      return {
-        value: animation,
-        params: {
-          enterTransform: 'translateX(100%)',
-          leaveTransform: 'translateX(-10%)',
-          enterTransformDec: 'translateX(-100%)',
-          leaveTransformDec: 'translateX(10%)'
-        }
-      };
-    }
-    
-    // Por defecto en desktop (eje Y)
+    // Retorna el mismo objeto cached porque los parámetros son siempre los mismos
     return {
       value: animation,
-      params: {
-        enterTransform: 'translateY(100%)',
-        leaveTransform: 'translateY(-10%)',
-        enterTransformDec: 'translateY(-100%)',
-        leaveTransformDec: 'translateY(10%)'
-      }
+      params: this.isMobile ? this.mobileAnimParams : this.desktopAnimParams
     };
   }
 }

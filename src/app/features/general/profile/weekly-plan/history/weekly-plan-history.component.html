@@ -1,0 +1,73 @@
+<div class="history-shell">
+  <div class="history-toolbar">
+    <select [(ngModel)]="statusFilter" (ngModelChange)="statusFilterChange.emit($event)">
+      <option value="">Todos los estados</option>
+      <option value="DRAFT">Borrador</option>
+      <option value="ACTIVE">Activa</option>
+      <option value="IN_PROGRESS">En progreso</option>
+      <option value="COMPLETED">Completado</option>
+      <option value="CANCELLED">Cancelado</option>
+    </select>
+    <span class="history-count">{{ totalElements }} planes</span>
+  </div>
+
+  <div class="table-container tabla-contenedor">
+    <table>
+      <thead>
+        <tr>
+          <th>Semana</th>
+          @if (showChefColumn) {
+            <th>Chef</th>
+          }
+          <th>Estado</th>
+          <th>Creado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading) {
+          @for (row of [1,2,3,4,5]; track row) {
+            <tr>
+              <td><span class="skeleton"></span></td>
+              @if (showChefColumn) {
+                <td><span class="skeleton"></span></td>
+              }
+              <td><span class="skeleton"></span></td>
+              <td><span class="skeleton"></span></td>
+              <td><span class="skeleton"></span></td>
+            </tr>
+          }
+        } @else if (plans.length === 0) {
+          <tr>
+            <td [attr.colspan]="showChefColumn ? 5 : 4" class="empty-cell">No hay planes para mostrar</td>
+          </tr>
+        } @else {
+          @for (plan of plans; track plan.id) {
+            <tr class="clickable" (click)="selectPlan.emit(plan)">
+              <td>{{ plan.weekStartDate }} - {{ plan.weekEndDate }}</td>
+              @if (showChefColumn) {
+                <td>{{ plan.chefName }}</td>
+              }
+              <td><span class="status-badge" [ngClass]="statusClass(plan.status)">{{ statusLabels[plan.status] || plan.status }}</span></td>
+              <td>{{ plan.createdAt }}</td>
+              <td class="action-buttons">
+                @if (canEdit(plan)) {
+                  <button type="button" class="btn-primary compact" (click)="editPlan.emit(plan); $event.stopPropagation()" title="Editar plan (solo borradores)">Editar</button>
+                }
+                <button type="button" class="btn-secondary compact" (click)="selectPlan.emit(plan); $event.stopPropagation()">Ver</button>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (totalPages > 1) {
+    <div class="pagination-controls">
+      <button class="btn-page" [disabled]="page === 0" (click)="pageChange.emit(page - 1)">Anterior</button>
+      <span class="page-info">Página {{ page + 1 }} de {{ totalPages }}</span>
+      <button class="btn-page" [disabled]="page >= totalPages - 1" (click)="pageChange.emit(page + 1)">Siguiente</button>
+    </div>
+  }
+</div>
