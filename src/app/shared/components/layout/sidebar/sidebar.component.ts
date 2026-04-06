@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, inject, OnInit, OnDestroy } fro
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ThemeService } from '../../../../core/services/theme.service';
 import { Subscription, filter } from 'rxjs';
 
 interface NavItem {
@@ -20,6 +21,7 @@ interface NavItem {
 })
 export class SidebarComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
+  private themeService = inject(ThemeService);
   private router = inject(Router);
   private routerSub!: Subscription;
 
@@ -92,6 +94,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
   toggleSidebar(): void {
     this.isOpen = !this.isOpen;
     this.sidebarToggled.emit(this.isOpen);
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+  }
+
+  isDarkMode(): boolean {
+    return this.themeService.isDark();
   }
 
   onLogout(): void {

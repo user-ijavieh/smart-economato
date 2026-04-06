@@ -1,14 +1,14 @@
 import { Component, Input, Output, EventEmitter, ViewChild, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ProductRequest } from '../../../../shared/models/product.model';
 import { Supplier } from '../../../../shared/models/supplier.model';
 import { MessageService } from '../../../../core/services/message.service';
+import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 
 @Component({
   selector: 'app-product-create-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule, BaseModalComponent],
   templateUrl: './product-create-modal.component.html',
   styleUrl: './product-create-modal.component.css'
 })
@@ -108,11 +108,6 @@ export class ProductCreateModalComponent {
 
   onClose(): void {
     this.close.emit();
-  }
-
-  onOverlayClick(event: MouseEvent): void {
-    // Modal no se cierra al hacer click fuera - solo con botones específicos
-    // No hacer nada para prevenir el cierre accidental
   }
 
   resetForm(): void {

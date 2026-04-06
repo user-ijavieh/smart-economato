@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductBatchResponseDTO } from '../../../../shared/models/product-batch.model';
 import { MessageService } from '../../../../core/services/message.service';
+import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 
 @Component({
   selector: 'app-batch-expiration-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, BaseModalComponent],
   templateUrl: './batch-expiration-modal.component.html',
   styleUrl: './batch-expiration-modal.component.css'
 })

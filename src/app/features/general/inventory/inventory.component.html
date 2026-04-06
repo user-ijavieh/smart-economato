@@ -1,9 +1,9 @@
-<div class="header-inventario">
+<div class="page-header header-inventario">
   <h1>Inventario</h1>
 </div>
 
-<div class="contenedor-principal hide-scrollbar">
-  <div class="controles">
+<div class="page-content contenedor-principal hide-scrollbar">
+  <div class="controls-bar controles">
     <div class="search-group">
       <input
         type="text"
@@ -124,7 +124,7 @@
     ></app-product-form>
   }
 
-  <div class="tabla-contenedor">
+  <div class="table-container tabla-contenedor">
     <table>
       <thead>
         <tr>
@@ -134,13 +134,6 @@
             [attr.data-sort-dir]="getSortDir('name')"
           >
             Nombre
-          </th>
-          <th
-            class="sortable hide-on-mobile"
-            (click)="onSortChange('type')"
-            [attr.data-sort-dir]="getSortDir('type')"
-          >
-            Tipo
           </th>
           <th
             class="sortable hide-on-mobile"
@@ -176,10 +169,6 @@
             <tr class="skeleton-row">
               <td><span class="skeleton skeleton-text" style="width: 150px"></span></td>
               <!-- Name -->
-              <td class="hide-on-mobile">
-                <span class="skeleton skeleton-text" style="width: 80px"></span>
-              </td>
-              <!-- Type -->
               <td class="hide-on-mobile">
                 <span class="skeleton skeleton-text" style="width: 60px"></span>
               </td>
@@ -258,7 +247,7 @@
         }
         @if (products.length === 0 && !loading && !initialLoad) {
           <tr>
-            <td [attr.colspan]="isAdmin ? 7 : 6" style="text-align: center; padding: 2rem">
+            <td [attr.colspan]="isAdmin ? 6 : 5" style="text-align: center; padding: 2rem">
               No se encontraron productos
             </td>
           </tr>
@@ -266,7 +255,7 @@
       </tbody>
       <tfoot>
         <tr>
-          <td colspan="8">
+          <td colspan="7">
             <div class="pagination-controls">
               <button class="btn-page" [disabled]="page === 0 || loading" (click)="onPageChange(page - 1)">
                 Anterior

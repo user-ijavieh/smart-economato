@@ -139,6 +139,7 @@
                                             d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
                                     </svg>
                                 </button>
+                                }
                                 <button class="btn-pdf" (click)="onDownloadPdf(order)" title="Descargar PDF">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                         viewBox="0 0 16 16">
@@ -272,19 +273,8 @@
 
 <!-- ===== CHANGE STATUS MODAL ===== -->
 @if (showChangeStatusModal && orderForStatusChange) {
-<div class="modal-overlay modal-overlay-base admin-theme" (click)="closeChangeStatusModal()">
-    <div class="modal-container" (click)="$event.stopPropagation()">
-        <div class="modal-dialog-base modal-content modal-status-change">
-            <div class="modal-header-base">
-                <h2>Cambiar Estado</h2>
-                <button class="modal-close" (click)="closeChangeStatusModal()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                </button>
-            </div>
+<app-base-modal title="Cambiar Estado" size="md" (closed)="closeChangeStatusModal()">
+        <div class="modal-content modal-status-change">
 
             <div class="modal-body">
                 <div class="modal-section" style="margin-bottom: 20px;">
@@ -324,22 +314,24 @@
                         @if (savingStatus) {
                             <span class="spinner"></span> Guardando...
                         } @else {
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                            </svg>
                             Guardar Cambios
                         }
                     </button>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+</app-base-modal>
 }
 
 <!-- ===== AUDIT DETAIL MODAL ===== -->
 @if (showAuditDetailModal && selectedAudit) {
-@if (showAuditDetailModal && selectedAudit) {
-<div class="audit-modal-overlay" (click)="onAuditOverlayClick($event)">
-    <div class="audit-modal" [class.audit-modal-wide]="hasDiffData">
+<app-base-modal [showHeader]="false" size="fullscreen" (closed)="closeAuditDetail()">
+    <div class="modal-container" style="max-width: 1100px;">
+    <div class="modal-content" [class.audit-modal-wide]="hasDiffData">
         <div class="audit-modal-header">
             <div class="audit-header-content">
                 <h2>Detalle de Auditoría</h2>
@@ -431,15 +423,15 @@
         }
     </div>
 </div>
-}
+</app-base-modal>
 
 }
 
 <!-- ===== ORDER DETAIL MODAL ===== -->
 @if (showOrderDetailModal && selectedOrder) {
-<div class="modal-overlay modal-overlay-base admin-theme" (click)="closeOrderDetail()">
-    <div class="modal-container" (click)="$event.stopPropagation()" style="max-width: 950px;">
-        <div class="modal-dialog-base modal-content">
+<app-base-modal [showHeader]="false" size="lg" (closed)="closeOrderDetail()">
+    <div class="modal-container" style="max-width: 950px;">
+        <div class="modal-content">
             <div class="modal-header-base">
                 <div class="modal-header-content">
                     <h2>Pedido #{{ selectedOrder.id }}</h2>
@@ -532,7 +524,7 @@
             </div>
         </div>
     </div>
-</div>
+</app-base-modal>
 }
 
 <!-- Modals & Toasts -->

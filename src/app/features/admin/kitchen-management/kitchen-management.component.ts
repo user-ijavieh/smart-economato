@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize, Observable, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -16,11 +16,13 @@ import { TraceabilityService } from '../../../core/services/traceability.service
 import { ReverseTraceabilityDTO } from '../../../shared/models/traceability.model';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
+import { ScrollService } from '../../../core/services/scroll.service';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 
 @Component({
   selector: 'app-kitchen-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, ConfirmDialogComponent, ToastComponent],
+  imports: [FormsModule, ConfirmDialogComponent, ToastComponent, BaseModalComponent, DatePipe, DecimalPipe, CurrencyPipe, AsyncPipe],
   templateUrl: './kitchen-management.component.html',
   styleUrl: './kitchen-management.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -31,6 +33,7 @@ export class KitchenManagementComponent implements OnInit {
   private traceabilityService = inject(TraceabilityService);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
+  private scrollService = inject(ScrollService);
   messageService = inject(MessageService);
 
   activeTab: 'history' | 'reports' = 'history';
@@ -261,16 +264,8 @@ export class KitchenManagementComponent implements OnInit {
   changePage(delta: number): void {
     const newPage = this.currentPage + delta;
     if (newPage >= 0 && newPage < this.totalPages) {
-      this.scrollToTop();
+      this.scrollService.scrollToTop();
       this.loadHistory(newPage);
-    }
-  }
-
-  private scrollToTop(): void {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    const container = document.querySelector('.contenedor-principal');
-    if (container) {
-      container.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
@@ -428,11 +423,17 @@ export class KitchenManagementComponent implements OnInit {
       });
   }
 
-  downloadReportPdf(): void {
+  async downloadReportPdf(): Promise<void> {
     if (this.reportRange === 'CUSTOM' && (!this.reportStartDate || !this.reportEndDate)) {
       this.messageService.showWarning('Debes indicar fecha de inicio y fin para rango personalizado');
       return;
     }
+
+    const confirmed = await this.messageService.confirm(
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo PDF?'
+    );
+    if (!confirmed) return;
 
     this.kitchenService.downloadKitchenReportPdf(this.reportRange, this.reportStartDate, this.reportEndDate)
       .subscribe({

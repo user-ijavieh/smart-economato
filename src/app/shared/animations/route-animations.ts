@@ -2,8 +2,6 @@ import { trigger, transition, style, query, animateChild, group, animate } from 
 
 export const slideInAnimation = trigger('routeAnimations', [
   transition(':increment', [
-    // La nueva ruta está "debajo" (mayor índice).
-    // => La nueva entra desde abajo (top: 100%), la vieja sale hacia arriba (top: -100%).
     style({ position: 'relative' }),
     query(':enter, :leave', [
       style({
@@ -15,22 +13,21 @@ export const slideInAnimation = trigger('routeAnimations', [
       })
     ], { optional: true }),
     query(':enter', [
-      style({ top: '100%', opacity: 0 })
+      style({ transform: '{{enterTransform}}', opacity: 0 })
     ], { optional: true }),
     query(':leave', animateChild(), { optional: true }),
     group([
       query(':leave', [
-        animate('500ms cubic-bezier(0.25, 0.8, 0.25, 1)', style({ top: '-10% !important', opacity: 0, scale: 0.95 }))
+        animate('500ms cubic-bezier(0.25, 0.8, 0.25, 1)', style({ transform: '{{leaveTransform}}', opacity: 0, scale: 0.95 }))
       ], { optional: true }),
       query(':enter', [
-        animate('500ms cubic-bezier(0.25, 0.8, 0.25, 1)', style({ top: '0%', opacity: 1, scale: 1 }))
+        animate('500ms cubic-bezier(0.25, 0.8, 0.25, 1)', style({ transform: 'translate(0, 0)', opacity: 1, scale: 1 }))
       ], { optional: true })
     ]),
     query(':enter', animateChild(), { optional: true })
-  ]),
+  ], { params: { enterTransform: 'translateY(100%)', leaveTransform: 'translateY(-10%)' } }),
+  
   transition(':decrement', [
-    // La nueva ruta está "arriba" (menor índice).
-    // => La nueva entra desde arriba (top: -100%), la vieja sale hacia abajo (top: 100%).
     style({ position: 'relative' }),
     query(':enter, :leave', [
       style({
@@ -42,17 +39,17 @@ export const slideInAnimation = trigger('routeAnimations', [
       })
     ], { optional: true }),
     query(':enter', [
-      style({ top: '-100%', opacity: 0 })
+      style({ transform: '{{enterTransformDec}}', opacity: 0 })
     ], { optional: true }),
     query(':leave', animateChild(), { optional: true }),
     group([
       query(':leave', [
-        animate('500ms cubic-bezier(0.25, 0.8, 0.25, 1)', style({ top: '10% !important', opacity: 0, scale: 0.95 }))
+        animate('500ms cubic-bezier(0.25, 0.8, 0.25, 1)', style({ transform: '{{leaveTransformDec}}', opacity: 0, scale: 0.95 }))
       ], { optional: true }),
       query(':enter', [
-        animate('500ms cubic-bezier(0.25, 0.8, 0.25, 1)', style({ top: '0%', opacity: 1, scale: 1 }))
+        animate('500ms cubic-bezier(0.25, 0.8, 0.25, 1)', style({ transform: 'translate(0, 0)', opacity: 1, scale: 1 }))
       ], { optional: true })
     ]),
     query(':enter', animateChild(), { optional: true })
-  ])
+  ], { params: { enterTransformDec: 'translateY(-100%)', leaveTransformDec: 'translateY(10%)' } })
 ]);

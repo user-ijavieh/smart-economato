@@ -1,5 +1,4 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnInit, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RecipeRequest } from '../../../../shared/models/recipe.model';
 import { Product } from '../../../../shared/models/product.model';
@@ -8,6 +7,7 @@ import { ProductService } from '../../../../core/services/product.service';
 import { AllergenService } from '../../../../core/services/allergen.service';
 import { MessageService } from '../../../../core/services/message.service';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 
 interface FormComponent {
   productId: number;
@@ -18,7 +18,7 @@ interface FormComponent {
 @Component({
   selector: 'app-recipe-create-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule, BaseModalComponent],
   templateUrl: './recipe-create-modal.component.html',
   styleUrl: './recipe-create-modal.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -251,12 +251,6 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
 
   closeModal(): void {
     this.close.emit();
-  }
-
-  onOverlayClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
-      this.closeModal();
-    }
   }
 
   saveRecipe(): void {

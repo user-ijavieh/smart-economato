@@ -5,6 +5,7 @@ import { ToastComponent } from './shared/components/layout/toast/toast.component
 import { ConfirmDialogComponent } from './shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { AlertNotificationComponent } from './shared/components/layout/alert-notification/alert-notification.component';
 import { MessageService } from './core/services/message.service';
+import { ThemeService } from './core/services/theme.service';
 import { filter } from 'rxjs';
 
 @Component({
@@ -17,9 +18,12 @@ export class App implements OnInit {
   protected readonly title = signal('smart-economato');
   private messageService = inject(MessageService);
   private router = inject(Router);
+  private themeService = inject(ThemeService);
   readonly toasts$ = this.messageService.toasts;
 
   ngOnInit(): void {
+    this.themeService.initTheme();
+
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {

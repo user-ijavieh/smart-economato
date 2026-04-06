@@ -1,8 +1,8 @@
-<div class="header-perfil">
+<div class="page-header header-perfil">
   <h1>Perfil</h1>
 </div>
 
-<div class="contenedor-principal hide-scrollbar">
+<div class="page-content contenedor-principal hide-scrollbar">
   <!-- Información del usuario -->
   <div class="user-card">
     <div class="user-avatar">
@@ -24,7 +24,7 @@
     </div>
 
     @if (loadingStudents) {
-    <div class="tabla-contenedor">
+    <div class="table-container tabla-contenedor">
       <table>
         <thead>
           <tr>
@@ -56,7 +56,7 @@
       <p>No tienes alumnos asignados actualmente.</p>
     </div>
     } @else {
-    <div class="tabla-contenedor">
+    <div class="table-container tabla-contenedor">
       <table>
         <thead>
           <tr>
@@ -106,17 +106,8 @@
 
 <!-- Modal para Dar Permisos Temporales -->
 @if (showEscalateModal && selectedStudent) {
-<div class="modal-overlay" (click)="closeEscalateModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2>Permisos Temporales</h2>
-      <button class="modal-close-btn" (click)="closeEscalateModal()">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
-          <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
-        </svg>
-      </button>
-    </div>
-    <div class="modal-body">
+<app-base-modal title="Permisos Temporales" size="md" (closed)="closeEscalateModal()">
+    <div class="escalate-modal-content">
       <p>
         Vas a escalar los permisos del alumno <strong>{{ selectedStudent.name }}</strong> a CHEF
         temporalmente.
@@ -128,12 +119,12 @@
           style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1" />
       </div>
     </div>
-    <div class="modal-footer">
+
+    <div modal-footer class="modal-footer">
       <button class="btn-secondary" (click)="closeEscalateModal()">Cancelar</button>
       <button class="btn-success" (click)="confirmEscalate()" [disabled]="isProcessing(selectedStudent.id)">
         {{ isProcessing(selectedStudent.id) ? 'Aplicando...' : 'Confirmar' }}
       </button>
     </div>
-  </div>
-</div>
+</app-base-modal>
 }
