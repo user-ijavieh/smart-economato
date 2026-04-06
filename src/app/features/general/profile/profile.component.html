@@ -104,6 +104,8 @@
   }
 </div>
 
+<app-weekly-plan-section [currentUser]="currentUser" />
+
 <!-- Modal para Dar Permisos Temporales -->
 @if (showEscalateModal && selectedStudent) {
 <app-base-modal title="Permisos Temporales" size="md" (closed)="closeEscalateModal()">
