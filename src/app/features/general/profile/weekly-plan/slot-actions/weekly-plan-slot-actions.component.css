@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+.slot-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.compact {
+  padding: 8px 12px;
+  font-size: 0.8rem;
+}

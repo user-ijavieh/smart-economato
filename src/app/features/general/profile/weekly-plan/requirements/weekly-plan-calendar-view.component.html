@@ -1,0 +1,82 @@
+@if (plan) {
+  <div class="calendar-shell">
+    <div class="calendar-header">
+      <div>
+        <h2>Semana {{ plan.weekStartDate }} - {{ plan.weekEndDate }}</h2>
+        <p>Chef: {{ plan.chefName }}</p>
+      </div>
+      <span class="plan-status" [ngClass]="planStatusClass()">{{ planStatusLabel(plan.status) }}</span>
+    </div>
+
+    <div class="calendar-grid">
+      @for (day of days; track day.value) {
+        <section class="day-column">
+          <div class="day-column-header">
+            <div>
+              <h3>{{ day.label }}</h3>
+              <span>{{ slotsForDay(day.value).length }} slots</span>
+            </div>
+            @if (canUseActions() && hasPendingSlots(day.value)) {
+              <app-weekly-plan-slot-actions
+                [planStatus]="plan.status"
+                [readOnly]="readOnly"
+                [showDayAction]="true"
+                (confirmDay)="confirmDay.emit(day.value)"
+              />
+            }
+          </div>
+
+          <div class="day-slots">
+            @for (slot of slotsForDay(day.value); track slot.id) {
+              <article class="slot-card" [class.locked]="isLocked(slot)" [class.cancelled]="slot.status === 'CANCELLED'">
+                <div class="slot-main">
+                  <div>
+                    <h4>{{ slot.recipeName }}</h4>
+                    <p>{{ slot.startTime }} - {{ slot.endTime }} · Cantidad {{ slot.quantity }}</p>
+                  </div>
+                  <span class="slot-status" [ngClass]="slotStatusClass(slot.status)">{{ slotStatusLabel(slot.status) }}</span>
+                </div>
+
+                <div class="slot-meta">
+                  @if (slot.confirmedByName) {
+                    <span>Confirmado por {{ slot.confirmedByName }}</span>
+                  }
+                  @if (slot.confirmedAt) {
+                    <span>{{ slot.confirmedAt }}</span>
+                  }
+                </div>
+
+                <div class="student-list">
+                  @for (student of slot.students; track student.id) {
+                    <div class="student-chip" [class.cancelled]="student.status === 'CANCELLED'">
+                      <span>{{ student.studentName }}</span>
+                      <small>{{ studentStatusLabel(student.status) }}</small>
+                      @if (!readOnly && canUseActions() && student.status !== 'CANCELLED') {
+                        <button type="button" class="chip-action" (click)="cancelStudent.emit({ slot, student })">Cancelar</button>
+                      }
+                    </div>
+                  }
+                  @if (slot.students.length === 0) {
+                    <div class="empty-students">Sin alumnos asignados</div>
+                  }
+                </div>
+
+                <app-weekly-plan-slot-actions
+                  [planStatus]="plan.status"
+                  [slotStatus]="slot.status"
+                  [readOnly]="readOnly || isLocked(slot)"
+                  (confirmSlot)="confirmSlot.emit(slot)"
+                  (cancelSlot)="cancelSlot.emit(slot)"
+                />
+              </article>
+            }
+
+            @if (slotsForDay(day.value).length === 0) {
+              <div class="empty-day">Sin slots en este día</div>
+            }
+          </div>
+        </section>
+      }
+    </div>
+  </div>
+}
