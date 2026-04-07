@@ -46,8 +46,8 @@
 
 input,
 select {
-  min-height: 40px;
-  border-radius: 8px;
+  min-height: 44px;
+  border-radius: var(--theme-radius-input);
   border: 1px solid var(--theme-border-glass);
   background: var(--theme-input-bg);
   color: var(--theme-text-primary);
@@ -60,7 +60,7 @@ input:focus,
 select:focus {
   outline: none;
   border-color: var(--brand-primary);
-  box-shadow: 0 0 0 2px rgba(var(--brand-primary-rgb), 0.1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 22%, transparent);
 }
 
 select[multiple] {
@@ -87,7 +87,7 @@ select[multiple] {
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  border-radius: 8px;
+  border-radius: var(--theme-radius-btn);
   border: 1px solid var(--theme-border-glass);
   background: var(--theme-surface-glass-hover);
   color: var(--theme-text-primary);
@@ -105,13 +105,13 @@ select[multiple] {
 }
 
 .btn-save-draft {
-  background: rgba(var(--brand-primary-rgb), 0.1);
-  border-color: var(--brand-primary);
-  color: var(--brand-primary);
+  background: color-mix(in srgb, var(--brand-primary) 16%, transparent);
+  border-color: color-mix(in srgb, var(--brand-primary) 36%, transparent);
+  color: var(--theme-text-primary);
 }
 
 .btn-save-draft:hover {
-  background: rgba(var(--brand-primary-rgb), 0.15);
+  background: color-mix(in srgb, var(--brand-primary) 24%, transparent);
 }
 
 .btn-activate {
@@ -152,7 +152,7 @@ select[multiple] {
 
 .shift-editor.locked {
   opacity: 0.8;
-  background: rgba(var(--theme-surface-glass-rgb), 0.5);
+  background: color-mix(in srgb, var(--theme-surface-glass) 72%, transparent);
 }
 
 .shift-header {
@@ -177,10 +177,10 @@ select[multiple] {
 
 .recipe-preview {
   padding: 4px 8px;
-  background: rgba(var(--brand-primary-rgb), 0.1);
-  border: 1px solid rgba(var(--brand-primary-rgb), 0.3);
+  background: color-mix(in srgb, var(--brand-primary) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 32%, transparent);
   border-radius: 6px;
-  color: var(--brand-primary);
+  color: var(--theme-text-primary);
   font-size: 0.85rem;
   white-space: nowrap;
   overflow: hidden;
@@ -202,7 +202,7 @@ select[multiple] {
 }
 
 .btn-remove-shift:hover {
-  background: rgba(var(--color-danger-rgb), 0.1);
+  background: color-mix(in srgb, var(--color-danger) 18%, transparent);
   border-radius: 6px;
 }
 
@@ -252,7 +252,7 @@ select[multiple] {
   transition: background 0.15s ease;
   font-size: 0.9rem;
   color: var(--theme-text-primary);
-  border-bottom: 1px solid rgba(var(--theme-border-glass-rgb), 0.3);
+  border-bottom: 1px solid var(--theme-border-light);
 }
 
 .dropdown-item:hover:not(.disabled):not(.loading) {
@@ -260,10 +260,10 @@ select[multiple] {
 }
 
 .dropdown-item.selected {
-  background: rgba(var(--brand-primary-rgb), 0.15);
-  color: var(--brand-primary);
+  background: color-mix(in srgb, var(--brand-primary) 18%, transparent);
+  color: var(--theme-text-primary);
   font-weight: 600;
-  border-bottom-color: var(--brand-primary);
+  border-bottom-color: color-mix(in srgb, var(--brand-primary) 42%, transparent);
 }
 
 .dropdown-item.disabled,
@@ -302,7 +302,7 @@ select[multiple] {
   padding: 10px 12px;
   cursor: pointer;
   transition: background 0.15s ease;
-  border-bottom: 1px solid rgba(var(--theme-border-glass-rgb), 0.3);
+  border-bottom: 1px solid var(--theme-border-light);
   font-size: 0.9rem;
   color: var(--theme-text-primary);
   user-select: none;
@@ -328,11 +328,11 @@ select[multiple] {
   display: inline-flex;
   align-items: center;
   padding: 6px 10px;
-  background: rgba(var(--brand-primary-rgb), 0.1);
-  border: 1px solid rgba(var(--brand-primary-rgb), 0.3);
+  background: color-mix(in srgb, var(--brand-primary) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 32%, transparent);
   border-radius: 6px;
   font-size: 0.85rem;
-  color: var(--brand-primary);
+  color: var(--theme-text-primary);
   font-weight: 500;
 }
 

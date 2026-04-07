@@ -12,7 +12,7 @@
   </div>
 
   <div class="table-container tabla-contenedor">
-    <table>
+    <table class="history-table">
       <thead>
         <tr>
           <th>Semana</th>
@@ -28,13 +28,13 @@
         @if (loading) {
           @for (row of [1,2,3,4,5]; track row) {
             <tr>
-              <td><span class="skeleton"></span></td>
+              <td data-label="Semana"><span class="skeleton"></span></td>
               @if (showChefColumn) {
-                <td><span class="skeleton"></span></td>
+                <td data-label="Chef"><span class="skeleton"></span></td>
               }
-              <td><span class="skeleton"></span></td>
-              <td><span class="skeleton"></span></td>
-              <td><span class="skeleton"></span></td>
+              <td data-label="Estado"><span class="skeleton"></span></td>
+              <td data-label="Creado"><span class="skeleton"></span></td>
+              <td data-label="Acciones"><span class="skeleton"></span></td>
             </tr>
           }
         } @else if (plans.length === 0) {
@@ -44,13 +44,13 @@
         } @else {
           @for (plan of plans; track plan.id) {
             <tr class="clickable" (click)="selectPlan.emit(plan)">
-              <td>{{ plan.weekStartDate }} - {{ plan.weekEndDate }}</td>
+              <td data-label="Semana">{{ plan.weekStartDate }} - {{ plan.weekEndDate }}</td>
               @if (showChefColumn) {
-                <td>{{ plan.chefName }}</td>
+                <td data-label="Chef">{{ plan.chefName }}</td>
               }
-              <td><span class="status-badge" [ngClass]="statusClass(plan.status)">{{ statusLabels[plan.status] || plan.status }}</span></td>
-              <td>{{ plan.createdAt }}</td>
-              <td class="action-buttons">
+              <td data-label="Estado"><span class="status-badge" [ngClass]="statusClass(plan.status)">{{ statusLabels[plan.status] || plan.status }}</span></td>
+              <td data-label="Creado">{{ plan.createdAt }}</td>
+              <td data-label="Acciones" class="action-buttons">
                 @if (canEdit(plan)) {
                   <button type="button" class="btn-primary compact" (click)="editPlan.emit(plan); $event.stopPropagation()" title="Editar plan (solo borradores)">Editar</button>
                 }
