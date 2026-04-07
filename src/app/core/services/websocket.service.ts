@@ -87,8 +87,15 @@ export class WebSocketService {
   }
 
   private getBrokerUrl(): string {
-    const wsProtocol = environment.apiUrl.startsWith('https://') ? 'wss://' : 'ws://';
-    const host = environment.apiUrl.replace(/^https?:\/\//, '');
+    const configuredApiUrl = (environment.apiUrl || '').trim();
+
+    if (!configuredApiUrl) {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      return `${protocol}//${window.location.host}/ws-alerts/websocket`;
+    }
+
+    const wsProtocol = configuredApiUrl.startsWith('https://') ? 'wss://' : 'ws://';
+    const host = configuredApiUrl.replace(/^https?:\/\//, '');
     return `${wsProtocol}${host}/ws-alerts/websocket`;
   }
 }
