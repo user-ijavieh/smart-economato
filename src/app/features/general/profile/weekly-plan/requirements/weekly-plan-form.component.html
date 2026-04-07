@@ -1,0 +1,207 @@
+<app-base-modal [title]="mode === 'create' ? 'Nuevo plan semanal' : 'Editar plan semanal'" size="fullscreen" (closed)="closed.emit()">
+  <div class="form-shell">
+    <div class="form-toolbar">
+      <div class="form-field">
+        <label>Semana</label>
+        <input type="date" [ngModel]="weekStartDate" (ngModelChange)="onWeekStartDateChange($event)" />
+        <small>Se ajusta automáticamente al lunes de la semana seleccionada.</small>
+      </div>
+
+      @if (isAdmin()) {
+        <div class="form-field">
+          <label>Chef</label>
+          <select [ngModel]="chefId" (ngModelChange)="chefId = $event">
+            <option [ngValue]="null">Selecciona un chef</option>
+            @for (teacher of teachers; track teacher.id) {
+              <option [ngValue]="teacher.id">{{ teacher.name }}</option>
+            }
+          </select>
+        </div>
+      }
+
+      <div class="form-actions">
+        <button type="button" class="btn-add-shift" title="Agregar nuevo turno (Alt+T)" (click)="addSlot(1)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          Agregar turno
+        </button>
+        <button type="button" class="btn-save-draft" (click)="save()" [disabled]="saving">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+            <polyline points="17 21 17 13 7 13 7 21" />
+            <polyline points="7 3 7 8 15 8" />
+          </svg>
+          {{ saving ? 'Guardando...' : 'Guardar como borrador' }}
+        </button>
+        @if (canActivate()) {
+          <button type="button" class="btn-activate" (click)="activate()" [disabled]="activating">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+            </svg>
+            {{ activating ? 'Activando...' : 'Activar' }}
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (validationMessage) {
+      <div class="validation-message">{{ validationMessage }}</div>
+    }
+
+    <div class="shifts-editor">
+      @for (slot of slots; track trackBySlot($index)) {
+        <section class="shift-editor" [class.locked]="slot.locked">
+          <div class="shift-header">
+            <div class="shift-title">
+              <strong>Turno {{ $index + 1 }}</strong>
+              @if (slot.recipeName || (slot.recipeId && recipes.length > 0)) {
+                <span class="recipe-preview">{{ getRecipeName(slot.recipeId) }}</span>
+              }
+            </div>
+            <div class="shift-actions">
+              @if (!slot.locked) {
+                <button type="button" class="btn-remove-shift" (click)="removeSlot($index)" title="Eliminar turno">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              } @else {
+                <span class="locked-badge">Bloqueado</span>
+              }
+            </div>
+          </div>
+
+          <div class="shift-grid">
+            <div class="form-field">
+              <label>Día</label>
+              <select [ngModel]="slot.dayOfWeek" (ngModelChange)="slot.dayOfWeek = $event" [disabled]="!!slot.locked">
+                @for (day of days; track day.value) {
+                  <option [ngValue]="day.value">{{ day.label }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Receta *</label>
+              <input 
+                type="text" 
+                [(ngModel)]="slot.recipeName"
+                (ngModelChange)="searchRecipes($event)"
+                [disabled]="!!slot.locked"
+                class="recipe-search"
+                placeholder="Buscar receta..."
+                autocomplete="off"
+              />
+              @if (recipeSearchResults.length > 0) {
+                <div class="dropdown-list" (scroll)="onRecipeScroll($event)">
+                  @for (recipe of recipeSearchResults; track recipe.id) {
+                    <div 
+                      class="dropdown-item"
+                      [class.selected]="slot.recipeId === recipe.id"
+                      (click)="slot.recipeId = recipe.id; slot.recipeName = recipe.name"
+                    >
+                      {{ recipe.name }}
+                    </div>
+                  }
+                  @if (loadingMoreRecipes) {
+                    <div class="dropdown-item loading">Cargando...</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="form-field">
+              <label>Cantidad</label>
+              <input 
+                type="number" 
+                min="0.001" 
+                step="0.001" 
+                [ngModel]="slot.quantity" 
+                (ngModelChange)="slot.quantity = $event" 
+                [disabled]="!!slot.locked"
+                placeholder="0.00"
+              />
+            </div>
+
+            <div class="form-field">
+              <label>Inicio</label>
+              <input 
+                type="time" 
+                [ngModel]="slot.startTime" 
+                (ngModelChange)="slot.startTime = $event" 
+                [disabled]="!!slot.locked"
+              />
+            </div>
+
+            <div class="form-field">
+              <label>Fin</label>
+              <input 
+                type="time" 
+                [ngModel]="slot.endTime" 
+                (ngModelChange)="slot.endTime = $event" 
+                [disabled]="!!slot.locked"
+              />
+            </div>
+
+            <div class="form-field">
+              <label>Orden</label>
+              <input 
+                type="number" 
+                min="1" 
+                step="1" 
+                [ngModel]="slot.sortOrder" 
+                (ngModelChange)="slot.sortOrder = $event" 
+                [disabled]="!!slot.locked"
+              />
+            </div>
+          </div>
+
+          <div class="form-field full-width">
+            <label>Alumnos</label>
+            <div class="students-selector">
+              <input 
+                type="text" 
+                [(ngModel)]="studentSearchQuery"
+                (ngModelChange)="searchStudents($event)"
+                [disabled]="!!slot.locked"
+                class="student-search"
+                placeholder="Buscar alumnos..."
+                autocomplete="off"
+              />
+              <div class="dropdown-list" (scroll)="onStudentScroll($event)">
+                @if (studentSearchResults.length > 0) {
+                  @for (student of studentSearchResults; track student.id) {
+                    <label class="dropdown-checkbox">
+                      <input 
+                        type="checkbox" 
+                        [checked]="slot.studentIds?.includes(student.id)"
+                        (change)="toggleStudent(slot, student.id, $event.target.checked)"
+                        [disabled]="!!slot.locked"
+                      />
+                      <span>{{ student.name }}</span>
+                    </label>
+                  }
+                  @if (loadingMoreStudents) {
+                    <div class="dropdown-label-loading">Cargando...</div>
+                  }
+                } @else {
+                  <div class="dropdown-empty">No hay resultados</div>
+                }
+              </div>
+              @if ((slot.studentIds && slot.studentIds.length > 0)) {
+                <div class="selected-students">
+                  @for (studentName of getStudentNames(slot.studentIds); track $index) {
+                    <span class="student-tag">{{ studentName }}</span>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </section>
+      }
+    </div>
+  </div>
+</app-base-modal>

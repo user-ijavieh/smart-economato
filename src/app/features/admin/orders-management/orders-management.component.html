@@ -24,36 +24,43 @@
 
     <!-- Filters -->
     <div class="controles">
-        <input type="text" [(ngModel)]="orderSearchTerm" placeholder="Buscar por usuario o ID..."
-            (ngModelChange)="onOrderSearch()" />
+        <div class="filter-row">
+            <input type="text" [(ngModel)]="orderSearchTerm" placeholder="Buscar por usuario o ID..."
+                (ngModelChange)="onClientFilterChange()" />
 
-        <input type="date" [(ngModel)]="orderDateFilter" class="date-input"
-            (ngModelChange)="onOrderSearch()" title="Filtrar por fecha" />
+            <input type="date" [(ngModel)]="orderStartDate" class="date-input"
+                (ngModelChange)="onServerFilterChange()" title="Desde" />
+            <span class="date-separator">—</span>
+            <input type="date" [(ngModel)]="orderEndDate" class="date-input"
+                (ngModelChange)="onServerFilterChange()" title="Hasta" />
+        </div>
 
-        <select [(ngModel)]="orderStatusFilter" class="action-select" (ngModelChange)="onOrderSearch()">
-            <option value="">Todos los estados</option>
-            @for (s of allStatuses; track s.value) {
-            <option [value]="s.value">{{ s.label }}</option>
+        <div class="filter-row">
+            <select [(ngModel)]="orderStatusFilter" class="action-select" (ngModelChange)="onClientFilterChange()">
+                <option value="">Todos los estados</option>
+                @for (s of allStatuses; track s.value) {
+                <option [value]="s.value">{{ s.label }}</option>
+                }
+            </select>
+
+            <select [(ngModel)]="orderSupplierFilter" class="action-select" (ngModelChange)="onServerFilterChange()">
+                <option value="">Todos los proveedores</option>
+                @for (s of suppliersList; track s.id) {
+                <option [value]="s.id">{{ s.name }}</option>
+                }
+            </select>
+
+            <select [(ngModel)]="orderUserFilter" class="action-select" (ngModelChange)="onServerFilterChange()">
+                <option value="">Todos los usuarios</option>
+                @for (u of usersList; track u.id) {
+                <option [value]="u.id">{{ u.name }}</option>
+                }
+            </select>
+
+            @if (hasActiveOrderFilters()) {
+            <button class="btn-clear" (click)="clearOrderFilters()">Limpiar Filtros</button>
             }
-        </select>
-
-        <select [(ngModel)]="orderSupplierFilter" class="action-select" (ngModelChange)="onOrderSearch()">
-            <option value="">Todos los proveedores</option>
-            @for (s of suppliersList; track s.id) {
-            <option [value]="s.id">{{ s.name }}</option>
-            }
-        </select>
-
-        <select [(ngModel)]="orderUserFilter" class="action-select" (ngModelChange)="onOrderSearch()">
-            <option value="">Todos los usuarios</option>
-            @for (u of usersList; track u.id) {
-            <option [value]="u.id">{{ u.name }}</option>
-            }
-        </select>
-
-        @if (hasActiveOrderFilters()) {
-        <button class="btn-clear" (click)="clearOrderFilters()">Limpiar Filtros</button>
-        }
+        </div>
     </div>
 
     <!-- Stats cards -->
@@ -78,8 +85,7 @@
                     <th class="hide-on-mobile">Fecha</th>
                     <th class="hide-on-mobile">Estado</th>
                     <th>Total</th>
-                    <th class="actions-col hide-on-mobile">Acciones</th>
-                    <th class="show-on-mobile-only mobile-icon-col"></th>
+                    <th class="actions-col">Acciones</th>
                 </tr>
             </thead>
             <tbody [class.loading]="loading">
@@ -91,8 +97,7 @@
                         <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width:130px"></span></td>
                         <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width:90px"></span></td>
                         <td><span class="skeleton skeleton-text" style="width:80px"></span></td>
-                        <td class="actions-col hide-on-mobile"></td>
-                        <td class="show-on-mobile-only mobile-icon-col"></td>
+                        <td class="actions-col"></td>
                     </tr>
                     }
                 } @else {
@@ -123,25 +128,17 @@
                             </span>
                         </td>
                         <td data-label="Total"><span class="cost-value">{{ (order.totalPrice || 0) | number:'1.2-2' }} €</span></td>
-                        <td class="actions-col hide-on-mobile" (click)="$event.stopPropagation()">
+                        <td class="actions-col" (click)="$event.stopPropagation()">
                             <div class="actions-cell">
                                 <button class="btn-ver" (click)="openOrderDetail(order)" title="Ver detalles">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
-                                        <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
-                                    </svg>
-                                </button>
-                                @if (order.status !== 'INCOMPLETE' && order.status !== 'CONFIRMED') {
-                                <button class="btn-edit-status" (click)="openChangeStatusModal(order)" title="Cambiar Estado">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                         viewBox="0 0 16 16">
                                         <path
-                                            d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                        <path fill-rule="evenodd"
-                                            d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                                            d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
+                                        <path
+                                            d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
                                     </svg>
                                 </button>
-                                }
                                 <button class="btn-pdf" (click)="onDownloadPdf(order)" title="Descargar PDF">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                         viewBox="0 0 16 16">
@@ -151,17 +148,21 @@
                                             d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
                                     </svg>
                                 </button>
+                                <button class="btn-edit-status" (click)="openChangeStatusModal(order)" title="Cambiar Estado">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        viewBox="0 0 16 16">
+                                        <path
+                                            d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                        <path fill-rule="evenodd"
+                                            d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                                    </svg>
+                                </button>
                                 @if (order.status === 'CONFIRMED') {
                                 <button class="btn-revert btn-textual" (click)="revertOrder(order)" title="Revertir Orden">
                                     Revertir
                                 </button>
                                 }
                             </div>
-                        </td>
-                        <td class="show-on-mobile-only mobile-icon-col">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
-                            </svg>
                         </td>
                     </tr>
                     }
@@ -334,6 +335,13 @@
                 <span class="audit-header-date">{{ formatDateWithTime(selectedAudit.auditDate) }}</span>
                 <span class="audit-header-user">{{ selectedAudit.userName }}</span>
             </div>
+            <button class="audit-modal-close" (click)="closeAuditDetail()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
         </div>
     </div>
     <div class="modal-container" style="max-width: 1100px;">

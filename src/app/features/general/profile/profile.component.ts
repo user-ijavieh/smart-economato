@@ -5,12 +5,13 @@ import { UserService } from '../../../core/services/user.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../shared/models/user.model';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
+import { WeeklyPlanSectionComponent } from './weekly-plan/weekly-plan-section.component';
 import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseModalComponent],
+  imports: [CommonModule, FormsModule, BaseModalComponent, WeeklyPlanSectionComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })

@@ -24,6 +24,7 @@ export interface OrderDetail {
   expirationDate?: string | null;
   unitPrice: number;
   subtotal?: number;
+  lots?: LotReceptionRequest[];
 }
 
 export interface OrderRequest {
@@ -32,7 +33,12 @@ export interface OrderRequest {
   details: { productId: number; quantity: number; unitPrice: number }[];
 }
 
+export interface LotReceptionRequest {
+  quantity: number;
+  expirationDate: string | null;
+}
+
 export interface OrderReceptionRequest {
   orderId: number;
-  items: { productId: number; quantityReceived: number; expirationDate?: string | null }[];
+  items: { productId: number; quantityReceived: number; lots: LotReceptionRequest[] }[];
 }

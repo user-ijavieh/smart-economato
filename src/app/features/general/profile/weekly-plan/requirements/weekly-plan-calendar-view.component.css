@@ -1,0 +1,220 @@
+:host {
+  display: block;
+}
+
+.calendar-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.calendar-header,
+.day-column,
+.slot-card {
+  background: var(--theme-surface-glass);
+  backdrop-filter: var(--theme-effect-glass);
+  border: 1px solid var(--theme-border-glass);
+  border-radius: var(--theme-radius-card);
+  box-shadow: var(--theme-shadow-card);
+}
+
+.calendar-header {
+  padding: 22px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.calendar-header h2,
+.day-column-header h3,
+.slot-main h4 {
+  margin: 0;
+  color: var(--theme-text-primary);
+}
+
+.calendar-header p,
+.day-column-header span,
+.slot-main p,
+.slot-meta,
+.empty-day,
+.empty-students {
+  color: var(--theme-text-secondary);
+}
+
+.plan-status,
+.slot-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid transparent;
+}
+
+.status-draft,
+.slot-status-pending {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+  border-color: var(--color-warning-border);
+}
+
+.status-active,
+.status-in-progress,
+.slot-status-in-progress {
+  background: var(--color-info-bg);
+  color: var(--color-info);
+  border-color: var(--color-info-border);
+}
+
+.status-completed,
+.slot-status-confirmed {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  border-color: var(--color-success-border);
+}
+
+.status-cancelled,
+.slot-status-cancelled {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  border-color: var(--color-danger-border);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.day-column {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.day-column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 12px;
+}
+
+.day-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.slot-card {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 14px;
+}
+
+.slot-card.locked {
+  opacity: 0.82;
+}
+
+.slot-card.cancelled {
+  opacity: 0.68;
+  text-decoration: line-through;
+}
+
+.slot-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.slot-main p,
+.slot-meta {
+  font-size: 0.82rem;
+  margin: 4px 0 0;
+}
+
+.slot-main h4 {
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.slot-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.student-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.student-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: var(--theme-input-bg);
+  border: 1px solid var(--theme-border-light);
+}
+
+.student-chip.cancelled {
+  opacity: 0.65;
+  text-decoration: line-through;
+}
+
+.student-chip small {
+  color: var(--theme-text-secondary);
+}
+
+.chip-action {
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--theme-border-glass);
+  background: var(--theme-surface-glass-hover);
+  color: var(--theme-text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chip-action:hover {
+  background: var(--color-danger-bg);
+  border-color: var(--color-danger-border);
+  color: var(--color-danger);
+}
+
+.empty-day,
+.empty-students {
+  padding: 14px;
+  text-align: center;
+  border-radius: 12px;
+  border: 1px dashed var(--theme-border-light);
+}
+
+@media (max-width: 768px) {
+  .calendar-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .slot-main {
+    flex-direction: column;
+  }
+
+  .slot-status {
+    align-self: flex-start;
+  }
+}
