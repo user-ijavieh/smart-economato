@@ -11,10 +11,6 @@
 @import 'styles/_empty-states.css';
 @import 'styles/_modal-admin-overrides.css';
 
-.reception-header {
-  background: linear-gradient(to right, rgba(16, 185, 129, 0.15), transparent) !important;
-}
-
 /* ===== MODAL BUTTON BASE ===== */
 .modal-btn {
   padding: 12px 24px;
