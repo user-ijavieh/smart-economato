@@ -16,8 +16,11 @@
   font-size: 1.8rem;
   color: var(--theme-text-primary);
   letter-spacing: 2px;
+  flex: 1;
   text-align: center;
   margin: 0;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
   text-shadow: var(--theme-heading-glow);
 }
 
