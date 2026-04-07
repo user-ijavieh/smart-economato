@@ -10,7 +10,7 @@ function registerServiceWorker(): void {
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker
-        .register('/cliente/sw.js', { scope: '/cliente/' })
+        .register('/sw.js', { scope: '/' })
         .then((reg) => {
           console.log('[SW] Registrado correctamente. Scope:', reg.scope);
 

@@ -9,7 +9,7 @@ RUN npm ci --legacy-peer-deps
 
 COPY . .
 
-RUN npm run build -- --configuration production --base-href /cliente/
+RUN npm run build -- --configuration production --base-href /
 
 RUN sed -i "s/__BUILD_TIMESTAMP__/$(date +%s)/g" /app/dist/smart-economato/browser/sw.js
 
