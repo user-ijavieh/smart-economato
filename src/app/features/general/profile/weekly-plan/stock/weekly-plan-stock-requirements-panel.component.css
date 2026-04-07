@@ -10,6 +10,16 @@
 
 .table-container {
   overflow-x: auto;
+  background: var(--theme-surface-glass);
+  backdrop-filter: var(--theme-effect-glass);
+  -webkit-backdrop-filter: var(--theme-effect-glass);
+  border: 1px solid var(--theme-border-glass);
+  border-radius: var(--theme-radius-card);
+  box-shadow: var(--theme-shadow-card);
+}
+
+.stock-table {
+  min-width: 680px;
 }
 
 table {
@@ -25,6 +35,7 @@ th, td {
 }
 
 th {
+  background: var(--theme-table-header-bg);
   color: var(--theme-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.8px;
@@ -62,21 +73,68 @@ th {
   padding: 0;
 }
 
-  .btn-secondary {
-    padding: 10px 16px;
-    border-radius: 8px;
-    border: 1px solid var(--theme-border-glass);
-    background: var(--theme-surface-glass);
-    color: var(--theme-text-primary);
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.btn-secondary {
+  padding: 10px 16px;
+  border-radius: var(--theme-radius-btn);
+  border: 1px solid var(--theme-border-glass);
+  background: var(--theme-surface-glass-hover);
+  color: var(--theme-text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-secondary:hover {
+  background: var(--theme-surface-glass-active);
+  border-color: var(--theme-border-light);
+}
+
+@media (max-width: 680px) {
+  .stock-table {
+    min-width: 0;
   }
 
-  .btn-secondary:hover {
-    background: var(--theme-surface-glass-hover);
-    border-color: var(--theme-border-light);
+  .stock-table thead {
+    display: none;
   }
+
+  .stock-table,
+  .stock-table tbody,
+  .stock-table tr,
+  .stock-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .stock-table tr {
+    padding: 14px;
+    border-bottom: 1px solid var(--theme-border-light);
+  }
+
+  .stock-table td {
+    border: 0;
+    padding: 8px 0;
+  }
+
+  .stock-table td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--theme-text-secondary);
+  }
+
+  .panel-footer {
+    justify-content: stretch;
+  }
+
+  .panel-footer .btn-secondary {
+    width: 100%;
+  }
+}
