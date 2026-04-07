@@ -22,20 +22,8 @@
   font-weight: 600;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-group label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--theme-text-secondary);
-}
-
 .required-asterisk {
-  color: #ef4444;
+  color: var(--color-danger);
   margin-left: 2px;
   font-weight: bold;
 }
@@ -78,72 +66,3 @@ input:focus {
   font-style: italic;
 }
 
-/** ===== MODAL FOOTER ===== */
-.modal-footer {
-  padding: 20px 28px;
-  border-top: 1px solid var(--theme-surface-glass-hover);
-  display: flex;
-  gap: 12px;
-  flex-shrink: 0;
-  justify-content: flex-end;
-}
-
-.btn-cancel,
-.btn-confirm {
-  padding: 12px 24px;
-  border-radius: var(--theme-radius-btn);
-  border: none;
-  font-size: 0.95rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: center;
-  flex: 1;
-}
-
-.btn-cancel {
-  background: var(--theme-surface-glass-hover);
-  color: var(--theme-text-secondary);
-  border: 1px solid var(--theme-border-glass);
-}
-
-.btn-cancel:hover {
-  background: var(--theme-border-medium);
-  color: var(--theme-text-primary);
-  transform: translateY(-2px);
-}
-
-.btn-confirm {
-  background: var(--theme-surface-glass-active);
-  color: var(--theme-text-primary);
-  box-shadow: 0 4px 18px rgba(90, 120, 220, 0.2);
-  border: 1px solid rgba(90, 120, 220, 0.3);
-}
-
-.btn-confirm:hover:not(:disabled) {
-  background: var(--color-accent-admin-hover-bg);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(90, 120, 220, 0.4);
-}
-
-.btn-confirm:disabled {
-  background: var(--theme-surface-glass-hover);
-  color: var(--theme-border-hover);
-  border-color: var(--theme-surface-glass-hover);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-/** ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-  .modal-footer {
-    padding: 16px 20px;
-    flex-direction: column;
-  }
-
-  .btn-cancel,
-  .btn-confirm {
-    width: 100%;
-  }
-}

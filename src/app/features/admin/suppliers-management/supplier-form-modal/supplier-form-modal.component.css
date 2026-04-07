@@ -11,14 +11,6 @@ form {
   overflow-y: auto;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 16px;
-  padding: 0;
-}
-
 form > .form-group:first-child {
   margin-top: 0;
 }
@@ -27,14 +19,8 @@ form > .form-group-last {
   margin-bottom: 28px;
 }
 
-.form-group label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--theme-text-secondary);
-}
-
 .field-error {
-  color: #ef4444;
+  color: var(--color-danger);
   font-size: 0.8rem;
   margin-top: 4px;
 }
@@ -60,7 +46,7 @@ input:focus {
 }
 
 input.input-error {
-  border-color: #ef4444;
+  border-color: var(--color-danger);
   background: rgba(239, 68, 68, 0.05);
 }
 
@@ -68,74 +54,8 @@ input.input-error:focus {
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
 }
 
-/** ===== MODAL ACTIONS ===== */
-.modal-actions {
-  padding: 20px 28px;
-  border-top: 1px solid var(--theme-surface-glass-hover);
-  display: flex;
-  gap: 12px;
-  flex-shrink: 0;
-  justify-content: flex-end;
-  background: var(--theme-section-header-bg);
-}
-
-.btn-cancel,
-.btn-save {
-  padding: 12px 24px;
-  border-radius: var(--theme-radius-btn);
-  border: none;
-  font-size: 0.95rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: center;
-  flex: 1;
-}
-
-.btn-cancel {
-  background: var(--theme-surface-glass-hover);
-  color: var(--theme-text-secondary);
-  border: 1px solid var(--theme-border-glass);
-}
-
-.btn-cancel:hover {
-  background: var(--theme-border-medium);
-  color: var(--theme-text-primary);
-  transform: translateY(-2px);
-}
-
-.btn-save {
-  background: var(--theme-surface-glass-active);
-  color: var(--theme-text-primary);
-  box-shadow: 0 4px 18px rgba(90, 120, 220, 0.2);
-  border: 1px solid rgba(90, 120, 220, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.btn-save:hover:not(:disabled) {
-  background: var(--color-accent-admin-hover-bg);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(90, 120, 220, 0.4);
-}
-
-.btn-save:disabled {
-  background: var(--theme-surface-glass-hover);
-  color: var(--theme-border-hover);
-  border-color: var(--theme-surface-glass-hover);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
 /** ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .form-group {
-    padding: 0;
-  }
-
   form > .form-group:first-child {
     margin-top: 0;
   }
@@ -144,8 +64,4 @@ input.input-error:focus {
     margin-bottom: 20px;
   }
 
-  .modal-actions {
-    padding: 16px 20px;
-    flex-direction: column;
-  }
 }

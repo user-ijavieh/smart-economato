@@ -27,9 +27,8 @@
         </div>
     </form>
 
-    <div modal-footer class="modal-actions">
-        <button type="button" class="btn-cancel" (click)="onClose()">Cancelar</button>
-        <button type="button" class="btn-save" (click)="onSubmit()" [disabled]="supplierForm.invalid">
+    <div modal-footer>
+        <button type="button" class="modal-btn modal-btn-primary" (click)="onSubmit()" [disabled]="supplierForm.invalid">
             {{ isEditMode ? 'Guardar Cambios' : 'Crear Proveedor' }}
         </button>
     </div>

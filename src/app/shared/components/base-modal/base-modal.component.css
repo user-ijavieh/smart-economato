@@ -12,8 +12,7 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  overflow-y: auto;
-  animation: fadeInModal 0.3s ease forwards;
+  overflow: hidden;
 }
 
 .modal-overlay-fullscreen {
@@ -125,56 +124,26 @@
   background: var(--scrollbar-thumb-hover);
 }
 
+.modal-footer {
+  padding: 20px 30px;
+  border-top: 1px solid var(--theme-surface-glass-hover);
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  background: var(--theme-overlay-light);
+}
+
+.modal-footer:not(:has(*)) {
+  display: none;
+}
+
 .modal-overlay.closing {
   animation: fadeOutModal 0.3s ease forwards;
 }
 
 .modal-overlay.closing .modal-dialog {
   animation: slideDownModal 0.3s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
-}
-
-@keyframes fadeInModal {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUpModal {
-  from {
-    opacity: 0;
-    transform: translateY(40px) scale(0.95);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes fadeOutModal {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes slideDownModal {
-  from {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-
-  to {
-    opacity: 0;
-    transform: translateY(40px) scale(0.95);
-  }
 }
 
 @media (max-width: 768px) {
@@ -205,5 +174,10 @@
 
   .modal-body {
     padding: 16px;
+  }
+
+  .modal-footer {
+    padding: 16px 20px;
+    flex-direction: column;
   }
 }

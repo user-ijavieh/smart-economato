@@ -1,0 +1,86 @@
+/* Global buttons partial */
+.btn-primary,
+.btn-secondary,
+.btn-success,
+.btn-danger,
+.btn-warning,
+.btn-details {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 10px 20px;
+	border-radius: var(--theme-radius-btn);
+	border: 1px solid var(--theme-border-medium);
+	font-size: 0.9rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary {
+	background: var(--theme-surface-glass-hover);
+	color: var(--theme-text-primary);
+}
+
+.btn-primary:hover {
+	background: var(--theme-surface-glass-active);
+	border-color: var(--theme-text-secondary);
+}
+
+.btn-secondary {
+	background: var(--theme-surface-glass-active);
+	color: var(--theme-text-primary);
+}
+
+.btn-secondary:hover {
+	background: var(--theme-border-glass);
+	border-color: var(--theme-border-hover);
+}
+
+.btn-success {
+	background: var(--color-success-bg);
+	border-color: var(--color-success-border);
+	color: var(--color-success);
+}
+
+.btn-success:hover {
+	background: var(--color-success-hover-bg);
+	border-color: var(--color-success-hover-border);
+	color: var(--theme-text-primary);
+}
+
+.btn-danger {
+	background: var(--color-danger-bg);
+	border-color: var(--color-danger-border);
+	color: var(--color-danger-muted);
+}
+
+.btn-danger:hover {
+	background: var(--color-danger-hover-bg);
+	border-color: var(--color-danger-hover-border);
+	color: var(--theme-text-primary);
+}
+
+.btn-warning {
+	background: var(--color-warning-bg);
+	border-color: var(--color-warning-border);
+	color: var(--color-warning);
+}
+
+.btn-warning:hover {
+	background: color-mix(in srgb, var(--color-warning-bg) 70%, var(--theme-surface-glass-active));
+	border-color: var(--color-warning-muted);
+	color: var(--theme-text-primary);
+}
+
+.btn-details {
+	background: var(--theme-surface-glass-hover);
+	border-color: var(--theme-border-medium);
+	color: var(--theme-text-primary);
+}
+
+.btn-details:hover {
+	background: var(--theme-surface-glass-active);
+	border-color: var(--theme-text-secondary);
+}
