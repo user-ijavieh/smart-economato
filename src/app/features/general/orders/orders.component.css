@@ -91,8 +91,7 @@
 }
 
 /** ===== LOADING & EMPTY STATES ===== */
-.loading-message,
-.empty-state {
+.loading-message {
   text-align: center;
   padding: 60px 20px;
   background: var(--theme-surface-glass);
@@ -108,17 +107,6 @@
   font-size: 1.2rem;
   color: var(--theme-text-secondary);
   font-style: italic;
-}
-
-.empty-state h3 {
-  font-size: 1.5rem;
-  color: var(--theme-text-secondary);
-  margin-bottom: 10px;
-}
-
-.empty-state p {
-  font-size: 1rem;
-  color: var(--theme-text-secondary);
 }
 
 /** ===== ORDERS GRID ===== */

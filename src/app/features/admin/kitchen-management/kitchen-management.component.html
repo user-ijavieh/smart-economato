@@ -1,9 +1,9 @@
-<div class="page-header header-recetas">
+<div class="admin-page-header">
   <h1>Gestión de Cocina</h1>
 </div>
 
-<div class="tab-bar">
-  <button class="tab-btn" [class.active]="activeTab === 'history'" (click)="switchTab('history')">
+<div class="admin-tab-bar">
+  <button class="admin-tab-btn" [class.active]="activeTab === 'history'" (click)="switchTab('history')">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
       <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 1 1-8 8h1a7 7 0 1 0 7.515-6.981z"/>
       <path d="M8.5 4.5a.5.5 0 0 0-1 0v4h-3a.5.5 0 0 0 0 1h4a.5.5 0 0 0 .5-.5v-4z"/>
@@ -11,7 +11,7 @@
 
     Historial
   </button>
-  <button class="tab-btn" [class.active]="activeTab === 'reports'" (click)="switchTab('reports')">
+  <button class="admin-tab-btn" [class.active]="activeTab === 'reports'" (click)="switchTab('reports')">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor">
       <path d="M280-280h80v-200h-80v200Zm160 0h80v-400h-80v400Zm160 0h80v-280h-80v280ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/>
     </svg>
@@ -146,18 +146,8 @@
   
   <!-- Mobile Detail Modal para History -->
   @if (showMobileModal && selectedAuditForMobile) {
-  <app-base-modal [showHeader]="false" size="md" (closed)="closeMobileModal()">
+    <app-base-modal [title]="'Receta #' + selectedAuditForMobile.recipeId" size="md" (closed)="closeMobileModal()">
       <div class="mobile-detail-modal" (click)="$event.stopPropagation()">
-          <div class="mobile-detail-modal-header">
-              <div class="title-cell">
-                  <h2>Receta #{{ selectedAuditForMobile.recipeId }}</h2>
-              </div>
-              <button class="modal-close-btn" (click)="closeMobileModal()">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                      <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-                  </svg>
-              </button>
-          </div>
           <div class="mobile-detail-modal-body">
               <div class="detail-field">
                   <span class="detail-label">Receta</span>
@@ -392,8 +382,6 @@
 @if (showTraceabilityModal) {
 <app-base-modal title="Trazabilidad de Ingredientes" size="lg" (closed)="closeTraceabilityModal()">
     <div class="modal-container traceability-modal-container">
-
-      <div class="modal-body">
         @if (loadingTraceability) {
           <div class="loading-traceability">
             <div class="spinner"></div>
@@ -477,8 +465,6 @@
             </div>
           </div>
         }
-      </div>
-
     </div>
 </app-base-modal>
 }
