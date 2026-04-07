@@ -46,6 +46,19 @@ export interface WeeklyConsumptionResponse {
     weeksOfHistory: number;
 }
 
+export interface ProductBatchInfo {
+    id: number;
+    productId: number;
+    productName: string;
+    expirationDate: string | null;
+    initialQuantity: number;
+    remainingQuantity: number;
+    receivedAt: string;
+    depleted: boolean;
+    expired: boolean;
+    daysUntilExpiration: number;
+}
+
 export interface DailyForecastResponse {
     productId: number;
     productName: string;
@@ -53,4 +66,5 @@ export interface DailyForecastResponse {
     dailyForecast: number[];
     horizonDays: number;
     calculatedAt: string;
+    activeBatches: ProductBatchInfo[];
 }
