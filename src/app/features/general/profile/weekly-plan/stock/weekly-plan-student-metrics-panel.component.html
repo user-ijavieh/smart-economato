@@ -16,7 +16,7 @@
       <p class="empty-state">Cargando métricas...</p>
     } @else {
       <div class="table-container tabla-contenedor">
-        <table>
+        <table class="metrics-table">
           <thead>
             <tr>
               <th>Alumno</th>
@@ -29,11 +29,11 @@
           <tbody>
             @for (metric of metrics; track metric.studentId) {
               <tr>
-                <td>{{ metric.studentName }}</td>
-                <td>{{ metric.totalAssignments }}</td>
-                <td>{{ metric.totalConfirmed }}</td>
-                <td>{{ metric.totalCancelled }}</td>
-                <td>
+                <td data-label="Alumno">{{ metric.studentName }}</td>
+                <td data-label="Asignaciones">{{ metric.totalAssignments }}</td>
+                <td data-label="Confirmados">{{ metric.totalConfirmed }}</td>
+                <td data-label="Cancelados">{{ metric.totalCancelled }}</td>
+                <td data-label="Participación">
                   <div class="progress-wrap">
                     <div class="progress-bar">
                       <span [style.width.%]="metric.participationRate"></span>

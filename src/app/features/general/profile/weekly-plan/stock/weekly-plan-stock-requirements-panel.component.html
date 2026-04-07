@@ -4,7 +4,7 @@
       <p class="empty-state">Cargando requisitos...</p>
     } @else {
       <div class="table-container tabla-contenedor">
-        <table>
+        <table class="stock-table">
           <thead>
             <tr>
               <th>Producto</th>
@@ -17,11 +17,11 @@
           <tbody>
             @for (item of requirements; track item.productId) {
               <tr>
-                <td>{{ item.productName }}</td>
-                <td>{{ item.requiredQuantity }}</td>
-                <td>{{ item.availableStock }}</td>
-                <td>{{ item.reservedByOtherPlans }}</td>
-                <td>
+                <td data-label="Producto">{{ item.productName }}</td>
+                <td data-label="Requerido">{{ item.requiredQuantity }}</td>
+                <td data-label="Disponible">{{ item.availableStock }}</td>
+                <td data-label="Reservado">{{ item.reservedByOtherPlans }}</td>
+                <td data-label="Estado">
                   <span class="stock-badge" [class.ok]="item.sufficient" [class.bad]="!item.sufficient">
                     {{ item.sufficient ? 'Suficiente' : 'Insuficiente' }}
                   </span>
