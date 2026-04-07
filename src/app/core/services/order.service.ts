@@ -59,7 +59,27 @@ export class OrderService {
 
   getByDateRange(start: string, end: string): Observable<Order[]> {
     const params = new HttpParams().set('start', start).set('end', end);
-    return this.http.get<Order[]>(`${this.url}/by-date-range`, { params });
+    return this.http.get<Order[]>(`${this.url}/daterange`, { params });
+  }
+
+  search(filters: {
+    startDate?: string;
+    endDate?: string;
+    userId?: number;
+    supplierId?: number;
+    orderId?: number;
+    page?: number;
+    size?: number;
+  }): Observable<any> {
+    let params = new HttpParams();
+    if (filters.startDate)  params = params.set('startDate',  filters.startDate);
+    if (filters.endDate)    params = params.set('endDate',    filters.endDate);
+    if (filters.userId)     params = params.set('userId',     filters.userId.toString());
+    if (filters.supplierId) params = params.set('supplierId', filters.supplierId.toString());
+    if (filters.orderId)    params = params.set('orderId',    filters.orderId.toString());
+    if (filters.page !== undefined) params = params.set('page', filters.page.toString());
+    if (filters.size !== undefined) params = params.set('size', filters.size.toString());
+    return this.http.get<any>(`${this.url}/search`, { params });
   }
 
   getMissingItems(orderId: number): Observable<OrderDetail[]> {

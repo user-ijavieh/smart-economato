@@ -3,6 +3,28 @@
 }
 
 /* ===== TOKENS (Reference from STYLE_GUIDE) ===== */
+:host {
+  --color-bg-base: rgba(8, 3, 3, 0.72);
+  --color-brand-primary: #B84B44;
+  --color-brand-dark: #8C2E28;
+  --color-brand-glow: rgba(184, 75, 68, 0.35);
+  --color-surface-glass: rgba(8, 3, 3, 0.58);
+  --color-border-glass: rgba(255, 255, 255, 0.14);
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A1A1A1;
+  --color-danger-bg: rgba(239, 68, 68, 0.08);
+  --color-danger-border: rgba(239, 68, 68, 0.35);
+
+  --radius-card: 18px;
+  --radius-input: 14px;
+  --radius-btn: 12px;
+
+  --effect-glass: blur(24px);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.50);
+  --shadow-hover: 0 22px 55px rgba(0, 0, 0, 0.65);
+}
+
+/* ── Wrapper: imagen de fondo fija ── */
 /** ===== Wrapper: imagen de fondo fija ===== */
 .login-wrapper {
   background-image: url('/assets/img/loginBackground.jpg');
@@ -69,14 +91,16 @@
 .card {
   position: relative;
   z-index: 1;
-  width: 400px; /* 3.2 Modals */
-  background: var(--theme-surface-glass);
-  backdrop-filter: var(--theme-effect-glass);
-  -webkit-backdrop-filter: var(--theme-effect-glass);
-  border-radius: var(--theme-radius-card);
-  border: 1px solid var(--theme-border-glass);
-  box-shadow: var(--theme-shadow-card);
-  padding: 40px 36px 32px; /* space-lg top, modal standard */
+  width: 400px;
+  /* 3.2 Modals */
+  background: var(--color-surface-glass);
+  backdrop-filter: var(--effect-glass);
+  -webkit-backdrop-filter: var(--effect-glass);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border-glass);
+  box-shadow: var(--shadow-card);
+  padding: 40px 36px 32px;
+  /* space-lg top, modal standard */
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -84,15 +108,24 @@
 }
 
 @keyframes cardIn {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 /** ===== Encabezado ===== */
 .card-header {
-  margin-bottom: 24px; /* space-md */
+  margin-bottom: 24px;
+  /* space-md */
   display: flex;
   flex-direction: column;
-  gap: 6px; /* space-xs */
+  gap: 6px;
+  /* space-xs */
   text-align: left;
 }
 
@@ -100,7 +133,8 @@
   margin: 0;
   font-family: var(--font-body);
   font-weight: 300;
-  font-size: 0.8rem; /* font-label-sm */
+  font-size: 0.8rem;
+  /* font-label-sm */
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--theme-text-secondary);
@@ -110,7 +144,8 @@
 .card-title {
   margin: 0;
   font-family: var(--font-heading);
-  font-size: 1.4rem; /* font-heading-md */
+  font-size: 1.4rem;
+  /* font-heading-md */
   font-weight: 600;
   letter-spacing: 0.5px;
   color: var(--theme-text-primary);
@@ -123,14 +158,34 @@
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 /** ===== Formulario ===== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 24px;
+  animation: fadeUp 0.5s 0.26s both;
+}
+
+.form-group:last-of-type {
+  animation-delay: 0.32s;
+}
+
 .form-label {
   font-family: var(--font-body);
   font-weight: 300;
-  font-size: 0.8rem; /* font-label-sm */
+  font-size: 0.8rem;
+  /* font-label-sm */
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--theme-text-secondary);
@@ -148,8 +203,9 @@
   -webkit-backdrop-filter: blur(8px);
   font-family: var(--font-body);
   font-weight: 400;
-  font-size: 0.98rem; /* font-body-base */
-  color: var(--theme-text-primary);
+  font-size: 0.98rem;
+  /* font-body-base */
+  color: var(--color-text-primary);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
 }
@@ -203,7 +259,8 @@
   font-size: 0.82rem;
   padding: 10px 14px;
   border-radius: 10px;
-  margin-bottom: 24px; /* space-md */
+  margin-bottom: 24px;
+  /* space-md */
   animation: fadeUp 0.5s 0.26s both;
 }
 /** ===== Boton ===== */
@@ -216,7 +273,8 @@
   color: var(--theme-text-primary);
   font-family: var(--font-body);
   font-weight: 600;
-  font-size: 0.98rem; /* font-body-base */
+  font-size: 0.98rem;
+  /* font-body-base */
   letter-spacing: 0.5px;
   cursor: pointer;
   position: relative;
@@ -255,7 +313,8 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 24px; /* space-md */
+  gap: 24px;
+  /* space-md */
   margin-top: 36px;
   padding-top: 24px;
   border-top: 1px solid var(--theme-border-glass);
@@ -263,7 +322,7 @@
 }
 
 .logos img {
-  height: 48px;
+  height:5rem;
   width: auto;
   object-fit: contain;
   opacity: 0.9;

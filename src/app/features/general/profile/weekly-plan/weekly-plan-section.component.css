@@ -1,0 +1,198 @@
+:host {
+  display: block;
+}
+
+.weekly-plan-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 4px;
+  width: 100%;
+}
+
+.section-header,
+.current-summary,
+.detail-backbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-header {
+  background: var(--theme-surface-glass);
+  backdrop-filter: var(--theme-effect-glass);
+  -webkit-backdrop-filter: var(--theme-effect-glass);
+  border: 1px solid var(--theme-border-glass);
+  border-radius: var(--theme-radius-card);
+  padding: 18px 20px;
+  box-shadow: var(--theme-shadow-card);
+}
+
+.section-header > div:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.section-header h2 {
+  margin: 0 0 6px 0;
+  color: var(--theme-text-primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.section-header p {
+  margin: 0;
+  color: var(--theme-text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.access-message,
+.empty-state-box,
+.loading-state,
+.summary-range {
+  color: var(--theme-text-secondary);
+}
+
+.section-actions,
+.tab-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.section-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.tab-bar {
+  padding: 4px;
+  background: var(--theme-surface-glass);
+  border: 1px solid var(--theme-border-glass);
+  border-radius: var(--theme-radius-input);
+  width: fit-content;
+}
+
+.tab-btn,
+.btn-secondary,
+.btn-success {
+  padding: 10px 15px;
+  border-radius: var(--theme-radius-btn);
+  border: 1px solid var(--theme-border-glass);
+  background: var(--theme-surface-glass-hover);
+  color: var(--theme-text-primary);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover,
+.btn-secondary:hover {
+  background: var(--theme-border-glass);
+  border-color: var(--theme-border-medium);
+}
+
+.tab-btn.active {
+  background: color-mix(in srgb, var(--brand-primary) 16%, transparent);
+  border-color: color-mix(in srgb, var(--brand-primary) 35%, transparent);
+  color: var(--theme-text-primary);
+  font-weight: 600;
+}
+
+.btn-success {
+  background: var(--color-success-bg);
+  border-color: var(--color-success-border);
+  color: var(--color-success);
+}
+
+.btn-success:hover {
+  background: var(--color-success-hover-bg);
+  border-color: var(--color-success-hover-border);
+  color: var(--theme-text-primary);
+  transform: translateY(-1px);
+}
+
+.access-message,
+.empty-state-box,
+.loading-state,
+.current-summary,
+.detail-backbar {
+  background: var(--theme-surface-glass);
+  border: 1px solid var(--theme-border-glass);
+  border-radius: var(--theme-radius-card);
+  padding: 16px 18px;
+  box-shadow: var(--theme-shadow-card);
+}
+
+.access-message,
+.empty-state-box,
+.loading-state {
+  text-align: center;
+  color: var(--theme-text-secondary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 24px 18px;
+}
+
+.current-summary {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px !important;
+}
+
+.summary-label {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--theme-text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.summary-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-draft { background: var(--color-warning-bg); color: var(--color-warning); }
+.status-active,
+.status-in-progress { background: var(--color-info-bg); color: var(--color-info); }
+.status-completed { background: var(--color-success-bg); color: var(--color-success); }
+.status-cancelled { background: var(--color-danger-bg); color: var(--color-danger); }
+
+@media (max-width: 768px) {
+  .section-header,
+  .current-summary,
+  .detail-backbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tab-bar {
+    width: 100%;
+  }
+
+  .tab-btn,
+  .btn-secondary,
+  .btn-success {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .section-actions {
+    width: 100%;
+  }
+}

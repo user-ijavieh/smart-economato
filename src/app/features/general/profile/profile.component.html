@@ -25,7 +25,7 @@
 
     @if (loadingStudents) {
     <div class="table-container tabla-contenedor">
-      <table>
+      <table class="students-table">
         <thead>
           <tr>
             <th>Alumno</th>
@@ -37,15 +37,15 @@
         <tbody>
           @for (row of [1,2,3,4,5]; track row) {
           <tr>
-            <td>
+            <td data-label="Alumno">
               <div class="student-name">
                 <div class="mini-avatar skeleton-circle"></div>
                 <span class="skeleton-text" style="width: 120px"></span>
               </div>
             </td>
-            <td><span class="skeleton-text" style="width: 90px"></span></td>
-            <td><span class="skeleton-text" style="width: 60px"></span></td>
-            <td><span class="skeleton-text" style="width: 100px"></span></td>
+            <td data-label="Usuario"><span class="skeleton-text" style="width: 90px"></span></td>
+            <td data-label="Rol Actual"><span class="skeleton-text" style="width: 60px"></span></td>
+            <td data-label="Permisos Temporales"><span class="skeleton-text" style="width: 100px"></span></td>
           </tr>
           }
         </tbody>
@@ -57,7 +57,7 @@
     </div>
     } @else {
     <div class="table-container tabla-contenedor">
-      <table>
+      <table class="students-table">
         <thead>
           <tr>
             <th>Alumno</th>
@@ -69,19 +69,19 @@
         <tbody>
           @for (student of students; track student.id) {
           <tr>
-            <td>
+            <td data-label="Alumno">
               <div class="student-name">
                 <div class="mini-avatar">{{ student.initials }}</div>
                 <span>{{ student.name }}</span>
               </div>
             </td>
-            <td>{{ student.user }}</td>
-            <td>
+            <td data-label="Usuario">{{ student.user }}</td>
+            <td data-label="Rol Actual">
               <span class="role-badge" [class.elevated]="student.role === 'ELEVATED'">
                 {{ student.role === 'ELEVATED' ? 'TEMPORAL (CHEF)' : student.role }}
               </span>
             </td>
-            <td>
+            <td data-label="Permisos Temporales">
               <div class="actions-container">
                 @if (student.role !== 'ELEVATED') {
                 <button class="btn-success" (click)="openEscalateModal(student)">
@@ -102,6 +102,8 @@
     }
   </div>
   }
+
+  <app-weekly-plan-section [currentUser]="currentUser" />
 </div>
 
 <!-- Modal para Dar Permisos Temporales -->
@@ -116,7 +118,7 @@
       <div class="form-group">
         <label for="duration">Duración (minutos)</label>
         <input type="number" id="duration" [(ngModel)]="durationInput" min="1" max="1440" class="duration-input"
-          style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1" />
+        />
       </div>
     </div>
 
