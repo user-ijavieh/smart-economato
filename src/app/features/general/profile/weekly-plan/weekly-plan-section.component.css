@@ -63,6 +63,12 @@
   flex-wrap: wrap;
 }
 
+.detail-nav-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .section-actions {
   display: flex;
   gap: 10px;
@@ -193,6 +199,10 @@
   }
 
   .section-actions {
+    width: 100%;
+  }
+
+  .detail-nav-group {
     width: 100%;
   }
 }

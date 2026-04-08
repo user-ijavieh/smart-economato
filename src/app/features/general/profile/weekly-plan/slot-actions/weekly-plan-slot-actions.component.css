@@ -11,7 +11,8 @@
 
 .btn-secondary,
 .btn-success,
-.btn-danger {
+.btn-danger,
+.btn-warning {
   padding: 8px 12px;
   border-radius: var(--theme-radius-btn);
   border: 1px solid var(--theme-border-glass);
@@ -51,6 +52,18 @@
 .btn-danger:hover {
   background: var(--color-danger-hover-bg);
   border-color: var(--color-danger-hover-border);
+  color: var(--theme-text-primary);
+}
+
+.btn-warning {
+  background: color-mix(in srgb, var(--color-warning, #f59e0b) 16%, transparent);
+  border-color: color-mix(in srgb, var(--color-warning, #f59e0b) 38%, var(--theme-border-glass));
+  color: var(--color-warning, #f59e0b);
+}
+
+.btn-warning:hover {
+  background: color-mix(in srgb, var(--color-warning, #f59e0b) 24%, transparent);
+  border-color: color-mix(in srgb, var(--color-warning, #f59e0b) 52%, var(--theme-border-glass));
   color: var(--theme-text-primary);
 }
 

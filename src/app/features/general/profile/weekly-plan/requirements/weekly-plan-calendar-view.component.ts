@@ -15,11 +15,14 @@ import { WeeklyPlanSlotActionsComponent } from '../slot-actions/weekly-plan-slot
 export class WeeklyPlanCalendarViewComponent {
   @Input() plan: WeeklyPlanResponse | null = null;
   @Input() readOnly = false;
+  @Input() allowRevertConfirmed = false;
 
   @Output() confirmSlot = new EventEmitter<WeeklyPlanSlotResponse>();
+  @Output() unconfirmSlot = new EventEmitter<WeeklyPlanSlotResponse>();
   @Output() cancelSlot = new EventEmitter<WeeklyPlanSlotResponse>();
   @Output() confirmDay = new EventEmitter<number>();
   @Output() cancelStudent = new EventEmitter<{ slot: WeeklyPlanSlotResponse; student: WeeklyPlanSlotStudentResponse }>();
+  @Output() cancelStudentDay = new EventEmitter<{ dayOfWeek: number; student: WeeklyPlanSlotStudentResponse }>();
 
   readonly days = WEEK_DAYS;
 
