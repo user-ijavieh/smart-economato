@@ -57,9 +57,8 @@
     </div>
   </form>
 
-  <div modal-footer class="modal-footer">
-    <button type="button" class="btn-cancel" (click)="onClose()">Cancelar</button>
-    <button type="button" class="btn-save" (click)="onSubmit()" [disabled]="!createForm.valid">
+  <div modal-footer>
+    <button type="button" class="modal-btn modal-btn-primary modal-btn-full" (click)="onSubmit()" [disabled]="!createForm.valid">
       Crear Producto
     </button>
   </div>

@@ -136,7 +136,6 @@
 <!-- Modal de detalle -->
 @if (showModal && selectedRecipe) {
   <app-recipe-detail-modal
-    [@modalAnimation]
     [recipe]="selectedRecipe"
     [canEdit]="canEdit()"
     (close)="closeModal()"
@@ -149,7 +148,6 @@
 <!-- Modal de Edición -->
 @if (showEditModal && selectedRecipe) {
   <app-recipe-edit-modal
-    [@modalAnimation]
     [recipe]="selectedRecipe"
     (close)="closeEditModal()"
     (save)="onSaveRecipe($event)"
@@ -159,7 +157,6 @@
 <!-- Modal de Creación -->
 @if (showCreateModal) {
   <app-recipe-create-modal
-    [@modalAnimation]
     (close)="closeCreateModal()"
     (save)="onCreateRecipe($event)"
   />

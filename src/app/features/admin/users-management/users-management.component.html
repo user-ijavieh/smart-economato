@@ -1,15 +1,15 @@
-<div class="page-header header-usuarios">
+<div class="page-header admin-page-header">
     <h1>Gestión de Usuarios</h1>
 </div>
 
-<div class="tab-bar">
-    <button class="tab-btn" [class.active]="activeTab === 'users'" (click)="switchTab('users')">
+<div class="admin-tab-bar">
+    <button class="admin-tab-btn" [class.active]="activeTab === 'users'" (click)="switchTab('users')">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
         </svg>
         Usuarios
     </button>
-    <button class="tab-btn" [class.active]="activeTab === 'assignments'" (click)="switchTab('assignments')">
+    <button class="admin-tab-btn" [class.active]="activeTab === 'assignments'" (click)="switchTab('assignments')">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" />
         </svg>
@@ -28,14 +28,14 @@
             <option value="CHEF">Chef</option>
             <option value="USER">Usuario</option>
         </select>
-        <button id="btnAgregarUsuario" (click)="openCreateModal()" *ngIf="!showingHidden">
+        <button id="btnAgregarUsuario" class="toolbar-btn" (click)="openCreateModal()" *ngIf="!showingHidden">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path
                     d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z" />
             </svg>
             Agregar Usuario
         </button>
-        <button class="btn-toggle-view" [class.active]="showingHidden" (click)="toggleView()">
+        <button class="toolbar-btn btn-toggle-view" [class.active]="showingHidden" (click)="toggleView()">
             <svg *ngIf="!showingHidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                 viewBox="0 0 16 16">
                 <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
@@ -53,7 +53,7 @@
             {{ showingHidden ? 'Ver Activos' : 'Ver Desactivados' }}
         </button>
         @if (hasActiveFilters()) {
-        <button class="btn-clear" (click)="clearFilters()">Limpiar Filtros</button>
+        <button class="toolbar-btn btn-clear" (click)="clearFilters()">Limpiar Filtros</button>
         }
     </div>
 
@@ -183,12 +183,12 @@
 
     @if (totalPages > 1) {
     <div class="pagination-controls">
-        <button class="btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
+        <button class="toolbar-btn btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
             Anterior
         </button>
         <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }} <span class="total-info">({{ totalElements }} usuarios)</span></span>
-        <button class="btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
+        <button class="toolbar-btn btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
             Siguiente
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
         </button>

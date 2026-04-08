@@ -46,13 +46,12 @@
     </div>
   </form>
 
-  <div modal-footer class="modal-footer">
+  <div modal-footer>
     @if (isAdmin) {
-    <button type="button" class="btn-delete" (click)="onToggleHidden()">{{ getToggleButtonText() }}</button>
+    <button type="button" class="modal-btn modal-btn-danger modal-btn-full" (click)="onToggleHidden()">{{ getToggleButtonText() }}</button>
     }
     <div class="modal-footer-right">
-      <button type="button" class="btn-cancel" (click)="onClose()">Cancelar</button>
-      <button type="button" class="btn-save" (click)="onSubmit()" [disabled]="!editForm.valid">
+      <button type="button" class="modal-btn modal-btn-primary modal-btn-full" (click)="onSubmit()" [disabled]="!editForm.valid">
         Guardar Cambios
       </button>
     </div>
