@@ -29,8 +29,11 @@
   } @else if (detailPlan) {
     <div class="detail-backbar">
       <button class="btn-secondary" (click)="closeDetail()">Volver</button>
-      @if (canEditPlan && detailReadOnly === false) {
+      @if (canEditPlan && detailPlan.status === 'DRAFT') {
         <button class="btn-secondary" (click)="openEditForm(detailPlan)">Editar</button>
+      }
+      @if (canEditPlan && detailPlan.status !== 'DRAFT') {
+        <button class="btn-secondary" (click)="openDuplicate(detailPlan)">Duplicar</button>
       }
     </div>
 
@@ -62,7 +65,8 @@
         (pageChange)="onHistoryPageChange($event)"
         (statusFilterChange)="onHistoryFilterChange($event)"
         (selectPlan)="openDetail($event)"
-         (editPlan)="openEditForm($event)"
+        (editPlan)="openEditForm($event)"
+        (duplicatePlan)="openDuplicate($event)"
       />
     } @else {
       @if (loadingCurrent) {
@@ -107,6 +111,30 @@
     (closed)="closeForm()"
     (saveDraft)="saveDraft($event)"
     (activatePlan)="activatePlan($event)"
+  />
+}
+
+@if (showConfirmDialog) {
+  <app-weekly-plan-confirmation
+    [open]="showConfirmDialog"
+    [title]="confirmDialogTitle"
+    [message]="confirmDialogMessage"
+    [details]="confirmDialogDetails"
+    [confirmText]="confirmDialogConfirmText"
+    [isDangerous]="confirmDialogDangerous"
+    [isLoading]="confirmDialogLoading"
+    (closed)="closeConfirmDialog()"
+    (confirmed)="onConfirmDialogConfirmed()"
+  />
+}
+
+@if (showDuplicateModal) {
+  <app-weekly-plan-duplicate
+    [open]="showDuplicateModal"
+    [plan]="duplicatePlan"
+    [saving]="duplicateSaving"
+    (closed)="closeDuplicate()"
+    (duplicate)="doDuplicate($event)"
   />
 }
 

@@ -10,11 +10,11 @@
 
     <div class="calendar-grid">
       @for (day of days; track day.value) {
-        <section class="day-column">
+        <section class="day-column" [class.expanded]="isDayExpanded(day.value)" (click)="toggleDay(day.value)">
           <div class="day-column-header">
             <div>
               <h3>{{ day.label }}</h3>
-              <span>{{ slotsForDay(day.value).length }} slots</span>
+              <span>{{ slotsForDay(day.value).length }} slot{{ slotsForDay(day.value).length !== 1 ? 's' : '' }}</span>
             </div>
             @if (canUseActions() && hasPendingSlots(day.value)) {
               <app-weekly-plan-slot-actions
@@ -22,13 +22,14 @@
                 [readOnly]="readOnly"
                 [showDayAction]="true"
                 (confirmDay)="confirmDay.emit(day.value)"
+                (click)="$event.stopPropagation()"
               />
             }
           </div>
 
           <div class="day-slots">
             @for (slot of slotsForDay(day.value); track slot.id) {
-              <article class="slot-card" [class.locked]="isLocked(slot)" [class.cancelled]="slot.status === 'CANCELLED'">
+              <article class="slot-card" [class.locked]="isLocked(slot)" [class.cancelled]="slot.status === 'CANCELLED'" (click)="$event.stopPropagation()">
                 <div class="slot-main">
                   <div>
                     <h4>{{ slot.recipeName }}</h4>
@@ -52,7 +53,7 @@
                       <span>{{ student.studentName }}</span>
                       <small>{{ studentStatusLabel(student.status) }}</small>
                       @if (!readOnly && canUseActions() && student.status !== 'CANCELLED') {
-                        <button type="button" class="chip-action" (click)="cancelStudent.emit({ slot, student })">Cancelar</button>
+                        <button type="button" class="chip-action" (click)="cancelStudent.emit({ slot, student }); $event.stopPropagation()">Cancelar</button>
                       }
                     </div>
                   }
@@ -67,6 +68,7 @@
                   [readOnly]="readOnly || isLocked(slot)"
                   (confirmSlot)="confirmSlot.emit(slot)"
                   (cancelSlot)="cancelSlot.emit(slot)"
+                  (click)="$event.stopPropagation()"
                 />
               </article>
             }

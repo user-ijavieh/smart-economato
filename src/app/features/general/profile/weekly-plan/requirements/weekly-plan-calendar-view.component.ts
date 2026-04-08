@@ -23,6 +23,21 @@ export class WeeklyPlanCalendarViewComponent {
 
   readonly days = WEEK_DAYS;
 
+  // Mobile accordion state
+  expandedDays = new Set<number>();
+
+  toggleDay(dayOfWeek: number): void {
+    if (this.expandedDays.has(dayOfWeek)) {
+      this.expandedDays.delete(dayOfWeek);
+    } else {
+      this.expandedDays.add(dayOfWeek);
+    }
+  }
+
+  isDayExpanded(dayOfWeek: number): boolean {
+    return this.expandedDays.has(dayOfWeek);
+  }
+
   slotsForDay(dayOfWeek: number): WeeklyPlanSlotResponse[] {
     return [...(this.plan?.slots || [])]
       .filter(slot => slot.dayOfWeek === dayOfWeek)

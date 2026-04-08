@@ -23,6 +23,19 @@ export class OrderReceptionModalComponent implements OnInit {
 
   isProcessing = false;
 
+  beforeCloseHandler = async (): Promise<boolean> => {
+    if (this.isProcessing) {
+      return false;
+    }
+
+    return await this.messageService.confirm(
+      'Cancelar Recepción',
+      '¿Estás seguro de que deseas cancelar? Los datos introducidos no se guardarán.',
+      'Cancelar',
+      'Volver'
+    );
+  };
+
   ngOnInit(): void {
     if (this.order && this.order.details) {
       this.order.details.forEach(detail => {

@@ -1,16 +1,16 @@
-<div class="header-recetas">
+<div class="admin-page-header">
     <h1>Gestión de Datos Maestros</h1>
 </div>
 
 <!-- Tab bar -->
-<div class="tab-bar">
-    <button class="tab-btn" [class.active]="activeTab === 'allergens'" (click)="switchTab('allergens')">
+<div class="admin-tab-bar">
+    <button class="admin-tab-btn" [class.active]="activeTab === 'allergens'" (click)="switchTab('allergens')">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H7l5-8v4h4l-5 8z" />
         </svg>
         Alérgenos
     </button>
-    <button class="tab-btn" [class.active]="activeTab === 'suppliers'" (click)="switchTab('suppliers')">
+    <button class="admin-tab-btn" [class.active]="activeTab === 'suppliers'" (click)="switchTab('suppliers')">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M16 4H8v4H4v12h16V8h-4V4zm-6 2h4v2h-4V6zM6 10h12v8H6v-8zm2 2v4h8v-4H8z" />
         </svg>
@@ -22,7 +22,7 @@
 <div class="contenedor-principal">
     <div class="controles">
         <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por nombre..." (ngModelChange)="onSearch()" />
-        <button id="btnAgregarAlergeno" (click)="openCreateModal()">
+        <button id="btnAgregarAlergeno" class="toolbar-btn" (click)="openCreateModal()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path
                     d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
@@ -30,7 +30,7 @@
             Agregar Alérgeno
         </button>
         @if (hasActiveFilters()) {
-        <button class="btn-clear" (click)="clearFilters()">Limpiar Filtros</button>
+        <button class="toolbar-btn btn-clear" (click)="clearFilters()">Limpiar Filtros</button>
         }
     </div>
 
@@ -103,12 +103,12 @@
 
     @if (totalPages > 1) {
     <div class="pagination-controls">
-        <button class="btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
+        <button class="toolbar-btn btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
             Anterior
         </button>
         <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }} <span class="total-info">({{ totalElements }} alérgenos)</span></span>
-        <button class="btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
+        <button class="toolbar-btn btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
             Siguiente
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
         </button>
@@ -128,7 +128,6 @@
             </div>
         </div>
         <div modal-footer class="allergen-modal-footer">
-            <button class="btn-cancel" (click)="closeModal()" [disabled]="modalSaving">Cancelar</button>
             <button class="btn-save" (click)="saveModal()" [disabled]="modalSaving || !modalName.trim()">
                 @if (modalSaving) {
                 <span class="saving-spinner"></span>

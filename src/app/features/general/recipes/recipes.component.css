@@ -85,56 +85,10 @@
   color: var(--theme-text-primary);
 }
 
-button, 
-.controles button,
-.pagination-controls button {
-  padding: 12px 20px;
-  border-radius: var(--theme-radius-btn);
-  border: 1px solid var(--theme-surface-glass-hover);
-  font-size: 0.9rem;
-  font-family: var(--font-body);
-  font-weight: 600;
-  background: var(--theme-surface-glass-active);
-  color: var(--theme-text-primary);
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-button:hover {
-  background: var(--theme-border-glass);
-  border-color: var(--theme-border-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
-button:active {
-  background: color-mix(in srgb, var(--brand-primary) 30%, transparent) !important;
-  transform: translateY(0);
-}
-
 .recipes-grid.loading {
   opacity: 0.6;
   pointer-events: none;
   transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-primary {
-  background: var(--theme-surface-glass-hover) !important;
-  border: 1px solid var(--theme-border-medium) !important;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
-  color: var(--theme-text-primary)!important;
-  backdrop-filter: blur(8px);
-}
-
-.btn-primary:hover {
-  background: var(--theme-surface-glass-active) !important;
-  border-color: var(--theme-text-secondary) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
 }
 
 #btnCrearReceta {
@@ -274,7 +228,7 @@ button:active {
 }
 
 /** ===== EMPTY STATE & LOADING ===== */
-.empty-state, .loading {
+.loading {
   grid-column: 1 / -1;
   text-align: center;
   padding: 60px 20px;

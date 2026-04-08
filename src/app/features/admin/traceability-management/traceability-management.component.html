@@ -1,15 +1,15 @@
-<div class="header-recetas">
+<div class="admin-page-header">
   <h1>Trazabilidad y Crisis</h1>
 </div>
 
-<div class="tab-bar">
-  <button type="button" class="tab-btn" [class.active]="activeView === 'active'" (click)="activeView = 'active'">
+<div class="admin-tab-bar">
+  <button type="button" class="admin-tab-btn" [class.active]="activeView === 'active'" (click)="activeView = 'active'">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
       <path d="M12 2L1 21h22L12 2zm1 14h-2v-2h2v2zm0-4h-2V8h2v4z"/>
     </svg>
     Crisis Activas ({{ activeCrises.length }})
   </button>
-  <button type="button" class="tab-btn" [class.active]="activeView === 'history'" (click)="activeView = 'history'">
+  <button type="button" class="admin-tab-btn" [class.active]="activeView === 'history'" (click)="activeView = 'history'">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
       <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 1 1-8 8h1a7 7 0 1 0 7.515-6.981z"/>
       <path d="M8.5 4.5a.5.5 0 0 0-1 0v4h-3a.5.5 0 0 0 0 1h4a.5.5 0 0 0 .5-.5v-4z"/>
@@ -51,7 +51,7 @@
             <td><div class="id-badge">{{ crisis.crisisCode || ('CRISIS-' + crisis.crisisId) }}</div></td>
             <td>{{ crisis.supplierName }}</td>
             <td class="hide-on-mobile">{{ crisis.timestamp | date:'dd/MM/yyyy HH:mm' }}</td>
-            <td class="hide-on-mobile"><span class="status-badge badge-active">CUARENTENA</span></td>
+            <td class="hide-on-mobile"><span class="status-badge danger badge-active">CUARENTENA</span></td>
             <td class="actions-cell">
               <button class="btn-ver" (click)="openCrisisDetail(crisis)" title="Ver Detalle">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -100,7 +100,7 @@
             <td><div class="id-badge">{{ crisis.crisisCode || ('CRISIS-' + crisis.crisisId) }}</div></td>
             <td>{{ crisis.supplierName }}</td>
             <td class="hide-on-mobile">{{ crisis.timestamp | date:'dd/MM/yyyy HH:mm' }}</td>
-            <td class="hide-on-mobile"><span class="status-badge badge-lifted">LEVANTADA</span></td>
+            <td class="hide-on-mobile"><span class="status-badge success badge-lifted">LEVANTADA</span></td>
             <td class="actions-cell">
               <button class="btn-ver" (click)="openCrisisDetail(crisis)" title="Ver Detalle">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -142,9 +142,7 @@
 @if (showActivationModal) {
 <app-base-modal title="Declarar Alerta de Trazabilidad" size="lg" (closed)="closeActivationModal()">
   <div class="modal-container">
-    
-    <div class="modal-body">
-      <div class="activation-form-grid">
+    <div class="activation-form-grid">
         <div class="form-item">
           <label>Proveedor Responsable</label>
           <div class="custom-select-container">
@@ -216,14 +214,12 @@
           <textarea [(ngModel)]="reason" class="reason-textarea" placeholder="Escribe el motivo detallado..."></textarea>
         </div>
       </div>
-    </div>
-    
-    <div modal-footer class="modal-footer">
-      <button class="btn-cancel" (click)="closeActivationModal()">Cancelar</button>
+  </div>
+
+  <div modal-footer>
       <button class="btn-activate-modal" (click)="activateCrisis()" [disabled]="activating">
         {{ activating ? 'Declarando...' : 'Declarar Alerta' }}
       </button>
-    </div>
   </div>
 </app-base-modal>
 }
@@ -233,9 +229,7 @@
 @if (showCrisisDetailModal && selectedCrisis) {
 <app-base-modal [title]="'Crisis / ' + (selectedCrisis.crisisCode || ('CRISIS-' + selectedCrisis.crisisId))" size="fullscreen" (closed)="closeCrisisDetail()">
   <div class="modal-container traceability-modal-container">
-    
-    <div class="modal-body">
-      <div class="crisis-detail-content" style="border-left: none; padding: 0;">
+    <div class="crisis-detail-content" style="border-left: none; padding: 0;">
         <div class="detail-grid-standard">
           <div class="detail-col"><strong>Motivo:</strong><p>{{ selectedCrisis.reason }}</p></div>
           <div class="detail-col"><strong>Impacto:</strong><ul><li>Lotes afectados: {{ selectedCrisis.affectedBatches?.length || 0 }}</li><li>Pedidos implicados: {{ selectedCrisis.affectedOrders?.length || 0 }}</li><li>Cocinados implicados: {{ selectedCrisis.affectedCookings?.length || 0 }}</li></ul></div>
@@ -258,8 +252,8 @@
                 <div class="batch-card-header">
                   <span class="batch-id">#{{ batch.batchId }}</span>
                   <div class="batch-badges">
-                    @if (batch.depleted) { <span class="status-badge badge-depleted">RETIRADO</span> }
-                    @if (batch.expired) { <span class="status-badge badge-expired">CADUCADO</span> }
+                    @if (batch.depleted) { <span class="status-badge admin badge-depleted">RETIRADO</span> }
+                    @if (batch.expired) { <span class="status-badge warning badge-expired">CADUCADO</span> }
                   </div>
                 </div>
                 <div class="batch-product-name">{{ batch.productName }}</div>
@@ -285,7 +279,7 @@
                   <tr>
                     <td><span class="id-badge">#{{ ord.orderId }}</span></td>
                     <td>{{ ord.supplierName }}</td>
-                    <td><span class="status-badge badge-lifted">{{ ord.status }}</span></td>
+                    <td><span class="status-badge success badge-lifted">{{ ord.status }}</span></td>
                     <td>{{ ord.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
                     <td>{{ ord.totalItems }} líneas</td>
                   </tr>
@@ -318,10 +312,10 @@
         </div>
         }
       </div>
-    </div>
-    
-    @if (selectedCrisis.status === 'ACTIVE') {
-    <div modal-footer class="modal-footer">
+  </div>
+
+  @if (selectedCrisis.status === 'ACTIVE') {
+    <div modal-footer>
       <div class="lift-crisis-actions" style="margin-top: 0; padding-top: 0; border: none; width: 100%; display: flex; justify-content: flex-end;">
         <div style="display: flex; gap: 10px;">
           <input type="number" min="0" max="100" [(ngModel)]="liftAvailabilityByCrisis[selectedCrisis.crisisId]" placeholder="Disp. %" class="input-standard" style="width: 120px;" />
@@ -329,7 +323,6 @@
         </div>
       </div>
     </div>
-    }
-  </div>
+  }
 </app-base-modal>
 }

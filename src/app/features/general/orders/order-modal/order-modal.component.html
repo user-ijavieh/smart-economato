@@ -133,11 +133,8 @@
       }
   </div>
 
-  <div modal-footer class="modal-footer">
-    <button type="button" class="btn-cancel" (click)="close()">
-      Cancelar
-    </button>
-    <button type="button" class="btn-submit" (click)="submitOrder()"
+  <div modal-footer>
+    <button type="button" class="modal-btn modal-btn-primary" (click)="submitOrder()"
       [disabled]="!selectedUserId || orderItems.length === 0 || isSubmitting">
       {{ isSubmitting ? (editOrder ? 'Actualizando...' : 'Creando...') : (editOrder ? 'Confirmar edición' : 'Crear Pedido') }}
     </button>
