@@ -25,6 +25,7 @@ export class WeeklyPlanHistoryComponent {
   @Output() statusFilterChange = new EventEmitter<string>();
   @Output() selectPlan = new EventEmitter<WeeklyPlanResponse>();
   @Output() editPlan = new EventEmitter<WeeklyPlanResponse>();
+  @Output() duplicatePlan = new EventEmitter<WeeklyPlanResponse>();
 
   readonly statusLabels = WEEKLY_PLAN_STATUS_LABELS;
 
@@ -34,5 +35,9 @@ export class WeeklyPlanHistoryComponent {
 
   canEdit(plan: WeeklyPlanResponse): boolean {
     return plan.status === 'DRAFT';
+  }
+
+  canDuplicate(plan: WeeklyPlanResponse): boolean {
+    return plan.status !== 'DRAFT';
   }
 }

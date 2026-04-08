@@ -515,7 +515,20 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                     predictionData.push(dailyAverage);
                     stockLevelData.push(currentStock);
 
-                    // 3. Process Forecast (Fallback to 14 days if null or empty)
+                    // 3. Build expiration map: { YYYY-MM-DD: quantity }
+                    // Agrupa todas las caducidades por fecha para saber cuánto stock se pierde cada día
+                    const expirationMap = new Map<string, number>();
+                    if (forecast?.activeBatches && forecast.activeBatches.length > 0) {
+                        forecast.activeBatches.forEach(batch => {
+                            if (batch.expirationDate && !batch.depleted) {
+                                const qty = expirationMap.get(batch.expirationDate) || 0;
+                                expirationMap.set(batch.expirationDate, qty + batch.remainingQuantity);
+                            }
+                        });
+                    }
+
+                    // 4. Process Forecast (Fallback to 14 days if null or empty)
+                    // IMPORTANTE: Rellenar TODOS los días (zero-fill) aunque no haya datos
                     let tempStock = currentStock;
                     let outDayFound = false;
                     
@@ -523,22 +536,36 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                         ? forecast.dailyForecast 
                         : Array(14).fill(dailyAverage);
 
-                    forecastValues.forEach((val: number, i: number) => {
+                    // Generar todos los días del horizonte, incluso si no hay consumo
+                    for (let i = 0; i < forecastValues.length; i++) {
                         const date = new Date();
                         date.setDate(today.getDate() + i + 1);
+                        const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD para comparar con expirationDate
+                        
+                        // Label: mostrar todos los días (zero-fill)
                         labels.push(date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
                         
                         historyData.push(null);
-                        predictionData.push(val);
+                        const dailyConsumption = forecastValues[i] || 0;
+                        predictionData.push(dailyConsumption);
                         
-                        tempStock = Math.max(0, tempStock - val);
+                        // Aplicar consumo
+                        tempStock = Math.max(0, tempStock - dailyConsumption);
+                        
+                        // Aplicar expiración: si hay lotes que caducan hoy, restarlos del stock
+                        const expiringQty = expirationMap.get(dateStr);
+                        if (expiringQty !== undefined && tempStock > 0) {
+                            tempStock = Math.max(0, tempStock - expiringQty);
+                        }
+                        
                         stockLevelData.push(tempStock);
 
+                        // Marcar el primer día en que stock llega a 0
                         if (tempStock === 0 && !outDayFound) {
                             this.stockOutDay = date.toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
                             outDayFound = true;
                         }
-                    });
+                    }
 
                     this.modalChartData = {
                         labels,
