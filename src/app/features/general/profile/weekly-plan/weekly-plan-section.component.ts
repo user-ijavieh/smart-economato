@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnChanges, OnInit, SimpleChanges, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
@@ -8,6 +8,7 @@ import { MessageService } from '../../../../core/services/message.service';
 import { RecipeService } from '../../../../core/services/recipe.service';
 import { UserService } from '../../../../core/services/user.service';
 import { WeeklyPlanService } from '../../../../core/services/weekly-plan.service';
+import { WeeklyPlanPolicyService } from '../../../../core/services/weekly-plan-policy.service';
 import { Recipe } from '../../../../shared/models/recipe.model';
 import { Page } from '../../../../shared/models/page.model';
 import { User } from '../../../../shared/models/user.model';
@@ -53,6 +54,7 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
 
   private authService = inject(AuthService);
   private weeklyPlanService = inject(WeeklyPlanService);
+  private weeklyPlanPolicyService = inject(WeeklyPlanPolicyService);
   private recipeService = inject(RecipeService);
   private userService = inject(UserService);
   private messageService = inject(MessageService);
@@ -90,6 +92,10 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
   showStockModal = false;
   stockLoading = false;
   stockRequirements: WeeklyPlanStockRequirement[] = [];
+  stockModalContext: 'view' | 'activation' = 'view';
+  stockTargetPlanId: number | null = null;
+  stockTargetChefId: number | null = null;
+  stockActivating = false;
 
   showMetricsModal = false;
   metricsLoading = false;
@@ -108,7 +114,7 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
 
   // Confirmation dialogs
   showConfirmDialog = false;
-  confirmAction: 'confirmSlot' | 'confirmDay' | 'cancelSlot' | 'cancelStudent' | null = null;
+  confirmAction: 'confirmSlot' | 'unconfirmSlot' | 'confirmDay' | 'cancelSlot' | 'cancelStudent' | 'cancelStudentDay' | null = null;
   confirmDialogTitle = '';
   confirmDialogMessage = '';
   confirmDialogDetails: string[] = [];
@@ -118,6 +124,7 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
   pendingConfirmationSlot: WeeklyPlanSlotResponse | null = null;
   pendingConfirmationDay: number | null = null;
   pendingConfirmationStudent: WeeklyPlanSlotStudentResponse | null = null;
+  pendingConfirmationStudentDay: number | null = null;
 
   private previousRole: Role | null = null;
   private previousChefId: number | null = null;
@@ -128,6 +135,23 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
 
   ngOnChanges(_: SimpleChanges): void {
     this.applyRoleContext();
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  onWeekNavigationHotkeys(event: KeyboardEvent): void {
+    if (!this.detailPlan || this.showFormModal || this.showStockModal || this.showMetricsModal || this.showDuplicateModal || this.showConfirmDialog) {
+      return;
+    }
+
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      this.navigateDetailWeek(-1);
+    }
+
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      this.navigateDetailWeek(1);
+    }
   }
 
   private applyRoleContext(): void {
@@ -179,11 +203,23 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
   }
 
   get canCreatePlan(): boolean {
-    return this.role === 'ADMIN' || this.role === 'CHEF';
+    return this.weeklyPlanPolicyService.canCreate(this.role);
   }
 
   get canEditPlan(): boolean {
     return this.role === 'ADMIN' || this.role === 'CHEF' || this.role === 'ELEVATED';
+  }
+
+  canModifyPlan(plan: WeeklyPlanResponse | null): boolean {
+    return this.weeklyPlanPolicyService.canEdit(this.role, plan);
+  }
+
+  canDuplicatePlan(plan: WeeklyPlanResponse | null): boolean {
+    return this.weeklyPlanPolicyService.canDuplicate(this.role, plan);
+  }
+
+  canManagePlanRuntime(plan: WeeklyPlanResponse | null): boolean {
+    return this.weeklyPlanPolicyService.canManageRuntime(this.role, plan);
   }
 
   get canActivatePlan(): boolean {
@@ -191,11 +227,18 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
   }
 
   get canViewSensitivePanels(): boolean {
-    return this.role === 'ADMIN' || this.role === 'CHEF';
+    return this.weeklyPlanPolicyService.canViewSensitive(this.role);
   }
 
   get canShowChefSelector(): boolean {
     return this.role === 'ADMIN';
+  }
+
+  get canActivateFromStockModal(): boolean {
+    if (this.stockModalContext !== 'activation' || !this.stockTargetPlanId) {
+      return false;
+    }
+    return this.stockRequirements.length > 0 && this.stockRequirements.every(item => item.sufficient);
   }
 
   get selectedPlanForReadOnly(): WeeklyPlanResponse | null {
@@ -244,6 +287,11 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
       return;
     }
 
+    if (!this.canModifyPlan(target)) {
+      this.messageService.showError('Este plan no se puede editar en su estado actual.');
+      return;
+    }
+
     this.ensureAuxiliaryData().then(() => {
       this.formMode = 'edit';
       this.formPlan = target;
@@ -253,9 +301,16 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
   }
 
   openDetail(plan: WeeklyPlanResponse): void {
-    this.detailPlan = plan;
-    this.detailReadOnly = true;
-    this.cdr.markForCheck();
+    this.weeklyPlanService.getPlanById(plan.id).subscribe({
+      next: (fullPlan) => {
+        this.detailPlan = fullPlan;
+        this.detailReadOnly = !this.canManagePlanRuntime(fullPlan);
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.messageService.showError(error.error?.message || 'No se pudo cargar el detalle del plan.');
+      }
+    });
   }
 
   closeDetail(): void {
@@ -270,8 +325,8 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
   }
 
   openDuplicate(plan: WeeklyPlanResponse): void {
-    if (plan.status === 'DRAFT') {
-      this.messageService.showError('No puedes duplicar un plan en borrador. Primero actívalo.');
+    if (!this.canDuplicatePlan(plan)) {
+      this.messageService.showError('No tienes permisos para duplicar este plan.');
       return;
     }
 
@@ -342,23 +397,33 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
       })
     ).subscribe({
       next: () => {
-        this.formActivating = true;
-        this.weeklyPlanService.activatePlan(this.formPlan!.id).pipe(
-          finalize(() => {
-            this.formActivating = false;
-            this.cdr.markForCheck();
-          })
-        ).subscribe({
-          next: (plan) => {
-            this.messageService.showSuccess('Plan activado correctamente.');
-            this.showFormModal = false;
-            this.formPlan = null;
-            this.refreshAfterMutation(plan.id, plan.chefId);
-          },
-          error: (error) => this.messageService.showError(error.error?.message || 'No se pudo activar el plan.')
-        });
+        this.formActivating = false;
+        this.showFormModal = false;
+        this.openStockRequirementsByPlanId(this.formPlan!.id, 'activation', this.formPlan!.chefId);
       },
       error: (error) => this.messageService.showError(error.error?.message || 'No se pudo guardar el plan.')
+    });
+  }
+
+  activateFromStockModal(): void {
+    if (!this.stockTargetPlanId || !this.canActivateFromStockModal) {
+      return;
+    }
+
+    this.stockActivating = true;
+    this.weeklyPlanService.activatePlan(this.stockTargetPlanId).pipe(
+      finalize(() => {
+        this.stockActivating = false;
+        this.cdr.markForCheck();
+      })
+    ).subscribe({
+      next: (plan) => {
+        this.messageService.showSuccess('Plan activado correctamente.');
+        this.closeStockModal();
+        this.formPlan = null;
+        this.refreshAfterMutation(plan.id, plan.chefId);
+      },
+      error: (error) => this.messageService.showError(error.error?.message || 'No se pudo activar el plan.')
     });
   }
 
@@ -374,7 +439,7 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
 
     // Show confirmation dialog
     this.confirmDialogTitle = `Confirmar ${slot.recipeName}`;
-    this.confirmDialogMessage = `¿Confirmar este slot? Se descontará stock del inventario y no se podrá revertir.`;
+    this.confirmDialogMessage = `¿Confirmar este slot? Se descontará stock del inventario.`;
     this.confirmDialogDetails = [
       `Receta: ${slot.recipeName}`,
       `Cantidad: ${slot.quantity}`,
@@ -389,6 +454,80 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
     this.cdr.markForCheck();
   }
 
+  unconfirmSlot(slot: WeeklyPlanSlotResponse): void {
+    if (this.role !== 'ADMIN') {
+      this.messageService.showError('Solo un administrador puede revertir una confirmación.');
+      return;
+    }
+
+    const plan = this.selectedPlanForReadOnly || this.currentPlan;
+    if (!plan) {
+      return;
+    }
+
+    this.confirmDialogTitle = `Revertir confirmación de ${slot.recipeName}`;
+    this.confirmDialogMessage = '¿Revertir este slot confirmado? Se restaurará el stock consumido y el slot volverá a pendiente.';
+    this.confirmDialogDetails = [
+      `Receta: ${slot.recipeName}`,
+      `Cantidad: ${slot.quantity}`,
+      `Horario: ${slot.startTime} - ${slot.endTime}`,
+      'Acción exclusiva para administradores'
+    ];
+    this.confirmDialogConfirmText = 'Revertir';
+    this.confirmDialogDangerous = true;
+    this.confirmAction = 'unconfirmSlot';
+    this.pendingConfirmationSlot = slot;
+    this.showConfirmDialog = true;
+    this.cdr.markForCheck();
+  }
+
+  doUnconfirmSlot(): void {
+    if (!this.pendingConfirmationSlot || this.role !== 'ADMIN') {
+      return;
+    }
+
+    const plan = this.selectedPlanForReadOnly || this.currentPlan;
+    if (!plan) {
+      return;
+    }
+
+    const rollback = this.startOptimisticUpdate(plan.id, draft => {
+      const target = draft.slots.find(s => s.id === this.pendingConfirmationSlot?.id);
+      if (!target) {
+        return;
+      }
+
+      target.status = 'PENDING';
+      target.confirmedAt = null;
+      target.confirmedByName = null;
+      target.students = target.students.map(student => ({
+        ...student,
+        status: student.status === 'CONFIRMED' ? 'ASSIGNED' : student.status
+      }));
+
+      const hasConfirmed = draft.slots.some(slot => slot.status === 'CONFIRMED');
+      draft.status = hasConfirmed ? 'IN_PROGRESS' : 'ACTIVE';
+    });
+
+    this.confirmDialogLoading = true;
+    this.weeklyPlanService.unconfirmSlot(plan.id, this.pendingConfirmationSlot.id).pipe(
+      finalize(() => {
+        this.confirmDialogLoading = false;
+        this.cdr.markForCheck();
+      })
+    ).subscribe({
+      next: () => {
+        this.messageService.showSuccess('Confirmación revertida y stock desbloqueado correctamente.');
+        this.closeConfirmDialog();
+        this.reloadPlan(plan.id);
+      },
+      error: (error) => {
+        rollback();
+        this.messageService.showError(error.error?.message || 'No se pudo revertir la confirmación del slot.');
+      }
+    });
+  }
+
   doConfirmSlot(): void {
     if (!this.pendingConfirmationSlot) {
       return;
@@ -398,6 +537,28 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
     if (!plan) {
       return;
     }
+
+    const rollback = this.startOptimisticUpdate(plan.id, draft => {
+      const target = draft.slots.find(s => s.id === this.pendingConfirmationSlot?.id);
+      if (!target) {
+        return;
+      }
+      target.status = 'CONFIRMED';
+      target.confirmedAt = new Date().toISOString();
+      target.confirmedByName = this.currentUser?.name || 'Tú';
+      target.students = target.students.map(student => ({
+        ...student,
+        status: student.status === 'ASSIGNED' ? 'CONFIRMED' : student.status
+      }));
+
+      if (draft.status === 'ACTIVE') {
+        draft.status = 'IN_PROGRESS';
+      }
+      const allDone = draft.slots.every(slot => slot.status === 'CONFIRMED' || slot.status === 'CANCELLED');
+      if (allDone) {
+        draft.status = 'COMPLETED';
+      }
+    });
 
     this.confirmDialogLoading = true;
     this.weeklyPlanService.confirmSlot(plan.id, this.pendingConfirmationSlot.id).pipe(
@@ -411,7 +572,10 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
         this.closeConfirmDialog();
         this.reloadPlan(plan.id);
       },
-      error: (error) => this.messageService.showError(error.error?.message || 'No se pudo confirmar el slot.')
+      error: (error) => {
+        rollback();
+        this.messageService.showError(error.error?.message || 'No se pudo confirmar el slot.');
+      }
     });
   }
 
@@ -447,6 +611,18 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
       return;
     }
 
+    const rollback = this.startOptimisticUpdate(plan.id, draft => {
+      const target = draft.slots.find(s => s.id === this.pendingConfirmationSlot?.id);
+      if (!target) {
+        return;
+      }
+      target.status = 'CANCELLED';
+      target.students = target.students.map(student => ({
+        ...student,
+        status: 'CANCELLED'
+      }));
+    });
+
     this.confirmDialogLoading = true;
     this.weeklyPlanService.cancelSlot(plan.id, this.pendingConfirmationSlot.id).pipe(
       finalize(() => {
@@ -459,7 +635,10 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
         this.closeConfirmDialog();
         this.reloadPlan(plan.id);
       },
-      error: (error) => this.messageService.showError(error.error?.message || 'No se pudo cancelar el slot.')
+      error: (error) => {
+        rollback();
+        this.messageService.showError(error.error?.message || 'No se pudo cancelar el slot.');
+      }
     });
   }
 
@@ -494,6 +673,34 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
       return;
     }
 
+    const targetDay = this.pendingConfirmationDay;
+    const rollback = this.startOptimisticUpdate(plan.id, draft => {
+      const now = new Date().toISOString();
+      draft.slots = draft.slots.map(slot => {
+        if (slot.dayOfWeek !== targetDay || (slot.status !== 'PENDING' && slot.status !== 'IN_PROGRESS')) {
+          return slot;
+        }
+        return {
+          ...slot,
+          status: 'CONFIRMED',
+          confirmedAt: now,
+          confirmedByName: this.currentUser?.name || 'Tú',
+          students: slot.students.map(student => ({
+            ...student,
+            status: student.status === 'ASSIGNED' ? 'CONFIRMED' : student.status
+          }))
+        };
+      });
+
+      if (draft.status === 'ACTIVE') {
+        draft.status = 'IN_PROGRESS';
+      }
+      const allDone = draft.slots.every(slot => slot.status === 'CONFIRMED' || slot.status === 'CANCELLED');
+      if (allDone) {
+        draft.status = 'COMPLETED';
+      }
+    });
+
     this.confirmDialogLoading = true;
     this.weeklyPlanService.confirmDay(plan.id, this.pendingConfirmationDay).pipe(
       finalize(() => {
@@ -506,7 +713,10 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
         this.closeConfirmDialog();
         this.reloadPlan(plan.id);
       },
-      error: (error) => this.messageService.showError(error.error?.message || 'No se pudo confirmar el día.')
+      error: (error) => {
+        rollback();
+        this.messageService.showError(error.error?.message || 'No se pudo confirmar el día.');
+      }
     });
   }
 
@@ -528,6 +738,28 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
     this.confirmAction = 'cancelStudent';
     this.pendingConfirmationSlot = event.slot;
     this.pendingConfirmationStudent = event.student;
+    this.pendingConfirmationStudentDay = event.slot.dayOfWeek;
+    this.showConfirmDialog = true;
+    this.cdr.markForCheck();
+  }
+
+  cancelStudentDay(event: { dayOfWeek: number; student: WeeklyPlanSlotStudentResponse }): void {
+    const plan = this.selectedPlanForReadOnly || this.currentPlan;
+    if (!plan) {
+      return;
+    }
+
+    this.confirmDialogTitle = 'Cancelar estudiante del día completo';
+    this.confirmDialogMessage = `¿Cancelar a ${event.student.studentName} en todos los slots del día seleccionado?`;
+    this.confirmDialogDetails = [
+      `Estudiante: ${event.student.studentName}`,
+      `Día de la semana: ${event.dayOfWeek}`
+    ];
+    this.confirmDialogConfirmText = 'Cancelar día';
+    this.confirmDialogDangerous = false;
+    this.confirmAction = 'cancelStudentDay';
+    this.pendingConfirmationStudent = event.student;
+    this.pendingConfirmationStudentDay = event.dayOfWeek;
     this.showConfirmDialog = true;
     this.cdr.markForCheck();
   }
@@ -542,6 +774,17 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
       return;
     }
 
+    const rollback = this.startOptimisticUpdate(plan.id, draft => {
+      const slot = draft.slots.find(s => s.id === this.pendingConfirmationSlot?.id);
+      if (!slot) {
+        return;
+      }
+      const student = slot.students.find(s => s.studentId === this.pendingConfirmationStudent?.studentId);
+      if (student) {
+        student.status = 'CANCELLED';
+      }
+    });
+
     this.confirmDialogLoading = true;
     this.weeklyPlanService.cancelStudentFromSlot(plan.id, this.pendingConfirmationSlot.id, this.pendingConfirmationStudent.studentId).pipe(
       finalize(() => {
@@ -554,7 +797,61 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
         this.closeConfirmDialog();
         this.reloadPlan(plan.id);
       },
-      error: (error) => this.messageService.showError(error.error?.message || 'No se pudo cancelar el estudiante.')
+      error: (error) => {
+        rollback();
+        this.messageService.showError(error.error?.message || 'No se pudo cancelar el estudiante.');
+      }
+    });
+  }
+
+  doCancelStudentDay(): void {
+    if (!this.pendingConfirmationStudent || this.pendingConfirmationStudentDay === null) {
+      return;
+    }
+
+    const plan = this.selectedPlanForReadOnly || this.currentPlan;
+    if (!plan) {
+      return;
+    }
+
+    const targetDay = this.pendingConfirmationStudentDay;
+    const targetStudentId = this.pendingConfirmationStudent.studentId;
+    const rollback = this.startOptimisticUpdate(plan.id, draft => {
+      draft.slots = draft.slots.map(slot => {
+        if (slot.dayOfWeek !== targetDay) {
+          return slot;
+        }
+        return {
+          ...slot,
+          students: slot.students.map(student => {
+            if (student.studentId !== targetStudentId) {
+              return student;
+            }
+            return {
+              ...student,
+              status: 'CANCELLED'
+            };
+          })
+        };
+      });
+    });
+
+    this.confirmDialogLoading = true;
+    this.weeklyPlanService.cancelStudentFromDay(plan.id, this.pendingConfirmationStudentDay, this.pendingConfirmationStudent.studentId).pipe(
+      finalize(() => {
+        this.confirmDialogLoading = false;
+        this.cdr.markForCheck();
+      })
+    ).subscribe({
+      next: () => {
+        this.messageService.showSuccess('Estudiante cancelado para todo el día.');
+        this.closeConfirmDialog();
+        this.reloadPlan(plan.id);
+      },
+      error: (error) => {
+        rollback();
+        this.messageService.showError(error.error?.message || 'No se pudo cancelar el estudiante del día.');
+      }
     });
   }
 
@@ -564,6 +861,7 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
     this.pendingConfirmationSlot = null;
     this.pendingConfirmationDay = null;
     this.pendingConfirmationStudent = null;
+    this.pendingConfirmationStudentDay = null;
     this.confirmDialogLoading = false;
     this.cdr.markForCheck();
   }
@@ -573,6 +871,9 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
       case 'confirmSlot':
         this.doConfirmSlot();
         break;
+      case 'unconfirmSlot':
+        this.doUnconfirmSlot();
+        break;
       case 'confirmDay':
         this.doConfirmDay();
         break;
@@ -581,6 +882,9 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
         break;
       case 'cancelStudent':
         this.doCancelStudent();
+        break;
+      case 'cancelStudentDay':
+        this.doCancelStudentDay();
         break;
     }
   }
@@ -595,9 +899,37 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
       return;
     }
 
+    this.openStockRequirementsByPlanId(target.id, 'view', target.chefId);
+  }
+
+  closeStockModal(): void {
+    this.showStockModal = false;
+    this.stockModalContext = 'view';
+    this.stockTargetPlanId = null;
+    this.stockTargetChefId = null;
+    this.stockRequirements = [];
+    this.stockLoading = false;
+    this.stockActivating = false;
+    this.cdr.markForCheck();
+  }
+
+  navigateDetailWeek(offset: -1 | 1): void {
+    if (!this.detailPlan) {
+      return;
+    }
+
+    const targetWeek = this.shiftIsoDate(this.detailPlan.weekStartDate, offset * 7);
+    this.findPlanByChefAndWeek(this.detailPlan.chefId, targetWeek);
+  }
+
+  private openStockRequirementsByPlanId(planId: number, context: 'view' | 'activation', chefId: number | null = null): void {
+    this.stockModalContext = context;
+    this.stockTargetPlanId = planId;
+    this.stockTargetChefId = chefId;
     this.showStockModal = true;
     this.stockLoading = true;
-    this.weeklyPlanService.getStockRequirements(target.id).pipe(
+
+    this.weeklyPlanService.getStockRequirements(planId).pipe(
       finalize(() => {
         this.stockLoading = false;
         this.cdr.markForCheck();
@@ -608,9 +940,76 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
       },
       error: (error) => {
         this.messageService.showError(error.error?.message || 'No se pudieron cargar los requisitos de stock.');
-        this.showStockModal = false;
+        this.closeStockModal();
       }
     });
+  }
+
+  private findPlanByChefAndWeek(chefId: number, weekStartDate: string): void {
+    this.historyLoading = true;
+    this.weeklyPlanService.getAllPlans(0, 200, 'weekStartDate,asc').pipe(
+      finalize(() => {
+        this.historyLoading = false;
+        this.cdr.markForCheck();
+      })
+    ).subscribe({
+      next: (response) => {
+        const found = response.content.find(plan => plan.chefId === chefId && plan.weekStartDate === weekStartDate);
+        if (!found) {
+          this.messageService.showError(`No existe plan para la semana ${weekStartDate}.`);
+          return;
+        }
+        this.openDetail(found);
+      },
+      error: (error) => this.messageService.showError(error.error?.message || 'No se pudo navegar entre semanas.')
+    });
+  }
+
+  private shiftIsoDate(isoDate: string, days: number): string {
+    const date = new Date(`${isoDate}T00:00:00`);
+    if (Number.isNaN(date.getTime())) {
+      return isoDate;
+    }
+    date.setDate(date.getDate() + days);
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const day = `${date.getDate()}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private startOptimisticUpdate(planId: number, mutator: (draft: WeeklyPlanResponse) => void): () => void {
+    const currentSnapshot = this.currentPlan?.id === planId
+      ? JSON.parse(JSON.stringify(this.currentPlan)) as WeeklyPlanResponse
+      : null;
+    const detailSnapshot = this.detailPlan?.id === planId
+      ? JSON.parse(JSON.stringify(this.detailPlan)) as WeeklyPlanResponse
+      : null;
+
+    if (this.currentPlan?.id === planId) {
+      const draft = JSON.parse(JSON.stringify(this.currentPlan)) as WeeklyPlanResponse;
+      mutator(draft);
+      this.currentPlan = draft;
+    }
+
+    if (this.detailPlan?.id === planId) {
+      const draft = JSON.parse(JSON.stringify(this.detailPlan)) as WeeklyPlanResponse;
+      mutator(draft);
+      this.detailPlan = draft;
+      this.detailReadOnly = !this.canManagePlanRuntime(draft);
+    }
+
+    this.cdr.markForCheck();
+
+    return () => {
+      if (currentSnapshot) {
+        this.currentPlan = currentSnapshot;
+      }
+      if (detailSnapshot) {
+        this.detailPlan = detailSnapshot;
+        this.detailReadOnly = !this.canManagePlanRuntime(detailSnapshot);
+      }
+      this.cdr.markForCheck();
+    };
   }
 
   openMetrics(): void {
