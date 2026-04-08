@@ -1,0 +1,75 @@
+<app-base-modal
+  title="Duplicar plan semanal"
+  size="md"
+  (closed)="closed.emit()"
+>
+  <div class="duplicate-shell">
+    @if (plan) {
+      <div class="duplicate-info">
+        <h3>Plan original</h3>
+        <p>
+          <strong>Semana:</strong> {{ plan.weekStartDate }} - {{ plan.weekEndDate }}<br/>
+          <strong>Chef:</strong> {{ plan.chefName }}<br/>
+          <strong>Slots a copiar:</strong> {{ getSlotsToCopy() }} (se excluyen los cancelados)
+        </p>
+      </div>
+
+      <div class="form-group">
+        <label for="targetWeek">Semana destino *</label>
+        <input
+          id="targetWeek"
+          type="date"
+          [ngModel]="targetWeekDate"
+          (ngModelChange)="onTargetWeekChange($event)"
+          class="form-input"
+        />
+        <small>Se ajusta automáticamente al lunes de la semana seleccionada.</small>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <input
+            type="checkbox"
+            [(ngModel)]="includeStudents"
+            class="form-checkbox"
+          />
+          <span>Incluir asignación de estudiantes</span>
+        </label>
+        <small>Si desactivas esto, los slots se copiarán sin estudiantes asignados.</small>
+      </div>
+
+      @if (validationMessage) {
+        <div class="validation-error">{{ validationMessage }}</div>
+      }
+
+      @if (targetWeekDate && targetWeekDate !== plan.weekStartDate) {
+        <div class="preview-summary">
+          <h4>Resumen de la copia</h4>
+          <ul>
+            <li>{{ getSlotsToCopy() }} slots se copiarán a la semana {{ targetWeekDate }}</li>
+            @if (includeStudents) {
+              <li>Se incluirán todos los estudiantes asignados</li>
+            } @else {
+              <li>Los slots se crearán sin estudiantes</li>
+            }
+            <li>El nuevo plan nacerá en estado BORRADOR</li>
+          </ul>
+        </div>
+      }
+    }
+  </div>
+
+  <div modal-footer class="modal-footer">
+    <button type="button" class="btn-secondary" (click)="closed.emit()" [disabled]="saving">
+      Cancelar
+    </button>
+    <button
+      type="button"
+      class="btn-primary"
+      (click)="doDuplicate()"
+      [disabled]="saving || !targetWeekDate || targetWeekDate === plan?.weekStartDate"
+    >
+      {{ saving ? 'Duplicando...' : 'Duplicar plan' }}
+    </button>
+  </div>
+</app-base-modal>

@@ -1,4 +1,4 @@
-﻿:host {
+:host {
   display: block;
 }
 
@@ -62,7 +62,7 @@
   box-shadow: 0 0 0 3px rgba(90, 120, 220, 0.2);
 }
 
-button {
+.toolbar-btn {
   padding: 10px 20px;
   border-radius: var(--theme-radius-btn);
   border: 1px solid var(--theme-surface-glass-hover);
@@ -77,14 +77,14 @@ button {
   backdrop-filter: blur(8px);
 }
 
-button:hover:not(:disabled) {
+.toolbar-btn:hover:not(:disabled) {
   background: var(--theme-border-glass);
   border-color: var(--theme-border-hover);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
-button:active { transform: translateY(0); }
+.toolbar-btn:active { transform: translateY(0); }
 
 #btnAgregarProveedor {
   background: rgba(76, 175, 80, 0.15);
@@ -226,7 +226,20 @@ tr:hover { background: var(--theme-surface-glass-hover); }
 
 .actions-cell > button {
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
   vertical-align: middle;
+  width: 32px !important;
+  min-width: 32px;
+  height: 32px !important;
+  padding: 8px !important;
+  box-shadow: none !important;
+  flex: 0 0 auto;
+}
+
+.actions-cell > button svg {
+  flex-shrink: 0;
+  pointer-events: none;
 }
 
 .btn-editar, .btn-eliminar {
@@ -261,11 +274,6 @@ tr:hover { background: var(--theme-surface-glass-hover); }
   border-radius: 4px;
   height: 20px;
   display: block;
-}
-
-@keyframes skeleton-loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
 }
 
 .skeleton-row td { border-bottom: 1px solid var(--theme-surface-glass-active); }
@@ -342,11 +350,6 @@ tr:hover { background: var(--theme-surface-glass-hover); }
     align-self: center;
     margin-bottom: 2rem;
   }
-}
-
-@keyframes slideUpModal {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
 }
 
 .mobile-detail-modal-header {

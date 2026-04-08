@@ -210,23 +210,16 @@ tr:hover td {
 
 /** ===== BADGES ===== */
 .role-badge {
-  display: inline-block;
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  background: rgba(59, 130, 246, 0.15);
+  background: var(--color-info-bg);
   color: var(--color-info);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-color: var(--color-info-border);
   backdrop-filter: blur(6px);
 }
 
 .role-badge.elevated {
-  background: rgba(245, 158, 11, 0.15);
-  color: var(--color-warning);
-  border-color: rgba(245, 158, 11, 0.3);
+  background: var(--color-warning-bg);
+  color: var(--color-warning-muted);
+  border-color: var(--color-warning-border);
 }
 
 /** ===== ACTIONS ===== */
@@ -235,87 +228,29 @@ tr:hover td {
   gap: 8px;
 }
 
-button,
-.btn-success,
-.btn-danger,
-.btn-secondary {
-  padding: 9px 18px;
-  border-radius: var(--theme-radius-btn);
-  border: 1px solid var(--theme-border-glass);
-  background: var(--theme-surface-glass-active);
-  color: var(--theme-text-primary);
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-family: var(--font-body);
-  display: flex;
-  align-items: center;
-  gap: 6px;
+button:disabled {  
+  opacity: 0.4;  
+  cursor: not-allowed;  
+  transform: none !important;  
+}  
+  
+button:focus-visible,  
+.duration-input:focus-visible {  
+  outline: 2px solid color-mix(in srgb, var(--brand-primary) 70%, white);  
+  outline-offset: 2px;  
+}  
+  
+/** ===== EMPTY STATE ===== */  
+.empty-state {  
+  padding: 50px 20px;  
+  text-align: center;  
+  color: var(--theme-text-secondary);  
+  font-style: italic;  
+}  
+  
+.weekly-plan-wrapper {  
+  margin-top: 10px;  
 }
-
-.btn-success {
-  background: rgba(16, 185, 129, 0.15) !important;
-  border-color: rgba(16, 185, 129, 0.3) !important;
-  color: var(--color-success) !important;
-}
-
-.btn-success:hover:not(:disabled) {
-  background: rgba(16, 185, 129, 0.25) !important;
-  border-color: rgba(16, 185, 129, 0.5) !important;
-  color: var(--theme-text-primary)!important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
-}
-
-.btn-danger {
-  background: rgba(239, 68, 68, 0.15) !important;
-  border-color: rgba(239, 68, 68, 0.3) !important;
-  color: var(--color-danger) !important;
-}
-
-.btn-danger:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.25) !important;
-  border-color: rgba(239, 68, 68, 0.5) !important;
-  color: var(--theme-text-primary)!important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.2);
-}
-
-.btn-secondary {
-  background: var(--theme-surface-glass-hover);
-  border-color: var(--theme-border-glass);
-}
-
-.btn-secondary:hover {
-  background: var(--theme-surface-glass-active);
-  transform: translateY(-2px);
-}
-
-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-button:focus-visible,
-.duration-input:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--brand-primary) 70%, white);
-  outline-offset: 2px;
-}
-
-/** ===== EMPTY STATE ===== */
-.empty-state {
-  padding: 50px 20px;
-  text-align: center;
-  color: var(--theme-text-secondary);
-  font-style: italic;
-}
-
-.weekly-plan-wrapper {
-  margin-top: 10px;
-}
-
 /** ===== SKELETON ===== */
 .skeleton-circle {
   border-radius: 50%;
@@ -346,20 +281,6 @@ button:focus-visible,
   color: var(--theme-text-primary);
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-group label {
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: var(--theme-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
 .duration-input {
   width: 100%;
   padding: 12px 16px;
@@ -377,15 +298,6 @@ button:focus-visible,
   border-color: color-mix(in srgb, var(--brand-primary) 60%, transparent);
   background: var(--theme-surface-glass-active);
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand-primary) 15%, transparent);
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  padding: 16px 24px;
-  border-top: 1px solid var(--theme-surface-glass-active);
-  background: var(--theme-overlay-light);
 }
 
 /** ===== RESPONSIVE ===== */

@@ -1,0 +1,52 @@
+/* Global badges partial */
+.status-badge {
+	display: inline-block;
+	padding: 4px 12px;
+	border-radius: 20px;
+	font-size: 0.78rem;
+	font-weight: 700;
+	letter-spacing: 0.5px;
+	text-transform: uppercase;
+	border: 1px solid transparent;
+}
+
+.status-badge.success {
+	background: var(--color-success-bg);
+	color: var(--color-success-muted);
+	border-color: var(--color-success-border);
+}
+
+.status-badge.danger {
+	background: var(--color-danger-bg);
+	color: var(--color-danger-muted);
+	border-color: var(--color-danger-border);
+}
+
+.status-badge.warning {
+	background: var(--color-warning-bg);
+	color: var(--color-warning-muted);
+	border-color: var(--color-warning-border);
+}
+
+.status-badge.info {
+	background: var(--color-info-bg);
+	color: var(--color-info);
+	border-color: var(--color-info-border);
+}
+
+.status-badge.admin {
+	background: var(--color-accent-admin-bg);
+	color: var(--color-accent-admin);
+	border-color: var(--color-accent-admin-border);
+}
+
+.role-badge {
+	display: inline-block;
+	padding: 4px 12px;
+	border-radius: 20px;
+	font-size: 0.78rem;
+	font-weight: 700;
+	letter-spacing: 0.5px;
+	text-transform: uppercase;
+	border: 1px solid transparent;
+}
