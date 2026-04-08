@@ -44,7 +44,7 @@
     <app-weekly-plan-calendar-view
       [plan]="detailPlan"
       [readOnly]="detailReadOnly"
-      [allowRevertConfirmed]="role === 'ADMIN'"
+      [allowRevertConfirmed]="canAdminRevertConfirmed"
       (confirmSlot)="confirmSlot($event)"
       (unconfirmSlot)="unconfirmSlot($event)"
       (cancelSlot)="cancelSlot($event)"
@@ -95,7 +95,7 @@
         <app-weekly-plan-calendar-view
           [plan]="currentPlan"
           [readOnly]="false"
-          [allowRevertConfirmed]="role === 'ADMIN'"
+          [allowRevertConfirmed]="false"
           (confirmSlot)="confirmSlot($event)"
           (unconfirmSlot)="unconfirmSlot($event)"
           (cancelSlot)="cancelSlot($event)"
