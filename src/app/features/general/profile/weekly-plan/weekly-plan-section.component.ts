@@ -234,6 +234,10 @@ export class WeeklyPlanSectionComponent implements OnInit, OnChanges {
     return this.role === 'ADMIN';
   }
 
+  get canAdminRevertConfirmed(): boolean {
+    return this.currentRole === 'ADMIN';
+  }
+
   get canActivateFromStockModal(): boolean {
     if (this.stockModalContext !== 'activation' || !this.stockTargetPlanId) {
       return false;
