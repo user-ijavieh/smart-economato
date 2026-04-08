@@ -54,6 +54,9 @@
                 @if (canEdit(plan)) {
                   <button type="button" class="btn-primary compact" (click)="editPlan.emit(plan); $event.stopPropagation()" title="Editar plan (solo borradores)">Editar</button>
                 }
+                @if (canDuplicate(plan)) {
+                  <button type="button" class="btn-secondary compact" (click)="duplicatePlan.emit(plan); $event.stopPropagation()" title="Duplicar a otra semana">Duplicar</button>
+                }
                 <button type="button" class="btn-secondary compact" (click)="selectPlan.emit(plan); $event.stopPropagation()">Ver</button>
               </td>
             </tr>
