@@ -35,15 +35,6 @@ import { finalize, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
       transition(':leave', [
         animate('200ms ease-in', style({ opacity: 0, transform: 'translateY(-10px)' }))
       ])
-    ]),
-    trigger('modalAnimation', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('350ms ease-out', style({ opacity: 1 }))
-      ]),
-      transition(':leave', [
-        animate('250ms ease-in', style({ opacity: 0 }))
-      ])
     ])
   ]
 })

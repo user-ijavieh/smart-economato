@@ -1,7 +1,6 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { trigger, transition, style, animate } from '@angular/animations';
 import { RecipeService } from '../../../core/services/recipe.service';
 import { MessageService } from '../../../core/services/message.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -18,27 +17,7 @@ import { finalize, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
   imports: [CommonModule, FormsModule, RecipeDetailModalComponent, RecipeEditModalComponent, RecipeCreateModalComponent],
   templateUrl: './recipes.component.html',
   styleUrl: './recipes.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('fadeSlide', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateX(-10px)' }),
-        animate('300ms cubic-bezier(0.175, 0.885, 0.32, 1.1)', style({ opacity: 1, transform: 'translateX(0)' }))
-      ]),
-      transition(':leave', [
-        animate('200ms ease-in', style({ opacity: 0, transform: 'translateX(-10px)' }))
-      ])
-    ]),
-    trigger('modalAnimation', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('350ms ease-out', style({ opacity: 1 }))
-      ]),
-      transition(':leave', [
-        animate('250ms ease-in', style({ opacity: 0 }))
-      ])
-    ])
-  ]
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecipesComponent implements OnInit {
   private recipeService = inject(RecipeService);

@@ -1,0 +1,78 @@
+/* ===== ADMIN THEME - MODAL OVERRIDES ===== */
+
+/* Variables de marca admin para modales general-feature que se usan en contexto admin */
+.admin-theme app-product-create-modal,
+.admin-theme app-product-detail-modal,
+.admin-theme app-product-edit-modal,
+.admin-theme app-recipe-create-modal,
+.admin-theme app-recipe-detail-modal,
+.admin-theme app-recipe-edit-modal {
+  --color-brand-primary: rgba(90, 120, 220, 0.95);
+  --color-brand-dark: rgba(90, 120, 220, 0.8);
+  --color-brand-glow: rgba(90, 120, 220, 0.35);
+  --color-surface-glass: var(--theme-surface-glass);
+  --color-border-glass: rgba(90, 120, 220, 0.15);
+}
+
+/* Header gradient admin */
+.admin-theme app-base-modal .modal-header-base {
+  background: linear-gradient(to right, rgba(90, 120, 220, 0.15), transparent);
+}
+
+/* Boton primario (save/cocinar) en admin */
+.admin-theme app-base-modal .modal-btn-primary,
+.admin-theme app-base-modal .btn-save,
+.admin-theme app-base-modal .btn-cocinar {
+  background: var(--theme-surface-glass-active);
+  border: none;
+  box-shadow: 0 4px 18px rgba(90, 120, 220, 0.2);
+  color: var(--theme-text-primary);
+}
+
+.admin-theme app-base-modal .modal-btn-primary:hover:not(:disabled),
+.admin-theme app-base-modal .btn-save:hover:not(:disabled),
+.admin-theme app-base-modal .btn-cocinar:hover:not(:disabled) {
+  background: rgba(90, 120, 220, 0.8);
+  box-shadow: 0 8px 25px rgba(90, 120, 220, 0.4);
+}
+
+/* Boton secundario/editar en admin */
+.admin-theme app-base-modal .modal-btn-cancel,
+.admin-theme app-base-modal .btn-editar {
+  background: rgba(90, 120, 220, 0.15);
+  color: var(--color-accent-admin);
+  border: 1px solid rgba(90, 120, 220, 0.3);
+}
+
+.admin-theme app-base-modal .modal-btn-cancel:hover:not(:disabled),
+.admin-theme app-base-modal .btn-editar:hover {
+  background: rgba(90, 120, 220, 0.25);
+  box-shadow: 0 8px 25px rgba(90, 120, 220, 0.15);
+}
+
+/* Boton eliminar en admin */
+.admin-theme app-base-modal .modal-btn-danger,
+.admin-theme app-base-modal .btn-eliminar {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--color-danger-muted);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.admin-theme app-base-modal .modal-btn-danger:hover:not(:disabled),
+.admin-theme app-base-modal .btn-eliminar:hover {
+  background: rgba(239, 68, 68, 0.25);
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.15);
+}
+
+/* Opciones seleccionadas en admin */
+.admin-theme app-base-modal .product-option.selected {
+  background: var(--color-accent-admin-bg);
+  color: var(--color-accent-admin);
+}
+
+/* Boton anadir componente en admin */
+.admin-theme app-base-modal .btn-add-component:hover {
+  border-color: rgba(90, 120, 220, 0.95);
+  color: var(--color-accent-admin);
+  background: rgba(90, 120, 220, 0.1);
+}

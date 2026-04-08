@@ -1,0 +1,30 @@
+/* Global empty states partial */
+.empty-state {
+	grid-column: 1 / -1;
+	text-align: center;
+	padding: 60px 20px;
+	background: var(--theme-surface-glass);
+	backdrop-filter: var(--theme-effect-glass);
+	-webkit-backdrop-filter: var(--theme-effect-glass);
+	border: 1px solid var(--theme-border-glass);
+	border-radius: var(--theme-radius-card);
+	box-shadow: var(--theme-shadow-card);
+	color: var(--theme-text-secondary);
+	animation: pageEntry 0.4s ease;
+}
+
+.empty-state svg {
+	fill: currentColor;
+	margin-bottom: 12px;
+}
+
+.empty-state h3 {
+	font-size: 1.5rem;
+	color: var(--theme-text-secondary);
+	margin-bottom: 10px;
+}
+
+.empty-state p {
+	font-size: 1rem;
+	color: var(--theme-text-secondary);
+}
