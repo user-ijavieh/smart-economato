@@ -16,10 +16,12 @@ export class WeeklyPlanSlotActionsComponent {
   @Input() slotStatus: WeeklyPlanSlotResponse['status'] | null = null;
   @Input() readOnly = false;
   @Input() showDayAction = false;
+  @Input() allowRevertConfirmed = false;
 
   @Output() confirmSlot = new EventEmitter<void>();
   @Output() cancelSlot = new EventEmitter<void>();
   @Output() confirmDay = new EventEmitter<void>();
+  @Output() unconfirmSlot = new EventEmitter<void>();
 
   canActOnSlot(): boolean {
     return !this.readOnly
@@ -29,6 +31,12 @@ export class WeeklyPlanSlotActionsComponent {
 
   canConfirmDay(): boolean {
     return !this.readOnly && (this.planStatus === 'ACTIVE' || this.planStatus === 'IN_PROGRESS');
+  }
+
+  canUnconfirmSlot(): boolean {
+    return this.allowRevertConfirmed
+      && this.slotStatus === 'CONFIRMED'
+      && (this.planStatus === 'ACTIVE' || this.planStatus === 'IN_PROGRESS' || this.planStatus === 'COMPLETED');
   }
 
   slotStatusClass(): string {

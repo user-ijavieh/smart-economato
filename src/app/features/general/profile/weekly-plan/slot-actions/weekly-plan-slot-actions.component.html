@@ -7,4 +7,7 @@
     <button type="button" class="btn-success compact" (click)="confirmSlot.emit()">Confirmar</button>
     <button type="button" class="btn-danger compact" (click)="cancelSlot.emit()">Cancelar slot</button>
   }
+  @if (canUnconfirmSlot()) {
+    <button type="button" class="btn-warning compact" (click)="unconfirmSlot.emit()">Revertir confirmación</button>
+  }
 </div>

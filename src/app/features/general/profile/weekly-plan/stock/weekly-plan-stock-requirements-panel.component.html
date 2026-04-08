@@ -1,5 +1,15 @@
 <app-base-modal title="Requisitos de stock" size="lg" (closed)="closed.emit()">
   <div class="panel-content">
+    @if (mode === 'activation' && !loading) {
+      <div class="activation-summary" [class.invalid]="!canActivate">
+        @if (canActivate) {
+          <strong>✅ Stock suficiente. Puedes activar el plan.</strong>
+        } @else {
+          <strong>❌ No hay stock suficiente para activar ({{ insufficientCount }} producto(s) insuficiente(s)).</strong>
+        }
+      </div>
+    }
+
     @if (loading) {
       <p class="empty-state">Cargando requisitos...</p>
     } @else {
@@ -35,6 +45,15 @@
   </div>
 
   <div modal-footer class="panel-footer">
+    @if (mode === 'activation') {
+      <button
+        class="btn-primary"
+        [disabled]="!canActivate || activating"
+        (click)="requestActivation()"
+      >
+        {{ activating ? 'Activando...' : 'Activar plan' }}
+      </button>
+    }
     <button class="btn-secondary" (click)="closed.emit()">Cerrar</button>
   </div>
 </app-base-modal>
