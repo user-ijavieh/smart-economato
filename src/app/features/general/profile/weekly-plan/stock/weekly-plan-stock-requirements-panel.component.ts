@@ -14,6 +14,21 @@ import { WeeklyPlanStockRequirement } from '../../../../../shared/models/weekly-
 export class WeeklyPlanStockRequirementsPanelComponent {
   @Input() requirements: WeeklyPlanStockRequirement[] = [];
   @Input() loading = false;
+  @Input() mode: 'view' | 'activation' = 'view';
+  @Input() canActivate = false;
+  @Input() activating = false;
 
   @Output() closed = new EventEmitter<void>();
+  @Output() activateRequested = new EventEmitter<void>();
+
+  get insufficientCount(): number {
+    return this.requirements.filter(item => !item.sufficient).length;
+  }
+
+  requestActivation(): void {
+    if (!this.canActivate || this.activating) {
+      return;
+    }
+    this.activateRequested.emit();
+  }
 }

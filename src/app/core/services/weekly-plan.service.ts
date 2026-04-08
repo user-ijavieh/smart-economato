@@ -34,6 +34,10 @@ export class WeeklyPlanService {
     return this.http.patch<WeeklyPlanSlotResponse>(`${this.url}/${planId}/slots/${slotId}/confirm`, {});
   }
 
+  unconfirmSlot(planId: number, slotId: number): Observable<WeeklyPlanSlotResponse> {
+    return this.http.patch<WeeklyPlanSlotResponse>(`${this.url}/${planId}/slots/${slotId}/unconfirm`, {});
+  }
+
   confirmDay(planId: number, dayOfWeek: number): Observable<ConfirmDayResponse> {
     return this.http.patch<ConfirmDayResponse>(`${this.url}/${planId}/days/${dayOfWeek}/confirm`, {});
   }

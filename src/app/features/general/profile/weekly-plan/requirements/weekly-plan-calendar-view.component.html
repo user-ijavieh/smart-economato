@@ -54,6 +54,7 @@
                       <small>{{ studentStatusLabel(student.status) }}</small>
                       @if (!readOnly && canUseActions() && student.status !== 'CANCELLED') {
                         <button type="button" class="chip-action" (click)="cancelStudent.emit({ slot, student }); $event.stopPropagation()">Cancelar</button>
+                        <button type="button" class="chip-action" (click)="cancelStudentDay.emit({ dayOfWeek: slot.dayOfWeek, student }); $event.stopPropagation()">Cancelar día</button>
                       }
                     </div>
                   }
@@ -66,7 +67,9 @@
                   [planStatus]="plan.status"
                   [slotStatus]="slot.status"
                   [readOnly]="readOnly || isLocked(slot)"
+                  [allowRevertConfirmed]="allowRevertConfirmed"
                   (confirmSlot)="confirmSlot.emit(slot)"
+                  (unconfirmSlot)="unconfirmSlot.emit(slot)"
                   (cancelSlot)="cancelSlot.emit(slot)"
                   (click)="$event.stopPropagation()"
                 />

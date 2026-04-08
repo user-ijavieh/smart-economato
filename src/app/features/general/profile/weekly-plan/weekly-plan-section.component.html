@@ -14,7 +14,7 @@
     </div>
 
     <div class="section-actions">
-      @if (canCreatePlan && activeTab === 'current' && !detailPlan) {
+      @if (canCreatePlan && !detailPlan && (role === 'ADMIN' || activeTab === 'current')) {
         <button class="btn-success" (click)="openCreateForm()">Nuevo plan</button>
       }
       @if (canViewSensitivePanels && (detailPlan || currentPlan)) {
@@ -28,22 +28,29 @@
     <div class="access-message">{{ accessMessage }}</div>
   } @else if (detailPlan) {
     <div class="detail-backbar">
-      <button class="btn-secondary" (click)="closeDetail()">Volver</button>
-      @if (canEditPlan && detailPlan.status === 'DRAFT') {
+      <div class="detail-nav-group">
+        <button class="btn-secondary" (click)="closeDetail()">Volver</button>
+        <button class="btn-secondary" (click)="navigateDetailWeek(-1)" aria-label="Semana anterior">← Semana anterior</button>
+        <button class="btn-secondary" (click)="navigateDetailWeek(1)" aria-label="Semana siguiente">Semana siguiente →</button>
+      </div>
+      @if (canModifyPlan(detailPlan)) {
         <button class="btn-secondary" (click)="openEditForm(detailPlan)">Editar</button>
       }
-      @if (canEditPlan && detailPlan.status !== 'DRAFT') {
+      @if (canDuplicatePlan(detailPlan)) {
         <button class="btn-secondary" (click)="openDuplicate(detailPlan)">Duplicar</button>
       }
     </div>
 
     <app-weekly-plan-calendar-view
       [plan]="detailPlan"
-      [readOnly]="true"
+      [readOnly]="detailReadOnly"
+      [allowRevertConfirmed]="canAdminRevertConfirmed"
       (confirmSlot)="confirmSlot($event)"
+      (unconfirmSlot)="unconfirmSlot($event)"
       (cancelSlot)="cancelSlot($event)"
       (confirmDay)="confirmDay($event)"
       (cancelStudent)="cancelStudent($event)"
+      (cancelStudentDay)="cancelStudentDay($event)"
     />
   } @else {
     @if (role !== 'ADMIN') {
@@ -62,6 +69,7 @@
         [totalElements]="historyTotalElements"
         [statusFilter]="historyStatusFilter"
         [showChefColumn]="role === 'ADMIN'"
+        [role]="role"
         (pageChange)="onHistoryPageChange($event)"
         (statusFilterChange)="onHistoryFilterChange($event)"
         (selectPlan)="openDetail($event)"
@@ -76,18 +84,24 @@
           <span class="summary-label">Estado</span>
           <span class="summary-badge" [ngClass]="currentStatusClass">{{ currentStatusLabel }}</span>
           <span class="summary-range">{{ currentPlan.weekStartDate }} - {{ currentPlan.weekEndDate }}</span>
-          @if (canEditPlan) {
+          @if (canModifyPlan(currentPlan)) {
             <button class="btn-secondary" (click)="openEditForm(currentPlan)">Editar</button>
+          }
+          @if (canDuplicatePlan(currentPlan)) {
+            <button class="btn-secondary" (click)="openDuplicate(currentPlan)">Duplicar</button>
           }
         </div>
 
         <app-weekly-plan-calendar-view
           [plan]="currentPlan"
           [readOnly]="false"
+          [allowRevertConfirmed]="false"
           (confirmSlot)="confirmSlot($event)"
+          (unconfirmSlot)="unconfirmSlot($event)"
           (cancelSlot)="cancelSlot($event)"
           (confirmDay)="confirmDay($event)"
           (cancelStudent)="cancelStudent($event)"
+          (cancelStudentDay)="cancelStudentDay($event)"
         />
       } @else {
         <div class="empty-state-box">No hay plan activo para esta semana.</div>
@@ -142,7 +156,11 @@
   <app-weekly-plan-stock-requirements-panel
     [requirements]="stockRequirements"
     [loading]="stockLoading"
-    (closed)="showStockModal = false"
+    [mode]="stockModalContext"
+    [activating]="stockActivating"
+    [canActivate]="canActivateFromStockModal"
+    (activateRequested)="activateFromStockModal()"
+    (closed)="closeStockModal()"
   />
 }
 
