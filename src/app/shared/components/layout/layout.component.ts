@@ -145,6 +145,7 @@ export class LayoutComponent {
     this.isNotificationPanelRendered.set(true);
     this.isNotificationPanelClosing.set(false);
     this.isNotificationPanelOpen.set(true);
+    this.notificationService.refreshNotifications();
   }
 
   stopPanelPropagation(event: MouseEvent): void {
