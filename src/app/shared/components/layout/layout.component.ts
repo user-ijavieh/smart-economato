@@ -36,7 +36,11 @@ export class LayoutComponent {
   readonly notifications$ = this.notificationService.notifications$;
   readonly unreadCount$ = this.notificationService.unreadCount$;
   readonly isNotificationPanelOpen = signal(false);
+  readonly isNotificationPanelRendered = signal(false);
+  readonly isNotificationPanelClosing = signal(false);
   readonly notificationPulse = signal(false);
+
+  private notificationCloseTimer?: ReturnType<typeof setTimeout>;
 
   isAuthenticated$ = this.authService.authStatus$;
 
@@ -75,8 +79,8 @@ export class LayoutComponent {
 
   @HostListener('document:click')
   onDocumentClick(): void {
-    if (this.isNotificationPanelOpen()) {
-      this.isNotificationPanelOpen.set(false);
+    if (this.isNotificationPanelOpen() || this.isNotificationPanelRendered()) {
+      this.closeNotificationPanel();
     }
   }
 
@@ -127,11 +131,45 @@ export class LayoutComponent {
 
   toggleNotificationPanel(event: MouseEvent): void {
     event.stopPropagation();
-    this.isNotificationPanelOpen.set(!this.isNotificationPanelOpen());
+
+    if (this.isNotificationPanelOpen()) {
+      this.closeNotificationPanel();
+      return;
+    }
+
+    if (this.notificationCloseTimer) {
+      clearTimeout(this.notificationCloseTimer);
+      this.notificationCloseTimer = undefined;
+    }
+
+    this.isNotificationPanelRendered.set(true);
+    this.isNotificationPanelClosing.set(false);
+    this.isNotificationPanelOpen.set(true);
   }
 
   stopPanelPropagation(event: MouseEvent): void {
     event.stopPropagation();
+  }
+
+  closeNotificationPanel(event?: MouseEvent): void {
+    event?.stopPropagation();
+
+    if (!this.isNotificationPanelRendered()) {
+      return;
+    }
+
+    this.isNotificationPanelOpen.set(false);
+    this.isNotificationPanelClosing.set(true);
+
+    if (this.notificationCloseTimer) {
+      clearTimeout(this.notificationCloseTimer);
+    }
+
+    this.notificationCloseTimer = setTimeout(() => {
+      this.isNotificationPanelClosing.set(false);
+      this.isNotificationPanelRendered.set(false);
+      this.notificationCloseTimer = undefined;
+    }, 220);
   }
 
   onNotificationClick(notification: SessionNotification): void {

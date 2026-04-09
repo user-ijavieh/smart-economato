@@ -26,8 +26,17 @@
   }
 </button>
 
-@if (isNotificationPanelOpen()) {
-  <aside class="notifications-panel" (click)="stopPanelPropagation($event)">
+@if (isNotificationPanelRendered()) {
+  <div
+    class="notifications-overlay"
+    [class.notifications-overlay--closing]="isNotificationPanelClosing()"
+    (click)="closeNotificationPanel($event)"
+  ></div>
+  <aside
+    class="notifications-panel"
+    [class.notifications-panel--closing]="isNotificationPanelClosing()"
+    (click)="stopPanelPropagation($event)"
+  >
     <header class="notifications-panel__header">
       <h3>Notificaciones</h3>
       <button type="button" (click)="markAllNotificationsAsRead()">Marcar todas</button>

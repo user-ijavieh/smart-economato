@@ -45,6 +45,12 @@ main.main-expanded {
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.notifications-bell:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
 }
 
 .notifications-bell__badge {
@@ -93,6 +99,64 @@ main.main-expanded {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  animation: notificationsPanelIn 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.notifications-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1001;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(1px);
+  animation: notificationsOverlayIn 180ms ease-out both;
+}
+
+.notifications-overlay.notifications-overlay--closing {
+  animation: notificationsOverlayOut 180ms ease-in both;
+}
+
+@keyframes notificationsPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes notificationsOverlayIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes notificationsOverlayOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.notifications-panel.notifications-panel--closing {
+  animation: notificationsPanelOut 200ms ease-in both;
+}
+
+@keyframes notificationsPanelOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.985);
+  }
 }
 
 .notifications-panel__header {
@@ -141,6 +205,11 @@ main.main-expanded {
   cursor: pointer;
   border: 1px solid var(--theme-border-glass);
   background: var(--theme-surface-glass);
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.notification-item:hover {
+  transform: translateY(-1px);
 }
 
 .notification-item--unread {
@@ -193,6 +262,7 @@ main.main-expanded {
 
 .notification-item p.collapsed {
   overflow: hidden;
+  line-clamp: 2;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -229,7 +299,33 @@ main.main-expanded {
     top: 58px;
     right: 8px;
     width: calc(100vw - 16px);
-    max-height: 58vh;
+    max-height: min(64vh, 540px);
+    border-radius: 12px;
+    animation-name: notificationsPanelInMobile;
+  }
+
+  .notifications-overlay {
+    background: rgba(0, 0, 0, 0.36);
+  }
+
+  .notifications-list {
+    gap: 6px;
+    padding: 6px;
+  }
+
+  .notification-item {
+    padding: 8px;
+  }
+
+  @keyframes notificationsPanelInMobile {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .mobile-theme-toggle:hover {

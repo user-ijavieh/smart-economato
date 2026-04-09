@@ -1,35 +1,26 @@
-<section class="notifications-admin">
-  <header class="notifications-admin__header">
-    <h1>Notificaciones manuales</h1>
-    <p>Envía notificaciones en tiempo real por rol o por usuario.</p>
-  </header>
+<div class="admin-page-header">
+  <h1>Gestión de Notificaciones</h1>
+</div>
 
-  <div class="notifications-admin__tabs" role="tablist" aria-label="Modo de envío">
-    <button
-      type="button"
-      class="tab-btn"
-      [class.active]="activeTab === 'role'"
-      (click)="setActiveTab('role')"
-    >
-      Enviar a rol
-    </button>
-    <button
-      type="button"
-      class="tab-btn"
-      [class.active]="activeTab === 'user'"
-      (click)="setActiveTab('user')"
-    >
-      Enviar a usuario
-    </button>
-  </div>
+<div class="admin-tab-bar" role="tablist" aria-label="Modo de envío">
+  <button type="button" class="admin-tab-btn" [class.active]="activeTab === 'role'" (click)="setActiveTab('role')">
+    Enviar a grupo
+  </button>
+  <button type="button" class="admin-tab-btn" [class.active]="activeTab === 'user'" (click)="setActiveTab('user')">
+    Enviar a usuario
+  </button>
+</div>
 
+<div class="page-content contenedor-principal">
   @if (activeTab === 'role') {
-    <form class="notification-form" [formGroup]="roleForm" (ngSubmit)="submitByRole()">
+    <form class="form-card" [formGroup]="roleForm" (ngSubmit)="submitByRole()">
+      <p class="form-helper">Envía una notificación manual a todos los usuarios de un grupo.</p>
+
       <label>
-        Rol
+        Grupo
         <select formControlName="role">
-          @for (role of roles; track role) {
-            <option [value]="role">{{ role }}</option>
+          @for (role of roles; track role.value) {
+            <option [value]="role.value">{{ role.label }}</option>
           }
         </select>
       </label>
@@ -44,12 +35,7 @@
 
       <label>
         Mensaje
-        <textarea
-          formControlName="message"
-          rows="5"
-          maxlength="500"
-          placeholder="Escribe el mensaje que verán los usuarios..."
-        ></textarea>
+        <textarea formControlName="message" rows="5" maxlength="500" placeholder="Escribe el mensaje que verán los usuarios..."></textarea>
       </label>
       @if (roleForm.controls.message.invalid && roleForm.controls.message.touched) {
         <small class="error">El mensaje es obligatorio y debe tener máximo 500 caracteres.</small>
@@ -57,7 +43,7 @@
 
       <div class="preview">{{ rolePreview() }}</div>
 
-      <button type="submit" [disabled]="sendingRole || roleForm.invalid">
+      <button type="submit" class="toolbar-btn btn-submit" [disabled]="sendingRole || roleForm.invalid">
         @if (sendingRole) {
           Enviando...
         } @else {
@@ -68,7 +54,9 @@
   }
 
   @if (activeTab === 'user') {
-    <form class="notification-form" [formGroup]="userForm" (ngSubmit)="submitByUser()">
+    <form class="form-card" [formGroup]="userForm" (ngSubmit)="submitByUser()">
+      <p class="form-helper">Envía una notificación manual a un usuario específico.</p>
+
       <label class="autocomplete-field">
         Usuario
         <input
@@ -104,12 +92,7 @@
 
       <label>
         Mensaje
-        <textarea
-          formControlName="message"
-          rows="5"
-          maxlength="500"
-          placeholder="Escribe el mensaje..."
-        ></textarea>
+        <textarea formControlName="message" rows="5" maxlength="500" placeholder="Escribe el mensaje..."></textarea>
       </label>
       @if (userForm.controls.message.invalid && userForm.controls.message.touched) {
         <small class="error">El mensaje es obligatorio y debe tener máximo 500 caracteres.</small>
@@ -117,7 +100,7 @@
 
       <div class="preview">{{ userPreview() }}</div>
 
-      <button type="submit" [disabled]="sendingUser || userForm.invalid">
+      <button type="submit" class="toolbar-btn btn-submit" [disabled]="sendingUser || userForm.invalid">
         @if (sendingUser) {
           Enviando...
         } @else {
@@ -126,4 +109,4 @@
       </button>
     </form>
   }
-</section>
+</div>
