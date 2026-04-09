@@ -3,9 +3,17 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 export interface Toast {
   id: number;
+  title?: string;
   message: string;
   type: 'success' | 'error' | 'warning' | 'info';
   duration?: number;
+  persistent?: boolean;
+}
+
+export interface ToastOptions {
+  duration?: number;
+  title?: string;
+  persistent?: boolean;
 }
 
 export interface ConfirmDialog {
@@ -33,20 +41,20 @@ export class MessageService {
     return this.confirmDialog$.asObservable();
   }
 
-  showSuccess(message: string, duration?: number): void {
-    this.addToast(message, 'success', duration);
+  showSuccess(message: string, duration?: number, options?: Omit<ToastOptions, 'duration'>): void {
+    this.addToast(message, 'success', { duration, ...options });
   }
 
-  showError(message: string, duration?: number): void {
-    this.addToast(message, 'error', duration);
+  showError(message: string, duration?: number, options?: Omit<ToastOptions, 'duration'>): void {
+    this.addToast(message, 'error', { duration, ...options });
   }
 
-  showWarning(message: string, duration?: number): void {
-    this.addToast(message, 'warning', duration);
+  showWarning(message: string, duration?: number, options?: Omit<ToastOptions, 'duration'>): void {
+    this.addToast(message, 'warning', { duration, ...options });
   }
 
-  showInfo(message: string, duration?: number): void {
-    this.addToast(message, 'info', duration);
+  showInfo(message: string, duration?: number, options?: Omit<ToastOptions, 'duration'>): void {
+    this.addToast(message, 'info', { duration, ...options });
   }
 
   confirm(title: string, message: string, confirmText?: string, cancelText?: string): Promise<boolean> {
@@ -61,12 +69,21 @@ export class MessageService {
     this.confirmResolve?.(result);
   }
 
-  private addToast(message: string, type: Toast['type'], duration = 3000): void {
-    const toast: Toast = { id: this.nextId++, message, type, duration };
+  private addToast(message: string, type: Toast['type'], options?: ToastOptions): void {
+    const toast: Toast = {
+      id: this.nextId++,
+      title: options?.title,
+      message,
+      type,
+      duration: options?.duration ?? 3000,
+      persistent: options?.persistent ?? false
+    };
 
     setTimeout(() => {
       this.toasts$.next([...this.toasts$.value, toast]);
-      setTimeout(() => this.toastExpired$.next(toast.id), duration);
+      if (!toast.persistent) {
+        setTimeout(() => this.toastExpired$.next(toast.id), toast.duration);
+      }
     }, 0);
   }
 

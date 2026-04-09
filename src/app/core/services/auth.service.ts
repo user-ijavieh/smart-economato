@@ -5,6 +5,7 @@ import { Observable, tap, BehaviorSubject, switchMap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Role, hasPermission } from '../../shared/models/role-permissions';
 import { WebSocketService } from './websocket.service';
+import { NotificationService } from './notification.service';
 
 interface LoginRequest {
   name: string;
@@ -38,6 +39,7 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
   private webSocketService = inject(WebSocketService);
+  private notificationService = inject(NotificationService);
   private apiUrl = environment.apiUrl;
   private TOKEN_KEY = 'auth_token';
   private ROLE_KEY = 'user_role';
@@ -49,8 +51,10 @@ export class AuthService {
 
   constructor() {
     const token = this.getToken();
+    const role = this.getRole();
     if (token) {
       this.webSocketService.connect(token);
+      this.notificationService.connect(token, role);
     }
   }
 
@@ -74,6 +78,7 @@ export class AuthService {
         localStorage.setItem(this.ROLE_KEY, profile.role);
         localStorage.setItem(this.ID_KEY, profile.id.toString());
         localStorage.setItem(this.FIRST_LOGIN_KEY, String(profile.firstLogin));
+        this.notificationService.connect(this.getToken() || '', profile.role);
         this.isLoggedIn$.next(true);
       })
     );
@@ -101,6 +106,7 @@ export class AuthService {
 
   logout(): void {
     this.webSocketService.disconnect();
+    this.notificationService.disconnect();
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.ROLE_KEY);
     localStorage.removeItem(this.NAME_KEY);

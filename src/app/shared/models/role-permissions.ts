@@ -222,6 +222,8 @@ export const ROLE_PERMISSIONS: Record<Exclude<Role, 'ELEVATED'>, string[]> = {
     "GET /api/traceability/crisis/{crisisId}/report/download",
     "GET /api/traceability/forward",
     "GET /api/traceability/reverse/{cookingAuditId}",
+    "POST /api/notifications/role/{role}",
+    "POST /api/notifications/user/{username}",
     "GET /api/stats/recipes",
     "GET /api/stats/recipes/with-allergens/count",
     "GET /api/stats/recipes/without-allergens/count",
