@@ -247,13 +247,15 @@ export class NotificationService {
   }
 
   private mapPersistedNotification(notification: NotificationResponseDTO): SessionNotification {
+    const isRead = notification.isRead ?? notification.read ?? false;
+
     return {
       id: notification.id.toString(),
       title: notification.title?.trim() || 'Notificación',
       message: notification.message,
       code: this.mapNotificationTypeToCode(notification.type),
       timestamp: this.normalizeTimestamp(notification.createdAt),
-      read: notification.isRead,
+      read: isRead,
       expanded: false,
       receivedAt: new Date(notification.createdAt).getTime() || Date.now()
     };
