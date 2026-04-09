@@ -10,7 +10,9 @@ export interface NotificationResponseDTO {
   title: string;
   message: string;
   referenceId: number | null;
-  isRead: boolean;
+  // Backend payload may use either "isRead" or "read" depending on serializer/config.
+  isRead?: boolean;
+  read?: boolean;
   senderName: string | null;
   groupId: string | null;
   createdAt: string;

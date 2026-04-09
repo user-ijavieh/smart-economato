@@ -91,7 +91,10 @@ export const ROLE_PERMISSIONS: Record<Exclude<Role, 'ELEVATED'>, string[]> = {
     "PATCH /api/weekly-plans/{id}/slots/{slotId}/cancel",
     "PATCH /api/weekly-plans/{id}/slots/{slotId}/students/{studentId}/cancel",
     "PATCH /api/weekly-plans/{id}/days/{dayOfWeek}/students/{studentId}/cancel",
-    "GET /api/weekly-plans/metrics/students"
+    "GET /api/weekly-plans/metrics/students",
+    "GET /api/notifications",
+    "PATCH /api/notifications/{id}/read",
+    "PATCH /api/notifications/read-all"
   ],
   ADMIN: [
     "GET /api/products/with-ledger",
