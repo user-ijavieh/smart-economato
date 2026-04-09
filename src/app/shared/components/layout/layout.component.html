@@ -12,6 +12,66 @@
   }
 </button>
 
+<button
+  class="notifications-bell"
+  [class.notifications-bell--pulse]="notificationPulse()"
+  [attr.aria-label]="'Abrir notificaciones'"
+  (click)="toggleNotificationPanel($event)"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+    <path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z" />
+  </svg>
+  @if (((unreadCount$ | async) || 0) > 0) {
+    <span class="notifications-bell__badge">{{ (unreadCount$ | async) || 0 }}</span>
+  }
+</button>
+
+@if (isNotificationPanelRendered()) {
+  <div
+    class="notifications-overlay"
+    [class.notifications-overlay--closing]="isNotificationPanelClosing()"
+    (click)="closeNotificationPanel($event)"
+  ></div>
+  <aside
+    class="notifications-panel"
+    [class.notifications-panel--closing]="isNotificationPanelClosing()"
+    (click)="stopPanelPropagation($event)"
+  >
+    <header class="notifications-panel__header">
+      <h3>Notificaciones</h3>
+      <button type="button" (click)="markAllNotificationsAsRead()">Marcar todas</button>
+    </header>
+
+    @if (notifications$ | async; as notifications) {
+      @if (notifications.length === 0) {
+        <div class="notifications-empty">No tienes notificaciones</div>
+      } @else {
+        <ul class="notifications-list">
+          @for (notification of notifications; track notification.id) {
+            <li
+              class="notification-item"
+              [class.notification-item--unread]="!notification.read"
+              [class.notification-item--crisis]="notification.code === 'FOOD_CRISIS_ACTIVATED'"
+              [class.notification-item--success]="notification.code === 'FOOD_CRISIS_LIFTED'"
+              [class.notification-item--info]="!notification.code"
+              (click)="onNotificationClick(notification)"
+            >
+              <div class="notification-item__icon">{{ notificationIcon(notification) }}</div>
+              <div class="notification-item__content">
+                <div class="notification-item__head">
+                  <strong>{{ notification.title }}</strong>
+                  <time>{{ formatNotificationTimestamp(notification.timestamp) }}</time>
+                </div>
+                <p [class.collapsed]="!notification.expanded">{{ notification.message }}</p>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    }
+  </aside>
+}
+
 <main class="scrollable-content" [class.main-expanded]="!sidebarOpen" [class.main-collapsed]="sidebarOpen">
   <div class="route-animation-wrapper" [@routeAnimations]="prepareRoute(outlet)">
     <router-outlet #outlet="outlet"></router-outlet>

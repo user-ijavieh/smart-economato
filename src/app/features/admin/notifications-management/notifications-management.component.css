@@ -1,0 +1,197 @@
+:host {
+  display: block;
+}
+
+.contenedor-principal {
+  min-height: calc(100vh - 140px);
+  animation: fadeSlideUp 0.3s ease-out;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px;
+  border-radius: var(--theme-radius-card);
+  border: 1px solid var(--theme-border-glass);
+  background: var(--theme-surface-glass);
+  backdrop-filter: var(--theme-effect-glass);
+  box-shadow: var(--theme-shadow-card);
+  margin-bottom: 1rem;
+  animation: fadeSlideUp 0.3s ease-out;
+}
+
+.form-helper {
+  margin: 0;
+  color: var(--theme-text-secondary);
+  font-size: 0.9rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--theme-text-primary);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+input,
+select,
+textarea {
+  border-radius: var(--theme-radius-input);
+  border: 1.5px solid var(--theme-border-glass);
+  padding: 11px 14px;
+  color: var(--theme-text-primary);
+  background: var(--theme-input-bg);
+  font: inherit;
+  transition: all 0.25s ease;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--theme-text-secondary);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: rgba(90, 120, 220, 0.6);
+  background: var(--theme-surface-glass-active);
+  box-shadow: 0 0 0 4px rgba(90, 120, 220, 0.2);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.error {
+  color: var(--color-danger);
+  font-size: 0.8rem;
+}
+
+.preview {
+  border-radius: 12px;
+  background: var(--theme-section-header-bg-strong);
+  border: 1px solid var(--theme-border-glass);
+  color: var(--theme-text-secondary);
+  padding: 12px;
+  font-size: 0.88rem;
+}
+
+.toolbar-btn {
+  padding: 10px 20px;
+  border-radius: var(--theme-radius-btn);
+  border: 1px solid var(--theme-surface-glass-hover);
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  background: var(--theme-surface-glass-active);
+  color: var(--theme-text-primary);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.toolbar-btn:hover:not(:disabled) {
+  background: var(--theme-border-glass);
+  border-color: var(--theme-border-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.toolbar-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-toggle-view {
+  background: var(--theme-surface-glass-hover);
+  border: 1px solid var(--theme-border-medium);
+  color: var(--theme-text-secondary);
+}
+
+.btn-toggle-view.active {
+  background: var(--color-accent-admin-bg);
+  color: var(--theme-text-primary);
+  border-color: var(--color-accent-admin-hover-border);
+}
+
+.btn-submit {
+  align-self: flex-start;
+  background: var(--color-accent-admin-bg);
+  border-color: var(--color-accent-admin-border);
+}
+
+.autocomplete-field {
+  position: relative;
+}
+
+.suggestions {
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  border-radius: 10px;
+  border: 1px solid var(--theme-border-glass);
+  background: var(--theme-option-bg);
+  max-height: 220px;
+  overflow: auto;
+  box-shadow: var(--theme-shadow-deep);
+}
+
+@media (max-width: 800px) {
+  .contenedor-principal {
+    min-height: auto;
+  }
+
+  .form-card {
+    padding: 14px;
+  }
+
+  .toolbar-btn,
+  .btn-submit {
+    width: 100%;
+  }
+}
+
+.suggestions li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.suggestions li:hover {
+  background: var(--theme-surface-glass-hover);
+}
+
+.suggestions .name {
+  font-weight: 600;
+}
+
+.suggestions .user {
+  color: var(--theme-text-secondary);
+  font-size: 0.8rem;
+}

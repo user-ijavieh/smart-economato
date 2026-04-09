@@ -1,0 +1,112 @@
+<div class="admin-page-header">
+  <h1>Gestión de Notificaciones</h1>
+</div>
+
+<div class="admin-tab-bar" role="tablist" aria-label="Modo de envío">
+  <button type="button" class="admin-tab-btn" [class.active]="activeTab === 'role'" (click)="setActiveTab('role')">
+    Enviar a grupo
+  </button>
+  <button type="button" class="admin-tab-btn" [class.active]="activeTab === 'user'" (click)="setActiveTab('user')">
+    Enviar a usuario
+  </button>
+</div>
+
+<div class="page-content contenedor-principal">
+  @if (activeTab === 'role') {
+    <form class="form-card" [formGroup]="roleForm" (ngSubmit)="submitByRole()">
+      <p class="form-helper">Envía una notificación manual a todos los usuarios de un grupo.</p>
+
+      <label>
+        Grupo
+        <select formControlName="role">
+          @for (role of roles; track role.value) {
+            <option [value]="role.value">{{ role.label }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        Título
+        <input formControlName="title" type="text" maxlength="100" placeholder="Ej. Cambio de horario" />
+      </label>
+      @if (roleForm.controls.title.invalid && roleForm.controls.title.touched) {
+        <small class="error">El título es obligatorio y debe tener máximo 100 caracteres.</small>
+      }
+
+      <label>
+        Mensaje
+        <textarea formControlName="message" rows="5" maxlength="500" placeholder="Escribe el mensaje que verán los usuarios..."></textarea>
+      </label>
+      @if (roleForm.controls.message.invalid && roleForm.controls.message.touched) {
+        <small class="error">El mensaje es obligatorio y debe tener máximo 500 caracteres.</small>
+      }
+
+      <div class="preview">{{ rolePreview() }}</div>
+
+      <button type="submit" class="toolbar-btn btn-submit" [disabled]="sendingRole || roleForm.invalid">
+        @if (sendingRole) {
+          Enviando...
+        } @else {
+          Enviar
+        }
+      </button>
+    </form>
+  }
+
+  @if (activeTab === 'user') {
+    <form class="form-card" [formGroup]="userForm" (ngSubmit)="submitByUser()">
+      <p class="form-helper">Envía una notificación manual a un usuario específico.</p>
+
+      <label class="autocomplete-field">
+        Usuario
+        <input
+          formControlName="username"
+          type="text"
+          placeholder="Busca por nombre o usuario"
+          autocomplete="off"
+          (input)="onUsernameInput()"
+          (blur)="hideSuggestions()"
+        />
+        @if (showUserSuggestions) {
+          <ul class="suggestions" role="listbox">
+            @for (user of filteredUsers; track user.id) {
+              <li role="option" (mousedown)="selectUser(user)">
+                <span class="name">{{ user.name }}</span>
+                <span class="user">{{ user.user }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </label>
+      @if (userForm.controls.username.invalid && userForm.controls.username.touched) {
+        <small class="error">Indica un usuario válido.</small>
+      }
+
+      <label>
+        Título
+        <input formControlName="title" type="text" maxlength="100" placeholder="Ej. Recordatorio" />
+      </label>
+      @if (userForm.controls.title.invalid && userForm.controls.title.touched) {
+        <small class="error">El título es obligatorio y debe tener máximo 100 caracteres.</small>
+      }
+
+      <label>
+        Mensaje
+        <textarea formControlName="message" rows="5" maxlength="500" placeholder="Escribe el mensaje..."></textarea>
+      </label>
+      @if (userForm.controls.message.invalid && userForm.controls.message.touched) {
+        <small class="error">El mensaje es obligatorio y debe tener máximo 500 caracteres.</small>
+      }
+
+      <div class="preview">{{ userPreview() }}</div>
+
+      <button type="submit" class="toolbar-btn btn-submit" [disabled]="sendingUser || userForm.invalid">
+        @if (sendingUser) {
+          Enviando...
+        } @else {
+          Enviar
+        }
+      </button>
+    </form>
+  }
+</div>
