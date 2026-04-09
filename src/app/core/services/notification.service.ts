@@ -4,6 +4,7 @@ import SockJS from 'sockjs-client';
 import { BehaviorSubject, Observable, Subject, distinctUntilChanged, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { MessageService } from './message.service';
+import { NotificationApiService, NotificationResponseDTO } from './notification-api.service';
 
 export type AppRole = 'ADMIN' | 'CHEF' | 'ELEVATED' | 'USER';
 export type NotificationCode = 'FOOD_CRISIS_ACTIVATED' | 'FOOD_CRISIS_LIFTED' | null;
@@ -22,9 +23,14 @@ export interface SessionNotification extends RoleNotificationMessage {
   receivedAt: number;
 }
 
+interface PersistedSessionNotification extends SessionNotification {
+  persistedId: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
   private readonly messageService = inject(MessageService);
+  private readonly notificationApiService = inject(NotificationApiService);
 
   private client?: Client;
   private roleSubscription?: StompSubscription;
@@ -35,6 +41,8 @@ export class NotificationService {
 
   private readonly incomingSubject = new Subject<RoleNotificationMessage>();
   private readonly notificationsSubject = new BehaviorSubject<SessionNotification[]>([]);
+
+  private readonly maxNotifications = 50;
 
   readonly incoming$: Observable<RoleNotificationMessage> = this.incomingSubject.asObservable();
   readonly notifications$: Observable<SessionNotification[]> = this.notificationsSubject.asObservable();
@@ -108,6 +116,8 @@ export class NotificationService {
         this.userSubscription = this.client?.subscribe('/user/queue/notifications', (message: IMessage) => {
           this.handleNotificationMessage(message);
         });
+
+        this.loadPersistedNotifications();
       },
       onStompError: frame => {
         const message = frame.headers['message'] || frame.body || '';
@@ -147,13 +157,41 @@ export class NotificationService {
   }
 
   markAsRead(id: string): void {
-    this.notificationsSubject.next(
-      this.notificationsSubject.value.map(item => (item.id === id ? { ...item, read: true } : item))
-    );
+    const current = this.notificationsSubject.value;
+    const target = current.find(item => item.id === id);
+
+    if (!target) {
+      return;
+    }
+
+    const next = current.map(item => (item.id === id ? { ...item, read: true } : item));
+    this.notificationsSubject.next(next);
+
+    const persistedId = this.extractPersistedId(target.id);
+    if (persistedId === null) {
+      return;
+    }
+
+    this.notificationApiService.markAsRead(persistedId).subscribe({
+      error: () => {
+        this.notificationsSubject.next(current);
+      }
+    });
   }
 
   markAllAsRead(): void {
-    this.notificationsSubject.next(this.notificationsSubject.value.map(item => ({ ...item, read: true })));
+    const current = this.notificationsSubject.value;
+    if (current.length === 0) {
+      return;
+    }
+
+    this.notificationsSubject.next(current.map(item => ({ ...item, read: true })));
+
+    this.notificationApiService.markAllAsRead().subscribe({
+      error: () => {
+        this.notificationsSubject.next(current);
+      }
+    });
   }
 
   toggleExpanded(id: string): void {
@@ -180,12 +218,56 @@ export class NotificationService {
         receivedAt: Date.now()
       };
 
-      this.notificationsSubject.next([sessionItem, ...this.notificationsSubject.value].slice(0, 50));
+      this.notificationsSubject.next([sessionItem, ...this.notificationsSubject.value].slice(0, this.maxNotifications));
       this.incomingSubject.next(normalized);
       this.showIncomingToast(normalized);
     } catch (error) {
       console.error('Invalid notification payload:', error);
     }
+  }
+
+  private loadPersistedNotifications(): void {
+    this.notificationApiService.getMyNotifications().subscribe({
+      next: page => {
+        const current = this.notificationsSubject.value;
+        const sessionOnly = current.filter(item => this.extractPersistedId(item.id) === null);
+        const persisted = page.content.map(notification => this.mapPersistedNotification(notification));
+
+        const merged = [...sessionOnly, ...persisted]
+          .sort((a, b) => b.receivedAt - a.receivedAt)
+          .slice(0, this.maxNotifications);
+
+        this.notificationsSubject.next(merged);
+      },
+      error: error => {
+        console.warn('Could not load persisted notifications:', error);
+      }
+    });
+  }
+
+  private mapPersistedNotification(notification: NotificationResponseDTO): SessionNotification {
+    return {
+      id: notification.id.toString(),
+      title: notification.title?.trim() || 'Notificación',
+      message: notification.message,
+      code: this.mapNotificationTypeToCode(notification.type),
+      timestamp: this.normalizeTimestamp(notification.createdAt),
+      read: notification.isRead,
+      expanded: false,
+      receivedAt: new Date(notification.createdAt).getTime() || Date.now()
+    };
+  }
+
+  private extractPersistedId(id: string): number | null {
+    return /^\d+$/.test(id) ? Number(id) : null;
+  }
+
+  private mapNotificationTypeToCode(type: string): NotificationCode {
+    if (type === 'FOOD_CRISIS_ACTIVATED' || type === 'FOOD_CRISIS_LIFTED') {
+      return type;
+    }
+
+    return null;
   }
 
   private showIncomingToast(notification: RoleNotificationMessage): void {
