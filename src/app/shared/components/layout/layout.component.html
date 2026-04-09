@@ -39,7 +39,7 @@
   >
     <header class="notifications-panel__header">
       <h3>Notificaciones</h3>
-      <button type="button" (click)="markAllNotificationsAsRead()">Marcar todas</button>
+      <button type="button" (click)="markAllNotificationsAsRead()">Marcar todo como leído</button>
     </header>
 
     @if (notifications$ | async; as notifications) {
@@ -56,7 +56,29 @@
               [class.notification-item--info]="!notification.code"
               (click)="onNotificationClick(notification)"
             >
-              <div class="notification-item__icon">{{ notificationIcon(notification) }}</div>
+              <div class="notification-item__icon">
+                @switch (notificationIcon(notification)) {
+                  @case ('crisis') {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 2L2 20h20L12 2Z"/>
+                      <line x1="12" y1="9" x2="12" y2="13"/>
+                      <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                  }
+                  @case ('success') {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  }
+                  @default {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"/>
+                      <line x1="12" y1="16" x2="12" y2="12"/>
+                      <line x1="12" y1="8" x2="12.01" y2="8"/>
+                    </svg>
+                  }
+                }
+              </div>
               <div class="notification-item__content">
                 <div class="notification-item__head">
                   <strong>{{ notification.title }}</strong>

@@ -39,6 +39,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     { label: 'Recetas', route: '/recipes', icon: 'book' },
     { label: 'Pedidos', route: '/orders', icon: 'cart' },
     { label: 'Recepción', route: '/reception', icon: 'truck' },
+    { label: 'Incidencias', route: '/incidents', icon: 'alert' },
 
 
     { label: 'Perfil', route: '/profile', icon: 'person' }
@@ -47,16 +48,16 @@ export class SidebarComponent implements OnInit, OnDestroy {
   // Items para la vista admin
   private adminNavItems: NavItem[] = [
     { label: 'Vista General', route: '/welcome', icon: 'home' },
-    { label: 'Usuarios', route: '/admin-panel/users', icon: 'people', section: 'Gestión' },
-    { label: 'Recetas', route: '/admin-panel/recipes', icon: 'menu_book' },
-    { label: 'Productos', route: '/admin-panel/products', icon: 'inventory' },
-    { label: 'Lotes', route: '/admin-panel/batches', icon: 'batches' },
-    { label: 'Datos Maestros', route: '/admin-panel/master-data', icon: 'database' },
+    { label: 'Órdenes', route: '/admin-panel/orders', icon: 'cart', section: 'OPERACIONES' },
     { label: 'Cocina', route: '/admin-panel/kitchen', icon: 'kitchen' },
-    { label: 'Stock', route: '/admin-panel/stock', icon: 'alert' },
-    { label: 'Órdenes', route: '/admin-panel/orders', icon: 'cart' },
-    { label: 'Notificaciones', route: '/admin-panel/notifications', icon: 'notifications' },
-    { label: 'Trazabilidad', route: '/admin-panel/traceability', icon: 'shield', section: 'Trazabilidad' }
+    { label: 'Incidencias', route: '/admin-panel/incidents', icon: 'alert' },
+    { label: 'Stock', route: '/admin-panel/stock', icon: 'inventory', section: 'INVENTARIO' },
+    { label: 'Lotes', route: '/admin-panel/batches', icon: 'batches' },
+    { label: 'Productos', route: '/admin-panel/products', icon: 'inventory' },
+    { label: 'Recetas', route: '/admin-panel/recipes', icon: 'menu_book' },
+    { label: 'Datos Maestros', route: '/admin-panel/master-data', icon: 'database', section: 'GESTIÓN' },
+    { label: 'Usuarios', route: '/admin-panel/users', icon: 'people' },
+    { label: 'Trazabilidad', route: '/admin-panel/traceability', icon: 'shield', section: 'TRAZABILIDAD' }
   ];
 
   ngOnInit(): void {
@@ -84,9 +85,16 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }
 
     const userRole = this.getUserRole();
+    if (userRole === 'ADMIN') {
+      return this.defaultNavItems.map(item =>
+        item.label === 'Incidencias'
+          ? { ...item, route: '/admin-panel/incidents' }
+          : item
+      );
+    }
     if (userRole === 'USER') {
       return this.defaultNavItems.filter(item =>
-        item.label !== 'Recepción' && item.label !== 'Pedidos' && item.label !== 'Perfil'
+        item.label !== 'Recepción' && item.label !== 'Pedidos' && item.label !== 'Perfil' && item.label !== 'Incidencias'
       );
     }
     return this.defaultNavItems;
