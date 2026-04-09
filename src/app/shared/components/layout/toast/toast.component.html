@@ -11,7 +11,7 @@
 
     <!-- Contenido: título + mensaje -->
     <div class="toast-body">
-      <p class="toast-title">{{ getTitle(toast.type) }}</p>
+      <p class="toast-title">{{ getToastTitle(toast) }}</p>
       <p class="toast-message">{{ toast.message }}</p>
     </div>
 
@@ -23,7 +23,9 @@
     </button>
 
     <!-- Barra de progreso -->
-    <div class="toast-progress"></div>
+    @if (!toast.persistent) {
+      <div class="toast-progress" [style.animation-duration.ms]="toast.duration"></div>
+    }
   </div>
   }
 </div>

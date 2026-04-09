@@ -57,4 +57,8 @@ export class ToastComponent implements OnInit, OnDestroy {
     };
     return titles[type] ?? '';
   }
+
+  getToastTitle(toast: Toast): string {
+    return toast.title?.trim() || this.getTitle(toast.type);
+  }
 }
