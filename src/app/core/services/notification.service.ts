@@ -67,10 +67,7 @@ export class NotificationService {
 
     this.client = new Client({
       webSocketFactory: () => {
-        if (typeof window !== 'undefined' && typeof window.WebSocket === 'function') {
-          return new WebSocket(this.getNativeWebSocketUrl());
-        }
-
+        // Backend endpoint is registered with SockJS; use the same transport on all browsers.
         return new SockJS(this.getSockJsUrl());
       },
       connectHeaders: {
@@ -387,16 +384,4 @@ export class NotificationService {
     return `${configuredApiUrl.replace(/\/$/, '')}/ws-notifications`;
   }
 
-  private getNativeWebSocketUrl(): string {
-    const configuredApiUrl = (environment.apiUrl || '').trim();
-
-    if (!configuredApiUrl) {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      return `${protocol}//${window.location.host}/ws-notifications/websocket`;
-    }
-
-    const wsProtocol = configuredApiUrl.startsWith('https://') ? 'wss://' : 'ws://';
-    const host = configuredApiUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
-    return `${wsProtocol}${host}/ws-notifications/websocket`;
-  }
 }
