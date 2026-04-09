@@ -184,14 +184,14 @@ export class LayoutComponent {
 
   notificationIcon(notification: SessionNotification): string {
     if (notification.code === 'FOOD_CRISIS_ACTIVATED') {
-      return '⚠️';
+      return 'crisis';
     }
 
     if (notification.code === 'FOOD_CRISIS_LIFTED') {
-      return '✅';
+      return 'success';
     }
 
-    return 'ℹ️';
+    return 'info';
   }
 
   formatNotificationTimestamp(timestamp: string): string {
