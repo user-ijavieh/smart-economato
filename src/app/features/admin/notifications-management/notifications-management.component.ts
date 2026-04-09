@@ -8,6 +8,8 @@ import { UserService } from '../../../core/services/user.service';
 import { AppRole } from '../../../core/services/notification.service';
 import { User } from '../../../shared/models/user.model';
 
+type NotificationTargetRole = Exclude<AppRole, 'ELEVATED'>;
+
 @Component({
   selector: 'app-notifications-management',
   standalone: true,
@@ -21,7 +23,11 @@ export class NotificationsManagementComponent implements OnInit {
   private readonly userService = inject(UserService);
   private readonly messageService = inject(MessageService);
 
-  readonly roles: AppRole[] = ['ADMIN', 'CHEF', 'ELEVATED', 'USER'];
+  readonly roles: Array<{ value: NotificationTargetRole; label: string }> = [
+    { value: 'ADMIN', label: 'Administrador' },
+    { value: 'CHEF', label: 'Profesor' },
+    { value: 'USER', label: 'Alumno' }
+  ];
 
   activeTab: 'role' | 'user' = 'role';
   sendingRole = false;
@@ -32,7 +38,7 @@ export class NotificationsManagementComponent implements OnInit {
   showUserSuggestions = false;
 
   readonly roleForm = this.fb.group({
-    role: this.fb.nonNullable.control<AppRole>('CHEF'),
+    role: this.fb.nonNullable.control<NotificationTargetRole>('CHEF'),
     title: this.fb.nonNullable.control('', [Validators.required, Validators.maxLength(100)]),
     message: this.fb.nonNullable.control('', [Validators.required, Validators.maxLength(500)])
   });
@@ -93,7 +99,7 @@ export class NotificationsManagementComponent implements OnInit {
       .pipe(finalize(() => (this.sendingRole = false)))
       .subscribe({
         next: () => {
-          this.messageService.showSuccess(`Notificación enviada a ${role}.`, 4000, {
+          this.messageService.showSuccess(`Notificación enviada a ${this.getRoleLabel(role)}.`, 4000, {
             title: 'Envío completado'
           });
           this.roleForm.reset({ role: this.roleForm.controls.role.value, title: '', message: '' });
@@ -136,7 +142,7 @@ export class NotificationsManagementComponent implements OnInit {
   rolePreview(): string {
     const role = this.roleForm.controls.role.value;
     const title = this.roleForm.controls.title.value.trim() || 'Sin título';
-    return `Vas a enviar a todos los ${role}: “${title}”.`;
+    return `Vas a enviar al grupo ${this.getRoleLabel(role)}: “${title}”.`;
   }
 
   userPreview(): string {
@@ -154,5 +160,9 @@ export class NotificationsManagementComponent implements OnInit {
         this.users = [];
       }
     });
+  }
+
+  private getRoleLabel(role: NotificationTargetRole): string {
+    return this.roles.find(item => item.value === role)?.label ?? role;
   }
 }

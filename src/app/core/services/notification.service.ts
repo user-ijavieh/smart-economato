@@ -28,6 +28,7 @@ export class NotificationService {
 
   private client?: Client;
   private roleSubscription?: StompSubscription;
+  private adminRoleSubscription?: StompSubscription;
   private userSubscription?: StompSubscription;
   private connectedToken?: string;
   private connectedRole?: AppRole;
@@ -57,7 +58,13 @@ export class NotificationService {
     this.connectedRole = normalizedRole;
 
     this.client = new Client({
-      webSocketFactory: () => new SockJS(this.getSockJsUrl()),
+      webSocketFactory: () => {
+        if (typeof window !== 'undefined' && typeof window.WebSocket === 'function') {
+          return new WebSocket(this.getNativeWebSocketUrl());
+        }
+
+        return new SockJS(this.getSockJsUrl());
+      },
       connectHeaders: {
         Authorization: `Bearer ${jwtToken}`
       },
@@ -81,6 +88,7 @@ export class NotificationService {
       heartbeatOutgoing: 10000,
       onConnect: () => {
         this.roleSubscription?.unsubscribe();
+        this.adminRoleSubscription?.unsubscribe();
         this.userSubscription?.unsubscribe();
 
         const roleDestination = `/topic/roles/${normalizedRole}`;
@@ -91,7 +99,7 @@ export class NotificationService {
         if (normalizedRole === 'ADMIN') {
           const adminDestination = '/topic/roles/ADMIN';
           if (adminDestination !== roleDestination) {
-            this.client?.subscribe(adminDestination, (message: IMessage) => {
+            this.adminRoleSubscription = this.client?.subscribe(adminDestination, (message: IMessage) => {
               this.handleNotificationMessage(message);
             });
           }
@@ -113,6 +121,9 @@ export class NotificationService {
         if (closeEvent.code !== 1000) {
           console.warn('Notification websocket closed unexpectedly:', closeEvent.reason || closeEvent.code);
         }
+      },
+      onWebSocketError: event => {
+        console.error('Notification websocket transport error:', event);
       }
     });
 
@@ -121,8 +132,10 @@ export class NotificationService {
 
   disconnect(): void {
     this.roleSubscription?.unsubscribe();
+    this.adminRoleSubscription?.unsubscribe();
     this.userSubscription?.unsubscribe();
     this.roleSubscription = undefined;
+    this.adminRoleSubscription = undefined;
     this.userSubscription = undefined;
     this.connectedToken = undefined;
     this.connectedRole = undefined;
@@ -290,5 +303,18 @@ export class NotificationService {
     }
 
     return `${configuredApiUrl.replace(/\/$/, '')}/ws-notifications`;
+  }
+
+  private getNativeWebSocketUrl(): string {
+    const configuredApiUrl = (environment.apiUrl || '').trim();
+
+    if (!configuredApiUrl) {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      return `${protocol}//${window.location.host}/ws-notifications/websocket`;
+    }
+
+    const wsProtocol = configuredApiUrl.startsWith('https://') ? 'wss://' : 'ws://';
+    const host = configuredApiUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+    return `${wsProtocol}${host}/ws-notifications/websocket`;
   }
 }
