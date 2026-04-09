@@ -191,6 +191,10 @@ export class NotificationService {
     });
   }
 
+  refreshNotifications(): void {
+    this.loadPersistedNotifications();
+  }
+
   toggleExpanded(id: string): void {
     this.notificationsSubject.next(
       this.notificationsSubject.value.map(item =>
