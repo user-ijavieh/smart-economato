@@ -89,6 +89,13 @@ export const routes: Routes = [
         data: { animation: 11 }
       },
       {
+        path: 'admin-panel/incidents',
+        loadComponent: () =>
+          import('./features/incidents/incidents.component').then(m => m.IncidentsComponent),
+        canActivate: [roleGuard('ADMIN')],
+        data: { animation: 12 }
+      },
+      {
         path: 'admin-panel/traceability',
         loadComponent: () =>
           import('./features/admin/traceability-management/traceability-management.component').then(m => m.TraceabilityManagementComponent),
@@ -135,6 +142,13 @@ export const routes: Routes = [
           import('./features/general/profile/profile.component').then(m => m.ProfileComponent),
         canActivate: [roleGuard('ADMIN', 'CHEF', 'ELEVATED')],
         data: { animation: 25 }
+      },
+      {
+        path: 'incidents',
+        loadComponent: () =>
+          import('./features/incidents/incidents.component').then(m => m.IncidentsComponent),
+        canActivate: [roleGuard('ADMIN', 'CHEF', 'ELEVATED')],
+        data: { animation: 26 }
       },
       {
         path: '',
