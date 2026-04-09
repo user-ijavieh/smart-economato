@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
@@ -17,7 +17,7 @@ type NotificationTargetRole = Exclude<AppRole, 'ELEVATED'>;
   templateUrl: './notifications-management.component.html',
   styleUrl: './notifications-management.component.css'
 })
-export class NotificationsManagementComponent implements OnInit {
+export class NotificationsManagementComponent {
   private readonly fb = inject(FormBuilder);
   private readonly notificationApiService = inject(NotificationApiService);
   private readonly userService = inject(UserService);
@@ -33,9 +33,10 @@ export class NotificationsManagementComponent implements OnInit {
   sendingRole = false;
   sendingUser = false;
 
-  private users: User[] = [];
   filteredUsers: User[] = [];
   showUserSuggestions = false;
+  private usernameSearchTimer?: ReturnType<typeof setTimeout>;
+  private usernameSearchRequestId = 0;
 
   readonly roleForm = this.fb.group({
     role: this.fb.nonNullable.control<NotificationTargetRole>('CHEF'),
@@ -49,30 +50,28 @@ export class NotificationsManagementComponent implements OnInit {
     message: this.fb.nonNullable.control('', [Validators.required, Validators.maxLength(500)])
   });
 
-  ngOnInit(): void {
-    this.loadUsers();
-  }
-
   setActiveTab(tab: 'role' | 'user'): void {
     this.activeTab = tab;
   }
 
   onUsernameInput(): void {
-    const username = this.userForm.controls.username.value.trim().toLowerCase();
-    if (!username) {
+    const username = this.userForm.controls.username.value.trim();
+    if (username.length < 2) {
+      if (this.usernameSearchTimer) {
+        clearTimeout(this.usernameSearchTimer);
+      }
       this.filteredUsers = [];
       this.showUserSuggestions = false;
       return;
     }
 
-    this.filteredUsers = this.users
-      .filter(user => !user.hidden)
-      .filter(user =>
-        user.name.toLowerCase().includes(username) || user.user.toLowerCase().includes(username)
-      )
-      .slice(0, 8);
+    if (this.usernameSearchTimer) {
+      clearTimeout(this.usernameSearchTimer);
+    }
 
-    this.showUserSuggestions = this.filteredUsers.length > 0;
+    this.usernameSearchTimer = setTimeout(() => {
+      this.searchUsers(username);
+    }, 250);
   }
 
   selectUser(user: User): void {
@@ -151,13 +150,25 @@ export class NotificationsManagementComponent implements OnInit {
     return `Vas a enviar a ${username}: “${title}”.`;
   }
 
-  private loadUsers(): void {
-    this.userService.getAllUnpaged().subscribe({
-      next: users => {
-        this.users = users;
+  private searchUsers(term: string): void {
+    const requestId = ++this.usernameSearchRequestId;
+
+    this.userService.search(term, 0, 8).subscribe({
+      next: page => {
+        if (requestId !== this.usernameSearchRequestId) {
+          return;
+        }
+
+        this.filteredUsers = page.content;
+        this.showUserSuggestions = this.filteredUsers.length > 0;
       },
       error: () => {
-        this.users = [];
+        if (requestId !== this.usernameSearchRequestId) {
+          return;
+        }
+
+        this.filteredUsers = [];
+        this.showUserSuggestions = false;
       }
     });
   }
