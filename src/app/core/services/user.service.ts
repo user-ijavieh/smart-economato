@@ -114,6 +114,16 @@ export class UserService {
     return this.getAll(0, 10000).pipe(map(page => page.content));
   }
 
+  search(term: string, page = 0, size = 8): Observable<Page<User>> {
+    const params = new HttpParams()
+      .set('term', term)
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sort', 'name,asc');
+
+    return this.http.get<Page<User>>(`${this.url}/search`, { params });
+  }
+
   getMyStudents(): Observable<User[]> {
     return this.http.get<User[]>(`${this.url}/students`);
   }
