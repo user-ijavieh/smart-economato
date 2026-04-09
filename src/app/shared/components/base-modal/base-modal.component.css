@@ -158,13 +158,15 @@
 
   .modal-dialog {
     width: 100%;
-    max-height: 92vh;
+    max-height: 100dvh;
+    height: 100dvh;
     border-radius: var(--theme-radius-card) var(--theme-radius-card) 0 0;
     border-bottom: none;
   }
 
   .modal-fullscreen {
-    max-height: 100vh;
+    max-height: 100dvh;
+    height: 100dvh;
     border-radius: 0;
   }
 
@@ -174,6 +176,7 @@
 
   .modal-body {
     padding: 16px;
+    -webkit-overflow-scrolling: touch;
   }
 
   .modal-footer {
