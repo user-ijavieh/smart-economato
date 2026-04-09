@@ -36,12 +36,25 @@
                 <span class="lot-label">↳ Lote {{ $index + 1 }}</span>
               </td>
               <td class="text-center received-col">
-                <input 
-                  type="number" 
-                  class="form-control quantity-input" 
-                  [(ngModel)]="lot.quantity" 
-                  min="0"
-                  [disabled]="isProcessing" />
+                <div class="quantity-cell-actions">
+                  <input 
+                    type="number" 
+                    class="form-control quantity-input" 
+                    [(ngModel)]="lot.quantity" 
+                    min="0"
+                    [disabled]="isProcessing" />
+                  <button
+                    type="button"
+                    class="btn-scale"
+                    [class.btn-scale-active]="isScaleActiveForLot(detail, $index)"
+                    [disabled]="isProcessing"
+                    [title]="isScaleActiveForLot(detail, $index) ? 'Detener lectura de báscula' : 'Iniciar lectura de báscula'"
+                    (click)="toggleScaleForLot(detail, $index)">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M4 8a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8Zm4-2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H8Zm1.2 7.2A2.8 2.8 0 1 1 14.8 13.2L12 10.8l-2.8 2.4Z" />
+                    </svg>
+                  </button>
+                </div>
               </td>
               <td class="text-center expiry-col lot-actions-cell">
                 <input

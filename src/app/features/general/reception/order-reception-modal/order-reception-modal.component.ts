@@ -1,9 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { Order, OrderReceptionRequest } from '../../../../shared/models/order.model';
 import { OrderService } from '../../../../core/services/order.service';
 import { MessageService } from '../../../../core/services/message.service';
+import { ScaleService } from '../../../../core/services/scale.service';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 
 @Component({
@@ -13,15 +15,21 @@ import { BaseModalComponent } from '../../../../shared/components/base-modal/bas
   templateUrl: './order-reception-modal.component.html',
   styleUrl: './order-reception-modal.component.css'
 })
-export class OrderReceptionModalComponent implements OnInit {
+export class OrderReceptionModalComponent implements OnInit, OnDestroy {
   @Input({ required: true }) order!: Order;
   @Output() closeModal = new EventEmitter<void>();
   @Output() receptionProcessed = new EventEmitter<void>();
 
   private orderService = inject(OrderService);
   private messageService = inject(MessageService);
+  private scaleService = inject(ScaleService);
 
   isProcessing = false;
+  isScaleListening = false;
+
+  private scaleSubscription?: Subscription;
+  private listeningSubscription?: Subscription;
+  private activeScaleTarget: { productId: number; lotIndex: number } | null = null;
 
   beforeCloseHandler = async (): Promise<boolean> => {
     if (this.isProcessing) {
@@ -37,6 +45,18 @@ export class OrderReceptionModalComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    this.scaleSubscription = this.scaleService.weight$.subscribe(weight => {
+      this.applyWeightToActiveLot(weight);
+    });
+
+    this.listeningSubscription = this.scaleService.listening$.subscribe(isListening => {
+      this.isScaleListening = isListening;
+
+      if (!isListening) {
+        this.activeScaleTarget = null;
+      }
+    });
+
     if (this.order && this.order.details) {
       this.order.details.forEach(detail => {
         if (!detail.lots || detail.lots.length === 0) {
@@ -44,6 +64,12 @@ export class OrderReceptionModalComponent implements OnInit {
         }
       });
     }
+  }
+
+  ngOnDestroy(): void {
+    this.scaleSubscription?.unsubscribe();
+    this.listeningSubscription?.unsubscribe();
+    void this.scaleService.stopListening();
   }
 
   addLot(detail: any): void {
@@ -75,7 +101,72 @@ export class OrderReceptionModalComponent implements OnInit {
   }
 
   close(): void {
+    void this.scaleService.stopListening();
     this.closeModal.emit();
+  }
+
+  async toggleScaleForLot(detail: any, lotIndex: number): Promise<void> {
+    if (this.isProcessing) {
+      return;
+    }
+
+    const productId = Number(detail.productId);
+    const sameTarget = this.activeScaleTarget?.productId === productId && this.activeScaleTarget?.lotIndex === lotIndex;
+
+    if (this.isScaleListening && sameTarget) {
+      await this.scaleService.stopListening();
+      return;
+    }
+
+    this.activeScaleTarget = { productId, lotIndex };
+
+    if (this.isScaleListening) {
+      return;
+    }
+
+    if (!this.scaleService.isSupported) {
+      this.messageService.showError('Este navegador no soporta conexión serial con báscula. Usa Chrome o Edge recientes.');
+      return;
+    }
+
+    try {
+      await this.scaleService.startListening({ baudRate: 9600 });
+      this.messageService.showInfo('Báscula conectada. Se actualizará el peso hasta cancelar.');
+    } catch {
+      this.activeScaleTarget = null;
+      this.messageService.showError('No se pudo iniciar la lectura de la báscula. Revisa permisos o conexión del puerto.');
+    }
+  }
+
+  isScaleActiveForLot(detail: any, lotIndex: number): boolean {
+    if (!this.isScaleListening || !this.activeScaleTarget) {
+      return false;
+    }
+
+    return this.activeScaleTarget.productId === Number(detail.productId) && this.activeScaleTarget.lotIndex === lotIndex;
+  }
+
+  private applyWeightToActiveLot(rawWeight: string): void {
+    if (!this.activeScaleTarget || !this.order.details) {
+      return;
+    }
+
+    const parsedWeight = Number(rawWeight);
+    if (!Number.isFinite(parsedWeight)) {
+      return;
+    }
+
+    const targetDetail = this.order.details.find(detail => Number(detail.productId) === this.activeScaleTarget?.productId);
+    if (!targetDetail?.lots) {
+      return;
+    }
+
+    const targetLot = targetDetail.lots[this.activeScaleTarget.lotIndex];
+    if (!targetLot) {
+      return;
+    }
+
+    targetLot.quantity = Number(parsedWeight.toFixed(4));
   }
 
   async processReception(): Promise<void> {
