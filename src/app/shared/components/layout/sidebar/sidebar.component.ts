@@ -55,6 +55,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     { label: 'Cocina', route: '/admin-panel/kitchen', icon: 'kitchen' },
     { label: 'Stock', route: '/admin-panel/stock', icon: 'alert' },
     { label: 'Órdenes', route: '/admin-panel/orders', icon: 'cart' },
+    { label: 'Notificaciones', route: '/admin-panel/notifications', icon: 'notifications' },
     { label: 'Trazabilidad', route: '/admin-panel/traceability', icon: 'shield', section: 'Trazabilidad' }
   ];
 

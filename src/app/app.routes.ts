@@ -82,6 +82,13 @@ export const routes: Routes = [
         data: { animation: 9 }
       },
       {
+        path: 'admin-panel/notifications',
+        loadComponent: () =>
+          import('./features/admin/notifications-management/notifications-management.component').then(m => m.NotificationsManagementComponent),
+        canActivate: [roleGuard('ADMIN')],
+        data: { animation: 11 }
+      },
+      {
         path: 'admin-panel/traceability',
         loadComponent: () =>
           import('./features/admin/traceability-management/traceability-management.component').then(m => m.TraceabilityManagementComponent),
