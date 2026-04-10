@@ -8,13 +8,17 @@ import {
   StockSnapshotResponseDTO,
   BatchStockMovementRequestDTO,
   BatchStockMovementResponseDTO,
-  ConsumptionBreakdownDTO
+  ConsumptionBreakdownDTO,
+  BlockchainStatsResponseDTO,
+  BlockchainVerificationResponseDTO,
+  LedgerBlockResponseDTO
 } from '../../shared/models/stock-ledger.model';
 
 @Injectable({ providedIn: 'root' })
 export class StockLedgerService {
   private http = inject(HttpClient);
   private url = `${environment.apiUrl}/api/stock-ledger`;
+  private blockchainAdminUrl = `${environment.apiUrl}/api/admin/blockchain`;
 
   getHistory(productId: number, page = 0, size = 15, sort = 'transactionTimestamp,desc'): Observable<any> {
     return this.http.get<any>(`${this.url}/history/${productId}`, {
@@ -65,5 +69,29 @@ export class StockLedgerService {
 
   registerManualAdjustment(request: any): Observable<StockLedgerResponseDTO> {
     return this.http.post<StockLedgerResponseDTO>(`${this.url}/manual-adjustment`, request);
+  }
+
+  getBlockchainStats(): Observable<BlockchainStatsResponseDTO> {
+    return this.http.get<BlockchainStatsResponseDTO>(`${this.blockchainAdminUrl}/stats`);
+  }
+
+  verifyBlockchain(): Observable<BlockchainVerificationResponseDTO> {
+    return this.http.get<BlockchainVerificationResponseDTO>(`${this.blockchainAdminUrl}/verify`);
+  }
+
+  getBlockchainBlocks(page = 0, size = 8, sort = 'blockNumber,desc'): Observable<any> {
+    return this.http.get<any>(`${this.blockchainAdminUrl}/blocks`, {
+      params: { page: page.toString(), size: size.toString(), sort }
+    });
+  }
+
+  getBlockchainBlock(blockNumber: number): Observable<LedgerBlockResponseDTO> {
+    return this.http.get<LedgerBlockResponseDTO>(`${this.blockchainAdminUrl}/blocks/${blockNumber}`);
+  }
+
+  getMempool(page = 0, size = 8, sort = 'id,asc'): Observable<any> {
+    return this.http.get<any>(`${this.blockchainAdminUrl}/mempool`, {
+      params: { page: page.toString(), size: size.toString(), sort }
+    });
   }
 }
