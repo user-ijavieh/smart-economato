@@ -103,6 +103,13 @@ export const routes: Routes = [
         data: { animation: 10 }
       },
       {
+        path: 'admin-panel/settings',
+        loadComponent: () =>
+          import('./features/admin/settings-management/settings-management.component').then(m => m.SettingsManagementComponent),
+        canActivate: [roleGuard('ADMIN')],
+        data: { animation: 13 }
+      },
+      {
         path: 'admin-panel/batches',
         loadComponent: () =>
           import('./features/admin/batches-management/batches-management.component').then(m => m.BatchesManagementComponent),
