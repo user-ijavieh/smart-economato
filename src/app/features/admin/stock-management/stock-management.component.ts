@@ -22,7 +22,15 @@ import {
 } from '../../../shared/models/stock-alert.model';
 import { Page } from '../../../shared/models/page.model';
 import { StockLedgerService } from '../../../core/services/stock-ledger.service';
-import { StockLedgerResponseDTO, IntegrityCheckResponseDTO, StockSnapshotResponseDTO, ConsumptionBreakdownDTO } from '../../../shared/models/stock-ledger.model';
+import {
+    StockLedgerResponseDTO,
+    IntegrityCheckResponseDTO,
+    StockSnapshotResponseDTO,
+    ConsumptionBreakdownDTO,
+    BlockchainStatsResponseDTO,
+    BlockchainVerificationResponseDTO,
+    LedgerBlockResponseDTO
+} from '../../../shared/models/stock-ledger.model';
 import { Product } from '../../../shared/models/product.model';
 import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.model';
 import { ScrollService } from '../../../core/services/scroll.service';
@@ -155,6 +163,25 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     ledgerTotalPages = 0;
     ledgerSortColumn = 'transactionTimestamp';
     ledgerSortDir: 'asc' | 'desc' = 'desc';
+    ledgerTabTapCount = 0;
+    ledgerTechnicalMode = false;
+
+    blockchainStats: BlockchainStatsResponseDTO | null = null;
+    blockchainVerification: BlockchainVerificationResponseDTO | null = null;
+    blockchainBlocks: LedgerBlockResponseDTO[] = [];
+    blockchainMempool: StockLedgerResponseDTO[] = [];
+    selectedBlockchainBlock: LedgerBlockResponseDTO | null = null;
+
+    loadingBlockchainStats = false;
+    loadingBlockchainVerification = false;
+    loadingBlockchainBlocks = false;
+    loadingBlockchainMempool = false;
+    loadingBlockchainBlockDetail = false;
+
+    blockchainBlocksPage = 0;
+    blockchainBlocksTotalPages = 0;
+    blockchainMempoolPage = 0;
+    blockchainMempoolTotalPages = 0;
 
     // ── Manual adjustment modal state ──
     showManualAdjustmentModal = false;
@@ -207,17 +234,49 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     }
 
     switchTab(tab: Tab): void {
+        const previousTab = this.activeTab;
         this.activeTab = tab;
+        if (tab !== 'ledger') {
+            this.ledgerTabTapCount = 0;
+        }
         if (tab === 'predictions' && this.predictions.length === 0) {
             this.loadPredictions();
         } else if (tab === 'ledger') {
             if (this.ledgerProducts.length === 0) {
                 this.loadLedgerProducts();
             }
+            if (this.ledgerTechnicalMode && previousTab !== 'ledger') {
+                this.refreshBlockchainTechnicalData();
+            }
         }
         this.showLedgerDropdown = false;
         this.ledgerSearchTerm = '';
         this.cdr.detectChanges();
+    }
+
+    onLedgerTabClick(): void {
+        if (this.activeTab === 'ledger') {
+            this.ledgerTabTapCount += 1;
+        } else {
+            this.ledgerTabTapCount = 1;
+        }
+
+        this.switchTab('ledger');
+
+        if (this.ledgerTabTapCount >= 5 && !this.ledgerTechnicalMode) {
+            if (!this.hasBlockchainAdminAccess()) {
+                this.messageService.showWarning('Solo ADMIN puede activar la vista tecnica blockchain');
+                this.ledgerTabTapCount = 0;
+                return;
+            }
+            this.ledgerTechnicalMode = true;
+            this.messageService.showSuccess('Modo tecnico blockchain activado');
+            this.refreshBlockchainTechnicalData();
+        }
+    }
+
+    hasBlockchainAdminAccess(): boolean {
+        return this.authService.getRole() === 'ADMIN';
     }
 
     // ================================================================
@@ -772,6 +831,105 @@ export class StockManagementComponent implements OnInit, OnDestroy {
 
     getSortLedgerDir(col: string): string {
         return this.ledgerSortColumn === col ? this.ledgerSortDir : '';
+    }
+
+    refreshBlockchainTechnicalData(): void {
+        if (!this.ledgerTechnicalMode) return;
+        this.loadBlockchainStats();
+        this.loadBlockchainVerification();
+        this.loadBlockchainBlocks(0);
+        this.loadBlockchainMempool(0);
+    }
+
+    loadBlockchainStats(): void {
+        this.loadingBlockchainStats = true;
+        this.stockLedgerService.getBlockchainStats().pipe(
+            finalize(() => {
+                this.loadingBlockchainStats = false;
+                this.cdr.detectChanges();
+            })
+        ).subscribe({
+            next: (data) => {
+                this.blockchainStats = data;
+            },
+            error: () => this.messageService.showError('Error al cargar estadisticas de blockchain')
+        });
+    }
+
+    loadBlockchainVerification(): void {
+        this.loadingBlockchainVerification = true;
+        this.stockLedgerService.verifyBlockchain().pipe(
+            finalize(() => {
+                this.loadingBlockchainVerification = false;
+                this.cdr.detectChanges();
+            })
+        ).subscribe({
+            next: (data) => {
+                this.blockchainVerification = data;
+            },
+            error: () => this.messageService.showError('Error al verificar blockchain')
+        });
+    }
+
+    loadBlockchainBlocks(page = 0): void {
+        this.loadingBlockchainBlocks = true;
+        this.stockLedgerService.getBlockchainBlocks(page, 8, 'blockNumber,desc').pipe(
+            finalize(() => {
+                this.loadingBlockchainBlocks = false;
+                this.cdr.detectChanges();
+            })
+        ).subscribe({
+            next: (data) => {
+                this.blockchainBlocks = data?.content || [];
+                this.blockchainBlocksPage = page;
+                this.blockchainBlocksTotalPages = data?.totalPages || 0;
+            },
+            error: () => this.messageService.showError('Error al cargar bloques confirmados')
+        });
+    }
+
+    loadBlockchainMempool(page = 0): void {
+        this.loadingBlockchainMempool = true;
+        this.stockLedgerService.getMempool(page, 8, 'id,asc').pipe(
+            finalize(() => {
+                this.loadingBlockchainMempool = false;
+                this.cdr.detectChanges();
+            })
+        ).subscribe({
+            next: (data) => {
+                this.blockchainMempool = data?.content || [];
+                this.blockchainMempoolPage = page;
+                this.blockchainMempoolTotalPages = data?.totalPages || 0;
+            },
+            error: () => this.messageService.showError('Error al cargar mempool')
+        });
+    }
+
+    onBlockchainBlocksPageChange(delta: number): void {
+        const next = this.blockchainBlocksPage + delta;
+        if (next < 0 || next >= this.blockchainBlocksTotalPages) return;
+        this.loadBlockchainBlocks(next);
+    }
+
+    onBlockchainMempoolPageChange(delta: number): void {
+        const next = this.blockchainMempoolPage + delta;
+        if (next < 0 || next >= this.blockchainMempoolTotalPages) return;
+        this.loadBlockchainMempool(next);
+    }
+
+    openBlockchainBlockDetail(blockNumber: number): void {
+        this.loadingBlockchainBlockDetail = true;
+        this.stockLedgerService.getBlockchainBlock(blockNumber).pipe(
+            finalize(() => {
+                this.loadingBlockchainBlockDetail = false;
+                this.cdr.detectChanges();
+            })
+        ).subscribe({
+            next: (data) => {
+                this.selectedBlockchainBlock = data;
+            },
+            error: () => this.messageService.showError('No se pudo cargar el detalle del bloque')
+        });
     }
 
     loadLedgerSnapshot(productId: number): void {

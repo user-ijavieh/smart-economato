@@ -80,6 +80,41 @@
 .btn-reset { background: rgba(158, 158, 158, 0.15); border-color: rgba(158, 158, 158, 0.3); color: #d1d5db; }
 .btn-adjust { background: rgba(255, 152, 0, 0.15); border-color: rgba(255, 152, 0, 0.3); color: #fcd34d; }
 
+.blockchain-technical-panel {
+  margin-bottom: 1.5rem;
+  background: var(--theme-surface-glass);
+  border: 1px solid var(--theme-border-glass);
+  border-radius: var(--theme-radius-card);
+  padding: 16px;
+}
+
+.blockchain-technical-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.blockchain-technical-header h3 {
+  margin: 0;
+  color: var(--theme-text-primary);
+  font-family: var(--font-heading);
+}
+
+.blockchain-stats-row {
+  margin-bottom: 1rem;
+}
+
+.compact-pagination {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+}
+
+.blockchain-detail-card {
+  margin-bottom: 1rem;
+}
+
 /** ===== CUSTOM SELECT (LEDGER) ===== */
 .search-box { display: flex; align-items: center; gap: 12px; }
 .search-box label { color: var(--theme-text-secondary); font-weight: 600; }
