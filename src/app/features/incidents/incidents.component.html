@@ -296,9 +296,9 @@
       </div>
 
       <div class="detail-tabs">
-        <button type="button" class="detail-tab" [class.active]="detailTab === 'summary'" (click)="detailTab = 'summary'">Resumen</button>
-        <button type="button" class="detail-tab" [class.active]="detailTab === 'chat'" (click)="detailTab = 'chat'">Chat ({{ selectedIncident.chatMessageCount || chatMessages.length }})</button>
-        <button type="button" class="detail-tab" [class.active]="detailTab === 'audits'" (click)="detailTab = 'audits'">Auditorías ({{ selectedIncident.attachedAudits.length || 0 }})</button>
+        <button type="button" class="detail-tab" [class.active]="detailTab === 'summary'" (click)="setDetailTab('summary')">Resumen</button>
+        <button type="button" class="detail-tab" [class.active]="detailTab === 'chat'" (click)="setDetailTab('chat')">Chat ({{ selectedIncident.chatMessageCount || chatMessages.length }})</button>
+        <button type="button" class="detail-tab" [class.active]="detailTab === 'audits'" (click)="setDetailTab('audits')">Auditorías ({{ selectedIncident.attachedAudits.length || 0 }})</button>
       </div>
 
       @if (detailTab === 'summary') {
@@ -353,7 +353,7 @@
             <div class="chat-empty">Todavía no hay mensajes.</div>
           } @else {
             @for (message of chatMessages; track message.id) {
-            <article class="chat-message" [class.chat-message-new]="message.id === latestChatMessageId">
+            <article #chatMessageItem class="chat-message" [attr.data-message-id]="message.id" [class.chat-message-own]="isOwnChatMessage(message)" [class.chat-message-new]="message.id === latestChatMessageId">
               <div class="chat-message-head">
                 <strong>{{ message.authorName }}</strong>
                 <span>{{ formatFullDate(message.createdAt) }}</span>
@@ -379,6 +379,24 @@
                   Descargar {{ message.attachmentFilename }}
                 </button>
                 }
+              }
+
+              @if (isOwnChatMessage(message)) {
+              <div class="chat-read-state" [class.chat-read-state-read]="isMessageReadByOthers(message)" [attr.title]="messageReadByLabel(message)">
+                @if (isMessageReadByOthers(message)) {
+                <svg class="chat-read-eye" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M2.06 12.34a1 1 0 0 1 0-.68 10 10 0 0 1 19.88 0 1 1 0 0 1 0 .68 10 10 0 0 1-19.88 0"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                } @else {
+                <svg class="chat-read-eye" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
+                  <path d="M6.61 6.61A13.53 13.53 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/>
+                  <line x1="2" y1="2" x2="22" y2="22"/>
+                </svg>
+                }
+                <span>{{ isMessageReadByOthers(message) ? 'Leido' : 'Enviado' }}</span>
+              </div>
               }
             </article>
             }
@@ -424,10 +442,15 @@
           }
         </div>
         }
+
+        @if (typingIndicatorText()) {
+        <div class="chat-typing-indicator">{{ typingIndicatorText() }}</div>
+        }
+
         <div class="chat-composer">
           <input #chatFileInput type="file" class="chat-file-input" (change)="onChatFileSelected($event)" />
           <input #chatCameraInput type="file" class="chat-file-input" accept="image/*" capture="environment" (change)="onChatFileSelected($event)" />
-          <textarea name="chatContent" [(ngModel)]="chatContent" rows="1" placeholder="Mensaje" (keydown)="onChatKeydown($event)"></textarea>
+          <textarea name="chatContent" [(ngModel)]="chatContent" (ngModelChange)="onChatInputChanged($event)" (blur)="onChatInputBlur()" rows="1" placeholder="Mensaje" (keydown)="onChatKeydown($event)"></textarea>
           <button class="chat-action-btn" type="button" (click)="chatFileInput.click()" title="Adjuntar archivo" [disabled]="sendingChat">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>

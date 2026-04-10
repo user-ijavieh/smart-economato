@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, forkJoin, finalize, takeUntil } from 'rxjs';
+import { Client, IMessage, ReconnectionTimeMode, StompSubscription } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 import { AuthService } from '../../core/services/auth.service';
 import { IncidentService } from '../../core/services/incident.service';
 import { MessageService } from '../../core/services/message.service';
@@ -10,10 +12,12 @@ import { NotificationService } from '../../core/services/notification.service';
 import { BaseModalComponent } from '../../shared/components/base-modal/base-modal.component';
 import {
   AttachAuditRequest,
+  IncidentChatReadReceipt,
   CloseIncidentRequest,
   CreateIncidentRequest,
   IncidentAuditAttachment,
   IncidentChatMessage,
+  IncidentChatTypingResponse,
   IncidentDetail,
   IncidentFilters,
   IncidentListItem,
@@ -32,6 +36,7 @@ import {
 import { Page } from '../../shared/models/page.model';
 import { User } from '../../shared/models/user.model';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 type IncidentTab = 'incidents' | 'types';
 type DetailTab = 'summary' | 'chat' | 'audits';
@@ -55,7 +60,7 @@ interface TypeFormState {
   styleUrl: './incidents.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class IncidentsComponent implements OnInit, OnDestroy {
+export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly authService = inject(AuthService);
   private readonly incidentService = inject(IncidentService);
   private readonly userService = inject(UserService);
@@ -64,6 +69,22 @@ export class IncidentsComponent implements OnInit, OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
   private readonly destroy$ = new Subject<void>();
+  private chatRealtimeClient?: Client;
+  private chatRealtimeConnected = false;
+  private readonly chatRealtimeSubscriptions: StompSubscription[] = [];
+  private subscribedIncidentId: number | null = null;
+  private pendingIncidentSubscriptionId: number | null = null;
+  private typingStopTimeout: number | null = null;
+  private typingLocallyActive = false;
+  private readonly remoteTypingTimeoutByUser = new Map<number, number>();
+  private readonly remoteTypingUsersMap = new Map<number, IncidentChatTypingResponse>();
+  private readonly remoteTypingVisibilityMs = 3200;
+  private readonly typingDebounceMs = 2400;
+  private readonly readReceiptDebounceMs = 120;
+  private markReadTimeout: number | null = null;
+  private readonly currentUserId = this.authService.getUserId();
+  private pendingScrollToMessageId: number | null = null;
+  @ViewChildren('chatMessageItem') private chatMessageItems!: QueryList<ElementRef<HTMLElement>>;
   readonly statusOptions = INCIDENT_STATUS_OPTIONS;
   readonly severityOptions = INCIDENT_SEVERITY_OPTIONS;
 
@@ -129,6 +150,7 @@ export class IncidentsComponent implements OnInit, OnDestroy {
   chatFile: File | null = null;
   chatFilePreviewUrl: string | null = null;
   latestChatMessageId: number | null = null;
+  typingUsers: IncidentChatTypingResponse[] = [];
   private newMessageHighlightTimeout: number | null = null;
 
   showOpenModal = false;
@@ -164,7 +186,21 @@ export class IncidentsComponent implements OnInit, OnDestroy {
       });
   }
 
+  ngAfterViewInit(): void {
+    this.chatMessageItems.changes
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.scrollToPendingMessageIfNeeded();
+      });
+  }
+
   ngOnDestroy(): void {
+    this.emitTypingState(false);
+    this.clearTypingStopTimeout();
+    this.clearMarkReadTimeout();
+    this.clearRemoteTypingUsers();
+    this.unsubscribeIncidentRealtimeTopics();
+    this.disconnectChatRealtime();
     if (this.newMessageHighlightTimeout !== null) {
       window.clearTimeout(this.newMessageHighlightTimeout);
     }
@@ -323,6 +359,11 @@ export class IncidentsComponent implements OnInit, OnDestroy {
     this.showIncidentDetailModal = true;
     this.detailTab = 'summary';
     this.latestChatMessageId = null;
+    this.clearRemoteTypingUsers();
+    this.clearTypingStopTimeout();
+    this.typingLocallyActive = false;
+    this.ensureChatRealtimeConnected();
+    this.subscribeIncidentRealtimeTopics(id);
     this.loadIncidentDetail(id);
   }
 
@@ -349,6 +390,7 @@ export class IncidentsComponent implements OnInit, OnDestroy {
         this.selectedIncident = payload.detail;
         this.chatMessages = payload.chat.content || [];
         this.prefetchChatImagePreviews(this.chatMessages);
+        this.scheduleMarkChatAsRead();
         this.selectedIncidentAttachments = payload.detail.attachedAudits || [];
         if ('audits' in payload) {
           const payloadWithAudits = payload as { audits: RecipeCookingAudit[] };
@@ -386,6 +428,10 @@ export class IncidentsComponent implements OnInit, OnDestroy {
   }
 
   closeIncidentDetail(): void {
+    this.emitTypingState(false);
+    this.clearTypingStopTimeout();
+    this.clearRemoteTypingUsers();
+    this.unsubscribeIncidentRealtimeTopics();
     this.revokeChatImagePreviews();
     this.closeImageZoom();
     this.showIncidentDetailModal = false;
@@ -394,8 +440,19 @@ export class IncidentsComponent implements OnInit, OnDestroy {
     this.chatMessages = [];
     this.chatContent = '';
     this.chatFile = null;
+    this.chatFilePreviewUrl = null;
     this.attachableAudits = [];
     this.selectedAttachAuditIds = new Set();
+  }
+
+  setDetailTab(tab: DetailTab): void {
+    this.detailTab = tab;
+    if (tab === 'chat') {
+      this.scheduleMarkChatAsRead();
+    } else {
+      this.emitTypingState(false);
+      this.clearRemoteTypingUsers();
+    }
   }
 
   openOpenModal(): void {
@@ -491,6 +548,24 @@ export class IncidentsComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
+  onChatInputChanged(value: string): void {
+    if (this.detailTab !== 'chat' || !this.selectedIncidentId) {
+      return;
+    }
+
+    if (!value || !value.trim()) {
+      this.emitTypingState(false);
+      return;
+    }
+
+    this.emitTypingState(true);
+    this.scheduleTypingStop();
+  }
+
+  onChatInputBlur(): void {
+    this.emitTypingState(false);
+  }
+
   sendChatMessage(): void {
     if (!this.selectedIncidentId) return;
 
@@ -501,6 +576,8 @@ export class IncidentsComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.emitTypingState(false);
+
     this.sendingChat = true;
     this.incidentService.sendChatMessage(this.selectedIncidentId, this.chatContent, this.chatFile).pipe(
       finalize(() => {
@@ -509,12 +586,14 @@ export class IncidentsComponent implements OnInit, OnDestroy {
       })
     ).subscribe({
       next: message => {
-        this.chatMessages = [...this.chatMessages, message];
+        this.upsertChatMessage(message);
+        this.queueScrollToMessage(message.id);
         this.highlightIncomingMessage(message.id);
         this.ensureChatImagePreview(message);
         this.chatContent = '';
         this.chatFile = null;
         this.chatFilePreviewUrl = null;
+        this.markChatAsRead();
         this.messageService.showSuccess('Mensaje enviado');
         this.refreshSelectedIncident();
       },
@@ -532,6 +611,43 @@ export class IncidentsComponent implements OnInit, OnDestroy {
       event.preventDefault();
       this.sendChatMessage();
     }
+  }
+
+  typingIndicatorText(): string {
+    if (this.typingUsers.length === 0) {
+      return '';
+    }
+
+    if (this.typingUsers.length === 1) {
+      return `${this.typingUsers[0].userName} esta escribiendo...`;
+    }
+
+    const first = this.typingUsers[0].userName;
+    const extra = this.typingUsers.length - 1;
+    return `${first} y ${extra} mas estan escribiendo...`;
+  }
+
+  isOwnChatMessage(message: IncidentChatMessage): boolean {
+    return !!this.currentUserId && message.authorId === this.currentUserId;
+  }
+
+  messageReadByOthers(message: IncidentChatMessage): IncidentChatReadReceipt[] {
+    const readers = message.readBy || [];
+    return readers.filter(reader => reader.userId !== message.authorId);
+  }
+
+  isMessageReadByOthers(message: IncidentChatMessage): boolean {
+    return this.messageReadByOthers(message).length > 0;
+  }
+
+  messageReadByLabel(message: IncidentChatMessage): string {
+    const readers = this.messageReadByOthers(message);
+    if (readers.length === 0) {
+      return 'Aun no leido por otros participantes';
+    }
+
+    const names = readers.map(reader => reader.userName).filter(Boolean);
+    return names.length > 0 ? `Leido por: ${names.join(', ')}` : 'Leido';
   }
 
   downloadAttachment(message: IncidentChatMessage): void {
@@ -927,5 +1043,345 @@ export class IncidentsComponent implements OnInit, OnDestroy {
     anchor.download = filename;
     anchor.click();
     window.URL.revokeObjectURL(url);
+  }
+
+  private ensureChatRealtimeConnected(): void {
+    const token = this.authService.getToken();
+    if (!token) {
+      return;
+    }
+
+    if (this.chatRealtimeClient?.active) {
+      return;
+    }
+
+    this.chatRealtimeClient = new Client({
+      webSocketFactory: () => new SockJS(this.getChatSockJsUrl()),
+      connectHeaders: {
+        Authorization: `Bearer ${token}`
+      },
+      beforeConnect: async () => {
+        const freshToken = this.authService.getToken();
+        if (!freshToken) {
+          throw new Error('Missing auth token for incident chat realtime');
+        }
+
+        if (this.chatRealtimeClient) {
+          this.chatRealtimeClient.connectHeaders = {
+            Authorization: `Bearer ${freshToken}`
+          };
+        }
+      },
+      reconnectDelay: 1000,
+      reconnectTimeMode: ReconnectionTimeMode.EXPONENTIAL,
+      maxReconnectDelay: 30000,
+      heartbeatIncoming: 10000,
+      heartbeatOutgoing: 10000,
+      onConnect: () => {
+        this.chatRealtimeConnected = true;
+        const incidentId = this.pendingIncidentSubscriptionId ?? this.selectedIncidentId;
+        if (incidentId) {
+          this.subscribeIncidentRealtimeTopics(incidentId);
+          this.pendingIncidentSubscriptionId = null;
+        }
+      },
+      onStompError: frame => {
+        console.error('Incident chat STOMP error:', frame.headers['message'] || frame.body);
+      },
+      onWebSocketClose: () => {
+        this.chatRealtimeConnected = false;
+      },
+      onWebSocketError: error => {
+        console.error('Incident chat websocket transport error:', error);
+      }
+    });
+
+    this.chatRealtimeClient.activate();
+  }
+
+  private disconnectChatRealtime(): void {
+    this.chatRealtimeConnected = false;
+    if (this.chatRealtimeClient) {
+      void this.chatRealtimeClient.deactivate();
+      this.chatRealtimeClient = undefined;
+    }
+  }
+
+  private subscribeIncidentRealtimeTopics(incidentId: number): void {
+    if (!this.chatRealtimeClient?.connected) {
+      this.pendingIncidentSubscriptionId = incidentId;
+      return;
+    }
+
+    if (this.subscribedIncidentId === incidentId && this.chatRealtimeSubscriptions.length > 0) {
+      return;
+    }
+
+    this.unsubscribeIncidentRealtimeTopics();
+    this.subscribedIncidentId = incidentId;
+
+    const chatTopic = `/topic/incidents/${incidentId}/chat`;
+    const readReceiptTopic = `/topic/incidents/${incidentId}/chat/read-receipts`;
+    const typingTopic = `/topic/incidents/${incidentId}/chat/typing`;
+
+    this.chatRealtimeSubscriptions.push(
+      this.chatRealtimeClient.subscribe(chatTopic, (message: IMessage) => {
+        this.handleChatRealtimeMessage(message);
+      })
+    );
+
+    this.chatRealtimeSubscriptions.push(
+      this.chatRealtimeClient.subscribe(readReceiptTopic, (message: IMessage) => {
+        this.handleReadReceiptRealtimeMessage(message);
+      })
+    );
+
+    this.chatRealtimeSubscriptions.push(
+      this.chatRealtimeClient.subscribe(typingTopic, (message: IMessage) => {
+        this.handleTypingRealtimeMessage(message);
+      })
+    );
+  }
+
+  private unsubscribeIncidentRealtimeTopics(): void {
+    this.chatRealtimeSubscriptions.forEach(subscription => subscription.unsubscribe());
+    this.chatRealtimeSubscriptions.length = 0;
+    this.subscribedIncidentId = null;
+  }
+
+  private handleChatRealtimeMessage(message: IMessage): void {
+    try {
+      const payload = JSON.parse(message.body) as IncidentChatMessage;
+      const wasNew = !this.chatMessages.some(item => item.id === payload.id);
+      this.upsertChatMessage(payload);
+
+      if (wasNew) {
+        this.queueScrollToMessage(payload.id);
+        this.highlightIncomingMessage(payload.id);
+      }
+
+      this.ensureChatImagePreview(payload);
+
+      if (this.detailTab === 'chat' && payload.authorId !== this.currentUserId) {
+        this.scheduleMarkChatAsRead();
+      }
+
+      this.cdr.markForCheck();
+    } catch (error) {
+      console.error('Invalid incident chat payload:', error);
+    }
+  }
+
+  private handleReadReceiptRealtimeMessage(message: IMessage): void {
+    try {
+      const payload = JSON.parse(message.body) as IncidentChatReadReceipt;
+      this.applyReadReceiptToMessages(payload);
+      this.cdr.markForCheck();
+    } catch (error) {
+      console.error('Invalid incident read receipt payload:', error);
+    }
+  }
+
+  private handleTypingRealtimeMessage(message: IMessage): void {
+    try {
+      const payload = JSON.parse(message.body) as IncidentChatTypingResponse;
+
+      if (!payload || payload.userId === this.currentUserId) {
+        return;
+      }
+
+      if (!payload.typing) {
+        this.removeRemoteTypingUser(payload.userId);
+        return;
+      }
+
+      this.remoteTypingUsersMap.set(payload.userId, payload);
+      this.typingUsers = Array.from(this.remoteTypingUsersMap.values());
+
+      const currentTimeout = this.remoteTypingTimeoutByUser.get(payload.userId);
+      if (currentTimeout !== undefined) {
+        window.clearTimeout(currentTimeout);
+      }
+
+      const timeoutId = window.setTimeout(() => {
+        this.removeRemoteTypingUser(payload.userId);
+      }, this.remoteTypingVisibilityMs);
+
+      this.remoteTypingTimeoutByUser.set(payload.userId, timeoutId);
+      this.cdr.markForCheck();
+    } catch (error) {
+      console.error('Invalid incident typing payload:', error);
+    }
+  }
+
+  private markChatAsRead(): void {
+    if (!this.selectedIncidentId || this.detailTab !== 'chat') {
+      return;
+    }
+
+    if (this.chatRealtimeClient?.connected) {
+      this.chatRealtimeClient.publish({
+        destination: `/app/incidents/${this.selectedIncidentId}/chat.markRead`,
+        body: ''
+      });
+      return;
+    }
+
+    this.incidentService.markChatAsRead(this.selectedIncidentId).subscribe({
+      error: () => {
+        // noop: fallback best-effort
+      }
+    });
+  }
+
+  private scheduleMarkChatAsRead(): void {
+    if (!this.selectedIncidentId || this.detailTab !== 'chat') {
+      return;
+    }
+
+    this.clearMarkReadTimeout();
+    this.markReadTimeout = window.setTimeout(() => {
+      this.markChatAsRead();
+      this.markReadTimeout = null;
+    }, this.readReceiptDebounceMs);
+  }
+
+  private clearMarkReadTimeout(): void {
+    if (this.markReadTimeout !== null) {
+      window.clearTimeout(this.markReadTimeout);
+      this.markReadTimeout = null;
+    }
+  }
+
+  private emitTypingState(typing: boolean): void {
+    if (!this.selectedIncidentId || this.detailTab !== 'chat') {
+      return;
+    }
+
+    if (!this.chatRealtimeClient?.connected) {
+      return;
+    }
+
+    if (this.typingLocallyActive === typing) {
+      return;
+    }
+
+    this.chatRealtimeClient.publish({
+      destination: `/app/incidents/${this.selectedIncidentId}/chat.typing`,
+      body: JSON.stringify({ typing })
+    });
+
+    this.typingLocallyActive = typing;
+
+    if (!typing) {
+      this.clearTypingStopTimeout();
+    }
+  }
+
+  private scheduleTypingStop(): void {
+    this.clearTypingStopTimeout();
+    this.typingStopTimeout = window.setTimeout(() => {
+      this.emitTypingState(false);
+      this.cdr.markForCheck();
+    }, this.typingDebounceMs);
+  }
+
+  private clearTypingStopTimeout(): void {
+    if (this.typingStopTimeout !== null) {
+      window.clearTimeout(this.typingStopTimeout);
+      this.typingStopTimeout = null;
+    }
+  }
+
+  private removeRemoteTypingUser(userId: number): void {
+    const timeout = this.remoteTypingTimeoutByUser.get(userId);
+    if (timeout !== undefined) {
+      window.clearTimeout(timeout);
+      this.remoteTypingTimeoutByUser.delete(userId);
+    }
+
+    if (this.remoteTypingUsersMap.delete(userId)) {
+      this.typingUsers = Array.from(this.remoteTypingUsersMap.values());
+      this.cdr.markForCheck();
+    }
+  }
+
+  private clearRemoteTypingUsers(): void {
+    this.remoteTypingTimeoutByUser.forEach(timeout => window.clearTimeout(timeout));
+    this.remoteTypingTimeoutByUser.clear();
+    this.remoteTypingUsersMap.clear();
+    this.typingUsers = [];
+    this.cdr.markForCheck();
+  }
+
+  private upsertChatMessage(message: IncidentChatMessage): void {
+    const existingIndex = this.chatMessages.findIndex(item => item.id === message.id);
+    if (existingIndex >= 0) {
+      const next = [...this.chatMessages];
+      next[existingIndex] = {
+        ...next[existingIndex],
+        ...message
+      };
+      this.chatMessages = next;
+      return;
+    }
+
+    this.chatMessages = [...this.chatMessages, message].sort((a, b) => a.id - b.id);
+  }
+
+  private applyReadReceiptToMessages(receipt: IncidentChatReadReceipt): void {
+    if (!receipt || !receipt.userId || !receipt.lastReadMessageId) {
+      return;
+    }
+
+    this.chatMessages = this.chatMessages.map(message => {
+      if (message.id > receipt.lastReadMessageId) {
+        return message;
+      }
+
+      const readBy = (message.readBy || []).filter(item => item.userId !== receipt.userId);
+      return {
+        ...message,
+        readBy: [...readBy, receipt]
+      };
+    });
+  }
+
+  private getChatSockJsUrl(): string {
+    const configured = (environment.apiUrl || '').trim();
+    if (configured) {
+      return `${configured.replace(/\/$/, '')}/ws-alerts`;
+    }
+
+    return `${window.location.origin}/ws-alerts`;
+  }
+
+  private queueScrollToMessage(messageId: number): void {
+    if (this.detailTab !== 'chat') {
+      return;
+    }
+
+    this.pendingScrollToMessageId = messageId;
+    this.scrollToPendingMessageIfNeeded();
+  }
+
+  private scrollToPendingMessageIfNeeded(): void {
+    if (this.pendingScrollToMessageId === null || !this.chatMessageItems || this.chatMessageItems.length === 0) {
+      return;
+    }
+
+    const pendingMessageId = this.pendingScrollToMessageId;
+    requestAnimationFrame(() => {
+      const target = this.chatMessageItems.find(
+        item => Number(item.nativeElement.dataset['messageId']) === pendingMessageId
+      )?.nativeElement ?? this.chatMessageItems.last?.nativeElement;
+
+      if (!target) {
+        return;
+      }
+
+      target.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      this.pendingScrollToMessageId = null;
+    });
   }
 }
