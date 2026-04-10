@@ -16,6 +16,7 @@ import { ProductDetailModalComponent } from '../../general/inventory/product-det
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { ScrollService } from '../../../core/services/scroll.service';
+import { PresenceTrackingService } from '../../../core/services/presence-tracking.service';
 import { finalize, catchError, forkJoin } from 'rxjs';
 import { of } from 'rxjs';
 
@@ -43,6 +44,7 @@ export class ProductsManagementComponent implements OnInit {
   private statsService = inject(StatsService);
   private cdr = inject(ChangeDetectorRef);
   private scrollService = inject(ScrollService);
+  private presenceTrackingService = inject(PresenceTrackingService);
   messageService = inject(MessageService);
 
   // ── Tab state ──
@@ -469,21 +471,25 @@ export class ProductsManagementComponent implements OnInit {
   openAuditDetailModal(audit: ProductAudit): void {
     this.selectedAudit = audit;
     this.showAuditDetailModal = true;
+    this.presenceTrackingService.reportModal('Detalle de movimiento de producto');
   }
 
   closeAuditDetailModal(): void {
     this.showAuditDetailModal = false;
     this.selectedAudit = null;
+    this.presenceTrackingService.clearContext();
   }
 
   // ── Product Modals ──
 
   openCreateModal(): void {
     this.showCreateModal = true;
+    this.presenceTrackingService.reportModal('Creación de producto');
   }
 
   onCloseCreateModal(): void {
     this.showCreateModal = false;
+    this.presenceTrackingService.clearContext();
   }
 
   onSaveProduct(productData: ProductRequest): void {
@@ -491,6 +497,7 @@ export class ProductsManagementComponent implements OnInit {
       next: () => {
         this.messageService.showSuccess('Producto creado correctamente');
         this.showCreateModal = false;
+        this.presenceTrackingService.clearContext();
         this.loadProducts(this.currentPage);
         this.loadStats();
       },
@@ -504,11 +511,13 @@ export class ProductsManagementComponent implements OnInit {
   openEditModal(product: Product): void {
     this.selectedProduct = product;
     this.showEditModal = true;
+    this.presenceTrackingService.reportModal('Edición de producto', product.name);
   }
 
   onCloseEditModal(): void {
     this.showEditModal = false;
     this.selectedProduct = null;
+    this.presenceTrackingService.clearContext();
   }
 
   onSaveEditedProduct(productData: ProductRequest): void {
@@ -519,6 +528,7 @@ export class ProductsManagementComponent implements OnInit {
         this.messageService.showSuccess('Producto actualizado correctamente');
         this.showEditModal = false;
         this.selectedProduct = null;
+        this.presenceTrackingService.clearContext();
         this.loadProducts(this.currentPage);
         this.loadStats();
       },
@@ -542,6 +552,7 @@ export class ProductsManagementComponent implements OnInit {
         this.messageService.showSuccess(`Producto ${actionText} correctamente`);
         this.showEditModal = false;
         this.selectedProduct = null;
+        this.presenceTrackingService.clearContext();
         
         // Recargar la vista actual - el producto desaparecerá de la lista actual
         // porque ya no cumple el criterio (oculto vs activo)
@@ -559,11 +570,13 @@ export class ProductsManagementComponent implements OnInit {
   openDetailModal(product: Product): void {
     this.selectedProduct = product;
     this.showDetailModal = true;
+    this.presenceTrackingService.reportModal('Detalle de producto', product.name);
   }
 
   onCloseDetailModal(): void {
     this.showDetailModal = false;
     this.selectedProduct = null;
+    this.presenceTrackingService.clearContext();
   }
 
   onEditFromDetail(product: Product): void {

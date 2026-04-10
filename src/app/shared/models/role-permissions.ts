@@ -108,7 +108,8 @@ export const ROLE_PERMISSIONS: Record<Exclude<Role, 'ELEVATED'>, string[]> = {
     "GET /api/weekly-plans/metrics/students",
     "GET /api/notifications",
     "PATCH /api/notifications/{id}/read",
-    "PATCH /api/notifications/read-all"
+    "PATCH /api/notifications/read-all",
+    "GET /api/user-activity/my-students"
   ],
   ADMIN: [
     "GET /api/products/with-ledger",
@@ -283,7 +284,10 @@ export const ROLE_PERMISSIONS: Record<Exclude<Role, 'ELEVATED'>, string[]> = {
     "GET /api/notifications",
     "PATCH /api/notifications/{id}/read",
     "PATCH /api/notifications/read-all",
-    "GET /api/users/search"
+    "GET /api/users/search",
+    "GET /api/user-activity",
+    "GET /api/user-activity/user/{userId}",
+    "GET /api/user-activity/my-students"
   ],
   USER: [
     "GET /api/products/with-ledger",

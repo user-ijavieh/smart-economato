@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../core/services/user.service';
@@ -7,6 +7,11 @@ import { User } from '../../../shared/models/user.model';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { WeeklyPlanSectionComponent } from './weekly-plan/weekly-plan-section.component';
 import { finalize } from 'rxjs';
+import { Subscription } from 'rxjs';
+import { WebSocketService } from '../../../core/services/websocket.service';
+import { UserPresenceSnapshot } from '../../../shared/models/presence.model';
+import { UserActivityService } from '../../../core/services/user-activity.service';
+import { UserActivityLogResponse } from '../../../shared/models/user-activity.model';
 
 @Component({
   selector: 'app-profile',
@@ -15,10 +20,13 @@ import { finalize } from 'rxjs';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
   private userService = inject(UserService);
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
+  private webSocketService = inject(WebSocketService);
+  private userActivityService = inject(UserActivityService);
+  private presenceSubscription?: Subscription;
 
   currentUser: User | null = null;
   userInitials: string = '';
@@ -26,6 +34,13 @@ export class ProfileComponent implements OnInit {
   
   students: (User & { initials?: string })[] = [];
   loadingStudents = false;
+  studentPresence: UserPresenceSnapshot[] = [];
+
+  activityLogs: UserActivityLogResponse[] = [];
+  activityPage = 0;
+  activitySize = 10;
+  activityLoading = false;
+  activityHasMore = true;
   
   // Modal
   showEscalateModal = false;
@@ -43,7 +58,16 @@ export class ProfileComponent implements OnInit {
 
     if (this.isChef) {
       this.loadStudents();
+      this.presenceSubscription = this.webSocketService.studentPresence$.subscribe((presence) => {
+        this.studentPresence = presence ?? [];
+        this.cdr.detectChanges();
+      });
+      this.loadStudentsActivity(true);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.presenceSubscription?.unsubscribe();
   }
 
   loadCurrentUser() {
@@ -161,5 +185,90 @@ export class ProfileComponent implements OnInit {
           alert('Error al intentar revocar permisos temporales.');
         }
       });
+  }
+
+  getStudentPresence(studentId: number): UserPresenceSnapshot | undefined {
+    return this.studentPresence.find(p => p.userId === studentId);
+  }
+
+  getStudentCurrentScreen(presence: UserPresenceSnapshot): string {
+    const screen = presence.tabs?.[0]?.screen;
+    return this.translateScreenName(screen);
+  }
+
+  getStudentLastActivity(presence: UserPresenceSnapshot): string {
+    const sorted = [...(presence.tabs ?? [])].sort((a, b) =>
+      new Date(b.lastActivityAt).getTime() - new Date(a.lastActivityAt).getTime()
+    );
+    return sorted[0]?.lastActivityAt ?? presence.connectedSince;
+  }
+
+  loadStudentsActivity(reset = false): void {
+    if (this.activityLoading) return;
+
+    if (reset) {
+      this.activityLogs = [];
+      this.activityPage = 0;
+      this.activityHasMore = true;
+    }
+
+    if (!this.activityHasMore) return;
+
+    this.activityLoading = true;
+    this.userActivityService.getMyStudentsActivity(this.activityPage, this.activitySize, 'timestamp,desc').subscribe({
+      next: (page) => {
+        this.activityLogs = [...this.activityLogs, ...(page.content ?? [])];
+        this.activityPage += 1;
+        this.activityHasMore = !page.last;
+        this.activityLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error loading students activity', err);
+        this.activityLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  formatActivityAction(action: string): string {
+    switch (action) {
+      case 'CONNECTED':
+        return 'Conectado';
+      case 'DISCONNECTED':
+        return 'Desconectado';
+      case 'SCREEN_CHANGED':
+        return 'Cambio de pantalla';
+      default:
+        return action;
+    }
+  }
+
+  formatActivityScreen(screen?: string | null, context?: string | null): string {
+    const label = this.translateScreenName(screen);
+    const detail = (context || '').trim();
+    return detail ? `${label} · ${detail}` : label;
+  }
+
+  private translateScreenName(screen?: string | null): string {
+    if (!screen) return 'Sin datos';
+
+    const map: Record<string, string> = {
+      DASHBOARD: 'Inicio',
+      USER_MANAGEMENT: 'Gestión de usuarios',
+      PRODUCT_MANAGEMENT: 'Gestión de productos',
+      ORDER_MANAGEMENT: 'Gestión de pedidos',
+      STOCK_MANAGEMENT: 'Gestión de stock',
+      RECIPE_MANAGEMENT: 'Gestión de recetas',
+      NOTIFICATIONS_MANAGEMENT: 'Gestión de notificaciones',
+      INCIDENTS: 'Incidencias',
+      ORDERS: 'Pedidos',
+      ORDER_RECEPTION: 'Recepción de pedidos',
+      RECIPES: 'Recetas',
+      INVENTORY: 'Inventario',
+      PROFILE: 'Perfil'
+    };
+
+    return map[screen] || screen.replaceAll('_', ' ');
   }
 }

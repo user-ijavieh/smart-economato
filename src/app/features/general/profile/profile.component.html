@@ -20,7 +20,7 @@
   <div class="students-section">
     <div class="section-header">
       <h2>Mis Alumnos</h2>
-      <span class="students-count">{{ students.length }} total</span>
+      <span class="students-count">{{ students.length }} total · {{ studentPresence.length }} en línea</span>
     </div>
 
     @if (loadingStudents) {
@@ -31,6 +31,8 @@
             <th>Alumno</th>
             <th>Usuario</th>
             <th>Rol Actual</th>
+            <th>Estado</th>
+            <th>Pantalla</th>
             <th>Permisos Temporales</th>
           </tr>
         </thead>
@@ -45,6 +47,8 @@
             </td>
             <td data-label="Usuario"><span class="skeleton-text" style="width: 90px"></span></td>
             <td data-label="Rol Actual"><span class="skeleton-text" style="width: 60px"></span></td>
+            <td data-label="Estado"><span class="skeleton-text" style="width: 80px"></span></td>
+            <td data-label="Pantalla"><span class="skeleton-text" style="width: 100px"></span></td>
             <td data-label="Permisos Temporales"><span class="skeleton-text" style="width: 100px"></span></td>
           </tr>
           }
@@ -63,6 +67,8 @@
             <th>Alumno</th>
             <th>Usuario</th>
             <th>Rol Actual</th>
+            <th>Estado</th>
+            <th>Pantalla</th>
             <th>Permisos Temporales</th>
           </tr>
         </thead>
@@ -80,6 +86,20 @@
               <span class="role-badge" [class.elevated]="student.role === 'ELEVATED'">
                 {{ student.role === 'ELEVATED' ? 'TEMPORAL (CHEF)' : student.role }}
               </span>
+            </td>
+            <td data-label="Estado">
+              @if (getStudentPresence(student.id); as presence) {
+              <span class="presence-pill connected">En línea</span>
+              } @else {
+              <span class="presence-pill disconnected">Desconectado</span>
+              }
+            </td>
+            <td data-label="Pantalla">
+              @if (getStudentPresence(student.id); as presence) {
+              <span>{{ getStudentCurrentScreen(presence) }}</span>
+              } @else {
+              <span>-</span>
+              }
             </td>
             <td data-label="Permisos Temporales">
               <div class="actions-container">
@@ -100,6 +120,42 @@
       </table>
     </div>
     }
+
+    <div class="students-activity-panel">
+      <div class="section-header activity-header">
+        <h2>Actividad reciente de alumnos</h2>
+        <button class="btn-success" (click)="loadStudentsActivity(true)" [disabled]="activityLoading">Refrescar</button>
+      </div>
+
+      <div class="activity-list">
+        @for (item of activityLogs; track item.id) {
+        <div class="activity-item">
+          <div class="activity-main">
+            <strong>{{ item.displayName || item.username }}</strong>
+            <span>{{ formatActivityAction(item.action) }}</span>
+          </div>
+          <div class="activity-meta">
+            <span>{{ formatActivityScreen(item.screen, item.screenContext) }}</span>
+            <span>{{ item.timestamp | date:'short' }}</span>
+          </div>
+        </div>
+        }
+
+        @if (activityLoading) {
+        <div class="empty-state">Cargando actividad...</div>
+        }
+
+        @if (!activityLoading && activityLogs.length === 0) {
+        <div class="empty-state">Sin actividad reciente</div>
+        }
+
+        @if (!activityLoading && activityHasMore) {
+        <div class="activity-load-more">
+          <button class="btn-success" (click)="loadStudentsActivity(false)">Cargar más</button>
+        </div>
+        }
+      </div>
+    </div>
   </div>
   }
 
