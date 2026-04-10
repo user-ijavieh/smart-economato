@@ -38,6 +38,21 @@ export interface IncidentChatMessage {
   attachmentFilename?: string | null;
   attachmentContentType?: string | null;
   createdAt: string;
+  readBy?: IncidentChatReadReceipt[];
+}
+
+export interface IncidentChatReadReceipt {
+  userId: number;
+  userName: string;
+  lastReadMessageId: number;
+  readAt: string;
+}
+
+export interface IncidentChatTypingResponse {
+  incidentId: number;
+  userId: number;
+  userName: string;
+  typing: boolean;
 }
 
 export interface IncidentListItem {

@@ -79,6 +79,10 @@ export class IncidentService {
     return this.http.get<Page<IncidentChatMessage>>(`${this.incidentsUrl}/${id}/chat`, { params });
   }
 
+  markChatAsRead(id: number): Observable<void> {
+    return this.http.post<void>(`${this.incidentsUrl}/${id}/chat/mark-read`, {});
+  }
+
   sendChatMessage(id: number, content: string, file?: File | null): Observable<IncidentChatMessage> {
     const formData = new FormData();
     const normalizedContent = content?.trim();
