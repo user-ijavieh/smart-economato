@@ -1,0 +1,232 @@
+.admin-tab-bar {
+  justify-content: flex-start;
+  gap: 6px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 12px;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-tab-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  scroll-snap-align: start;
+}
+
+.admin-tab-bar::-webkit-scrollbar {
+  height: 6px;
+}
+
+.admin-tab-bar::-webkit-scrollbar-thumb {
+  background: var(--theme-border-glass);
+  border-radius: 99px;
+}
+
+.contenedor-principal {
+  flex: 1;
+  padding: 32px;
+  min-height: calc(100vh - 140px);
+}
+
+.stats-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  background: var(--theme-surface-glass);
+  border: 1px solid var(--theme-border-glass);
+  border-radius: var(--theme-radius-card);
+  padding: 18px;
+  text-align: center;
+  flex: 1;
+  min-width: 220px;
+}
+
+.stat-number {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--theme-text-primary);
+}
+
+.stat-label {
+  margin: 6px 0 0;
+  color: var(--theme-text-secondary);
+  font-size: 0.82rem;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.toolbar-btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--theme-border-glass);
+  background: var(--theme-surface-glass-active);
+  color: var(--theme-text-primary);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.toolbar-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.toolbar-btn--primary {
+  background: rgba(90, 120, 220, 0.24);
+  border-color: rgba(122, 150, 240, 0.45);
+}
+
+.btn-danger {
+  margin-top: 12px;
+  background: var(--color-danger-bg);
+  border-color: var(--color-danger-border);
+  color: var(--color-danger-muted);
+}
+
+.config-card {
+  background: var(--theme-surface-glass);
+  border: 1px solid var(--theme-border-glass);
+  border-radius: var(--theme-radius-card);
+  padding: 22px;
+}
+
+.config-card h2 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: var(--theme-text-primary);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--theme-text-secondary);
+  font-size: 0.9rem;
+}
+
+.form-grid input,
+.form-grid textarea {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--theme-border-glass);
+  background: var(--theme-input-bg);
+  color: var(--theme-text-primary);
+}
+
+.form-grid .toggle-line {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-grid .toggle-line input {
+  width: auto;
+}
+
+.selector-block {
+  background: var(--theme-surface-glass-hover);
+  border: 1px solid var(--theme-border-glass);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.selector-title {
+  margin: 0 0 6px;
+  color: var(--theme-text-primary);
+  font-weight: 700;
+}
+
+.selector-help {
+  margin: 0 0 10px;
+  color: var(--theme-text-secondary);
+  font-size: 0.82rem;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.tabla-contenedor {
+  background: var(--theme-surface-glass);
+  border-radius: var(--theme-radius-card);
+  border: 1px solid var(--theme-border-glass);
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid var(--theme-border-subtle);
+  text-align: left;
+}
+
+th {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: var(--theme-text-secondary);
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--theme-text-secondary);
+  padding: 16px;
+}
+
+.pagination-bar {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  color: var(--theme-text-secondary);
+}
+
+@media (max-width: 900px) {
+  .admin-tab-bar {
+    padding: 0 8px;
+  }
+
+  .admin-tab-btn {
+    font-size: 0.84rem;
+    padding: 0 12px;
+  }
+
+  .contenedor-principal {
+    padding: 20px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar {
+    justify-content: stretch;
+    flex-wrap: wrap;
+  }
+
+  .toolbar-btn {
+    width: 100%;
+  }
+}
