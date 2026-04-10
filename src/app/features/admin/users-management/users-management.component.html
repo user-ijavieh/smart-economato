@@ -15,6 +15,12 @@
         </svg>
         Asignaciones
     </button>
+    <button class="admin-tab-btn" [class.active]="activeTab === 'presence'" (click)="switchTab('presence')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 14.93V19h-2v-2.07A8.012 8.012 0 0 1 5.07 13H3v-2h2.07A8.012 8.012 0 0 1 11 5.07V3h2v2.07A8.012 8.012 0 0 1 18.93 11H21v2h-2.07A8.012 8.012 0 0 1 13 16.93ZM12 7a5 5 0 1 0 5 5 5.006 5.006 0 0 0-5-5Z" />
+        </svg>
+        Presencia
+    </button>
 </div>
 
 @if (activeTab === 'users') {
@@ -194,6 +200,88 @@
         </button>
     </div>
     }
+</div>
+}
+
+@if (activeTab === 'presence') {
+<div class="page-content contenedor-principal presence-container">
+    <div class="stats-row">
+        <div class="stat-card stat-user">
+            <span class="stat-number">{{ connectedSnapshots.length }}</span>
+            <span class="stat-label">Conectados ahora</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-number">{{ activityLogs.length }}</span>
+            <span class="stat-label">Eventos cargados</span>
+        </div>
+    </div>
+
+    <div class="presence-layout">
+        <div class="tabla-contenedor presence-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                        <th>Pantalla</th>
+                        <th class="hide-on-mobile">Última actividad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (user of filteredUsers; track user.id) {
+                    @if (!showingHidden) {
+                    <tr>
+                        <td>{{ user.name }}</td>
+                        <td>
+                            <span class="role-badge" [ngClass]="getRoleBadgeClass(user.role)">
+                                {{ user.role }}
+                            </span>
+                        </td>
+                        @if (getPresenceForUser(user.id!); as presence) {
+                        <td><span class="presence-pill connected">En línea</span></td>
+                        <td>{{ getCurrentScreen(presence) }}</td>
+                        <td class="hide-on-mobile">{{ getLastHeartbeat(presence) | date:'short' }}</td>
+                        } @else {
+                        <td><span class="presence-pill disconnected">Desconectado</span></td>
+                        <td>-</td>
+                        <td class="hide-on-mobile">-</td>
+                        }
+                    </tr>
+                    }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="activity-feed" (scroll)="onActivityScroll($event)">
+            <div class="feed-header">
+                <h3>Historial de actividad</h3>
+                <button class="toolbar-btn btn-clear" (click)="loadActivity(true)">Refrescar</button>
+            </div>
+
+            @for (log of activityLogs; track trackByActivityId($index, log)) {
+            <div class="activity-item">
+                <div class="activity-main">
+                    <strong>{{ log.displayName || log.username }}</strong>
+                    <span>{{ formatActivityAction(log.action) }}</span>
+                </div>
+                <div class="activity-meta">
+                    <span>{{ formatActivityScreen(log) }}</span>
+                    <span>{{ log.timestamp | date:'short' }}</span>
+                </div>
+            </div>
+            }
+
+            @if (activityLoading) {
+            <div class="activity-loading">Cargando actividad...</div>
+            }
+
+            @if (!activityLoading && activityLogs.length === 0) {
+            <div class="activity-empty">Sin eventos de actividad</div>
+            }
+        </div>
+    </div>
 </div>
 }
 
