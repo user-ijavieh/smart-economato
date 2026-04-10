@@ -10,6 +10,7 @@ import { ThemeService } from '../../../core/services/theme.service';
 import { BaseModalComponent } from '../base-modal/base-modal.component';
 import { slideInAnimation } from '../../animations/route-animations';
 import { NotificationService, SessionNotification } from '../../../core/services/notification.service';
+import { PresenceTrackingService } from '../../../core/services/presence-tracking.service';
 
 @Component({
   selector: 'app-layout',
@@ -26,6 +27,7 @@ export class LayoutComponent {
   private router = inject(Router);
   private themeService = inject(ThemeService);
   private notificationService = inject(NotificationService);
+  private presenceTrackingService = inject(PresenceTrackingService);
   private destroyRef = inject(DestroyRef);
 
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
@@ -45,6 +47,8 @@ export class LayoutComponent {
   isAuthenticated$ = this.authService.authStatus$;
 
   constructor() {
+    this.presenceTrackingService.initialize();
+
     this.notificationService.incoming$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {

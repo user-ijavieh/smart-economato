@@ -1,7 +1,8 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { forkJoin, of, switchMap } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { UserService } from '../../../core/services/user.service';
 import { MessageService } from '../../../core/services/message.service';
 import { User, UserRequest, BatchAssignResponse } from '../../../shared/models/user.model';
@@ -9,6 +10,11 @@ import { UserFormModalComponent } from './user-form-modal/user-form-modal.compon
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { ScrollService } from '../../../core/services/scroll.service';
+import { WebSocketService } from '../../../core/services/websocket.service';
+import { UserPresenceSnapshot } from '../../../shared/models/presence.model';
+import { UserActivityService } from '../../../core/services/user-activity.service';
+import { UserActivityLogResponse } from '../../../shared/models/user-activity.model';
+import { PresenceTrackingService } from '../../../core/services/presence-tracking.service';
 
 @Component({
     selector: 'app-users-management',
@@ -23,11 +29,15 @@ import { ScrollService } from '../../../core/services/scroll.service';
     templateUrl: './users-management.component.html',
     styleUrl: './users-management.component.css'
 })
-export class UsersManagementComponent implements OnInit {
+export class UsersManagementComponent implements OnInit, OnDestroy {
     private userService = inject(UserService);
     private cdr = inject(ChangeDetectorRef);
     private scrollService = inject(ScrollService);
+    private webSocketService = inject(WebSocketService);
+    private userActivityService = inject(UserActivityService);
+    private presenceTrackingService = inject(PresenceTrackingService);
     messageService = inject(MessageService);
+    private presenceSubscription?: Subscription;
 
     users: User[] = [];
     filteredUsers: User[] = [];
@@ -62,7 +72,16 @@ export class UsersManagementComponent implements OnInit {
     sortInteracted = false;
 
     // ── Tab state ──
-    activeTab: 'users' | 'assignments' = 'users';
+    activeTab: 'users' | 'assignments' | 'presence' = 'users';
+
+    // ── Presence + Activity state ──
+    connectedSnapshots: UserPresenceSnapshot[] = [];
+    activityLogs: UserActivityLogResponse[] = [];
+    activityPage = 0;
+    activitySize = 20;
+    activityLoading = false;
+    activityHasMore = true;
+    activityInitialized = false;
 
     // ── Assignments state ──
     unassignedStudents: User[] = [];
@@ -82,6 +101,15 @@ export class UsersManagementComponent implements OnInit {
     ngOnInit(): void {
         this.loadUsers();
         this.loadTeachers();
+
+        this.presenceSubscription = this.webSocketService.adminPresence$.subscribe((snapshots) => {
+            this.connectedSnapshots = snapshots ?? [];
+            this.cdr.detectChanges();
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.presenceSubscription?.unsubscribe();
     }
 
     loadTeachers(force = false): void {
@@ -259,7 +287,7 @@ export class UsersManagementComponent implements OnInit {
 
     // ── Tab switching ──
 
-    switchTab(tab: 'users' | 'assignments'): void {
+    switchTab(tab: 'users' | 'assignments' | 'presence'): void {
         if (this.activeTab === tab) return;
         this.clearSelection();
         this.activeTab = tab;
@@ -267,6 +295,111 @@ export class UsersManagementComponent implements OnInit {
         if (tab === 'assignments' && !this.assignmentsLoaded) {
             this.loadAssignmentData();
         }
+        if (tab === 'presence' && !this.activityInitialized) {
+            this.loadActivity(true);
+        }
+    }
+
+    loadActivity(reset = false): void {
+        if (this.activityLoading) return;
+
+        if (reset) {
+            this.activityLogs = [];
+            this.activityPage = 0;
+            this.activityHasMore = true;
+        }
+
+        if (!this.activityHasMore) return;
+
+        this.activityLoading = true;
+        this.userActivityService.getAllActivity(this.activityPage, this.activitySize, 'timestamp,desc').subscribe({
+            next: (page) => {
+                const incoming = page.content ?? [];
+                this.activityLogs = [...this.activityLogs, ...incoming];
+                this.activityPage += 1;
+                this.activityHasMore = !page.last;
+                this.activityInitialized = true;
+                this.activityLoading = false;
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error loading user activity:', err);
+                this.messageService.showError('Error al cargar el historial de actividad');
+                this.activityLoading = false;
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    onActivityScroll(event: Event): void {
+        if (this.activityLoading || !this.activityHasMore) return;
+
+        const target = event.target as HTMLElement;
+        const nearBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 120;
+        if (nearBottom) {
+            this.loadActivity(false);
+        }
+    }
+
+    getPresenceForUser(userId: number): UserPresenceSnapshot | undefined {
+        return this.connectedSnapshots.find(snapshot => snapshot.userId === userId);
+    }
+
+    getCurrentScreen(snapshot: UserPresenceSnapshot): string {
+        const screen = snapshot.tabs?.[0]?.screen;
+        return this.translateScreenName(screen);
+    }
+
+    getLastHeartbeat(snapshot: UserPresenceSnapshot): string {
+        const sorted = [...(snapshot.tabs ?? [])].sort((a, b) =>
+            new Date(b.lastActivityAt).getTime() - new Date(a.lastActivityAt).getTime()
+        );
+        return sorted[0]?.lastActivityAt ?? snapshot.connectedSince;
+    }
+
+    formatActivityScreen(log: UserActivityLogResponse): string {
+        const screenLabel = this.translateScreenName(log.screen);
+        const context = (log.screenContext || '').trim();
+        return context ? `${screenLabel} · ${context}` : screenLabel;
+    }
+
+    private translateScreenName(screen?: string | null): string {
+        if (!screen) return 'Sin datos';
+
+        const map: Record<string, string> = {
+            DASHBOARD: 'Inicio',
+            USER_MANAGEMENT: 'Gestión de usuarios',
+            PRODUCT_MANAGEMENT: 'Gestión de productos',
+            ORDER_MANAGEMENT: 'Gestión de pedidos',
+            STOCK_MANAGEMENT: 'Gestión de stock',
+            RECIPE_MANAGEMENT: 'Gestión de recetas',
+            NOTIFICATIONS_MANAGEMENT: 'Gestión de notificaciones',
+            INCIDENTS: 'Incidencias',
+            ORDERS: 'Pedidos',
+            ORDER_RECEPTION: 'Recepción de pedidos',
+            RECIPES: 'Recetas',
+            INVENTORY: 'Inventario',
+            PROFILE: 'Perfil'
+        };
+
+        return map[screen] || screen.replaceAll('_', ' ');
+    }
+
+    formatActivityAction(action: string): string {
+        switch (action) {
+            case 'CONNECTED':
+                return 'Conectado';
+            case 'DISCONNECTED':
+                return 'Desconectado';
+            case 'SCREEN_CHANGED':
+                return 'Cambio de pantalla';
+            default:
+                return action;
+        }
+    }
+
+    trackByActivityId(index: number, item: UserActivityLogResponse): number {
+        return item.id ?? index;
     }
 
     // ── Assignments data loading ──
@@ -620,6 +753,7 @@ export class UsersManagementComponent implements OnInit {
     openCreateModal(): void {
         this.selectedUser = null;
         this.showFormModal = true;
+        this.presenceTrackingService.reportModal('Creación de usuario');
     }
 
     openEditModal(user: User): void {
@@ -629,6 +763,7 @@ export class UsersManagementComponent implements OnInit {
         if (hasTeacherProperty) {
             this.selectedUser = { ...user };
             this.showFormModal = true;
+            this.presenceTrackingService.reportModal('Edición de usuario', user.name);
             return;
         }
 
@@ -636,6 +771,7 @@ export class UsersManagementComponent implements OnInit {
             next: (fullUser) => {
                 this.selectedUser = { ...fullUser };
                 this.showFormModal = true;
+                this.presenceTrackingService.reportModal('Edición de usuario', fullUser.name);
                 this.cdr.detectChanges();
             },
             error: (err) => {
@@ -648,6 +784,7 @@ export class UsersManagementComponent implements OnInit {
     closeFormModal(): void {
         this.showFormModal = false;
         this.selectedUser = null;
+        this.presenceTrackingService.clearContext();
     }
 
     openMobileModal(user: User): void {

@@ -6,6 +6,7 @@ import { environment } from '../../../environments/environment';
 import { Role, hasPermission } from '../../shared/models/role-permissions';
 import { WebSocketService } from './websocket.service';
 import { NotificationService } from './notification.service';
+import { PresenceTrackingService } from './presence-tracking.service';
 
 interface LoginRequest {
   name: string;
@@ -40,6 +41,7 @@ export class AuthService {
   private router = inject(Router);
   private webSocketService = inject(WebSocketService);
   private notificationService = inject(NotificationService);
+  private presenceTrackingService = inject(PresenceTrackingService);
   private apiUrl = environment.apiUrl;
   private TOKEN_KEY = 'auth_token';
   private ROLE_KEY = 'user_role';
@@ -53,8 +55,9 @@ export class AuthService {
     const token = this.getToken();
     const role = this.getRole();
     if (token) {
-      this.webSocketService.connect(token);
+      this.webSocketService.connect(token, role);
       this.notificationService.connect(token, role);
+      this.presenceTrackingService.initialize();
     }
   }
 
@@ -65,7 +68,6 @@ export class AuthService {
     ).pipe(
       tap(response => {
         localStorage.setItem(this.TOKEN_KEY, response.token);
-        this.webSocketService.connect(response.token);
       }),
       switchMap(() => this.http.get<UserProfileResponse>(`${this.apiUrl}/api/users/me`)),
       tap(profile => {
@@ -78,7 +80,9 @@ export class AuthService {
         localStorage.setItem(this.ROLE_KEY, profile.role);
         localStorage.setItem(this.ID_KEY, profile.id.toString());
         localStorage.setItem(this.FIRST_LOGIN_KEY, String(profile.firstLogin));
+        this.webSocketService.connect(this.getToken() || '', profile.role);
         this.notificationService.connect(this.getToken() || '', profile.role);
+        this.presenceTrackingService.initialize();
         this.isLoggedIn$.next(true);
       })
     );
@@ -105,6 +109,7 @@ export class AuthService {
   }
 
   logout(): void {
+    this.presenceTrackingService.destroy();
     this.webSocketService.disconnect();
     this.notificationService.disconnect();
     localStorage.removeItem(this.TOKEN_KEY);
