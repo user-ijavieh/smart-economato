@@ -73,3 +73,33 @@ export interface ConsumptionBreakdownDTO {
   endDate: string;
   breakdown: DailyConsumptionDTO[];
 }
+
+export interface BlockchainStatsResponseDTO {
+  blockCount: number;
+  pendingTransactions: number;
+  latestBlockNumber: number | null;
+  latestBlockHash: string | null;
+  difficulty: number;
+  valid: boolean;
+}
+
+export interface BlockchainVerificationResponseDTO {
+  valid: boolean;
+  message: string;
+  blockCount: number;
+  pendingTransactions: number;
+  latestBlockNumber: number | null;
+  latestBlockHash: string | null;
+}
+
+export interface LedgerBlockResponseDTO {
+  blockNumber: number;
+  previousBlockHash: string;
+  merkleRoot: string;
+  blockHash: string;
+  nonce: number;
+  difficulty: number;
+  timestamp: string;
+  transactionCount: number;
+  hmacKeyVersion: number;
+}

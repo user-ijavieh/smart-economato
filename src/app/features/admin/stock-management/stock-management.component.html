@@ -16,7 +16,7 @@
     </svg>
     Predicciones
   </button>
-  <button class="admin-tab-btn" [class.active]="activeTab === 'ledger'" (click)="switchTab('ledger')">
+  <button class="admin-tab-btn" [class.active]="activeTab === 'ledger'" (click)="onLedgerTabClick()">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor">
       <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm80-80h400v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 320v-560 560Z"/>
     </svg>
@@ -436,6 +436,126 @@
       }
     </div>
   </div>
+
+  @if (ledgerTechnicalMode) {
+  <div class="blockchain-technical-panel">
+    <div class="blockchain-technical-header">
+      <h3>Blockchain Tecnico</h3>
+      <button class="toolbar-btn btn-verify" (click)="refreshBlockchainTechnicalData()" [disabled]="loadingBlockchainStats || loadingBlockchainVerification || loadingBlockchainBlocks || loadingBlockchainMempool">
+        Actualizar
+      </button>
+    </div>
+
+    <div class="stats-row blockchain-stats-row">
+      <div class="stat-card">
+        <span class="stat-number">{{ blockchainStats?.blockCount ?? 0 }}</span>
+        <span class="stat-label">Bloques</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ blockchainStats?.pendingTransactions ?? 0 }}</span>
+        <span class="stat-label">Mempool</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ blockchainStats?.difficulty ?? 0 }}</span>
+        <span class="stat-label">Dificultad</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ blockchainVerification?.valid ? 'OK' : 'FAIL' }}</span>
+        <span class="stat-label">Verificacion global</span>
+      </div>
+    </div>
+
+    <div class="tabla-contenedor">
+      <table>
+        <thead>
+          <tr>
+            <th>Bloque</th>
+            <th>Fecha</th>
+            <th>Tx</th>
+            <th>Dificultad</th>
+            <th class="hide-on-mobile">Hash</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (loadingBlockchainBlocks) {
+            <tr><td colspan="5" class="empty-state">Cargando bloques...</td></tr>
+          } @else {
+            @for (block of blockchainBlocks; track block.blockNumber) {
+            <tr class="clickable-row" (click)="openBlockchainBlockDetail(block.blockNumber)">
+              <td>#{{ block.blockNumber }}</td>
+              <td>{{ formatDate(block.timestamp) }}</td>
+              <td>{{ block.transactionCount }}</td>
+              <td>{{ block.difficulty }}</td>
+              <td class="hide-on-mobile"><span class="summary-hash">{{ block.blockHash.substring(0, 18) }}...</span></td>
+            </tr>
+            }
+            @if (blockchainBlocks.length === 0) {
+              <tr><td colspan="5" class="empty-state">No hay bloques confirmados</td></tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (blockchainBlocksTotalPages > 1) {
+    <div class="pagination-controls compact-pagination">
+      <button class="toolbar-btn btn-page" [disabled]="blockchainBlocksPage === 0" (click)="onBlockchainBlocksPageChange(-1)">Anterior</button>
+      <span class="page-info">Bloques {{ blockchainBlocksPage + 1 }} / {{ blockchainBlocksTotalPages }}</span>
+      <button class="toolbar-btn btn-page" [disabled]="blockchainBlocksPage >= blockchainBlocksTotalPages - 1" (click)="onBlockchainBlocksPageChange(1)">Siguiente</button>
+    </div>
+    }
+
+    @if (selectedBlockchainBlock) {
+    <div class="summary-card blockchain-detail-card">
+      <span class="summary-label">Detalle Bloque #{{ selectedBlockchainBlock.blockNumber }}</span>
+      <span class="summary-hash">Hash: {{ selectedBlockchainBlock.blockHash }}</span>
+      <span class="summary-hash">Previo: {{ selectedBlockchainBlock.previousBlockHash }}</span>
+      <span class="summary-hash">Merkle: {{ selectedBlockchainBlock.merkleRoot }}</span>
+      <span class="summary-label">Nonce {{ selectedBlockchainBlock.nonce }} | HMAC v{{ selectedBlockchainBlock.hmacKeyVersion }}</span>
+    </div>
+    }
+
+    <div class="tabla-contenedor">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Producto</th>
+            <th>Tipo</th>
+            <th>Delta</th>
+            <th class="hide-on-mobile">Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (loadingBlockchainMempool) {
+            <tr><td colspan="5" class="empty-state">Cargando mempool...</td></tr>
+          } @else {
+            @for (tx of blockchainMempool; track tx.id) {
+            <tr>
+              <td>#{{ tx.id }}</td>
+              <td>{{ tx.productName }}</td>
+              <td><span class="movement-badge" [ngClass]="getMovementTypeClass(tx.movementType)">{{ tx.movementType }}</span></td>
+              <td class="delta-cell" [class.positive]="tx.quantityDelta > 0" [class.negative]="tx.quantityDelta < 0">{{ tx.quantityDelta > 0 ? '+' : '' }}{{ tx.quantityDelta | number:'1.0-3' }}</td>
+              <td class="hide-on-mobile">{{ formatDate(tx.transactionTimestamp) }}</td>
+            </tr>
+            }
+            @if (blockchainMempool.length === 0) {
+              <tr><td colspan="5" class="empty-state">No hay transacciones pendientes</td></tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (blockchainMempoolTotalPages > 1) {
+    <div class="pagination-controls compact-pagination">
+      <button class="toolbar-btn btn-page" [disabled]="blockchainMempoolPage === 0" (click)="onBlockchainMempoolPageChange(-1)">Anterior</button>
+      <span class="page-info">Mempool {{ blockchainMempoolPage + 1 }} / {{ blockchainMempoolTotalPages }}</span>
+      <button class="toolbar-btn btn-page" [disabled]="blockchainMempoolPage >= blockchainMempoolTotalPages - 1" (click)="onBlockchainMempoolPageChange(1)">Siguiente</button>
+    </div>
+    }
+  </div>
+  }
 
   @if (ledgerSnapshot) {
   <div id="ledgerHistoryHeader" class="ledger-summary-row">
