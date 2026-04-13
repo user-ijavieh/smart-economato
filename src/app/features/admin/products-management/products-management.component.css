@@ -590,7 +590,16 @@ tr.low-stock-row:hover td {
 }
 
 /** ===== AUDIT DETAIL MODAL ===== */
-.audit-modal-wide { max-width: 800px; }
+.audit-modal-wide {
+  max-width: 800px;
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 8px;
+}
+
+.audit-modal-wide .diff-container {
+  padding-right: 8px;
+}
 
 .audit-modal-header-info {
   display: flex;
@@ -648,7 +657,7 @@ tr.low-stock-row:hover td {
 
 /** ===== DIFF VIEWS ===== */
 .diff-container {
-  padding: 20px 28px;
+  padding: 20px 16px 20px 24px;
   display: flex;
   flex-direction: column;
   gap: 24px;
