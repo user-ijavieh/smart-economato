@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { ApplicationRef, Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 export interface Toast {
@@ -25,6 +25,7 @@ export interface ConfirmDialog {
 
 @Injectable({ providedIn: 'root' })
 export class MessageService {
+  private appRef = inject(ApplicationRef);
   private toasts$ = new BehaviorSubject<Toast[]>([]);
   private confirmDialog$ = new BehaviorSubject<ConfirmDialog | null>(null);
   private confirmResolve?: (value: boolean) => void;
@@ -81,6 +82,7 @@ export class MessageService {
 
     setTimeout(() => {
       this.toasts$.next([...this.toasts$.value, toast]);
+      this.appRef.tick();
       if (!toast.persistent) {
         setTimeout(() => this.toastExpired$.next(toast.id), toast.duration);
       }
@@ -89,5 +91,6 @@ export class MessageService {
 
   removeToast(id: number): void {
     this.toasts$.next(this.toasts$.value.filter(t => t.id !== id));
+    this.appRef.tick();
   }
 }

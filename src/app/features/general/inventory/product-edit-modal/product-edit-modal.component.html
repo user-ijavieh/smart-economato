@@ -46,14 +46,12 @@
     </div>
   </form>
 
-  <div modal-footer>
+  <div modal-footer class="product-edit-footer">
     @if (isAdmin) {
-    <button type="button" class="modal-btn modal-btn-danger modal-btn-full" (click)="onToggleHidden()">{{ getToggleButtonText() }}</button>
+    <button type="button" class="modal-btn modal-btn-danger" (click)="onToggleHidden()">{{ getToggleButtonText() }}</button>
     }
-    <div class="modal-footer-right">
-      <button type="button" class="modal-btn modal-btn-primary modal-btn-full" (click)="onSubmit()" [disabled]="!editForm.valid">
-        Guardar Cambios
-      </button>
-    </div>
+    <button type="button" class="modal-btn modal-btn-primary" (click)="onSubmit()" [disabled]="!editForm.valid">
+      Guardar Cambios
+    </button>
   </div>
 </app-base-modal>

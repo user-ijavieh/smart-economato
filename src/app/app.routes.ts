@@ -165,6 +165,11 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'pruebas',
+    loadComponent: () =>
+      import('./features/general/pruebas/pruebas.component').then(m => m.PruebasComponent)
+  },
+  {
     path: '**',
     redirectTo: '/login'
   }

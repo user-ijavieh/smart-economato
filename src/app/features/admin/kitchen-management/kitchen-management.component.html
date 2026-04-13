@@ -99,7 +99,7 @@
           <td class="hide-on-mobile">{{ audit.quantityCooked | number:'1.2-2' }}</td>
           <td class="actions-cell hide-on-mobile" (click)="$event.stopPropagation()">
               <div class="actions-cell">
-                <button class="btn-trace" (click)="viewTraceability(audit)" title="Trazabilidad">
+                <button class="btn-trace" (click)="viewTraceability(audit)" title="Ver detalle">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
                     <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
@@ -147,27 +147,25 @@
   <!-- Mobile Detail Modal para History -->
   @if (showMobileModal && selectedAuditForMobile) {
     <app-base-modal [title]="'Receta #' + selectedAuditForMobile.recipeId" size="md" (closed)="closeMobileModal()">
-      <div class="mobile-detail-modal" (click)="$event.stopPropagation()">
-          <div class="mobile-detail-modal-body">
-              <div class="detail-field">
+      <div class="detail-field">
                   <span class="detail-label">Receta</span>
                   <span class="detail-value">{{ selectedAuditForMobile.recipeName }}</span>
-              </div>
-              <div class="detail-field">
+      </div>
+      <div class="detail-field">
                   <span class="detail-label">Usuario</span>
                   <span class="detail-value">{{ selectedAuditForMobile.userName }} (ID: {{ selectedAuditForMobile.userId }})</span>
-              </div>
-              <div class="detail-field">
+      </div>
+      <div class="detail-field">
                   <span class="detail-label">Fecha de Cocinado</span>
                   <span class="detail-value">{{ formatDate(selectedAuditForMobile.cookingDate) }}</span>
-              </div>
-              <div class="detail-field">
+      </div>
+      <div class="detail-field">
                   <span class="detail-label">Cantidad (Porciones)</span>
                   <span class="detail-value">{{ selectedAuditForMobile.quantityCooked | number:'1.2-2' }}</span>
-              </div>
+      </div>
 
               <!-- Trazabilidad en Móvil -->
-              <div class="mobile-traceability-section">
+      <div class="mobile-traceability-section">
                   <h3 class="section-title">Trazabilidad de Ingredientes</h3>
                   
                   @if (loadingTraceability) {
@@ -210,11 +208,9 @@
               </div>
 
               <div class="detail-actions">
-                  <button class="btn-revert btn-full" (click)="revertAudit(selectedAuditForMobile); closeMobileModal()">
-                      Revertir Cocinado
-                  </button>
-              </div>
-          </div>
+                <button class="btn-revert btn-full" (click)="revertAudit(selectedAuditForMobile); closeMobileModal()">
+                  Revertir Cocinado
+                </button>
       </div>
   </app-base-modal>
   }

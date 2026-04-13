@@ -590,70 +590,15 @@ tr.low-stock-row:hover td {
 }
 
 /** ===== AUDIT DETAIL MODAL ===== */
-.audit-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--theme-overlay-bg);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  animation: fadeInOverlay 0.2s ease;
+.audit-modal-wide {
+  max-width: 800px;
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 8px;
 }
 
-@keyframes fadeInOverlay {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.audit-modal {
-  background: var(--theme-surface-glass);
-  backdrop-filter: var(--theme-effect-glass);
-  border: 1px solid var(--theme-border-glass);
-  border-radius: 16px;
-  width: 90%;
-  max-width: 560px;
-  max-height: 85vh;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.audit-modal-wide { max-width: 800px; }
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.audit-modal-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 20px 28px;
-  background: var(--theme-section-header-bg);
-  color: var(--theme-text-primary);
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
-}
-
-.audit-header-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.audit-modal-header h2 {
-  margin: 0;
-  font-size: 1.2rem;
-  font-family: var(--font-heading);
-  font-weight: var(--font-heading-weight);
-  letter-spacing: 0.5px;
+.audit-modal-wide .diff-container {
+  padding-right: 8px;
 }
 
 .audit-modal-header-info {
@@ -665,28 +610,6 @@ tr.low-stock-row:hover td {
 .audit-header-date, .audit-header-user {
   font-size: 0.85rem;
   color: var(--theme-text-secondary);
-}
-
-.audit-modal-close {
-  background: var(--theme-surface-glass-hover);
-  border: 1px solid var(--theme-border-medium);
-  color: var(--theme-text-primary);
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  box-shadow: none;
-  transition: all 0.2s ease;
-}
-
-.audit-modal-close:hover {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: var(--color-danger-hover-border);
-  color: var(--color-danger-muted);
 }
 
 .audit-modal-body {
@@ -734,7 +657,7 @@ tr.low-stock-row:hover td {
 
 /** ===== DIFF VIEWS ===== */
 .diff-container {
-  padding: 20px 28px;
+  padding: 20px 16px 20px 24px;
   display: flex;
   flex-direction: column;
   gap: 24px;
