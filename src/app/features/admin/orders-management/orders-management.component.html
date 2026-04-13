@@ -191,7 +191,7 @@
 <!-- ===== AUDITS TAB ===== -->
 @if (activeTab === 'audits') {
 <div class="contenedor-principal">
-    <div class="controles">
+    <div class="controles controles-audits">
         <input type="text" [(ngModel)]="auditSearchTerm" placeholder="Buscar por ID de orden o usuario..." (ngModelChange)="onAuditSearch()" />
         <input type="date" [(ngModel)]="auditStartDate" class="date-input" title="Desde" (ngModelChange)="onAuditDateFilter()" />
         <span class="date-separator">—</span>
@@ -272,7 +272,7 @@
 
 <!-- ===== CHANGE STATUS MODAL ===== -->
 @if (showChangeStatusModal && orderForStatusChange) {
-<app-base-modal title="Cambiar Estado" size="md" (closed)="closeChangeStatusModal()">
+<app-base-modal title="Cambiar Estado" size="sm" (closed)="closeChangeStatusModal()">
         <div class="modal-content modal-status-change">
                 <div class="modal-section" style="margin-bottom: 20px;">
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
@@ -324,7 +324,7 @@
 
 <!-- ===== AUDIT DETAIL MODAL ===== -->
 @if (showAuditDetailModal && selectedAudit) {
-<app-base-modal size="fullscreen" (closed)="closeAuditDetail()">
+<app-base-modal size="lg" (closed)="closeAuditDetail()">
     <div modal-header>
         <div class="audit-header-content">
             <h2>Detalle de Auditoría</h2>
@@ -335,16 +335,9 @@
                 <span class="audit-header-date">{{ formatDateWithTime(selectedAudit.auditDate) }}</span>
                 <span class="audit-header-user">{{ selectedAudit.userName }}</span>
             </div>
-            <button class="audit-modal-close" (click)="closeAuditDetail()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-            </button>
         </div>
     </div>
-    <div class="modal-container" style="max-width: 1100px;">
+    <div class="modal-container audit-detail-layout" [style.max-width]="hasDiffData ? '980px' : '760px'">
     <div class="modal-content" [class.audit-modal-wide]="hasDiffData">
         @if (hasDiffData) {
         <div class="diff-container">
@@ -423,7 +416,7 @@
 
 <!-- ===== ORDER DETAIL MODAL ===== -->
 @if (showOrderDetailModal && selectedOrder) {
-<app-base-modal size="lg" (closed)="closeOrderDetail()">
+<app-base-modal size="md" (closed)="closeOrderDetail()">
     <div modal-header>
         <div class="modal-header-content">
             <h2>Pedido #{{ selectedOrder.id }}</h2>
@@ -436,7 +429,7 @@
             </div>
         </div>
     </div>
-    <div class="modal-container" style="max-width: 950px;">
+    <div class="modal-container order-detail-layout">
         <div class="modal-content">
                 <!-- Información General -->
                 <div class="modal-section">
