@@ -1,4 +1,5 @@
 import { Component, inject, ChangeDetectorRef } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -61,6 +62,10 @@ export class LoginComponent {
       error: (err) => {
         if (err.message === 'user_hidden') {
           this.messageService.showError('El usuario está bloqueado o inactivo y no puede acceder al sistema.');
+        } else if (err instanceof HttpErrorResponse && err.status === 401) {
+          this.messageService.showError('Credenciales incorrectas');
+        } else {
+          this.messageService.showError('Error al iniciar sesión');
         }
         this.loading = false;
         this.cdr.markForCheck();
