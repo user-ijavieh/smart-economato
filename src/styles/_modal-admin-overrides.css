@@ -29,7 +29,8 @@
 /* Boton primario (save/cocinar) en admin */
 .admin-theme app-base-modal .modal-btn-primary,
 .admin-theme app-base-modal .btn-save,
-.admin-theme app-base-modal .btn-cocinar {
+.admin-theme app-base-modal .btn-cocinar,
+.admin-theme app-base-modal .btn-imprimir {
   background: var(--theme-surface-glass-active);
   border: none;
   box-shadow: 0 4px 18px rgba(90, 120, 220, 0.2);
@@ -38,7 +39,8 @@
 
 .admin-theme app-base-modal .modal-btn-primary:hover:not(:disabled),
 .admin-theme app-base-modal .btn-save:hover:not(:disabled),
-.admin-theme app-base-modal .btn-cocinar:hover:not(:disabled) {
+.admin-theme app-base-modal .btn-cocinar:hover:not(:disabled),
+.admin-theme app-base-modal .btn-imprimir:hover:not(:disabled) {
   background: rgba(90, 120, 220, 0.8);
   box-shadow: 0 8px 25px rgba(90, 120, 220, 0.4);
 }
