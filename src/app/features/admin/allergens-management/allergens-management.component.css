@@ -432,19 +432,6 @@ tr:hover { background: var(--theme-surface-glass-hover); }
 }
 
 /** ===== MODAL ===== */
-.allergen-modal {
-  background: var(--theme-surface-glass);
-  backdrop-filter: var(--theme-effect-glass);
-  border: 1px solid var(--theme-border-glass);
-  border-radius: var(--theme-radius-card);
-  box-shadow: var(--theme-shadow-card);
-  width: 90%;
-  max-width: 440px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  color: var(--theme-text-primary);
-}
 
 .allergen-modal-body {
   padding: 28px;
@@ -526,7 +513,6 @@ tr:hover { background: var(--theme-surface-glass-hover); }
   .contenedor-principal { padding: 15px; }
   .controles { padding: 15px; }
   .stats-row { grid-template-columns: repeat(2, 1fr); }
-  .allergen-modal { width: 95%; }
 }
 
 @media (max-width: 480px) {
