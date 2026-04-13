@@ -10,6 +10,7 @@ import { SupplierFormModalComponent } from './supplier-form-modal/supplier-form-
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { ScrollService } from '../../../core/services/scroll.service';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 
 @Component({
     selector: 'app-suppliers-management',
@@ -18,6 +19,7 @@ import { ScrollService } from '../../../core/services/scroll.service';
         CommonModule,
         FormsModule,
         SupplierFormModalComponent,
+        BaseModalComponent,
         ConfirmDialogComponent,
         ToastComponent
     ],

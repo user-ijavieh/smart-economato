@@ -305,31 +305,19 @@
 
 <!-- Audit Detail Modal -->
 @if (showAuditDetailModal && selectedAudit) {
-<div class="audit-modal-overlay" (click)="showAuditDetailModal = false">
-    <div class="audit-modal" [class.audit-modal-wide]="hasDiffData" (click)="$event.stopPropagation()">
-        <div class="audit-modal-header">
-            <div class="audit-header-content">
-                <h2>Detalle de Auditoría</h2>
-                <div class="audit-modal-header-info">
-                    <span class="movement-badge" [ngClass]="'movement-' + selectedAudit.movementType.toLowerCase()">
-                        {{ selectedAudit.movementType }}
-                    </span>
-                    <span class="audit-header-date">{{ selectedAudit.movementDate | date:'dd/MM/yyyy HH:mm' }}</span>
-                    <span class="audit-header-user">{{ selectedAudit.userName }}</span>
-                </div>
-            </div>
-            <button class="audit-modal-close" (click)="closeAuditDetailModal()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                    <line x1="18" y1="6" x2="6" y2="18"/>
-                    <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-            </button>
-        </div>
+<app-base-modal title="Detalle de Auditoría" [size]="hasDiffData ? 'lg' : 'md'" (closed)="closeAuditDetailModal()">
+    <div class="audit-modal-header-info">
+        <span class="movement-badge" [ngClass]="'movement-' + selectedAudit.movementType.toLowerCase()">
+            {{ selectedAudit.movementType }}
+        </span>
+        <span class="audit-header-date">{{ selectedAudit.movementDate | date:'dd/MM/yyyy HH:mm' }}</span>
+        <span class="audit-header-user">{{ selectedAudit.userName }}</span>
+    </div>
 
+    <div [class.audit-modal-wide]="hasDiffData">
         @if (hasDiffData) {
         <!-- Side-by-side diff view -->
         <div class="diff-container">
-            <!-- Field diffs -->
             <table class="diff-table">
                 <thead>
                     <tr>
@@ -377,7 +365,7 @@
         </div>
         }
     </div>
-</div>
+</app-base-modal>
 }
 
 <!-- Confirm Dialog -->
