@@ -666,38 +666,6 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 }
 
 /* ===== MOBILE DETAIL MODAL RESULT ===== */
-.mobile-detail-modal {
-  background: var(--theme-surface-glass);
-  backdrop-filter: var(--theme-effect-glass);
-  border: 1px solid var(--theme-border-glass);
-  border-radius: 20px 20px 0 0;
-  width: 100%;
-  max-height: 90vh;
-  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
-  animation: slideUpModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  color: var(--theme-text-primary);
-}
-
-@media (min-width: 768px) {
-  .mobile-detail-modal {
-    border-radius: var(--theme-radius-card);
-    max-width: 450px;
-    align-self: center;
-    margin-bottom: 2rem;
-  }
-}
-
-.mobile-detail-modal-body {
-  padding: 24px;
-  overflow: visible;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
 .detail-field {
   display: flex;
   flex-direction: column;

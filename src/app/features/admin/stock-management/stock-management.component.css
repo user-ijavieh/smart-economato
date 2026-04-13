@@ -488,14 +488,6 @@ tbody.loading { opacity: 0.6; }
 .btn-pdf-small { align-self: flex-start; margin-top: auto; padding: 6px 12px; font-size: 0.8rem; background: var(--theme-surface-glass-hover); border-color: transparent; }
 
 /** ===== MODALS ===== */
-.mobile-detail-modal-overlay {
-  position: fixed; inset: 0;
-  background: var(--theme-overlay-bg); backdrop-filter: blur(8px);
-  display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px;
-  animation: fadeInOverlay 0.2s ease;
-}
-.mobile-detail-modal-overlay { align-items: flex-end; padding: 0; }
-
 .modal-container {
   width: 100%;
   max-width: 800px;
@@ -509,27 +501,6 @@ tbody.loading { opacity: 0.6; }
   width: 100%;
   margin: 0 auto;
 }
-.mobile-detail-modal {
-  background: var(--theme-surface-glass);
-  backdrop-filter: var(--theme-effect-glass);
-  border: 1px solid var(--theme-border-glass);
-  border-radius: 20px 20px 0 0;
-  box-shadow: var(--theme-shadow-card);
-  display: flex;
-  flex-direction: column;
-  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: visible;
-  color: var(--theme-text-primary);
-  width: 100%;
-  max-height: none;
-}
-
-@media (min-width: 768px) {
-  .mobile-detail-modal { max-width: 500px; border-radius: var(--theme-radius-card); align-self: center; margin-bottom: 2rem; }
-}
-
-.mobile-detail-modal-body { padding: 24px; overflow: visible; flex: 1; }
-
 
 /** ===== ORDER MODAL ELEMENTS ===== */
 .days-control { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
