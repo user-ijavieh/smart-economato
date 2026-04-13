@@ -1,0 +1,489 @@
+<section class="catalog-page">
+  <header class="catalog-header">
+    <h1>Catalogo Visual de Modales</h1>
+    <p>Escaparate de patrones de modal con datos mock para Smart Economato.</p>
+  </header>
+
+  <div class="catalog-grid">
+    <article class="catalog-card">
+      <div class="catalog-card-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="4" y="5" width="16" height="14" rx="3" />
+          <path d="M8 10H16" />
+          <path d="M8 14H13" />
+        </svg>
+      </div>
+      <h3>Formulario Simple</h3>
+      <p>1 a 3 campos para altas rapidas.</p>
+      <button type="button" class="modal-btn modal-btn-secondary" (click)="openSimpleForm()">Ver ejemplo</button>
+    </article>
+
+    <article class="catalog-card">
+      <div class="catalog-card-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="4" width="18" height="16" rx="3" />
+          <path d="M3 10H21" />
+          <path d="M12 10V20" />
+        </svg>
+      </div>
+      <h3>Formulario con Grid</h3>
+      <p>Edicion mediana con campos en dos columnas.</p>
+      <button type="button" class="modal-btn modal-btn-secondary" (click)="openGridForm()">Ver ejemplo</button>
+    </article>
+
+    <article class="catalog-card">
+      <div class="catalog-card-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 20C4 16.7 7 14 12 14C17 14 20 16.7 20 20" />
+        </svg>
+      </div>
+      <h3>Formulario con Credenciales</h3>
+      <p>Flujo create y estado de credenciales generadas.</p>
+      <button type="button" class="modal-btn modal-btn-secondary" (click)="openCredentialsForm()">Ver ejemplo</button>
+    </article>
+
+    <article class="catalog-card">
+      <div class="catalog-card-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M4 6H20" />
+          <path d="M4 12H14" />
+          <path d="M4 18H10" />
+          <circle cx="18" cy="12" r="2" />
+        </svg>
+      </div>
+      <h3>Formulario Complejo + Busqueda</h3>
+      <p>Selects, busqueda de items y resumen de total.</p>
+      <button type="button" class="modal-btn modal-btn-secondary" (click)="openComplexOrderForm()">Ver ejemplo</button>
+    </article>
+
+    <article class="catalog-card">
+      <div class="catalog-card-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="4" width="18" height="16" rx="3" />
+          <path d="M7 9H17" />
+          <path d="M7 13H17" />
+          <path d="M7 17H12" />
+        </svg>
+      </div>
+      <h3>Detalle / Solo Lectura</h3>
+      <p>Secciones con tablas, badges y acciones finales.</p>
+      <button type="button" class="modal-btn modal-btn-secondary" (click)="openDetailReadOnly()">Ver ejemplo</button>
+    </article>
+
+    <article class="catalog-card">
+      <div class="catalog-card-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 3L3 20H21L12 3Z" />
+          <path d="M12 9V13" />
+          <circle cx="12" cy="17" r="1" />
+        </svg>
+      </div>
+      <h3>Confirmacion / Dialogo</h3>
+      <p>Variante peligrosa y variante segura.</p>
+      <button type="button" class="modal-btn modal-btn-secondary" (click)="openConfirmationDialog()">Ver ejemplo</button>
+    </article>
+
+    <article class="catalog-card">
+      <div class="catalog-card-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="5" width="18" height="14" rx="3" />
+          <path d="M3 10H21" />
+          <path d="M9 15H10" />
+          <path d="M14 15H15" />
+        </svg>
+      </div>
+      <h3>Proceso / Accion Especializada</h3>
+      <p>Tabla interactiva con entradas por item.</p>
+      <button type="button" class="modal-btn modal-btn-secondary" (click)="openSpecialProcess()">Ver ejemplo</button>
+    </article>
+
+    <article class="catalog-card">
+      <div class="catalog-card-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M8 12L11 15L16 9" />
+        </svg>
+      </div>
+      <h3>Resultado / Exito</h3>
+      <p>Mensaje final con resumen de operacion.</p>
+      <button type="button" class="modal-btn modal-btn-secondary" (click)="openSuccessResult()">Ver ejemplo</button>
+    </article>
+  </div>
+</section>
+
+@if (showSimpleForm) {
+  <div class="catalog-modal-overlay" (click)="closeSimpleForm()">
+    <section class="catalog-modal-shell modal-sm" role="dialog" aria-modal="true" aria-labelledby="modal-simple-title" (click)="$event.stopPropagation()">
+      <header class="catalog-modal-header">
+        <h2 id="modal-simple-title">Formulario Simple</h2>
+        <button type="button" class="catalog-modal-close" aria-label="Cerrar" (click)="closeSimpleForm()">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18" /><path d="M18 6L6 18" /></svg>
+        </button>
+      </header>
+      <div class="catalog-modal-body">
+        <div class="form-stack">
+          <label>Nombre
+            <input type="text" value="Proveedor Mediterraneo" />
+          </label>
+          <label>Email
+            <input type="email" value="contacto@mediterraneo.com" />
+          </label>
+          <label>Telefono
+            <input type="tel" value="+34 600 111 222" />
+          </label>
+        </div>
+      </div>
+      <footer class="catalog-modal-footer">
+        <button type="button" class="modal-btn modal-btn-secondary" (click)="closeSimpleForm()">Cancelar</button>
+        <button type="button" class="modal-btn modal-btn-primary" (click)="closeSimpleForm()">Guardar</button>
+      </footer>
+    </section>
+  </div>
+}
+
+@if (showGridForm) {
+  <div class="catalog-modal-overlay">
+    <section class="catalog-modal-shell modal-md" role="dialog" aria-modal="true" aria-labelledby="modal-grid-title" (click)="$event.stopPropagation()">
+      <header class="catalog-modal-header">
+        <h2 id="modal-grid-title">Formulario con Grid</h2>
+        <span class="header-badge">No cierra al hacer clic fuera</span>
+        <button type="button" class="catalog-modal-close" aria-label="Cerrar" (click)="closeGridForm()">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18" /><path d="M18 6L6 18" /></svg>
+        </button>
+      </header>
+      <div class="catalog-modal-body">
+        <div class="form-grid-two">
+          <label>Nombre<input type="text" value="Aceite de oliva extra" /></label>
+          <label>Codigo<input type="text" value="PRD-00231" /></label>
+          <label>Unidad
+            <select><option selected>Litros</option><option>Kg</option></select>
+          </label>
+          <label>Precio<input type="number" value="26.50" /></label>
+          <label>Stock<input type="number" value="12" /></label>
+          <label>Proveedor<input type="text" value="Molinos del Sur" /></label>
+          <label>Fecha alta<input type="date" value="2026-04-13" /></label>
+        </div>
+      </div>
+      <footer class="catalog-modal-footer">
+        <button type="button" class="modal-btn modal-btn-primary modal-btn-full" (click)="closeGridForm()">Crear Producto</button>
+      </footer>
+    </section>
+  </div>
+}
+
+@if (showCredentialsForm) {
+  <div class="catalog-modal-overlay" (click)="closeCredentialsForm()">
+    <section class="catalog-modal-shell modal-md" role="dialog" aria-modal="true" aria-labelledby="modal-credentials-title" (click)="$event.stopPropagation()">
+      <header class="catalog-modal-header">
+        <h2 id="modal-credentials-title">Formulario con Credenciales</h2>
+        <button type="button" class="catalog-modal-close" aria-label="Cerrar" (click)="closeCredentialsForm()">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18" /><path d="M18 6L6 18" /></svg>
+        </button>
+      </header>
+      <div class="catalog-modal-body">
+        @if (!credentialsGenerated) {
+          <div class="form-stack">
+            <label>Nombre completo<input type="text" value="Chef Garcia" /></label>
+            <label>Rol
+              <select><option selected>CHEF</option><option>ADMIN</option><option>ELEVATED</option></select>
+            </label>
+            <p class="helper-note">Al crear el usuario se generaran credenciales automaticamente.</p>
+          </div>
+        } @else {
+          <div class="result-block">
+            <div class="result-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" /><path d="M8 12L11 15L16 9" /></svg>
+            </div>
+            <h3>Credenciales generadas</h3>
+            <div class="credential-row"><span>Usuario</span><strong>chef_garcia</strong></div>
+            <div class="credential-row"><span>Contrasena</span><strong>Xk9#mP2$</strong></div>
+            <div class="inline-actions">
+              <button type="button" class="modal-btn modal-btn-neutral">Copiar</button>
+              <button type="button" class="modal-btn modal-btn-primary" (click)="closeCredentialsForm()">Cerrar</button>
+            </div>
+          </div>
+        }
+      </div>
+      @if (!credentialsGenerated) {
+        <footer class="catalog-modal-footer">
+          <button type="button" class="modal-btn modal-btn-primary" (click)="generateCredentials()">Crear Usuario</button>
+        </footer>
+      }
+    </section>
+  </div>
+}
+
+@if (showComplexOrderForm) {
+  <div class="catalog-modal-overlay" (click)="closeComplexOrderForm()">
+    <section class="catalog-modal-shell modal-lg" role="dialog" aria-modal="true" aria-labelledby="modal-complex-title" (click)="$event.stopPropagation()">
+      <header class="catalog-modal-header">
+        <h2 id="modal-complex-title">Formulario Complejo + Busqueda</h2>
+        <button type="button" class="catalog-modal-close" aria-label="Cerrar" (click)="closeComplexOrderForm()">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18" /><path d="M18 6L6 18" /></svg>
+        </button>
+      </header>
+      <div class="catalog-modal-body">
+        <div class="form-grid-two compact-gap">
+          <label>Usuario
+            <select><option selected>Chef Garcia</option><option>Admin Marta</option></select>
+          </label>
+          <label>Proveedor
+            <select><option selected>Molinos del Sur</option><option>Carnes Norte</option></select>
+          </label>
+        </div>
+
+        <section class="section-card">
+          <h3>Agregar Productos</h3>
+          <input type="text" value="harina" aria-label="Buscar producto" />
+          <div class="search-dropdown">
+            @for (result of orderSearchResults; track result) {
+              <button type="button" class="dropdown-item">{{ result }}</button>
+            }
+          </div>
+        </section>
+
+        <section class="section-card">
+          <h3>Items agregados</h3>
+          <table class="catalog-table">
+            <thead>
+              <tr><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Subtotal</th></tr>
+            </thead>
+            <tbody>
+              @for (item of orderItems; track item.name) {
+                <tr>
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.qty }}</td>
+                  <td>{{ item.price }}</td>
+                  <td>{{ item.subtotal }}</td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr><td colspan="3">Total</td><td>138.20 EUR</td></tr>
+            </tfoot>
+          </table>
+        </section>
+      </div>
+      <footer class="catalog-modal-footer">
+        <button type="button" class="modal-btn modal-btn-primary" (click)="closeComplexOrderForm()">Crear Pedido</button>
+      </footer>
+    </section>
+  </div>
+}
+
+@if (showDetailReadOnly) {
+  <div class="catalog-modal-overlay" (click)="closeDetailReadOnly()">
+    <section class="catalog-modal-shell modal-lg" role="dialog" aria-modal="true" aria-labelledby="modal-detail-title" (click)="$event.stopPropagation()">
+      <header class="catalog-modal-header">
+        <div class="header-title-wrap">
+          <h2 id="modal-detail-title">Detalle / Solo Lectura</h2>
+          <span class="status-badge success">Completado</span>
+        </div>
+        <button type="button" class="catalog-modal-close" aria-label="Cerrar" (click)="closeDetailReadOnly()">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18" /><path d="M18 6L6 18" /></svg>
+        </button>
+      </header>
+      <div class="catalog-modal-body">
+        <section class="section-card">
+          <h3>Informacion General</h3>
+          @for (row of detailRows; track row.label) {
+            <div class="detail-row">
+              <span>{{ row.label }}</span>
+              <strong>{{ row.value }}</strong>
+            </div>
+          }
+        </section>
+
+        <section class="section-card">
+          <h3>Productos</h3>
+          <table class="catalog-table">
+            <thead>
+              <tr><th>Producto</th><th>Cantidad</th><th>P. Unitario</th><th>Subtotal</th></tr>
+            </thead>
+            <tbody>
+              @for (product of detailProducts; track product.product) {
+                <tr>
+                  <td>{{ product.product }}</td>
+                  <td>{{ product.qty }}</td>
+                  <td>{{ product.unitPrice }}</td>
+                  <td>{{ product.subtotal }}</td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr><td colspan="3">Total</td><td>136.40 EUR</td></tr>
+            </tfoot>
+          </table>
+        </section>
+
+        <section class="section-card">
+          <h3>Lotes Activos</h3>
+          <table class="catalog-table compact">
+            <thead>
+              <tr><th>ID</th><th>Cantidad</th><th>Caducidad</th><th>Estado</th></tr>
+            </thead>
+            <tbody>
+              @for (lot of lotRows; track lot.id) {
+                <tr>
+                  <td>{{ lot.id }}</td>
+                  <td>{{ lot.qty }}</td>
+                  <td>{{ lot.expiry }}</td>
+                  <td>
+                    @if (lot.expired) {
+                      <span class="status-badge danger">CADUCADO</span>
+                    } @else {
+                      <span class="status-badge neutral">Activo</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </section>
+      </div>
+      <footer class="catalog-modal-footer">
+        <button type="button" class="modal-btn modal-btn-neutral">Exportar</button>
+        <button type="button" class="modal-btn modal-btn-primary" (click)="closeDetailReadOnly()">Editar</button>
+      </footer>
+    </section>
+  </div>
+}
+
+@if (showConfirmationDialog) {
+  <div class="catalog-modal-overlay" (click)="closeConfirmationDialog()">
+    <section class="catalog-modal-shell modal-sm" role="dialog" aria-modal="true" aria-labelledby="modal-confirmation-title" (click)="$event.stopPropagation()">
+      <header class="catalog-modal-header">
+        <h2 id="modal-confirmation-title">Confirmacion / Dialogo</h2>
+        <button type="button" class="catalog-modal-close" aria-label="Cerrar" (click)="closeConfirmationDialog()">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18" /><path d="M18 6L6 18" /></svg>
+        </button>
+      </header>
+      <div class="catalog-modal-body">
+        <button type="button" class="variant-toggle" (click)="toggleConfirmationVariant()">
+          @if (showSafeConfirmationVariant) {
+            Cambiar a variante peligrosa
+          } @else {
+            Cambiar a variante segura
+          }
+        </button>
+
+        <div class="dialog-visual" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 3L3 20H21L12 3Z" /><path d="M12 9V13" /><circle cx="12" cy="17" r="1" /></svg>
+        </div>
+
+        @if (!showSafeConfirmationVariant) {
+          <h3>Eliminar este registro?</h3>
+          <p class="secondary-text">Esta accion eliminara los datos asociados de forma permanente.</p>
+          <ul class="dialog-list">
+            <li>Se perdera el historial vinculado.</li>
+            <li>No podra deshacerse desde la interfaz.</li>
+            <li>El stock debera revisarse manualmente.</li>
+          </ul>
+        } @else {
+          <h3>Confirmar esta accion?</h3>
+          <p class="secondary-text">La operacion actualizara el estado del registro y notificara al equipo.</p>
+          <ul class="dialog-list">
+            <li>Se notificara al responsable del turno.</li>
+            <li>El cambio quedara auditado en el sistema.</li>
+          </ul>
+        }
+      </div>
+      <footer class="catalog-modal-footer">
+        <button type="button" class="modal-btn modal-btn-secondary" (click)="closeConfirmationDialog()">Cancelar</button>
+        @if (showSafeConfirmationVariant) {
+          <button type="button" class="modal-btn modal-btn-primary" (click)="closeConfirmationDialog()">Confirmar</button>
+        } @else {
+          <button type="button" class="modal-btn modal-btn-danger" (click)="closeConfirmationDialog()">Eliminar</button>
+        }
+      </footer>
+    </section>
+  </div>
+}
+
+@if (showSpecialProcess) {
+  <div class="catalog-modal-overlay">
+    <section class="catalog-modal-shell modal-lg" role="dialog" aria-modal="true" aria-labelledby="modal-process-title" (click)="$event.stopPropagation()">
+      <header class="catalog-modal-header">
+        <h2 id="modal-process-title">Proceso / Accion Especializada</h2>
+        <span class="header-badge">No cierra al hacer clic fuera</span>
+        <button type="button" class="catalog-modal-close" aria-label="Cerrar" (click)="closeSpecialProcess()">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18" /><path d="M18 6L6 18" /></svg>
+        </button>
+      </header>
+      <div class="catalog-modal-body">
+        <div class="process-meta">
+          <span>Usuario: Chef Garcia</span>
+          <span>Fecha: 13/04/2026</span>
+        </div>
+
+        <table class="catalog-table process-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Solicitado</th>
+              <th>Recibido</th>
+              <th>F. Caducidad</th>
+              <th>Lotes</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of processRows; track row.product) {
+              <tr>
+                <td>{{ row.product }}</td>
+                <td>{{ row.requested }}</td>
+                <td><input type="number" [value]="row.received" /></td>
+                <td><input type="date" [value]="row.expiry" /></td>
+                <td><button type="button" class="modal-btn modal-btn-neutral small-btn">+ Lote</button></td>
+                <td>
+                  @if (row.received === row.requested) {
+                    <span class="status-badge success">Coincide</span>
+                  } @else {
+                    <span class="status-badge warning">Diferencia</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <footer class="catalog-modal-footer">
+        <button type="button" class="modal-btn modal-btn-success" (click)="closeSpecialProcess()">Procesar Recepcion</button>
+      </footer>
+    </section>
+  </div>
+}
+
+@if (showSuccessResult) {
+  <div class="catalog-modal-overlay" (click)="closeSuccessResult()">
+    <section class="catalog-modal-shell modal-sm" role="dialog" aria-modal="true" aria-labelledby="modal-success-title" (click)="$event.stopPropagation()">
+      <header class="catalog-modal-header">
+        <h2 id="modal-success-title">Resultado / Exito</h2>
+        <button type="button" class="catalog-modal-close" aria-label="Cerrar" (click)="closeSuccessResult()">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18" /><path d="M18 6L6 18" /></svg>
+        </button>
+      </header>
+      <div class="catalog-modal-body">
+        <div class="result-block">
+          <div class="result-icon success" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" /><path d="M8 12L11 15L16 9" /></svg>
+          </div>
+          <h3>Operacion completada</h3>
+          <p class="secondary-text">El registro se guardo correctamente en el sistema.</p>
+          <div class="summary-box">
+            @for (row of successRows; track row.label) {
+              <div class="summary-row">
+                <span>{{ row.label }}</span>
+                <strong>{{ row.value }}</strong>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+      <footer class="catalog-modal-footer">
+        <button type="button" class="modal-btn modal-btn-secondary" (click)="closeSuccessResult()">Cerrar</button>
+      </footer>
+    </section>
+  </div>
+}
