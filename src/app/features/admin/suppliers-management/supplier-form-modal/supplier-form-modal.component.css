@@ -9,6 +9,7 @@ form {
   flex-direction: column;
   flex: 1;
   overflow-y: auto;
+  padding-top: 22px;
 }
 
 form > .form-group:first-child {
@@ -23,6 +24,11 @@ form > .form-group-last {
   color: var(--color-danger);
   font-size: 0.8rem;
   margin-top: 4px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
 }
 
 input {
