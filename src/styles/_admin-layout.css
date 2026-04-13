@@ -2,9 +2,9 @@
 .admin-page-header {
 	display: flex;
 	align-items: center;
-	gap: 20px;
-	height: 80px;
-	padding: 0 40px;
+	gap: 1.25rem;
+	height: 5rem;
+	padding: 0 2.5rem;
 	box-sizing: border-box;
 	background: var(--theme-surface-glass);
 	backdrop-filter: var(--theme-effect-glass);
@@ -34,8 +34,8 @@
 	justify-content: center;
 	background: var(--theme-surface-glass);
 	backdrop-filter: var(--theme-effect-glass);
-	height: 54px;
-	padding: 0 24px;
+	height: 3.375rem;
+	padding: 0 1.5rem;
 	box-sizing: border-box;
 	border-bottom: 1px solid var(--theme-border-glass);
 	z-index: 99;
@@ -44,9 +44,9 @@
 .admin-tab-btn {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: 0.5rem;
 	height: auto;
-	padding: 0 24px;
+	padding: 0 1.5rem;
 	box-sizing: border-box;
 	border: none;
 	background: transparent;
@@ -64,10 +64,10 @@
 .admin-tab-btn::after {
 	content: '';
 	position: absolute;
-	bottom: -2px;
+	bottom: -0.125rem;
 	left: 0;
 	right: 0;
-	height: 3px;
+	height: 0.1875rem;
 	background: transparent;
 	border-radius: 3px 3px 0 0;
 	transition: background 0.3s ease;
@@ -90,7 +90,7 @@
 
 @media (max-width: 1024px) {
 	.admin-page-header {
-		padding: 0 20px;
+		padding: 0 1.25rem;
 	}
 
 	.admin-page-header h1 {
@@ -100,8 +100,8 @@
 
 @media (max-width: 768px) {
 	.admin-page-header {
-		height: 70px;
-		padding: 0 15px;
+		height: 4.375rem;
+		padding: 0 0.9375rem;
 	}
 
 	.admin-page-header h1 {
@@ -110,21 +110,21 @@
 	}
 
 	.admin-tab-bar {
-		padding: 0 8px;
+		padding: 0 0.5rem;
 	}
 
 	.admin-tab-btn {
 		flex: 1;
 		justify-content: center;
-		padding: 0 10px;
+		padding: 0 0.625rem;
 		font-size: 0.86rem;
 	}
 }
 
 @media (max-width: 640px) {
 	.admin-page-header {
-		height: 60px;
-		padding: 0 10px;
+		height: 3.75rem;
+		padding: 0 0.625rem;
 	}
 
 	.admin-page-header h1 {
