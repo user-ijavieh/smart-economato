@@ -1,4 +1,4 @@
-<app-base-modal title="Editar Receta" size="lg" (closed)="closeModal()">
+<app-base-modal title="Editar Receta" size="md" (closed)="closeModal()">
   <div class="edit-modal-content" (click)="closeAllDropdowns()">
       <form class="edit-form">
         <!-- Nombre -->
@@ -110,7 +110,7 @@
       </form>
   </div>
 
-  <div modal-footer>
+  <div modal-footer class="recipe-edit-footer">
     <div class="footer-left">
       @if (isAdmin) {
         <button type="button" class="btn-toggle-hidden" (click)="onToggleHidden()" [class.is-hidden]="showingHidden">

@@ -15,6 +15,7 @@ import { UserPresenceSnapshot } from '../../../shared/models/presence.model';
 import { UserActivityService } from '../../../core/services/user-activity.service';
 import { UserActivityLogResponse } from '../../../shared/models/user-activity.model';
 import { PresenceTrackingService } from '../../../core/services/presence-tracking.service';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 
 @Component({
     selector: 'app-users-management',
@@ -23,6 +24,7 @@ import { PresenceTrackingService } from '../../../core/services/presence-trackin
         CommonModule,
         FormsModule,
         UserFormModalComponent,
+        BaseModalComponent,
         ConfirmDialogComponent,
         ToastComponent
     ],

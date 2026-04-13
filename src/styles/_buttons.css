@@ -8,8 +8,8 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	gap: 8px;
-	padding: 10px 20px;
+	gap: 0.5rem;
+	padding: 0.625rem 1.25rem;
 	border-radius: var(--theme-radius-btn);
 	border: 1px solid var(--theme-border-medium);
 	font-size: 0.9rem;
