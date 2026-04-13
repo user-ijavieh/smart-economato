@@ -718,26 +718,6 @@ tbody tr:hover {
 .text-right { text-align: right; }
 
 /** ===== AUDIT DETAIL MODAL ===== */
-.audit-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  animation: fadeInOverlay 0.2s ease;
-}
-
-@keyframes fadeInOverlay {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 .audit-modal {
   background: var(--color-surface-glass);
   backdrop-filter: var(--effect-glass);

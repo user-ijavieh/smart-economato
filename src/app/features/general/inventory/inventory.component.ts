@@ -19,11 +19,12 @@ import { ProductBatchService } from '../../../core/services/product-batch.servic
 import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.model';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { finalize, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductFormComponent, ProductEditModalComponent, ProductCreateModalComponent, ProductDetailModalComponent, BarcodeScannerComponent, ToastComponent, ConfirmDialogComponent],
+  imports: [CommonModule, FormsModule, ProductFormComponent, ProductEditModalComponent, ProductCreateModalComponent, ProductDetailModalComponent, BarcodeScannerComponent, ToastComponent, ConfirmDialogComponent, BaseModalComponent],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.css',
   animations: [

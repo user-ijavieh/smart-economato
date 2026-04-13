@@ -666,18 +666,6 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 }
 
 /* ===== MOBILE DETAIL MODAL RESULT ===== */
-.mobile-detail-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--theme-overlay-bg);
-  backdrop-filter: blur(8px);
-  z-index: 9999;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  animation: fadeInOverlay 0.2s ease;
-}
-
 .mobile-detail-modal {
   background: var(--theme-surface-glass);
   backdrop-filter: var(--theme-effect-glass);

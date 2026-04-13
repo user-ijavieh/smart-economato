@@ -9,6 +9,7 @@
 @import 'styles/_admin-layout.css';
 @import 'styles/_skeletons.css';
 @import 'styles/_empty-states.css';
+@import 'styles/_modal-utilities.css';
 @import 'styles/_modal-admin-overrides.css';
 
 /* ===== MODAL BUTTON BASE ===== */

@@ -15,8 +15,15 @@
 }
 
 /* Header gradient admin */
-.admin-theme app-base-modal .modal-header-base {
+.admin-theme app-base-modal .modal-header {
   background: linear-gradient(to right, rgba(90, 120, 220, 0.15), transparent);
+}
+
+/* Shell gradient admin */
+.admin-theme app-base-modal .modal-dialog {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, rgba(90, 120, 220, 0.95) 10%, transparent), transparent 42%),
+    var(--theme-surface-glass);
 }
 
 /* Boton primario (save/cocinar) en admin */
