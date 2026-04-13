@@ -147,27 +147,25 @@
   <!-- Mobile Detail Modal para History -->
   @if (showMobileModal && selectedAuditForMobile) {
     <app-base-modal [title]="'Receta #' + selectedAuditForMobile.recipeId" size="md" (closed)="closeMobileModal()">
-      <div class="mobile-detail-modal" (click)="$event.stopPropagation()">
-          <div class="mobile-detail-modal-body">
-              <div class="detail-field">
+      <div class="detail-field">
                   <span class="detail-label">Receta</span>
                   <span class="detail-value">{{ selectedAuditForMobile.recipeName }}</span>
-              </div>
-              <div class="detail-field">
+      </div>
+      <div class="detail-field">
                   <span class="detail-label">Usuario</span>
                   <span class="detail-value">{{ selectedAuditForMobile.userName }} (ID: {{ selectedAuditForMobile.userId }})</span>
-              </div>
-              <div class="detail-field">
+      </div>
+      <div class="detail-field">
                   <span class="detail-label">Fecha de Cocinado</span>
                   <span class="detail-value">{{ formatDate(selectedAuditForMobile.cookingDate) }}</span>
-              </div>
-              <div class="detail-field">
+      </div>
+      <div class="detail-field">
                   <span class="detail-label">Cantidad (Porciones)</span>
                   <span class="detail-value">{{ selectedAuditForMobile.quantityCooked | number:'1.2-2' }}</span>
-              </div>
+      </div>
 
               <!-- Trazabilidad en Móvil -->
-              <div class="mobile-traceability-section">
+      <div class="mobile-traceability-section">
                   <h3 class="section-title">Trazabilidad de Ingredientes</h3>
                   
                   @if (loadingTraceability) {
@@ -210,11 +208,9 @@
               </div>
 
               <div class="detail-actions">
-                  <button class="btn-revert btn-full" (click)="revertAudit(selectedAuditForMobile); closeMobileModal()">
-                      Revertir Cocinado
-                  </button>
-              </div>
-          </div>
+                <button class="btn-revert btn-full" (click)="revertAudit(selectedAuditForMobile); closeMobileModal()">
+                  Revertir Cocinado
+                </button>
       </div>
   </app-base-modal>
   }
