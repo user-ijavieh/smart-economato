@@ -18,6 +18,12 @@
         </svg>
         Auditoría
     </button>
+    <button class="admin-tab-btn" [class.active]="activeTab === 'drafts'" (click)="switchTab('drafts')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor">
+            <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h360l280 280v360q0 33-23.5 56.5T760-120H200Zm320-520h240L520-760v120Zm-280 440h560v-280H520v-240H240v520Zm80-80h400v-80H320v80Zm0-160h400v-80H320v80Zm0-160h160v-80H320v80Z"/>
+        </svg>
+        Borradores
+    </button>
 </div>
 
 <!-- ===== RECIPES TAB ===== -->
@@ -195,6 +201,112 @@
             Siguiente
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
         </button>
+    </div>
+    }
+</div>
+}
+
+<!-- ===== DRAFTS TAB ===== -->
+@if (activeTab === 'drafts') {
+<div class="page-content contenedor-principal">
+    <div class="controls-bar controles">
+        <select [(ngModel)]="draftStatusFilter" (ngModelChange)="onDraftStatusFilterChange()" class="action-select">
+            <option value="ALL">Todos los estados</option>
+            <option value="PENDING">Pendientes</option>
+            <option value="APPROVED">Aprobados</option>
+            <option value="REJECTED">Rechazados</option>
+        </select>
+        @if (hasActiveDraftFilters()) {
+        <button class="toolbar-btn btn-clear" (click)="clearDraftFilters()">Limpiar filtros</button>
+        }
+        <button class="toolbar-btn" (click)="loadDrafts(currentDraftPage)">Refrescar</button>
+    </div>
+
+    <div class="tabla-contenedor drafts-table-wrapper" (scroll)="onDraftsScroll($event)">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th class="hide-on-mobile">Estado</th>
+                    <th class="hide-on-mobile">Creador</th>
+                    <th class="hide-on-mobile">Revisor</th>
+                    <th class="hide-on-mobile">Aprobada</th>
+                    <th class="hide-on-mobile">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (loadingDrafts && drafts.length === 0) {
+                @for (i of [1, 2, 3, 4, 5]; track i) {
+                <tr class="skeleton-row">
+                    <td><span class="skeleton skeleton-text" style="width: 160px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 90px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 120px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 120px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 80px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 180px"></span></td>
+                </tr>
+                }
+                } @else {
+                @for (draft of filteredDrafts; track draft.id) {
+                <tr class="clickable-row mobile-clickable-row" (click)="openDraftDetailModal(draft)">
+                    <td>
+                        <strong>{{ draft.name }}</strong>
+                        @if (draft.isHidden) {
+                            <span class="status-badge danger" style="margin-left: 8px;">Oculto</span>
+                        }
+                    </td>
+                    <td class="hide-on-mobile">
+                        <span class="status-badge" [ngClass]="getDraftStatusClass(draft.status)">
+                            {{ getDraftStatusLabel(draft.status) }}
+                        </span>
+                    </td>
+                    <td class="hide-on-mobile">{{ draft.createdByName || ('#' + draft.createdById) }}</td>
+                    <td class="hide-on-mobile">{{ draft.reviewedByName || '—' }}</td>
+                    <td class="hide-on-mobile">{{ draft.approvedRecipeId || '—' }}</td>
+                    <td class="actions-cell hide-on-mobile" (click)="$event.stopPropagation()">
+                        @if (draft.status === 'PENDING') {
+                        <button class="btn-ver" (click)="approveDraft(draft)" title="Aprobar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </button>
+                        <button class="btn-eliminar" (click)="openRejectDraftModal(draft)" title="Rechazar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                        }
+                        @if (draft.status === 'REJECTED') {
+                        <span class="status-badge badge-default">Reenviable</span>
+                        }
+                    </td>
+                </tr>
+                }
+                @if (filteredDrafts.length === 0 && !loadingDrafts) {
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: #999">
+                        No se encontraron borradores
+                    </td>
+                </tr>
+                }
+                }
+                @if (loadingDrafts && drafts.length > 0) {
+                <tr>
+                    <td colspan="6" class="drafts-loading-more">
+                        Cargando más borradores...
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (totalDraftPages > 1) {
+    <div class="pagination-controls drafts-pagination">
+        <button class="toolbar-btn btn-page" [disabled]="currentDraftPage === 0 || loadingDrafts" (click)="changeDraftPage(-1)">Anterior</button>
+        <span class="page-info">Página {{ currentDraftPage + 1 }} de {{ totalDraftPages }} <span class="total-info">({{ totalDraftsCount }} borradores)</span></span>
+        <button class="toolbar-btn btn-page" [disabled]="currentDraftPage === totalDraftPages - 1 || loadingDrafts" (click)="changeDraftPage(1)">Siguiente</button>
     </div>
     }
 </div>
@@ -422,8 +534,89 @@
 </app-base-modal>
 }
 
+@if (showRejectDraftModal && selectedDraftToReject) {
+<app-base-modal [title]="'Rechazar borrador'" size="md" (closed)="closeRejectDraftModal()">
+    <div class="reject-modal-body">
+        <p class="reject-modal-copy">Indica el motivo para rechazar el borrador <strong>{{ selectedDraftToReject.name }}</strong>.</p>
+        <div class="form-item reject-form-item">
+            <label for="reject-reason">Motivo</label>
+            <textarea
+                id="reject-reason"
+                [(ngModel)]="rejectDraftReason"
+                name="rejectReason"
+                rows="5"
+                placeholder="Escribe el motivo de rechazo..."
+            ></textarea>
+        </div>
+    </div>
+    <div modal-footer>
+        <button class="draft-modal-btn draft-modal-btn-danger" (click)="confirmRejectDraft()">Rechazar</button>
+    </div>
+</app-base-modal>
+}
+
 <!-- Confirm Dialog -->
 <app-confirm-dialog></app-confirm-dialog>
 
 <!-- Toasts -->
 <app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
+
+@if (showDraftDetailModal && selectedDraft) {
+<app-base-modal [title]="'Detalle del Borrador'" size="lg" (closed)="closeDraftDetailModal()">
+    <div class="audit-modal-body draft-detail-grid">
+        <div class="audit-field">
+            <span class="audit-field-label">Nombre</span>
+            <span class="audit-field-value">{{ selectedDraft.name }}</span>
+        </div>
+        <div class="audit-field">
+            <span class="audit-field-label">Estado</span>
+            <span class="audit-field-value draft-status-inline">
+                <span class="status-badge" [ngClass]="getDraftStatusClass(selectedDraft.status)">{{ getDraftStatusLabel(selectedDraft.status) }}</span>
+            </span>
+        </div>
+        <div class="audit-field">
+            <span class="audit-field-label">Creador</span>
+            <span class="audit-field-value">{{ selectedDraft.createdByName || ('#' + selectedDraft.createdById) }}</span>
+        </div>
+        <div class="audit-field">
+            <span class="audit-field-label">Última actualización</span>
+            <span class="audit-field-value">{{ selectedDraft.updatedAt || selectedDraft.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <div class="audit-field audit-field-full">
+            <span class="audit-field-label">Elaboración</span>
+            <p class="audit-details-text">{{ selectedDraft.elaboration || '—' }}</p>
+        </div>
+        <div class="audit-field audit-field-full">
+            <span class="audit-field-label">Presentación</span>
+            <p class="audit-details-text">{{ selectedDraft.presentation || '—' }}</p>
+        </div>
+        @if (selectedDraft.rejectionReason) {
+        <div class="audit-field audit-field-full">
+            <span class="audit-field-label">Motivo de rechazo</span>
+            <p class="audit-details-text">{{ selectedDraft.rejectionReason }}</p>
+        </div>
+        }
+    </div>
+    <div modal-footer>
+        @if (selectedDraft.status === 'PENDING') {
+        <button class="draft-modal-btn draft-modal-btn-success" (click)="approveDraft(selectedDraft)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Aceptar
+        </button>
+        <button class="draft-modal-btn draft-modal-btn-danger" (click)="openRejectDraftModal(selectedDraft)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            Rechazar
+        </button>
+        }
+        @if (selectedDraft.approvedRecipeId) {
+        <button class="draft-modal-btn draft-modal-btn-primary" (click)="openApprovedRecipeFromDraft()">Ver receta aprobada</button>
+        }
+        <button class="draft-modal-btn draft-modal-btn-neutral" (click)="closeDraftDetailModal()">Cerrar</button>
+    </div>
+</app-base-modal>
+}
