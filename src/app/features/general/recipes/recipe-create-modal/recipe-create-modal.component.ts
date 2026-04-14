@@ -32,6 +32,9 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<RecipeRequest>();
   @Input() isAdmin = false;
+  @Input() modalTitle = 'Crear Nueva Receta';
+  @Input() actionLabel = 'Crear Receta';
+  @Input() initialRecipe: RecipeRequest | null = null;
 
   createForm: RecipeRequest = {
     name: '',
@@ -58,6 +61,7 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initialiseSearchSubscription();
+    this.initialiseFromInput();
     this.loadFormData();
   }
 
@@ -77,6 +81,27 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
   private loadFormData(): void {
     this.loadProducts();
     this.loadAllergens();
+  }
+
+  private initialiseFromInput(): void {
+    if (!this.initialRecipe) {
+      return;
+    }
+
+    this.createForm = {
+      name: this.initialRecipe.name ?? '',
+      elaboration: this.initialRecipe.elaboration ?? '',
+      presentation: this.initialRecipe.presentation ?? '',
+      components: this.initialRecipe.components ?? [],
+      allergenIds: this.initialRecipe.allergenIds ?? [],
+      isHidden: this.initialRecipe.isHidden ?? false
+    };
+
+    this.formComponents = (this.initialRecipe.components ?? []).map(c => ({
+      productId: c.productId,
+      quantity: c.quantity,
+      searchText: ''
+    }));
   }
 
   private loadProducts(page: number = 0, append: boolean = false): void {
@@ -102,6 +127,7 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
         }
         this.currentProductPage = page;
         this.totalProductPages = response.totalPages;
+        this.syncComponentSearchTexts();
         this.loadingProducts = false;
         this.loadingMoreProducts = false;
         this.cdr.markForCheck();
@@ -113,6 +139,18 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       }
     });
+  }
+
+  private syncComponentSearchTexts(): void {
+    if (!this.formComponents.length) {
+      return;
+    }
+
+    for (const component of this.formComponents) {
+      if (!component.searchText && component.productId > 0) {
+        component.searchText = this.getProductName(component.productId);
+      }
+    }
   }
 
   private loadAllergens(): void {
