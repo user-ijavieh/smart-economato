@@ -1,0 +1,111 @@
+<app-base-modal [title]="draft.name" size="lg" (closed)="closeModal()">
+  <div class="draft-modal-body">
+    <div class="draft-summary-grid">
+      <div class="draft-field">
+        <span class="draft-field-label">Estado</span>
+        <span class="draft-field-value draft-status-value">
+          <span class="status-badge" [ngClass]="getDraftStatusClass(draft.status)">
+            {{ getDraftStatusLabel(draft.status) }}
+          </span>
+        </span>
+      </div>
+      <div class="draft-field">
+        <span class="draft-field-label">Porciones</span>
+        <span class="draft-field-value">{{ draft.portions }}</span>
+      </div>
+      <div class="draft-field">
+        <span class="draft-field-label">Visible</span>
+        <span class="draft-field-value">{{ draft.isHidden ? 'Oculto' : 'Visible' }}</span>
+      </div>
+      <div class="draft-field">
+        <span class="draft-field-label">Creador</span>
+        <span class="draft-field-value">{{ draft.createdByName || ('#' + draft.createdById) }}</span>
+      </div>
+      <div class="draft-field">
+        <span class="draft-field-label">Última actualización</span>
+        <span class="draft-field-value">{{ (draft.updatedAt || draft.createdAt) | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+      <div class="draft-field">
+        <span class="draft-field-label">Revisor</span>
+        <span class="draft-field-value">{{ draft.reviewedByName || '—' }}</span>
+      </div>
+    </div>
+
+    <div class="draft-section">
+      <h4>Presentación</h4>
+      <p>{{ draft.presentation || '—' }}</p>
+    </div>
+
+    <div class="draft-section">
+      <h4>Elaboración</h4>
+      <p class="draft-preformatted">{{ draft.elaboration || '—' }}</p>
+    </div>
+
+    <div class="draft-section">
+      <h4>Componentes</h4>
+      @if (draft.components.length > 0) {
+        <table class="draft-components-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (component of draft.components; track component.productId) {
+              <tr>
+                <td>Producto #{{ component.productId }}</td>
+                <td>{{ component.quantity }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <p>Esta receta aún no tiene componentes.</p>
+      }
+    </div>
+
+    <div class="draft-section">
+      <h4>Alérgenos</h4>
+      @if (draft.allergenIds.length > 0) {
+        <div class="draft-tags-list">
+          @for (allergenId of draft.allergenIds; track allergenId) {
+            <span class="draft-tag">#{{ allergenId }}</span>
+          }
+        </div>
+      } @else {
+        <p>Sin alérgenos registrados.</p>
+      }
+    </div>
+
+    @if (draft.rejectionReason) {
+      <div class="draft-section">
+        <h4>Motivo de rechazo</h4>
+        <p class="draft-rejection-reason">{{ draft.rejectionReason }}</p>
+      </div>
+    }
+  </div>
+
+  <div modal-footer>
+    <div class="draft-footer-actions">
+      @if (canEditDraft()) {
+        <button class="draft-modal-btn draft-modal-btn-primary" type="button" (click)="editDraft()">
+          Editar
+        </button>
+      }
+      @if (canDeleteDraft()) {
+        <button class="draft-modal-btn draft-modal-btn-danger" type="button" (click)="deleteDraft()">
+          Eliminar
+        </button>
+      }
+      @if (canResubmitDraft()) {
+        <button class="draft-modal-btn draft-modal-btn-success" type="button" (click)="resubmitDraft()">
+          Reenviar
+        </button>
+      }
+      <button class="draft-modal-btn draft-modal-btn-neutral" type="button" (click)="closeModal()">
+        Cerrar
+      </button>
+    </div>
+  </div>
+</app-base-modal>

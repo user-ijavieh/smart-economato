@@ -3,6 +3,7 @@ export interface Recipe {
   name: string;
   elaboration?: string;
   presentation?: string;
+  portions?: number;
   totalCost: number;
   isHidden: boolean;
   components: RecipeComponent[];
@@ -22,6 +23,7 @@ export interface RecipeRequest {
   name: string;
   elaboration?: string;
   presentation?: string;
+  portions?: number;
   isHidden?: boolean;
   components: { productId: number; quantity: number }[];
   allergenIds?: number[];

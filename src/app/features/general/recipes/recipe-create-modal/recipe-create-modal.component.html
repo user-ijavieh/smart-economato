@@ -1,4 +1,4 @@
-<app-base-modal title="Crear Nueva Receta" size="lg" (closed)="closeModal()">
+<app-base-modal [title]="modalTitle" size="lg" (closed)="closeModal()">
   <div (click)="closeAllDropdowns()">
     <form class="create-form" (click)="$event.stopPropagation()">
       <div class="form-group">
@@ -106,6 +106,6 @@
   </div>
 
   <div modal-footer>
-    <button class="modal-btn modal-btn-primary" (click)="saveRecipe()">Crear Receta</button>
+    <button class="modal-btn modal-btn-primary" (click)="saveRecipe()">{{ actionLabel }}</button>
   </div>
 </app-base-modal>
