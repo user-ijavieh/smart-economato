@@ -2,11 +2,13 @@ import { Component, OnInit, inject, ChangeDetectorRef, ChangeDetectionStrategy }
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RecipeService } from '../../../core/services/recipe.service';
+import { RecipeDraftService } from '../../../core/services/recipe-draft.service';
 import { RecipeAuditService } from '../../../core/services/recipe-audit.service';
 import { UserService } from '../../../core/services/user.service';
 import { StatsService } from '../../../core/services/stats.service';
 import { MessageService } from '../../../core/services/message.service';
 import { Recipe, RecipeRequest } from '../../../shared/models/recipe.model';
+import { RecipeDraft, RecipeDraftStatus } from '../../../shared/models/recipe-draft.model';
 import { RecipeAudit } from '../../../shared/models/recipe-audit.model';
 import { RecipeCreateModalComponent } from '../../general/recipes/recipe-create-modal/recipe-create-modal.component';
 import { RecipeEditModalComponent } from '../../general/recipes/recipe-edit-modal/recipe-edit-modal.component';
@@ -37,6 +39,7 @@ import { of } from 'rxjs';
 })
 export class RecipesManagementComponent implements OnInit {
     private recipeService = inject(RecipeService);
+    private recipeDraftService = inject(RecipeDraftService);
     private recipeAuditService = inject(RecipeAuditService);
     private userService = inject(UserService);
     private statsService = inject(StatsService);
@@ -45,7 +48,7 @@ export class RecipesManagementComponent implements OnInit {
     messageService = inject(MessageService);
 
     // ── Tab state ──
-    activeTab: 'recipes' | 'audits' = 'recipes';
+    activeTab: 'recipes' | 'audits' | 'drafts' = 'recipes';
 
     // ── Recipes state ──
     recipes: Recipe[] = [];
@@ -70,6 +73,22 @@ export class RecipesManagementComponent implements OnInit {
     showEditModal = false;
     showDetailModal = false;
     selectedRecipe: Recipe | null = null;
+    showDraftDetailModal = false;
+    selectedDraft: RecipeDraft | null = null;
+
+    // ── Drafts state ──
+    drafts: RecipeDraft[] = [];
+    filteredDrafts: RecipeDraft[] = [];
+    loadingDrafts = false;
+    draftsLoaded = false;
+    currentDraftPage = 0;
+    draftPageSize = 20;
+    totalDraftPages = 0;
+    totalDraftsCount = 0;
+    draftStatusFilter: 'ALL' | RecipeDraftStatus = 'ALL';
+    showRejectDraftModal = false;
+    selectedDraftToReject: RecipeDraft | null = null;
+    rejectDraftReason = '';
 
     // Stats
     statTotalRecipes = 0;
@@ -165,10 +184,12 @@ export class RecipesManagementComponent implements OnInit {
 
     // ── Tab switching ──
 
-    switchTab(tab: 'recipes' | 'audits'): void {
+    switchTab(tab: 'recipes' | 'audits' | 'drafts'): void {
         this.activeTab = tab;
         if (tab === 'audits') {
             this.loadAudits();
+        } else if (tab === 'drafts') {
+            this.loadDrafts();
         }
         this.cdr.detectChanges();
     }
@@ -467,6 +488,180 @@ export class RecipesManagementComponent implements OnInit {
     refreshAudits(): void {
         this.auditCache.clear();
         this.loadAudits();
+    }
+
+    loadDrafts(page: number = 0, append = false): void {
+        if (this.loadingDrafts) {
+            return;
+        }
+
+        this.loadingDrafts = true;
+        this.currentDraftPage = page;
+        this.cdr.detectChanges();
+
+        const source$ = this.draftStatusFilter === 'ALL'
+            ? this.recipeDraftService.getAll(this.currentDraftPage, this.draftPageSize)
+            : this.recipeDraftService.getAll(this.currentDraftPage, this.draftPageSize, this.draftStatusFilter);
+
+        source$.pipe(
+            finalize(() => {
+                this.loadingDrafts = false;
+                this.draftsLoaded = true;
+                this.cdr.detectChanges();
+            })
+        ).subscribe({
+            next: (response) => {
+                const incoming = response.content || [];
+                this.drafts = append ? [...this.drafts, ...incoming] : incoming;
+                this.filteredDrafts = [...this.drafts];
+                this.totalDraftsCount = response.totalElements || this.drafts.length;
+                this.totalDraftPages = response.totalPages || 1;
+                this.currentDraftPage = response.number ?? page;
+                this.cdr.markForCheck();
+            },
+            error: () => {
+                this.messageService.showError('Error al cargar los borradores de recetas');
+            }
+        });
+    }
+
+    changeDraftPage(delta: number): void {
+        const newPage = this.currentDraftPage + delta;
+        if (newPage >= 0 && newPage < this.totalDraftPages) {
+            this.scrollService.scrollToTop();
+            this.loadDrafts(newPage, false);
+        }
+    }
+
+    onDraftsScroll(event: Event): void {
+        if (this.loadingDrafts || this.currentDraftPage >= this.totalDraftPages - 1) {
+            return;
+        }
+
+        const target = event.target as HTMLElement;
+        const nearBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 120;
+        if (nearBottom) {
+            this.loadDrafts(this.currentDraftPage + 1, true);
+        }
+    }
+
+    onDraftStatusFilterChange(): void {
+        this.loadDrafts(0);
+    }
+
+    hasActiveDraftFilters(): boolean {
+        return this.draftStatusFilter !== 'ALL';
+    }
+
+    clearDraftFilters(): void {
+        this.draftStatusFilter = 'ALL';
+        this.loadDrafts(0);
+    }
+
+    getDraftStatusLabel(status: RecipeDraftStatus): string {
+        switch (status) {
+            case 'PENDING': return 'Pendiente';
+            case 'APPROVED': return 'Aprobado';
+            case 'REJECTED': return 'Rechazado';
+            default: return status;
+        }
+    }
+
+    getDraftStatusClass(status: RecipeDraftStatus): string {
+        switch (status) {
+            case 'PENDING': return 'badge-default';
+            case 'APPROVED': return 'badge-create';
+            case 'REJECTED': return 'badge-delete';
+            default: return 'badge-default';
+        }
+    }
+
+    async approveDraft(draft: RecipeDraft): Promise<void> {
+        const confirmed = await this.messageService.confirm(
+            'Aprobar borrador',
+            `¿Deseas aprobar el borrador "${draft.name}"?`
+        );
+        if (!confirmed) return;
+
+        this.recipeDraftService.approve(draft.id).subscribe({
+            next: () => {
+                this.messageService.showSuccess(`Borrador "${draft.name}" aprobado`);
+                this.closeDraftDetailModal();
+                this.loadDrafts(this.currentDraftPage);
+            },
+            error: (err: any) => {
+                const msg = err.error?.message || err.error || 'Error al aprobar el borrador';
+                this.messageService.showError(msg);
+            }
+        });
+    }
+
+    openRejectDraftModal(draft: RecipeDraft): void {
+        this.closeDraftDetailModal();
+        this.selectedDraftToReject = draft;
+        this.rejectDraftReason = '';
+        this.showRejectDraftModal = true;
+        this.cdr.detectChanges();
+    }
+
+    closeRejectDraftModal(): void {
+        this.showRejectDraftModal = false;
+        this.selectedDraftToReject = null;
+        this.rejectDraftReason = '';
+        this.cdr.detectChanges();
+    }
+
+    confirmRejectDraft(): void {
+        if (!this.selectedDraftToReject) {
+            return;
+        }
+
+        const reason = this.rejectDraftReason.trim();
+        if (!reason) {
+            this.messageService.showWarning('Debes indicar un motivo de rechazo');
+            return;
+        }
+
+        const draft = this.selectedDraftToReject;
+        this.recipeDraftService.reject(draft.id, reason).subscribe({
+            next: () => {
+                this.messageService.showSuccess(`Borrador "${draft.name}" rechazado`);
+                this.closeRejectDraftModal();
+                this.loadDrafts(this.currentDraftPage);
+            },
+            error: (err: any) => {
+                const msg = err.error?.message || err.error || 'Error al rechazar el borrador';
+                this.messageService.showError(msg);
+            }
+        });
+    }
+
+    openDraftDetailModal(draft: RecipeDraft): void {
+        this.selectedDraft = draft;
+        this.showDraftDetailModal = true;
+        this.cdr.detectChanges();
+    }
+
+    closeDraftDetailModal(): void {
+        this.showDraftDetailModal = false;
+        this.selectedDraft = null;
+        this.cdr.detectChanges();
+    }
+
+    openApprovedRecipeFromDraft(): void {
+        if (!this.selectedDraft?.approvedRecipeId) {
+            return;
+        }
+
+        this.recipeService.getById(this.selectedDraft.approvedRecipeId).subscribe({
+            next: (recipe) => {
+                this.closeDraftDetailModal();
+                this.openDetailModal(recipe);
+            },
+            error: () => {
+                this.messageService.showError('No se pudo cargar la receta aprobada');
+            }
+        });
     }
 
     getActionBadgeClass(action: string): string {

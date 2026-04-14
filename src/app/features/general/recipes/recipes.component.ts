@@ -2,9 +2,12 @@ import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef }
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RecipeService } from '../../../core/services/recipe.service';
+import { RecipeDraftService } from '../../../core/services/recipe-draft.service';
 import { MessageService } from '../../../core/services/message.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Recipe, RecipeRequest } from '../../../shared/models/recipe.model';
+import { RecipeDraft, RecipeDraftRequest } from '../../../shared/models/recipe-draft.model';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { RecipeDetailModalComponent } from './recipe-detail-modal/recipe-detail-modal.component';
 import { RecipeEditModalComponent } from './recipe-edit-modal/recipe-edit-modal.component';
 import { RecipeCreateModalComponent } from './recipe-create-modal/recipe-create-modal.component';
@@ -14,13 +17,14 @@ import { finalize, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 @Component({
   selector: 'app-recipes',
   standalone: true,
-  imports: [CommonModule, FormsModule, RecipeDetailModalComponent, RecipeEditModalComponent, RecipeCreateModalComponent],
+  imports: [CommonModule, FormsModule, BaseModalComponent, RecipeDetailModalComponent, RecipeEditModalComponent, RecipeCreateModalComponent],
   templateUrl: './recipes.component.html',
   styleUrl: './recipes.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecipesComponent implements OnInit {
   private recipeService = inject(RecipeService);
+  private recipeDraftService = inject(RecipeDraftService);
   private messageService = inject(MessageService);
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
@@ -38,6 +42,20 @@ export class RecipesComponent implements OnInit {
   showFilters = false;
   showEditModal = false;
   showCreateModal = false;
+  showDraftDetailModal = false;
+  activeTab: 'recipes' | 'drafts' = 'recipes';
+  createModalTitle = 'Crear Nueva Receta';
+  createActionLabel = 'Crear Receta';
+  createMode: 'recipe-create' | 'draft-create' | 'draft-edit' = 'recipe-create';
+  selectedDraftForEdit: RecipeDraft | null = null;
+  selectedDraftForDetail: RecipeDraft | null = null;
+
+  drafts: RecipeDraft[] = [];
+  loadingDrafts = false;
+  currentDraftPage = 0;
+  draftPageSize = 12;
+  totalDraftElements = 0;
+  totalDraftPages = 0;
 
   // Filtros
   filterAllergens: 'all' | 'with' | 'without' = 'all';
@@ -52,6 +70,16 @@ export class RecipesComponent implements OnInit {
   ngOnInit(): void {
     this.initialiseSearchSubscription();
     this.loadRecipes();
+  }
+
+  switchTab(tab: 'recipes' | 'drafts'): void {
+    this.activeTab = tab;
+    if (tab === 'drafts') {
+      this.loadMyDrafts(0, false);
+    } else {
+      this.loadRecipes();
+    }
+    this.cdr.markForCheck();
   }
 
   initialiseSearchSubscription(): void {
@@ -263,13 +291,182 @@ export class RecipesComponent implements OnInit {
   }
 
   openCreateModal(): void {
+    if (this.canEdit()) {
+      this.createMode = 'recipe-create';
+      this.selectedDraftForEdit = null;
+      this.createModalTitle = 'Crear Nueva Receta';
+      this.createActionLabel = 'Crear Receta';
+    } else {
+      this.createMode = 'draft-create';
+      this.selectedDraftForEdit = null;
+      this.createModalTitle = 'Crear Nuevo Borrador';
+      this.createActionLabel = 'Guardar Borrador';
+    }
     this.showCreateModal = true;
     this.cdr.markForCheck();
   }
 
   closeCreateModal(): void {
     this.showCreateModal = false;
+    this.selectedDraftForEdit = null;
     this.cdr.markForCheck();
+  }
+
+  private toDraftRequest(recipeRequest: RecipeRequest, existingDraft?: RecipeDraft | null): RecipeDraftRequest {
+    return {
+      name: recipeRequest.name,
+      elaboration: recipeRequest.elaboration ?? '',
+      presentation: recipeRequest.presentation ?? '',
+      portions: existingDraft?.portions ?? 1,
+      components: recipeRequest.components,
+      allergenIds: recipeRequest.allergenIds ?? [],
+      isHidden: existingDraft?.isHidden ?? recipeRequest.isHidden ?? false
+    };
+  }
+
+  mapDraftToRecipeRequest(draft: RecipeDraft): RecipeRequest {
+    return {
+      name: draft.name,
+      elaboration: draft.elaboration ?? '',
+      presentation: draft.presentation ?? '',
+      components: draft.components ?? [],
+      allergenIds: draft.allergenIds ?? [],
+      isHidden: draft.isHidden
+    };
+  }
+
+  loadMyDrafts(page: number = 0, append = false): void {
+    this.loadingDrafts = true;
+    this.currentDraftPage = page;
+    this.cdr.markForCheck();
+
+    this.recipeDraftService.getMine(this.currentDraftPage, this.draftPageSize)
+      .pipe(finalize(() => {
+        this.loadingDrafts = false;
+        this.cdr.markForCheck();
+      }))
+      .subscribe({
+        next: (draftPage) => {
+          this.drafts = append ? [...this.drafts, ...draftPage.content] : draftPage.content;
+          this.totalDraftElements = draftPage.totalElements;
+          this.totalDraftPages = draftPage.totalPages;
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.messageService.showError('Error al cargar tus borradores');
+        }
+      });
+  }
+
+  onDraftsScroll(event: Event): void {
+    const target = event.target as HTMLElement;
+    if (!target || this.loadingDrafts || this.currentDraftPage >= this.totalDraftPages - 1) {
+      return;
+    }
+
+    const threshold = 120;
+    const distanceToBottom = target.scrollHeight - target.scrollTop - target.clientHeight;
+    if (distanceToBottom <= threshold) {
+      this.loadMyDrafts(this.currentDraftPage + 1, true);
+    }
+  }
+
+  getDraftStatusLabel(status: RecipeDraft['status']): string {
+    switch (status) {
+      case 'PENDING':
+        return 'Pendiente';
+      case 'APPROVED':
+        return 'Aprobado';
+      case 'REJECTED':
+        return 'Rechazado';
+      default:
+        return status;
+    }
+  }
+
+  getDraftStatusClass(status: RecipeDraft['status']): string {
+    switch (status) {
+      case 'PENDING':
+        return 'warning';
+      case 'APPROVED':
+        return 'success';
+      case 'REJECTED':
+        return 'danger';
+      default:
+        return 'badge-default';
+    }
+  }
+
+  canEditDraft(draft: RecipeDraft): boolean {
+    return draft.status === 'PENDING' || draft.status === 'REJECTED';
+  }
+
+  openDraftDetailModal(draft: RecipeDraft): void {
+    this.selectedDraftForDetail = draft;
+    this.showDraftDetailModal = true;
+    this.cdr.markForCheck();
+  }
+
+  closeDraftDetailModal(): void {
+    this.showDraftDetailModal = false;
+    this.selectedDraftForDetail = null;
+    this.cdr.markForCheck();
+  }
+
+  openEditDraftModal(draft: RecipeDraft): void {
+    if (!this.canEditDraft(draft)) {
+      this.messageService.showError('Este borrador ya no se puede editar');
+      return;
+    }
+
+    this.createMode = 'draft-edit';
+    this.selectedDraftForEdit = draft;
+    this.createModalTitle = `Editar Borrador: ${draft.name}`;
+    this.createActionLabel = draft.status === 'REJECTED' ? 'Guardar y Reenviar' : 'Guardar Cambios';
+    this.showCreateModal = true;
+    this.closeDraftDetailModal();
+    this.cdr.markForCheck();
+  }
+
+  openEditDraftFromDetail(): void {
+    if (!this.selectedDraftForDetail) return;
+    this.openEditDraftModal(this.selectedDraftForDetail);
+  }
+
+  async deleteDraft(draft: RecipeDraft): Promise<void> {
+    const confirmed = await this.messageService.confirm(
+      'Eliminar borrador',
+      `¿Seguro que deseas eliminar el borrador "${draft.name}"?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.recipeDraftService.delete(draft.id).subscribe({
+      next: () => {
+        this.messageService.showSuccess(`Borrador "${draft.name}" eliminado`);
+        this.closeDraftDetailModal();
+        this.loadMyDrafts(this.currentDraftPage);
+      },
+      error: () => {
+        this.messageService.showError('Error al eliminar el borrador');
+      }
+    });
+  }
+
+  resubmitDraft(draft: RecipeDraft): void {
+    const request = this.toDraftRequest(this.mapDraftToRecipeRequest(draft), draft);
+    this.recipeDraftService.update(draft.id, request).subscribe({
+      next: () => {
+        this.messageService.showSuccess(`Borrador "${draft.name}" reenviado`);
+        this.closeDraftDetailModal();
+        this.loadMyDrafts(this.currentDraftPage);
+      },
+      error: () => {
+        this.messageService.showError('Error al reenviar el borrador');
+      }
+    });
   }
 
   onSaveRecipe(recipeRequest: RecipeRequest): void {
@@ -289,14 +486,49 @@ export class RecipesComponent implements OnInit {
   }
 
   onCreateRecipe(recipeRequest: RecipeRequest): void {
-    this.recipeService.create(recipeRequest).subscribe({
+    if (this.createMode === 'recipe-create') {
+      this.recipeService.create(recipeRequest).subscribe({
+        next: (recipe) => {
+          this.messageService.showSuccess(`Receta "${recipe.name}" creada con éxito`);
+          this.closeCreateModal();
+          this.loadRecipes();
+        },
+        error: (err) => {
+          // Handled by interceptor
+        }
+      });
+      return;
+    }
+
+    if (this.createMode === 'draft-edit' && this.selectedDraftForEdit) {
+      const updateRequest = this.toDraftRequest(recipeRequest, this.selectedDraftForEdit);
+      this.recipeDraftService.update(this.selectedDraftForEdit.id, updateRequest).subscribe({
+        next: (draft) => {
+          this.messageService.showSuccess(
+            draft.status === 'PENDING'
+              ? `Borrador "${draft.name}" guardado y enviado`
+              : `Borrador "${draft.name}" actualizado`
+          );
+          this.closeCreateModal();
+          this.loadMyDrafts(this.currentDraftPage);
+        },
+        error: () => {
+          this.messageService.showError('Error al actualizar el borrador');
+        }
+      });
+      return;
+    }
+
+    const draftRequest = this.toDraftRequest(recipeRequest);
+
+    this.recipeDraftService.create(draftRequest).subscribe({
       next: (recipe) => {
-        this.messageService.showSuccess(`Receta "${recipe.name}" creada con éxito`);
+        this.messageService.showSuccess(`Borrador "${recipe.name}" creado con éxito`);
         this.closeCreateModal();
-        this.loadRecipes();
+        this.loadMyDrafts(0);
       },
       error: (err) => {
-        // Handled by interceptor
+        this.messageService.showError('Error al crear el borrador');
       }
     });
   }

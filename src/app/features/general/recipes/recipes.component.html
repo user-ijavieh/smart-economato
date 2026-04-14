@@ -1,9 +1,20 @@
 <!-- Header -->
 <div class="page-header header-recetas">
   <h1>Recetas</h1>
+  @if (!canEdit()) {
+    <div class="recipes-user-tabs">
+      <button class="recipes-tab-btn" [class.active]="activeTab === 'recipes'" (click)="switchTab('recipes')">
+        Recetas
+      </button>
+      <button class="recipes-tab-btn" [class.active]="activeTab === 'drafts'" (click)="switchTab('drafts')">
+        Borradores
+      </button>
+    </div>
+  }
 </div>
 
 <!-- Contenido -->
+@if (activeTab === 'recipes') {
 <div class="page-content contenedor-principal">
   <!-- Controles -->
   <div class="controls-bar controles">
@@ -28,11 +39,11 @@
       <button (click)="clearFilters()">Limpiar Filtros</button>
     }
 
-    <button id="btnCrearReceta" class="btn-primary" (click)="openCreateModal()" title="Crear nueva receta">
+    <button id="btnCrearReceta" class="btn-primary" (click)="openCreateModal()" [title]="canEdit() ? 'Crear nueva receta' : 'Crear nuevo borrador'">
       <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
         <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
       </svg>
-      Crear Receta
+      {{ canEdit() ? 'Crear Receta' : 'Crear Borrador' }}
     </button>
   </div>
 
@@ -132,6 +143,92 @@
     }
   }
 </div>
+}
+
+@if (activeTab === 'drafts' && !canEdit()) {
+  <div class="page-content contenedor-principal">
+    <div class="controls-bar controles">
+      <span class="page-info">Total: {{ totalDraftElements }} borradores</span>
+      <button class="btn-primary" (click)="openCreateModal()" title="Crear nuevo borrador">
+        Crear Borrador
+      </button>
+    </div>
+
+    <div class="table-container tabla-contenedor drafts-table-wrapper" (scroll)="onDraftsScroll($event)">
+      <table class="drafts-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th class="hide-on-mobile">Estado</th>
+            <th class="hide-on-mobile">Actualizado</th>
+            <th class="hide-on-mobile">Motivo rechazo</th>
+            <th class="hide-on-mobile">Acciones</th>
+            <th class="show-on-mobile-only mobile-icon-col"></th>
+          </tr>
+        </thead>
+        <tbody [class.loading]="loadingDrafts">
+          @if (loadingDrafts && drafts.length === 0) {
+            @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+              <tr class="skeleton-row">
+                <td><span class="skeleton skeleton-text" style="width: 160px"></span></td>
+                <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 90px"></span></td>
+                <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 110px"></span></td>
+                <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 160px"></span></td>
+                <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 200px"></span></td>
+                <td class="show-on-mobile-only mobile-icon-col"></td>
+              </tr>
+            }
+          } @else {
+            @for (draft of drafts; track draft.id) {
+              <tr class="clickable-row mobile-clickable-row" (click)="openDraftDetailModal(draft)">
+                <td>
+                  <strong>{{ draft.name }}</strong>
+                  @if (draft.isHidden) {
+                    <span class="status-badge danger" style="margin-left: 8px;">Oculto</span>
+                  }
+                </td>
+                <td class="hide-on-mobile">
+                  <span class="status-badge" [ngClass]="getDraftStatusClass(draft.status)">
+                    {{ getDraftStatusLabel(draft.status) }}
+                  </span>
+                </td>
+                <td class="hide-on-mobile">{{ (draft.updatedAt || draft.createdAt) | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="hide-on-mobile">{{ draft.rejectionReason || '—' }}</td>
+                <td class="actions-cell hide-on-mobile" (click)="$event.stopPropagation()">
+                  <button class="btn-ver" (click)="openDraftDetailModal(draft)" title="Ver borrador">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
+                      <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
+                    </svg>
+                  </button>
+                </td>
+                <td class="show-on-mobile-only mobile-icon-col" (click)="openDraftDetailModal(draft)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+                  </svg>
+                </td>
+              </tr>
+            }
+
+            @if (drafts.length === 0 && !loadingDrafts) {
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 2rem; color: #999">
+                  Aún no tienes borradores
+                </td>
+              </tr>
+            }
+            @if (loadingDrafts && drafts.length > 0) {
+              <tr>
+                <td colspan="6" class="drafts-loading-more">Cargando más borradores...</td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+}
 
 <!-- Modal de detalle -->
 @if (showModal && selectedRecipe) {
@@ -157,7 +254,124 @@
 <!-- Modal de Creación -->
 @if (showCreateModal) {
   <app-recipe-create-modal
+    [modalTitle]="createModalTitle"
+    [actionLabel]="createActionLabel"
+    [initialRecipe]="selectedDraftForEdit ? mapDraftToRecipeRequest(selectedDraftForEdit) : null"
     (close)="closeCreateModal()"
     (save)="onCreateRecipe($event)"
   />
+}
+
+@if (showDraftDetailModal && selectedDraftForDetail) {
+  <app-base-modal [title]="selectedDraftForDetail.name" size="lg" (closed)="closeDraftDetailModal()">
+    <div class="draft-modal-body">
+      <div class="draft-summary-grid">
+        <div class="draft-field">
+          <span class="draft-field-label">Estado</span>
+          <span class="draft-field-value draft-status-value">
+            <span class="status-badge" [ngClass]="getDraftStatusClass(selectedDraftForDetail.status)">
+              {{ getDraftStatusLabel(selectedDraftForDetail.status) }}
+            </span>
+          </span>
+        </div>
+        <div class="draft-field">
+          <span class="draft-field-label">Porciones</span>
+          <span class="draft-field-value">{{ selectedDraftForDetail.portions }}</span>
+        </div>
+        <div class="draft-field">
+          <span class="draft-field-label">Visible</span>
+          <span class="draft-field-value">{{ selectedDraftForDetail.isHidden ? 'Oculto' : 'Visible' }}</span>
+        </div>
+        <div class="draft-field">
+          <span class="draft-field-label">Creador</span>
+          <span class="draft-field-value">{{ selectedDraftForDetail.createdByName || ('#' + selectedDraftForDetail.createdById) }}</span>
+        </div>
+        <div class="draft-field">
+          <span class="draft-field-label">Última actualización</span>
+          <span class="draft-field-value">{{ (selectedDraftForDetail.updatedAt || selectedDraftForDetail.createdAt) | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <div class="draft-field">
+          <span class="draft-field-label">Revisor</span>
+          <span class="draft-field-value">{{ selectedDraftForDetail.reviewedByName || '—' }}</span>
+        </div>
+      </div>
+
+      <div class="draft-section">
+        <h4>Presentación</h4>
+        <p>{{ selectedDraftForDetail.presentation || '—' }}</p>
+      </div>
+
+      <div class="draft-section">
+        <h4>Elaboración</h4>
+        <p class="draft-preformatted">{{ selectedDraftForDetail.elaboration || '—' }}</p>
+      </div>
+
+      <div class="draft-section">
+        <h4>Componentes</h4>
+        @if (selectedDraftForDetail.components.length > 0) {
+          <table class="draft-components-table">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (component of selectedDraftForDetail.components; track component.productId) {
+                <tr>
+                  <td>Producto #{{ component.productId }}</td>
+                  <td>{{ component.quantity }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <p>Esta receta aún no tiene componentes.</p>
+        }
+      </div>
+
+      <div class="draft-section">
+        <h4>Alérgenos</h4>
+        @if (selectedDraftForDetail.allergenIds.length > 0) {
+          <div class="draft-tags-list">
+            @for (allergenId of selectedDraftForDetail.allergenIds; track allergenId) {
+              <span class="draft-tag">#{{ allergenId }}</span>
+            }
+          </div>
+        } @else {
+          <p>Sin alérgenos registrados.</p>
+        }
+      </div>
+
+      @if (selectedDraftForDetail.rejectionReason) {
+        <div class="draft-section">
+          <h4>Motivo de rechazo</h4>
+          <p class="draft-rejection-reason">{{ selectedDraftForDetail.rejectionReason }}</p>
+        </div>
+      }
+    </div>
+
+    <div modal-footer>
+      <div class="draft-footer-actions">
+        @if (canEditDraft(selectedDraftForDetail)) {
+          <button class="draft-modal-btn draft-modal-btn-primary" type="button" (click)="openEditDraftFromDetail()">
+            Editar
+          </button>
+        }
+        @if (selectedDraftForDetail.status === 'PENDING') {
+          <button class="draft-modal-btn draft-modal-btn-danger" type="button" (click)="deleteDraft(selectedDraftForDetail)">
+            Eliminar
+          </button>
+        }
+        @if (selectedDraftForDetail.status === 'REJECTED') {
+          <button class="draft-modal-btn draft-modal-btn-success" type="button" (click)="resubmitDraft(selectedDraftForDetail)">
+            Reenviar
+          </button>
+        }
+        <button class="draft-modal-btn draft-modal-btn-neutral" type="button" (click)="closeDraftDetailModal()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </app-base-modal>
 }
