@@ -56,6 +56,20 @@
   align-items: center;
   gap: 8px;
 }
+
+.date-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.date-field-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--theme-text-secondary);
+}
+
 .date-separator { color: var(--theme-text-secondary); }
 
 .controles button,
@@ -915,7 +929,6 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 
   .mobile-icon-col { width: 40px; text-align: center; padding: 8px !important; }
   .mobile-icon-col svg { color: var(--theme-text-secondary); vertical-align: middle; }
-  .show-on-mobile-only { display: none; }
   
   .header-recetas { height: 60px; padding: 0 16px; }
   .header-recetas h1 { font-size: 1.3rem; letter-spacing: 1px; }
@@ -935,6 +948,7 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
   .id-input { width: 100%; }
   
   .date-range-group { width: 100%; flex-direction: column; gap: 10px; }
+  .date-filter-field { width: 100%; }
   .date-separator { display: none; }
   
   .stats-row { grid-template-columns: repeat(2, 1fr); gap: clamp(8px, 2vw, 12px); }

@@ -238,7 +238,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
+  padding: 8px 12px 8px 16px;
   background: var(--theme-input-bg);
   border: 1px solid var(--theme-border-subtle);
   border-radius: 8px;

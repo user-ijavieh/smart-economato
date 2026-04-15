@@ -325,9 +325,15 @@
             }
         </select>
         <div class="date-range-group">
-            <input type="date" [(ngModel)]="auditStartDate" class="date-input" placeholder="Desde" />
+            <div class="date-filter-field">
+                <span class="date-field-label">Desde</span>
+                <input type="date" [(ngModel)]="auditStartDate" class="date-input" placeholder="Desde" />
+            </div>
             <span class="date-separator">—</span>
-            <input type="date" [(ngModel)]="auditEndDate" class="date-input" placeholder="Hasta" />
+            <div class="date-filter-field">
+                <span class="date-field-label">Hasta</span>
+                <input type="date" [(ngModel)]="auditEndDate" class="date-input" placeholder="Hasta" />
+            </div>
             <button class="toolbar-btn btn-date-filter" (click)="onDateRangeFilter()" [disabled]="!auditStartDate || !auditEndDate">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                     <path

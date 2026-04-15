@@ -20,9 +20,9 @@
       <div class="user-selection-section">
         <h3>Seleccionar Proveedor</h3>
         <div class="form-group">
-          <label for="supplierSelect">Proveedor (Opcional)</label>
+          <label for="supplierSelect">Proveedor</label>
           <select id="supplierSelect" [(ngModel)]="selectedSupplierId" class="form-control">
-            <option [ngValue]="null">-- Seleccionar proveedor --</option>
+            <option [ngValue]="null">-- Sin proveedor --</option>
             @for (supplier of suppliers; track supplier.id) {
             <option [ngValue]="supplier.id">
               {{ supplier.name }}

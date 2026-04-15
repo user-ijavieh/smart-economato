@@ -26,9 +26,15 @@
     <input type="number" [(ngModel)]="recipeIdFilter" placeholder="ID Receta" min="1" class="id-input" />
     <input type="number" [(ngModel)]="userIdFilter" placeholder="ID Usuario" min="1" class="id-input" />
     <div class="date-range-group">
-      <input type="date" [(ngModel)]="startDate" class="date-input" />
+      <div class="date-filter-field">
+        <span class="date-field-label">Desde</span>
+        <input type="date" [(ngModel)]="startDate" class="date-input" title="Desde" />
+      </div>
       <span class="date-separator">—</span>
-      <input type="date" [(ngModel)]="endDate" class="date-input" />
+      <div class="date-filter-field">
+        <span class="date-field-label">Hasta</span>
+        <input type="date" [(ngModel)]="endDate" class="date-input" title="Hasta" />
+      </div>
     </div>
     <button class="btn-filter" (click)="applyServerFilters()">Aplicar Filtros</button>
     @if (hasActiveHistoryFilters()) {

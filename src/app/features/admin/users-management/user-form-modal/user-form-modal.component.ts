@@ -22,7 +22,11 @@ export class UserFormModalComponent implements OnInit {
     @Output() close = new EventEmitter<void>();
 
     userForm!: FormGroup;
-    roles = ['ADMIN', 'CHEF', 'USER', 'ELEVATED'];
+    roleOptions = [
+        { value: 'USER', label: 'Alumno' },
+        { value: 'CHEF', label: 'Profesor' },
+        { value: 'ADMIN', label: 'Administrador' }
+    ];
 
     // Auto-generated credentials (create mode only)
     generatedUser = '';
@@ -45,6 +49,13 @@ export class UserFormModalComponent implements OnInit {
 
         const role = String(this.userForm?.get('role')?.value ?? '').toUpperCase();
         return role === 'USER' || role === 'ELEVATED';
+    }
+
+    get availableRoleOptions(): Array<{ value: string; label: string }> {
+        if (this.isEditMode && String(this.userForm?.get('role')?.value ?? '').toUpperCase() === 'ELEVATED') {
+            return [...this.roleOptions, { value: 'ELEVATED', label: 'Alumno' }];
+        }
+        return this.roleOptions;
     }
 
     ngOnInit(): void {
