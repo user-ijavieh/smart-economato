@@ -176,6 +176,25 @@
 }
 .dropdown-search input::placeholder { color: var(--theme-text-secondary); }
 
+.btn-scan-dropdown {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--theme-border-glass);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--brand-primary) 12%, transparent);
+  color: var(--theme-text-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.btn-scan-dropdown:hover {
+  border-color: var(--brand-primary);
+  background: color-mix(in srgb, var(--brand-primary) 22%, transparent);
+}
+
 .dropdown-list {
   max-height: 250px;
   overflow-y: auto;
@@ -198,6 +217,10 @@
   position: fixed;
   inset: 0;
   z-index: 1100;
+}
+
+.scanner-modal-body {
+  padding: 0.75rem 1rem 1rem;
 }
 
 .ledger-actions { display: flex; gap: 8px; flex-wrap: wrap; }

@@ -35,6 +35,11 @@
               <input type="text" [(ngModel)]="component.searchText" (focus)="toggleProductDropdown(i)"
                 (ngModelChange)="onProductSearch($event, i)" [name]="'product-search-' + i" class="product-select"
                 placeholder="Buscar producto..." autocomplete="off" />
+              <button type="button" class="btn-scan-inline" (click)="openBarcodeScanner(i)" title="Escanear código de barras">
+                <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor">
+                  <path d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z" />
+                </svg>
+              </button>
 
               @if (showProductDropdown[i]) {
               <div class="product-dropdown" (scroll)="onProductDropdownScroll($event, i)">
@@ -109,3 +114,17 @@
     <button class="modal-btn modal-btn-primary" (click)="saveRecipe()">{{ actionLabel }}</button>
   </div>
 </app-base-modal>
+
+@if (showScannerModal) {
+  <div class="scanner-modal-overlay" (click)="closeBarcodeScanner()">
+    <div class="scanner-modal" (click)="$event.stopPropagation()">
+      <div class="scanner-modal-header">
+        <h2>Escanear Código de Barras</h2>
+        <button class="scanner-close-btn" (click)="closeBarcodeScanner()">✕</button>
+      </div>
+      <div class="scanner-modal-body">
+        <app-barcode-scanner (productFound)="onScannedProductFound($event)"></app-barcode-scanner>
+      </div>
+    </div>
+  </div>
+}

@@ -391,6 +391,9 @@
             <div class="dropdown-search">
               <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-732q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
               <input type="text" [(ngModel)]="ledgerSearchTerm" (input)="onLedgerSearchInput()" placeholder="Buscar producto..." (click)="$event.stopPropagation()" focus="true" />
+              <button type="button" class="btn-scan-dropdown" (click)="$event.stopPropagation(); openLedgerBarcodeScanner()" title="Escanear código de barras">
+                <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z"/></svg>
+              </button>
             </div>
             <div class="dropdown-list" (scroll)="onLedgerDropdownScroll($event)">
               <div class="dropdown-item" (click)="onProductSelect(null)" [class.selected]="!selectedProductId">
@@ -1014,3 +1017,11 @@
 }
 
 <app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
+
+@if (showLedgerScannerModal) {
+  <app-base-modal title="Escanear Código de Barras" size="md" (closed)="closeLedgerBarcodeScanner()">
+    <div class="scanner-modal-body">
+      <app-barcode-scanner (productFound)="onLedgerProductFound($event)"></app-barcode-scanner>
+    </div>
+  </app-base-modal>
+}
