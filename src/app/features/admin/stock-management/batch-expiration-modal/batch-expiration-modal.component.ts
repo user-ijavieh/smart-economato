@@ -14,18 +14,21 @@ import { BaseModalComponent } from '../../../../shared/components/base-modal/bas
 })
 export class BatchExpirationModalComponent {
   @Input({ required: true }) batch!: ProductBatchResponseDTO;
-  @Output() save = new EventEmitter<{ expirationDate: string; reason?: string }>();
+  @Output() save = new EventEmitter<{ expirationDate: string; reason?: string; batchCode?: string }>();
   @Output() close = new EventEmitter<void>();
 
   private messageService = inject(MessageService);
 
   expirationDate = '';
   reason = '';
+  batchCode = '';
 
   ngOnInit() {
     if (this.batch && this.batch.expirationDate) {
       this.expirationDate = this.batch.expirationDate;
     }
+
+    this.batchCode = this.batch?.batchCode?.trim() || '';
   }
 
   onSubmit() {
@@ -36,7 +39,8 @@ export class BatchExpirationModalComponent {
 
     this.save.emit({
       expirationDate: this.expirationDate,
-      reason: this.reason || undefined
+      reason: this.reason || undefined,
+      batchCode: this.batchCode.trim() || undefined
     });
   }
 

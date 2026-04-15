@@ -60,6 +60,16 @@ export interface BatchStockMovementResponseDTO {
   errorDetail: string | null;
 }
 
+export interface ManualStockAdjustmentRequestDTO {
+  productId: number;
+  quantityDelta: number;
+  movementType: 'ENTRADA' | 'SALIDA' | 'AJUSTE' | 'MERMA' | 'MODIFICACION' | 'CUARENTENA';
+  description: string;
+  batchId?: number;
+  batchReference?: string;
+  expirationDate?: string;
+}
+
 export interface DailyConsumptionDTO {
   date: string;
   consumed: number;

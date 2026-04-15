@@ -1,5 +1,6 @@
 export type AlertSeverity = 'OK' | 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-export type AlertResolution = 'OK' | 'COVERED_BY_ORDER' | 'PARTIALLY_COVERED' | 'UNCOVERED';
+export type AlertResolution = 'OK' | 'COVERED_BY_ORDER' | 'PARTIALLY_COVERED' | 'UNCOVERED' | 'EXPIRING';
+export type AlertType = 'PREDICTION' | 'EXPIRATION' | 'COMBINED';
 
 export interface StockAlertDTO {
     productId: number;
@@ -12,6 +13,7 @@ export interface StockAlertDTO {
     effectiveGap: number;
     estimatedDaysRemaining: number;
     severity: AlertSeverity;
+    alertType?: AlertType;
     resolution: AlertResolution;
     message: string;
     topConsumingRecipes: string[];
