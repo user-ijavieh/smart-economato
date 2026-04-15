@@ -94,8 +94,8 @@
         <div class="form-group">
             <label for="role">Rol</label>
             <select id="role" formControlName="role">
-                @for (role of roles; track role) {
-                <option [value]="role">{{ role }}</option>
+                @for (roleOption of availableRoleOptions; track roleOption.value) {
+                <option [value]="roleOption.value">{{ roleOption.label }}</option>
                 }
             </select>
         </div>

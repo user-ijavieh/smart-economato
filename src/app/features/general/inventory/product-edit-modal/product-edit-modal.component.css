@@ -66,6 +66,13 @@
   background: color-mix(in srgb, var(--brand-primary) 22%, transparent);
 }
 
+.field-hint {
+  display: block;
+  margin-top: 4px;
+  color: var(--theme-text-secondary);
+  font-size: 0.8rem;
+}
+
 .scanner-modal-overlay {
   position: fixed;
   inset: 0;

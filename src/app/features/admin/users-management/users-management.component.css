@@ -545,9 +545,10 @@ tr.row-hidden .user-avatar-small {
 }
 
 .mobile-icon-col {
-  width: 40px;
+  width: 28px;
+  max-width: 28px;
   text-align: center;
-  padding: 8px !important;
+  padding: 4px !important;
 }
 
 .mobile-icon-col svg {

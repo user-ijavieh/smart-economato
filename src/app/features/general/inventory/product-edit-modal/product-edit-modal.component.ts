@@ -31,6 +31,7 @@ export class ProductEditModalComponent implements OnChanges {
   formData = {
     name: '',
     productCode: '',
+    barcode: '',
     unitPrice: 0,
     currentStock: 0,
     availabilityPercentage: undefined as number | undefined,
@@ -58,6 +59,7 @@ export class ProductEditModalComponent implements OnChanges {
       this.formData = {
         name: this.product.name,
         productCode: this.product.productCode || '',
+        barcode: this.product.barcode || '',
         unitPrice: Number(this.product.unitPrice) || 0,
         currentStock: Number(this.product.currentStock) || 0,
         availabilityPercentage: this.product.availabilityPercentage || undefined,
@@ -103,6 +105,7 @@ export class ProductEditModalComponent implements OnChanges {
       unit: this.formData.unit,
       unitPrice: unitPrice,
       productCode: this.formData.productCode.trim(),
+      barcode: this.formData.barcode.trim() || undefined,
       currentStock: currentStock,
       supplierId: supplierId
     };
@@ -138,14 +141,14 @@ export class ProductEditModalComponent implements OnChanges {
     this.showScannerModal = false;
   }
 
-  onProductScanned(product: Product): void {
-    this.formData.productCode = (product.productCode || '').trim();
+  onCodeScanned(code: string): void {
+    this.formData.barcode = code.trim();
     this.showScannerModal = false;
 
-    if (this.formData.productCode) {
-      this.messageService.showSuccess(`Codigo detectado: ${this.formData.productCode}`);
+    if (this.formData.barcode) {
+      this.messageService.showSuccess(`Código detectado: ${this.formData.barcode}`);
     } else {
-      this.messageService.showWarning('El producto escaneado no trae codigo asignado.');
+      this.messageService.showWarning('No se pudo leer un código de barras válido.');
     }
   }
 }

@@ -275,13 +275,14 @@
   border-radius: 12px;
   overflow: hidden;
   background: var(--theme-overlay-light);
+  padding-left: 8px;
 }
 
 .order-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 18px;
+  padding: 14px 18px 14px 22px;
   border-bottom: 1px solid var(--theme-surface-glass-hover);
   transition: background 0.2s;
 }

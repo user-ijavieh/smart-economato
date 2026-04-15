@@ -110,6 +110,10 @@ export class IncidentService {
     return this.http.get<IncidentType[]>(this.incidentTypesUrl);
   }
 
+  getAllIncidentTypes(): Observable<IncidentType[]> {
+    return this.http.get<IncidentType[]>(`${this.incidentTypesUrl}/all`);
+  }
+
   getIncidentType(id: number): Observable<IncidentType> {
     return this.http.get<IncidentType>(`${this.incidentTypesUrl}/${id}`);
   }

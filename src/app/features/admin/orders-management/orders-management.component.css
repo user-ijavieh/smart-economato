@@ -78,6 +78,19 @@
   transition: all 0.3s ease;
 }
 
+.date-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.date-field-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--theme-text-secondary);
+}
+
 .controles input[type='text']::placeholder,
 .date-input::placeholder {
   color: var(--theme-text-secondary);
@@ -267,6 +280,12 @@ tbody tr:hover {
 
 /** ===== ACTIONS ===== */
 .actions-col { text-align: left; }
+.show-on-mobile-only { display: none; }
+.mobile-icon-col {
+  width: 44px;
+  text-align: center;
+  color: var(--theme-text-secondary);
+}
 .actions-cell {
   display: flex;
   gap: 8px;
@@ -450,6 +469,13 @@ tbody tr:hover {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.order-lines-load-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
 }
 
 .btn-editar {
@@ -970,6 +996,7 @@ tbody tr:hover {
   .controles { flex-direction: column; align-items: stretch; padding: 15px; gap: 10px; }  
   .filter-row { flex-direction: column; align-items: stretch; }  
   .controles input, .action-select, .date-input { width: 100%; box-sizing: border-box; min-width: 0; }  
+  .date-filter-field { width: 100%; }
   .date-separator { text-align: center; }  
   
   /* Stats */  
@@ -1016,6 +1043,7 @@ tbody tr:hover {
   .actions-cell { gap: 6px; }  
   .btn-ver, .btn-pdf, .btn-edit-status, .btn-revert { padding: 7px; }  
   .btn-textual { padding: 6px 10px; font-size: 0.78rem; }  
+  .modal-actions button { width: 100%; justify-content: center; }
 }  
   
 @media (max-width: 480px) {  

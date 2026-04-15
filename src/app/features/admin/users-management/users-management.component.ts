@@ -907,6 +907,21 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
         }
     }
 
+    getRoleLabel(role: string): string {
+        switch (role) {
+            case 'ADMIN':
+                return 'Administrador';
+            case 'CHEF':
+                return 'Profesor';
+            case 'USER':
+                return 'Alumno';
+            case 'ELEVATED':
+                return 'Alumno';
+            default:
+                return role;
+        }
+    }
+
     countByRole(role: string): number {
         return this.filteredUsers.filter(u => u.role === role).length;
     }
