@@ -552,9 +552,40 @@ tr.depleted-row:hover td { background: var(--theme-surface-glass-hover); }
   border-radius: 12px;
 }
 .sub-tab-bar .tab-btn {
+  display: inline-flex;
+  gap: 8px;
   padding: 0 24px;
-  height: auto;
+  height: 100%;
   align-items: center;
+  justify-content: center;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--theme-text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.sub-tab-bar .tab-btn svg {
+  opacity: 0.85;
+}
+
+.sub-tab-bar .tab-btn:hover {
+  color: var(--theme-text-primary);
+  background: var(--theme-surface-glass-hover);
+}
+
+.sub-tab-bar .tab-btn.active {
+  color: var(--color-accent-admin);
+  border-bottom-color: var(--color-accent-admin);
+  background: rgba(90, 120, 220, 0.12);
+}
+
+.sub-tab-bar .tab-btn.active svg {
+  opacity: 1;
 }
 
 /* Table Name Text */

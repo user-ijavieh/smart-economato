@@ -5,14 +5,15 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: var(--theme-overlay-bg);
-  backdrop-filter: blur(8px);
+  background: color-mix(in srgb, var(--theme-overlay-bg) 92%, transparent);
+  backdrop-filter: blur(10px);
   z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 1.25rem;
   overflow: hidden;
+  animation: fadeInOverlay 0.2s ease;
 }
 
 .modal-overlay-fullscreen {
@@ -23,30 +24,32 @@
 
 .modal-dialog {
   width: min(100%, 600px);
-  max-height: 90vh;
-  background: var(--theme-surface-glass);
+  max-height: 92dvh;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--brand-primary) 10%, transparent), transparent 42%),
+    var(--theme-surface-glass);
   backdrop-filter: var(--theme-effect-glass);
   -webkit-backdrop-filter: var(--theme-effect-glass);
   border: 1px solid var(--theme-border-glass);
   border-radius: var(--theme-radius-card);
-  box-shadow: var(--theme-shadow-card);
+  box-shadow: var(--theme-shadow-deep);
   color: var(--theme-text-primary);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  animation: slideUpModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
+  animation: riseInModal 0.24s ease forwards;
 }
 
 .modal-sm {
-  width: min(100%, 400px);
+  width: min(100%, 420px);
 }
 
 .modal-md {
-  width: min(100%, 600px);
+  width: min(100%, 640px);
 }
 
 .modal-lg {
-  width: min(100%, 900px);
+  width: min(100%, 940px);
 }
 
 .modal-fullscreen {
@@ -58,34 +61,35 @@
 }
 
 .modal-header {
-  padding: 24px 30px;
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid var(--theme-border-subtle);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
   flex-shrink: 0;
-  background: linear-gradient(to right, color-mix(in srgb, var(--brand-primary) 15%, transparent), transparent);
 }
 
 .modal-header h2 {
   margin: 0;
-  font-size: 1.4rem;
+  font-size: 1.12rem;
   font-weight: 700;
   color: var(--theme-text-primary);
+  flex: 1;
 }
 
 .modal-close-btn {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border: 1px solid var(--theme-border-medium);
   background: var(--theme-surface-glass-hover);
-  border-radius: 10px;
+  border-radius: 999px;
   color: var(--theme-text-primary);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex: 0 0 auto;
   transition: all 0.2s ease;
 }
 
@@ -102,9 +106,12 @@
 }
 
 .modal-body {
-  padding: 30px;
+  padding: 1rem 1.2rem;
   overflow-y: auto;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
 }
 
 .modal-body::-webkit-scrollbar {
@@ -125,10 +132,10 @@
 }
 
 .modal-footer {
-  padding: 20px 30px;
-  border-top: 1px solid var(--theme-surface-glass-hover);
+  padding: 0.9rem 1.2rem;
+  border-top: 1px solid var(--theme-border-subtle);
   display: flex;
-  gap: 12px;
+  gap: 0.65rem;
   justify-content: flex-end;
   flex-shrink: 0;
   background: var(--theme-overlay-light);
@@ -139,17 +146,51 @@
 }
 
 .modal-overlay.closing {
-  animation: fadeOutModal 0.3s ease forwards;
+  animation: fadeOutModal 0.2s ease forwards;
 }
 
 .modal-overlay.closing .modal-dialog {
-  animation: slideDownModal 0.3s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
+  animation: riseOutModal 0.2s ease forwards;
+}
+
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes riseInModal {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes riseOutModal {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
 }
 
 @media (max-width: 768px) {
   .modal-overlay {
-    padding: 0;
     align-items: flex-end;
+    padding: 0;
   }
 
   .modal-overlay-fullscreen {
@@ -159,8 +200,7 @@
   .modal-dialog {
     width: 100%;
     max-height: 100dvh;
-    height: 100dvh;
-    border-radius: var(--theme-radius-card) var(--theme-radius-card) 0 0;
+    border-radius: 20px 20px 0 0;
     border-bottom: none;
   }
 
@@ -171,16 +211,19 @@
   }
 
   .modal-header {
-    padding: 16px;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   .modal-body {
-    padding: 16px;
+    padding-left: 1rem;
+    padding-right: 1rem;
     -webkit-overflow-scrolling: touch;
   }
 
   .modal-footer {
-    padding: 16px 20px;
+    padding-left: 1rem;
+    padding-right: 1rem;
     flex-direction: column;
   }
 }
