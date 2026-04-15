@@ -1,7 +1,7 @@
 /* Global badges partial */
 .status-badge {
 	display: inline-block;
-	padding: 4px 12px;
+	padding: 0.25rem 0.75rem;
 	border-radius: 20px;
 	font-size: 0.78rem;
 	font-weight: 700;
@@ -42,7 +42,7 @@
 
 .role-badge {
 	display: inline-block;
-	padding: 4px 12px;
+	padding: 0.25rem 0.75rem;
 	border-radius: 20px;
 	font-size: 0.78rem;
 	font-weight: 700;

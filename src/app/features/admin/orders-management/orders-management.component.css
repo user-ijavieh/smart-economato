@@ -38,6 +38,25 @@
   box-shadow: var(--theme-shadow-card);
 }
 
+.controles-audits {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.controles-audits input[type='text'] {
+  min-width: 320px;
+}
+
+.controles-audits .date-input {
+  min-width: 160px;
+}
+
+.controles-audits .date-separator {
+  padding: 0 0.25rem;
+}
+
 .filter-row {
   display: flex;
   flex-wrap: wrap;
@@ -364,7 +383,28 @@ tbody tr:hover {
   justify-content: center;
 }
 
-.modal-status-change { max-width: 450px; }
+.audit-detail-layout {
+  display: block;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.audit-detail-layout > .modal-content {
+  width: 100%;
+  max-width: none;
+  flex: 1 1 auto;
+}
+
+.order-detail-layout {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.order-detail-layout .modal-content {
+  width: 100%;
+}
+
+.modal-status-change { max-width: 390px; }
 
 .modal-header-content h2 {
   font-size: 2rem;
@@ -500,7 +540,11 @@ tbody tr:hover {
 
 /* ===== AUDIT DETAIL MODAL ===== */
 .audit-modal-wide {
-  max-width: 1100px;
+  max-width: 980px;
+}
+
+.audit-header-content .audit-modal-close {
+  display: none;
 }
 
 .audit-header-content {
@@ -718,26 +762,6 @@ tbody tr:hover {
 .text-right { text-align: right; }
 
 /** ===== AUDIT DETAIL MODAL ===== */
-.audit-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  animation: fadeInOverlay 0.2s ease;
-}
-
-@keyframes fadeInOverlay {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 .audit-modal {
   background: var(--color-surface-glass);
   backdrop-filter: var(--effect-glass);
@@ -978,6 +1002,11 @@ tbody tr:hover {
   
   /* Status transition preview */  
   .status-transition-preview { flex-direction: column; gap: 10px; padding: 16px; }  
+
+  .controles-audits {
+    flex-direction: column;
+    align-items: stretch;
+  }
   
   /* Table */  
   .tabla-contenedor { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }  

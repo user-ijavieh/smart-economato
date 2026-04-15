@@ -523,22 +523,8 @@ export class KitchenManagementComponent implements OnInit {
   }
 
   viewTraceability(audit: RecipeCookingAudit): void {
-    this.showTraceabilityModal = true;
-    this.loadingTraceability = true;
-    this.traceData = null;
-    this.cdr.markForCheck();
-
-    this.traceabilityService.getReverseTraceability(audit.id)
-      .pipe(finalize(() => {
-        this.loadingTraceability = false;
-        this.cdr.markForCheck();
-      }))
-      .subscribe({
-        next: (data: any) => {
-          this.traceData = data as ReverseTraceabilityDTO;
-        },
-        error: () => this.messageService.showError('No se pudo obtener la trazabilidad de los ingredientes.')
-      });
+    // Keep button behavior consistent with row click: open the same detail modal.
+    this.openMobileModal(audit);
   }
 
   closeTraceabilityModal(): void {

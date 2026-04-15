@@ -151,9 +151,7 @@
   <!-- Mobile Detail Modal para Alertas -->
   @if (showMobileModal && selectedAlertForMobile) {
     <app-base-modal [title]="selectedAlertForMobile.productName" size="md" (closed)="closeMobileModal()">
-      <div class="mobile-detail-modal" (click)="$event.stopPropagation()">
-          <div class="mobile-detail-modal-body">
-              <div class="detail-table-container">
+      <div class="detail-table-container">
                 <table class="detail-table">
                   <tbody>
                     <tr>
@@ -225,8 +223,6 @@
                   }
                 </div>
               </div>
-          </div>
-      </div>
   </app-base-modal>
   }
 </div>
@@ -321,9 +317,7 @@
   <!-- Mobile Detail Modal para Predictions -->
   @if (showPredictionMobileModal && selectedPredictionForMobile) {
     <app-base-modal [title]="selectedPredictionForMobile.productName" size="md" (closed)="closePredictionMobileModal()">
-      <div class="mobile-detail-modal" (click)="$event.stopPropagation()">
-          <div class="mobile-detail-modal-body">
-              <div class="detail-table-container">
+      <div class="detail-table-container">
                 <table class="detail-table">
                   <tbody>
                     <tr>
@@ -373,8 +367,6 @@
                   }
                 </div>
               </div>
-          </div>
-      </div>
   </app-base-modal>
   }
 </div>

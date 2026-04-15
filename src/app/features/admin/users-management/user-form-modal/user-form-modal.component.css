@@ -9,11 +9,28 @@ form {
     padding: 0;
 }
 
+form {
+    padding-top: 14px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 2px;
+}
+
+.form-group label {
+    line-height: 1.2;
+}
+
 .optional-label {
+    display: block;
     font-weight: 400;
     font-size: 0.8rem;
     color: var(--theme-text-secondary);
-    margin-left: 4px;
+    margin-left: 0;
+    margin-top: 2px;
 }
 
 .form-group input::placeholder {
@@ -41,7 +58,7 @@ form {
 /** ===== RESPONSIVE ===== */
 @media (max-width: 480px) {
     form {
-        padding: 0;
+        padding: 12px 0 0;
     }
 }
 

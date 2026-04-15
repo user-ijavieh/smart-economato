@@ -432,84 +432,6 @@ tr:hover { background: var(--theme-surface-glass-hover); }
 }
 
 /** ===== MODAL ===== */
-.allergen-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--theme-overlay-bg);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  animation: fadeInOverlay 0.2s ease;
-}
-
-@keyframes fadeInOverlay {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.allergen-modal {
-  background: var(--theme-surface-glass);
-  backdrop-filter: var(--theme-effect-glass);
-  border: 1px solid var(--theme-border-glass);
-  border-radius: var(--theme-radius-card);
-  box-shadow: var(--theme-shadow-card);
-  width: 90%;
-  max-width: 440px;
-  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  color: var(--theme-text-primary);
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.allergen-modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 28px;
-  background: var(--theme-section-header-bg);
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
-}
-
-.allergen-modal-header h2 {
-  margin: 0;
-  font-size: 1.15rem;
-  font-family: var(--font-heading);
-  letter-spacing: 0.5px;
-}
-
-.allergen-modal-close {
-  background: var(--theme-surface-glass-hover);
-  border: 1px solid var(--theme-border-medium);
-  color: var(--theme-text-primary);
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  box-shadow: none;
-  transition: all 0.2s ease;
-}
-
-.allergen-modal-close:hover {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: var(--color-danger-hover-border);
-  color: var(--color-danger-muted);
-  transform: scale(1.05);
-}
 
 .allergen-modal-body {
   padding: 28px;
@@ -591,7 +513,6 @@ tr:hover { background: var(--theme-surface-glass-hover); }
   .contenedor-principal { padding: 15px; }
   .controles { padding: 15px; }
   .stats-row { grid-template-columns: repeat(2, 1fr); }
-  .allergen-modal { width: 95%; }
 }
 
 @media (max-width: 480px) {

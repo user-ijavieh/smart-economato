@@ -13,6 +13,7 @@ import { Supplier } from '../../../shared/models/supplier.model';
 import { ProductCreateModalComponent } from '../../general/inventory/product-create-modal/product-create-modal.component';
 import { ProductEditModalComponent } from '../../general/inventory/product-edit-modal/product-edit-modal.component';
 import { ProductDetailModalComponent } from '../../general/inventory/product-detail-modal/product-detail-modal.component';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { ScrollService } from '../../../core/services/scroll.service';
@@ -29,6 +30,7 @@ import { of } from 'rxjs';
     ProductCreateModalComponent,
     ProductEditModalComponent,
     ProductDetailModalComponent,
+    BaseModalComponent,
     ConfirmDialogComponent,
     ToastComponent
   ],
