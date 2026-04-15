@@ -1,4 +1,4 @@
-<app-base-modal title="Editar Receta" size="md" (closed)="closeModal()">
+<app-base-modal title="Editar Receta" size="md" [closeOnBackdrop]="false" (closed)="closeModal()">
   <div class="edit-modal-content" (click)="closeAllDropdowns()">
       <form class="edit-form">
         <!-- Nombre -->

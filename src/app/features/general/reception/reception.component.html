@@ -246,7 +246,7 @@
               @for (detail of (order.details || []).slice(0, 2); track $index) {
               <div class="item-preview">
                 <span>{{ detail.productName }}</span>
-                <span>{{ detail.quantity }} uds</span>
+                <span>{{ detail.quantityReceived ?? detail.quantity }} uds</span>
               </div>
               }
               @if ((order.details?.length || 0) > 2) {
@@ -316,7 +316,7 @@
               @for (detail of (order.details || []).slice(0, 2); track $index) {
               <div class="item-preview">
                 <span>{{ detail.productName }}</span>
-                <span>{{ detail.quantity }} uds</span>
+                <span>{{ detail.quantityReceived ?? detail.quantity }} uds</span>
               </div>
               }
               @if ((order.details?.length || 0) > 2) {

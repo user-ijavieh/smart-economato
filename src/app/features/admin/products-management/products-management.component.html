@@ -212,7 +212,6 @@
                     <th class="sortable" (click)="onSortAuditsChange('movementDate')" [attr.data-sort-dir]="getSortAuditsDir('movementDate')">Fecha</th>
                     <th>Producto</th>
                     <th class="hide-on-mobile">Tipo</th>
-                    <th class="hide-on-mobile sortable" (click)="onSortAuditsChange('quantity')" [attr.data-sort-dir]="getSortAuditsDir('quantity')">Cantidad</th>
                     <th class="hide-on-mobile">Usuario</th>
                     <th class="hide-on-mobile">Descripción</th>
                     <th class="show-on-mobile-only mobile-icon-col"></th>
@@ -225,7 +224,6 @@
                     <td><span class="skeleton skeleton-text" style="width: 130px"></span></td>
                     <td><span class="skeleton skeleton-text" style="width: 120px"></span></td>
                     <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 80px"></span></td>
-                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 60px"></span></td>
                     <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 100px"></span></td>
                     <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 150px"></span></td>
                     <td class="show-on-mobile-only mobile-icon-col"></td>
@@ -251,11 +249,6 @@
                         </span>
                     </td>
                     <td class="hide-on-mobile">
-                        <span class="quantity-value" [class.quantity-negative]="audit.movementType === 'SALIDA'">
-                            {{ audit.movementType === 'SALIDA' ? '-' : '+' }}{{ audit.quantity | number:'1.2-2' }}
-                        </span>
-                    </td>
-                    <td class="hide-on-mobile">
                         <span class="user-name">{{ audit.userName }}</span>
                     </td>
                     <td class="details-cell hide-on-mobile">{{ translateActionDescription(audit.actionDescription) }}</td>
@@ -268,7 +261,7 @@
                 }
                 @if (filteredAudits.length === 0 && !loadingAudits) {
                 <tr>
-                    <td colspan="7" style="text-align: center; padding: 2rem; color: #999">
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: #999">
                         No se encontraron auditorías
                     </td>
                 </tr>
@@ -357,20 +350,6 @@
             <div class="audit-field">
                 <span class="audit-field-label">Producto</span>
                 <span class="audit-field-value">{{ selectedAudit.productName }} <span class="id-badge">#{{ selectedAudit.productId }}</span></span>
-            </div>
-            <div class="audit-field">
-                <span class="audit-field-label">Cantidad</span>
-                <span class="audit-field-value quantity-value" [class.quantity-negative]="selectedAudit.movementType === 'SALIDA'">
-                    {{ selectedAudit.movementType === 'SALIDA' ? '-' : '+' }}{{ selectedAudit.quantity | number:'1.2-2' }}
-                </span>
-            </div>
-            <div class="audit-field">
-                <span class="audit-field-label">Stock Anterior</span>
-                <span class="audit-field-value">{{ selectedAudit.previousStock | number:'1.2-2' }}</span>
-            </div>
-            <div class="audit-field">
-                <span class="audit-field-label">Stock Actual</span>
-                <span class="audit-field-value">{{ selectedAudit.currentStock | number:'1.2-2' }}</span>
             </div>
             <div class="audit-field audit-field-full">
                 <span class="audit-field-label">Descripción</span>

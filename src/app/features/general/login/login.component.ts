@@ -1,7 +1,7 @@
 import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
 import { MessageService } from '../../../core/services/message.service';
@@ -17,6 +17,7 @@ import { ThemeService } from '../../../core/services/theme.service';
 export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private messageService = inject(MessageService);
   private cdr = inject(ChangeDetectorRef);
   private themeService = inject(ThemeService);
@@ -48,15 +49,20 @@ export class LoginComponent {
     this.authService.login(name!, password!).subscribe({
       next: () => {
         this.messageService.showSuccess('Sesión iniciada correctamente');
+        const returnUrl = this.getSafeReturnUrl();
+
         if (this.authService.isFirstLogin()) {
-          this.router.navigate(['/change-password']);
+          this.router.navigate(['/change-password'], {
+            queryParams: returnUrl ? { returnUrl } : undefined
+          });
         } else {
-          const role = this.authService.getRole();
-          if (role === 'ADMIN') {
-            this.router.navigate(['/admin-panel']);
-          } else {
-            this.router.navigate(['/welcome']);
+          if (returnUrl) {
+            this.router.navigateByUrl(returnUrl);
+            return;
           }
+
+          const role = this.authService.getRole();
+          this.router.navigate([role === 'ADMIN' ? '/admin-panel' : '/welcome']);
         }
       },
       error: (err) => {
@@ -71,5 +77,12 @@ export class LoginComponent {
         this.cdr.markForCheck();
       }
     });
+  }
+
+  private getSafeReturnUrl(): string | null {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    if (!returnUrl) return null;
+    if (!returnUrl.startsWith('/') || returnUrl.startsWith('//')) return null;
+    return returnUrl;
   }
 }

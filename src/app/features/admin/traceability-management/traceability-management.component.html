@@ -20,7 +20,7 @@
 </div>
 
 @if (activeView === 'active') {
-<div class="contenedor-principal">
+<div class="contenedor-principal" (scroll)="onActiveScroll($event)">
   
   <div class="action-header action-header-main">
     <div class="search-group-standard search-group-compact">
@@ -46,7 +46,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (crisis of filteredActiveCrises; track crisis.crisisId) {
+        @for (crisis of activeVisibleCrises; track crisis.crisisId) {
           <tr>
             <td><div class="id-badge">{{ crisis.crisisCode || ('CRISIS-' + crisis.crisisId) }}</div></td>
             <td>{{ crisis.supplierName }}</td>
@@ -66,16 +66,34 @@
             </td>
           </tr>
         }
-        @if (activeCrises.length === 0) {
+        @if (filteredActiveCrises.length === 0) {
           <tr><td colspan="5" class="empty-row text-center">No hay crisis activas</td></tr>
         }
       </tbody>
     </table>
   </div>
+
+  @if (filteredActiveCrises.length > 0) {
+    <div class="history-lazy-info">
+      Mostrando {{ activeVisibleCrises.length }} de {{ filteredActiveCrises.length }} resultados
+    </div>
+  }
+
+  @if (activeHasMore) {
+    <div class="history-load-more-wrap">
+      <button class="btn-cancel" [disabled]="loadingActiveMore" (click)="loadNextActivePage()">
+        {{ loadingActiveMore ? 'Cargando...' : 'Cargar más' }}
+      </button>
+    </div>
+  }
+
+  @if (!activeHasMore && filteredActiveCrises.length > 0) {
+    <div class="history-end-message">Has llegado al final de las crisis activas.</div>
+  }
 </div>
 }
 @if (activeView === 'history') {
-<div class="contenedor-principal">
+<div class="contenedor-principal" (scroll)="onHistoryScroll($event)">
   
   <div class="action-header action-header-history">
     <div class="search-group-standard search-group-compact">
@@ -91,25 +109,25 @@
           <th>Proveedor</th>
           <th class="hide-on-mobile">Fecha</th>
           <th class="hide-on-mobile">Estado</th>
-          <th>Acciones</th>
+          <th class="hide-on-mobile">Acciones</th>
         </tr>
       </thead>
       <tbody>
         @for (crisis of filteredHistoryCrises; track crisis.crisisId) {
-          <tr>
+          <tr class="history-row-mobile-clickable" (click)="onHistoryRowClick(crisis)">
             <td><div class="id-badge">{{ crisis.crisisCode || ('CRISIS-' + crisis.crisisId) }}</div></td>
             <td>{{ crisis.supplierName }}</td>
             <td class="hide-on-mobile">{{ crisis.timestamp | date:'dd/MM/yyyy HH:mm' }}</td>
             <td class="hide-on-mobile"><span class="status-badge success badge-lifted">LEVANTADA</span></td>
-            <td class="actions-cell">
-              <button class="btn-ver" (click)="openCrisisDetail(crisis)" title="Ver Detalle">
+            <td class="actions-cell hide-on-mobile" (click)="stopRowClick($event)">
+              <button class="btn-ver" (click)="openCrisisDetail(crisis); stopRowClick($event)" title="Ver Detalle">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                   <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
                   <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
                 </svg>
 
               </button>
-              <button class="btn-edit-status" (click)="downloadReport(crisis)" title="Descargar PDF">
+              <button class="btn-edit-status" (click)="downloadReport(crisis); stopRowClick($event)" title="Descargar PDF">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 15v3H6v-3H4v3c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-3h-2zm-1-4l-1.41-1.41L13 12.17V4h-2v8.17L8.41 9.59 7 11l5 5 5-5z"/></svg>
               </button>
             </td>
@@ -125,16 +143,22 @@
     </table>
   </div>
 
-  @if (historyTotalPages > 1) {
-    <div class="pagination-controls history-pagination">
-      <span class="history-page-info">
-        Mostrando página {{ historyPage + 1 }} de {{ historyTotalPages }} ({{ historyTotalElements }} resultados)
-      </span>
-      <div class="history-pagination-actions">
-        <button class="btn-cancel" [disabled]="historyPage === 0" (click)="prevHistoryPage()">Anterior</button>
-        <button class="btn-cancel" [disabled]="historyPage >= historyTotalPages - 1" (click)="nextHistoryPage()">Siguiente</button>
-      </div>
+  @if (historyTotalElements > 0) {
+    <div class="history-lazy-info">
+      Mostrando {{ filteredHistoryCrises.length }} de {{ historyTotalElements }} resultados
     </div>
+  }
+
+  @if (historyHasMore) {
+    <div class="history-load-more-wrap">
+      <button class="btn-cancel" [disabled]="loadingHistory || loadingHistoryMore" (click)="loadNextHistoryPage()">
+        {{ loadingHistoryMore ? 'Cargando...' : 'Cargar más' }}
+      </button>
+    </div>
+  }
+
+  @if (!historyHasMore && filteredHistoryCrises.length > 0) {
+    <div class="history-end-message">Has llegado al final del historial.</div>
   }
 </div>
 }
@@ -238,19 +262,24 @@
 <app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
 
 @if (showCrisisDetailModal && selectedCrisis) {
-<app-base-modal [title]="'Crisis / ' + (selectedCrisis.crisisCode || ('CRISIS-' + selectedCrisis.crisisId))" size="fullscreen" (closed)="closeCrisisDetail()">
+<app-base-modal [title]="'Crisis / ' + (selectedCrisis.crisisCode || ('CRISIS-' + selectedCrisis.crisisId))" size="lg" (closed)="closeCrisisDetail()">
   <div class="modal-container traceability-modal-container">
     <div class="crisis-detail-content" style="border-left: none; padding: 0;">
         <div class="detail-grid-standard">
-          <div class="detail-col"><strong>Motivo:</strong><p>{{ selectedCrisis.reason }}</p></div>
+          <div class="detail-col">
+            <strong>Proveedor responsable:</strong>
+            <p>{{ selectedCrisis.supplierName }}</p>
+            <strong>Motivo:</strong>
+            <p>{{ selectedCrisis.reason }}</p>
+          </div>
           <div class="detail-col"><strong>Impacto:</strong><ul><li>Lotes afectados: {{ selectedCrisis.affectedBatches?.length || 0 }}</li><li>Pedidos implicados: {{ selectedCrisis.affectedOrders?.length || 0 }}</li><li>Cocinados implicados: {{ selectedCrisis.affectedCookings?.length || 0 }}</li></ul></div>
         </div>
         
         <div class="quarantine-section" style="margin-top: 20px;">
           <strong>Productos en Cuarentena:</strong>
           <div class="quarantine-tags">
-            @if (selectedCrisis.quarantinedProducts | keyvalue; as quarantinedProducts) {
-              @for (item of quarantinedProducts; track item.key) {<span class="q-tag">{{ item.key }}</span>}
+            @for (product of getQuarantinedProductRows(selectedCrisis); track product.productName) {
+              <span class="q-tag">{{ product.productName }}</span>
             }
           </div>
         </div>
@@ -287,12 +316,11 @@
           <strong>Pedidos Implicados:</strong>
           <div class="traceability-table-wrap">
             <table class="traceability-sub-table">
-              <thead><tr><th>#Pedido</th><th>Proveedor</th><th>Estado</th><th>Fecha</th><th>Líneas</th></tr></thead>
+              <thead><tr><th>#Pedido</th><th>Estado</th><th>Fecha</th><th>Líneas</th></tr></thead>
               <tbody>
                 @for (ord of selectedCrisis.affectedOrders; track ord.orderId) {
                   <tr>
                     <td><span class="id-badge">#{{ ord.orderId }}</span></td>
-                    <td>{{ ord.supplierName }}</td>
                     <td><span class="status-badge success badge-lifted">{{ ord.status }}</span></td>
                     <td>{{ ord.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
                     <td>{{ ord.totalItems }} líneas</td>
@@ -328,15 +356,17 @@
       </div>
   </div>
 
-  @if (selectedCrisis.status === 'ACTIVE') {
-    <div modal-footer>
-      <div class="lift-crisis-actions" style="margin-top: 0; padding-top: 0; border: none; width: 100%; display: flex; justify-content: flex-end;">
-        <div style="display: flex; gap: 10px;">
-          <input type="number" min="0" max="100" [(ngModel)]="liftAvailabilityByCrisis[selectedCrisis.crisisId]" placeholder="Disp. %" class="input-standard" style="width: 120px;" />
-          <button class="btn-lift btn-confirm" style="background:#22c55e;" (click)="liftCrisis(selectedCrisis)">Levantar Crisis</button>
-        </div>
+  <div modal-footer>
+      <div class="crisis-modal-actions">
+        <button class="btn-cancel" (click)="downloadReport(selectedCrisis)">Descargar PDF</button>
+
+        @if (selectedCrisis.status === 'ACTIVE') {
+          <div class="lift-crisis-actions">
+            <input type="number" min="0" max="100" [(ngModel)]="liftAvailabilityByCrisis[selectedCrisis.crisisId]" placeholder="Disp. %" class="input-standard" />
+            <button class="btn-lift btn-confirm" (click)="liftCrisis(selectedCrisis)">Levantar Crisis</button>
+          </div>
+        }
       </div>
-    </div>
-  }
+  </div>
 </app-base-modal>
 }

@@ -1,10 +1,10 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
-import { AsyncPipe, DatePipe, DecimalPipe, KeyValuePipe } from '@angular/common';
+import { AsyncPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize, debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-import { ProductService } from '../../../core/services/product.service';
 import { SupplierService } from '../../../core/services/supplier.service';
 import { TraceabilityService } from '../../../core/services/traceability.service';
+import { ProductService } from '../../../core/services/product.service';
 import { MessageService } from '../../../core/services/message.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { BarcodeScannerComponent } from '../../general/barcode-scanner/barcode-scanner.component';
@@ -21,7 +21,7 @@ type CrisisView = 'active' | 'history';
 @Component({
   selector: 'app-traceability-management',
   standalone: true,
-  imports: [FormsModule, ToastComponent, BaseModalComponent, BarcodeScannerComponent, AsyncPipe, DatePipe, DecimalPipe, KeyValuePipe],
+  imports: [FormsModule, ToastComponent, BaseModalComponent, BarcodeScannerComponent, AsyncPipe, DatePipe, DecimalPipe],
   templateUrl: './traceability-management.component.html',
   styleUrl: './traceability-management.component.css'
 })
@@ -72,6 +72,11 @@ export class TraceabilityManagementComponent implements OnInit {
 
   activeCrises: CrisisResponseDTO[] = [];
   filteredActiveCrises: CrisisResponseDTO[] = [];
+  activeVisibleCrises: CrisisResponseDTO[] = [];
+  activePage = 0;
+  activeSize = 10;
+  loadingActiveMore = false;
+  activeHasMore = false;
   liftedCrises: CrisisResponseDTO[] = [];
   filteredHistoryCrises: CrisisResponseDTO[] = [];
   liftAvailabilityByCrisis: Record<number, string> = {};
@@ -81,6 +86,8 @@ export class TraceabilityManagementComponent implements OnInit {
   historyTotalPages = 0;
   historyTotalElements = 0;
   loadingHistory = false;
+  loadingHistoryMore = false;
+  historyHasMore = true;
   private historySearchSubject = new Subject<string>();
 
   ngOnInit(): void {
@@ -136,7 +143,8 @@ export class TraceabilityManagementComponent implements OnInit {
       distinctUntilChanged()
     ).subscribe((_: string) => {
       this.historyPage = 0;
-      this.loadHistory();
+      this.historyHasMore = true;
+      this.loadHistory(false);
     });
   }
 
@@ -258,26 +266,22 @@ export class TraceabilityManagementComponent implements OnInit {
     this.loadingProducts = true;
     this.cdr.markForCheck();
 
-    // In a real app, we would use a specialized search endpoint that takes supplierId
-    // For now, let's use getAll and filter
-    this.productService.getAll(this.productPage, 50, 'name,asc').pipe(
+    this.productService.getWithLedger(
+      this.productSearchTerm,
+      this.productPage,
+      50,
+      'name,asc'
+    ).pipe(
       finalize(() => {
         this.loadingProducts = false;
         this.cdr.markForCheck();
       })
     ).subscribe({
       next: (page: any) => {
-        let content = (page.content || []).filter((p: Product) => !p.hidden);
-        
-        // Filter by supplier if one is selected
+        let content = page.content || [];
+
         if (this.selectedSupplierId) {
           content = content.filter((p: Product) => p.supplier?.id === this.selectedSupplierId);
-        }
-
-        // Filter by search term
-        const term = this.productSearchTerm.toLowerCase();
-        if (term) {
-          content = content.filter((p: Product) => p.name.toLowerCase().includes(term));
         }
 
         if (this.productPage === 0) this.products = content;
@@ -450,6 +454,7 @@ export class TraceabilityManagementComponent implements OnInit {
     const term = this.activeSearchTerm.trim().toLowerCase();
     if (!term) {
       this.filteredActiveCrises = [...this.activeCrises];
+      this.resetActiveLazyState();
       return;
     }
     this.filteredActiveCrises = this.activeCrises.filter(c => 
@@ -458,21 +463,80 @@ export class TraceabilityManagementComponent implements OnInit {
       (c.supplierName && c.supplierName.toLowerCase().includes(term)) ||
       (c.reason && c.reason.toLowerCase().includes(term))
     );
+    this.resetActiveLazyState();
   }
 
-  loadHistory(): void {
-    this.loadingHistory = true;
+  onActiveScroll(event: Event): void {
+    if (this.activeView !== 'active') {
+      return;
+    }
+
+    const target = event.target as HTMLElement;
+    const nearBottom = target.scrollHeight - target.scrollTop <= target.clientHeight + 80;
+
+    if (nearBottom) {
+      this.loadNextActivePage();
+    }
+  }
+
+  loadNextActivePage(): void {
+    if (!this.activeHasMore || this.loadingActiveMore) {
+      return;
+    }
+
+    this.loadingActiveMore = true;
+    this.activePage++;
+    this.appendActivePage();
+    this.loadingActiveMore = false;
+    this.cdr.markForCheck();
+  }
+
+  private resetActiveLazyState(): void {
+    this.activePage = 0;
+    this.activeVisibleCrises = [];
+    this.activeHasMore = this.filteredActiveCrises.length > 0;
+    this.appendActivePage();
+  }
+
+  private appendActivePage(): void {
+    const endExclusive = (this.activePage + 1) * this.activeSize;
+    this.activeVisibleCrises = this.filteredActiveCrises.slice(0, endExclusive);
+    this.activeHasMore = this.activeVisibleCrises.length < this.filteredActiveCrises.length;
+  }
+
+  loadHistory(append = false): void {
+    if (append && (!this.historyHasMore || this.loadingHistory || this.loadingHistoryMore)) {
+      return;
+    }
+
+    if (append) {
+      this.loadingHistoryMore = true;
+    } else {
+      this.loadingHistory = true;
+    }
+
     this.cdr.markForCheck();
     this.traceabilityService.getCrisisHistory(this.historyPage, this.historySize, this.historySearchTerm).pipe(
       finalize(() => {
         this.loadingHistory = false;
+        this.loadingHistoryMore = false;
         this.cdr.markForCheck();
       })
     ).subscribe({
       next: (response) => {
-        this.filteredHistoryCrises = response.content;
+        const incoming = response.content || [];
+
+        if (append) {
+          const existingIds = new Set(this.filteredHistoryCrises.map(item => item.crisisId));
+          const uniqueIncoming = incoming.filter((item: CrisisResponseDTO) => !existingIds.has(item.crisisId));
+          this.filteredHistoryCrises = [...this.filteredHistoryCrises, ...uniqueIncoming];
+        } else {
+          this.filteredHistoryCrises = incoming;
+        }
+
         this.historyTotalPages = response.totalPages;
         this.historyTotalElements = response.totalElements;
+        this.historyHasMore = this.historyPage < this.historyTotalPages - 1;
       },
       error: () => this.messageService.showError('No se pudo cargar el historial.')
     });
@@ -480,6 +544,39 @@ export class TraceabilityManagementComponent implements OnInit {
 
   onHistorySearch(): void {
     this.historySearchSubject.next(this.historySearchTerm);
+  }
+
+  onHistoryScroll(event: Event): void {
+    if (this.activeView !== 'history') {
+      return;
+    }
+
+    const target = event.target as HTMLElement;
+    const nearBottom = target.scrollHeight - target.scrollTop <= target.clientHeight + 80;
+
+    if (nearBottom) {
+      this.loadNextHistoryPage();
+    }
+  }
+
+  loadNextHistoryPage(): void {
+    if (!this.historyHasMore || this.loadingHistory || this.loadingHistoryMore) {
+      return;
+    }
+
+    this.historyPage++;
+    this.loadHistory(true);
+  }
+
+  onHistoryRowClick(crisis: CrisisResponseDTO): void {
+    if (window.innerWidth > 768) {
+      return;
+    }
+    this.openCrisisDetail(crisis);
+  }
+
+  stopRowClick(event: Event): void {
+    event.stopPropagation();
   }
 
   prevHistoryPage(): void {
@@ -502,6 +599,27 @@ export class TraceabilityManagementComponent implements OnInit {
 
   getBadgeClass(status: string): string {
     return status === 'ACTIVE' ? 'badge-active' : 'badge-lifted';
+  }
+
+  getQuarantinedProductRows(crisis: CrisisResponseDTO): Array<{ productName: string; lotLabel: string }> {
+    const names = Object.keys(crisis.quarantinedProducts || {});
+    const details = crisis.quarantinedProductsInfo || {};
+
+    return names.map((productName) => {
+      const info = details[productName];
+
+      if (!info) {
+        return { productName, lotLabel: 'Sin lote' };
+      }
+
+      const lotCode = (info.batchCode || '').trim();
+      const lotId = info.batchId;
+      const lotLabel = lotCode
+        ? lotCode
+        : (lotId ? `Lote #${lotId}` : 'Sin lote');
+
+      return { productName, lotLabel };
+    });
   }
 
   private addOrUpdateCrisis(crisis: CrisisResponseDTO): void {

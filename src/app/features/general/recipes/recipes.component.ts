@@ -52,6 +52,8 @@ export class RecipesComponent implements OnInit {
 
   drafts: RecipeDraft[] = [];
   loadingDrafts = false;
+  showLoadWarningModal = false;
+  private loadWarningTimer: ReturnType<typeof setTimeout> | null = null;
   currentDraftPage = 0;
   draftPageSize = 12;
   totalDraftElements = 0;
@@ -102,6 +104,7 @@ export class RecipesComponent implements OnInit {
 
   loadRecipes(): void {
     this.loading = true;
+    this.startLoadWarningTimer();
     this.cdr.markForCheck();
 
     const sort = this.getSortString();
@@ -109,6 +112,7 @@ export class RecipesComponent implements OnInit {
     this.recipeService.getAll(this.currentPage, this.pageSize, sort).pipe(
       finalize(() => {
         this.loading = false;
+        this.stopLoadWarningTimer();
         this.cdr.markForCheck();
       })
     ).subscribe({
@@ -138,6 +142,7 @@ export class RecipesComponent implements OnInit {
     }
 
     this.loading = true;
+    this.startLoadWarningTimer();
     this.cdr.markForCheck();
 
     const sort = this.getSortString();
@@ -146,6 +151,7 @@ export class RecipesComponent implements OnInit {
       .pipe(
         finalize(() => {
           this.loading = false;
+          this.stopLoadWarningTimer();
           this.cdr.markForCheck();
         })
       )
@@ -337,12 +343,14 @@ export class RecipesComponent implements OnInit {
 
   loadMyDrafts(page: number = 0, append = false): void {
     this.loadingDrafts = true;
+    this.startLoadWarningTimer();
     this.currentDraftPage = page;
     this.cdr.markForCheck();
 
     this.recipeDraftService.getMine(this.currentDraftPage, this.draftPageSize)
       .pipe(finalize(() => {
         this.loadingDrafts = false;
+        this.stopLoadWarningTimer();
         this.cdr.markForCheck();
       }))
       .subscribe({
@@ -550,5 +558,41 @@ export class RecipesComponent implements OnInit {
         // Handled by interceptor
       }
     });
+  }
+
+  private startLoadWarningTimer(): void {
+    this.stopLoadWarningTimer();
+    this.showLoadWarningModal = false;
+    this.loadWarningTimer = setTimeout(() => {
+      if (this.loading || this.loadingDrafts) {
+        this.showLoadWarningModal = true;
+        this.cdr.markForCheck();
+      }
+    }, 7000);
+  }
+
+  private stopLoadWarningTimer(): void {
+    if (this.loadWarningTimer) {
+      clearTimeout(this.loadWarningTimer);
+      this.loadWarningTimer = null;
+    }
+  }
+
+  closeLoadWarningModal(): void {
+    this.showLoadWarningModal = false;
+    this.cdr.markForCheck();
+  }
+
+  retryLoadAfterWarning(): void {
+    this.showLoadWarningModal = false;
+    if (this.activeTab === 'drafts' && !this.canEdit()) {
+      this.loadMyDrafts(0, false);
+      return;
+    }
+    if (this.searchTerm.trim()) {
+      this.performSearch(this.searchTerm);
+      return;
+    }
+    this.loadRecipes();
   }
 }
