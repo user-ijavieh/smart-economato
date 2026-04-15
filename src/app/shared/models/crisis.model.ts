@@ -13,6 +13,7 @@ export interface CrisisAffectedBatchDTO {
 
 export interface QuarantinedProductInfo {
   batchId?: number | null;
+  batchCode?: string | null;
   expirationDate?: string | null;
   initialQuantity?: number | null;
   remainingQuantity?: number | null;
@@ -42,7 +43,8 @@ export interface CrisisResponseDTO {
   status: CrisisStatus;
   reason: string;
   supplierName: string;
-  quarantinedProducts: Record<string, string | QuarantinedProductInfo>;
+  quarantinedProducts: Record<string, string>;
+  quarantinedProductsInfo?: Record<string, QuarantinedProductInfo>;
   affectedBatches?: CrisisAffectedBatchDTO[];
   affectedOrderIds?: number[];
   affectedOrders?: CrisisAffectedOrderDTO[];

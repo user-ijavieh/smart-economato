@@ -59,11 +59,7 @@
               <thead>
                 <tr>
                   <th>Producto</th>
-                  <th>Cantidad pedida</th>
-                  @if (shouldShowReceptionColumns()) {
-                    <th>Cantidad recibida</th>
-                    <th>Diferencia</th>
-                  }
+                  <th>Cantidad</th>
                   <th>Precio Unit.</th>
                   <th>Subtotal</th>
                 </tr>
@@ -73,26 +69,22 @@
                   @if (detail.productName) {
                     <tr>
                       <td>{{ detail.productName }}</td>
-                      <td>{{ detail.quantity }} {{ detail.unit || 'uds' }}</td>
-                      @if (shouldShowReceptionColumns()) {
-                        <td>
-                          @if (getReceivedQuantity(detail) !== null) {
-                            {{ getReceivedQuantity(detail) }} {{ detail.unit || 'uds' }}
-                          } @else {
-                            —
+                      <td>
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                          <span style="font-family: 'Courier New', monospace; font-weight: 600; font-size: 0.9rem; background: var(--theme-surface-glass); padding: 0.3rem 0.6rem; border-radius: 6px;">{{ getFormattedQuantity(detail) }}</span>
+                          @if (getComparisonSymbol(detail)) {
+                            <span 
+                              style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; font-weight: bold; font-size: 1rem; border: 1.5px solid; transition: all 0.2s ease;"
+                              [style.background]="getComparisonSymbol(detail) === '✓' ? 'color-mix(in srgb, #10b981 20%, transparent)' : (getComparisonSymbol(detail) === '✕' ? 'color-mix(in srgb, #ef4444 20%, transparent)' : 'color-mix(in srgb, #f59e0b 20%, transparent)')"
+                              [style.color]="getComparisonSymbol(detail) === '✓' ? '#10b981' : (getComparisonSymbol(detail) === '✕' ? '#ef4444' : '#f59e0b')"
+                              [style.border-color]="getComparisonSymbol(detail) === '✓' ? '#10b981' : (getComparisonSymbol(detail) === '✕' ? '#ef4444' : '#f59e0b')"
+                              [title]="getComparisonSymbol(detail) === '✓' ? 'Cantidad exacta' : (getComparisonSymbol(detail) === '✕' ? 'Falta cantidad' : 'Hay de más')"
+                            >
+                              {{ getComparisonSymbol(detail) }}
+                            </span>
                           }
-                        </td>
-                        <td>
-                          <span
-                            class="qty-delta"
-                            [class.qty-delta-ok]="getQuantityDelta(detail) === 0"
-                            [class.qty-delta-up]="(getQuantityDelta(detail) ?? 0) > 0"
-                            [class.qty-delta-down]="(getQuantityDelta(detail) ?? 0) < 0"
-                          >
-                            {{ getQuantityDeltaLabel(detail) }}
-                          </span>
-                        </td>
-                      }
+                        </div>
+                      </td>
                       <td>{{ detail.unitPrice | number:'1.2-2' }} €</td>
                       <td>{{ (detail.quantity * detail.unitPrice) | number:'1.2-2' }} €</td>
                     </tr>
@@ -101,7 +93,8 @@
               </tbody>
               <tfoot>
                 <tr>
-                  <td [attr.colspan]="shouldShowReceptionColumns() ? 5 : 3">Total del Pedido</td>
+                  <td colspan="2">Total del Pedido</td>
+                  <td></td>
                   <td>{{ getOrderTotal() | number:'1.2-2' }} €</td>
                 </tr>
               </tfoot>
@@ -126,10 +119,6 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
             Eliminar
           </button>
-          <button type="button" class="modal-btn modal-btn-primary" (click)="onEdit()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-            Editar
-          </button>
         }
         <button type="button" class="modal-btn modal-btn-neutral" (click)="printOrder()" [disabled]="isDownloading">
           @if (!isDownloading) {
@@ -139,6 +128,12 @@
             Descargando...
           }
         </button>
+        @if (order.status === 'CREATED') {
+          <button type="button" class="modal-btn modal-btn-primary" (click)="onEdit()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            Editar
+          </button>
+        }
     </div>
   }
 </app-base-modal>

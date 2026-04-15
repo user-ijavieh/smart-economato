@@ -739,6 +739,11 @@ tr.row-hidden .user-avatar-small {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  line-height: 0;
+}
+
+.selection-toggle-box svg {
+  display: block;
 }
 
 .selection-toggle.active .selection-toggle-box {
@@ -1077,6 +1082,22 @@ tr.row-hidden .user-avatar-small {
 
 .presence-table {
   max-height: 70vh;
+}
+
+.presence-user-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.presence-user-cell .role-badge {
+  align-self: flex-start;
+  width: fit-content;
+}
+
+.presence-user-name {
+  font-weight: 600;
+  color: var(--theme-text-primary);
 }
 
 .presence-pill {

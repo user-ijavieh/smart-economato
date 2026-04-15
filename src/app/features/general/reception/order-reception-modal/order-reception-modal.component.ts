@@ -46,9 +46,9 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     }
 
     return await this.messageService.confirm(
-      'Cancelar Recepción',
-      '¿Estás seguro de que deseas cancelar? Los datos introducidos no se guardarán.',
-      'Cancelar',
+      'Salir de recepción',
+      '¿Salir sin guardar? Los datos introducidos no se conservarán.',
+      'Salir sin guardar',
       'Volver'
     );
   };
@@ -71,7 +71,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     if (this.order && this.order.details) {
       this.order.details.forEach(detail => {
         if (!detail.lots || detail.lots.length === 0) {
-          detail.lots = [{ quantity: detail.quantity, expirationDate: null, batchCode: null }];
+          detail.lots = [{ quantity: 0, expirationDate: null, batchCode: null }];
         }
       });
     }
@@ -169,11 +169,31 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     return detail.lots.reduce((acc: number, lot: any) => acc + (lot.quantity || 0), 0);
   }
 
+  getComparisonSymbol(detail: any): string {
+    const expected = detail.quantity || 0;
+    const received = this.getTotalReceived(detail);
+    
+    if (received === expected) {
+      return '✓'; // Tick para justo
+    } else if (received < expected) {
+      return '✕'; // X para falta
+    } else {
+      return '▲'; // Triángulo para hay de más
+    }
+  }
+
+  getFormattedQuantity(detail: any): string {
+    const expected = detail.quantity || 0;
+    const received = this.getTotalReceived(detail);
+    const unit = detail.unit || 'uds';
+    return `${expected} / ${received} ${unit}`;
+  }
+
   async confirmCancel() {
     const confirmed = await this.messageService.confirm(
-      'Cancelar Recepción',
-      '¿Estás seguro de que deseas cancelar? Los datos introducidos no se guardarán.',
-      'Cancelar',
+      'Salir de recepción',
+      '¿Salir sin guardar? Los datos introducidos no se conservarán.',
+      'Salir sin guardar',
       'Volver'
     );
     if (confirmed) {

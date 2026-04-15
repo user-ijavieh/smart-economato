@@ -172,6 +172,14 @@
   background: color-mix(in srgb, var(--brand-primary) 16%, transparent);
 }
 
+[modal-footer] {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 /** ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .info-grid { grid-template-columns: 1fr; gap: 1rem; padding: 15px; }

@@ -1,4 +1,4 @@
-<app-base-modal [title]="editOrder ? 'Editar Pedido #' + editOrder.id : 'Crear Nuevo Pedido'" size="lg" (closed)="close()">
+<app-base-modal [title]="editOrder ? 'Editar Pedido #' + editOrder.id : 'Crear Nuevo Pedido'" size="lg" [closeOnBackdrop]="false" (closed)="close()">
   <div class="order-modal-content">
       <!-- User Selection -->
       <div class="user-selection-section">

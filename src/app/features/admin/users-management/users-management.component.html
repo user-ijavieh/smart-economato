@@ -218,7 +218,6 @@
                 <thead>
                     <tr>
                         <th>Usuario</th>
-                        <th>Rol</th>
                         <th>Estado</th>
                         <th>Pantalla</th>
                         <th class="hide-on-mobile">Última actividad</th>
@@ -228,11 +227,13 @@
                     @for (user of filteredUsers; track user.id) {
                     @if (!showingHidden) {
                     <tr>
-                        <td>{{ user.name }}</td>
                         <td>
-                            <span class="role-badge" [ngClass]="getRoleBadgeClass(user.role)">
-                                {{ getRoleLabel(user.role) }}
-                            </span>
+                            <div class="presence-user-cell">
+                                <span class="presence-user-name">{{ user.name }}</span>
+                                <span class="role-badge" [ngClass]="getRoleBadgeClass(user.role)">
+                                    {{ getRoleLabel(user.role) }}
+                                </span>
+                            </div>
                         </td>
                         @if (getPresenceForUser(user.id!); as presence) {
                         <td><span class="presence-pill connected">En línea</span></td>
@@ -253,7 +254,6 @@
         <div class="activity-feed" (scroll)="onActivityScroll($event)">
             <div class="feed-header">
                 <h3>Historial de actividad</h3>
-                <button class="toolbar-btn btn-clear" (click)="loadActivity(true)">Refrescar</button>
             </div>
 
             @for (log of activityLogs; track trackByActivityId($index, log)) {

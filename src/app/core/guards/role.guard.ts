@@ -20,7 +20,9 @@ export function roleGuard(...allowedRoles: Role[]): CanActivateFn {
 
         if (authService.isFirstLogin()) {
             if (state.url === '/change-password') return true;
-            return router.createUrlTree(['/change-password']);
+            return router.createUrlTree(['/change-password'], {
+                queryParams: { returnUrl: state.url }
+            });
         }
 
         if (state.url === '/change-password') {
