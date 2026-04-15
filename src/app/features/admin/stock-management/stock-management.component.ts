@@ -12,9 +12,11 @@ import { AuthService } from '../../../core/services/auth.service';
 import { MessageService } from '../../../core/services/message.service';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { ProductBatchService } from '../../../core/services/product-batch.service';
+import { SupplierService } from '../../../core/services/supplier.service';
 import {
     AlertResolution,
     AlertSeverity,
+    AlertType,
     DailyForecastResponse,
     StockAlertDTO,
     StockPredictionResponseDTO,
@@ -33,11 +35,26 @@ import {
 } from '../../../shared/models/stock-ledger.model';
 import { Product } from '../../../shared/models/product.model';
 import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.model';
+import { Supplier } from '../../../shared/models/supplier.model';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 
 
 type Tab = 'alerts' | 'predictions' | 'ledger';
+type AlertChartMode = 'prediction' | 'expiration' | 'combined';
+
+interface RepositionOrderItem extends StockAlertDTO {
+    unitPrice: number;
+    supplierId: number | null;
+    supplierName: string | null;
+}
+
+interface RepositionOrderGroup {
+    id: number;
+    title: string;
+    supplierId: number | null;
+    items: RepositionOrderItem[];
+}
 
 @Component({
     selector: 'app-stock-management',
@@ -55,6 +72,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     private authService = inject(AuthService);
     private stockLedgerService = inject(StockLedgerService);
     private productBatchService = inject(ProductBatchService);
+    private supplierService = inject(SupplierService);
     private scrollService = inject(ScrollService);
     messageService = inject(MessageService);
 
@@ -71,7 +89,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
 
     // ── Mobile modal state ──
     showMobileModal = false;
-    selectedAlertForMobile: any = null;
+    selectedAlertForMobile: (StockAlertDTO & { estimatedDailyConsumption: number }) | null = null;
 
     // ── Sorting state ──
     sortColumn = 'severity';
@@ -81,7 +99,13 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     // ── Order modal ──
     showOrderModal = false;
     daysAhead = 14;
-    orderAlerts: StockAlertDTO[] = [];
+    orderAlerts: RepositionOrderItem[] = [];
+    orderGroups: RepositionOrderGroup[] = [];
+    suppliers: Supplier[] = [];
+    loadingSuppliers = false;
+    private nextOrderGroupId = 1;
+    private draggedOrderItem: RepositionOrderItem | null = null;
+    private draggedSourceGroupId: number | 'pool' | null = null;
     creatingOrder = false;
 
     // ── Predictions tab state ──
@@ -104,6 +128,8 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     modalChartData: ChartData<'line' | 'bar'> = { labels: [], datasets: [] };
     loadingModalChart = false;
     stockOutDay: string | null = null;
+    modalChartMode: AlertChartMode = 'prediction';
+    modalChartTitle = 'Análisis de Consumo y Evolución de Stock';
 
     modalChartOptions: ChartOptions<'line' | 'bar'> = {
         responsive: true,
@@ -217,6 +243,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.loadAlerts();
+        this.loadSuppliers();
         
         this.searchSubscription = this.searchSubject.pipe(
             debounceTime(300),
@@ -313,7 +340,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             estimatedDailyConsumption: alert.projectedConsumption / 14
         };
         this.showMobileModal = true;
-        this.loadModalChartData(alert.productId, alert.currentStock, alert.projectedConsumption / 14);
+        this.loadAlertChartData(alert, alert.projectedConsumption / 14);
     }
 
     closeMobileModal(): void {
@@ -330,18 +357,28 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     }
 
     getResolutionClass(r: AlertResolution): string {
-        return { COVERED_BY_ORDER: 'resolution-covered', PARTIALLY_COVERED: 'resolution-partial', UNCOVERED: 'resolution-uncovered', OK: 'resolution-ok' }[r] ?? '';
+        return { COVERED_BY_ORDER: 'resolution-covered', PARTIALLY_COVERED: 'resolution-partial', UNCOVERED: 'resolution-uncovered', EXPIRING: 'resolution-expiring', OK: 'resolution-ok' }[r] ?? '';
     }
 
     getResolutionIcon(r: AlertResolution): string {
-        return { COVERED_BY_ORDER: '', PARTIALLY_COVERED: '', UNCOVERED: '', OK: '' }[r] ?? '';
+        return { COVERED_BY_ORDER: '', PARTIALLY_COVERED: '', UNCOVERED: '', EXPIRING: '', OK: '' }[r] ?? '';
     }
 
     getResolutionLabel(r: AlertResolution): string {
-        return { COVERED_BY_ORDER: 'Cubierto', PARTIALLY_COVERED: 'Parcial', UNCOVERED: 'No cubierto', OK: 'Cubierto' }[r] ?? r;
+        return { COVERED_BY_ORDER: 'Cubierto', PARTIALLY_COVERED: 'Parcial', UNCOVERED: 'No cubierto', EXPIRING: 'Caduca pronto', OK: 'Cubierto' }[r] ?? r;
+    }
+
+    getAlertTypeClass(t?: AlertType): string {
+        return { PREDICTION: 'alert-type-prediction', EXPIRATION: 'alert-type-expiration', COMBINED: 'alert-type-combined' }[t || 'PREDICTION'] ?? '';
+    }
+
+    getAlertTypeLabel(t?: AlertType): string {
+        return { PREDICTION: 'Predicción', EXPIRATION: 'Caducidad', COMBINED: 'Combinada' }[t || 'PREDICTION'] ?? 'Predicción';
     }
 
     countBySeverity(s: AlertSeverity): number { return this.alerts.filter(a => a.severity === s).length; }
+
+    countByType(t: AlertType): number { return this.alerts.filter(a => (a.alertType || 'PREDICTION') === t).length; }
 
     splitMessage(msg: string): string[] {
         if (!msg) return [];
@@ -399,7 +436,10 @@ export class StockManagementComponent implements OnInit, OnDestroy {
 
     openOrderModal(): void {
         if (this.loadingOrderData) return;
-        const ids = this.alerts.filter(a => a.resolution === 'UNCOVERED' || a.resolution === 'PARTIALLY_COVERED').map(a => a.productId);
+        const ids = this.alerts
+            .filter(a => (a.alertType || 'PREDICTION') !== 'EXPIRATION')
+            .filter(a => a.resolution === 'UNCOVERED' || a.resolution === 'PARTIALLY_COVERED')
+            .map(a => a.productId);
         if (!ids.length) { this.messageService.showError('No hay productos sin cubrir para generar una orden.'); return; }
 
         this.loadingOrderData = true;
@@ -410,42 +450,246 @@ export class StockManagementComponent implements OnInit, OnDestroy {
 
                 // Fetch product details for each alert to get unitPrice
                 const priceRequests = alerts.map((a: StockAlertDTO) => this.productService.getById(a.productId).pipe(
-                    map((product: any) => ({ ...a, unitPrice: product.unitPrice || 0 }))
+                    map((product: Product) => ({
+                        ...a,
+                        unitPrice: product.unitPrice || 0,
+                        supplierId: product.supplier?.id ?? null,
+                        supplierName: product.supplier?.name ?? null
+                    } as RepositionOrderItem))
                 ));
                 return forkJoin(priceRequests);
             })
         ).subscribe({
-            next: (data: any) => { this.orderAlerts = data as any; this.showOrderModal = true; this.loadingOrderData = false; this.cdr.detectChanges(); },
+            next: (data: any) => {
+                this.orderAlerts = data as RepositionOrderItem[];
+                this.orderGroups = [this.createOrderGroup()];
+                this.showOrderModal = true;
+                this.loadingOrderData = false;
+                this.cdr.detectChanges();
+            },
             error: () => { this.messageService.showError('Error al calcular los productos'); this.loadingOrderData = false; this.cdr.detectChanges(); }
         });
     }
 
-    closeOrderModal(): void { this.showOrderModal = false; this.orderAlerts = []; this.daysAhead = 14; }
+    loadSuppliers(): void {
+        if (this.loadingSuppliers || this.suppliers.length > 0) return;
+        this.loadingSuppliers = true;
+        this.supplierService.getAll(0, 200, 'name,asc').pipe(
+            finalize(() => {
+                this.loadingSuppliers = false;
+                this.cdr.detectChanges();
+            })
+        ).subscribe({
+            next: (page) => {
+                this.suppliers = page?.content || [];
+            },
+            error: () => {
+                this.messageService.showError('Error al cargar proveedores');
+            }
+        });
+    }
+
+    closeOrderModal(): void {
+        this.showOrderModal = false;
+        this.orderAlerts = [];
+        this.orderGroups = [];
+        this.daysAhead = 14;
+        this.draggedOrderItem = null;
+        this.draggedSourceGroupId = null;
+        this.nextOrderGroupId = 1;
+    }
+
+    private createOrderGroup(): RepositionOrderGroup {
+        const groupId = this.nextOrderGroupId++;
+        return {
+            id: groupId,
+            title: `Pedido ${groupId}`,
+            supplierId: null,
+            items: []
+        };
+    }
+
+    addOrderGroup(): void {
+        this.orderGroups = [...this.orderGroups, this.createOrderGroup()];
+        this.cdr.detectChanges();
+    }
+
+    removeOrderGroup(groupId: number): void {
+        const target = this.orderGroups.find(group => group.id === groupId);
+        if (!target) return;
+
+        this.orderAlerts = [...this.orderAlerts, ...target.items];
+        this.orderGroups = this.orderGroups.filter(group => group.id !== groupId);
+        if (this.orderGroups.length === 0) {
+            this.orderGroups = [this.createOrderGroup()];
+        }
+        this.reindexOrderGroups();
+        this.cdr.detectChanges();
+    }
+
+    private reindexOrderGroups(): void {
+        this.orderGroups = this.orderGroups.map((group, index) => ({
+            ...group,
+            title: `Pedido ${index + 1}`
+        }));
+    }
+
+    onOrderDragStart(item: RepositionOrderItem, source: 'pool' | number): void {
+        this.draggedOrderItem = item;
+        this.draggedSourceGroupId = source;
+    }
+
+    onOrderDragEnd(): void {
+        this.draggedOrderItem = null;
+        this.draggedSourceGroupId = null;
+    }
+
+    allowOrderDrop(event: DragEvent): void {
+        event.preventDefault();
+        if (event.dataTransfer) {
+            event.dataTransfer.dropEffect = 'move';
+        }
+    }
+
+    dropOnGroup(event: DragEvent, groupId: number): void {
+        event.preventDefault();
+        if (!this.draggedOrderItem) return;
+
+        const targetGroup = this.orderGroups.find(group => group.id === groupId);
+        if (!targetGroup) return;
+
+        this.removeDraggedItemFromSource();
+        targetGroup.items = [...targetGroup.items, this.draggedOrderItem];
+        if (!targetGroup.supplierId && this.draggedOrderItem.supplierId) {
+            targetGroup.supplierId = this.draggedOrderItem.supplierId;
+        }
+        this.draggedOrderItem = null;
+        this.draggedSourceGroupId = null;
+        this.cdr.detectChanges();
+    }
+
+    dropOnPool(event: DragEvent): void {
+        event.preventDefault();
+        if (!this.draggedOrderItem) return;
+
+        this.removeDraggedItemFromSource();
+        this.orderAlerts = [...this.orderAlerts, this.draggedOrderItem];
+        this.draggedOrderItem = null;
+        this.draggedSourceGroupId = null;
+        this.cdr.detectChanges();
+    }
+
+    moveItemToPool(item: RepositionOrderItem, groupId: number): void {
+        const group = this.orderGroups.find(entry => entry.id === groupId);
+        if (!group) return;
+
+        group.items = group.items.filter(entry => entry.productId !== item.productId);
+        this.orderAlerts = [...this.orderAlerts, item];
+        this.cdr.detectChanges();
+    }
+
+    private removeDraggedItemFromSource(): void {
+        if (!this.draggedOrderItem) return;
+
+        if (this.draggedSourceGroupId === 'pool') {
+            this.orderAlerts = this.orderAlerts.filter(item => item.productId !== this.draggedOrderItem?.productId);
+            return;
+        }
+
+        if (typeof this.draggedSourceGroupId === 'number') {
+            const sourceGroup = this.orderGroups.find(group => group.id === this.draggedSourceGroupId);
+            if (sourceGroup) {
+                sourceGroup.items = sourceGroup.items.filter(item => item.productId !== this.draggedOrderItem?.productId);
+            }
+        }
+    }
 
     getOrderQuantity(a: StockAlertDTO): number {
         const daily = a.projectedConsumption / 14;
         return Math.ceil(Math.max(0, daily * this.daysAhead - a.currentStock - a.pendingOrderQuantity) * 100) / 100;
     }
 
-    getOrderTotal(): number {
-        return this.orderAlerts.reduce((sum, a) => {
+    getOrderTotal(items: Array<StockAlertDTO | RepositionOrderItem> = this.orderAlerts): number {
+        return items.reduce((sum, a) => {
             const qty = this.getOrderQuantity(a);
             return sum + (qty > 0 ? qty * (a.unitPrice || 0) : 0);
         }, 0);
     }
 
-    confirmCreateOrder(): void {
-        const details = this.orderAlerts.map(a => ({ productId: a.productId, quantity: this.getOrderQuantity(a), unitPrice: a.unitPrice || 0 })).filter(d => d.quantity > 0);
-        if (!details.length) { this.messageService.showError('No hay cantidades a pedir.'); return; }
+    getGroupTotal(group: RepositionOrderGroup): number {
+        return this.getOrderTotal(group.items);
+    }
 
-        const userId = this.authService.getUserId() || 1; // Fallback to 1 if no auth logic binds
-        const payload: any = { userId, details };
+    getOrderGrandTotal(): number {
+        return this.orderGroups.reduce((sum, group) => sum + this.getGroupTotal(group), 0);
+    }
+
+    getAssignedItemCount(): number {
+        return this.orderGroups.reduce((sum, group) => sum + group.items.length, 0);
+    }
+
+    getPendingItemCount(): number {
+        return this.orderAlerts.length;
+    }
+
+    async confirmCreateOrder(): Promise<void> {
+        const payloads = this.buildOrderPayloads();
+        if (!payloads.length) {
+            this.messageService.showError('Asigna los productos a al menos una orden con cantidades válidas.');
+            return;
+        }
+
+        if (this.orderAlerts.length > 0) {
+            this.messageService.showError('Arrastra todos los productos a una orden antes de crearla.');
+            return;
+        }
+
+        const totalOrders = payloads.length;
+        const totalItems = payloads.reduce((sum, payload) => sum + payload.details.length, 0);
+        const confirmed = await this.messageService.confirm(
+            'Confirmar órdenes de reposición',
+            `Se crearán ${totalOrders} orden${totalOrders > 1 ? 'es' : ''} con ${totalItems} producto${totalItems > 1 ? 's' : ''}. ¿Continuar?`
+        );
+
+        if (!confirmed) return;
 
         this.creatingOrder = true;
-        this.orderService.create(payload).subscribe({
-            next: () => { this.messageService.showSuccess('Orden creada correctamente'); this.closeOrderModal(); this.creatingOrder = false; this.loadAlerts(); this.cdr.detectChanges(); },
-            error: (err: any) => { this.messageService.showError(err.error?.message || 'Error al crear la orden'); this.creatingOrder = false; this.cdr.detectChanges(); }
+        forkJoin(payloads.map(payload => this.orderService.create(payload))).pipe(
+            finalize(() => {
+                this.creatingOrder = false;
+                this.cdr.detectChanges();
+            })
+        ).subscribe({
+            next: () => {
+                this.messageService.showSuccess('Órdenes creadas correctamente');
+                this.closeOrderModal();
+                this.loadAlerts();
+            },
+            error: (err: any) => {
+                this.messageService.showError(err.error?.message || 'Error al crear las órdenes');
+            }
         });
+    }
+
+    private buildOrderPayloads(): any[] {
+        const userId = this.authService.getUserId() || 1;
+        return this.orderGroups
+            .map(group => {
+                const details = group.items
+                    .map(item => ({
+                        productId: item.productId,
+                        quantity: this.getOrderQuantity(item),
+                        unitPrice: item.unitPrice || 0
+                    }))
+                    .filter(detail => detail.quantity > 0);
+
+                return {
+                    userId,
+                    supplierId: group.supplierId || undefined,
+                    details
+                };
+            })
+            .filter(payload => payload.details.length > 0);
     }
 
     // ================================================================
@@ -529,7 +773,21 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             daysOfCoverage: Math.round(daysOfCoverage)
         };
         this.showPredictionMobileModal = true;
-        this.loadModalChartData(prediction.productId, currentStock, dailyAvg);
+        this.loadAlertChartData({
+            productId: prediction.productId,
+            productName: prediction.productName,
+            unit: prediction.projectedConsumptionUnit,
+            currentStock,
+            pendingOrderQuantity: 0,
+            projectedConsumption: prediction.projectedConsumption,
+            effectiveGap: currentStock - prediction.projectedConsumption,
+            estimatedDaysRemaining: Math.max(0, Math.round(daysOfCoverage)),
+            severity: 'LOW',
+            resolution: 'OK',
+            message: '',
+            topConsumingRecipes: [],
+            alertType: 'PREDICTION'
+        }, dailyAvg);
     }
 
     closePredictionMobileModal(): void {
@@ -537,133 +795,27 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         this.selectedPredictionForMobile = null;
     }
 
-    loadModalChartData(productId: number, currentStock: number, dailyAverage: number): void {
+    loadAlertChartData(alert: StockAlertDTO, dailyAverage = alert.projectedConsumption / 14): void {
         this.loadingModalChart = true;
         this.stockOutDay = null;
         this.modalChartData = { labels: [], datasets: [] };
+        this.modalChartMode = (alert.alertType || 'PREDICTION').toLowerCase() as AlertChartMode;
+        this.modalChartTitle = alert.alertType === 'EXPIRATION'
+            ? 'Análisis de Caducidad de Lotes'
+            : alert.alertType === 'COMBINED'
+                ? 'Análisis Combinado de Consumo y Caducidad'
+                : 'Análisis de Consumo y Proyección de Stock';
         this.cdr.markForCheck();
 
         forkJoin({
-            history: this.stockLedgerService.getConsumptionBreakdown(productId, { lastDays: 14 }),
-            forecast: this.stockAlertService.getDailyForecastByProduct(productId).pipe(
+            history: this.stockLedgerService.getConsumptionBreakdown(alert.productId, { lastDays: 14 }),
+            forecast: this.stockAlertService.getDailyForecastByProduct(alert.productId).pipe(
                 catchError(() => of(null as DailyForecastResponse | null))
             )
         }).subscribe({
             next: ({ history, forecast }: { history: ConsumptionBreakdownDTO, forecast: DailyForecastResponse | null }) => {
                 this.ngZone.run(() => {
-                    const labels: string[] = [];
-                    const historyData: (number | null)[] = [];
-                    const predictionData: (number | null)[] = [];
-                    const stockLevelData: (number | null)[] = [];
-
-                    // 1. Process History (Last 14 days)
-                    history.breakdown.forEach((day: any) => {
-                        labels.push(new Date(day.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
-                        historyData.push(day.consumed);
-                        predictionData.push(null);
-                        stockLevelData.push(null);
-                    });
-
-                    // 2. Add Current Day Marker (Today)
-                    const today = new Date();
-                    const todayDateStr = today.toISOString().split('T')[0];
-                    const existingToday = history.breakdown.find((d: any) => d.date === todayDateStr);
-                    
-                    labels.push('Hoy');
-                    historyData.push(existingToday ? existingToday.consumed : 0); 
-                    predictionData.push(dailyAverage);
-                    stockLevelData.push(currentStock);
-
-                    // 3. Build expiration map: { YYYY-MM-DD: quantity }
-                    // Agrupa todas las caducidades por fecha para saber cuánto stock se pierde cada día
-                    const expirationMap = new Map<string, number>();
-                    if (forecast?.activeBatches && forecast.activeBatches.length > 0) {
-                        forecast.activeBatches.forEach(batch => {
-                            if (batch.expirationDate && !batch.depleted) {
-                                const qty = expirationMap.get(batch.expirationDate) || 0;
-                                expirationMap.set(batch.expirationDate, qty + batch.remainingQuantity);
-                            }
-                        });
-                    }
-
-                    // 4. Process Forecast (Fallback to 14 days if null or empty)
-                    // IMPORTANTE: Rellenar TODOS los días (zero-fill) aunque no haya datos
-                    let tempStock = currentStock;
-                    let outDayFound = false;
-                    
-                    const forecastValues = (forecast && forecast.dailyForecast && forecast.dailyForecast.length > 0) 
-                        ? forecast.dailyForecast 
-                        : Array(14).fill(dailyAverage);
-
-                    // Generar todos los días del horizonte, incluso si no hay consumo
-                    for (let i = 0; i < forecastValues.length; i++) {
-                        const date = new Date();
-                        date.setDate(today.getDate() + i + 1);
-                        const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD para comparar con expirationDate
-                        
-                        // Label: mostrar todos los días (zero-fill)
-                        labels.push(date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
-                        
-                        historyData.push(null);
-                        const dailyConsumption = forecastValues[i] || 0;
-                        predictionData.push(dailyConsumption);
-                        
-                        // Aplicar consumo
-                        tempStock = Math.max(0, tempStock - dailyConsumption);
-                        
-                        // Aplicar expiración: si hay lotes que caducan hoy, restarlos del stock
-                        const expiringQty = expirationMap.get(dateStr);
-                        if (expiringQty !== undefined && tempStock > 0) {
-                            tempStock = Math.max(0, tempStock - expiringQty);
-                        }
-                        
-                        stockLevelData.push(tempStock);
-
-                        // Marcar el primer día en que stock llega a 0
-                        if (tempStock === 0 && !outDayFound) {
-                            this.stockOutDay = date.toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
-                            outDayFound = true;
-                        }
-                    }
-
-                    this.modalChartData = {
-                        labels,
-                        datasets: [
-                            {
-                                type: 'line',
-                                label: 'Stock Estimado',
-                                data: stockLevelData,
-                                borderColor: '#0ea5e9',
-                                backgroundColor: 'transparent',
-                                borderWidth: 3,
-                                pointBackgroundColor: '#fff',
-                                pointBorderColor: '#0ea5e9',
-                                pointRadius: 5,
-                                pointHoverRadius: 7,
-                                tension: 0.1,
-                                order: 1,
-                                spanGaps: true
-                            } as any,
-                            {
-                                type: 'bar',
-                                label: 'Consumo Histórico',
-                                data: historyData,
-                                backgroundColor: 'rgba(54, 162, 235, 0.4)',
-                                borderColor: 'rgba(54, 162, 235, 1)',
-                                borderWidth: 1,
-                                order: 2
-                            } as any,
-                            {
-                                type: 'bar',
-                                label: 'Consumo Proyectado',
-                                data: predictionData,
-                                backgroundColor: 'rgba(255, 99, 132, 0.3)',
-                                borderColor: 'rgba(255, 99, 132, 1)',
-                                borderWidth: 1,
-                                order: 2
-                            } as any
-                        ]
-                    };
+                    this.modalChartData = this.buildAlertChartData(alert, history, forecast, dailyAverage);
 
                     this.loadingModalChart = false;
                     this.cdr.markForCheck();
@@ -675,6 +827,170 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 this.cdr.markForCheck();
             }
         });
+    }
+
+    private buildAlertChartData(
+        alert: StockAlertDTO,
+        history: ConsumptionBreakdownDTO,
+        forecast: DailyForecastResponse | null,
+        dailyAverage: number
+    ): ChartData<'line' | 'bar'> {
+        if ((alert.alertType || 'PREDICTION') === 'EXPIRATION') {
+            return this.buildExpirationChartData(alert, forecast);
+        }
+
+        return this.buildConsumptionChartData(alert, history, forecast, dailyAverage, alert.alertType === 'COMBINED');
+    }
+
+    private buildConsumptionChartData(
+        alert: StockAlertDTO,
+        history: ConsumptionBreakdownDTO,
+        forecast: DailyForecastResponse | null,
+        dailyAverage: number,
+        includeExpirations: boolean
+    ): ChartData<'line' | 'bar'> {
+        const labels: string[] = [];
+        const historyData: (number | null)[] = [];
+        const predictionData: (number | null)[] = [];
+        const stockLevelData: (number | null)[] = [];
+
+        history.breakdown.forEach((day: any) => {
+            labels.push(new Date(day.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
+            historyData.push(day.consumed);
+            predictionData.push(null);
+            stockLevelData.push(null);
+        });
+
+        const today = new Date();
+        const todayDateStr = today.toISOString().split('T')[0];
+        const existingToday = history.breakdown.find((d: any) => d.date === todayDateStr);
+
+        labels.push('Hoy');
+        historyData.push(existingToday ? existingToday.consumed : 0);
+        predictionData.push(dailyAverage);
+        stockLevelData.push(alert.currentStock);
+
+        const expirationMap = new Map<string, number>();
+        if (includeExpirations && forecast?.activeBatches?.length) {
+            forecast.activeBatches.forEach(batch => {
+                if (batch.expirationDate && !batch.depleted) {
+                    const qty = expirationMap.get(batch.expirationDate) || 0;
+                    expirationMap.set(batch.expirationDate, qty + batch.remainingQuantity);
+                }
+            });
+        }
+
+        let tempStock = alert.currentStock;
+        let outDayFound = false;
+        const forecastValues = forecast?.dailyForecast?.length ? forecast.dailyForecast : Array(14).fill(dailyAverage);
+
+        for (let i = 0; i < forecastValues.length; i++) {
+            const date = new Date();
+            date.setDate(today.getDate() + i + 1);
+            const dateStr = date.toISOString().split('T')[0];
+
+            labels.push(date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
+            historyData.push(null);
+            const dailyConsumption = forecastValues[i] || 0;
+            predictionData.push(dailyConsumption);
+
+            tempStock = Math.max(0, tempStock - dailyConsumption);
+
+            const expiringQty = expirationMap.get(dateStr);
+            if (expiringQty !== undefined && tempStock > 0) {
+                tempStock = Math.max(0, tempStock - expiringQty);
+            }
+
+            stockLevelData.push(tempStock);
+
+            if (tempStock === 0 && !outDayFound) {
+                this.stockOutDay = date.toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
+                outDayFound = true;
+            }
+        }
+
+        return {
+            labels,
+            datasets: [
+                {
+                    type: 'line',
+                    label: includeExpirations ? 'Stock Estimado con Caducidades' : 'Stock Estimado',
+                    data: stockLevelData,
+                    borderColor: includeExpirations ? '#f59e0b' : '#0ea5e9',
+                    backgroundColor: 'transparent',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: includeExpirations ? '#f59e0b' : '#0ea5e9',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    tension: 0.1,
+                    order: 1,
+                    spanGaps: true
+                } as any,
+                {
+                    type: 'bar',
+                    label: 'Consumo Histórico',
+                    data: historyData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.4)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                    order: 2
+                } as any,
+                {
+                    type: 'bar',
+                    label: 'Consumo Proyectado',
+                    data: predictionData,
+                    backgroundColor: includeExpirations ? 'rgba(245, 158, 11, 0.28)' : 'rgba(255, 99, 132, 0.3)',
+                    borderColor: includeExpirations ? 'rgba(245, 158, 11, 1)' : 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1,
+                    order: 2
+                } as any
+            ]
+        };
+    }
+
+    private buildExpirationChartData(alert: StockAlertDTO, forecast: DailyForecastResponse | null): ChartData<'line' | 'bar'> {
+        const batches = (forecast?.activeBatches || [])
+            .filter(batch => batch.expirationDate && !batch.depleted)
+            .slice()
+            .sort((left, right) => left.expirationDate!.localeCompare(right.expirationDate!));
+
+        const labels = batches.map(batch => new Date(batch.expirationDate as string).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
+        const quantities = batches.map(batch => batch.remainingQuantity);
+        const stockLine = batches.map(() => alert.currentStock);
+
+        if (batches.length > 0) {
+            this.stockOutDay = batches[0].expirationDate
+                ? new Date(batches[0].expirationDate).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })
+                : null;
+        }
+
+        return {
+            labels: labels.length > 0 ? labels : ['Sin lotes próximos'],
+            datasets: [
+                {
+                    type: 'bar',
+                    label: 'Cantidad por caducidad',
+                    data: labels.length > 0 ? quantities : [0],
+                    backgroundColor: 'rgba(245, 158, 11, 0.35)',
+                    borderColor: 'rgba(245, 158, 11, 1)',
+                    borderWidth: 1,
+                    order: 2
+                } as any,
+                {
+                    type: 'line',
+                    label: 'Stock actual',
+                    data: labels.length > 0 ? stockLine : [alert.currentStock],
+                    borderColor: '#22c55e',
+                    backgroundColor: 'transparent',
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    tension: 0.1,
+                    order: 1,
+                    spanGaps: true
+                } as any
+            ]
+        };
     }
 
     formatDate(dateStr: string): string {
