@@ -8,6 +8,7 @@ import { AllergenService } from '../../../../core/services/allergen.service';
 import { MessageService } from '../../../../core/services/message.service';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
+import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.component';
 
 interface FormComponent {
   productId: number;
@@ -18,7 +19,7 @@ interface FormComponent {
 @Component({
   selector: 'app-recipe-create-modal',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent],
+  imports: [FormsModule, BaseModalComponent, BarcodeScannerComponent],
   templateUrl: './recipe-create-modal.component.html',
   styleUrl: './recipe-create-modal.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -57,6 +58,8 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
   productSearchResults: Product[] = [];
   showProductDropdown: { [key: number]: boolean } = {};
   activeComponentIndex: number | null = null;
+  showScannerModal = false;
+  scannerComponentIndex: number | null = null;
   private searchSubject = new Subject<{ query: string, index: number }>();
 
   ngOnInit(): void {
@@ -285,6 +288,27 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
     });
     this.activeComponentIndex = null;
     this.cdr.markForCheck();
+  }
+
+  openBarcodeScanner(index: number): void {
+    this.scannerComponentIndex = index;
+    this.showScannerModal = true;
+  }
+
+  closeBarcodeScanner(): void {
+    this.showScannerModal = false;
+    this.scannerComponentIndex = null;
+  }
+
+  onScannedProductFound(product: Product): void {
+    if (this.scannerComponentIndex === null || this.scannerComponentIndex >= this.formComponents.length) {
+      this.closeBarcodeScanner();
+      return;
+    }
+
+    this.selectProduct(product.id, this.scannerComponentIndex);
+    this.messageService.showSuccess(`Producto añadido por escaneo: ${product.name}`);
+    this.closeBarcodeScanner();
   }
 
   closeModal(): void {

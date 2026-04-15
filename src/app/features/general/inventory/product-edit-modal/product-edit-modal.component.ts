@@ -4,11 +4,12 @@ import { Product, ProductRequest } from '../../../../shared/models/product.model
 import { Supplier } from '../../../../shared/models/supplier.model';
 import { MessageService } from '../../../../core/services/message.service';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
+import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.component';
 
 @Component({
   selector: 'app-product-edit-modal',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent],
+  imports: [FormsModule, BaseModalComponent, BarcodeScannerComponent],
   templateUrl: './product-edit-modal.component.html',
   styleUrl: './product-edit-modal.component.css'
 })
@@ -25,6 +26,7 @@ export class ProductEditModalComponent implements OnChanges {
   @ViewChild('editForm') editForm?: NgForm;
 
   private messageService = inject(MessageService);
+  showScannerModal = false;
 
   formData = {
     name: '',
@@ -126,5 +128,24 @@ export class ProductEditModalComponent implements OnChanges {
 
   getToggleButtonText(): string {
     return this.showingHidden ? 'Mostrar' : 'Ocultar';
+  }
+
+  openBarcodeScanner(): void {
+    this.showScannerModal = true;
+  }
+
+  closeBarcodeScanner(): void {
+    this.showScannerModal = false;
+  }
+
+  onProductScanned(product: Product): void {
+    this.formData.productCode = (product.productCode || '').trim();
+    this.showScannerModal = false;
+
+    if (this.formData.productCode) {
+      this.messageService.showSuccess(`Codigo detectado: ${this.formData.productCode}`);
+    } else {
+      this.messageService.showWarning('El producto escaneado no trae codigo asignado.');
+    }
   }
 }
