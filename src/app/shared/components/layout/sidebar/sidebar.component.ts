@@ -57,6 +57,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     { label: 'Recetas', route: '/admin-panel/recipes', icon: 'menu_book' },
     { label: 'Datos Maestros', route: '/admin-panel/master-data', icon: 'database', section: 'GESTIÓN' },
     { label: 'Usuarios', route: '/admin-panel/users', icon: 'people' },
+    { label: 'Notificaciones', route: '/admin-panel/notifications', icon: 'notifications' },
     { label: 'Configuraciones', route: '/admin-panel/settings', icon: 'settings' },
     { label: 'Trazabilidad', route: '/admin-panel/traceability', icon: 'shield', section: 'TRAZABILIDAD' }
   ];

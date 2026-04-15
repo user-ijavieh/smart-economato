@@ -90,16 +90,19 @@ export class AllergensManagementComponent implements OnInit {
         if (term) {
             // Use exact search endpoint
             this.allergenService.searchByName(term).pipe(
-                map(allergen => ({
-                    content: [allergen],
-                    totalElements: 1,
-                    totalPages: 1,
-                    size: 1,
+                map(allergen => {
+                    const content = allergen ? [allergen] : [];
+                    return {
+                    content,
+                    totalElements: content.length,
+                    totalPages: content.length > 0 ? 1 : 0,
+                    size: content.length || 1,
                     number: 0,
                     first: true,
                     last: true,
-                    empty: false
-                })),
+                    empty: content.length === 0
+                };
+                }),
                 catchError(() => of({
                     content: [],
                     totalElements: 0,
@@ -115,7 +118,9 @@ export class AllergensManagementComponent implements OnInit {
                     this.cdr.markForCheck();
                 })
             ).subscribe((pageData: any) => {
-                this.allergens = pageData.content;
+                this.allergens = (pageData.content ?? []).filter((a: Allergen | null | undefined): a is Allergen =>
+                    !!a && typeof a.name === 'string'
+                );
                 this.serverTotalElements = pageData.totalElements;
                 this.serverTotalPages = pageData.totalPages;
                 this.applyFilter();
@@ -129,7 +134,9 @@ export class AllergensManagementComponent implements OnInit {
                 })
             ).subscribe({
                 next: (pageData: Page<Allergen>) => {
-                    this.allergens = pageData.content;
+                    this.allergens = (pageData.content ?? []).filter((a: Allergen | null | undefined): a is Allergen =>
+                        !!a && typeof a.name === 'string'
+                    );
                     this.serverTotalElements = pageData.totalElements;
                     this.serverTotalPages = pageData.totalPages;
                     this.applyFilter();
@@ -160,19 +167,20 @@ export class AllergensManagementComponent implements OnInit {
 
     applyFilter(): void {
         const term = this.searchTerm.trim().toLowerCase();
+        const safeAllergens = this.allergens.filter((a): a is Allergen => !!a && typeof a.name === 'string');
         let result = term
-            ? this.allergens.filter(a => a.name.toLowerCase().includes(term))
-            : [...this.allergens];
+            ? safeAllergens.filter(a => a.name.toLowerCase().includes(term))
+            : [...safeAllergens];
             
         // Sorting fallback (essential for filtering results or backend delay)
         const factor = this.sortDir === 'asc' ? 1 : -1;
         result.sort((a, b) => {
-            const valA = (a as any)[this.sortColumn];
-            const valB = (b as any)[this.sortColumn];
+            const valA = ((a as any)?.[this.sortColumn] ?? '');
+            const valB = ((b as any)?.[this.sortColumn] ?? '');
             if (typeof valA === 'string' && typeof valB === 'string') {
                 return valA.localeCompare(valB) * factor;
             }
-            return ((valA as number) - (valB as number)) * factor;
+            return ((Number(valA) || 0) - (Number(valB) || 0)) * factor;
         });
         
         this.filteredAllergens = result;
