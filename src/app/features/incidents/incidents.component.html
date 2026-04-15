@@ -448,6 +448,10 @@
         </div>
         }
 
+        @if (compressingChatFile) {
+        <div class="chat-typing-indicator">Optimizando imagen...</div>
+        }
+
         @if (typingIndicatorText()) {
         <div class="chat-typing-indicator">{{ typingIndicatorText() }}</div>
         }
@@ -455,19 +459,19 @@
         <div class="chat-composer">
           <input #chatFileInput type="file" class="chat-file-input" (change)="onChatFileSelected($event)" />
           <input #chatCameraInput type="file" class="chat-file-input" accept="image/*" capture="environment" (change)="onChatFileSelected($event)" />
-          <textarea name="chatContent" [(ngModel)]="chatContent" (ngModelChange)="onChatInputChanged($event)" (blur)="onChatInputBlur()" rows="1" placeholder="Mensaje" (keydown)="onChatKeydown($event)"></textarea>
-          <button class="chat-action-btn" type="button" (click)="chatFileInput.click()" title="Adjuntar archivo" [disabled]="sendingChat">
+          <textarea name="chatContent" [(ngModel)]="chatContent" (ngModelChange)="onChatInputChanged($event)" (blur)="onChatInputBlur()" rows="1" placeholder="Mensaje" (keydown)="onChatKeydown($event)" [disabled]="sendingChat || compressingChatFile"></textarea>
+          <button class="chat-action-btn" type="button" (click)="chatFileInput.click()" title="Adjuntar archivo" [disabled]="sendingChat || compressingChatFile">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
             </svg>
           </button>
-          <button class="chat-action-btn" type="button" (click)="chatCameraInput.click()" title="Tomar foto" [disabled]="sendingChat">
+          <button class="chat-action-btn" type="button" (click)="chatCameraInput.click()" title="Tomar foto" [disabled]="sendingChat || compressingChatFile">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
               <circle cx="12" cy="13" r="3"/>
             </svg>
           </button>
-          <button class="chat-action-btn chat-send-btn" type="button" (click)="sendChatMessage()" [disabled]="sendingChat" title="Enviar">
+          <button class="chat-action-btn chat-send-btn" type="button" (click)="sendChatMessage()" [disabled]="sendingChat || compressingChatFile" title="Enviar">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="22" y1="2" x2="11" y2="13"/>
               <polygon points="22 2 15 22 11 13 2 9 22 2"/>
