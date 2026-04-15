@@ -36,6 +36,7 @@ export interface OrderRequest {
 export interface LotReceptionRequest {
   quantity: number;
   expirationDate: string | null;
+  batchCode?: string | null;
 }
 
 export interface OrderReceptionRequest {

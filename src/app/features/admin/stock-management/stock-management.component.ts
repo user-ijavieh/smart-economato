@@ -12,6 +12,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { MessageService } from '../../../core/services/message.service';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { ProductBatchService } from '../../../core/services/product-batch.service';
+import { BatchTypeaheadDTO } from '../../../core/services/product-batch.service';
 import { SupplierService } from '../../../core/services/supplier.service';
 import {
     AlertResolution,
@@ -217,9 +218,13 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     adjustmentType: 'AJUSTE' | 'MERMA' | 'ENTRADA' | 'SALIDA' = 'AJUSTE';
     adjustmentDescription = '';
     adjustmentBatchId: number | null = null;
+    adjustmentBatchReference = '';
     adjustmentExpirationDate: string = '';
     activeBatchesForAdjustment: ProductBatchResponseDTO[] = [];
+    batchTypeaheadSuggestions: BatchTypeaheadDTO[] = [];
     submittingAdjustment = false;
+    private adjustmentBatchSearchSubject = new Subject<string>();
+    private adjustmentBatchSearchSubscription?: any;
     
     get todayStr(): string {
         return new Date().toISOString().split('T')[0];
@@ -252,11 +257,21 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             this.ledgerProductsPage = 0;
             this.loadLedgerProducts(0, false);
         });
+
+        this.adjustmentBatchSearchSubscription = this.adjustmentBatchSearchSubject.pipe(
+            debounceTime(250),
+            distinctUntilChanged()
+        ).subscribe((query: string) => {
+            this.loadBatchTypeahead(query);
+        });
     }
 
     ngOnDestroy(): void {
         if (this.searchSubscription) {
             this.searchSubscription.unsubscribe();
+        }
+        if (this.adjustmentBatchSearchSubscription) {
+            this.adjustmentBatchSearchSubscription.unsubscribe();
         }
     }
 
@@ -1387,7 +1402,9 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         this.adjustmentType = 'AJUSTE';
         this.adjustmentDescription = '';
         this.adjustmentBatchId = null;
+        this.adjustmentBatchReference = '';
         this.adjustmentExpirationDate = '';
+        this.batchTypeaheadSuggestions = [];
         this.productBatchService.getActiveBatches(this.selectedProductId).subscribe({
             next: (batches) => {
                 this.activeBatchesForAdjustment = batches;
@@ -1400,13 +1417,63 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     closeManualAdjustmentModal(): void {
         this.showManualAdjustmentModal = false;
         this.activeBatchesForAdjustment = [];
+        this.batchTypeaheadSuggestions = [];
+        this.adjustmentBatchReference = '';
+    }
+
+    onAdjustmentBatchReferenceInput(): void {
+        this.adjustmentBatchId = null;
+        this.adjustmentBatchSearchSubject.next(this.adjustmentBatchReference);
+    }
+
+    selectBatchSuggestion(suggestion: BatchTypeaheadDTO): void {
+        this.adjustmentBatchId = suggestion.id;
+        this.adjustmentBatchReference = suggestion.batchCode?.trim()
+            ? suggestion.batchCode.trim()
+            : `#${suggestion.id}`;
+        this.batchTypeaheadSuggestions = [];
+        this.cdr.detectChanges();
+    }
+
+    onAdjustmentBatchReferenceFocus(): void {
+        const clean = this.adjustmentBatchReference.trim();
+        if (!clean) {
+            this.batchTypeaheadSuggestions = [...this.activeBatchesForAdjustment];
+            this.cdr.detectChanges();
+            return;
+        }
+
+        this.onAdjustmentBatchReferenceInput();
+    }
+
+    private loadBatchTypeahead(query: string): void {
+        const clean = query?.trim() || '';
+        if (!this.selectedProductId || clean.length < 1) {
+            this.batchTypeaheadSuggestions = [];
+            this.cdr.detectChanges();
+            return;
+        }
+
+        this.productBatchService.getBatchTypeahead(clean, this.selectedProductId, 8).subscribe({
+            next: (suggestions) => {
+                this.batchTypeaheadSuggestions = suggestions;
+                this.cdr.detectChanges();
+            },
+            error: () => {
+                this.batchTypeaheadSuggestions = [];
+                this.cdr.detectChanges();
+            }
+        });
     }
 
     submitManualAdjustment(): void {
         if (!this.selectedProductId || !this.absoluteAdjustmentQuantity || !this.adjustmentDescription) return;
         
         // If no batch is selected and we're adding stock, expiration date is mandatory (Backend DTO requirement)
-        if (!this.adjustmentBatchId && this.adjustmentDirection === 'ENTRY' && !this.adjustmentExpirationDate) {
+        if (!this.adjustmentBatchId
+            && this.adjustmentBatchReference.trim().length === 0
+            && this.adjustmentDirection === 'ENTRY'
+            && !this.adjustmentExpirationDate) {
             this.messageService.showError('La fecha de caducidad es obligatoria para un nuevo lote.');
             return;
         }
@@ -1422,7 +1489,12 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             movementType: this.adjustmentType,
             description: this.adjustmentDescription,
             batchId: this.adjustmentBatchId || undefined,
-            expirationDate: (!this.adjustmentBatchId && this.adjustmentDirection === 'ENTRY') ? this.adjustmentExpirationDate : undefined
+            batchReference: (!this.adjustmentBatchId && this.adjustmentBatchReference.trim().length > 0)
+                ? this.adjustmentBatchReference.trim()
+                : undefined,
+            expirationDate: (!this.adjustmentBatchId
+                && this.adjustmentBatchReference.trim().length === 0
+                && this.adjustmentDirection === 'ENTRY') ? this.adjustmentExpirationDate : undefined
         };
 
         this.submittingAdjustment = true;

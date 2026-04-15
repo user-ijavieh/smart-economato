@@ -4,6 +4,15 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ProductBatchResponseDTO } from '../../shared/models/product-batch.model';
 
+export interface BatchTypeaheadDTO {
+  id: number;
+  batchCode?: string | null;
+  productId: number;
+  productName: string;
+  expirationDate: string | null;
+  remainingQuantity: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ProductBatchService {
   private http = inject(HttpClient);
@@ -42,7 +51,15 @@ export class ProductBatchService {
     return this.http.post<void>(`${this.url}/${batchId}/withdraw`, {});
   }
 
-  updateBatchExpiration(batchId: number, data: { expirationDate: string; reason?: string }): Observable<void> {
+  getBatchTypeahead(query: string, productId?: number, limit: number = 10): Observable<BatchTypeaheadDTO[]> {
+    let params = new HttpParams().set('query', query).set('limit', limit.toString());
+    if (productId !== undefined && productId !== null) {
+      params = params.set('productId', productId.toString());
+    }
+    return this.http.get<BatchTypeaheadDTO[]>(`${this.url}/typeahead`, { params });
+  }
+
+  updateBatchExpiration(batchId: number, data: { expirationDate: string; reason?: string; batchCode?: string }): Observable<void> {
     return this.http.patch<void>(`${this.url}/${batchId}/expiration`, data);
   }
 }

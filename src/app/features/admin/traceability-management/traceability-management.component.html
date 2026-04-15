@@ -239,7 +239,7 @@
           <strong>Productos en Cuarentena:</strong>
           <div class="quarantine-tags">
             @if (selectedCrisis.quarantinedProducts | keyvalue; as quarantinedProducts) {
-              @for (item of quarantinedProducts; track item.key) {<span class="q-tag">{{ item.key }}: {{ item.value }}</span>}
+              @for (item of quarantinedProducts; track item.key) {<span class="q-tag">{{ item.key }}</span>}
             }
           </div>
         </div>
@@ -251,6 +251,9 @@
               <div class="batch-card">
                 <div class="batch-card-header">
                   <span class="batch-id">#{{ batch.batchId }}</span>
+                  @if (batch.batchCode) {
+                    <span class="chip">{{ batch.batchCode }}</span>
+                  }
                   <div class="batch-badges">
                     @if (batch.depleted) { <span class="status-badge admin badge-depleted">RETIRADO</span> }
                     @if (batch.expired) { <span class="status-badge warning badge-expired">CADUCADO</span> }
