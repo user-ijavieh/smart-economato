@@ -605,6 +605,8 @@ tr.depleted-row:hover td { background: var(--theme-surface-glass-hover); }
   font-weight: 700;
   color: var(--theme-text-primary);
   font-size: 0.95rem;
+  display: block;
+  margin-bottom: 4px;
 }
 /** ===== SKELETON LOADING PATTERN ===== */
 .skeleton {
