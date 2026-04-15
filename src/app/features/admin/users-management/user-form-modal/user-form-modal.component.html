@@ -1,4 +1,4 @@
-<app-base-modal [title]="title" size="md" (closed)="onClose()">
+<app-base-modal [title]="title" size="md" [closeOnBackdrop]="false" (closed)="onClose()">
     <!-- Credentials display after creation -->
     @if (showCredentials) {
     <div class="credentials-result">

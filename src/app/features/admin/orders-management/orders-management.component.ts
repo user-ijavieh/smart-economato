@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService } from '../../../core/services/order.service';
 import { OrderAuditService } from '../../../core/services/order-audit.service';
 import { KitchenService } from '../../../core/services/kitchen.service';
@@ -39,6 +40,8 @@ export class OrdersManagementComponent implements OnInit {
   private kitchenService = inject(KitchenService);
   private supplierService = inject(SupplierService);
   private userService = inject(UserService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
   messageService = inject(MessageService);
 
@@ -102,11 +105,26 @@ export class OrdersManagementComponent implements OnInit {
   savingStatus = false;
 
   private auditCache: Map<string, any> = new Map();
+  private pendingOrderIdFromQuery: number | null = null;
+  private hasProcessedOrderQueryParam = false;
 
   ngOnInit(): void {
+    this.consumeOrderIdFromQuery();
     this.loadAllOrders();
     this.loadSuppliers();
     this.loadUsers();
+  }
+
+  private consumeOrderIdFromQuery(): void {
+    const rawOrderId = this.route.snapshot.queryParamMap.get('orderId');
+    const orderId = rawOrderId ? Number(rawOrderId) : NaN;
+
+    if (!Number.isFinite(orderId) || orderId <= 0) {
+      return;
+    }
+
+    this.pendingOrderIdFromQuery = orderId;
+    this.hasProcessedOrderQueryParam = false;
   }
 
 
@@ -151,17 +169,20 @@ export class OrdersManagementComponent implements OnInit {
       })
     ).subscribe({
       next: (response) => {
+        const normalizeOrders = (orders: any[]): Order[] => orders.map(order => this.normalizeOrderPayload(order));
+
         if (Array.isArray(response)) {
-          this.orders = response;
+          this.orders = normalizeOrders(response);
         } else if (response?.orders) {
-          this.orders = response.orders;
+          this.orders = normalizeOrders(response.orders);
         } else if (response?.content) {
-          this.orders = response.content;
+          this.orders = normalizeOrders(response.content);
         } else {
           this.orders = [];
         }
         this.filteredAuditOrders = this.orders.filter(o => o.status === 'CONFIRMED');
         this.applyOrderFilters();
+        this.tryOpenOrderFromQuery();
         this.cdr.markForCheck();
       },
       error: () => {
@@ -500,10 +521,84 @@ export class OrdersManagementComponent implements OnInit {
 
   // ── Order Detail Modal ──
   openOrderDetail(order: Order): void {
-    this.selectedOrder = order;
+    this.selectedOrder = this.normalizeOrderPayload(order as any);
     this.showOrderDetailModal = true;
     this.selectedOrderVisibleLines = this.selectedOrderLinesStep;
     this.cdr.markForCheck();
+
+    this.orderService.getById(order.id).subscribe({
+      next: (fullOrder) => {
+        this.selectedOrder = this.normalizeOrderPayload(fullOrder as any);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        // Keep list data as fallback if detail endpoint fails.
+      }
+    });
+  }
+
+  shouldShowReceivedColumn(order: Order | null): boolean {
+    if (!order) return false;
+    if (order.status === 'CONFIRMED' || order.status === 'INCOMPLETE') return true;
+    return (order.details || []).some(d => d.quantityReceived !== undefined && d.quantityReceived !== null);
+  }
+
+  getReceivedQuantity(detail: any): number | null {
+    const raw = detail?.quantityReceived ?? detail?.quantityRecieved ?? detail?.quantity_received;
+    if (raw === undefined || raw === null || raw === '') return null;
+    const value = Number(raw);
+    return Number.isFinite(value) ? value : null;
+  }
+
+  private normalizeOrderPayload(order: any): Order {
+    const details = Array.isArray(order?.details)
+      ? order.details.map((detail: any) => ({
+          ...detail,
+          quantityReceived: this.getReceivedQuantity(detail)
+        }))
+      : [];
+
+    return {
+      ...order,
+      details
+    } as Order;
+  }
+
+  private tryOpenOrderFromQuery(): void {
+    if (this.pendingOrderIdFromQuery == null || this.hasProcessedOrderQueryParam) {
+      return;
+    }
+
+    this.hasProcessedOrderQueryParam = true;
+    const targetOrderId = this.pendingOrderIdFromQuery;
+    this.pendingOrderIdFromQuery = null;
+
+    const existingOrder = this.orders.find(order => order.id === targetOrderId);
+    if (existingOrder) {
+      this.openOrderDetail(existingOrder);
+      this.clearOrderIdQueryParam();
+      return;
+    }
+
+    this.orderService.getById(targetOrderId).subscribe({
+      next: (order) => {
+        this.openOrderDetail(order);
+        this.clearOrderIdQueryParam();
+      },
+      error: () => {
+        this.messageService.showError(`No se pudo cargar la orden #${targetOrderId}`);
+        this.clearOrderIdQueryParam();
+      }
+    });
+  }
+
+  private clearOrderIdQueryParam(): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { orderId: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
   }
 
   get visibleSelectedOrderDetails() {

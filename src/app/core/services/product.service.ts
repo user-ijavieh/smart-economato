@@ -43,6 +43,36 @@ export class ProductService {
     return this.http.get<Product>(`${this.url}/${id}`);
   }
 
+  getWithLedger(name = '', page = 0, size = 20, sort = 'name,asc'): Observable<Page<Product>> {
+    const params: any = {
+      page: page.toString(),
+      size: size.toString(),
+      sort
+    };
+
+    if (name.trim()) {
+      params.name = name.trim();
+    }
+
+    return this.http.get<any>(`${this.url}/with-ledger`, { params }).pipe(
+      map(response => {
+        const rawContent = response.content || (Array.isArray(response) ? response : []);
+        const mappedContent: Product[] = rawContent.map((item: any) => this.mapToProduct(item));
+
+        return {
+          content: mappedContent,
+          totalElements: response.totalElements ?? mappedContent.length,
+          totalPages: response.totalPages ?? 1,
+          size: response.size ?? size,
+          number: response.number ?? page,
+          first: response.first ?? true,
+          last: response.last ?? true,
+          empty: mappedContent.length === 0
+        };
+      })
+    );
+  }
+
   getByBarcode(barcode: string): Observable<Product> {
     return this.http.get<Product>(`${this.url}/codebar/${barcode}`);
   }

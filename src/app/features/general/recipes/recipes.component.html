@@ -258,6 +258,20 @@
   />
 }
 
+@if (showLoadWarningModal) {
+  <app-base-modal title="La carga está tardando más de lo normal" size="sm" [closeOnBackdrop]="false" (closed)="closeLoadWarningModal()">
+    <div class="draft-modal-body">
+      <p>Estamos teniendo una respuesta lenta al cargar recetas. Puedes seguir esperando o reintentar ahora.</p>
+    </div>
+    <div modal-footer>
+      <div class="draft-footer-actions">
+        <button class="draft-modal-btn draft-modal-btn-secondary" type="button" (click)="closeLoadWarningModal()">Seguir esperando</button>
+        <button class="draft-modal-btn draft-modal-btn-primary" type="button" (click)="retryLoadAfterWarning()">Reintentar</button>
+      </div>
+    </div>
+  </app-base-modal>
+}
+
 @if (showDraftDetailModal && selectedDraftForDetail) {
   <app-base-modal [title]="selectedDraftForDetail.name" size="lg" (closed)="closeDraftDetailModal()">
     <div class="draft-modal-body">

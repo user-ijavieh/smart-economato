@@ -31,6 +31,102 @@
   letter-spacing: 1px;
 }
 
+.reception-summary {
+  margin: 0 0 1.5rem;
+  padding: 1rem 1.2rem;
+  border-radius: 14px;
+  border: 1px solid var(--theme-border-glass);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--theme-surface-glass) 88%, transparent), color-mix(in srgb, var(--theme-surface-glass-active) 85%, transparent));
+  box-shadow: var(--theme-shadow-card);
+}
+
+.summary-title {
+  margin: 0 0 0.8rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--theme-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summary-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.8rem;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: 10px;
+  background: var(--theme-table-row-hover);
+  border: 1px solid color-mix(in srgb, var(--theme-border-glass) 60%, transparent);
+  transition: all 0.2s ease;
+}
+
+.summary-item:hover {
+  background: var(--theme-table-row-active);
+  border-color: var(--theme-border-glass);
+}
+
+.summary-product-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--theme-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.summary-quantity {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  justify-content: space-between;
+}
+
+.quantity-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--theme-text-secondary);
+  background: var(--theme-surface-glass);
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+}
+
+.comparison-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+}
+
+.comparison-symbol.symbol-match {
+  background: color-mix(in srgb, #10b981 20%, transparent);
+  color: #10b981;
+  border: 1.5px solid #10b981;
+}
+
+.comparison-symbol.symbol-missing {
+  background: color-mix(in srgb, #ef4444 20%, transparent);
+  color: #ef4444;
+  border: 1.5px solid #ef4444;
+}
+
+.comparison-symbol.symbol-excess {
+  background: color-mix(in srgb, #f59e0b 20%, transparent);
+  color: #f59e0b;
+  border: 1.5px solid #f59e0b;
+}
+
 .reception-search-bar {
   margin: 0 0 1rem;
   padding: 0.95rem 1rem 1rem;

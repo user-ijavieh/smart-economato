@@ -6,6 +6,23 @@
         <p><strong>Fecha Solicitud:</strong> {{ order.orderDate | date:'dd/MM/yyyy' }}</p>
       </div>
 
+      <div class="reception-summary">
+        <h3 class="summary-title">Resumen de Productos</h3>
+        <div class="summary-items">
+          @for (detail of order.details; track detail.productId) {
+            <div class="summary-item">
+              <div class="summary-product-name">{{ detail.productName }}</div>
+              <div class="summary-quantity">
+                <span class="quantity-value">{{ getFormattedQuantity(detail) }}</span>
+                <span class="comparison-symbol" [class.symbol-match]="getComparisonSymbol(detail) === '✓'" [class.symbol-missing]="getComparisonSymbol(detail) === '✕'" [class.symbol-excess]="getComparisonSymbol(detail) === '▲'">
+                  {{ getComparisonSymbol(detail) }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
       <div class="reception-search-bar">
         <div class="search-bar-header">
           <span class="search-bar-title">Buscar productos a procesar</span>

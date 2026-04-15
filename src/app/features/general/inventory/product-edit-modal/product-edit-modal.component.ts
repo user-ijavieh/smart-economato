@@ -118,7 +118,7 @@ export class ProductEditModalComponent implements OnChanges {
   }
 
   async onToggleHidden(): Promise<void> {
-    const action = this.showingHidden ? 'mostrar' : 'ocultar';
+    const action = this.showingHidden ? 'activar' : 'archivar';
     const confirmed = await this.messageService.confirm(
       `Confirmar ${action}`,
       `¿Estás seguro de que deseas ${action} "${this.product?.name}"?`
@@ -130,7 +130,7 @@ export class ProductEditModalComponent implements OnChanges {
   }
 
   getToggleButtonText(): string {
-    return this.showingHidden ? 'Mostrar' : 'Ocultar';
+    return this.showingHidden ? 'Activar' : 'Archivar';
   }
 
   openBarcodeScanner(): void {

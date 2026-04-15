@@ -181,6 +181,30 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 }
 .history-page-info { color: var(--theme-text-secondary); font-size: 0.95rem; }
 .history-pagination-actions { display: flex; gap: 10px; }
+.history-lazy-info {
+  margin-top: 12px;
+  color: var(--theme-text-secondary);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.history-load-more-wrap {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.history-end-message {
+  margin-top: 12px;
+  color: var(--theme-text-secondary);
+  font-size: 0.88rem;
+  text-align: center;
+  opacity: 0.85;
+}
+
+.history-row-mobile-clickable {
+  cursor: default;
+}
 .btn-cancel {
   background: var(--theme-surface-glass-hover);
   color: var(--theme-text-secondary);
@@ -200,6 +224,7 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
   display: flex; flex-direction: column;
   overflow: auto;
   color: var(--theme-text-primary);
+  margin: 0 auto;
 }
 .traceability-modal-container { max-width: 800px; }
 
@@ -353,6 +378,25 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 }
 .btn-lift:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3); }
 
+.crisis-modal-actions {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lift-crisis-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lift-crisis-actions .input-standard {
+  width: 120px;
+}
+
 /** ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .hide-on-mobile { display: none !important; }
@@ -360,7 +404,38 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
   .action-header { padding: 16px; flex-direction: column; align-items: stretch; }
   .search-group-standard { max-width: 100%; }
   .btn-new-alert { justify-content: center; width: 100%; }
+
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .form-row .form-item {
+    width: 100%;
+  }
   
   .detail-grid-standard { grid-template-columns: 1fr; gap: 15px; }
   .batch-list-grid { grid-template-columns: 1fr; }
+
+  .history-row-mobile-clickable {
+    cursor: pointer;
+  }
+
+  .crisis-modal-actions {
+    justify-content: stretch;
+  }
+
+  .crisis-modal-actions .btn-cancel {
+    width: 100%;
+  }
+
+  .lift-crisis-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .lift-crisis-actions .input-standard,
+  .lift-crisis-actions .btn-lift {
+    width: 100%;
+  }
 }

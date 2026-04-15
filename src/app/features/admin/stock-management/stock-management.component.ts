@@ -1332,9 +1332,18 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 setTimeout(() => {
                     const el = document.getElementById('globalVerificationResults');
                     if (el) {
-                        const yOffset = -20; 
+                        const scrollContainer = document.querySelector<HTMLElement>('.scrollable-content')
+                            ?? document.querySelector<HTMLElement>('.contenedor-principal');
+
+                        if (scrollContainer) {
+                            const targetTop = el.offsetTop - 20;
+                            scrollContainer.scrollTo({ top: targetTop, behavior: 'smooth' });
+                            return;
+                        }
+
+                        const yOffset = -20;
                         const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                        window.scrollTo({top: y, behavior: 'smooth'});
+                        window.scrollTo({ top: y, behavior: 'smooth' });
                     }
                 }, 100);
             },

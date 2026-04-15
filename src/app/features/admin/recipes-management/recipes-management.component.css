@@ -83,6 +83,12 @@
   color: var(--theme-text-secondary);
 }
 
+@media (min-width: 1024px) {
+  .date-field-label {
+    display: none;
+  }
+}
+
 .date-input {
   padding: 10px 12px;
   border-radius: 8px;

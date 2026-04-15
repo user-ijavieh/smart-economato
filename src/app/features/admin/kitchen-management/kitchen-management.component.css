@@ -18,6 +18,11 @@
   animation-delay: 0.1s;
 }
 
+@keyframes filterControlFade {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .controles input,
 .action-select {
   padding: 10px 15px;
@@ -28,6 +33,7 @@
   font-size: 0.9rem;
   font-family: var(--font-body);
   transition: all 0.3s ease;
+  animation: filterControlFade 0.22s ease-out both;
 }
 
 .controles input::placeholder,
@@ -70,6 +76,12 @@
   color: var(--theme-text-secondary);
 }
 
+@media (min-width: 1024px) {
+  .date-field-label {
+    display: none;
+  }
+}
+
 .date-separator { color: var(--theme-text-secondary); }
 
 .controles button,
@@ -87,6 +99,7 @@
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(8px);
+  animation: filterControlFade 0.22s ease-out both;
 }
 
 .controles button:hover:not(:disabled),
