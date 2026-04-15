@@ -92,6 +92,8 @@ export class OrdersManagementComponent implements OnInit {
   // ── Order Detail Modal ──
   selectedOrder: Order | null = null;
   showOrderDetailModal = false;
+  selectedOrderVisibleLines = 20;
+  readonly selectedOrderLinesStep = 20;
 
   // ── Change-Status Modal ──
   showChangeStatusModal = false;
@@ -500,7 +502,27 @@ export class OrdersManagementComponent implements OnInit {
   openOrderDetail(order: Order): void {
     this.selectedOrder = order;
     this.showOrderDetailModal = true;
+    this.selectedOrderVisibleLines = this.selectedOrderLinesStep;
     this.cdr.markForCheck();
+  }
+
+  get visibleSelectedOrderDetails() {
+    return (this.selectedOrder?.details || []).slice(0, this.selectedOrderVisibleLines);
+  }
+
+  get hasMoreSelectedOrderDetails(): boolean {
+    return (this.selectedOrder?.details?.length || 0) > this.selectedOrderVisibleLines;
+  }
+
+  loadMoreSelectedOrderLines(): void {
+    this.selectedOrderVisibleLines += this.selectedOrderLinesStep;
+  }
+
+  openStatusEditorFromDetail(): void {
+    if (!this.selectedOrder) return;
+    const selected = this.selectedOrder;
+    this.closeOrderDetail();
+    this.openChangeStatusModal(selected);
   }
 
   async revertOrder(order: Order): Promise<void> {
@@ -613,7 +635,21 @@ export class OrdersManagementComponent implements OnInit {
   closeOrderDetail(): void {
     this.showOrderDetailModal = false;
     this.selectedOrder = null;
+    this.selectedOrderVisibleLines = this.selectedOrderLinesStep;
     this.cdr.markForCheck();
+  }
+
+  getAuditOrderStatus(audit: OrderAudit): OrderStatus {
+    const newState = this.parseAuditState(audit.newState);
+    const previousState = this.parseAuditState(audit.previousState);
+
+    const raw = this.getAuditStateValue(newState, ['status', 'estado'])
+      ?? this.getAuditStateValue(previousState, ['status', 'estado'])
+      ?? 'CREATED';
+
+    const normalized = this.normalizeStatus(raw);
+    const validStatuses: OrderStatus[] = ['CREATED', 'PENDING', 'REVIEW', 'CONFIRMED', 'INCOMPLETE', 'CANCELLED'];
+    return validStatuses.includes(normalized as OrderStatus) ? (normalized as OrderStatus) : 'CREATED';
   }
 
 

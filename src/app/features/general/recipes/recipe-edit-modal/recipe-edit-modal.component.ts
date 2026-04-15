@@ -8,6 +8,7 @@ import { ProductService } from '../../../../core/services/product.service';
 import { AllergenService } from '../../../../core/services/allergen.service';
 import { MessageService } from '../../../../core/services/message.service';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
+import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.component';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 interface FormComponent {
@@ -19,7 +20,7 @@ interface FormComponent {
 @Component({
   selector: 'app-recipe-edit-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseModalComponent],
+  imports: [CommonModule, FormsModule, BaseModalComponent, BarcodeScannerComponent],
   templateUrl: './recipe-edit-modal.component.html',
   styleUrl: './recipe-edit-modal.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -58,6 +59,8 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
   showProductDropdown: { [key: number]: boolean } = {};
   activeComponentIndex: number | null = null;
   productNamesMap: { [key: number]: string } = {};
+  showScannerModal = false;
+  scannerComponentIndex: number | null = null;
   private searchSubject = new Subject<{ query: string, index: number }>();
 
   ngOnInit(): void {
@@ -243,6 +246,36 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
     this.activeComponentIndex = null;
     this.productSearchQuery = '';
     this.productSearchResults = this.availableProducts;
+    this.cdr.markForCheck();
+  }
+
+  openBarcodeScanner(index: number): void {
+    this.scannerComponentIndex = index;
+    this.showScannerModal = true;
+    this.cdr.markForCheck();
+  }
+
+  closeBarcodeScanner(): void {
+    this.showScannerModal = false;
+    this.scannerComponentIndex = null;
+    this.cdr.markForCheck();
+  }
+
+  onScannedProductFound(product: Product): void {
+    if (this.scannerComponentIndex === null || !this.formComponents[this.scannerComponentIndex]) {
+      this.closeBarcodeScanner();
+      return;
+    }
+
+    const index = this.scannerComponentIndex;
+    this.formComponents[index].productId = product.id;
+    this.formComponents[index].searchText = product.name;
+    this.productNamesMap[product.id] = product.name;
+    this.showProductDropdown[index] = false;
+    this.activeComponentIndex = null;
+    this.productSearchQuery = '';
+    this.productSearchResults = this.availableProducts;
+    this.closeBarcodeScanner();
     this.cdr.markForCheck();
   }
 

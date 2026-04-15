@@ -4,11 +4,12 @@ import { Product, ProductRequest } from '../../../../shared/models/product.model
 import { Supplier } from '../../../../shared/models/supplier.model';
 import { MessageService } from '../../../../core/services/message.service';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
+import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.component';
 
 @Component({
   selector: 'app-product-edit-modal',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent],
+  imports: [FormsModule, BaseModalComponent, BarcodeScannerComponent],
   templateUrl: './product-edit-modal.component.html',
   styleUrl: './product-edit-modal.component.css'
 })
@@ -25,10 +26,12 @@ export class ProductEditModalComponent implements OnChanges {
   @ViewChild('editForm') editForm?: NgForm;
 
   private messageService = inject(MessageService);
+  showScannerModal = false;
 
   formData = {
     name: '',
     productCode: '',
+    barcode: '',
     unitPrice: 0,
     currentStock: 0,
     availabilityPercentage: undefined as number | undefined,
@@ -56,6 +59,7 @@ export class ProductEditModalComponent implements OnChanges {
       this.formData = {
         name: this.product.name,
         productCode: this.product.productCode || '',
+        barcode: this.product.barcode || '',
         unitPrice: Number(this.product.unitPrice) || 0,
         currentStock: Number(this.product.currentStock) || 0,
         availabilityPercentage: this.product.availabilityPercentage || undefined,
@@ -101,6 +105,7 @@ export class ProductEditModalComponent implements OnChanges {
       unit: this.formData.unit,
       unitPrice: unitPrice,
       productCode: this.formData.productCode.trim(),
+      barcode: this.formData.barcode.trim() || undefined,
       currentStock: currentStock,
       supplierId: supplierId
     };
@@ -126,5 +131,24 @@ export class ProductEditModalComponent implements OnChanges {
 
   getToggleButtonText(): string {
     return this.showingHidden ? 'Mostrar' : 'Ocultar';
+  }
+
+  openBarcodeScanner(): void {
+    this.showScannerModal = true;
+  }
+
+  closeBarcodeScanner(): void {
+    this.showScannerModal = false;
+  }
+
+  onCodeScanned(code: string): void {
+    this.formData.barcode = code.trim();
+    this.showScannerModal = false;
+
+    if (this.formData.barcode) {
+      this.messageService.showSuccess(`Código detectado: ${this.formData.barcode}`);
+    } else {
+      this.messageService.showWarning('No se pudo leer un código de barras válido.');
+    }
   }
 }

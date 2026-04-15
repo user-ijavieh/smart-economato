@@ -20,6 +20,22 @@ form {
     margin-top: 2px;
 }
 
+.form-group + .auto-gen-info {
+    margin-top: 10px;
+}
+
+.auto-gen-info + .form-group {
+    margin-top: 12px;
+}
+
+.form-group:has(#role) {
+    margin-top: 12px;
+}
+
+.form-group:has(#teacherId) {
+    margin-top: 14px;
+}
+
 .form-group label {
     line-height: 1.2;
 }
@@ -71,7 +87,7 @@ form {
     background: rgba(90, 120, 220, 0.1);
     border: 1px solid rgba(90, 120, 220, 0.2);
     border-radius: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
     color: var(--color-accent-admin);
     font-size: 0.85rem;
     line-height: 1.4;

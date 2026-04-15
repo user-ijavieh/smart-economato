@@ -15,6 +15,7 @@ import { Product } from '../../../shared/models/product.model';
 export class BarcodeScannerComponent implements OnInit {
   @ViewChild('scanner') scanner!: ZXingScannerComponent;
   @Output() productFound = new EventEmitter<Product>();
+  @Output() codeScanned = new EventEmitter<string>();
 
   private productService = inject(ProductService);
 
@@ -78,6 +79,8 @@ export class BarcodeScannerComponent implements OnInit {
     this.loading = true;
     this.error = null;
     this.product = null;
+
+    this.codeScanned.emit(code);
 
     this.productService.getByBarcode(code).subscribe({
       next: (product) => {

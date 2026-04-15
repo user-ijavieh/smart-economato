@@ -28,11 +28,17 @@
             <input type="text" [(ngModel)]="orderSearchTerm" placeholder="Buscar por usuario o ID..."
                 (ngModelChange)="onClientFilterChange()" />
 
-            <input type="date" [(ngModel)]="orderStartDate" class="date-input"
-                (ngModelChange)="onServerFilterChange()" title="Desde" />
+            <div class="date-filter-field">
+                <span class="date-field-label">Desde</span>
+                <input type="date" [(ngModel)]="orderStartDate" class="date-input"
+                    (ngModelChange)="onServerFilterChange()" title="Desde" />
+            </div>
             <span class="date-separator">—</span>
-            <input type="date" [(ngModel)]="orderEndDate" class="date-input"
-                (ngModelChange)="onServerFilterChange()" title="Hasta" />
+            <div class="date-filter-field">
+                <span class="date-field-label">Hasta</span>
+                <input type="date" [(ngModel)]="orderEndDate" class="date-input"
+                    (ngModelChange)="onServerFilterChange()" title="Hasta" />
+            </div>
         </div>
 
         <div class="filter-row">
@@ -85,7 +91,8 @@
                     <th class="hide-on-mobile">Fecha</th>
                     <th class="hide-on-mobile">Estado</th>
                     <th>Total</th>
-                    <th class="actions-col">Acciones</th>
+                    <th class="actions-col hide-on-mobile">Acciones</th>
+                    <th class="show-on-mobile-only mobile-icon-col"></th>
                 </tr>
             </thead>
             <tbody [class.loading]="loading">
@@ -97,7 +104,8 @@
                         <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width:130px"></span></td>
                         <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width:90px"></span></td>
                         <td><span class="skeleton skeleton-text" style="width:80px"></span></td>
-                        <td class="actions-col"></td>
+                        <td class="actions-col hide-on-mobile"></td>
+                        <td class="show-on-mobile-only mobile-icon-col"></td>
                     </tr>
                     }
                 } @else {
@@ -128,7 +136,7 @@
                             </span>
                         </td>
                         <td data-label="Total"><span class="cost-value">{{ (order.totalPrice || 0) | number:'1.2-2' }} €</span></td>
-                        <td class="actions-col" (click)="$event.stopPropagation()">
+                        <td class="actions-col hide-on-mobile" (click)="$event.stopPropagation()">
                             <div class="actions-cell">
                                 <button class="btn-ver" (click)="openOrderDetail(order)" title="Ver detalles">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -164,6 +172,11 @@
                                 }
                             </div>
                         </td>
+                        <td class="show-on-mobile-only mobile-icon-col">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+                            </svg>
+                        </td>
                     </tr>
                     }
                     @if (filteredOrders.length === 0 && !loading) {
@@ -193,9 +206,15 @@
 <div class="contenedor-principal">
     <div class="controles controles-audits">
         <input type="text" [(ngModel)]="auditSearchTerm" placeholder="Buscar por ID de orden o usuario..." (ngModelChange)="onAuditSearch()" />
-        <input type="date" [(ngModel)]="auditStartDate" class="date-input" title="Desde" (ngModelChange)="onAuditDateFilter()" />
+        <div class="date-filter-field">
+            <span class="date-field-label">Desde</span>
+            <input type="date" [(ngModel)]="auditStartDate" class="date-input" title="Desde" (ngModelChange)="onAuditDateFilter()" />
+        </div>
         <span class="date-separator">—</span>
-        <input type="date" [(ngModel)]="auditEndDate" class="date-input" title="Hasta" (ngModelChange)="onAuditDateFilter()" />
+        <div class="date-filter-field">
+            <span class="date-field-label">Hasta</span>
+            <input type="date" [(ngModel)]="auditEndDate" class="date-input" title="Hasta" (ngModelChange)="onAuditDateFilter()" />
+        </div>
         @if (hasActiveAuditFilters()) {
         <button class="btn-clear" (click)="clearAuditFilters()">Limpiar Filtros</button>
         }
@@ -207,6 +226,7 @@
                 <tr>
                     <th>Fecha / Hora</th>
                     <th class="hide-on-mobile">Acción</th>
+                    <th class="hide-on-mobile">Estado pedido</th>
                     <th>ID Pedido</th>
                     <th class="hide-on-mobile">Usuario</th>
                     <th class="show-on-mobile-only mobile-icon-col"></th>
@@ -218,6 +238,7 @@
                     <tr class="skeleton-row">
                         <td><span class="skeleton skeleton-text" style="width:130px"></span></td>
                         <td><span class="skeleton skeleton-text" style="width:100px"></span></td>
+                        <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width:100px"></span></td>
                         <td><span class="skeleton skeleton-text" style="width:60px"></span></td>
                         <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width:120px"></span></td>
                         <td class="show-on-mobile-only mobile-icon-col"></td>
@@ -235,6 +256,9 @@
                         <td data-label="Acción" class="hide-on-mobile">
                             <span class="action-badge" [ngClass]="getActionBadgeClass(audit.action)">{{ translateAction(audit.action) }}</span>
                         </td>
+                        <td data-label="Estado pedido" class="hide-on-mobile">
+                            <span class="status-badge admin {{ getStatusClass(getAuditOrderStatus(audit)) }}">{{ formatStatus(getAuditOrderStatus(audit)) }}</span>
+                        </td>
                         <td data-label="ID Orden">
                             <span class="id-badge">#{{ audit.orderId }}</span>
                         </td>
@@ -249,7 +273,7 @@
                     </tr>
                     }
                     @if (filteredAudits.length === 0 && !loadingAudits) {
-                    <tr><td colspan="5" class="empty-state">No se encontraron auditorías</td></tr>
+                    <tr><td colspan="6" class="empty-state">No se encontraron auditorías</td></tr>
                     }
                 }
             </tbody>
@@ -460,7 +484,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @for (line of selectedOrder.details; track line.productId) {
+                            @for (line of visibleSelectedOrderDetails; track line.productId) {
                             <tr>
                                 <td>{{ line.productName }}</td>
                                 <td class="text-right">{{ line.quantity }}</td>
@@ -475,6 +499,11 @@
                             </tr>
                         </tfoot>
                     </table>
+                    @if (hasMoreSelectedOrderDetails) {
+                    <div class="order-lines-load-more">
+                        <button class="btn-page" (click)="loadMoreSelectedOrderLines()">Cargar más líneas</button>
+                    </div>
+                    }
                 </div>
                 }
 
@@ -482,6 +511,9 @@
     </div>
     <div modal-footer>
         <div class="modal-actions">
+            <button class="btn-editar" (click)="openStatusEditorFromDetail()">
+                Editar
+            </button>
             <button class="btn-imprimir" (click)="onDownloadPdf(selectedOrder)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
