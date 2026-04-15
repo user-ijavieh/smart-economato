@@ -20,9 +20,9 @@
       <div class="user-selection-section">
         <h3>Seleccionar Proveedor</h3>
         <div class="form-group">
-          <label for="supplierSelect">Proveedor (Opcional)</label>
+          <label for="supplierSelect">Proveedor</label>
           <select id="supplierSelect" [(ngModel)]="selectedSupplierId" class="form-control">
-            <option [ngValue]="null">-- Seleccionar proveedor --</option>
+            <option [ngValue]="null">-- Sin proveedor --</option>
             @for (supplier of suppliers; track supplier.id) {
             <option [ngValue]="supplier.id">
               {{ supplier.name }}
@@ -43,6 +43,11 @@
                 (input)="onProductSearch($any($event.target).value)" (focus)="showProductDropdown = true"
                 placeholder="Buscar producto..." autocomplete="off" class="form-control dropdown-trigger">
               <span class="dropdown-arrow" (click)="toggleProductDropdown()">▼</span>
+              <button type="button" class="btn-scan-inline" (click)="openBarcodeScanner()" title="Escanear código de barras">
+                <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor">
+                  <path d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z" />
+                </svg>
+              </button>
               @if (showProductDropdown) {
               <div class="autocomplete-dropdown" (scroll)="onProductDropdownScroll($event)">
                 @for (product of filteredProducts; track product.id) {
@@ -140,3 +145,17 @@
     </button>
   </div>
 </app-base-modal>
+
+@if (showScannerModal) {
+  <div class="scanner-modal-overlay" (click)="closeBarcodeScanner()">
+    <div class="scanner-modal" (click)="$event.stopPropagation()">
+      <div class="scanner-modal-header">
+        <h2>Escanear Código de Barras</h2>
+        <button class="scanner-close-btn" (click)="closeBarcodeScanner()">✕</button>
+      </div>
+      <div class="scanner-modal-body">
+        <app-barcode-scanner (productFound)="onProductFound($event)"></app-barcode-scanner>
+      </div>
+    </div>
+  </div>
+}

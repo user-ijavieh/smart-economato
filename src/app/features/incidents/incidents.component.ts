@@ -116,6 +116,10 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
   incidentTypes: IncidentType[] = [];
   loadingTypes = false;
 
+  get activeIncidentTypes(): IncidentType[] {
+    return this.incidentTypes.filter(type => this.incidentTypeActive(type));
+  }
+
   users: User[] = [];
 
   showCreateModal = false;
@@ -318,7 +322,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openCreateIncident(): void {
     this.incidentForm = {
-      incidentTypeId: this.incidentTypes[0]?.id ?? '',
+      incidentTypeId: this.activeIncidentTypes[0]?.id ?? '',
       title: '',
       description: ''
     };
@@ -765,7 +769,11 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loadIncidentTypes(): void {
     this.loadingTypes = true;
-    this.incidentService.getIncidentTypes().pipe(
+    const load$ = this.canManageTypes()
+      ? this.incidentService.getAllIncidentTypes()
+      : this.incidentService.getIncidentTypes();
+
+    load$.pipe(
       finalize(() => {
         this.loadingTypes = false;
         this.cdr.markForCheck();
@@ -819,11 +827,31 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  toggleType(type: IncidentType): void {
+  async toggleType(type: IncidentType): Promise<void> {
+    const currentlyActive = this.incidentTypeActive(type);
+    const action = currentlyActive ? 'desactivar' : 'activar';
+
+    const confirmed = await this.messageService.confirm(
+      `${currentlyActive ? 'Desactivar' : 'Activar'} tipo`,
+      `¿Deseas ${action} el tipo "${type.name}"?`
+    );
+
+    if (!confirmed) return;
+
     this.incidentService.toggleIncidentType(type.id).subscribe({
-      next: () => {
-        this.messageService.showSuccess(type.isActive || type.active ? 'Tipo desactivado' : 'Tipo activado');
-        this.loadIncidentTypes();
+      next: (updatedType) => {
+        const index = this.incidentTypes.findIndex(item => item.id === type.id);
+        if (index >= 0) {
+          this.incidentTypes[index] = updatedType ?? {
+            ...this.incidentTypes[index],
+            isActive: !currentlyActive,
+            active: !currentlyActive
+          };
+          this.incidentTypes = [...this.incidentTypes];
+        }
+
+        this.messageService.showSuccess(currentlyActive ? 'Tipo desactivado' : 'Tipo activado');
+        this.cdr.markForCheck();
       },
       error: () => this.messageService.showError('No se pudo cambiar el estado del tipo')
     });

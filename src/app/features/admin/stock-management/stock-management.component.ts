@@ -39,6 +39,7 @@ import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.mo
 import { Supplier } from '../../../shared/models/supplier.model';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
+import { BarcodeScannerComponent } from '../../general/barcode-scanner/barcode-scanner.component';
 
 
 type Tab = 'alerts' | 'predictions' | 'ledger';
@@ -60,7 +61,7 @@ interface RepositionOrderGroup {
 @Component({
     selector: 'app-stock-management',
     standalone: true,
-    imports: [CommonModule, FormsModule, ToastComponent, BaseChartDirective, BaseModalComponent],
+    imports: [CommonModule, FormsModule, ToastComponent, BaseChartDirective, BaseModalComponent, BarcodeScannerComponent],
     templateUrl: './stock-management.component.html',
     styleUrl: './stock-management.component.css'
 })
@@ -241,6 +242,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     ledgerProductsPage = 0;
     ledgerProductsTotalPages = 0;
     loadingLedgerProducts = false;
+    showLedgerScannerModal = false;
     private searchSubject = new Subject<string>();
     private searchSubscription?: any;
 
@@ -1099,6 +1101,26 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 this.ledgerSnapshot = null;
             }
         });
+    }
+
+    openLedgerBarcodeScanner(): void {
+        this.showLedgerScannerModal = true;
+    }
+
+    closeLedgerBarcodeScanner(): void {
+        this.showLedgerScannerModal = false;
+    }
+
+    onLedgerProductFound(product: Product): void {
+        this.closeLedgerBarcodeScanner();
+        this.ledgerSearchTerm = product.name || '';
+        this.selectedProductId = product.id;
+        this.ledgerProducts = [product, ...(this.ledgerProducts || []).filter(item => item.id !== product.id)];
+        this.showLedgerDropdown = false;
+        this.ledgerPage = 0;
+        this.loadLedgerHistory(product.id);
+        this.loadLedgerSnapshot(product.id);
+        this.loadLedgerProducts(0, false);
     }
 
     get selectedProductName(): string {

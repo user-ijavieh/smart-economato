@@ -34,7 +34,6 @@
       <article class="stat-card stat-incidents-total"><span class="stat-number">{{ incidentsPage?.totalElements || 0 }}</span><span class="stat-label">Incidencias totales</span></article>
       <article class="stat-card stat-incidents-pending"><span class="stat-number">{{ countPendingIncidents() }}</span><span class="stat-label">Pendientes y abiertas</span></article>
       <article class="stat-card stat-incidents-closed"><span class="stat-number">{{ countClosedIncidents() }}</span><span class="stat-label">Cerradas</span></article>
-      <article class="stat-card stat-incidents-chat"><span class="stat-number">{{ countChatMessages() }}</span><span class="stat-label">Mensajes en página</span></article>
     </section>
 
     @if (activeTab === 'incidents') {
@@ -69,9 +68,15 @@
         </div>
 
         <div class="incident-filters-row incident-date-row">
-          <input type="date" name="incidentFrom" [(ngModel)]="incidentFilters.from" />
+          <div class="date-filter-field">
+            <span class="date-field-label">Desde</span>
+            <input type="date" name="incidentFrom" [(ngModel)]="incidentFilters.from" />
+          </div>
           <span>—</span>
-          <input type="date" name="incidentTo" [(ngModel)]="incidentFilters.to" />
+          <div class="date-filter-field">
+            <span class="date-field-label">Hasta</span>
+            <input type="date" name="incidentTo" [(ngModel)]="incidentFilters.to" />
+          </div>
           <button class="toolbar-btn btn-incident-secondary" type="button" (click)="clearIncidentFilters()" [disabled]="!hasIncidentFilters()">
             Limpiar
           </button>
@@ -235,7 +240,7 @@
     <label>
       <span>Tipo</span>
       <select name="createIncidentType" [(ngModel)]="incidentForm.incidentTypeId">
-        @for (type of incidentTypes; track type.id) {
+        @for (type of activeIncidentTypes; track type.id) {
         <option [value]="type.id">{{ type.name }}</option>
         }
       </select>

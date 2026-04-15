@@ -23,6 +23,12 @@
 <div class="page-content contenedor-principal">
     <div class="controls-bar controles">
         <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por nombre..." (ngModelChange)="onSearch()" />
+        <button class="toolbar-btn btn-scan-product" (click)="openBarcodeScanner()" title="Escanear código de barras">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 -960 960 960">
+                <path d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z" />
+            </svg>
+            Escanear
+        </button>
         <button id="btnAgregarProducto" class="toolbar-btn" (click)="openCreateModal()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
@@ -301,6 +307,14 @@
 <!-- Modal de Creación -->
 @if (showCreateModal) {
 <app-product-create-modal [suppliers]="suppliers" [isAdmin]="true" (close)="onCloseCreateModal()" (save)="onSaveProduct($event)" />
+}
+
+@if (showScannerModal) {
+<app-base-modal title="Escanear Código de Barras" size="md" (closed)="closeBarcodeScanner()">
+    <div class="scanner-modal-body">
+        <app-barcode-scanner (productFound)="onProductFound($event)"></app-barcode-scanner>
+    </div>
+</app-base-modal>
 }
 
 <!-- Audit Detail Modal -->

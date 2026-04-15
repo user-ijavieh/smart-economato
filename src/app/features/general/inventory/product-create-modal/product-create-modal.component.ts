@@ -4,11 +4,12 @@ import { ProductRequest } from '../../../../shared/models/product.model';
 import { Supplier } from '../../../../shared/models/supplier.model';
 import { MessageService } from '../../../../core/services/message.service';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
+import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.component';
 
 @Component({
   selector: 'app-product-create-modal',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent],
+  imports: [FormsModule, BaseModalComponent, BarcodeScannerComponent],
   templateUrl: './product-create-modal.component.html',
   styleUrl: './product-create-modal.component.css'
 })
@@ -22,10 +23,12 @@ export class ProductCreateModalComponent {
   @ViewChild('createForm') createForm?: NgForm;
 
   private messageService = inject(MessageService);
+  showScannerModal = false;
 
   formData = {
     name: '',
     productCode: '',
+    barcode: '',
     unitPrice: 0,
     currentStock: 0,
     availabilityPercentage: undefined as number | undefined,
@@ -98,6 +101,7 @@ export class ProductCreateModalComponent {
       unit: this.formData.unit,
       unitPrice: unitPrice,
       productCode: this.formData.productCode.trim(),
+      barcode: this.formData.barcode.trim() || undefined,
       currentStock: currentStock,
       supplierId: supplierId,
       expirationDate: this.formData.expirationDate || undefined
@@ -110,10 +114,25 @@ export class ProductCreateModalComponent {
     this.close.emit();
   }
 
+  openBarcodeScanner(): void {
+    this.showScannerModal = true;
+  }
+
+  closeBarcodeScanner(): void {
+    this.showScannerModal = false;
+  }
+
+  onCodeScanned(code: string): void {
+    this.formData.barcode = code.trim();
+    this.showScannerModal = false;
+    this.messageService.showSuccess(`Código detectado: ${this.formData.barcode}`);
+  }
+
   resetForm(): void {
     this.formData = {
       name: '',
       productCode: '',
+      barcode: '',
       availabilityPercentage: undefined,
       unitPrice: 0,
       currentStock: 0,

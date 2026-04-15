@@ -30,9 +30,9 @@
             (ngModelChange)="onSearch()" />
         <select [(ngModel)]="roleFilter" (ngModelChange)="onRoleFilterChange()" class="role-select">
             <option value="">Todos los roles</option>
-            <option value="ADMIN">Admin</option>
-            <option value="CHEF">Chef</option>
-            <option value="USER">Usuario</option>
+            <option value="ADMIN">Administrador</option>
+            <option value="CHEF">Profesor</option>
+            <option value="USER">Alumno</option>
         </select>
         <button id="btnAgregarUsuario" class="toolbar-btn" (click)="openCreateModal()" *ngIf="!showingHidden">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -123,7 +123,7 @@
                     <td class="hide-on-mobile">{{ user.user }}</td>
                     <td>
                         <span class="role-badge" [ngClass]="getRoleBadgeClass(user.role)">
-                            {{ user.role }}
+                            {{ getRoleLabel(user.role) }}
                         </span>
                     </td>
                     <td class="hide-on-mobile teacher-cell">
@@ -210,10 +210,6 @@
             <span class="stat-number">{{ connectedSnapshots.length }}</span>
             <span class="stat-label">Conectados ahora</span>
         </div>
-        <div class="stat-card">
-            <span class="stat-number">{{ activityLogs.length }}</span>
-            <span class="stat-label">Eventos cargados</span>
-        </div>
     </div>
 
     <div class="presence-layout">
@@ -235,7 +231,7 @@
                         <td>{{ user.name }}</td>
                         <td>
                             <span class="role-badge" [ngClass]="getRoleBadgeClass(user.role)">
-                                {{ user.role }}
+                                {{ getRoleLabel(user.role) }}
                             </span>
                         </td>
                         @if (getPresenceForUser(user.id!); as presence) {

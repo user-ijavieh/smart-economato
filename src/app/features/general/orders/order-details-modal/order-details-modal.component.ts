@@ -1,6 +1,7 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Order } from '../../../../shared/models/order.model';
+import { OrderDetail } from '../../../../shared/models/order.model';
 import { OrderService } from '../../../../core/services/order.service';
 import { MessageService } from '../../../../core/services/message.service';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
@@ -12,7 +13,7 @@ import { BaseModalComponent } from '../../../../shared/components/base-modal/bas
   templateUrl: './order-details-modal.component.html',
   styleUrl: './order-details-modal.component.css'
 })
-export class OrderDetailsModalComponent {
+export class OrderDetailsModalComponent implements OnChanges {
   @Input() order: Order | null = null;
   @Output() closeModal = new EventEmitter<void>();
   @Output() deleteOrder = new EventEmitter<number>();
@@ -21,6 +22,50 @@ export class OrderDetailsModalComponent {
   private orderService = inject(OrderService);
   private messageService = inject(MessageService);
   isDownloading = false;
+  visibleDetailsCount = 20;
+  readonly detailsPageSize = 20;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['order']) {
+      this.visibleDetailsCount = this.detailsPageSize;
+    }
+  }
+
+  get displayedDetails() {
+    return (this.order?.details || []).slice(0, this.visibleDetailsCount);
+  }
+
+  get hasMoreDetails(): boolean {
+    return (this.order?.details?.length || 0) > this.visibleDetailsCount;
+  }
+
+  loadMoreDetails(): void {
+    this.visibleDetailsCount += this.detailsPageSize;
+  }
+
+  shouldShowReceptionColumns(): boolean {
+    if (!this.order) return false;
+    if (this.order.status === 'CONFIRMED' || this.order.status === 'INCOMPLETE') return true;
+    return (this.order.details || []).some(detail => detail.quantityReceived !== undefined && detail.quantityReceived !== null);
+  }
+
+  getReceivedQuantity(detail: OrderDetail): number | null {
+    return detail.quantityReceived ?? null;
+  }
+
+  getQuantityDelta(detail: OrderDetail): number | null {
+    const received = this.getReceivedQuantity(detail);
+    if (received === null) return null;
+    return received - detail.quantity;
+  }
+
+  getQuantityDeltaLabel(detail: OrderDetail): string {
+    const delta = this.getQuantityDelta(detail);
+    if (delta === null) return '—';
+    if (delta === 0) return 'Exacto';
+    if (delta > 0) return `Exceso +${delta}`;
+    return `Faltante ${Math.abs(delta)}`;
+  }
 
   close(): void {
     this.closeModal.emit();

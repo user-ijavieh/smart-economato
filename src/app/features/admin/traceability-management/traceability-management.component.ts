@@ -7,6 +7,7 @@ import { SupplierService } from '../../../core/services/supplier.service';
 import { TraceabilityService } from '../../../core/services/traceability.service';
 import { MessageService } from '../../../core/services/message.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
+import { BarcodeScannerComponent } from '../../general/barcode-scanner/barcode-scanner.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import {
   CrisisActivationRequest,
@@ -20,7 +21,7 @@ type CrisisView = 'active' | 'history';
 @Component({
   selector: 'app-traceability-management',
   standalone: true,
-  imports: [FormsModule, ToastComponent, BaseModalComponent, AsyncPipe, DatePipe, DecimalPipe, KeyValuePipe],
+  imports: [FormsModule, ToastComponent, BaseModalComponent, BarcodeScannerComponent, AsyncPipe, DatePipe, DecimalPipe, KeyValuePipe],
   templateUrl: './traceability-management.component.html',
   styleUrl: './traceability-management.component.css'
 })
@@ -56,6 +57,7 @@ export class TraceabilityManagementComponent implements OnInit {
   loadingProducts = false;
   productPage = 0;
   productTotalPages = 0;
+  showProductScannerModal = false;
   private productSearchSubject = new Subject<string>();
 
   dateFrom = '';
@@ -222,6 +224,26 @@ export class TraceabilityManagementComponent implements OnInit {
 
   onProductSearchInput(): void {
     this.productSearchSubject.next(this.productSearchTerm);
+  }
+
+  openProductBarcodeScanner(): void {
+    this.showProductScannerModal = true;
+  }
+
+  closeProductBarcodeScanner(): void {
+    this.showProductScannerModal = false;
+  }
+
+  onScannedProductFound(product: Product): void {
+    this.closeProductBarcodeScanner();
+
+    if (!this.selectedProductIds.includes(product.id)) {
+      this.selectedProductIds = [...this.selectedProductIds, product.id];
+    }
+
+    this.showProductDropdown = false;
+    this.productSearchTerm = '';
+    this.cdr.markForCheck();
   }
 
   onProductDropdownScroll(event: any): void {

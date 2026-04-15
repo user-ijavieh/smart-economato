@@ -177,7 +177,7 @@
 
 .stats-row {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   animation: fadeInStaggered 0.38s ease both;
 }
@@ -198,7 +198,6 @@
 .stats-row .stat-card:nth-child(1) { animation: fadeInStaggered 0.28s ease both; animation-delay: 0.03s; }
 .stats-row .stat-card:nth-child(2) { animation: fadeInStaggered 0.28s ease both; animation-delay: 0.08s; }
 .stats-row .stat-card:nth-child(3) { animation: fadeInStaggered 0.28s ease both; animation-delay: 0.13s; }
-.stats-row .stat-card:nth-child(4) { animation: fadeInStaggered 0.28s ease both; animation-delay: 0.18s; }
 
 .stat-card::after {
   content: '';
@@ -243,11 +242,6 @@
 .stat-incidents-closed {
   border-top-color: rgba(34, 197, 94, 0.9);
   color: var(--color-success-muted);
-}
-
-.stat-incidents-chat {
-  border-top-color: rgba(59, 130, 246, 0.9);
-  color: var(--color-info);
 }
 
 .incident-panel {
@@ -316,6 +310,19 @@
 .incident-date-row {
   grid-template-columns: 1fr auto 1fr auto auto;
   align-items: center;
+}
+
+.date-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.date-field-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--theme-text-secondary);
 }
 
 .incident-date-row span {
@@ -525,6 +532,10 @@
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.type-card-actions {
+  margin-top: 14px;
 }
 
 .pagination-bar {

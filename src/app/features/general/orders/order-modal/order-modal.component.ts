@@ -12,6 +12,7 @@ import { Supplier } from '../../../../shared/models/supplier.model';
 import { Order, OrderRequest } from '../../../../shared/models/order.model';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.component';
 
 interface OrderItem {
   productId: number;
@@ -24,7 +25,7 @@ interface OrderItem {
 @Component({
   selector: 'app-order-modal',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent, DecimalPipe],
+  imports: [FormsModule, BaseModalComponent, DecimalPipe, BarcodeScannerComponent],
   templateUrl: './order-modal.component.html',
   styleUrl: './order-modal.component.css'
 })
@@ -48,6 +49,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   orderItems: OrderItem[] = [];
   showProductDropdown = false;
   isSubmitting = false;
+  showScannerModal = false;
 
   currentPage = 0;
   pageSize = 20;
@@ -213,6 +215,21 @@ export class OrderModalComponent implements OnInit, OnDestroy {
     this.itemForm.unit = product.unit || 'unidad';
     this.showProductDropdown = false;
     this.productSearchResults = null;
+  }
+
+  openBarcodeScanner(): void {
+    this.showScannerModal = true;
+  }
+
+  closeBarcodeScanner(): void {
+    this.showScannerModal = false;
+  }
+
+  onProductFound(product: Product): void {
+    this.selectProduct(product);
+    this.showScannerModal = false;
+    this.messageService.showSuccess(`Producto detectado: ${product.name}`);
+    this.cdr.markForCheck();
   }
 
   addItemToOrder(): void {

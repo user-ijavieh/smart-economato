@@ -13,6 +13,7 @@ import { Supplier } from '../../../shared/models/supplier.model';
 import { ProductCreateModalComponent } from '../../general/inventory/product-create-modal/product-create-modal.component';
 import { ProductEditModalComponent } from '../../general/inventory/product-edit-modal/product-edit-modal.component';
 import { ProductDetailModalComponent } from '../../general/inventory/product-detail-modal/product-detail-modal.component';
+import { BarcodeScannerComponent } from '../../general/barcode-scanner/barcode-scanner.component';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
@@ -30,6 +31,7 @@ import { of } from 'rxjs';
     ProductCreateModalComponent,
     ProductEditModalComponent,
     ProductDetailModalComponent,
+    BarcodeScannerComponent,
     BaseModalComponent,
     ConfirmDialogComponent,
     ToastComponent
@@ -75,6 +77,7 @@ export class ProductsManagementComponent implements OnInit {
   showCreateModal = false;
   showEditModal = false;
   showDetailModal = false;
+  showScannerModal = false;
   selectedProduct: Product | null = null;
 
   // Stats
@@ -239,6 +242,19 @@ export class ProductsManagementComponent implements OnInit {
   onSearch(): void {
     this.currentPage = 0;
     this.loadProducts();
+  }
+
+  openBarcodeScanner(): void {
+    this.showScannerModal = true;
+  }
+
+  closeBarcodeScanner(): void {
+    this.showScannerModal = false;
+  }
+
+  onProductFound(product: Product): void {
+    this.closeBarcodeScanner();
+    this.openDetailModal(product);
   }
 
   clearFilters(): void {
