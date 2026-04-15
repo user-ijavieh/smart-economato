@@ -6,7 +6,32 @@
         <p><strong>Fecha Solicitud:</strong> {{ order.orderDate | date:'dd/MM/yyyy' }}</p>
       </div>
 
-      <div class="table-container">
+      <div class="reception-search-bar">
+        <div class="search-bar-header">
+          <span class="search-bar-title">Buscar productos a procesar</span>
+          <span class="search-bar-hint">Escribe un nombre o usa el escáner</span>
+        </div>
+        <div class="search-input-group">
+          <input
+            type="text"
+            class="form-control search-input"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearchTermChange($event)"
+            placeholder="Buscar producto por nombre o código"
+          />
+          <button type="button" class="btn-barcode" (click)="openBarcodeScanner()" [disabled]="isProcessing" title="Buscar por código de barras">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+              <path d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z"/>
+            </svg>
+            Escanear
+          </button>
+          @if (searchTerm) {
+            <button type="button" class="btn-clear-search" (click)="clearSearch()" [disabled]="isProcessing">Limpiar</button>
+          }
+        </div>
+      </div>
+
+      <div class="table-container desktop-table-container">
         <table class="details-table">
           <thead>
             <tr>
@@ -14,10 +39,11 @@
               <th class="text-center">Solicitado</th>
               <th class="text-center received-col">Recibido (Total)</th>
               <th class="text-center expiry-col">F. Caducidad <span class="required-asterisk">*</span></th>
+              <th class="text-center">Codigo de lote (opcional)</th>
             </tr>
           </thead>
           <tbody>
-            @for (detail of order.details; track detail.productId) {
+            @for (detail of visibleDetails; track detail.productId) {
             <tr class="product-base-row">
               <td><strong>{{ detail.productName }}</strong></td>
               <td class="text-center">{{ detail.quantity }} {{ detail.unit || 'uds' }}</td>
@@ -26,7 +52,7 @@
                     {{ getTotalReceived(detail) }}
                  </span>
               </td>
-              <td class="text-right">
+              <td class="text-right" colspan="2">
                 <button type="button" class="btn btn-sm btn-secondary add-lot-btn" (click)="addLot(detail)" [disabled]="isProcessing">+ Lote</button>
               </td>
             </tr>
@@ -66,13 +92,108 @@
                   <button type="button" class="btn-remove-lot" (click)="removeLot(detail, $index)" [disabled]="isProcessing" title="Eliminar lote">✕</button>
                 }
               </td>
+              <td class="text-center">
+                <input
+                  type="text"
+                  class="form-control quantity-input"
+                  [(ngModel)]="lot.batchCode"
+                  maxlength="100"
+                  placeholder="Ej. LOT-2026-001"
+                  [disabled]="isProcessing" />
+              </td>
             </tr>
             }
             }
           </tbody>
         </table>
       </div>
+
+      <div class="mobile-reception-list">
+            @for (detail of visibleDetails; track detail.productId) {
+          <section class="mobile-product-section">
+            <div class="mobile-product-header">
+              <div>
+                <div class="mobile-product-name">{{ detail.productName }}</div>
+                <div class="mobile-product-meta">
+                  Solicitado: {{ detail.quantity }} {{ detail.unit || 'uds' }}
+                </div>
+                <div class="mobile-product-meta">
+                  Recibido total:
+                  <span class="total-badge" [class.total-match]="getTotalReceived(detail) === detail.quantity">
+                    {{ getTotalReceived(detail) }}
+                  </span>
+                </div>
+              </div>
+              <button type="button" class="btn btn-sm btn-secondary add-lot-btn" (click)="addLot(detail)" [disabled]="isProcessing">+ Lote</button>
+            </div>
+
+            <div class="mobile-lots-list">
+              @for (lot of detail.lots; track $index) {
+                <article class="mobile-lot-card">
+                  <div class="mobile-lot-title">Lote {{ $index + 1 }}</div>
+
+                  <label class="mobile-field-label">CODIGO</label>
+                  <input
+                    type="text"
+                    class="form-control quantity-input"
+                    [(ngModel)]="lot.batchCode"
+                    maxlength="100"
+                    placeholder="Ej. LOT-2026-001"
+                    [disabled]="isProcessing" />
+
+                  <label class="mobile-field-label">RECIBIDO</label>
+                  <div class="quantity-cell-actions mobile-quantity-actions">
+                    <input
+                      type="number"
+                      class="form-control quantity-input"
+                      [(ngModel)]="lot.quantity"
+                      min="0"
+                      [disabled]="isProcessing" />
+                    <button
+                      type="button"
+                      class="btn-scale"
+                      [class.btn-scale-active]="isScaleActiveForLot(detail, $index)"
+                      [disabled]="isProcessing"
+                      [title]="isScaleActiveForLot(detail, $index) ? 'Detener lectura de báscula' : 'Iniciar lectura de báscula'"
+                      (click)="toggleScaleForLot(detail, $index)">
+                      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M4 8a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8Zm4-2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H8Zm1.2 7.2A2.8 2.8 0 1 1 14.8 13.2L12 10.8l-2.8 2.4Z" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <label class="mobile-field-label">FECHA DE CADUCIDAD <span class="required-asterisk">*</span></label>
+                  <div class="mobile-expiration-row">
+                    <input
+                      type="date"
+                      class="form-control quantity-input"
+                      [(ngModel)]="lot.expirationDate"
+                      [disabled]="isProcessing" />
+                    @if (detail.lots!.length > 1) {
+                      <button type="button" class="btn-remove-lot" (click)="removeLot(detail, $index)" [disabled]="isProcessing" title="Eliminar lote">✕</button>
+                    }
+                  </div>
+                </article>
+              }
+            </div>
+          </section>
+        }
+      </div>
   </div>
+
+  @if (showScannerModal) {
+    <div class="scanner-modal-overlay" (click)="closeBarcodeScanner()">
+      <div class="scanner-modal" (click)="$event.stopPropagation()">
+        <div class="scanner-modal-header">
+          <h2>Buscar por código de barras</h2>
+          <button type="button" class="scanner-close-btn" (click)="closeBarcodeScanner()">✕</button>
+        </div>
+        <div class="scanner-modal-body">
+          <app-barcode-scanner (productFound)="onProductFound($event)"></app-barcode-scanner>
+        </div>
+      </div>
+    </div>
+  }
 
   <div modal-footer>
     <button class="modal-btn modal-btn-success" (click)="processReception()" [disabled]="isProcessing">

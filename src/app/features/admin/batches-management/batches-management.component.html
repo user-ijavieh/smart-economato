@@ -23,7 +23,7 @@
     <!-- CONTROLES TAB 1 -->
     <div class="controles">
       <div class="search-group">
-        <input type="text" class="input-standard" [(ngModel)]="searchTerm" placeholder="Buscar por producto..." (ngModelChange)="onSearch()" />
+        <input type="text" class="input-standard" [(ngModel)]="searchTerm" placeholder="Buscar por producto o codigo de lote..." (ngModelChange)="onSearch()" />
       </div>
       
       <select [(ngModel)]="statusFilter" (change)="onSearch()" class="action-select">
@@ -61,6 +61,7 @@
           <tr>
             <th class="sortable" (click)="onSort('id')" [attr.data-sort-dir]="getSortDir('id')">ID</th>
             <th class="sortable" (click)="onSort('productName')" [attr.data-sort-dir]="getSortDir('productName')">Producto</th>
+            <th>Código Lote</th>
             <th>Cant. Original</th>
             <th class="sortable" (click)="onSort('remainingQuantity')" [attr.data-sort-dir]="getSortDir('remainingQuantity')">Stock</th>
             <th class="sortable" (click)="onSort('receivedAt')" [attr.data-sort-dir]="getSortDir('receivedAt')">Recibido</th>
@@ -75,6 +76,7 @@
               <tr class="skeleton-row">
                 <td><span class="skeleton" style="width: 40px"></span></td>
                 <td><span class="skeleton" style="width: 150px"></span></td>
+                <td><span class="skeleton" style="width: 120px"></span></td>
                 <td><span class="skeleton" style="width: 80px"></span></td>
                 <td><span class="skeleton" style="width: 80px"></span></td>
                 <td><span class="skeleton" style="width: 100px"></span></td>
@@ -101,6 +103,7 @@
                     <strong>{{batch.productName}}</strong>
                   </div>
                 </td>
+                <td>{{ batch.batchCode || '-' }}</td>
                 <td>{{batch.initialQuantity | number:'1.0-2'}}</td>
                 <td>
                   <span class="stock-value" [class.stock-low]="batch.remainingQuantity < 5">
@@ -144,7 +147,7 @@
             }
             @if (batches.length === 0 && !loading) {
               <tr>
-                <td colspan="8" class="empty-state">No se encontraron lotes activos</td>
+                <td colspan="9" class="empty-state">No se encontraron lotes activos</td>
               </tr>
             }
           }
@@ -188,6 +191,10 @@
                 <strong>{{ batch.productName }}</strong>
               </div>
               <div class="card-details">
+                <div class="detail-item">
+                  <span class="detail-label">Codigo:</span>
+                  <span>{{ batch.batchCode || '-' }}</span>
+                </div>
                 <div class="detail-item">
                   <span class="detail-label">Stock:</span>
                   <span class="stock-value" [class.stock-low]="batch.remainingQuantity < 5">

@@ -127,6 +127,7 @@
               <div class="status-cell">
                 <span class="severity-badge" [ngClass]="getSeverityClass(alert.severity)">{{ getSeverityLabel(alert.severity) }}</span>
                 <span class="resolution-badge" [ngClass]="getResolutionClass(alert.resolution)" [title]="getResolutionLabel(alert.resolution)">{{ getResolutionLabel(alert.resolution) }}</span>
+                <span class="alert-type-badge" [ngClass]="getAlertTypeClass(alert.alertType)">{{ getAlertTypeLabel(alert.alertType) }}</span>
               </div>
             </td>
             <td class="show-on-mobile-only mobile-icon-col">
@@ -166,6 +167,22 @@
                       </td>
                     </tr>
                     <tr>
+                      <td class="detail-td-label">Tipo</td>
+                      <td class="detail-td-value">
+                        <span class="detail-val-badge" [ngClass]="getAlertTypeClass(selectedAlertForMobile.alertType)">
+                          {{ getAlertTypeLabel(selectedAlertForMobile.alertType) }}
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="detail-td-label">Resolución</td>
+                      <td class="detail-td-value">
+                        <span class="detail-val-badge" [ngClass]="getResolutionClass(selectedAlertForMobile.resolution)">
+                          {{ getResolutionLabel(selectedAlertForMobile.resolution) }}
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
                       <td class="detail-td-label">Stock Actual</td>
                       <td class="detail-td-value">{{ selectedAlertForMobile.currentStock | number:'1.0-2' }} {{ selectedAlertForMobile.unit }}</td>
                     </tr>
@@ -186,11 +203,11 @@
               <!-- Combined Chart Section -->
               <div class="modal-chart-section">
                 <div class="chart-header">
-                  <h3>Análisis de Consumo y Evolución de Stock</h3>
+                  <h3>{{ modalChartTitle }}</h3>
                   @if (stockOutDay) {
-                    <div class="stock-out-warning">
+                    <div class="stock-out-warning" [class.ok]="modalChartMode === 'expiration'">
                       <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
-                      Agotamiento estimado: <strong>{{ stockOutDay }}</strong>
+                      {{ modalChartMode === 'expiration' ? 'Caducidad más próxima:' : 'Agotamiento estimado:' }} <strong>{{ stockOutDay }}</strong>
                     </div>
                   }
                 </div>
@@ -704,7 +721,7 @@
 <!-- Order Modal -->
 @if (showOrderModal) {
 <app-base-modal title="Generar una Orden de Reposición" size="lg" (closed)="closeOrderModal()">
-  <div class="modal-container">
+  <div class="modal-container order-builder-modal">
       <div class="days-control">
         <label>¿Para cuántos días deseas cubrir el stock estimado?</label>
         <div class="days-input-group">
@@ -712,38 +729,126 @@
           <span>días</span>
         </div>
       </div>
-      <div class="order-table-wrapper">
-        <table class="order-table">
-          <thead><tr><th>Producto</th><th class="hide-on-mobile">Stock</th><th class="hide-on-mobile">Pedido Pend.</th><th class="hide-on-mobile">Consumo/Día</th><th class="hide-on-mobile">Precio/U.</th><th>A Pedir</th><th>Subtotal</th></tr></thead>
-          <tbody>
-            @for (alert of orderAlerts; track alert.productId) {
-            <tr [class.skip-row]="getOrderQuantity(alert) <= 0">
-              <td>
-                <div class="product-cell" style="min-width: unset;">
-                  <strong>{{ alert.productName }}</strong>
-                  <span class="unit-label" style="margin-top:2px;">{{ alert.unit }}</span>
-                </div>
-              </td>
-              <td class="num-cell hide-on-mobile">{{ alert.currentStock | number:'1.0-2' }}</td>
-              <td class="num-cell hide-on-mobile">{{ alert.pendingOrderQuantity | number:'1.0-2' }}</td>
-              <td class="num-cell hide-on-mobile">{{ (alert.projectedConsumption / 14) | number:'1.0-2' }}</td>
-              <td class="num-cell hide-on-mobile">{{ (alert.unitPrice || 0) | currency:'EUR' }}</td>
-              <td class="num-cell quantity-col"><strong>{{ getOrderQuantity(alert) | number:'1.0-2' }}</strong> {{ alert.unit }}</td>
-              <td class="num-cell"><strong>{{ (getOrderQuantity(alert) * (alert.unitPrice || 0)) | currency:'EUR' }}</strong></td>
-            </tr>
+
+      <div class="order-builder-summary">
+        <span class="summary-chip">Pendientes: {{ getPendingItemCount() }}</span>
+        <span class="summary-chip">Asignados: {{ getAssignedItemCount() }}</span>
+        <span class="summary-chip">Órdenes: {{ orderGroups.length }}</span>
+      </div>
+
+      <div class="order-builder-grid">
+        <section class="order-source-panel" (dragover)="allowOrderDrop($event)" (drop)="dropOnPool($event)">
+          <div class="panel-header">
+            <h3>Productos pendientes</h3>
+            <span class="panel-counter">{{ orderAlerts.length }}</span>
+          </div>
+          <p class="panel-help">Arrastra cada producto a una orden para repartir la reposición.</p>
+
+          <div class="order-card-list">
+            @if (orderAlerts.length) {
+              @for (alert of orderAlerts; track alert.productId) {
+                <article class="order-item-card pool-card" draggable="true" (dragstart)="onOrderDragStart(alert, 'pool')" (dragend)="onOrderDragEnd()">
+                  <div class="order-item-main">
+                    <strong>{{ alert.productName }}</strong>
+                    <span class="unit-label">{{ alert.unit }}</span>
+                    <div class="order-badges">
+                      <span class="chip">{{ getAlertTypeLabel(alert.alertType) }}</span>
+                      @if (alert.supplierName) {
+                        <span class="chip">{{ alert.supplierName }}</span>
+                      }
+                    </div>
+                  </div>
+                  <div class="order-item-meta">
+                    <div><span>Stock</span><strong>{{ alert.currentStock | number:'1.0-2' }}</strong></div>
+                    <div><span>A pedir</span><strong>{{ getOrderQuantity(alert) | number:'1.0-2' }}</strong></div>
+                  </div>
+                </article>
+              }
+            } @else {
+              <div class="empty-drop-zone">
+                <p>No quedan productos pendientes por asignar.</p>
+              </div>
             }
-          </tbody>
-        </table>
+          </div>
+        </section>
+
+        <section class="order-destinations-panel">
+          <div class="panel-header panel-header-actions">
+            <h3>Órdenes</h3>
+            <button type="button" class="toolbar-btn btn-crear-orden" (click)="addOrderGroup()">
+              + Añadir orden
+            </button>
+          </div>
+
+          <div class="order-groups">
+            @for (group of orderGroups; track group.id) {
+              <article class="order-group-card" (dragover)="allowOrderDrop($event)" (drop)="dropOnGroup($event, group.id)">
+                <div class="order-group-header">
+                  <div class="order-group-title-block">
+                    <strong>{{ group.title }}</strong>
+                    <span class="group-subtitle">{{ group.items.length }} producto{{ group.items.length === 1 ? '' : 's' }}</span>
+                  </div>
+                  <button type="button" class="btn-remove-group" (click)="removeOrderGroup(group.id)" [disabled]="orderGroups.length === 1">
+                    Quitar
+                  </button>
+                </div>
+
+                <div class="form-group order-supplier-field">
+                  <label>Proveedor</label>
+                  <select [(ngModel)]="group.supplierId" class="form-control">
+                    <option [ngValue]="null">Sin proveedor</option>
+                    @for (supplier of suppliers; track supplier.id) {
+                      <option [ngValue]="supplier.id">{{ supplier.name }}</option>
+                    }
+                  </select>
+                </div>
+
+                <div class="order-card-list bucket-list">
+                  @if (group.items.length) {
+                    @for (item of group.items; track item.productId) {
+                      <article class="order-item-card bucket-card" draggable="true" (dragstart)="onOrderDragStart(item, group.id)" (dragend)="onOrderDragEnd()">
+                        <div class="order-item-main">
+                          <strong>{{ item.productName }}</strong>
+                          <span class="unit-label">{{ item.unit }}</span>
+                          <div class="order-badges">
+                            <span class="chip">{{ getAlertTypeLabel(item.alertType) }}</span>
+                            @if (item.supplierName) {
+                              <span class="chip">{{ item.supplierName }}</span>
+                            }
+                          </div>
+                        </div>
+                        <div class="order-item-meta">
+                          <div><span>A pedir</span><strong>{{ getOrderQuantity(item) | number:'1.0-2' }}</strong></div>
+                          <div><span>Subtotal</span><strong>{{ (getOrderQuantity(item) * (item.unitPrice || 0)) | currency:'EUR' }}</strong></div>
+                        </div>
+                        <button type="button" class="btn-send-back" (click)="moveItemToPool(item, group.id)">Volver</button>
+                      </article>
+                    }
+                  } @else {
+                    <div class="empty-drop-zone compact">
+                      <p>Suelta aquí los productos de esta orden.</p>
+                    </div>
+                  }
+                </div>
+
+                <div class="bucket-footer">
+                  <span>Total: <strong>{{ getGroupTotal(group) | currency:'EUR' }}</strong></span>
+                  <span>{{ group.items.length }} productos</span>
+                </div>
+              </article>
+            }
+          </div>
+        </section>
       </div>
   </div>
   <div modal-footer>
     <div class="order-modal-footer">
       <div class="order-total">
-        Total estimado: <strong>{{ getOrderTotal() | currency:'EUR' }}</strong>
+        Total estimado: <strong>{{ getOrderGrandTotal() | currency:'EUR' }}</strong>
       </div>
       <div class="order-actions">
-        <button type="button" class="btn-confirm" (click)="confirmCreateOrder()" [disabled]="creatingOrder || getOrderTotal() === 0">
-          {{ creatingOrder ? 'Creando...' : 'Confirmar Orden' }}
+        <button type="button" class="btn-confirm" (click)="confirmCreateOrder()" [disabled]="creatingOrder || orderAlerts.length > 0 || getOrderGrandTotal() === 0">
+          {{ creatingOrder ? 'Creando...' : 'Confirmar Órdenes' }}
         </button>
       </div>
     </div>
@@ -857,17 +962,35 @@
       </div>
       
       <div class="form-item">
-        <label>Asignar a Lote Específico (Opcional)</label>
-        <select [(ngModel)]="adjustmentBatchId" class="input-standard">
-          <option [ngValue]="null">--- Crear Lote Nuevo / Selección Automática ---</option>
-          @for (batch of activeBatchesForAdjustment; track batch.id) {
-            <option [ngValue]="batch.id">Lote #{{ batch.id }} - Stock: {{ batch.remainingQuantity | number:'1.0-2' }} (Cad: {{ batch.expirationDate | date:'dd/MM/yyyy' }})</option>
-          }
-        </select>
+        <label>Buscar lote por ID o codigo (Opcional)</label>
+        <input
+          type="text"
+          class="input-standard"
+          [(ngModel)]="adjustmentBatchReference"
+          (focus)="onAdjustmentBatchReferenceFocus()"
+          (ngModelChange)="onAdjustmentBatchReferenceInput()"
+          maxlength="100"
+          placeholder="Ej. 42 o LOT-2026-001" />
+        @if (batchTypeaheadSuggestions.length > 0) {
+          <div class="custom-dropdown-menu" style="position: static; margin-top: 6px; max-height: 220px;">
+            <div class="dropdown-list" style="max-height: 220px;">
+              @for (suggestion of batchTypeaheadSuggestions; track suggestion.id) {
+                <div class="dropdown-item" (click)="selectBatchSuggestion(suggestion)">
+                  <strong>#{{ suggestion.id }}</strong>
+                  @if (suggestion.batchCode) {
+                    <span> - {{ suggestion.batchCode }}</span>
+                  }
+                  <span> (Stock: {{ suggestion.remainingQuantity | number:'1.0-2' }})</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+        <small class="form-help">Si no seleccionas uno, se usa FIFO (salidas) o se crea lote nuevo (entradas).</small>
       </div>
 
       <!-- Expiration Date for New Batch (Backend requires this if batchId is null for entries) -->
-      @if (!adjustmentBatchId && adjustmentDirection === 'ENTRY') {
+      @if (!adjustmentBatchId && !adjustmentBatchReference.trim() && adjustmentDirection === 'ENTRY') {
       <div class="form-item arrival-animation">
         <label>Fecha de Caducidad (Lote Nuevo) *</label>
         <input type="date" [(ngModel)]="adjustmentExpirationDate" class="input-standard" 

@@ -2,12 +2,22 @@ export type CrisisStatus = 'ACTIVE' | 'LIFTED';
 
 export interface CrisisAffectedBatchDTO {
   batchId: number;
+  batchCode?: string | null;
   productId: number;
   productName: string;
   expirationDate: string | null;
   remainingQuantity: number;
   expired: boolean;
   depleted: boolean;
+}
+
+export interface QuarantinedProductInfo {
+  batchId?: number | null;
+  expirationDate?: string | null;
+  initialQuantity?: number | null;
+  remainingQuantity?: number | null;
+  receivedAt?: string | null;
+  ledgerHash?: string | null;
 }
 
 export interface CrisisAffectedOrderDTO {
@@ -32,7 +42,7 @@ export interface CrisisResponseDTO {
   status: CrisisStatus;
   reason: string;
   supplierName: string;
-  quarantinedProducts: Record<string, string>;
+  quarantinedProducts: Record<string, string | QuarantinedProductInfo>;
   affectedBatches?: CrisisAffectedBatchDTO[];
   affectedOrderIds?: number[];
   affectedOrders?: CrisisAffectedOrderDTO[];
