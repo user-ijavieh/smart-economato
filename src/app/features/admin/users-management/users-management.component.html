@@ -224,8 +224,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for (user of filteredUsers; track user.id) {
-                    @if (!showingHidden) {
+                    @for (user of onlineUsers; track user.id) {
                     <tr>
                         <td>
                             <div class="presence-user-cell">
@@ -239,13 +238,15 @@
                         <td><span class="presence-pill connected">En línea</span></td>
                         <td>{{ getCurrentScreen(presence) }}</td>
                         <td class="hide-on-mobile">{{ getLastHeartbeat(presence) | date:'short' }}</td>
-                        } @else {
-                        <td><span class="presence-pill disconnected">Desconectado</span></td>
-                        <td>-</td>
-                        <td class="hide-on-mobile">-</td>
                         }
                     </tr>
                     }
+                    @if (onlineUsers.length === 0) {
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 1.5rem; color: var(--theme-text-secondary);">
+                            No hay usuarios en línea
+                        </td>
+                    </tr>
                     }
                 </tbody>
             </table>

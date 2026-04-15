@@ -80,6 +80,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
 
     // ── Presence + Activity state ──
     connectedSnapshots: UserPresenceSnapshot[] = [];
+    onlineUsers: User[] = [];
     activityLogs: UserActivityLogResponse[] = [];
     activityPage = 0;
     activitySize = 20;
@@ -109,6 +110,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
 
         this.presenceSubscription = this.webSocketService.adminPresence$.subscribe((snapshots) => {
             this.connectedSnapshots = snapshots ?? [];
+            this.updateOnlineUsers();
             this.scheduleActivityRefreshFromWebSocket();
             this.cdr.detectChanges();
         });
@@ -264,6 +266,13 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 this.totalElements = this.serverTotalElements;
             }
         }
+
+        this.updateOnlineUsers();
+    }
+
+    private updateOnlineUsers(): void {
+        const connectedIds = new Set(this.connectedSnapshots.map(snapshot => snapshot.userId));
+        this.onlineUsers = this.filteredUsers.filter(user => !!user.id && connectedIds.has(user.id));
     }
 
     onSearch(): void {

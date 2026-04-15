@@ -1078,10 +1078,12 @@ tr.row-hidden .user-avatar-small {
   display: grid;
   grid-template-columns: 1.3fr 1fr;
   gap: 16px;
+  align-items: start;
 }
 
 .presence-table {
   max-height: 70vh;
+  overflow-y: auto;
 }
 
 .presence-user-cell {
