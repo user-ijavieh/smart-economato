@@ -533,7 +533,10 @@ export class KitchenManagementComponent implements OnInit {
     this.cdr.markForCheck();
   }
   
-  goToOrder(orderId: number): void {
+  goToOrder(orderId: number, event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+
     if (!orderId) {
       return;
     }

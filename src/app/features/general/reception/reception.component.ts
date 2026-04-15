@@ -56,13 +56,15 @@ export class ReceptionComponent implements OnInit {
     this.loading = true;
     this.orderService.getAll().subscribe({
       next: (response) => {
+        const normalizeOrders = (orders: any[]): Order[] => orders.map(order => this.normalizeOrderPayload(order));
+
         // Verificar si la respuesta es un array directo o un objeto paginado
         let ordersArray: Order[] = [];
         if (Array.isArray(response)) {
-          ordersArray = response;
+          ordersArray = normalizeOrders(response);
         } else if (response && Array.isArray((response as any).content)) {
           // Respuesta paginada con estructura {content: [], ...}
-          ordersArray = (response as any).content;
+          ordersArray = normalizeOrders((response as any).content);
         }
 
         // Ordenar las órdenes de más reciente a más antigua (creando una copia)
@@ -287,5 +289,26 @@ export class ReceptionComponent implements OnInit {
   closeDetailsModal(): void {
     this.showDetailsModal = false;
     this.selectedOrder = null;
+  }
+
+  private normalizeOrderPayload(order: any): Order {
+    const details = Array.isArray(order?.details)
+      ? order.details.map((detail: any) => ({
+          ...detail,
+          quantityReceived: this.normalizeReceivedQuantity(detail)
+        }))
+      : [];
+
+    return {
+      ...order,
+      details
+    } as Order;
+  }
+
+  private normalizeReceivedQuantity(detail: any): number | undefined {
+    const raw = detail?.quantityReceived ?? detail?.quantityRecieved ?? detail?.quantity_received;
+    if (raw === undefined || raw === null || raw === '') return undefined;
+    const value = Number(raw);
+    return Number.isFinite(value) ? value : undefined;
   }
 }

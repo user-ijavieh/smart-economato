@@ -40,6 +40,8 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
     private presenceTrackingService = inject(PresenceTrackingService);
     messageService = inject(MessageService);
     private presenceSubscription?: Subscription;
+    private wsActivityRefreshTimer: ReturnType<typeof setTimeout> | null = null;
+    private lastActivityRefreshAt = 0;
 
     users: User[] = [];
     filteredUsers: User[] = [];
@@ -84,6 +86,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
     activityLoading = false;
     activityHasMore = true;
     activityInitialized = false;
+    private readonly minActivityRefreshIntervalMs = 10000;
 
     // ── Assignments state ──
     unassignedStudents: User[] = [];
@@ -106,12 +109,17 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
 
         this.presenceSubscription = this.webSocketService.adminPresence$.subscribe((snapshots) => {
             this.connectedSnapshots = snapshots ?? [];
+            this.scheduleActivityRefreshFromWebSocket();
             this.cdr.detectChanges();
         });
     }
 
     ngOnDestroy(): void {
         this.presenceSubscription?.unsubscribe();
+        if (this.wsActivityRefreshTimer) {
+            clearTimeout(this.wsActivityRefreshTimer);
+            this.wsActivityRefreshTimer = null;
+        }
     }
 
     loadTeachers(force = false): void {
@@ -305,6 +313,8 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
     loadActivity(reset = false): void {
         if (this.activityLoading) return;
 
+        this.lastActivityRefreshAt = Date.now();
+
         if (reset) {
             this.activityLogs = [];
             this.activityPage = 0;
@@ -341,6 +351,34 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
         if (nearBottom) {
             this.loadActivity(false);
         }
+    }
+
+    private scheduleActivityRefreshFromWebSocket(): void {
+        if (!this.activityInitialized || this.activeTab !== 'presence') {
+            return;
+        }
+
+        if (this.activityLoading) {
+            return;
+        }
+
+        const elapsed = Date.now() - this.lastActivityRefreshAt;
+        if (elapsed >= this.minActivityRefreshIntervalMs) {
+            this.loadActivity(true);
+            return;
+        }
+
+        if (this.wsActivityRefreshTimer) {
+            return;
+        }
+
+        const delay = this.minActivityRefreshIntervalMs - elapsed;
+        this.wsActivityRefreshTimer = setTimeout(() => {
+            this.wsActivityRefreshTimer = null;
+            if (this.activeTab === 'presence' && this.activityInitialized && !this.activityLoading) {
+                this.loadActivity(true);
+            }
+        }, delay);
     }
 
     getPresenceForUser(userId: number): UserPresenceSnapshot | undefined {
@@ -875,9 +913,9 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
     }
 
     async toggleUserVisibility(user: User): Promise<void> {
-        const actionText = this.showingHidden ? 'mostrar' : 'ocultar';
+        const actionText = this.showingHidden ? 'activar' : 'desactivar';
         const confirmed = await this.messageService.confirm(
-            this.showingHidden ? '¿Mostrar usuario?' : '¿Ocultar usuario?',
+            this.showingHidden ? '¿Activar usuario?' : '¿Desactivar usuario?',
             `¿Estás seguro de que quieres ${actionText} a "${user.name}"?`
         );
 
@@ -885,7 +923,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
 
         this.userService.toggleHidden(user.id, !this.showingHidden).subscribe({
             next: () => {
-                this.messageService.showSuccess(`Usuario ${this.showingHidden ? 'mostrado' : 'ocultado'} correctamente`);
+                this.messageService.showSuccess(`Usuario ${this.showingHidden ? 'activado' : 'desactivado'} correctamente`);
                 this.loadUsers(this.currentPage);
                 this.cdr.detectChanges();
             },

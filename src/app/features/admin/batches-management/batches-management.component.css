@@ -588,6 +588,18 @@ tr.depleted-row:hover td { background: var(--theme-surface-glass-hover); }
   opacity: 1;
 }
 
+.sub-tab-bar .tab-btn-expiring.active {
+  color: var(--color-warning);
+  border-bottom-color: rgba(250, 204, 21, 0.8);
+  background: rgba(250, 204, 21, 0.14);
+}
+
+.sub-tab-bar .tab-btn-expired.active {
+  color: var(--color-danger-muted);
+  border-bottom-color: rgba(239, 68, 68, 0.85);
+  background: rgba(239, 68, 68, 0.14);
+}
+
 /* Table Name Text */
 .product-name-text {
   font-weight: 700;

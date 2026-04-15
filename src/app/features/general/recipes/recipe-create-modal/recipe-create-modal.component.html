@@ -1,4 +1,4 @@
-<app-base-modal [title]="modalTitle" size="lg" (closed)="closeModal()">
+<app-base-modal [title]="modalTitle" size="lg" [closeOnBackdrop]="false" (closed)="closeModal()">
   <div (click)="closeAllDropdowns()">
     <form class="create-form" (click)="$event.stopPropagation()">
       <div class="form-group">

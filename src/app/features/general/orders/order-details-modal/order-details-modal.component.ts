@@ -67,6 +67,25 @@ export class OrderDetailsModalComponent implements OnChanges {
     return `Faltante ${Math.abs(delta)}`;
   }
 
+  getComparisonSymbol(detail: OrderDetail): string {
+    const received = this.getReceivedQuantity(detail);
+    if (received === null) return '';
+    
+    if (received === detail.quantity) {
+      return '✓';
+    } else if (received < detail.quantity) {
+      return '✕';
+    } else {
+      return '▲';
+    }
+  }
+
+  getFormattedQuantity(detail: OrderDetail): string {
+    const received = this.getReceivedQuantity(detail);
+    if (received === null) return `${detail.quantity} ${detail.unit || 'uds'}`;
+    return `${detail.quantity} / ${received} ${detail.unit || 'uds'}`;
+  }
+
   close(): void {
     this.closeModal.emit();
   }

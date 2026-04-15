@@ -45,6 +45,17 @@
   align-items: center;
 }
 
+.controles-audits .date-filter-field {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.controles-audits .date-field-label {
+  margin: 0;
+  white-space: nowrap;
+}
+
 .controles-audits input[type='text'] {
   min-width: 320px;
 }
@@ -89,6 +100,13 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--theme-text-secondary);
+}
+
+@media (min-width: 1024px) {
+  .date-field-label,
+  .controles-audits .date-field-label {
+    display: none;
+  }
 }
 
 .controles input[type='text']::placeholder,

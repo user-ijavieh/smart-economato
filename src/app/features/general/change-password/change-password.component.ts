@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { MessageService } from '../../../core/services/message.service';
 
@@ -41,6 +41,7 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
 export class ChangePasswordComponent {
     private authService = inject(AuthService);
     private router = inject(Router);
+    private route = inject(ActivatedRoute);
     private messageService = inject(MessageService);
 
     loading = false;
@@ -75,6 +76,12 @@ export class ChangePasswordComponent {
                 this.authService.clearFirstLogin();
                 this.messageService.showSuccess('Contraseña actualizada correctamente');
 
+                const returnUrl = this.getSafeReturnUrl();
+                if (returnUrl) {
+                    this.router.navigateByUrl(returnUrl);
+                    return;
+                }
+
                 const role = this.authService.getRole();
                 if (role === 'ADMIN') {
                     this.router.navigate(['/admin-panel']);
@@ -88,5 +95,12 @@ export class ChangePasswordComponent {
                 this.messageService.showError('Error al cambiar la contraseña. Verifica tu contraseña actual.');
             }
         });
+    }
+
+    private getSafeReturnUrl(): string | null {
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+        if (!returnUrl) return null;
+        if (!returnUrl.startsWith('/') || returnUrl.startsWith('//')) return null;
+        return returnUrl;
     }
 }

@@ -686,28 +686,6 @@ export class ProductsManagementComponent implements OnInit {
       changed: prevPrice !== nextPrice
     });
 
-    // Stock Actual
-    const prevStock = prev.stockActual?.toFixed(3) ?? '0.000';
-    const nextStock = next.stockActual?.toFixed(3) ?? '0.000';
-    fields.push({
-      label: 'Stock Actual',
-      prev: prevStock,
-      next: nextStock,
-      changed: prevStock !== nextStock
-    });
-
-    // Stock Mínimo (si existe)
-    if (prev.stockMinimo !== undefined || next.stockMinimo !== undefined) {
-      const prevMinStock = prev.stockMinimo?.toFixed(3) ?? 'No definido';
-      const nextMinStock = next.stockMinimo?.toFixed(3) ?? 'No definido';
-      fields.push({
-        label: 'Stock Mínimo',
-        prev: prevMinStock,
-        next: nextMinStock,
-        changed: prevMinStock !== nextMinStock
-      });
-    }
-
     // Disponibilidad (si existe)
     if (prev.disponibilidad !== undefined || next.disponibilidad !== undefined) {
       const prevAvail = prev.disponibilidad !== undefined ? prev.disponibilidad + '%' : 'No definido';
