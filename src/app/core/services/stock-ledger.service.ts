@@ -8,6 +8,7 @@ import {
   StockSnapshotResponseDTO,
   BatchStockMovementRequestDTO,
   BatchStockMovementResponseDTO,
+  ManualStockAdjustmentRequestDTO,
   ConsumptionBreakdownDTO,
   BlockchainStatsResponseDTO,
   BlockchainVerificationResponseDTO,
@@ -67,7 +68,7 @@ export class StockLedgerService {
     return this.http.get<ConsumptionBreakdownDTO>(`${this.url}/consumption/${productId}`, { params: params as any });
   }
 
-  registerManualAdjustment(request: any): Observable<StockLedgerResponseDTO> {
+  registerManualAdjustment(request: ManualStockAdjustmentRequestDTO): Observable<StockLedgerResponseDTO> {
     return this.http.post<StockLedgerResponseDTO>(`${this.url}/manual-adjustment`, request);
   }
 

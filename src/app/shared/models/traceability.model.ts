@@ -26,4 +26,7 @@ export interface IngredientTraceDTO {
   supplierName: string | null;
   movementType: string | null;
   description: string | null;
+  batchId?: number | null;
+  batchCode?: string | null;
+  expirationDate?: string | null;
 }

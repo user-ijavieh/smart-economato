@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { AsyncPipe, CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { finalize, Observable, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { KitchenService } from '../../../core/services/kitchen.service';
 import { RecipeService } from '../../../core/services/recipe.service';
+import { OrderService } from '../../../core/services/order.service';
 import { MessageService } from '../../../core/services/message.service';
 import {
   BatchStockMovementRequest,
@@ -12,17 +12,19 @@ import {
   RecipeCookingAudit,
   ReportRange
 } from '../../../shared/models/kitchen.model';
+import { Order } from '../../../shared/models/order.model';
 import { TraceabilityService } from '../../../core/services/traceability.service';
 import { ReverseTraceabilityDTO } from '../../../shared/models/traceability.model';
 import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
+import { OrderDetailsModalComponent } from '../../general/orders/order-details-modal/order-details-modal.component';
 
 @Component({
   selector: 'app-kitchen-management',
   standalone: true,
-  imports: [FormsModule, ConfirmDialogComponent, ToastComponent, BaseModalComponent, DatePipe, DecimalPipe, CurrencyPipe, AsyncPipe],
+  imports: [FormsModule, ConfirmDialogComponent, ToastComponent, BaseModalComponent, DatePipe, DecimalPipe, CurrencyPipe, AsyncPipe, OrderDetailsModalComponent],
   templateUrl: './kitchen-management.component.html',
   styleUrl: './kitchen-management.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -30,9 +32,9 @@ import { BaseModalComponent } from '../../../shared/components/base-modal/base-m
 export class KitchenManagementComponent implements OnInit {
   private kitchenService = inject(KitchenService);
   private recipeService = inject(RecipeService);
+  private orderService = inject(OrderService);
   private traceabilityService = inject(TraceabilityService);
   private cdr = inject(ChangeDetectorRef);
-  private router = inject(Router);
   private scrollService = inject(ScrollService);
   messageService = inject(MessageService);
 
@@ -73,6 +75,8 @@ export class KitchenManagementComponent implements OnInit {
   showTraceabilityModal = false;
   loadingTraceability = false;
   traceData: ReverseTraceabilityDTO | null = null;
+  showOrderDetailsModal = false;
+  selectedOrder: Order | null = null;
 
   ngOnInit(): void {
     this.loadHistory();
@@ -544,7 +548,27 @@ export class KitchenManagementComponent implements OnInit {
   }
   
   goToOrder(orderId: number): void {
-    this.router.navigate(['/admin/orders'], { queryParams: { id: orderId } });
-    this.closeTraceabilityModal();
+    if (!orderId) {
+      return;
+    }
+
+    this.orderService.getById(orderId).subscribe({
+      next: (order) => {
+        this.selectedOrder = order;
+        this.showOrderDetailsModal = true;
+        this.showTraceabilityModal = false;
+        this.showMobileModal = false;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.messageService.showError(`No se pudo cargar la orden #${orderId}`);
+      }
+    });
+  }
+
+  closeOrderDetailsModal(): void {
+    this.showOrderDetailsModal = false;
+    this.selectedOrder = null;
+    this.cdr.markForCheck();
   }
 }

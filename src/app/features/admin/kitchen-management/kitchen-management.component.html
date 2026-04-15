@@ -182,8 +182,17 @@
                           <div class="ingredient-name-mobile">{{ ingredient.productName }}</div>
                           <div class="mobile-trace-grid">
                             <div class="mobile-trace-item">
-                              <span class="mobile-trace-label">Hash:</span>
-                              <span class="mobile-trace-value hash">{{ ingredient.ledgerHash || 'N/A' }}</span>
+                              <span class="mobile-trace-label">Lote:</span>
+                              <span class="mobile-trace-value">
+                                @if (ingredient.batchCode || ingredient.batchId) {
+                                  {{ ingredient.batchCode || 'Sin codigo' }}
+                                  @if (ingredient.batchId) {
+                                    <span>(#{{ ingredient.batchId }})</span>
+                                  }
+                                } @else {
+                                  Sin lote
+                                }
+                              </span>
                             </div>
                             <div class="mobile-trace-item">
                               <span class="mobile-trace-label">Origen:</span>
@@ -420,8 +429,17 @@
                   </div>
                   <div class="trace-details-grid">
                     <div class="trace-item">
-                      <span class="trace-label">Hash Ledger</span>
-                      <span class="trace-value hash-value">{{ ingredient.ledgerHash || 'N/A' }}</span>
+                      <span class="trace-label">Lote origen</span>
+                      <span class="trace-value">
+                        @if (ingredient.batchCode || ingredient.batchId) {
+                          {{ ingredient.batchCode || 'Sin codigo' }}
+                          @if (ingredient.batchId) {
+                            <span>(#{{ ingredient.batchId }})</span>
+                          }
+                        } @else {
+                          Sin lote
+                        }
+                      </span>
                     </div>
                     <div class="trace-item">
                       <span class="trace-label">Proveedor</span>
@@ -467,4 +485,12 @@
         }
     </div>
 </app-base-modal>
+}
+
+@if (showOrderDetailsModal && selectedOrder) {
+  <app-order-details-modal
+    [order]="selectedOrder"
+    (closeModal)="closeOrderDetailsModal()"
+    (deleteOrder)="closeOrderDetailsModal()"
+  ></app-order-details-modal>
 }

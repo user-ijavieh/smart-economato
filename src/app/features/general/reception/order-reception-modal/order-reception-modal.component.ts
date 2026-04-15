@@ -2,16 +2,20 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } fro
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { Order, OrderReceptionRequest } from '../../../../shared/models/order.model';
+import { catchError, of } from 'rxjs';
+import { Order, OrderDetail, OrderReceptionRequest } from '../../../../shared/models/order.model';
 import { OrderService } from '../../../../core/services/order.service';
 import { MessageService } from '../../../../core/services/message.service';
+import { ProductService } from '../../../../core/services/product.service';
+import { Product } from '../../../../shared/models/product.model';
 import { ScaleService } from '../../../../core/services/scale.service';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
+import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.component';
 
 @Component({
   selector: 'app-order-reception-modal',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent, DatePipe],
+  imports: [FormsModule, BaseModalComponent, DatePipe, BarcodeScannerComponent],
   templateUrl: './order-reception-modal.component.html',
   styleUrl: './order-reception-modal.component.css'
 })
@@ -22,13 +26,18 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
 
   private orderService = inject(OrderService);
   private messageService = inject(MessageService);
+  private productService = inject(ProductService);
   private scaleService = inject(ScaleService);
 
   isProcessing = false;
   isScaleListening = false;
+  searchTerm = '';
+  showScannerModal = false;
+  filteredDetails: OrderDetail[] = [];
 
   private scaleSubscription?: Subscription;
   private listeningSubscription?: Subscription;
+  private searchSubscription?: Subscription;
   private activeScaleTarget: { productId: number; lotIndex: number } | null = null;
 
   beforeCloseHandler = async (): Promise<boolean> => {
@@ -45,6 +54,8 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
   };
 
   ngOnInit(): void {
+    this.filteredDetails = [...(this.order.details || [])];
+
     this.scaleSubscription = this.scaleService.weight$.subscribe(weight => {
       this.applyWeightToActiveLot(weight);
     });
@@ -60,21 +71,91 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     if (this.order && this.order.details) {
       this.order.details.forEach(detail => {
         if (!detail.lots || detail.lots.length === 0) {
-          detail.lots = [{ quantity: detail.quantity, expirationDate: null }];
+          detail.lots = [{ quantity: detail.quantity, expirationDate: null, batchCode: null }];
         }
       });
     }
+
+    this.applySearch();
   }
 
   ngOnDestroy(): void {
     this.scaleSubscription?.unsubscribe();
     this.listeningSubscription?.unsubscribe();
+    this.searchSubscription?.unsubscribe();
     void this.scaleService.stopListening();
+  }
+
+  onSearchTermChange(term: string): void {
+    this.searchTerm = term;
+    this.applySearch();
+  }
+
+  applySearch(): void {
+    const details = this.order.details || [];
+    const term = this.searchTerm.trim();
+
+    if (!term) {
+      this.filteredDetails = [...details];
+      return;
+    }
+
+    const normalizedTerm = this.normalizeText(term);
+    const nameMatches = details.filter(detail =>
+      this.normalizeText(detail.productName).includes(normalizedTerm)
+    );
+
+    if (nameMatches.length > 0) {
+      this.filteredDetails = nameMatches;
+      return;
+    }
+
+    this.productService.getByBarcode(term).pipe(
+      catchError(() => of(null))
+    ).subscribe(product => {
+      if (!product) {
+        this.filteredDetails = [];
+        return;
+      }
+
+      this.filteredDetails = details.filter(detail => detail.productId === product.id);
+      this.searchTerm = product.productCode || product.name || term;
+    });
+  }
+
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.filteredDetails = [...(this.order.details || [])];
+  }
+
+  openBarcodeScanner(): void {
+    this.showScannerModal = true;
+  }
+
+  closeBarcodeScanner(): void {
+    this.showScannerModal = false;
+  }
+
+  onProductFound(product: Product): void {
+    this.searchTerm = product.productCode || product.name || '';
+    this.showScannerModal = false;
+    this.applySearch();
+  }
+
+  get visibleDetails(): OrderDetail[] {
+    return this.filteredDetails;
   }
 
   addLot(detail: any): void {
     if (!detail.lots) detail.lots = [];
-    detail.lots.push({ quantity: 0, expirationDate: null });
+    detail.lots.push({ quantity: 0, expirationDate: null, batchCode: null });
+  }
+
+  private normalizeText(value: string): string {
+    return value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
   }
 
   removeLot(detail: any, index: number): void {
@@ -217,7 +298,11 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
       items: this.order.details.map(d => ({
         productId: d.productId,
         quantityReceived: this.getTotalReceived(d),
-        lots: d.lots?.map(l => ({ quantity: l.quantity, expirationDate: l.expirationDate || null })) || []
+        lots: d.lots?.map(l => ({
+          quantity: l.quantity,
+          expirationDate: l.expirationDate || null,
+          batchCode: l.batchCode?.trim() ? l.batchCode.trim() : null
+        })) || []
       }))
     };
 

@@ -31,11 +31,143 @@
   letter-spacing: 1px;
 }
 
+.reception-search-bar {
+  margin: 0 0 1rem;
+  padding: 0.95rem 1rem 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--theme-border-glass);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--theme-surface-glass) 92%, transparent), color-mix(in srgb, var(--theme-surface-glass-active) 88%, transparent));
+  box-shadow: var(--theme-shadow-card);
+}
+
+.search-bar-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-bottom: 0.8rem;
+}
+
+.search-bar-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--theme-text-primary);
+}
+
+.search-bar-hint {
+  font-size: 0.8rem;
+  color: var(--theme-text-secondary);
+}
+
+.search-input-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+.search-input-group .search-input {
+  flex: 1 1 260px;
+  min-width: 0;
+  text-align: left;
+  height: 46px;
+  border-radius: 12px;
+  padding-inline: 14px;
+  border: 1.5px solid var(--theme-border-glass);
+  background: var(--theme-input-bg);
+  color: var(--theme-text-primary);
+  transition: all 0.25s ease;
+}
+
+.btn-barcode,
+.btn-clear-search {
+  height: 46px;
+  border-radius: 10px;
+  border: 1px solid var(--theme-border-glass);
+  background: var(--theme-surface-glass-hover);
+  color: var(--theme-text-primary);
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-barcode:hover,
+.btn-clear-search:hover {
+  border-color: var(--brand-primary);
+  background: color-mix(in srgb, var(--brand-primary) 10%, transparent);
+}
+
+.btn-barcode {
+  background: color-mix(in srgb, var(--brand-primary) 12%, transparent);
+}
+
+.btn-clear-search {
+  color: var(--theme-text-secondary);
+}
+
+.scanner-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1200;
+}
+
+.scanner-modal {
+  width: min(720px, 100%);
+  max-height: 90vh;
+  overflow: hidden;
+  border-radius: 18px;
+  background: var(--theme-surface-glass);
+  border: 1px solid var(--theme-border-glass);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+}
+
+.scanner-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--theme-border-glass);
+}
+
+.scanner-modal-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--theme-text-primary);
+}
+
+.scanner-close-btn {
+  border: 0;
+  background: transparent;
+  color: var(--theme-text-secondary);
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.scanner-modal-body {
+  overflow: auto;
+  padding: 0.75rem 1rem 1rem;
+}
+
 .table-container {
   overflow-x: auto;
   border-radius: 12px;
   border: 1px solid var(--theme-border-glass);
   background: var(--theme-section-header-bg);
+}
+
+.mobile-reception-list {
+  display: none;
 }
 
 .details-table {
@@ -202,14 +334,135 @@
 /** ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .detail-group { grid-template-columns: 1fr; gap: 0.5rem; padding: 10px; margin-bottom: 1rem; }
-  .details-table th, .details-table td { padding: 8px 4px; font-size: 0.75rem; white-space: normal; }
-  .details-table th:first-child, .details-table td:first-child { min-width: auto; }
-  .received-col { width: 65px; }
-  .expiry-col { width: 120px; }
-  .lot-indent { padding-left: 12px !important; }
-  .lot-actions-cell { flex-direction: column; }
-  .quantity-cell-actions { flex-direction: column; }
-  .btn-scale { width: 100%; height: 30px; }
-  .quantity-input, .table-input { padding: 4px; font-size: 0.75rem; }
+
+  .search-input-group {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .btn-barcode,
+  .btn-clear-search {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .reception-search-bar {
+    padding: 0.85rem;
+  }
+
+  .desktop-table-container {
+    display: none;
+  }
+
+  .mobile-reception-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .mobile-product-section {
+    border: 1px solid var(--theme-border-glass);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--theme-surface-glass-active) 40%, transparent);
+    padding: 0.7rem;
+  }
+
+  .mobile-product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.7rem;
+  }
+
+  .mobile-product-name {
+    font-weight: 700;
+    color: var(--theme-text-primary);
+    font-size: 0.95rem;
+  }
+
+  .mobile-product-meta {
+    font-size: 0.78rem;
+    color: var(--theme-text-secondary);
+    margin-top: 0.15rem;
+  }
+
+  .mobile-lots-list {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .mobile-lot-card {
+    border: 1px solid var(--theme-border-glass);
+    border-radius: 8px;
+    background: var(--theme-input-bg);
+    padding: 0.6rem;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .mobile-lot-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--theme-text-secondary);
+    margin-bottom: 0.1rem;
+  }
+
+  .mobile-field-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--theme-text-secondary);
+    letter-spacing: 0.02em;
+  }
+
+  .mobile-quantity-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .mobile-quantity-actions .quantity-input {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .mobile-expiration-row {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .mobile-expiration-row .quantity-input {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .add-lot-btn {
+    width: 100%;
+    margin-top: 0.3rem;
+  }
+
+  .btn-scale {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+  }
+
+  .quantity-input,
+  .table-input {
+    padding: 7px 8px;
+    font-size: 0.83rem;
+    text-align: left;
+  }
+
+  .scanner-modal {
+    width: 100%;
+    max-height: 95vh;
+  }
+
+  .scanner-modal-header {
+    padding: 0.85rem 1rem;
+  }
 }
 

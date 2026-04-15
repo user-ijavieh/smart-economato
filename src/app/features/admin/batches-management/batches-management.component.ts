@@ -195,7 +195,7 @@ export class BatchesManagementComponent implements OnInit {
     this.selectedBatch = null;
   }
 
-  onSaveBatch(data: { expirationDate: string; reason?: string }): void {
+  onSaveBatch(data: { expirationDate: string; reason?: string; batchCode?: string }): void {
     if (this.selectedBatch) {
       this.batchService.updateBatchExpiration(this.selectedBatch.id, data).subscribe({
         next: () => {
