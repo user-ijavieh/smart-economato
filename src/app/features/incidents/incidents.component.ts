@@ -150,6 +150,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
   zoomImageAlt = '';
   loadingChat = false;
   sendingChat = false;
+  compressingChatFile = false;
   chatContent = '';
   chatFile: File | null = null;
   chatFilePreviewUrl: string | null = null;
@@ -516,11 +517,38 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  onChatFileSelected(event: Event): void {
+  async onChatFileSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
-    this.chatFile = input.files?.[0] ?? null;
-    this.createChatFilePreview();
+    const selectedFile = input.files?.[0] ?? null;
+
+    if (!selectedFile) {
+      this.chatFile = null;
+      this.chatFilePreviewUrl = null;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (!selectedFile.type.startsWith('image/')) {
+      this.chatFile = selectedFile;
+      this.createChatFilePreview();
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.compressingChatFile = true;
     this.cdr.markForCheck();
+
+    try {
+      this.chatFile = await this.compressChatImage(selectedFile);
+      this.createChatFilePreview();
+    } catch {
+      this.chatFile = selectedFile;
+      this.createChatFilePreview();
+      this.messageService.showWarning('No se pudo optimizar la imagen. Se enviara el archivo original.');
+    } finally {
+      this.compressingChatFile = false;
+      this.cdr.markForCheck();
+    }
   }
 
   private createChatFilePreview(): void {
@@ -544,6 +572,73 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
   private isChatFileImage(): boolean {
     if (!this.chatFile) return false;
     return this.chatFile.type.startsWith('image/');
+  }
+
+  private async compressChatImage(file: File): Promise<File> {
+    if (!this.shouldCompressImage(file)) {
+      return file;
+    }
+
+    const imageBitmap = await createImageBitmap(file);
+
+    try {
+      const maxDimension = 1920;
+      const { width, height } = this.scaledImageDimensions(imageBitmap.width, imageBitmap.height, maxDimension);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+
+      const context = canvas.getContext('2d');
+      if (!context) {
+        return file;
+      }
+
+      context.drawImage(imageBitmap, 0, 0, width, height);
+
+      const targetType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+      const quality = targetType === 'image/png' ? undefined : 0.8;
+      const compressedBlob = await this.canvasToBlob(canvas, targetType, quality);
+      if (!compressedBlob || compressedBlob.size >= file.size) {
+        return file;
+      }
+
+      const safeFileName = this.renameFileExtension(file.name, targetType);
+      return new File([compressedBlob], safeFileName, {
+        type: compressedBlob.type,
+        lastModified: Date.now()
+      });
+    } finally {
+      imageBitmap.close();
+    }
+  }
+
+  private shouldCompressImage(file: File): boolean {
+    return file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/webp';
+  }
+
+  private scaledImageDimensions(width: number, height: number, maxDimension: number): { width: number; height: number } {
+    if (width <= maxDimension && height <= maxDimension) {
+      return { width, height };
+    }
+
+    const scale = Math.min(maxDimension / width, maxDimension / height);
+    return {
+      width: Math.max(1, Math.round(width * scale)),
+      height: Math.max(1, Math.round(height * scale))
+    };
+  }
+
+  private canvasToBlob(canvas: HTMLCanvasElement, type: string, quality?: number): Promise<Blob | null> {
+    return new Promise(resolve => {
+      canvas.toBlob(blob => resolve(blob), type, quality);
+    });
+  }
+
+  private renameFileExtension(fileName: string, mimeType: string): string {
+    const extension = mimeType === 'image/png' ? 'png' : 'jpg';
+    const baseName = fileName.includes('.') ? fileName.substring(0, fileName.lastIndexOf('.')) : fileName;
+    return `${baseName}.${extension}`;
   }
 
   removeChatFile(): void {
@@ -577,6 +672,11 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
     const hasFile = !!this.chatFile;
     if (!hasText && !hasFile) {
       this.messageService.showWarning('Escribe un mensaje o adjunta un archivo');
+      return;
+    }
+
+    if (this.compressingChatFile) {
+      this.messageService.showInfo('Espera a que termine la compresion de la imagen');
       return;
     }
 
