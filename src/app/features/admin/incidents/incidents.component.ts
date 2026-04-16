@@ -4,12 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, forkJoin, finalize, takeUntil } from 'rxjs';
 import { Client, IMessage, ReconnectionTimeMode, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import { AuthService } from '../../core/services/auth.service';
-import { IncidentService } from '../../core/services/incident.service';
-import { MessageService } from '../../core/services/message.service';
-import { UserService } from '../../core/services/user.service';
-import { NotificationService } from '../../core/services/notification.service';
-import { BaseModalComponent } from '../../shared/components/base-modal/base-modal.component';
+import { AuthService } from '../../../core/services/auth.service';
+import { IncidentService } from '../../../core/services/incident.service';
+import { MessageService } from '../../../core/services/message.service';
+import { UserService } from '../../../core/services/user.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import {
   AttachAuditRequest,
   IncidentChatReadReceipt,
@@ -32,11 +32,11 @@ import {
   INCIDENT_STATUS_OPTIONS,
   incidentTypeIsActive,
   isIncidentClosed
-} from '../../shared/models/incident.model';
-import { Page } from '../../shared/models/page.model';
-import { User } from '../../shared/models/user.model';
+} from '../../../shared/models/incident.model';
+import { Page } from '../../../shared/models/page.model';
+import { User } from '../../../shared/models/user.model';
 import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 
 type IncidentTab = 'incidents' | 'types';
 type DetailTab = 'summary' | 'chat' | 'audits';
