@@ -144,7 +144,7 @@
   top: 100%;
   left: 0;
   right: 0;
-  background: rgba(15, 10, 10, 0.95);
+  background: var(--theme-option-bg);
   backdrop-filter: blur(20px);
   border: 1px solid var(--theme-border-glass);
   border-top: none;
@@ -152,7 +152,7 @@
   max-height: 280px;
   overflow-y: auto;
   z-index: 100;
-  box-shadow: 0 8px 20px var(--theme-table-header-bg);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .scanner-modal-overlay {

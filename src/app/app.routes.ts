@@ -91,7 +91,7 @@ export const routes: Routes = [
       {
         path: 'admin-panel/incidents',
         loadComponent: () =>
-          import('./features/incidents/incidents.component').then(m => m.IncidentsComponent),
+          import('./features/admin/incidents/incidents.component').then(m => m.IncidentsComponent),
         canActivate: [roleGuard('ADMIN')],
         data: { animation: 12 }
       },
@@ -153,9 +153,16 @@ export const routes: Routes = [
       {
         path: 'incidents',
         loadComponent: () =>
-          import('./features/incidents/incidents.component').then(m => m.IncidentsComponent),
-        canActivate: [roleGuard('ADMIN', 'CHEF', 'ELEVATED')],
+          import('./features/admin/incidents/incidents.component').then(m => m.IncidentsComponent),
+        canActivate: [roleGuard('ADMIN')],
         data: { animation: 26 }
+      },
+      {
+        path: 'ai-chat',
+        loadComponent: () =>
+          import('./features/general/ai-chat/ai-chat.component').then(m => m.AiChatComponent),
+        canActivate: [roleGuard('ADMIN', 'CHEF', 'ELEVATED')],
+        data: { animation: 27 }
       },
       {
         path: '',

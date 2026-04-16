@@ -10,14 +10,14 @@ form {
 }
 
 form {
-    padding-top: 14px;
+    padding-top: 18px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-top: 2px;
+    gap: 12px;
+    margin-top: 8px;
 }
 
 .form-group + .auto-gen-info {
@@ -38,6 +38,7 @@ form {
 
 .form-group label {
     line-height: 1.2;
+    margin-bottom: 2px;
 }
 
 .optional-label {
@@ -46,7 +47,7 @@ form {
     font-size: 0.8rem;
     color: var(--theme-text-secondary);
     margin-left: 0;
-    margin-top: 2px;
+    margin-top: 4px;
 }
 
 .form-group input::placeholder {

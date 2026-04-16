@@ -41,6 +41,7 @@ export class LayoutComponent {
   readonly isNotificationPanelRendered = signal(false);
   readonly isNotificationPanelClosing = signal(false);
   readonly notificationPulse = signal(false);
+  readonly showUtilities = signal<boolean>(localStorage.getItem('layout_utilities_visible') !== 'false');
 
   private notificationCloseTimer?: ReturnType<typeof setTimeout>;
 
@@ -120,6 +121,10 @@ export class LayoutComponent {
     return this.themeService.isDark();
   }
 
+  get isAiChat(): boolean {
+    return this.router.url.includes('/ai-chat');
+  }
+
   logout(): void {
     this.showLogoutModal = true;
   }
@@ -131,6 +136,12 @@ export class LayoutComponent {
 
   cancelLogout(): void {
     this.showLogoutModal = false;
+  }
+
+  toggleUtilities(): void {
+    const newValue = !this.showUtilities();
+    this.showUtilities.set(newValue);
+    localStorage.setItem('layout_utilities_visible', String(newValue));
   }
 
   toggleNotificationPanel(event: MouseEvent): void {

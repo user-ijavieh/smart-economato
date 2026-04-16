@@ -1,11 +1,12 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { finalize, takeUntil } from 'rxjs';
 import { MessageService } from '../../../core/services/message.service';
 import { SystemConfigService } from '../../../core/services/system-config.service';
+import { AiConfigurationService } from '../../../core/services/ai-configuration.service';
 import {
   AdvancedConfigRequestDTO,
   AlertsConfigRequestDTO,
@@ -18,6 +19,14 @@ import {
   SessionsConfigRequestDTO,
   SystemConfigSnapshotResponseDTO
 } from '../../../shared/models/system-config.model';
+import {
+  AiConfigurationDto,
+  AiKeySaveRequest,
+  AiKeyMetadata,
+  AiProvider,
+  AiChatTechnicalConfig,
+  AiStreamingConfig
+} from '../../../shared/models/ai-config.model';
 
 type TabKey =
   | 'presence'
@@ -28,6 +37,7 @@ type TabKey =
   | 'incidents'
   | 'notifications'
   | 'advanced'
+  | 'ia'
   | 'audit';
 
 type FileTypeOption = {
@@ -54,8 +64,10 @@ type FileTypeOption = {
     ])
   ]
 })
-export class SettingsManagementComponent implements OnInit {
+export class SettingsManagementComponent implements OnInit, OnDestroy {
+  private readonly destroy$ = new Subject<void>();
   private systemConfigService = inject(SystemConfigService);
+  private aiConfigService = inject(AiConfigurationService);
   private messageService = inject(MessageService);
   private cdr = inject(ChangeDetectorRef);
 
@@ -68,6 +80,7 @@ export class SettingsManagementComponent implements OnInit {
     { key: 'incidents', label: 'Incidencias' },
     { key: 'notifications', label: 'Notificaciones' },
     { key: 'advanced', label: 'Avanzado' },
+    { key: 'ia', label: 'IA' },
     { key: 'audit', label: 'Auditoría' }
   ];
 
@@ -189,8 +202,42 @@ export class SettingsManagementComponent implements OnInit {
   auditSize = 20;
   auditTotalPages = 0;
 
+  // AI Configuration
+  aiConfig: AiConfigurationDto | null = null;
+  aiKeys: AiKeyMetadata[] = [];
+  aiLoading = false;
+  aiNewKeyProvider: AiProvider | null = null;
+  aiNewKeyValue = '';
+  aiShowNewKeyForm = false;
+  aiDeletingKeyProvider: AiProvider | null = null;
+  aiSavingKey = false;
+
+  // AI Technical Configuration
+  aiChatConfig: AiChatTechnicalConfig = {
+    defaultProvider: 'OPENAI',
+    defaultLanguage: 'es',
+    supportedLanguages: ['es', 'en', 'fr', 'de', 'it', 'pt', 'ca', 'eu', 'gl'],
+    titleMaxLength: 200,
+    maxConcurrentStreamsPerUser: 2,
+    autoArchiveOnLimit: true,
+    maxChatHistoryDays: 365
+  };
+
+  aiStreamingConfig: AiStreamingConfig = {
+    enableThinkingStream: true,
+    enableToolStream: true,
+    chunkSize: 1024,
+    flushIntervalMs: 100,
+    maxStreamDurationMs: 120000
+  };
+
   ngOnInit(): void {
     this.loadSnapshot();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadSnapshot(showSuccessMessage = false): void {
@@ -273,6 +320,8 @@ export class SettingsManagementComponent implements OnInit {
     this.activeTab = tab;
     if (tab === 'audit') {
       this.loadAudit(0);
+    } else if (tab === 'ia') {
+      this.loadAiConfiguration();
     }
   }
 
@@ -312,6 +361,10 @@ export class SettingsManagementComponent implements OnInit {
       case 'advanced':
         request$ = this.systemConfigService.updateAdvanced(this.advancedConfig);
         break;
+      case 'ia':
+        // IA tab does not have a single save; individual saves handled separately
+        this.saving = false;
+        return;
       default:
         request$ = this.systemConfigService.getCurrent();
         break;
@@ -327,6 +380,114 @@ export class SettingsManagementComponent implements OnInit {
         error: () => this.messageService.showError('No se pudo guardar la configuración')
       });
   }
+
+  // AI Configuration Methods
+
+  loadAiConfiguration(): void {
+    this.aiLoading = true;
+    this.aiConfigService
+      .getApiKeys()
+      .pipe(finalize(() => {
+        this.aiLoading = false;
+        this.cdr.detectChanges();
+      }))
+      .subscribe({
+        next: (keys) => {
+          this.aiKeys = keys;
+          this.aiConfig = {
+            apiKeys: keys,
+            modelConfigs: [],
+            operationalLimits: {
+              messagesPerMinute: 0,
+              maxChatsPerUser: 0,
+              maxMessagesPerChat: 0,
+              maxApiKeysPerUser: 0,
+              circuitBreakerThreshold: 0
+            }
+          };
+          this.cdr.detectChanges();
+        },
+        error: (err: Error) => {
+          this.messageService.showError('No se pudo cargar la configuración de IA: ' + err.message);
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
+  showAiNewKeyForm(): void {
+    this.aiShowNewKeyForm = true;
+    this.aiNewKeyProvider = null;
+    this.aiNewKeyValue = '';
+    this.cdr.detectChanges();
+  }
+
+  saveAiKey(): void {
+    if (!this.aiNewKeyProvider || !this.aiNewKeyValue.trim()) {
+      this.messageService.showError('Selecciona proveedor e ingresa la clave API.');
+      return;
+    }
+
+    this.aiSavingKey = true;
+    const request: AiKeySaveRequest = {
+      provider: this.aiNewKeyProvider,
+      apiKey: this.aiNewKeyValue
+    };
+
+    this.aiConfigService
+      .saveApiKey(request)
+      .pipe(finalize(() => {
+        this.aiSavingKey = false;
+        this.cdr.detectChanges();
+      }))
+      .subscribe({
+        next: (updated) => {
+          const idx = this.aiKeys.findIndex(k => k.provider === updated.provider);
+          if (idx >= 0) {
+            this.aiKeys[idx] = updated;
+          } else {
+            this.aiKeys.push(updated);
+          }
+          this.aiShowNewKeyForm = false;
+          this.aiNewKeyValue = '';
+          this.messageService.showSuccess(`Clave API para ${this.aiNewKeyProvider} guardada.`);
+          this.cdr.detectChanges();
+        },
+        error: (err: Error) => {
+          this.messageService.showError('Error al guardar clave: ' + err.message);
+        }
+      });
+  }
+
+  deleteAiKey(provider: AiProvider): void {
+    const key = this.aiKeys.find(k => k.provider === provider);
+    if (!key) return;
+
+    this.messageService
+      .confirm(
+        'Eliminar clave API',
+        `¿Eliminar clave API para ${provider}? Esta acción no se puede deshacer.`,
+        'Eliminar',
+        'Cancelar'
+      )
+      .then((confirmed) => {
+        if (confirmed) {
+          this.aiConfigService
+            .deleteApiKey(provider)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: () => {
+                this.aiKeys = this.aiKeys.filter(k => k.provider !== provider);
+                this.messageService.showSuccess(`Clave API para ${provider} eliminada.`);
+                this.cdr.detectChanges();
+              },
+              error: (err: Error) => {
+                this.messageService.showError('Error al eliminar clave: ' + err.message);
+              }
+            });
+        }
+      });
+  }
+
 
   async purgePresenceLogs(): Promise<void> {
     const confirmed = await this.messageService.confirm(
