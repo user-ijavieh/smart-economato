@@ -85,7 +85,7 @@
 }
 
 :host-context([data-theme="light"]) .login-wrapper::before {
-  background: linear-gradient(155deg, rgba(255,255,255,0.65) 0%, color-mix(in srgb, var(--brand-primary) 15%, transparent) 48%, rgba(255,255,255,0.70) 100%);
+  background: linear-gradient(155deg, rgba(255,255,255,0.55) 0%, color-mix(in srgb, var(--brand-primary) 10%, transparent) 48%, rgba(255,255,255,0.35) 100%);
 }
 /** ===== Card principal (Dark Glassmorphism) ===== */
 .card {
@@ -352,4 +352,69 @@
     border-radius: 16px;
     padding: 28px 20px 24px;
   }
+}
+
+/* ===== Light Mode Overrides ===== */
+:host-context([data-theme="light"]) {
+  --color-surface-glass: rgba(255, 255, 255, 0.82);
+  --color-border-glass: rgba(0, 0, 0, 0.08);
+  --color-text-primary: #1E293B;
+  --color-text-secondary: #64748B;
+  --shadow-card: 0 4px 24px rgba(15, 23, 42, 0.08);
+  --shadow-hover: 0 12px 40px rgba(15, 23, 42, 0.12);
+}
+
+:host-context([data-theme="light"]) .card {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08),
+              0 0 0 1px rgba(0, 0, 0, 0.03);
+}
+
+:host-context([data-theme="light"]) .form-input {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #1E293B;
+  backdrop-filter: none;
+}
+
+:host-context([data-theme="light"]) .form-input::placeholder {
+  color: #94A3B8;
+}
+
+:host-context([data-theme="light"]) .form-input:focus {
+  background: #ffffff;
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 4px rgba(184, 75, 68, 0.1);
+}
+
+:host-context([data-theme="light"]) .form-label {
+  color: #475569;
+}
+
+:host-context([data-theme="light"]) .card-eyebrow {
+  color: #64748B;
+}
+
+:host-context([data-theme="light"]) .card-title {
+  color: #1E293B;
+}
+
+:host-context([data-theme="light"]) .btn-submit {
+  color: #ffffff;
+  box-shadow: 0 4px 18px rgba(184, 75, 68, 0.2);
+}
+
+:host-context([data-theme="light"]) .btn-submit:hover:not(:disabled) {
+  box-shadow: 0 8px 28px rgba(184, 75, 68, 0.3);
+}
+
+:host-context([data-theme="light"]) .btn-submit:disabled {
+  filter: grayscale(0);
+  opacity: 0.45;
+  background: linear-gradient(135deg, #d4837d, #c4645d);
+}
+
+:host-context([data-theme="light"]) .logos {
+  border-top-color: rgba(0, 0, 0, 0.06);
 }
