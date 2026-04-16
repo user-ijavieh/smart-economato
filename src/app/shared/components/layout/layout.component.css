@@ -1,4 +1,4 @@
-﻿main {
+main {
   transition: margin-left 300ms ease-in-out;
   padding: min(30px, 7%);
   height: 100dvh;
@@ -7,6 +7,13 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+}
+
+main.is-ai-chat {
+  padding: 0 !important;
+  overflow: hidden !important;
+  height: 100dvh !important;
+  display: flex;
 }
 
 .route-animation-wrapper {
@@ -25,27 +32,80 @@ main.main-expanded {
   margin-left: 60px;
 }
 
-.mobile-theme-toggle {
-  display: none;
-}
-
-.notifications-bell {
+.utilities-container {
   position: fixed;
   top: 12px;
   right: 16px;
   z-index: 1002;
-  width: 42px;
-  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--theme-section-header-bg-strong);
+  backdrop-filter: blur(12px);
+  padding: 4px;
   border-radius: 12px;
   border: 1px solid var(--theme-border-light);
-  background: var(--theme-section-header-bg-strong);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.utilities-container.collapsed {
+  transform: translateX(calc(100% - 14px)); /* Only 14px remains visible */
+}
+
+.utilities-container.collapsed:hover {
+  transform: translateX(calc(100% - 24px)); /* Slight peek on hover when collapsed */
+}
+
+.utilities-toggle {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--theme-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.utilities-toggle:hover {
+  background: var(--theme-surface-glass-hover);
+  color: var(--theme-text-primary);
+}
+
+.mobile-theme-toggle {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--theme-border-glass);
+  background: var(--theme-surface-glass);
   color: var(--theme-text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+  transition: transform 0.2s;
+}
+
+.notifications-bell {
+  position: relative;
+  top: auto;
+  right: auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--theme-border-glass);
+  background: var(--theme-surface-glass);
+  color: var(--theme-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: none;
+  transition: transform 0.2s;
 }
 
 .notifications-bell:hover {
@@ -270,29 +330,22 @@ main.main-expanded {
 
 @media (max-width: 800px) {
 
-  .mobile-theme-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    top: 12px;
-    right: 12px;
-    z-index: 1001;
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    border: 1px solid var(--theme-border-light);
-    background: var(--theme-section-header-bg-strong);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    color: var(--theme-text-primary);
-    cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  .utilities-container {
+    top: 10px;
+    right: 10px;
+    padding: 3px;
+    gap: 6px;
   }
 
+  .utilities-container.collapsed {
+    transform: translateX(calc(100% - 10px));
+  }
+
+  .utilities-toggle, 
+  .mobile-theme-toggle, 
   .notifications-bell {
-    right: 60px;
+    width: 32px;
+    height: 32px;
   }
 
   .notifications-panel {
@@ -342,6 +395,11 @@ main.main-expanded {
   main.main-expanded {
     margin-left: 0;
     padding: 2em 1em 60px 1em;
+  }
+
+  main.is-ai-chat {
+    padding: 0 !important;
+    margin-top: 0 !important;
   }
 }
 
