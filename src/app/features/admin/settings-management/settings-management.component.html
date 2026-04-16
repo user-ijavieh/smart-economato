@@ -235,4 +235,138 @@
       <button type="button" class="toolbar-btn" [disabled]="auditPage + 1 >= auditTotalPages || auditLoading" (click)="loadAudit(auditPage + 1)">Siguiente</button>
     </div>
   </section>
+
+  <!-- IA Configuration Tab -->
+  <section *ngIf="activeTab === 'ia'" class="config-card" [@tabContent]>
+    <h2>Configuración de IA</h2>
+
+    <div *ngIf="aiLoading" class="empty-state">Cargando configuración de IA...</div>
+
+    <div *ngIf="!aiLoading">
+      <!-- Subsection: API Keys -->
+      <div class="ia-subsection">
+        <h3>Claves API</h3>
+        <div class="ia-keys-list">
+          <div *ngFor="let key of aiKeys" class="ia-key-item">
+            <div class="key-provider">{{ key.provider }}</div>
+            <div class="key-info">
+              <span class="key-preview">{{ key.keyPreview || '••••••••••' }}</span>
+              <span class="key-date" *ngIf="key.lastUpdatedAt">
+                Última actualización: {{ key.lastUpdatedAt | date: 'short' }}
+              </span>
+            </div>
+            <div class="key-actions">
+              <button type="button" class="toolbar-btn toolbar-btn--small" (click)="showAiNewKeyForm()">
+                Actualizar
+              </button>
+              <button type="button" class="toolbar-btn toolbar-btn--danger toolbar-btn--small" (click)="deleteAiKey(key.provider)">
+                Eliminar
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="aiKeys.length === 0" class="empty-state-card">
+            <p>No hay claves API configuradas.</p>
+          </div>
+        </div>
+
+        <div *ngIf="aiShowNewKeyForm" class="ia-new-key-form">
+          <h4>Agregar/Actualizar Clave API</h4>
+          <div class="form-grid">
+            <label>
+              Proveedor
+              <select [(ngModel)]="aiNewKeyProvider" class="form-input provider-select">
+                <option value="">--Seleccionar--</option>
+                <option value="OPENAI">OpenAI</option>
+                <option value="ANTHROPIC">Anthropic</option>
+                <option value="DEEPSEEK">DeepSeek</option>
+                <option value="GOOGLE">Google</option>
+              </select>
+            </label>
+            <label class="span-2">
+              Clave API
+              <input type="password" [(ngModel)]="aiNewKeyValue" placeholder="Ingresa la clave API..." class="form-input" />
+            </label>
+          </div>
+          <div class="button-group">
+            <button type="button" class="toolbar-btn" (click)="aiShowNewKeyForm = false">Cancelar</button>
+            <button type="button" class="toolbar-btn toolbar-btn--primary" (click)="saveAiKey()" [disabled]="aiSavingKey">
+              {{ aiSavingKey ? 'Guardando...' : 'Guardar' }}
+            </button>
+          </div>
+        </div>
+
+        <button *ngIf="!aiShowNewKeyForm" type="button" class="toolbar-btn toolbar-btn--primary" (click)="showAiNewKeyForm()">
+          + Agregar Clave
+        </button>
+      </div>
+
+      <!-- Subsection: Chat Technical Configuration -->
+      <div class="ia-subsection">
+        <h3>Configuración Técnica de Chat</h3>
+        <div class="form-grid">
+          <label>
+            Proveedor por defecto
+            <select [(ngModel)]="aiChatConfig.defaultProvider" class="form-input">
+              <option value="OPENAI">OpenAI</option>
+              <option value="ANTHROPIC">Anthropic</option>
+              <option value="DEEPSEEK">DeepSeek</option>
+              <option value="GOOGLE">Google</option>
+            </select>
+          </label>
+          <label>
+            Idioma por defecto
+            <input type="text" [(ngModel)]="aiChatConfig.defaultLanguage" placeholder="es" class="form-input" />
+          </label>
+          <label>
+            Idiomas soportados (separados por comas)
+            <input type="text" [(ngModel)]="aiChatConfig.supportedLanguages" placeholder="es,en,fr,de" class="form-input" />
+          </label>
+          <label>
+            Longitud máxima del título
+            <input type="number" [(ngModel)]="aiChatConfig.titleMaxLength" min="1" class="form-input" />
+          </label>
+          <label>
+            Streams concurrentes por usuario
+            <input type="number" [(ngModel)]="aiChatConfig.maxConcurrentStreamsPerUser" min="1" class="form-input" />
+          </label>
+          <label>
+            Días de historial máximo
+            <input type="number" [(ngModel)]="aiChatConfig.maxChatHistoryDays" min="1" class="form-input" />
+          </label>
+          <label class="toggle-line">
+            <input type="checkbox" [(ngModel)]="aiChatConfig.autoArchiveOnLimit" />
+            Archivar automáticamente al alcanzar límite
+          </label>
+        </div>
+      </div>
+
+      <!-- Subsection: Streaming Configuration -->
+      <div class="ia-subsection">
+        <h3>Configuración de Streaming</h3>
+        <div class="form-grid">
+          <label class="toggle-line">
+            <input type="checkbox" [(ngModel)]="aiStreamingConfig.enableThinkingStream" />
+            Habilitar streaming de pensamiento
+          </label>
+          <label class="toggle-line">
+            <input type="checkbox" [(ngModel)]="aiStreamingConfig.enableToolStream" />
+            Habilitar streaming de herramientas
+          </label>
+          <label>
+            Tamaño del chunk (bytes)
+            <input type="number" [(ngModel)]="aiStreamingConfig.chunkSize" min="256" class="form-input" />
+          </label>
+          <label>
+            Intervalo de vaciado (ms)
+            <input type="number" [(ngModel)]="aiStreamingConfig.flushIntervalMs" min="10" class="form-input" />
+          </label>
+          <label>
+            Duración máxima del stream (ms)
+            <input type="number" [(ngModel)]="aiStreamingConfig.maxStreamDurationMs" min="5000" class="form-input" />
+          </label>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>

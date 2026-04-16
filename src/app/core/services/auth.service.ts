@@ -117,6 +117,7 @@ export class AuthService {
     localStorage.removeItem(this.NAME_KEY);
     localStorage.removeItem(this.ID_KEY);
     localStorage.removeItem(this.FIRST_LOGIN_KEY);
+    localStorage.removeItem('ai_last_chat_id');
     this.isLoggedIn$.next(false);
     this.router.navigate(['/login']);
   }
