@@ -90,18 +90,17 @@ export class AllergensManagementComponent implements OnInit {
         if (term) {
             // Use exact search endpoint
             this.allergenService.searchByName(term).pipe(
-                map(allergen => {
-                    const content = allergen ? [allergen] : [];
+                map(allergens => {
                     return {
-                    content,
-                    totalElements: content.length,
-                    totalPages: content.length > 0 ? 1 : 0,
-                    size: content.length || 1,
-                    number: 0,
-                    first: true,
-                    last: true,
-                    empty: content.length === 0
-                };
+                        content: allergens || [],
+                        totalElements: (allergens || []).length,
+                        totalPages: (allergens || []).length > 0 ? 1 : 0,
+                        size: (allergens || []).length || 50,
+                        number: 0,
+                        first: true,
+                        last: true,
+                        empty: (allergens || []).length === 0
+                    };
                 }),
                 catchError(() => of({
                     content: [],

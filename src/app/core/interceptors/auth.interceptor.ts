@@ -9,10 +9,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = localStorage.getItem('auth_token');
   const userRole = localStorage.getItem('user_role') as Role;
+  const requestUrl = req.url;
+  const isRelativeApiRequest = requestUrl.startsWith('/api/');
+  const isAbsoluteApiRequest = requestUrl.includes(environment.apiUrl + '/api/');
 
   // Verificar si es una petición a la API que necesita verificación de permisos
-  const isApiRequest = req.url.includes(environment.apiUrl + '/api/');
-  const isAuthRequest = req.url.includes('/api/auth/');
+  const isApiRequest = isRelativeApiRequest || isAbsoluteApiRequest;
+  const isAuthRequest = requestUrl.includes('/api/auth/');
 
   // Añadir token a todas las requests (excepto login/register)
   if (token && !req.url.includes('/api/auth/login') && !req.url.includes('/api/auth/register')) {
@@ -24,9 +27,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   // Verificar permisos solo para peticiones API (excluyendo auth y /api/users/me)
-  if (isApiRequest && !isAuthRequest && !req.url.includes('/api/users/me') && userRole) {
+  if (isApiRequest && !isAuthRequest && !requestUrl.includes('/api/users/me') && userRole) {
     const method = req.method;
-    const apiPath = req.url.replace(environment.apiUrl, '');
+    const apiPath = isRelativeApiRequest
+      ? requestUrl.split('?')[0]
+      : requestUrl.replace(environment.apiUrl, '').split('?')[0];
     const urlPattern = getUrlPattern(apiPath);
 
     if (!hasPermission(userRole, method, urlPattern)) {
