@@ -154,7 +154,7 @@ export const routes: Routes = [
         path: 'incidents',
         loadComponent: () =>
           import('./features/admin/incidents/incidents.component').then(m => m.IncidentsComponent),
-        canActivate: [roleGuard('ADMIN', 'CHEF', 'ELEVATED')],
+        canActivate: [roleGuard('ADMIN')],
         data: { animation: 26 }
       },
       {
