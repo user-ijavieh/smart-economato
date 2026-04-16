@@ -24,6 +24,9 @@
 
 .modal-dialog {
   width: min(100%, 560px);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--brand-primary) 10%, transparent), transparent 42%),
+    var(--theme-surface-glass);
   max-height: 92dvh;
   backdrop-filter: var(--theme-effect-glass);
   -webkit-backdrop-filter: var(--theme-effect-glass);

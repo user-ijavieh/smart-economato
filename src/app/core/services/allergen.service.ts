@@ -36,8 +36,8 @@ export class AllergenService {
     return this.http.delete<void>(`${this.url}/${id}`);
   }
 
-  searchByName(name: string): Observable<Allergen> {
-    return this.http.get<Allergen>(`${this.url}/search`, {
+  searchByName(name: string): Observable<Allergen[]> {
+    return this.http.get<Allergen[]>(`${this.url}/search`, {
       params: new HttpParams().set('name', name)
     });
   }

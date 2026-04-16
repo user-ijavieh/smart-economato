@@ -39,8 +39,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     { label: 'Recetas', route: '/recipes', icon: 'book' },
     { label: 'Pedidos', route: '/orders', icon: 'cart' },
     { label: 'Recepción', route: '/reception', icon: 'truck' },
-
-
+    { label: 'Chat IA', route: '/ai-chat', icon: 'chat' },
     { label: 'Perfil', route: '/profile', icon: 'person' }
   ];
 
@@ -91,6 +90,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }
     if (userRole === 'USER') {
       return this.defaultNavItems.filter(item =>
+        item.label !== 'Recepción' &&
+        item.label !== 'Pedidos' &&
+        item.label !== 'Perfil' &&
+        item.label !== 'Incidencias' &&
+        item.label !== 'Chat IA' &&
         item.label !== 'Recepción' && item.label !== 'Pedidos' && item.label !== 'Perfil'
       );
     }

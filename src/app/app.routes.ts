@@ -158,6 +158,13 @@ export const routes: Routes = [
         data: { animation: 26 }
       },
       {
+        path: 'ai-chat',
+        loadComponent: () =>
+          import('./features/general/ai-chat/ai-chat.component').then(m => m.AiChatComponent),
+        canActivate: [roleGuard('ADMIN', 'CHEF', 'ELEVATED')],
+        data: { animation: 27 }
+      },
+      {
         path: '',
         redirectTo: '/welcome',
         pathMatch: 'full'
