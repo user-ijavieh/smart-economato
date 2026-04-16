@@ -138,6 +138,7 @@ main.main-expanded {
     opacity: 0;
     transform: translateY(-10px) scale(0.98);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -148,6 +149,7 @@ main.main-expanded {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -157,6 +159,7 @@ main.main-expanded {
   from {
     opacity: 1;
   }
+
   to {
     opacity: 0;
   }
@@ -171,6 +174,7 @@ main.main-expanded {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+
   to {
     opacity: 0;
     transform: translateY(-8px) scale(0.985);
@@ -393,134 +397,3 @@ main.main-expanded {
   }
 }
 
-/** ===== LOGOUT CONFIRMATION MODAL ===== */
-.logout-modal {
-  background: var(--theme-modal-glass);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
-  border: 1px solid var(--theme-border-card);
-  border-radius: 22px;
-  padding: 40px 28px 10px;
-  text-align: center;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
-  animation: logoutSlideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-  color: var(--theme-text-primary);
-}
-
-@keyframes logoutSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px) scale(0.95);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.logout-modal-icon {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: var(--color-danger-bg);
-  border: 1.5px solid rgba(239, 68, 68, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 20px;
-  color: var(--color-danger);
-  backdrop-filter: blur(8px);
-}
-
-.logout-modal h2 {
-  margin: 0 0 10px;
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--theme-text-primary);
-}
-
-.logout-modal p {
-  margin: 0 0 30px;
-  font-size: 0.95rem;
-  color: var(--theme-text-secondary);
-  line-height: 1.6;
-}
-
-.logout-modal-actions {
-  display: flex;
-  gap: 12px;
-  padding: 0 28px 24px;
-}
-
-.btn-logout-cancel {
-  flex: 1;
-  padding: 12px 20px;
-  border: 1px solid var(--theme-border-glass);
-  background: var(--theme-surface-glass-active);
-  color: var(--theme-text-primary);
-  border-radius: 12px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  backdrop-filter: blur(8px);
-}
-
-.btn-logout-cancel:hover {
-  background: var(--theme-border-glass);
-  border-color: var(--theme-border-hover);
-  transform: translateY(-2px);
-}
-
-.btn-logout-confirm {
-  flex: 1;
-  padding: 12px 20px;
-  border: 1px solid rgba(239, 68, 68, 0.35);
-  background: var(--color-danger-bg);
-  color: var(--color-danger);
-  border-radius: 12px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  backdrop-filter: blur(8px);
-}
-
-.btn-logout-confirm:hover {
-  background: rgba(239, 68, 68, 0.28);
-  border-color: rgba(239, 68, 68, 0.55);
-  color: var(--theme-text-primary);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
-}
-
-/* Light mode overrides para Logout Modal */
-:host-context([data-theme="light"]) .logout-modal {
-  box-shadow: var(--theme-shadow-deep);
-}
-
-:host-context([data-theme="light"]) .btn-logout-cancel {
-  color: var(--theme-text-primary);
-}
-
-:host-context([data-theme="light"]) .btn-logout-confirm {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.25);
-}
-
-:host-context([data-theme="light"]) .btn-logout-confirm:hover {
-  background: var(--color-danger-hover-bg);
-  border-color: rgba(239, 68, 68, 0.4);
-}
-
-@media (max-width: 480px) {
-  .logout-modal {
-    padding: 30px 20px 8px;
-  }
-
-  .logout-modal-actions {
-    flex-direction: column;
-    padding: 0 20px 20px;
-  }
-}
