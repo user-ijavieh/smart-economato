@@ -20,7 +20,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 52px 12px 16px; /* Aumentado a la derecha para evitar colisión con utilidades */
+  padding: 12px 52px 12px 16px;
+  /* Aumentado a la derecha para evitar colisión con utilidades */
   background: var(--theme-surface-glass);
   backdrop-filter: var(--theme-effect-glass);
   border-bottom: 1px solid var(--theme-border-subtle);
@@ -28,7 +29,8 @@
   flex-shrink: 0;
 }
 
-.gpt-top-left, .gpt-top-right {
+.gpt-top-left,
+.gpt-top-right {
   display: flex;
   align-items: center;
   min-width: 120px;
@@ -101,7 +103,8 @@
 .ai-chat-thread {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 20px 100px 20px;
+  padding: 20px 20px 140px 20px;
+  /* Aumentado para mayor holgura con el composer */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -111,7 +114,8 @@
 }
 
 /* TOP BAR BUTTONS SQUARE */
-.gpt-top-left .toolbar-btn, .gpt-top-right .toolbar-btn {
+.gpt-top-left .toolbar-btn,
+.gpt-top-right .toolbar-btn {
   width: 40px;
   height: 40px;
   min-width: 40px;
@@ -160,8 +164,15 @@
 }
 
 @keyframes messageSlideIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .ai-message-meta {
@@ -195,7 +206,8 @@
 }
 
 .ai-message-card.is-user .ai-message-content {
-  text-align: left; /* Texto interno a la izquierda, la burbuja a la derecha */
+  text-align: left;
+  /* Texto interno a la izquierda, la burbuja a la derecha */
   background: var(--theme-surface-glass-active);
   border: 1px solid var(--theme-border-medium);
   padding: 14px 18px;
@@ -223,7 +235,8 @@
   display: flex;
   justify-content: center;
   background: linear-gradient(to top, var(--theme-surface-primary) 50%, transparent);
-  pointer-events: none; /* Let clicks pass through empty space */
+  pointer-events: none;
+  /* Let clicks pass through empty space */
 }
 
 .chat-composer {
@@ -290,7 +303,8 @@
 }
 
 .send-btn svg {
-  margin-left: -2px; /* Corrección óptica por la forma asimétrica del SVG */
+  margin-left: -2px;
+  /* Corrección óptica por la forma asimétrica del SVG */
   margin-top: 1px;
 }
 
@@ -329,8 +343,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .history-drawer-panel {
@@ -345,13 +364,18 @@
   z-index: 901;
   display: flex;
   flex-direction: column;
-  box-shadow: -4px 0 24px rgba(0,0,0,0.25);
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.25);
   animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes slideInRight {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
 }
 
 .drawer-header {
@@ -590,10 +614,11 @@
   cursor: pointer;
   transition: all 0.3s ease;
   overflow: hidden;
-  -webkit-tap-highlight-color: transparent; /* Fix blue flash on mobile tap */
+  -webkit-tap-highlight-color: transparent;
+  /* Fix blue flash on mobile tap */
 }
 
-.brain-icon { 
+.brain-icon {
   display: none;
 }
 
@@ -607,7 +632,8 @@
   align-items: center;
   gap: 8px;
   outline: none;
-  min-height: 40px; /* Asegura un tamaño consistente para el disparador */
+  min-height: 40px;
+  /* Asegura un tamaño consistente para el disparador */
 }
 
 .thinking-anim-wrapper {
@@ -632,7 +658,8 @@
   font-size: 0.9em;
   margin: 0 0 12px 0;
   white-space: pre-wrap;
-  word-break: break-word; /* Evita que texto largo rompa el layout */
+  word-break: break-word;
+  /* Evita que texto largo rompa el layout */
 }
 
 .tool-calls-header {
@@ -653,7 +680,9 @@
 }
 
 @keyframes dots {
-  to { width: 1.25em; }
+  to {
+    width: 1.25em;
+  }
 }
 
 .tool-calls-nested {
@@ -662,7 +691,11 @@
   border-radius: 6px;
   background: var(--theme-surface-glass);
 }
-.tool-calls-nested summary { font-size: 0.85rem; }
+
+.tool-calls-nested summary {
+  font-size: 0.85rem;
+}
+
 .tool-call-item {
   padding: 4px 6px;
   background: var(--theme-surface-subtle);
@@ -671,10 +704,29 @@
   font-size: 0.85rem;
   margin-top: 4px;
 }
-.tool-result { color: var(--theme-text-secondary); font-size: 0.8rem; margin: 2px 0 0 0; }
 
-.typing-cursor { animation: blink-cursor 0.85s infinite; }
-@keyframes blink-cursor { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+.tool-result {
+  color: var(--theme-text-secondary);
+  font-size: 0.8rem;
+  margin: 2px 0 0 0;
+}
+
+.typing-cursor {
+  animation: blink-cursor 0.85s infinite;
+}
+
+@keyframes blink-cursor {
+
+  0%,
+  50% {
+    opacity: 1;
+  }
+
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
 
 .table-skeleton {
   display: block;
@@ -685,13 +737,23 @@
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s ease infinite;
 }
-@keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
 
 /* Modales Base Compartidos */
 .modal-form-grid {
   display: grid;
   gap: 12px;
 }
+
 .modal-form-grid label {
   display: flex;
   flex-direction: column;
@@ -699,6 +761,7 @@
   font-size: 0.9rem;
   color: var(--theme-text-secondary);
 }
+
 .modal-form-grid input,
 .modal-form-grid select {
   background: var(--theme-input-bg);
@@ -708,21 +771,62 @@
   border-radius: 8px;
   font-size: 0.95rem;
 }
-.span-2 { grid-column: 1 / -1; }
+
+.span-2 {
+  grid-column: 1 / -1;
+}
 
 @media (max-width: 768px) {
   :host {
-    height: calc(100dvh - 60px);
+    height: 100dvh;
+    overflow: hidden;
   }
-  .gpt-top-bar { padding-right: 48px; }
-  .gpt-top-left, .gpt-top-right { min-width: auto; }
-  .gpt-chat-title { max-width: 160px; font-size: 1rem; }
-  .ai-message-card { padding: 0 10px; }
-  .ai-message-card.is-user { max-width: 90%; }
-  .chat-composer { padding-left: 12px; }
-  .gpt-composer-wrapper { 
-    bottom: 13px; /* Sube la barra por encima de la navbar de 60px */
-    padding-bottom: 0; 
+
+  .gpt-top-bar {
+    padding-right: 30px;
   }
-  .desktop-only-text { display: none; }
+
+  .gpt-top-left,
+  .gpt-top-right {
+    min-width: auto;
+  }
+
+  .gpt-chat-title {
+    max-width: 160px;
+    font-size: 1rem;
+  }
+
+  .ai-message-card {
+    padding: 0 10px;
+  }
+
+  .ai-chat-thread {
+    height: auto;
+    flex: 1;
+    max-height: calc(100dvh - 130px);
+    /* Reserva espacio para composer + navbar */
+    padding-bottom: 100px;
+    /* Aumentado para evitar que el último mensaje choque con el composer */
+  }
+
+  .gpt-single-layout {
+    height: 100dvh;
+    padding-bottom: 60px;
+  }
+
+  .chat-composer {
+    padding-left: 12px;
+  }
+
+  .gpt-composer-wrapper {
+    bottom: 10px;
+    /* Se posiciona justo encima de la navbar */
+    padding-top: 10px;
+    padding-bottom: 10px;
+    /* Añade el margen estético superior */
+  }
+
+  .desktop-only-text {
+    display: none;
+  }
 }
