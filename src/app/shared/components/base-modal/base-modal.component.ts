@@ -26,6 +26,7 @@ export class BaseModalComponent implements OnInit, OnDestroy {
   @Input() headerClass = '';
   @Input() size: 'sm' | 'md' | 'lg' | 'fullscreen' = 'md';
   @Input() zIndex: number | null = null;
+  @Input() backdropVariant: 'default' | 'soft' = 'default';
   @Input() closeOnBackdrop = true;
   @Input() showCloseButton = true;
   @Input() showHeader = true;
