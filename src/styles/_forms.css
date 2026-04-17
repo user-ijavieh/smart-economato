@@ -60,3 +60,92 @@
 	border-color: rgba(90, 120, 220, 0.6);
 	box-shadow: 0 0 0 3px rgba(90, 120, 220, 0.2);
 }
+
+/* Global dropdown styling across pages */
+select,
+.form-control,
+.action-select,
+.role-select,
+.input-standard,
+.size-selector,
+.top-provider-select {
+	color-scheme: var(--theme-color-scheme);
+}
+
+select option,
+select optgroup,
+.form-control option,
+.action-select option,
+.role-select option,
+.input-standard option,
+.size-selector option,
+.top-provider-select option {
+	background: var(--theme-option-bg);
+	color: var(--theme-text-primary);
+}
+
+[data-theme="light"] select,
+[data-theme="light"] .form-control,
+[data-theme="light"] .action-select,
+[data-theme="light"] .role-select,
+[data-theme="light"] .input-standard,
+[data-theme="light"] .size-selector,
+[data-theme="light"] .top-provider-select {
+	background: #ffffff;
+	color: #1e293b;
+}
+
+/* Unified light-mode select shell (border + arrow icon) */
+[data-theme="light"] select:not([multiple]):not([size]) {
+	-webkit-appearance: none;
+	appearance: none;
+	background-color: #ffffff;
+	color: #1e293b;
+	border-color: rgba(37, 99, 235, 0.18);
+	padding-right: 2.35rem;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 0.75rem center;
+	background-size: 14px 14px;
+}
+
+[data-theme="light"] select:not([multiple]):not([size]):focus {
+	outline: none;
+	border-color: #2563eb;
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
+}
+
+/* Native date/time controls (and browser pickers) */
+input[type="date"],
+input[type="datetime-local"],
+input[type="time"],
+input[type="month"],
+input[type="week"],
+.date-input,
+.date-input-full {
+	color-scheme: var(--theme-color-scheme);
+}
+
+[data-theme="light"] input[type="date"],
+[data-theme="light"] input[type="datetime-local"],
+[data-theme="light"] input[type="time"],
+[data-theme="light"] input[type="month"],
+[data-theme="light"] input[type="week"],
+[data-theme="light"] .date-input,
+[data-theme="light"] .date-input-full {
+	color-scheme: light;
+	background-color: #ffffff;
+	color: #1e293b;
+	border-color: rgba(37, 99, 235, 0.18);
+}
+
+[data-theme="light"] input[type="date"]:focus,
+[data-theme="light"] input[type="datetime-local"]:focus,
+[data-theme="light"] input[type="time"]:focus,
+[data-theme="light"] input[type="month"]:focus,
+[data-theme="light"] input[type="week"]:focus,
+[data-theme="light"] .date-input:focus,
+[data-theme="light"] .date-input-full:focus {
+	border-color: #2563eb;
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
+}
