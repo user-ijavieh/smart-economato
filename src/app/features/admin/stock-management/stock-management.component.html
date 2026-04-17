@@ -737,6 +737,11 @@
         <span class="summary-chip">Pendientes: {{ getPendingItemCount() }}</span>
         <span class="summary-chip">Asignados: {{ getAssignedItemCount() }}</span>
         <span class="summary-chip">Órdenes: {{ orderGroups.length }}</span>
+        <span class="summary-chip">Seleccionados: {{ getSelectedOrderCount() }}</span>
+        <label class="summary-toggle">
+          <input type="checkbox" [(ngModel)]="roundUpOrderQuantities" />
+          <span>Redondear hacia arriba</span>
+        </label>
       </div>
 
       <div class="order-builder-grid">
@@ -747,24 +752,53 @@
           </div>
           <p class="panel-help">Arrastra cada producto a una orden para repartir la reposición.</p>
 
+          <div class="pool-search-row">
+            <input
+              type="text"
+              class="form-control pool-search-input"
+              [(ngModel)]="orderSearchTerm"
+              placeholder="Buscar producto o proveedor..."
+            />
+            @if (orderSearchTerm) {
+              <button type="button" class="btn-clear-search" (click)="orderSearchTerm = ''">Limpiar</button>
+            }
+            <span class="pool-search-count">{{ getVisiblePoolItemsCount() }}</span>
+          </div>
+
           <div class="order-card-list">
-            @if (orderAlerts.length) {
-              @for (alert of orderAlerts; track alert.productId) {
-                <article class="order-item-card pool-card" draggable="true" (dragstart)="onOrderDragStart(alert, 'pool')" (dragend)="onOrderDragEnd()">
-                  <div class="order-item-main">
-                    <strong>{{ alert.productName }}</strong>
-                    <span class="unit-label">{{ alert.unit }}</span>
-                    <div class="order-badges">
-                      <span class="chip">{{ getAlertTypeLabel(alert.alertType) }}</span>
-                      @if (alert.supplierName) {
-                        <span class="chip">{{ alert.supplierName }}</span>
+            @if (getVisiblePoolItemsCount()) {
+              @for (section of getPoolSupplierSections(); track section.key) {
+                <article class="supplier-section">
+                  <button type="button" class="supplier-section-trigger" (click)="togglePoolSupplierCollapse(section.key)">
+                    <span>{{ section.label }}</span>
+                    <span class="supplier-section-meta">{{ section.items.length }} producto{{ section.items.length === 1 ? '' : 's' }}</span>
+                  </button>
+
+                  @if (!isPoolSupplierCollapsed(section.key)) {
+                    <div class="supplier-section-items">
+                      @for (alert of section.items; track alert.productId) {
+                        <article class="order-item-card pool-card" [class.selected]="isOrderItemSelected(alert.productId)" draggable="true" (click)="toggleOrderItemSelection(alert, $event)" (dragstart)="onOrderDragStart($event, alert, 'pool')" (dragend)="onOrderDragEnd()">
+                          <label class="item-selector" (click)="$event.stopPropagation()">
+                            <input type="checkbox" [checked]="isOrderItemSelected(alert.productId)" (change)="onOrderItemCheckboxChange(alert, $event)" />
+                          </label>
+                          <div class="order-item-main">
+                            <strong>{{ alert.productName }}</strong>
+                            <span class="unit-label">{{ alert.unit }}</span>
+                            <div class="order-badges">
+                              <span class="chip">{{ getAlertTypeLabel(alert.alertType) }}</span>
+                              @if (alert.supplierName) {
+                                <span class="chip">{{ alert.supplierName }}</span>
+                              }
+                            </div>
+                          </div>
+                          <div class="order-item-meta">
+                            <div><span>Stock</span><strong>{{ alert.currentStock | number:'1.0-2' }}</strong></div>
+                            <div><span>A pedir</span><strong>{{ getOrderQuantity(alert) | number:'1.0-2' }}</strong></div>
+                          </div>
+                        </article>
                       }
                     </div>
-                  </div>
-                  <div class="order-item-meta">
-                    <div><span>Stock</span><strong>{{ alert.currentStock | number:'1.0-2' }}</strong></div>
-                    <div><span>A pedir</span><strong>{{ getOrderQuantity(alert) | number:'1.0-2' }}</strong></div>
-                  </div>
+                  }
                 </article>
               }
             } @else {
@@ -778,9 +812,10 @@
         <section class="order-destinations-panel">
           <div class="panel-header panel-header-actions">
             <h3>Órdenes</h3>
-            <button type="button" class="toolbar-btn btn-crear-orden" (click)="addOrderGroup()">
-              + Añadir orden
-            </button>
+            <div class="panel-actions-inline">
+              <button type="button" class="toolbar-btn btn-crear-completa" (click)="createCompleteOrderBySupplier()">Crear orden completa</button>
+              <button type="button" class="toolbar-btn btn-crear-orden" (click)="addOrderGroup()">+ Añadir orden</button>
+            </div>
           </div>
 
           <div class="order-groups">
@@ -798,7 +833,7 @@
 
                 <div class="form-group order-supplier-field">
                   <label>Proveedor</label>
-                  <select [(ngModel)]="group.supplierId" class="form-control">
+                  <select [(ngModel)]="group.supplierId" class="form-control" (click)="$event.stopPropagation()">
                     <option [ngValue]="null">Sin proveedor</option>
                     @for (supplier of suppliers; track supplier.id) {
                       <option [ngValue]="supplier.id">{{ supplier.name }}</option>
@@ -809,7 +844,10 @@
                 <div class="order-card-list bucket-list">
                   @if (group.items.length) {
                     @for (item of group.items; track item.productId) {
-                      <article class="order-item-card bucket-card" draggable="true" (dragstart)="onOrderDragStart(item, group.id)" (dragend)="onOrderDragEnd()">
+                      <article class="order-item-card bucket-card" [class.selected]="isOrderItemSelected(item.productId)" draggable="true" (click)="toggleOrderItemSelection(item, $event)" (dragstart)="onOrderDragStart($event, item, group.id)" (dragend)="onOrderDragEnd()">
+                        <label class="item-selector" (click)="$event.stopPropagation()">
+                          <input type="checkbox" [checked]="isOrderItemSelected(item.productId)" (change)="onOrderItemCheckboxChange(item, $event)" />
+                        </label>
                         <div class="order-item-main">
                           <strong>{{ item.productName }}</strong>
                           <span class="unit-label">{{ item.unit }}</span>
@@ -824,7 +862,7 @@
                           <div><span>A pedir</span><strong>{{ getOrderQuantity(item) | number:'1.0-2' }}</strong></div>
                           <div><span>Subtotal</span><strong>{{ (getOrderQuantity(item) * (item.unitPrice || 0)) | currency:'EUR' }}</strong></div>
                         </div>
-                        <button type="button" class="btn-send-back" (click)="moveItemToPool(item, group.id)">Volver</button>
+                        <button type="button" class="btn-send-back" (click)="$event.stopPropagation(); moveItemToPool(item, group.id)">Volver</button>
                       </article>
                     }
                   } @else {

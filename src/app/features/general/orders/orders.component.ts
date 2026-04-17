@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService } from '../../../core/services/order.service';
 import { MessageService } from '../../../core/services/message.service';
 import { Order, OrderStatus } from '../../../shared/models/order.model';
@@ -21,16 +22,38 @@ export class OrdersComponent implements OnInit {
   public showDetailsModal = false;
   public selectedOrder: Order | null = null;
   public orderToEdit: Order | null = null;
+  public prefillUserId: number | null = null;
+  public prefillSupplierId: number | null = null;
+  public prefillOrderItems: Array<{ productId: number; productName: string; unit: string; quantity: number; unitPrice: number }> = [];
 
   private orderService = inject(OrderService);
   private messageService = inject(MessageService);
   private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private pendingOpenOrderId: number | null = null;
 
   // Paginación
   public displayCount = 1;
 
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe(params => {
+      const rawOrderId = params.get('openOrderId');
+      const parsedOrderId = rawOrderId ? Number(rawOrderId) : NaN;
+      this.pendingOpenOrderId = Number.isFinite(parsedOrderId) ? parsedOrderId : null;
+      this.tryOpenOrderFromQueryParam();
+    });
+
     this.loadOrders();
+
+    const orderPrefill = history.state?.orderPrefill;
+    if (orderPrefill) {
+      this.prefillUserId = orderPrefill.userId ?? null;
+      this.prefillSupplierId = orderPrefill.supplierId ?? null;
+      this.prefillOrderItems = orderPrefill.items || [];
+      this.openCreateOrderModal();
+      history.replaceState({}, '', this.router.url);
+    }
   }
 
   public loadOrders(): void {
@@ -48,6 +71,7 @@ export class OrdersComponent implements OnInit {
         
         this.orders = [...ordersArray].sort((a, b) => b.id - a.id);
         this.displayCount = 1;
+        this.tryOpenOrderFromQueryParam();
         this.loading = false;
         this.cdr.markForCheck();
       },
@@ -66,6 +90,9 @@ export class OrdersComponent implements OnInit {
   public closeModal(): void {
     this.showModal = false;
     this.orderToEdit = null;
+    this.prefillUserId = null;
+    this.prefillSupplierId = null;
+    this.prefillOrderItems = [];
     this.cdr.markForCheck();
   }
 
@@ -146,6 +173,39 @@ export class OrdersComponent implements OnInit {
   public viewOrderDetails(order: Order): void {
     this.selectedOrder = order;
     this.showDetailsModal = true;
+  }
+
+  private tryOpenOrderFromQueryParam(): void {
+    if (!this.pendingOpenOrderId) return;
+
+    const orderInList = this.orders.find(order => order.id === this.pendingOpenOrderId);
+    if (orderInList) {
+      this.viewOrderDetails(orderInList);
+      this.clearOpenOrderQueryParam();
+      return;
+    }
+
+    const targetOrderId = this.pendingOpenOrderId;
+    this.orderService.getById(targetOrderId).subscribe({
+      next: (order) => {
+        this.viewOrderDetails(order);
+        this.clearOpenOrderQueryParam();
+      },
+      error: () => {
+        this.messageService.showError(`No se pudo abrir el pedido #${targetOrderId}.`);
+        this.clearOpenOrderQueryParam();
+      }
+    });
+  }
+
+  private clearOpenOrderQueryParam(): void {
+    this.pendingOpenOrderId = null;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { openOrderId: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
   }
 
   public closeDetailsModal(): void {

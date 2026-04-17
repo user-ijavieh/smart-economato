@@ -11,8 +11,6 @@ import { Supplier } from '../../../shared/models/supplier.model';
 import { ProductFormComponent } from './product-form/product-form.component';
 import { ProductEditModalComponent } from './product-edit-modal/product-edit-modal.component';
 import { ProductCreateModalComponent } from './product-create-modal/product-create-modal.component';
-import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
-import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
 import { ProductDetailModalComponent } from './product-detail-modal/product-detail-modal.component';
 import { BarcodeScannerComponent } from '../barcode-scanner/barcode-scanner.component';
 import { ProductBatchService } from '../../../core/services/product-batch.service';
@@ -24,7 +22,7 @@ import { BaseModalComponent } from '../../../shared/components/base-modal/base-m
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductFormComponent, ProductEditModalComponent, ProductCreateModalComponent, ProductDetailModalComponent, BarcodeScannerComponent, ToastComponent, ConfirmDialogComponent, BaseModalComponent],
+  imports: [CommonModule, FormsModule, ProductFormComponent, ProductEditModalComponent, ProductCreateModalComponent, ProductDetailModalComponent, BarcodeScannerComponent, BaseModalComponent],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.css',
   animations: [

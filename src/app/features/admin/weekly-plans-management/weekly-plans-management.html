@@ -1,0 +1,91 @@
+<div class="page-header header-planes-admin">
+	<div>
+		<h1>Planes Semanales</h1>
+		<p class="header-subtitle">Vista administrativa con resumen global y por profesor.</p>
+	</div>
+	<div class="header-actions">
+		<button class="modal-btn modal-btn-primary" type="button" (click)="createPlan()">Nuevo plan</button>
+	</div>
+</div>
+
+<div class="page-content contenedor-principal admin-weekly-plans-page">
+	<section class="teacher-toggle-card">
+		<div class="teacher-toggle-header">
+			<strong>Visión</strong>
+			<span>{{ viewTitle }}</span>
+		</div>
+
+		<div class="teacher-toggle-controls">
+			<label for="teacherSelector">Profesor</label>
+			<select
+				id="teacherSelector"
+				class="teacher-select"
+				[disabled]="loadingTeachers"
+				[ngModel]="selectedTeacherId"
+				(ngModelChange)="onTeacherChange($event || '')"
+			>
+				<option [ngValue]="null">Vista global (todos los profesores)</option>
+				@for (teacher of teachers; track teacher.id) {
+					<option [ngValue]="teacher.id">{{ teacher.name }}</option>
+				}
+			</select>
+		</div>
+	</section>
+
+	<section class="summary-grid">
+		<article class="summary-card">
+			<span class="summary-label">Planes</span>
+			<strong class="summary-value">{{ totalPlans }}</strong>
+		</article>
+		<article class="summary-card">
+			<span class="summary-label">Activos / en curso</span>
+			<strong class="summary-value">{{ activePlans }}</strong>
+		</article>
+		<article class="summary-card">
+			<span class="summary-label">Borradores</span>
+			<strong class="summary-value">{{ draftPlans }}</strong>
+		</article>
+		<article class="summary-card">
+			<span class="summary-label">Finalizados</span>
+			<strong class="summary-value">{{ completedPlans }}</strong>
+		</article>
+		<article class="summary-card">
+			<span class="summary-label">Sesiones totales</span>
+			<strong class="summary-value">{{ totalSessions }}</strong>
+		</article>
+		<article class="summary-card">
+			<span class="summary-label">Sesiones confirmadas</span>
+			<strong class="summary-value">{{ confirmedSessions }}</strong>
+		</article>
+	</section>
+
+	<section class="plans-section">
+		<div class="plans-section-header">
+			<h2>Listado de planes</h2>
+			<span>{{ visiblePlans.length }} resultado{{ visiblePlans.length === 1 ? '' : 's' }}</span>
+		</div>
+
+		@if (loadingPlans) {
+			<div class="empty-state">Cargando planes...</div>
+		} @else if (visiblePlans.length === 0) {
+			<div class="empty-state">No hay planes para la vista seleccionada.</div>
+		} @else {
+			<div class="plans-list">
+				@for (plan of visiblePlans; track plan.id) {
+					<article class="plan-row" (click)="openPlan(plan)">
+						<div class="plan-main">
+							<strong>Semana {{ plan.weekStartDate }} - {{ plan.weekEndDate }}</strong>
+							<span>Chef: {{ plan.chefName }}</span>
+							<span>{{ plan.slots.length || 0 }} sesiones</span>
+						</div>
+						<div class="plan-meta">
+							<span class="status-badge" [ngClass]="'status-' + plan.status.toLowerCase()">{{ statusLabel(plan.status) }}</span>
+							<button class="modal-btn modal-btn-secondary modal-btn-small" type="button" (click)="editPlan(plan, $event)">Editar</button>
+							<button class="modal-btn modal-btn-secondary modal-btn-small" type="button" (click)="duplicatePlan(plan, $event)">Duplicar</button>
+						</div>
+					</article>
+				}
+			</div>
+		}
+	</section>
+</div>

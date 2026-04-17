@@ -7,6 +7,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  Renderer2,
   inject
 } from '@angular/core';
 import { ModalStackService } from '../../../core/services/modal-stack.service';
@@ -21,6 +22,7 @@ import { ModalStackService } from '../../../core/services/modal-stack.service';
     '(document:keydown.escape)': 'onEscapeKey()'
   }
 })
+
 export class BaseModalComponent implements OnInit, OnDestroy {
   @Input() title = '';
   @Input() headerClass = '';
@@ -32,6 +34,7 @@ export class BaseModalComponent implements OnInit, OnDestroy {
   @Input() beforeClose?: () => Promise<boolean> | boolean;
   @Output() closed = new EventEmitter<void>();
 
+  private renderer = inject(Renderer2);
   private cdr = inject(ChangeDetectorRef);
   private modalStack = inject(ModalStackService);
   private readonly modalId = `modal-${Math.random().toString(36).slice(2)}-${Date.now()}`;

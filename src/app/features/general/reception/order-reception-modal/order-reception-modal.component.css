@@ -212,7 +212,7 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  z-index: 11001;
+  z-index: 30000;
 }
 
 .scanner-modal {
@@ -331,6 +331,11 @@
   color: var(--color-success);  
   border-color: rgba(16, 185, 129, 0.3);  
 }  
+.total-excess {
+  background: rgba(250, 204, 21, 0.15);
+  color: var(--color-warning-muted);
+  border-color: rgba(250, 204, 21, 0.3);
+}
 .add-lot-btn {  
   padding: 6px 14px;  
   font-size: 0.85rem;  

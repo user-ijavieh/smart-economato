@@ -42,6 +42,12 @@ export interface SearchableItem {
             </div>
           }
         </div>
+      } @else if (isOpen && loading) {
+        <div class="dropdown-menu">
+          <div class="dropdown-item loading">
+            <span>Cargando recetas...</span>
+          </div>
+        </div>
       } @else if (isOpen && searchResults.length === 0 && !loading) {
         <div class="dropdown-menu">
           <div class="dropdown-item disabled">No hay resultados</div>
@@ -119,11 +125,24 @@ export interface SearchableItem {
 export class SearchableDropdownComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
 
-  @Input() items: SearchableItem[] = [];
+  private _items: SearchableItem[] = [];
+  @Input() set items(value: SearchableItem[]) {
+    this._items = value || [];
+    this.syncResultsWithItems();
+  }
+  get items(): SearchableItem[] {
+    return this._items;
+  }
   @Input() placeholder = 'Buscar...';
   @Input() selectedIds: number[] = [];
   @Input() loading = false;
   @Input() loadingMore = false;
+  @Input() set initialText(val: string) {
+    if (val && !this.searchText) {
+      this.searchText = val;
+      this.cdr.markForCheck();
+    }
+  }
 
   @Output() search = new EventEmitter<string>();
   @Output() scrollNearBottom = new EventEmitter<void>();
@@ -148,21 +167,20 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy {
   }
 
   onSearch(query: string): void {
-    this.searchResults = [];
+    this.isOpen = true;
+    this.searchResults = [...this.items];
     this.searchSubject.next(query);
+    this.cdr.markForCheck();
   }
 
   open(): void {
     this.isOpen = true;
-    this.searchResults = this.items;
-    this.cdr.markForCheck();
+    this.syncResultsWithItems();
   }
 
   close(): void {
     setTimeout(() => {
       this.isOpen = false;
-      this.searchText = '';
-      this.searchResults = [];
       this.cdr.markForCheck();
     }, 150);
   }
@@ -185,5 +203,10 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy {
     if (scrollHeight - scrollPosition < 100) {
       this.scrollNearBottom.emit();
     }
+  }
+
+  private syncResultsWithItems(): void {
+    this.searchResults = [...this.items];
+    this.cdr.markForCheck();
   }
 }

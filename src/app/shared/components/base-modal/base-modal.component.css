@@ -14,7 +14,7 @@
   inset: 0;
   background: color-mix(in srgb, var(--theme-overlay-bg) 92%, transparent);
   backdrop-filter: blur(10px);
-  z-index: 10000;
+  z-index: 20000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -253,8 +253,8 @@
 
 @media (max-width: 768px) {
   .modal-overlay {
-    align-items: flex-end;
-    padding: 0;
+    align-items: center;
+    padding: 1rem;
   }
 
   .modal-overlay-fullscreen {

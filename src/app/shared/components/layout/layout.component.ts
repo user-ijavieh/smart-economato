@@ -5,7 +5,6 @@ import { RouterModule, RouterOutlet, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { MessageService, Toast } from '../../../core/services/message.service';
 import { SidebarComponent } from './sidebar/sidebar.component';
-import { ToastComponent } from './toast/toast.component';
 import { ThemeService } from '../../../core/services/theme.service';
 import { BaseModalComponent } from '../base-modal/base-modal.component';
 import { slideInAnimation } from '../../animations/route-animations';
@@ -15,7 +14,7 @@ import { PresenceTrackingService } from '../../../core/services/presence-trackin
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [AsyncPipe, RouterModule, SidebarComponent, ToastComponent, BaseModalComponent],
+  imports: [AsyncPipe, RouterModule, SidebarComponent, BaseModalComponent],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.css',
   animations: [slideInAnimation],
@@ -91,11 +90,11 @@ export class LayoutComponent {
 
   private navigateWithShortcut(direction: number) {
     if (!this.sidebar) return;
-    
+
     // Obtenemos los ítems visibles según nuestro rol y contexto actual
     const items = this.sidebar.filteredNavItems;
     const currentUrl = this.router.url.split('?')[0];
-    
+
     // Buscamos cuál de los ítems del sidebar corresponde a nuestra página actual
     const currentIndex = items.findIndex(item => currentUrl.startsWith(item.route));
     if (currentIndex === -1) return;
@@ -114,6 +113,9 @@ export class LayoutComponent {
   }
 
   toggleTheme(): void {
+    if (this.isNotificationPanelOpen()) {
+      this.closeNotificationPanel();
+    }
     this.themeService.toggleTheme();
   }
 
@@ -126,6 +128,9 @@ export class LayoutComponent {
   }
 
   logout(): void {
+    if (this.isNotificationPanelOpen()) {
+      this.closeNotificationPanel();
+    }
     this.showLogoutModal = true;
   }
 
@@ -236,7 +241,7 @@ export class LayoutComponent {
   prepareRoute(outlet: RouterOutlet) {
     const animation = outlet?.activatedRouteData?.['animation'];
     if (!animation) return null;
-    
+
     // Retorna el mismo objeto cached porque los parámetros son siempre los mismos
     return {
       value: animation,

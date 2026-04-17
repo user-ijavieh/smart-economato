@@ -17,7 +17,7 @@
   flex-direction: column;
   gap: 8px;
   width: 340px;
-  z-index: 10000; /* toasts sit above at 10001 */
+  z-index: 32000; /* toasts sit above at 31000 */
   pointer-events: none;
 }
 

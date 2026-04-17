@@ -5,7 +5,6 @@ import { UserService } from '../../../core/services/user.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../shared/models/user.model';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
-import { WeeklyPlanSectionComponent } from './weekly-plan/weekly-plan-section.component';
 import { finalize } from 'rxjs';
 import { Subscription } from 'rxjs';
 import { WebSocketService } from '../../../core/services/websocket.service';
@@ -16,7 +15,7 @@ import { UserActivityLogResponse } from '../../../shared/models/user-activity.mo
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseModalComponent, WeeklyPlanSectionComponent],
+  imports: [CommonModule, FormsModule, BaseModalComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })

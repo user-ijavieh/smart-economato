@@ -82,6 +82,34 @@ export const routes: Routes = [
         data: { animation: 9 }
       },
       {
+        path: 'admin-panel/weekly-plans',
+        loadComponent: () =>
+          import('./features/admin/weekly-plans-management/weekly-plans-management').then(m => m.WeeklyPlansManagement),
+        canActivate: [roleGuard('ADMIN')],
+        data: { animation: 14 }
+      },
+      {
+        path: 'admin-panel/weekly-plans/new',
+        loadComponent: () =>
+          import('./features/general/weekly-plans/weekly-plan-wizard.component').then(m => m.WeeklyPlanWizardComponent),
+        canActivate: [roleGuard('ADMIN')],
+        data: { animation: 15 }
+      },
+      {
+        path: 'admin-panel/weekly-plans/:id',
+        loadComponent: () =>
+          import('./features/general/weekly-plans/weekly-plan-detail.component').then(m => m.WeeklyPlanDetailComponent),
+        canActivate: [roleGuard('ADMIN')],
+        data: { animation: 16 }
+      },
+      {
+        path: 'admin-panel/weekly-plans/:id/edit',
+        loadComponent: () =>
+          import('./features/general/weekly-plans/weekly-plan-wizard.component').then(m => m.WeeklyPlanWizardComponent),
+        canActivate: [roleGuard('ADMIN')],
+        data: { animation: 17 }
+      },
+      {
         path: 'admin-panel/notifications',
         loadComponent: () =>
           import('./features/admin/notifications-management/notifications-management.component').then(m => m.NotificationsManagementComponent),
@@ -133,14 +161,14 @@ export const routes: Routes = [
         path: 'orders',
         loadComponent: () =>
           import('./features/general/orders/orders.component').then(m => m.OrdersComponent),
-        canActivate: [roleGuard('ADMIN', 'CHEF')],
+        canActivate: [roleGuard('ADMIN', 'CHEF', 'ELEVATED')],
         data: { animation: 23 }
       },
       {
         path: 'reception',
         loadComponent: () =>
           import('./features/general/reception/reception.component').then(m => m.ReceptionComponent),
-        canActivate: [roleGuard('ADMIN', 'CHEF')],
+        canActivate: [roleGuard('ADMIN', 'CHEF', 'ELEVATED')],
         data: { animation: 24 }
       },
       {
@@ -149,6 +177,33 @@ export const routes: Routes = [
           import('./features/general/profile/profile.component').then(m => m.ProfileComponent),
         canActivate: [roleGuard('ADMIN', 'CHEF', 'ELEVATED')],
         data: { animation: 25 }
+      },
+      {
+        path: 'weekly-plans',
+        canActivate: [roleGuard('CHEF', 'ELEVATED')],
+        data: { animation: 28 },
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/general/weekly-plans/weekly-plans.component').then(m => m.WeeklyPlansComponent)
+          },
+          {
+            path: 'wizard',
+            loadComponent: () =>
+              import('./features/general/weekly-plans/weekly-plan-wizard.component').then(m => m.WeeklyPlanWizardComponent)
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./features/general/weekly-plans/weekly-plan-detail.component').then(m => m.WeeklyPlanDetailComponent)
+          },
+          {
+            path: ':id/edit',
+            loadComponent: () =>
+              import('./features/general/weekly-plans/weekly-plan-wizard.component').then(m => m.WeeklyPlanWizardComponent)
+          }
+        ]
       },
       {
         path: 'incidents',
