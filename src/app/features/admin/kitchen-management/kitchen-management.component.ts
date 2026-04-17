@@ -15,8 +15,6 @@ import {
 import { Order } from '../../../shared/models/order.model';
 import { TraceabilityService } from '../../../core/services/traceability.service';
 import { ReverseTraceabilityDTO } from '../../../shared/models/traceability.model';
-import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
-import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { OrderDetailsModalComponent } from '../../general/orders/order-details-modal/order-details-modal.component';
@@ -24,7 +22,7 @@ import { OrderDetailsModalComponent } from '../../general/orders/order-details-m
 @Component({
   selector: 'app-kitchen-management',
   standalone: true,
-  imports: [FormsModule, ConfirmDialogComponent, ToastComponent, BaseModalComponent, DatePipe, DecimalPipe, CurrencyPipe, AsyncPipe, OrderDetailsModalComponent],
+  imports: [FormsModule, BaseModalComponent, DatePipe, DecimalPipe, CurrencyPipe, OrderDetailsModalComponent],
   templateUrl: './kitchen-management.component.html',
   styleUrl: './kitchen-management.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

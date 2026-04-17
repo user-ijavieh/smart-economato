@@ -5,8 +5,6 @@ import { AllergenService } from '../../../core/services/allergen.service';
 import { MessageService } from '../../../core/services/message.service';
 import { Allergen, AllergenRequest } from '../../../shared/models/allergen.model';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
-import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
-import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { SuppliersManagementComponent } from '../suppliers-management/suppliers-management.component';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { finalize, Observable, of } from 'rxjs';
@@ -20,8 +18,6 @@ import { catchError, map } from 'rxjs/operators';
         CommonModule,
         FormsModule,
         BaseModalComponent,
-        ConfirmDialogComponent,
-        ToastComponent,
         SuppliersManagementComponent
     ],
     templateUrl: './allergens-management.component.html',

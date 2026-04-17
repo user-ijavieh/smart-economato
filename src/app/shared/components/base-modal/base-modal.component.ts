@@ -7,6 +7,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  Renderer2,
   inject
 } from '@angular/core';
 import { ModalStackService } from '../../../core/services/modal-stack.service';

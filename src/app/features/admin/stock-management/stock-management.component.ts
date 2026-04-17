@@ -68,7 +68,7 @@ interface PoolSupplierSection {
 @Component({
     selector: 'app-stock-management',
     standalone: true,
-    imports: [CommonModule, FormsModule, ToastComponent, BaseChartDirective, BaseModalComponent, BarcodeScannerComponent],
+    imports: [CommonModule, FormsModule, BaseChartDirective, BaseModalComponent, BarcodeScannerComponent],
     templateUrl: './stock-management.component.html',
     styleUrl: './stock-management.component.css'
 })
