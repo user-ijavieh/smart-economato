@@ -94,3 +94,90 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 25px color-mix(in srgb, var(--brand-primary) 35%, transparent);
 }
+
+/* ===== ADMIN THEME ===== */
+:host-context(body.admin-theme) .dialog-backdrop {
+  background: color-mix(in srgb, var(--theme-overlay-bg) 88%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+:host-context(body.admin-theme) .dialog-content {
+  background: linear-gradient(135deg, color-mix(in srgb, rgba(90, 120, 220, 0.18) 18%, transparent), transparent 42%), var(--theme-modal-glass-bg);
+  border: 1px solid rgba(90, 120, 220, 0.2);
+  box-shadow: 0 12px 40px rgba(90, 120, 220, 0.18), 0 4px 20px var(--theme-table-header-bg);
+}
+
+:host-context(body.admin-theme) .dialog-header {
+  background: linear-gradient(to right, rgba(90, 120, 220, 0.16), transparent);
+  border-bottom-color: rgba(90, 120, 220, 0.16);
+}
+
+:host-context(body.admin-theme) .btn-confirm {
+  background: rgba(90, 120, 220, 0.16);
+  border-color: rgba(90, 120, 220, 0.35);
+  color: var(--theme-text-primary);
+}
+
+:host-context(body.admin-theme) .btn-confirm:hover {
+  background: rgba(90, 120, 220, 0.28);
+  border-color: rgba(90, 120, 220, 0.55);
+  box-shadow: 0 8px 25px rgba(90, 120, 220, 0.22);
+}
+
+:host-context(body.admin-theme) .btn-cancel {
+  background: rgba(90, 120, 220, 0.08);
+  border-color: rgba(90, 120, 220, 0.2);
+  color: var(--theme-text-primary);
+}
+
+:host-context(body.admin-theme) .btn-cancel:hover {
+  background: rgba(90, 120, 220, 0.14);
+}
+
+/* ===== LIGHT MODE + ADMIN ===== */
+:host-context([data-theme="light"] body.admin-theme) .dialog-content,
+:host-context(body.admin-theme[data-theme="light"]) .dialog-content,
+:host-context([data-theme="light"] .admin-theme) .dialog-content {
+  background: #ffffff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  box-shadow: 0 12px 40px rgba(37, 99, 235, 0.10), 0 4px 20px rgba(15, 23, 42, 0.08);
+}
+
+:host-context([data-theme="light"] body.admin-theme) .dialog-header,
+:host-context(body.admin-theme[data-theme="light"]) .dialog-header,
+:host-context([data-theme="light"] .admin-theme) .dialog-header {
+  background: linear-gradient(to right, rgba(37, 99, 235, 0.18), rgba(37, 99, 235, 0.05));
+  border-bottom-color: rgba(37, 99, 235, 0.18);
+}
+
+:host-context([data-theme="light"] body.admin-theme) .btn-confirm,
+:host-context(body.admin-theme[data-theme="light"]) .btn-confirm,
+:host-context([data-theme="light"] .admin-theme) .btn-confirm {
+  background: #2563eb;
+  color: #ffffff;
+  border: 1px solid #2563eb;
+}
+
+:host-context([data-theme="light"] body.admin-theme) .btn-confirm:hover,
+:host-context(body.admin-theme[data-theme="light"]) .btn-confirm:hover,
+:host-context([data-theme="light"] .admin-theme) .btn-confirm:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+:host-context([data-theme="light"] body.admin-theme) .btn-cancel,
+:host-context(body.admin-theme[data-theme="light"]) .btn-cancel,
+:host-context([data-theme="light"] .admin-theme) .btn-cancel {
+  background: rgba(37, 99, 235, 0.06);
+  color: #111827;
+  border-color: rgba(37, 99, 235, 0.18);
+}
+
+:host-context([data-theme="light"] body.admin-theme) .btn-cancel:hover,
+:host-context(body.admin-theme[data-theme="light"]) .btn-cancel:hover,
+:host-context([data-theme="light"] .admin-theme) .btn-cancel:hover {
+  background: rgba(37, 99, 235, 0.12);
+}

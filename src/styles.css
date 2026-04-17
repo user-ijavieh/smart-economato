@@ -332,12 +332,12 @@
   --theme-border-card: rgba(0, 0, 0, 0.08);
 
   /* Texto */
-  --theme-text-primary: #1E293B;
-  --theme-text-secondary: #64748B;
-  --theme-text-bright: #1E293B;
-  --theme-text-accent-light: #334155;
-  --theme-text-accent-lighter: #475569;
-  --theme-text-link-inactive: #64748B;
+  --theme-text-primary: #111827;
+  --theme-text-secondary: #334155;
+  --theme-text-bright: #0F172A;
+  --theme-text-accent-light: #1E293B;
+  --theme-text-accent-lighter: #334155;
+  --theme-text-link-inactive: #334155;
   --theme-text-link-hover: #1E293B;
   --theme-svg-inactive: #94A3B8;
   --theme-svg-hover: #475569;
