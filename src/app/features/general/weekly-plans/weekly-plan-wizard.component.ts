@@ -16,6 +16,23 @@ import { BaseModalComponent } from '../../../shared/components/base-modal/base-m
 
 type DistributionMode = 'EQUITATIVE' | 'HISTORICAL' | 'RANDOM';
 
+interface AutoCreateOptions {
+  sessionCount: number;
+  startTime: string;
+  endTime: string;
+  sessionDurationMinutes: number;
+  platesPerSession: number;
+  maxStudentsPerSession: number;
+  breakStartTime: string;
+  breakEndTime: string;
+  useCurrentStock: boolean;
+  recipeSelectionMode: 'EXCLUDE' | 'INCLUDE';
+  excludedAllergenIds: number[];
+  selectedRecipeIds: number[];
+  excludedStudentIds: number[];
+  distributionMode: DistributionMode;
+}
+
 interface WizardSlot {
   uiKey?: string;
   id?: number;
@@ -61,6 +78,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
   private pendingOrdersLookupKey = '';
   private pendingOrdersLoading = false;
   private readonly shortageEpsilon = 0.0001;
+  private readonly AUTO_CREATE_STORAGE_KEY = 'weekly_plan_wizard_auto_create_options';
 
   currentStep = 1;
   saving = false;
@@ -697,20 +715,41 @@ export class WeeklyPlanWizardComponent implements OnInit {
 
   openAutoCreateModal(dayOfWeek: number) {
     this.autoCreateDayOfWeek = dayOfWeek;
-    this.autoCreateSessionCount = Math.max(1, this.getDaySlots(dayOfWeek).length || 2);
-    this.autoCreateStartTime = '08:00';
-    this.autoCreateEndTime = '14:00';
-    this.autoCreateSessionDurationMinutes = 60;
-    this.autoCreatePlatesPerSession = 1;
-    this.autoCreateMaxStudentsPerSession = Math.max(1, Math.min(2, this.myStudents.length || 1));
-    this.autoCreateBreakStartTime = '';
-    this.autoCreateBreakEndTime = '';
-    this.autoCreateUseCurrentStock = true;
-    this.autoCreateRecipeSelectionMode = 'EXCLUDE';
-    this.autoCreateExcludedAllergenIds = [];
-    this.autoCreateSelectedRecipeIds = [];
-    this.autoCreateExcludedStudentIds = [];
-    this.autoCreateDistributionMode = 'EQUITATIVE';
+
+    // Load from cache or set defaults
+    const cached = this.loadAutoCreateOptions();
+    if (cached) {
+      this.autoCreateSessionCount = cached.sessionCount;
+      this.autoCreateStartTime = cached.startTime;
+      this.autoCreateEndTime = cached.endTime;
+      this.autoCreateSessionDurationMinutes = cached.sessionDurationMinutes;
+      this.autoCreatePlatesPerSession = cached.platesPerSession;
+      this.autoCreateMaxStudentsPerSession = cached.maxStudentsPerSession;
+      this.autoCreateBreakStartTime = cached.breakStartTime;
+      this.autoCreateBreakEndTime = cached.breakEndTime;
+      this.autoCreateUseCurrentStock = cached.useCurrentStock;
+      this.autoCreateRecipeSelectionMode = cached.recipeSelectionMode;
+      this.autoCreateExcludedAllergenIds = cached.excludedAllergenIds;
+      this.autoCreateSelectedRecipeIds = cached.selectedRecipeIds;
+      this.autoCreateExcludedStudentIds = cached.excludedStudentIds;
+      this.autoCreateDistributionMode = cached.distributionMode;
+    } else {
+      this.autoCreateSessionCount = Math.max(1, this.getDaySlots(dayOfWeek).length || 2);
+      this.autoCreateStartTime = '08:00';
+      this.autoCreateEndTime = '14:00';
+      this.autoCreateSessionDurationMinutes = 60;
+      this.autoCreatePlatesPerSession = 1;
+      this.autoCreateMaxStudentsPerSession = Math.max(1, Math.min(2, this.myStudents.length || 1));
+      this.autoCreateBreakStartTime = '';
+      this.autoCreateBreakEndTime = '';
+      this.autoCreateUseCurrentStock = true;
+      this.autoCreateRecipeSelectionMode = 'EXCLUDE';
+      this.autoCreateExcludedAllergenIds = [];
+      this.autoCreateSelectedRecipeIds = [];
+      this.autoCreateExcludedStudentIds = [];
+      this.autoCreateDistributionMode = 'EQUITATIVE';
+    }
+
     this.autoCreateRecipeSearchQuery = '';
     this.autoCreateRecipePage = 0;
     this.autoCreateRecipeHasMore = true;
@@ -718,6 +757,39 @@ export class WeeklyPlanWizardComponent implements OnInit {
     this.showAutoCreateModal = true;
     this.loadCookableRecipeCatalog();
     this.loadAutoCreateRecipePage('', true);
+  }
+
+  private saveAutoCreateOptions() {
+    const options: AutoCreateOptions = {
+      sessionCount: this.autoCreateSessionCount,
+      startTime: this.autoCreateStartTime,
+      endTime: this.autoCreateEndTime,
+      sessionDurationMinutes: this.autoCreateSessionDurationMinutes,
+      platesPerSession: this.autoCreatePlatesPerSession,
+      maxStudentsPerSession: this.autoCreateMaxStudentsPerSession,
+      breakStartTime: this.autoCreateBreakStartTime,
+      breakEndTime: this.autoCreateBreakEndTime,
+      useCurrentStock: this.autoCreateUseCurrentStock,
+      recipeSelectionMode: this.autoCreateRecipeSelectionMode,
+      excludedAllergenIds: this.autoCreateExcludedAllergenIds,
+      selectedRecipeIds: this.autoCreateSelectedRecipeIds,
+      excludedStudentIds: this.autoCreateExcludedStudentIds,
+      distributionMode: this.autoCreateDistributionMode
+    };
+    localStorage.setItem(this.AUTO_CREATE_STORAGE_KEY, JSON.stringify(options));
+  }
+
+  private loadAutoCreateOptions(): AutoCreateOptions | null {
+    const data = localStorage.getItem(this.AUTO_CREATE_STORAGE_KEY);
+    if (!data) {
+      return null;
+    }
+    try {
+      return JSON.parse(data) as AutoCreateOptions;
+    } catch (e) {
+      console.error('Error parsing auto create options from localStorage', e);
+      return null;
+    }
   }
 
   closeAutoCreateModal() {
@@ -800,6 +872,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
       });
     }
 
+    this.saveAutoCreateOptions();
     this.closeAutoCreateModal();
     this.messageService.showSuccess(`Se han creado ${schedule.length} sesiones automáticamente para ${this.getDayLabel(targetDayOfWeek)}.`);
   }

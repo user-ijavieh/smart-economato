@@ -8,7 +8,7 @@ import { ProductService } from '../../../core/services/product.service';
 import { OrderService } from '../../../core/services/order.service';
 import { SupplierService } from '../../../core/services/supplier.service';
 import { MessageService } from '../../../core/services/message.service';
-import { WeeklyPlanProductPendingOrder, WeeklyPlanResponse, WeeklyPlanSlotResponse, WeeklyPlanStockRequirement } from '../../../shared/models/weekly-plan.model';
+import { WeeklyPlanProductPendingOrder, WeeklyPlanResponse, WeeklyPlanSlotResponse, WeeklyPlanSlotStudentResponse, WeeklyPlanStockRequirement } from '../../../shared/models/weekly-plan.model';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { Supplier } from '../../../shared/models/supplier.model';
 
@@ -32,10 +32,8 @@ export class WeeklyPlanDetailComponent implements OnInit {
   planId: number | null = null;
   plan: WeeklyPlanResponse | null = null;
   loading = true;
-  activatingPlanCopy = false;
-  showActivateModal = false;
-  activateTargetWeekStartDate = '';
-  activateKeepStudents = true;
+  activatingPlan = false;
+  deactivatingPlan = false;
   
   activeTab: 'tablero' | 'stock' | 'asistencia' = 'tablero';
   
@@ -49,6 +47,7 @@ export class WeeklyPlanDetailComponent implements OnInit {
 
   collapsedDays = new Set<number>();
   selectedDayTab = 1; // Default to Monday (1)
+  activeDayMenu: number | null = null;
 
   stockRequirements: WeeklyPlanStockRequirement[] = [];
   loadingStock = false;
@@ -65,11 +64,14 @@ export class WeeklyPlanDetailComponent implements OnInit {
   private draggedStockOrderItems: WeeklyPlanRepositionOrderItem[] = [];
   roundUpStockOrderQuantities = false;
   stockOrderSearchTerm = '';
+  stockSearchTerm = '';
+  attendanceSearchTerm = '';
   collapsedStockPoolSuppliers = new Set<string>();
   selectedStockOrderItemIds = new Set<number>();
   lastSelectedStockOrderItemId: number | null = null;
   expandedAttendanceStudents = new Set<number>();
   expandedAttendanceDays = new Set<string>();
+  cancellingAttendance = new Set<string>(); // key: studentId-dayOfWeek or studentId-slotId
 
   get rosterStudents(): WeeklyPlanStudentRosterRow[] {
     if (!this.plan?.slots?.length) {
@@ -79,7 +81,13 @@ export class WeeklyPlanDetailComponent implements OnInit {
     const byStudent = new Map<number, WeeklyPlanStudentRosterRow>();
 
     for (const slot of this.plan.slots) {
+      // Filter out slots that are cancelled entirely
+      if (slot.status === 'CANCELLED') continue;
+
       for (const student of slot.students || []) {
+        // Skip students whose attendance was cancelled for this specific slot
+        if (student.status === 'CANCELLED') continue;
+
         const existing = byStudent.get(student.studentId);
         const dayLabel = this.getDayLabel(slot.dayOfWeek);
         const item: WeeklyPlanStudentRosterDay = {
@@ -120,6 +128,24 @@ export class WeeklyPlanDetailComponent implements OnInit {
     return Array.from(byStudent.values()).sort((a, b) => a.studentName.localeCompare(b.studentName));
   }
 
+  get filteredRosterStudents(): WeeklyPlanStudentRosterRow[] {
+    const term = this.attendanceSearchTerm.trim().toLowerCase();
+    if (!term) {
+      return this.rosterStudents;
+    }
+
+    return this.rosterStudents.filter(student => student.studentName.toLowerCase().includes(term));
+  }
+
+  get filteredStockRequirements(): WeeklyPlanStockRequirement[] {
+    const term = this.stockSearchTerm.trim().toLowerCase();
+    if (!term) {
+      return this.stockRequirements;
+    }
+
+    return this.stockRequirements.filter(requirement => requirement.productName.toLowerCase().includes(term));
+  }
+
   get slotsByDay(): Record<number, WeeklyPlanSlotResponse[]> {
     const map: Record<number, WeeklyPlanSlotResponse[]> = { 1: [], 2: [], 3: [], 4: [], 5: [] };
     if (!this.plan || !this.plan.slots) return map;
@@ -141,13 +167,25 @@ export class WeeklyPlanDetailComponent implements OnInit {
     return map;
   }
 
-  toggleDayCollapse(dayValue: number) {
-    if (this.collapsedDays.has(dayValue)) {
-      this.collapsedDays.delete(dayValue);
+  toggleDayCollapse(day: number) {
+    if (this.collapsedDays.has(day)) {
+      this.collapsedDays.delete(day);
     } else {
-      this.collapsedDays.add(dayValue);
+      this.collapsedDays.add(day);
     }
-    this.cdr.detectChanges();
+  }
+
+  toggleDayMenu(day: number, event: MouseEvent) {
+    event.stopPropagation();
+    if (this.activeDayMenu === day) {
+      this.activeDayMenu = null;
+    } else {
+      this.activeDayMenu = day;
+    }
+  }
+
+  closeAllMenus() {
+    this.activeDayMenu = null;
   }
 
   isDayCollapsed(dayValue: number): boolean {
@@ -205,7 +243,7 @@ export class WeeklyPlanDetailComponent implements OnInit {
 
   switchTab(tab: 'tablero' | 'stock' | 'asistencia') {
     this.activeTab = tab;
-    if (tab === 'stock' && this.stockRequirements.length === 0) {
+    if (tab === 'stock') {
       this.loadStock();
     }
   }
@@ -332,34 +370,57 @@ export class WeeklyPlanDetailComponent implements OnInit {
     this.router.navigate(['/weekly-plans', this.planId, 'edit']);
   }
 
-  openActivateModal() {
-    if (!this.plan) return;
-    this.activateTargetWeekStartDate = this.addDaysToDate(this.plan.weekStartDate, 7);
-    this.activateKeepStudents = true;
-    this.showActivateModal = true;
-  }
+  async activatePlan() {
+    if (!this.planId || this.activatingPlan) return;
 
-  closeActivateModal() {
-    this.showActivateModal = false;
-  }
+    const confirmed = await this.messageService.confirm(
+      'Activar plan',
+      'Al activar el plan quedará listo para confirmar sesiones. ¿Deseas continuar?',
+      'Activar',
+      'Cancelar'
+    );
+    if (!confirmed) return;
 
-  confirmActivatePlanCopy() {
-    if (!this.planId || !this.plan) return;
-    if (!this.activateTargetWeekStartDate) {
-      this.messageService.showError('Selecciona la semana de destino.');
-      return;
-    }
-
-    this.activatingPlanCopy = true;
-    this.router.navigate(['/weekly-plans/wizard'], {
-      queryParams: {
-        duplicateFrom: this.planId,
-        weekStartDate: this.activateTargetWeekStartDate,
-        keepStudents: this.activateKeepStudents ? '1' : '0'
+    this.activatingPlan = true;
+    this.weeklyPlanService.activatePlan(this.planId).subscribe({
+      next: () => {
+        this.messageService.showSuccess('Plan activado correctamente.');
+        this.loadPlan();
+      },
+      error: (err) => {
+        this.messageService.showError(err.error?.message || 'No se pudo activar el plan.');
+      },
+      complete: () => {
+        this.activatingPlan = false;
+        this.cdr.detectChanges();
       }
-    }).finally(() => {
-      this.activatingPlanCopy = false;
-      this.closeActivateModal();
+    });
+  }
+
+  async deactivatePlan() {
+    if (!this.planId || this.deactivatingPlan) return;
+
+    const confirmed = await this.messageService.confirm(
+      'Volver a borrador',
+      'El plan volverá a estado borrador. Esta acción se bloqueará si existen sesiones confirmadas. ¿Deseas continuar?',
+      'Volver a borrador',
+      'Cancelar'
+    );
+    if (!confirmed) return;
+
+    this.deactivatingPlan = true;
+    this.weeklyPlanService.deactivatePlan(this.planId).subscribe({
+      next: () => {
+        this.messageService.showSuccess('Plan pasado a borrador correctamente.');
+        this.loadPlan();
+      },
+      error: (err) => {
+        this.messageService.showError(err.error?.message || 'No se pudo pasar el plan a borrador.');
+      },
+      complete: () => {
+        this.deactivatingPlan = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -879,8 +940,76 @@ export class WeeklyPlanDetailComponent implements OnInit {
     });
   }
 
+  async unconfirmSlot(slot: WeeklyPlanSlotResponse) {
+    if (!this.planId) return;
+
+    const confirmed = await this.messageService.confirm(
+      'Revertir confirmación',
+      `Se anulará el registro de cocinado y se restaurará el stock de ${slot.recipeName}. ¿Deseas continuar?`,
+      'Revertir',
+      'Cancelar'
+    );
+
+    if (!confirmed) return;
+
+    this.weeklyPlanService.unconfirmSlot(this.planId, slot.id).subscribe({
+      next: () => {
+        this.messageService.showSuccess(`Confirmación revertida correctamente.`);
+        this.loadPlan();
+      },
+      error: (err) => this.messageService.showError(err.error?.message || 'Error al revertir la confirmación.')
+    });
+  }
+
+  async confirmDay(dayOfWeek: number) {
+    if (!this.planId) return;
+
+    const dayName = this.getDayLabel(dayOfWeek);
+    const confirmed = await this.messageService.confirm(
+      'Confirmar día completo',
+      `Se confirmarán todas las sesiones del ${dayName} y se descontará el stock correspondiente. ¿Deseas continuar?`,
+      'Confirmar todo',
+      'Cancelar'
+    );
+
+    if (!confirmed) return;
+
+    this.weeklyPlanService.confirmDay(this.planId, dayOfWeek).subscribe({
+      next: (res) => {
+        this.messageService.showSuccess(`Día ${dayName} confirmado correctamente.`);
+        this.loadPlan();
+      },
+      error: (err) => this.messageService.showError(err.error?.message || 'Error al confirmar el día.')
+    });
+  }
+
+  async unconfirmDay(dayOfWeek: number) {
+    if (!this.planId) return;
+
+    const dayName = this.getDayLabel(dayOfWeek);
+    const confirmed = await this.messageService.confirm(
+      'Revertir confirmación del día',
+      `Se anularán todas las sesiones confirmadas del ${dayName} y se restaurará el stock. ¿Deseas continuar?`,
+      'Revertir todo',
+      'Cancelar'
+    );
+
+    if (!confirmed) return;
+
+    this.weeklyPlanService.unconfirmDay(this.planId, dayOfWeek).subscribe({
+      next: () => {
+        this.messageService.showSuccess(`Confirmaciones del ${dayName} revertidas correctamente.`);
+        this.loadPlan();
+      },
+      error: (err) => this.messageService.showError(err.error?.message || 'Error al revertir las confirmaciones del día.')
+    });
+  }
+
   async cancelStudentFromDay(studentId: number, studentName: string, dayOfWeek: number) {
     if (!this.planId) return;
+
+    const opKey = `${studentId}-${dayOfWeek}`;
+    if (this.cancellingAttendance.has(opKey)) return;
 
     const confirmed = await this.messageService.confirm(
       'Cancelar alumno del día',
@@ -893,17 +1022,27 @@ export class WeeklyPlanDetailComponent implements OnInit {
       return;
     }
 
+    this.cancellingAttendance.add(opKey);
     this.weeklyPlanService.cancelStudentFromDay(this.planId, dayOfWeek, studentId).subscribe({
       next: () => {
         this.messageService.showSuccess(`${studentName} cancelado del día correctamente.`);
         this.loadPlan();
       },
-      error: (err) => this.messageService.showError(err.error?.message || 'No se pudo cancelar al alumno del día.')
+      error: (err) => {
+        this.messageService.showError(err.error?.message || 'No se pudo cancelar al alumno del día.');
+      },
+      complete: () => {
+        this.cancellingAttendance.delete(opKey);
+        this.cdr.detectChanges();
+      }
     });
   }
 
   async cancelStudentFromSession(studentId: number, studentName: string, slotId: number, recipeName: string, sortOrder: number) {
     if (!this.planId) return;
+
+    const opKey = `slot-${studentId}-${slotId}`;
+    if (this.cancellingAttendance.has(opKey)) return;
 
     const confirmed = await this.messageService.confirm(
       'Cancelar sesión al alumno',
@@ -916,12 +1055,19 @@ export class WeeklyPlanDetailComponent implements OnInit {
       return;
     }
 
+    this.cancellingAttendance.add(opKey);
     this.weeklyPlanService.cancelStudentFromSlot(this.planId, slotId, studentId).subscribe({
       next: () => {
         this.messageService.showSuccess(`${studentName} cancelado de la sesión correctamente.`);
         this.loadPlan();
       },
-      error: (err) => this.messageService.showError(err.error?.message || 'No se pudo cancelar al alumno de la sesión.')
+      error: (err) => {
+        this.messageService.showError(err.error?.message || 'No se pudo cancelar al alumno de la sesión.');
+      },
+      complete: () => {
+        this.cancellingAttendance.delete(opKey);
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -950,6 +1096,22 @@ export class WeeklyPlanDetailComponent implements OnInit {
     return this.expandedAttendanceDays.has(`${studentId}-${dayOfWeek}`);
   }
 
+  canManageAttendanceCancellation(): boolean {
+    return this.plan?.status !== 'DRAFT';
+  }
+
+  isSessionConfirmed(slotId: number): boolean {
+    return (this.plan?.slots || []).some(s => s.id === slotId && s.status === 'CONFIRMED');
+  }
+
+  isDayConfirmedSome(dayOfWeek: number): boolean {
+    return (this.plan?.slots || []).some(s => s.dayOfWeek === dayOfWeek && s.status === 'CONFIRMED');
+  }
+
+  hasActionableSlots(dayOfWeek: number): boolean {
+    return (this.slotsByDay[dayOfWeek] || []).some(s => (s.status === 'PENDING' || s.status === 'IN_PROGRESS') && this.isSlotActionable(s));
+  }
+
   getStatusLabel(status: string): string {
     const labels: Record<string, string> = {
       DRAFT: 'Borrador',
@@ -967,14 +1129,17 @@ export class WeeklyPlanDetailComponent implements OnInit {
   }
 
   getSlotsForStudentAndDay(studentId: number, dayOfWeek: number): WeeklyPlanSlotResponse[] {
-    return (this.plan?.slots || []).filter(slot => slot.dayOfWeek === dayOfWeek && (slot.students || []).some(student => student.studentId === studentId));
+    return (this.plan?.slots || []).filter(slot => 
+      slot.dayOfWeek === dayOfWeek && 
+      slot.status !== 'CANCELLED' &&
+      (slot.students || []).some(student => student.studentId === studentId && student.status !== 'CANCELLED')
+    );
   }
 
-  private addDaysToDate(dateStr: string, days: number): string {
-    const date = new Date(`${dateStr}T00:00:00`);
-    date.setDate(date.getDate() + days);
-    return date.toISOString().split('T')[0];
+  getActiveStudents(slot: WeeklyPlanSlotResponse): WeeklyPlanSlotStudentResponse[] {
+    return (slot.students || []).filter(s => s.status !== 'CANCELLED');
   }
+
 }
 
 interface WeeklyPlanStudentRosterSlot {

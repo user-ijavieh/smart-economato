@@ -181,6 +181,12 @@ section h2 {
   border-top: 1px solid var(--theme-border-subtle);
 }
 
+.plan-card-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
 /* BADGES */
 .status-badge {
   padding: 4px 8px;

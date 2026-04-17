@@ -114,6 +114,9 @@ export class LayoutComponent {
   }
 
   toggleTheme(): void {
+    if (this.isNotificationPanelOpen()) {
+      this.closeNotificationPanel();
+    }
     this.themeService.toggleTheme();
   }
 
@@ -126,6 +129,9 @@ export class LayoutComponent {
   }
 
   logout(): void {
+    if (this.isNotificationPanelOpen()) {
+      this.closeNotificationPanel();
+    }
     this.showLogoutModal = true;
   }
 

@@ -3,7 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductBatchService } from '../../../core/services/product-batch.service';
 import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.model';
+import { RecipeCookingAudit } from '../../../shared/models/kitchen.model';
+import { TraceabilityService } from '../../../core/services/traceability.service';
 import { BatchExpirationModalComponent } from '../stock-management/batch-expiration-modal/batch-expiration-modal.component';
+import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { MessageService } from '../../../core/services/message.service';
 import { ScrollService } from '../../../core/services/scroll.service';
 
@@ -13,12 +16,13 @@ type ControlSubTab = 'expiring' | 'expired';
 @Component({
   selector: 'app-batches-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, BatchExpirationModalComponent],
+  imports: [CommonModule, FormsModule, BatchExpirationModalComponent, BaseModalComponent],
   templateUrl: './batches-management.component.html',
   styleUrl: './batches-management.component.css'
 })
 export class BatchesManagementComponent implements OnInit {
   private batchService = inject(ProductBatchService);
+  private traceabilityService = inject(TraceabilityService);
   private cdr = inject(ChangeDetectorRef);
   private messageService = inject(MessageService);
   private scrollService = inject(ScrollService);
@@ -53,8 +57,11 @@ export class BatchesManagementComponent implements OnInit {
   expiringSoonCount = 0;
 
   // Modal State
+  showViewModal = false;
   showEditModal = false;
   selectedBatch: ProductBatchResponseDTO | null = null;
+  batchCookings: RecipeCookingAudit[] = [];
+  loadingCookings = false;
 
   ngOnInit(): void {
     this.loadBatches();
@@ -185,14 +192,52 @@ export class BatchesManagementComponent implements OnInit {
     return this.sortColumn === column ? this.sortDir : '';
   }
 
-  openEditModal(batch: ProductBatchResponseDTO): void {
+  openViewModal(batch: ProductBatchResponseDTO): void {
+    console.log('[BatchesManagement] openViewModal called with batch id:', batch?.id);
     this.selectedBatch = batch;
+    this.showViewModal = true;
+    this.loadingCookings = true;
+    this.batchCookings = [];
+    
+    if (!batch || !batch.id) {
+      console.warn('Batch is undefined or has no id');
+      this.loadingCookings = false;
+      return;
+    }
+
+    this.traceabilityService.getBatchCookings(batch.id).subscribe({
+      next: (cookings) => {
+        console.log('[BatchesManagement] Traceability response received:', cookings);
+        this.batchCookings = cookings || [];
+        this.loadingCookings = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('[BatchesManagement] Traceability request failed:', err);
+        this.loadingCookings = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  openEditModalFromView(): void {
     this.showEditModal = true;
+  }
+
+  // Called from individual rows instead of openEditModal
+  onRowClick(batch: ProductBatchResponseDTO): void {
+    this.openViewModal(batch);
+  }
+
+  onViewModalClosed(): void {
+    this.showViewModal = false;
+    this.selectedBatch = null;
+    this.batchCookings = [];
   }
 
   onModalClosed(): void {
     this.showEditModal = false;
-    this.selectedBatch = null;
+    // We intentionally don't clear selectedBatch here if view modal is still open.
   }
 
   onSaveBatch(data: { expirationDate: string; reason?: string; batchCode?: string }): void {

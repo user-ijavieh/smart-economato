@@ -109,6 +109,17 @@ export class WeeklyPlansComponent implements OnInit {
     this.router.navigate(['/weekly-plans', plan.id]);
   }
 
+  duplicatePlan(plan: WeeklyPlanResponse): void {
+    const targetWeek = this.addDaysToDate(plan.weekStartDate, 7);
+    this.router.navigate(['/weekly-plans/wizard'], {
+      queryParams: {
+        duplicateFrom: plan.id,
+        weekStartDate: targetWeek,
+        keepStudents: '1'
+      }
+    });
+  }
+
   calculateProgress(plan: WeeklyPlanResponse): { confirmed: number, total: number, percent: number } {
     if (!plan || !plan.slots) return { confirmed: 0, total: 0, percent: 0 };
     const total = plan.slots.length;
@@ -127,5 +138,11 @@ export class WeeklyPlansComponent implements OnInit {
     };
 
     return labels[status] || status;
+  }
+
+  private addDaysToDate(dateStr: string, days: number): string {
+    const date = new Date(`${dateStr}T00:00:00`);
+    date.setDate(date.getDate() + days);
+    return date.toISOString().split('T')[0];
   }
 }

@@ -1,4 +1,4 @@
-﻿/** ===== MODAL OVERLAY ===== */
+/** ===== MODAL OVERLAY ===== */
 :host {
   display: block;
 }
@@ -141,7 +141,7 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  z-index: 11001;
+  z-index: 30000;
 }
 
 .scanner-modal {
