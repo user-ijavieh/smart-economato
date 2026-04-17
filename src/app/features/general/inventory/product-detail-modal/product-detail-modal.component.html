@@ -3,7 +3,7 @@
     <!-- Información General -->
     <div class="modal-section">
       <h4>Información General</h4>
-      <table class="details-table">
+      <table class="modal-table details-table">
         <tbody>
           <tr>
             <td class="detail-label">Código</td>
@@ -24,7 +24,7 @@
     <!-- Precio y Stock -->
     <div class="modal-section">
       <h4>Precio y Stock</h4>
-      <table class="details-table">
+      <table class="modal-table details-table">
         <tbody>
           <tr>
             <td class="detail-label">Precio Unitario</td>
@@ -55,7 +55,7 @@
         @if (loadingBatches) {
           <p class="loading-text">Cargando lotes...</p>
         } @else if (batches.length > 0) {
-          <table class="batches-table">
+          <table class="modal-table batches-table">
             <thead>
               <tr>
                 <th>ID</th>

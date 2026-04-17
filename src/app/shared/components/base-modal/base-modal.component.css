@@ -196,7 +196,7 @@
 /* ===== LIGHT MODE ===== */
 
 :host-context([data-theme="light"]) .modal-dialog {
-  background: #ffffff;
+  background: var(--base-modal-light-dialog-bg);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   border: 1px solid rgba(0, 0, 0, 0.08);
@@ -204,8 +204,8 @@
 }
 
 :host-context([data-theme="light"]) .modal-header {
-  background: linear-gradient(to right, rgba(184, 75, 68, 0.18), rgba(184, 75, 68, 0.05));
-  border-bottom: 2px solid rgba(184, 75, 68, 0.20);
+  background: var(--base-modal-light-header-bg);
+  border-bottom: var(--base-modal-light-header-border);
 }
 
 /* ===== ADMIN THEME (modal shell) ===== */
