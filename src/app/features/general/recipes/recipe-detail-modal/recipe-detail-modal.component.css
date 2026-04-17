@@ -39,39 +39,6 @@
   font-size: 0.95rem;
 }
 
-.ingredients-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-  background: var(--theme-section-header-bg);
-  border: 1px solid var(--theme-border-glass);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.ingredients-table thead th {
-  background: var(--theme-table-header-bg);
-  padding: 12px;
-  text-align: left;
-  font-weight: 600;
-  color: var(--theme-text-secondary);
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
-}
-
-.ingredients-table tbody td {
-  padding: 10px 12px;
-  color: var(--theme-text-primary);
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
-}
-
-.ingredients-table tfoot td {
-  padding: 12px;
-  font-weight: 700;
-  color: var(--color-danger-muted);
-  border-top: 1px solid var(--theme-surface-glass-hover);
-  background: var(--theme-section-header-bg);
-}
-
 .allergens-list {
   display: flex;
   flex-wrap: wrap;

@@ -364,7 +364,7 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 .traceability-table-wrap { background: var(--theme-section-header-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--theme-surface-glass-hover); }
 .traceability-sub-table { width: 100%; border-collapse: collapse; }
 .traceability-sub-table th, .traceability-sub-table td { padding: 12px; text-align: left; font-size: 0.85rem; border-bottom: 1px solid var(--theme-surface-glass-hover); }
-.traceability-sub-table th { background: rgba(0,0,0,0.3); color: var(--theme-text-secondary); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; }
+.traceability-sub-table th { background: var(--theme-section-header-bg-strong); color: var(--theme-text-secondary); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; }
 
 .lift-crisis-actions .input-standard {
   padding: 10px 15px; border-radius: 12px; border: 1.5px solid var(--theme-border-glass);

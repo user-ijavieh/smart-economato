@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output, inject, ViewChild, ElementRef, AfterViewInit, OnDestroy, Renderer2 } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  inject
+} from '@angular/core';
+import { ModalStackService } from '../../../core/services/modal-stack.service';
 
 @Component({
   selector: 'app-base-modal',
@@ -10,11 +21,12 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, In
     '(document:keydown.escape)': 'onEscapeKey()'
   }
 })
-export class BaseModalComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('modalOverlay') modalOverlay!: ElementRef;
+
+export class BaseModalComponent implements OnInit, OnDestroy {
   @Input() title = '';
   @Input() headerClass = '';
   @Input() size: 'sm' | 'md' | 'lg' | 'fullscreen' = 'md';
+  @Input() zIndex: number | null = null;
   @Input() closeOnBackdrop = true;
   @Input() showCloseButton = true;
   @Input() showHeader = true;
@@ -23,23 +35,34 @@ export class BaseModalComponent implements AfterViewInit, OnDestroy {
 
   private renderer = inject(Renderer2);
   private cdr = inject(ChangeDetectorRef);
+  private modalStack = inject(ModalStackService);
+  private readonly modalId = `modal-${Math.random().toString(36).slice(2)}-${Date.now()}`;
+
   isClosing = false;
 
-  ngAfterViewInit() {
-    // Teleport to body to escape local stacking contexts and transforms
-    this.renderer.appendChild(document.body, this.modalOverlay.nativeElement);
+  ngOnInit(): void {
+    this.modalStack.register(this.modalId);
+    this.cdr.markForCheck();
   }
 
-  ngOnDestroy() {
-    // Cleanup: remove from body if it was moved there
-    const overlay = this.modalOverlay?.nativeElement;
-    if (overlay && overlay.parentNode === document.body) {
-      this.renderer.removeChild(document.body, overlay);
+  ngOnDestroy(): void {
+    this.modalStack.unregister(this.modalId);
+  }
+
+  private canHandleCloseEvents(): boolean {
+    return this.modalStack.isTop(this.modalId);
+  }
+
+  get overlayZIndex(): number {
+    if (this.zIndex !== null) {
+      return this.zIndex;
     }
+
+    return this.modalStack.getZIndex(this.modalId);
   }
 
   onOverlayClick(event: MouseEvent): void {
-    if (!this.closeOnBackdrop || this.isClosing) {
+    if (!this.closeOnBackdrop || this.isClosing || !this.canHandleCloseEvents()) {
       return;
     }
 
@@ -49,7 +72,7 @@ export class BaseModalComponent implements AfterViewInit, OnDestroy {
   }
 
   onEscapeKey(): void {
-    if (!this.isClosing) {
+    if (!this.isClosing && this.canHandleCloseEvents()) {
       this.close();
     }
   }

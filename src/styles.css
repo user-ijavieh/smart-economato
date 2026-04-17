@@ -464,6 +464,56 @@ body.admin-theme[data-theme="light"],
   --theme-heading-glow-admin: none;
 }
 
+/* ===== MODAL BUTTONS - LIGHT MODE ===== */
+[data-theme="light"] .modal-btn-primary {
+  background: var(--brand-primary);
+  color: #ffffff;
+  border: none;
+  backdrop-filter: none;
+  box-shadow: 0 2px 8px rgba(184, 75, 68, 0.20);
+}
+
+[data-theme="light"] .modal-btn-primary:hover:not(:disabled) {
+  background: var(--brand-dark);
+  border-color: transparent;
+  box-shadow: 0 4px 16px rgba(184, 75, 68, 0.30);
+}
+
+[data-theme="light"] .modal-btn-secondary,
+[data-theme="light"] .modal-btn-neutral {
+  background: #f8fafc;
+  color: #475569;
+  border: 1px solid rgba(0, 0, 0, 0.10);
+}
+
+[data-theme="light"] .modal-btn-secondary:hover:not(:disabled),
+[data-theme="light"] .modal-btn-neutral:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="light"] .modal-btn-danger {
+  background: rgba(220, 38, 38, 0.06);
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.18);
+}
+
+[data-theme="light"] .modal-btn-danger:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.12);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.12);
+}
+
+[data-theme="light"] .modal-btn-success {
+  background: rgba(5, 150, 105, 0.08);
+  color: #059669;
+  border: 1px solid rgba(5, 150, 105, 0.20);
+}
+
+[data-theme="light"] .modal-btn-success:hover:not(:disabled) {
+  background: rgba(5, 150, 105, 0.14);
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.12);
+}
+
 /* Fuentes Sora */
 @font-face {
   font-family: 'Sora';

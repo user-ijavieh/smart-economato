@@ -574,7 +574,7 @@ tbody.loading { opacity: 0.6; }
 .days-input-group { display: flex; align-items: center; gap: 8px; }
 .days-input { padding: 10px 15px; border-radius: 12px; border: 1.5px solid var(--theme-border-glass); background: var(--theme-input-bg); color: var(--theme-text-primary); width: 80px; font-size: 1rem; text-align: center; }
 .order-table-wrapper { background: var(--theme-surface-glass-hover); border-radius: 16px; border: 1px solid var(--theme-surface-glass-hover); overflow: hidden; overflow-x: auto; }
-.order-table th { background: rgba(0,0,0,0.3); }
+.order-table th { background: var(--theme-section-header-bg-strong); }
 .order-modal-footer {
   width: 100%;
   display: flex;
@@ -1085,7 +1085,7 @@ tbody.loading { opacity: 0.6; }
 .form-item label { color: var(--theme-text-secondary); font-weight: 600; font-size: 0.9rem; }
 .input-standard { padding: 14px; border-radius: 12px; border: 1px solid var(--theme-surface-glass-hover); background: var(--theme-surface-glass-hover); color: var(--theme-text-primary); font-size: 1rem; transition: all 0.3s; }
 .input-standard:focus { outline: none; border-color: rgba(90, 120, 220, 0.6); background: var(--theme-surface-glass-active); box-shadow: 0 0 0 3px rgba(90, 120, 220, 0.2); }
-.input-standard option { background: #1a1f33; color: var(--theme-text-primary); }
+.input-standard option { background: var(--theme-option-bg); color: var(--theme-text-primary); }
 
 .arrival-animation {
   animation: fadeIn 0.4s ease-out both;
