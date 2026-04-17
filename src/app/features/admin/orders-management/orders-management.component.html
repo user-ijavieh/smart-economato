@@ -541,6 +541,4 @@
 </app-base-modal>
 }
 
-<!-- Modals & Toasts -->
-<app-confirm-dialog></app-confirm-dialog>
-<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
+<!-- Modals are handled globally at app root -->

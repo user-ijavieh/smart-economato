@@ -453,12 +453,6 @@
     (close)="closeFormModal()"></app-user-form-modal>
 }
 
-<!-- Confirm Dialog -->
-<app-confirm-dialog></app-confirm-dialog>
-
-<!-- Toasts -->
-<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
-
 <!-- Mobile Detail Modal (solo visible en tab users) -->
 @if (activeTab === 'users' && showMobileModal && selectedUserForMobile) {
 <app-base-modal [title]="selectedUserForMobile.name" size="sm" (closed)="closeMobileModal()">
