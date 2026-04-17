@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, NgZone, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { finalize, forkJoin, Subject, of } from 'rxjs';
 import { map, switchMap, debounceTime, distinctUntilChanged, catchError } from 'rxjs/operators';
 import { BaseChartDirective } from 'ng2-charts';
@@ -58,6 +59,12 @@ interface RepositionOrderGroup {
     items: RepositionOrderItem[];
 }
 
+interface PoolSupplierSection {
+    key: string;
+    label: string;
+    items: RepositionOrderItem[];
+}
+
 @Component({
     selector: 'app-stock-management',
     standalone: true,
@@ -76,11 +83,13 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     private productBatchService = inject(ProductBatchService);
     private supplierService = inject(SupplierService);
     private scrollService = inject(ScrollService);
+    private route = inject(ActivatedRoute);
     messageService = inject(MessageService);
 
     loadingAlerts = true;
     loadingPredictions = true;
     loadingOrderData = false;
+    autoOpenOrderModal = false;
 
     activeTab: Tab = 'alerts';
 
@@ -108,7 +117,13 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     private nextOrderGroupId = 1;
     private draggedOrderItem: RepositionOrderItem | null = null;
     private draggedSourceGroupId: number | 'pool' | null = null;
+    private draggedOrderItems: RepositionOrderItem[] = [];
     creatingOrder = false;
+    roundUpOrderQuantities = false;
+    orderSearchTerm = '';
+    collapsedPoolSuppliers = new Set<string>();
+    selectedOrderItemIds = new Set<number>();
+    lastSelectedOrderItemId: number | null = null;
 
     // ── Predictions tab state ──
     predictions: StockPredictionResponseDTO[] = [];
@@ -249,6 +264,10 @@ export class StockManagementComponent implements OnInit, OnDestroy {
 
 
     ngOnInit(): void {
+        this.route.queryParamMap.subscribe(params => {
+            this.autoOpenOrderModal = params.get('openOrderModal') === '1';
+        });
+
         this.loadAlerts();
         this.loadSuppliers();
         
@@ -335,6 +354,10 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             next: (data: StockAlertDTO[]) => {
                 this.alerts = data;
                 this.applySorting(); // Apply sorting immediately
+                if (this.autoOpenOrderModal) {
+                    this.autoOpenOrderModal = false;
+                    setTimeout(() => this.openOrderModal());
+                }
                 setTimeout(() => { this.loadingAlerts = false; this.cdr.markForCheck(); });
             },
             error: () => {
@@ -511,8 +534,14 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         this.orderAlerts = [];
         this.orderGroups = [];
         this.daysAhead = 14;
+        this.orderSearchTerm = '';
+        this.collapsedPoolSuppliers.clear();
         this.draggedOrderItem = null;
         this.draggedSourceGroupId = null;
+        this.draggedOrderItems = [];
+        this.roundUpOrderQuantities = false;
+        this.selectedOrderItemIds.clear();
+        this.lastSelectedOrderItemId = null;
         this.nextOrderGroupId = 1;
     }
 
@@ -527,7 +556,8 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     }
 
     addOrderGroup(): void {
-        this.orderGroups = [...this.orderGroups, this.createOrderGroup()];
+        this.orderGroups = [this.createOrderGroup(), ...this.orderGroups];
+        this.reindexOrderGroups();
         this.cdr.detectChanges();
     }
 
@@ -551,18 +581,25 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         }));
     }
 
-    onOrderDragStart(item: RepositionOrderItem, source: 'pool' | number): void {
+    onOrderDragStart(event: DragEvent, item: RepositionOrderItem, source: 'pool' | number): void {
         this.draggedOrderItem = item;
         this.draggedSourceGroupId = source;
+        this.draggedOrderItems = this.resolveDraggedOrderItems(item, source);
+        if (event.dataTransfer) {
+            event.dataTransfer.effectAllowed = 'move';
+            event.dataTransfer.setData('text/plain', String(item.productId));
+        }
     }
 
     onOrderDragEnd(): void {
         this.draggedOrderItem = null;
         this.draggedSourceGroupId = null;
+        this.draggedOrderItems = [];
     }
 
     allowOrderDrop(event: DragEvent): void {
         event.preventDefault();
+        event.stopPropagation();
         if (event.dataTransfer) {
             event.dataTransfer.dropEffect = 'move';
         }
@@ -570,29 +607,37 @@ export class StockManagementComponent implements OnInit, OnDestroy {
 
     dropOnGroup(event: DragEvent, groupId: number): void {
         event.preventDefault();
+        event.stopPropagation();
         if (!this.draggedOrderItem) return;
 
         const targetGroup = this.orderGroups.find(group => group.id === groupId);
         if (!targetGroup) return;
 
-        this.removeDraggedItemFromSource();
-        targetGroup.items = [...targetGroup.items, this.draggedOrderItem];
-        if (!targetGroup.supplierId && this.draggedOrderItem.supplierId) {
-            targetGroup.supplierId = this.draggedOrderItem.supplierId;
+        const itemsToMove = this.draggedOrderItems.length ? this.draggedOrderItems : [this.draggedOrderItem];
+        this.removeDraggedItemsFromSource(itemsToMove);
+        targetGroup.items = [...targetGroup.items, ...itemsToMove.filter(item => !targetGroup.items.some(existing => existing.productId === item.productId))];
+        if (!targetGroup.supplierId && itemsToMove[0]?.supplierId) {
+            targetGroup.supplierId = itemsToMove[0].supplierId;
         }
         this.draggedOrderItem = null;
         this.draggedSourceGroupId = null;
+        this.draggedOrderItems = [];
+        this.clearOrderSelection();
         this.cdr.detectChanges();
     }
 
     dropOnPool(event: DragEvent): void {
         event.preventDefault();
+        event.stopPropagation();
         if (!this.draggedOrderItem) return;
 
-        this.removeDraggedItemFromSource();
-        this.orderAlerts = [...this.orderAlerts, this.draggedOrderItem];
+        const itemsToMove = this.draggedOrderItems.length ? this.draggedOrderItems : [this.draggedOrderItem];
+        this.removeDraggedItemsFromSource(itemsToMove);
+        this.orderAlerts = [...this.orderAlerts, ...itemsToMove.filter(item => !this.orderAlerts.some(existing => existing.productId === item.productId))];
         this.draggedOrderItem = null;
         this.draggedSourceGroupId = null;
+        this.draggedOrderItems = [];
+        this.clearOrderSelection();
         this.cdr.detectChanges();
     }
 
@@ -605,25 +650,101 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
     }
 
-    private removeDraggedItemFromSource(): void {
-        if (!this.draggedOrderItem) return;
+    private removeDraggedItemsFromSource(items: RepositionOrderItem[]): void {
+        if (!items.length) return;
+        const productIds = new Set(items.map(item => item.productId));
 
         if (this.draggedSourceGroupId === 'pool') {
-            this.orderAlerts = this.orderAlerts.filter(item => item.productId !== this.draggedOrderItem?.productId);
+            this.orderAlerts = this.orderAlerts.filter(item => !productIds.has(item.productId));
             return;
         }
 
         if (typeof this.draggedSourceGroupId === 'number') {
             const sourceGroup = this.orderGroups.find(group => group.id === this.draggedSourceGroupId);
             if (sourceGroup) {
-                sourceGroup.items = sourceGroup.items.filter(item => item.productId !== this.draggedOrderItem?.productId);
+                sourceGroup.items = sourceGroup.items.filter(item => !productIds.has(item.productId));
             }
         }
     }
 
+    private resolveDraggedOrderItems(item: RepositionOrderItem, source: 'pool' | number): RepositionOrderItem[] {
+        if (!this.selectedOrderItemIds.has(item.productId)) {
+            return [item];
+        }
+
+        const sourceItems = source === 'pool'
+            ? this.orderAlerts
+            : (this.orderGroups.find(group => group.id === source)?.items || []);
+        const selected = sourceItems.filter(entry => this.selectedOrderItemIds.has(entry.productId));
+        return selected.length ? selected : [item];
+    }
+
+    isOrderItemSelected(productId: number): boolean {
+        return this.selectedOrderItemIds.has(productId);
+    }
+
+    toggleOrderItemSelection(item: RepositionOrderItem, event?: MouseEvent): void {
+        const sourceItems = this.findOrderItemSource(item.productId);
+        if (!sourceItems) return;
+
+        const clickedIndex = sourceItems.findIndex(entry => entry.productId === item.productId);
+        const shiftKey = !!event?.shiftKey;
+        if (shiftKey && this.lastSelectedOrderItemId !== null) {
+            const lastIndex = sourceItems.findIndex(entry => entry.productId === this.lastSelectedOrderItemId);
+            if (lastIndex !== -1 && clickedIndex !== -1) {
+                const start = Math.min(lastIndex, clickedIndex);
+                const end = Math.max(lastIndex, clickedIndex);
+                for (let i = start; i <= end; i += 1) {
+                    this.selectedOrderItemIds.add(sourceItems[i].productId);
+                }
+                return;
+            }
+        }
+
+        if (this.selectedOrderItemIds.has(item.productId)) {
+            this.selectedOrderItemIds.delete(item.productId);
+        } else {
+            this.selectedOrderItemIds.add(item.productId);
+        }
+        this.lastSelectedOrderItemId = item.productId;
+    }
+
+    onOrderItemCheckboxChange(item: RepositionOrderItem, event: Event): void {
+        event.stopPropagation();
+        const target = event.target as HTMLInputElement;
+        if (target.checked) {
+            this.selectedOrderItemIds.add(item.productId);
+            this.lastSelectedOrderItemId = item.productId;
+        } else {
+            this.selectedOrderItemIds.delete(item.productId);
+            if (this.lastSelectedOrderItemId === item.productId) {
+                this.lastSelectedOrderItemId = null;
+            }
+        }
+    }
+
+    clearOrderSelection(): void {
+        this.selectedOrderItemIds.clear();
+        this.lastSelectedOrderItemId = null;
+    }
+
+    getSelectedOrderCount(): number {
+        return this.selectedOrderItemIds.size;
+    }
+
+    private findOrderItemSource(productId: number): RepositionOrderItem[] | null {
+        if (this.orderAlerts.some(item => item.productId === productId)) {
+            return this.orderAlerts;
+        }
+
+        const group = this.orderGroups.find(entry => entry.items.some(item => item.productId === productId));
+        return group?.items || null;
+    }
+
     getOrderQuantity(a: StockAlertDTO): number {
         const daily = a.projectedConsumption / 14;
-        return Math.ceil(Math.max(0, daily * this.daysAhead - a.currentStock - a.pendingOrderQuantity) * 100) / 100;
+        const raw = Math.ceil(Math.max(0, daily * this.daysAhead - a.currentStock - a.pendingOrderQuantity) * 100) / 100;
+        return this.roundUpOrderQuantities ? Math.ceil(raw) : raw;
     }
 
     getOrderTotal(items: Array<StockAlertDTO | RepositionOrderItem> = this.orderAlerts): number {
@@ -647,6 +768,85 @@ export class StockManagementComponent implements OnInit, OnDestroy {
 
     getPendingItemCount(): number {
         return this.orderAlerts.length;
+    }
+
+    getPoolSupplierSections(): PoolSupplierSection[] {
+        const term = this.orderSearchTerm.trim().toLowerCase();
+        const filtered = term
+            ? this.orderAlerts.filter(item => item.productName.toLowerCase().includes(term) || (item.supplierName || '').toLowerCase().includes(term))
+            : this.orderAlerts;
+
+        const grouped = new Map<string, PoolSupplierSection>();
+        for (const item of filtered) {
+            const supplierKey = item.supplierId ? String(item.supplierId) : 'none';
+            const section = grouped.get(supplierKey);
+            if (section) {
+                section.items.push(item);
+                continue;
+            }
+
+            grouped.set(supplierKey, {
+                key: supplierKey,
+                label: item.supplierName || 'Sin proveedor',
+                items: [item]
+            });
+        }
+
+        return Array.from(grouped.values()).sort((a, b) => a.label.localeCompare(b.label));
+    }
+
+    togglePoolSupplierCollapse(key: string): void {
+        if (this.collapsedPoolSuppliers.has(key)) {
+            this.collapsedPoolSuppliers.delete(key);
+        } else {
+            this.collapsedPoolSuppliers.add(key);
+        }
+    }
+
+    isPoolSupplierCollapsed(key: string): boolean {
+        return this.collapsedPoolSuppliers.has(key);
+    }
+
+    getVisiblePoolItemsCount(): number {
+        return this.getPoolSupplierSections().reduce((sum, section) => sum + section.items.length, 0);
+    }
+
+    async createCompleteOrderBySupplier(): Promise<void> {
+        if (!this.orderAlerts.length) {
+            this.messageService.showInfo('No hay productos pendientes para agrupar.');
+            return;
+        }
+
+        const confirmed = await this.messageService.confirm(
+            'Crear orden completa',
+            'Se agruparán los productos pendientes por proveedor y se añadirán como nuevas órdenes. ¿Continuar?',
+            'Crear órdenes',
+            'Cancelar'
+        );
+        if (!confirmed) return;
+
+        const groupedBySupplier = new Map<number | null, RepositionOrderItem[]>();
+        for (const item of this.orderAlerts) {
+            const key = item.supplierId ?? null;
+            const bucket = groupedBySupplier.get(key) || [];
+            bucket.push(item);
+            groupedBySupplier.set(key, bucket);
+        }
+
+        const generatedGroups: RepositionOrderGroup[] = Array.from(groupedBySupplier.entries()).map(([supplierId, items]) => {
+            const group = this.createOrderGroup();
+            return {
+                ...group,
+                supplierId,
+                items: [...items]
+            };
+        });
+
+        this.orderGroups = [...generatedGroups, ...this.orderGroups];
+        this.orderAlerts = [];
+        this.reindexOrderGroups();
+        this.clearOrderSelection();
+        this.cdr.detectChanges();
     }
 
     async confirmCreateOrder(): Promise<void> {

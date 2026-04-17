@@ -34,9 +34,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
   // Items para la vista normal
   private defaultNavItems: NavItem[] = [
     { label: 'Inicio', route: '/welcome', icon: 'home' },
-    { label: 'Inventario', route: '/inventario', icon: 'inventory', section: 'Gestión' },
-
+    { label: 'Inventario', route: '/inventario', icon: 'inventory' },
     { label: 'Recetas', route: '/recipes', icon: 'book' },
+    { label: 'Plan Semanal', route: '/weekly-plans', icon: 'calendar' },
     { label: 'Pedidos', route: '/orders', icon: 'cart' },
     { label: 'Recepción', route: '/reception', icon: 'truck' },
     { label: 'Chat IA', route: '/ai-chat', icon: 'chat' },
@@ -95,7 +95,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
         item.label !== 'Perfil' &&
         item.label !== 'Incidencias' &&
         item.label !== 'Chat IA' &&
-        item.label !== 'Recepción' && item.label !== 'Pedidos' && item.label !== 'Perfil'
+        item.label !== 'Perfil' &&
+        item.label !== 'Plan Semanal'
       );
     }
     return this.defaultNavItems;

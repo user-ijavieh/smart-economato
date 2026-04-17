@@ -1,0 +1,122 @@
+<div class="page-header header-planes">
+  <h1>Planes Semanales</h1>
+  <div class="header-actions">
+    <button class="modal-btn modal-btn-primary" (click)="createNew()" aria-label="Crear un nuevo plan semanal">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Crear nuevo plan
+    </button>
+  </div>
+</div>
+
+<div class="page-content contenedor-principal hide-scrollbar">
+    
+    <!-- CURRENT WEEK HERO -->
+    <section class="hero-section">
+      <h2>Semana en curso</h2>
+      
+      @if (loadingCurrent) {
+        <div class="hero-card skeleton-card">
+          <div class="skeleton-line" style="width: 150px; height: 24px;"></div>
+          <div class="skeleton-line" style="width: 250px; height: 16px; margin-top: 10px;"></div>
+          <div class="skeleton-line" style="width: 100%; height: 8px; margin-top: 20px;"></div>
+        </div>
+      } @else if (currentPlan) {
+        <div class="hero-card glassmorphism" (click)="openDetail(currentPlan)">
+          <div class="card-content">
+            <div class="status-badge" [ngClass]="'status-' + currentPlan.status.toLowerCase()">
+              {{ getStatusLabel(currentPlan.status) }}
+            </div>
+            <h3>{{ currentPlan.weekStartDate }} al {{ currentPlan.weekEndDate }}</h3>
+            
+            <div class="progress-container">
+              @let progress = calculateProgress(currentPlan);
+              <div class="progress-info">
+                <span>Sesiones confirmadas</span>
+                <span>{{ progress.confirmed }} / {{ progress.total }} ({{ progress.percent }}%)</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" [style.width.%]="progress.percent"></div>
+              </div>
+            </div>
+          </div>
+          <div class="card-action">
+            <button class="btn-hero" aria-label="Abrir detalle del plan semanal">Abrir plan</button>
+          </div>
+        </div>
+      } @else {
+        <div class="hero-empty">
+          <div class="empty-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 20H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h16c1.1 0 2 .9 2 2v7" />
+              <path d="M16 14v2a2 2 0 0 1-2 2h-3" />
+              <path d="M12 3v17" />
+              <path d="M3 8h18" />
+              <circle cx="18.5" cy="17.5" r="3.5" />
+              <path d="m16.5 16 1.5 1.5 3-3" />
+            </svg>
+          </div>
+          <h3>No hay un plan activo esta semana</h3>
+          <p>Crea tu plan para organizar sesiones, recetas y alumnos.</p>
+          
+          @if (currentWeekDraftPlan) {
+            <button class="modal-btn modal-btn-secondary" (click)="openDetail(currentWeekDraftPlan)">Revisar plan en borrador</button>
+          } @else {
+            <button class="modal-btn modal-btn-primary" (click)="createNew()">Empezar nueva semana</button>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- UPCOMING PLANS GRID -->
+    <section class="upcoming-section">
+      <h2>Próximos planes</h2>
+      
+      @if (loadingList) {
+        <div class="plans-grid">
+          @for (i of [1,2,3]; track i) {
+            <div class="plan-card skeleton-card" style="height: 120px;"></div>
+          }
+        </div>
+      } @else if (upcomingPlans.length > 0) {
+        <div class="plans-grid">
+          @for (plan of upcomingPlans; track plan.id) {
+            <div class="plan-card" (click)="openDetail(plan)">
+              <div class="plan-card-header">
+                <span class="status-badge" [ngClass]="'status-' + plan.status.toLowerCase()">{{ getStatusLabel(plan.status) }}</span>
+                <span class="plan-date">{{ plan.weekStartDate }}</span>
+              </div>
+              <div class="plan-card-body">
+                <p class="plan-chef">Responsable: {{ plan.chefName }}</p>
+                <div class="plan-stats">
+                  <span>{{ plan.slots.length || 0 }} sesiones</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="empty-state-small">No tienes planes futuros por ahora.</div>
+      }
+    </section>
+
+    <!-- PAST PLANS (simplified list) -->
+    <section class="past-section">
+      <h2>Historial reciente</h2>
+      @if (!loadingList && pastPlans.length > 0) {
+        <div class="past-list">
+          @for (plan of pastPlans.slice(0, 5); track plan.id) {
+            <div class="past-item" (click)="openDetail(plan)">
+              <span class="past-date">{{ plan.weekStartDate }} al {{ plan.weekEndDate }}</span>
+              <span class="status-text" [ngClass]="'text-' + plan.status.toLowerCase()">{{ getStatusLabel(plan.status) }}</span>
+            </div>
+          }
+        </div>
+      } @else if (!loadingList) {
+        <div class="empty-state-small">No hay historial disponible.</div>
+      }
+    </section>
+
+  </div>
