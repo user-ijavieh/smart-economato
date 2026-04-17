@@ -143,11 +143,6 @@
 </app-base-modal>
 }
 
-<!-- Confirm Dialog -->
-<app-confirm-dialog></app-confirm-dialog>
-
-<!-- Toasts -->
-<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
 }
 
 @if (activeTab === 'suppliers') {

@@ -475,7 +475,7 @@
                 @if (selectedOrder.details && selectedOrder.details.length > 0) {
                 <div class="modal-section">
                     <h4>Líneas de Pedido</h4>
-                    <table class="ingredients-table">
+                    <table class="modal-table ingredients-table">
                         <thead>
                             <tr>
                                 <th>Producto</th>
@@ -541,6 +541,4 @@
 </app-base-modal>
 }
 
-<!-- Modals & Toasts -->
-<app-confirm-dialog></app-confirm-dialog>
-<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
+<!-- Modals are handled globally at app root -->

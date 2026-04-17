@@ -1016,8 +1016,6 @@
 </app-base-modal>
 }
 
-<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
-
 @if (showLedgerScannerModal) {
   <app-base-modal title="Escanear Código de Barras" size="md" (closed)="closeLedgerBarcodeScanner()">
     <div class="scanner-modal-body">

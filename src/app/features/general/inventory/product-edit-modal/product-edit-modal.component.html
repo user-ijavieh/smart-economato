@@ -79,15 +79,9 @@
 </app-base-modal>
 
 @if (showScannerModal) {
-  <div class="scanner-modal-overlay" (click)="closeBarcodeScanner()">
-    <div class="scanner-modal" (click)="$event.stopPropagation()">
-      <div class="scanner-modal-header">
-        <h2>Escanear Código de Barras</h2>
-        <button class="scanner-close-btn" (click)="closeBarcodeScanner()">✕</button>
-      </div>
-      <div class="scanner-modal-body">
-        <app-barcode-scanner (codeScanned)="onCodeScanned($event)"></app-barcode-scanner>
-      </div>
+  <app-base-modal title="Escanear Código de Barras" size="md" (closed)="closeBarcodeScanner()">
+    <div class="scanner-modal-body">
+      <app-barcode-scanner (codeScanned)="onCodeScanned($event)"></app-barcode-scanner>
     </div>
-  </div>
+  </app-base-modal>
 }

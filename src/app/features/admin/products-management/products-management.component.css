@@ -665,64 +665,6 @@ tr.low-stock-row:hover td {
   white-space: pre-wrap;
 }
 
-/** ===== DIFF VIEWS ===== */
-.diff-container {
-  padding: 20px 16px 20px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  overflow-y: auto;
-}
-
-.diff-section-title {
-  font-size: 1.05rem;
-  margin: 0;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
-  color: var(--theme-text-primary);
-  font-family: var(--font-heading);
-}
-
-.diff-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-  background: var(--theme-section-header-bg);
-  border: 1px solid var(--theme-surface-glass-hover);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.diff-table th {
-  background: var(--theme-section-header-bg-strong);
-  color: var(--theme-text-secondary);
-  font-weight: 600;
-  text-align: left;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
-}
-
-.diff-table td {
-  padding: 12px 16px;
-  color: var(--theme-text-primary);
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
-  vertical-align: top;
-}
-
-.diff-changed td { background: rgba(90, 120, 220, 0.05); }
-
-.diff-highlight-old {
-  background: rgba(239, 68, 68, 0.1) !important;
-  color: var(--color-danger-muted) !important;
-  text-decoration: line-through;
-}
-
-.diff-highlight-new {
-  background: rgba(74, 222, 128, 0.1) !important;
-  color: #6ee7b7 !important;
-  font-weight: 600;
-}
-
 /** ===== PAGINACION ===== */
 .pagination-controls {
   display: flex;
@@ -804,7 +746,6 @@ tr.low-stock-row:hover td {
   th, td { padding: 12px 10px; font-size: 0.85rem; white-space: nowrap; }
   .audit-modal { width: 95%; max-height: 90vh; }
   .audit-modal-body { grid-template-columns: 1fr; gap: 12px; padding: 20px; }
-  .diff-table th, .diff-table td { font-size: 0.8rem; padding: 8px; }
 }
 
 @media (max-width: 480px) {

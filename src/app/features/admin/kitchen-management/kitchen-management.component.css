@@ -42,7 +42,7 @@
 }
 
 .action-select option {
-  background: #1a1f33;
+  background: var(--theme-option-bg);
   color: var(--theme-text-primary);
 }
 

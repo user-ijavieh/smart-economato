@@ -386,9 +386,6 @@
 </div>
 }
 
-<app-confirm-dialog></app-confirm-dialog>
-<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
-
 <!-- Traceability Modal -->
 @if (showTraceabilityModal) {
 <app-base-modal title="Trazabilidad de Ingredientes" size="lg" (closed)="closeTraceabilityModal()">

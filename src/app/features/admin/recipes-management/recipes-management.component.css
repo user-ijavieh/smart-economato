@@ -882,75 +882,6 @@ tr.clickable-row {
   white-space: pre-wrap;
 }
 
-/** ===== DIFF VIEWS ===== */
-.diff-container {
-  padding: 20px 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  overflow-y: auto;
-}
-
-.diff-section-title {
-  font-size: 1.05rem;
-  margin: 0;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
-  color: var(--theme-text-primary);
-  font-family: var(--font-heading);
-}
-
-.diff-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-  background: var(--theme-section-header-bg);
-  border: 1px solid var(--theme-surface-glass-hover);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.diff-table th {
-  background: var(--theme-section-header-bg-strong);
-  color: var(--theme-text-secondary);
-  font-weight: 600;
-  text-align: left;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
-}
-
-.diff-table td {
-  padding: 12px 16px;
-  color: var(--theme-text-primary);
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
-  vertical-align: top;
-}
-
-.diff-changed td { background: rgba(90, 120, 220, 0.05); }
-
-.diff-highlight-old {
-  background: rgba(239, 68, 68, 0.1) !important;
-  color: var(--color-danger-muted) !important;
-  text-decoration: line-through;
-}
-
-.diff-highlight-new {
-  background: rgba(74, 222, 128, 0.1) !important;
-  color: #6ee7b7 !important;
-  font-weight: 600;
-}
-
-.diff-tag {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin-left: 8px;
-}
-.tag-added { background: rgba(74, 222, 128, 0.15); color: var(--color-success); border: 1px solid rgba(74, 222, 128, 0.3); }
-.tag-removed { background: var(--color-danger-bg); color: var(--color-danger-muted); border: 1px solid rgba(239, 68, 68, 0.3); }
-
 /** ===== PAGINACION ===== */
 .pagination-controls {
   display: flex;
@@ -1032,7 +963,6 @@ tr.clickable-row {
   th, td { padding: 12px 10px; font-size: 0.85rem; white-space: nowrap; }
   .audit-modal { width: 95%; max-height: 90vh; }
   .audit-modal-body { grid-template-columns: 1fr; gap: 12px; padding: 20px; }
-  .diff-table th, .diff-table td { font-size: 0.8rem; padding: 8px; }
 }
 
 .modal-footer > .draft-modal-btn + .draft-modal-btn {
