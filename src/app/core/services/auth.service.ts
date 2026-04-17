@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap, BehaviorSubject, switchMap } from 'rxjs';
+import { Observable, tap, BehaviorSubject, switchMap, of, filter } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Role, hasPermission } from '../../shared/models/role-permissions';
 import { WebSocketService } from './websocket.service';
@@ -20,6 +20,8 @@ interface LoginResponse {
 interface RoleResponse {
   role: string;
 }
+
+type SessionRole = 'ADMIN' | 'CHEF' | 'ELEVATED' | 'USER';
 
 interface UserProfileResponse {
   id: number;
@@ -50,15 +52,34 @@ export class AuthService {
   private FIRST_LOGIN_KEY = 'first_login';
 
   private isLoggedIn$ = new BehaviorSubject<boolean>(this.hasToken());
+  private role$Subject = new BehaviorSubject<string | null>(this.getRole());
 
   constructor() {
+    this.bindRoleEscalationEvents();
+
     const token = this.getToken();
     const role = this.getRole();
     if (token) {
       this.webSocketService.connect(token, role);
       this.notificationService.connect(token, role);
       this.presenceTrackingService.initialize();
+      this.syncSessionProfile().subscribe();
     }
+  }
+
+  syncSessionProfile(): Observable<UserProfileResponse | null> {
+    if (!this.getToken()) {
+      return of(null);
+    }
+
+    return this.http.get<UserProfileResponse>(`${this.apiUrl}/api/users/me`).pipe(
+      tap(profile => {
+        localStorage.setItem(this.NAME_KEY, profile.name);
+        this.setRole(profile.role);
+        localStorage.setItem(this.ID_KEY, profile.id.toString());
+        localStorage.setItem(this.FIRST_LOGIN_KEY, String(profile.firstLogin));
+      })
+    );
   }
 
   login(name: string, password: string): Observable<UserProfileResponse> {
@@ -77,7 +98,7 @@ export class AuthService {
           throw new Error('user_hidden');
         }
         localStorage.setItem(this.NAME_KEY, profile.name);
-        localStorage.setItem(this.ROLE_KEY, profile.role);
+        this.setRole(profile.role);
         localStorage.setItem(this.ID_KEY, profile.id.toString());
         localStorage.setItem(this.FIRST_LOGIN_KEY, String(profile.firstLogin));
         this.webSocketService.connect(this.getToken() || '', profile.role);
@@ -113,7 +134,7 @@ export class AuthService {
     this.webSocketService.disconnect();
     this.notificationService.disconnect();
     localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.ROLE_KEY);
+    this.setRole(null);
     localStorage.removeItem(this.NAME_KEY);
     localStorage.removeItem(this.ID_KEY);
     localStorage.removeItem(this.FIRST_LOGIN_KEY);
@@ -163,6 +184,59 @@ export class AuthService {
 
   get authStatus$(): Observable<boolean> {
     return this.isLoggedIn$.asObservable();
+  }
+
+  get roleChanges$(): Observable<string | null> {
+    return this.role$Subject.asObservable();
+  }
+
+  private bindRoleEscalationEvents(): void {
+    this.notificationService.incoming$
+      .pipe(filter(notification => notification.code === 'ROLE_ESCALATION_CHANGED' && !!notification.newRole))
+      .subscribe(notification => {
+        const normalizedRole = this.normalizeSessionRole(notification.newRole ?? null);
+        if (!normalizedRole) {
+          return;
+        }
+
+        const previousRole = this.getRole();
+        if (previousRole === normalizedRole) {
+          return;
+        }
+
+        this.setRole(normalizedRole);
+
+        const token = this.getToken();
+        if (token) {
+          this.webSocketService.connect(token, normalizedRole);
+          this.notificationService.connect(token, normalizedRole);
+        }
+
+        if (previousRole === 'ADMIN' && normalizedRole !== 'ADMIN' && this.router.url.startsWith('/admin-panel')) {
+          void this.router.navigate(['/welcome']);
+        }
+      });
+  }
+
+  private setRole(role: string | null): void {
+    if (role) {
+      localStorage.setItem(this.ROLE_KEY, role);
+    } else {
+      localStorage.removeItem(this.ROLE_KEY);
+    }
+    this.role$Subject.next(role);
+  }
+
+  private normalizeSessionRole(role: string | null): SessionRole | null {
+    switch (role) {
+      case 'ADMIN':
+      case 'CHEF':
+      case 'ELEVATED':
+      case 'USER':
+        return role;
+      default:
+        return null;
+    }
   }
 
   private hasToken(): boolean {

@@ -177,6 +177,10 @@ export class WeeklyPlanWizardComponent implements OnInit {
         this.loadPlanForEditing();
       } else {
         const duplicateFrom = this.route.snapshot.queryParamMap.get('duplicateFrom');
+        const queryChefId = this.route.snapshot.queryParamMap.get('chefId');
+        if (queryChefId) {
+          this.chefId = Number(queryChefId);
+        }
         if (duplicateFrom) {
           const keepStudents = this.route.snapshot.queryParamMap.get('keepStudents') !== '0';
           const targetWeekStartDate = this.route.snapshot.queryParamMap.get('weekStartDate') || '';
@@ -294,7 +298,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
       },
       error: () => {
         this.messageService.showError('No se pudo cargar el plan para edición.');
-        this.router.navigate(['/weekly-plans']);
+        this.router.navigate([this.getBaseRoute()]);
       }
     });
   }
@@ -328,7 +332,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
       error: () => {
         this.loadingInitial = false;
         this.messageService.showError('No se pudo cargar el plan para duplicarlo.');
-        this.router.navigate(['/weekly-plans']);
+        this.router.navigate([this.getBaseRoute()]);
       }
     });
   }
@@ -367,8 +371,26 @@ export class WeeklyPlanWizardComponent implements OnInit {
 
         this.loadingInitial = false;
         if (existingPlan) {
-          this.messageService.showInfo(`Ya existe un plan para la semana ${selectedWeek}. Se abrirá en edición.`);
-          this.router.navigate(['/weekly-plans', existingPlan.id, 'edit']);
+          if (existingPlan.status === 'DRAFT') {
+            this.messageService.showInfo(`Ya existe un plan borrador para la semana ${selectedWeek}. Se abrirá en edición.`);
+            this.router.navigate([this.getBaseRoute(), existingPlan.id, 'edit']);
+            return;
+          }
+
+          if (existingPlan.status === 'ACTIVE' || existingPlan.status === 'IN_PROGRESS') {
+            this.messageService.showError(
+              `La semana ${selectedWeek} ya tiene un plan activo o en curso. ` +
+              'Selecciona otra semana o abre ese plan desde la pantalla principal.'
+            );
+            this.cdr.detectChanges();
+            return;
+          }
+
+          this.messageService.showWarning(
+            `La semana ${selectedWeek} ya tiene un plan en estado ${existingPlan.status}. ` +
+            'Selecciona otra semana o abre ese plan desde la pantalla principal.'
+          );
+          this.cdr.detectChanges();
           return;
         }
 
@@ -1341,7 +1363,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
         next: (res) => {
           this.saving = false;
           this.messageService.showSuccess('Plan semanal actualizado con éxito.');
-          this.router.navigate(['/weekly-plans', res.id]);
+          this.router.navigate([this.getBaseRoute(), res.id]);
         },
         error: (err) => {
           this.saving = false;
@@ -1353,7 +1375,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
         next: (res) => {
           this.saving = false;
           this.messageService.showSuccess('Plan semanal creado con éxito en estado borrador.');
-          this.router.navigate(['/weekly-plans', res.id]);
+          this.router.navigate([this.getBaseRoute(), res.id]);
         },
         error: (err) => {
           this.saving = false;
@@ -1377,9 +1399,9 @@ export class WeeklyPlanWizardComponent implements OnInit {
     }
 
     if (this.editMode && this.planId) {
-      this.router.navigate(['/weekly-plans', this.planId]);
+      this.router.navigate([this.getBaseRoute(), this.planId]);
     } else {
-      this.router.navigate(['/weekly-plans']);
+      this.router.navigate([this.getBaseRoute()]);
     }
   }
 
@@ -1409,5 +1431,11 @@ export class WeeklyPlanWizardComponent implements OnInit {
     const date = new Date(`${dateStr}T00:00:00`);
     date.setDate(date.getDate() + days);
     return date.toISOString().split('T')[0];
+  }
+
+  private getBaseRoute(): string {
+    return this.router.url.startsWith('/admin-panel/weekly-plans')
+      ? '/admin-panel/weekly-plans'
+      : '/weekly-plans';
   }
 }
