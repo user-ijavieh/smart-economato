@@ -28,18 +28,6 @@
 }
 
 /** ===== DETAILS TABLE ===== */
-.details-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-}
-
-.details-table td {
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--theme-surface-glass-active);
-  color: var(--theme-text-primary);
-}
-
 .details-table .detail-label {
   font-weight: 600;
   color: var(--theme-text-secondary);
@@ -65,25 +53,6 @@
   border-radius: 8px;
   padding: 10px;
   border: 1px solid var(--theme-border-glass);
-}
-
-.batches-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-}
-
-.batches-table th {
-  text-align: left;
-  padding: 8px;
-  color: var(--theme-text-secondary);
-  font-weight: 600;
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
-}
-
-.batches-table td {
-  padding: 8px;
-  border-bottom: 1px solid var(--theme-surface-glass-hover);
 }
 
 .expiring-row {

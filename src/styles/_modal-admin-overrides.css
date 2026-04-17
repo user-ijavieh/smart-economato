@@ -14,17 +14,6 @@
   --color-border-glass: rgba(90, 120, 220, 0.15);
 }
 
-/* Header gradient admin */
-.admin-theme app-base-modal .modal-header {
-  background: linear-gradient(to right, rgba(90, 120, 220, 0.15), transparent);
-}
-
-/* Shell gradient admin */
-.admin-theme app-base-modal .modal-dialog {
-  background:
-    linear-gradient(135deg, color-mix(in srgb, rgba(90, 120, 220, 0.95) 10%, transparent), transparent 42%),
-    var(--theme-surface-glass);
-}
 
 /* Boton primario (save/cocinar) en admin */
 .admin-theme app-base-modal .modal-btn-primary,
@@ -84,4 +73,72 @@
   border-color: rgba(90, 120, 220, 0.95);
   color: var(--color-accent-admin);
   background: rgba(90, 120, 220, 0.1);
+}
+
+/* ===== ADMIN THEME - LIGHT MODE MODAL OVERRIDES ===== */
+
+[data-theme="light"] .admin-theme app-base-modal .modal-dialog {
+  background: #ffffff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+[data-theme="light"] .admin-theme app-base-modal .modal-header {
+  background: linear-gradient(to right, rgba(37, 99, 235, 0.18), rgba(37, 99, 235, 0.05));
+  border-bottom: 2px solid rgba(37, 99, 235, 0.20);
+}
+
+[data-theme="light"] .admin-theme app-base-modal .modal-btn-primary,
+[data-theme="light"] .admin-theme app-base-modal .btn-save,
+[data-theme="light"] .admin-theme app-base-modal .btn-cocinar,
+[data-theme="light"] .admin-theme app-base-modal .btn-imprimir {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+}
+
+[data-theme="light"] .admin-theme app-base-modal .modal-btn-primary:hover:not(:disabled),
+[data-theme="light"] .admin-theme app-base-modal .btn-save:hover:not(:disabled),
+[data-theme="light"] .admin-theme app-base-modal .btn-cocinar:hover:not(:disabled),
+[data-theme="light"] .admin-theme app-base-modal .btn-imprimir:hover:not(:disabled) {
+  background: #1d4ed8;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+}
+
+[data-theme="light"] .admin-theme app-base-modal .modal-btn-cancel,
+[data-theme="light"] .admin-theme app-base-modal .btn-editar {
+  background: rgba(37, 99, 235, 0.06);
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.18);
+}
+
+[data-theme="light"] .admin-theme app-base-modal .modal-btn-cancel:hover:not(:disabled),
+[data-theme="light"] .admin-theme app-base-modal .btn-editar:hover {
+  background: rgba(37, 99, 235, 0.12);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.10);
+}
+
+[data-theme="light"] .admin-theme app-base-modal .modal-btn-danger,
+[data-theme="light"] .admin-theme app-base-modal .btn-eliminar {
+  background: rgba(220, 38, 38, 0.06);
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.18);
+}
+
+[data-theme="light"] .admin-theme app-base-modal .modal-btn-danger:hover:not(:disabled),
+[data-theme="light"] .admin-theme app-base-modal .btn-eliminar:hover {
+  background: rgba(220, 38, 38, 0.12);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.12);
+}
+
+[data-theme="light"] .admin-theme app-base-modal .product-option.selected {
+  background: rgba(37, 99, 235, 0.06);
+  color: #2563eb;
+}
+
+[data-theme="light"] .admin-theme app-base-modal .btn-add-component:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.04);
 }

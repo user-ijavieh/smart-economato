@@ -53,7 +53,7 @@
       </div>
 
       <div class="table-container desktop-table-container">
-        <table class="details-table">
+        <table class="modal-table details-table">
           <thead>
             <tr>
               <th>Producto</th>
@@ -207,17 +207,11 @@
   </div>
 
   @if (showScannerModal) {
-    <div class="scanner-modal-overlay" (click)="closeBarcodeScanner()">
-      <div class="scanner-modal" (click)="$event.stopPropagation()">
-        <div class="scanner-modal-header">
-          <h2>Buscar por código de barras</h2>
-          <button type="button" class="scanner-close-btn" (click)="closeBarcodeScanner()">✕</button>
-        </div>
-        <div class="scanner-modal-body">
-          <app-barcode-scanner (productFound)="onProductFound($event)"></app-barcode-scanner>
-        </div>
+    <app-base-modal title="Buscar por código de barras" size="md" (closed)="closeBarcodeScanner()">
+      <div class="scanner-modal-body">
+        <app-barcode-scanner (productFound)="onProductFound($event)"></app-barcode-scanner>
       </div>
-    </div>
+    </app-base-modal>
   }
 
   <div modal-footer>
