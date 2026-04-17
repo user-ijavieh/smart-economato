@@ -842,6 +842,15 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
         this.selectedUserForMobile = null;
     }
 
+    openEditFromMobile(): void {
+        if (!this.selectedUserForMobile) {
+            return;
+        }
+
+        // Keep mobile detail modal open and stack edit modal above it.
+        this.openEditModal(this.selectedUserForMobile);
+    }
+
     onSaveUser(data: any): void {
         if (this.selectedUser) {
             const userId = this.selectedUser.id;

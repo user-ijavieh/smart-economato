@@ -199,6 +199,15 @@ export class SuppliersManagementComponent implements OnInit {
         this.selectedSupplierForMobile = null;
     }
 
+    openEditFromMobile(): void {
+        if (!this.selectedSupplierForMobile) {
+            return;
+        }
+
+        // Keep mobile detail modal open and stack edit modal above it.
+        this.openEditModal(this.selectedSupplierForMobile);
+    }
+
     onSaveSupplier(data: any): void {
         const request: SupplierRequest = {
             name: data.name,
