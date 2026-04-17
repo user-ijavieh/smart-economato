@@ -571,8 +571,31 @@ tr.row-hidden .user-avatar-small {
 .detail-field:last-of-type { border-bottom: none; }
 .detail-label { color: var(--theme-text-secondary); font-size: 0.85rem; }
 .detail-value { font-weight: 500; color: var(--theme-text-primary); }
-.detail-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-.btn-full { width: 100%; justify-content: center; }
+.detail-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-full {
+  width: auto;
+  min-width: 130px;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .detail-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-full {
+    width: 100%;
+  }
+}
 
 /** ===== TAB BAR ===== */
 
