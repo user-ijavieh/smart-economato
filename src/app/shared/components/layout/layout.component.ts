@@ -90,11 +90,11 @@ export class LayoutComponent {
 
   private navigateWithShortcut(direction: number) {
     if (!this.sidebar) return;
-    
+
     // Obtenemos los ítems visibles según nuestro rol y contexto actual
     const items = this.sidebar.filteredNavItems;
     const currentUrl = this.router.url.split('?')[0];
-    
+
     // Buscamos cuál de los ítems del sidebar corresponde a nuestra página actual
     const currentIndex = items.findIndex(item => currentUrl.startsWith(item.route));
     if (currentIndex === -1) return;
@@ -113,6 +113,9 @@ export class LayoutComponent {
   }
 
   toggleTheme(): void {
+    if (this.isNotificationPanelOpen()) {
+      this.closeNotificationPanel();
+    }
     this.themeService.toggleTheme();
   }
 
@@ -125,6 +128,9 @@ export class LayoutComponent {
   }
 
   logout(): void {
+    if (this.isNotificationPanelOpen()) {
+      this.closeNotificationPanel();
+    }
     this.showLogoutModal = true;
   }
 
@@ -235,7 +241,7 @@ export class LayoutComponent {
   prepareRoute(outlet: RouterOutlet) {
     const animation = outlet?.activatedRouteData?.['animation'];
     if (!animation) return null;
-    
+
     // Retorna el mismo objeto cached porque los parámetros son siempre los mismos
     return {
       value: animation,

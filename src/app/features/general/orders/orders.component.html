@@ -131,6 +131,9 @@
 @if (showModal) {
   <app-order-modal
     [editOrder]="orderToEdit"
+    [initialUserId]="prefillUserId"
+    [initialSupplierId]="prefillSupplierId"
+    [initialItems]="prefillOrderItems"
     (closeModal)="closeModal()"
     (orderCreated)="onOrderCreated()"
   ></app-order-modal>

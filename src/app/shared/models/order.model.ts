@@ -43,3 +43,23 @@ export interface OrderReceptionRequest {
   orderId: number;
   items: { productId: number; quantityReceived: number; lots: LotReceptionRequest[] }[];
 }
+
+export interface ProductOrderQuantity {
+  orderId: number;
+  status: OrderStatus;
+  quantity: number;
+  supplierName?: string | null;
+  orderDate?: string;
+}
+
+export interface OrdersByProductsRequest {
+  productIds: number[];
+  statuses?: OrderStatus[];
+}
+
+export interface OrdersByProductsResponse {
+  orders: Order[];
+  totalQuantityPerProduct: Record<string, number>;
+  orderCountPerProduct: Record<string, number>;
+  ordersByProduct: Record<string, ProductOrderQuantity[]>;
+}

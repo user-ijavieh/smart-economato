@@ -22,7 +22,11 @@ export const errorHandlingInterceptor: HttpInterceptorFn = (req, next) => {
       // No mostrar 401 aquí: el authInterceptor se encarga del logout
       const isUnauthorized = error.status === 401;
       
-      if (!(isGetRequest && isForbidden) && !isUnauthorized) {
+      // No mostrar 404 en el endpoint de plan actual, ya que es esperado si no hay plan activo
+      const isCurrentPlanRequest = req.url.includes('/api/weekly-plans/current');
+      const isNotFound = error.status === 404;
+
+      if (!(isGetRequest && isForbidden) && !isUnauthorized && !(isCurrentPlanRequest && isNotFound)) {
         handleError(error, messageService);
       }
       return throwError(() => error);
