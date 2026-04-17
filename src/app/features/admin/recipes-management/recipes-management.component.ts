@@ -808,16 +808,33 @@ export class RecipesManagementComponent implements OnInit {
 
     closeEditModal(): void {
         this.showEditModal = false;
-        this.selectedRecipe = null;
+
+        // Keep selected recipe if detail modal is still open underneath.
+        if (!this.showDetailModal) {
+            this.selectedRecipe = null;
+        }
+
         this.cdr.detectChanges();
     }
 
     onSaveRecipe(recipeRequest: RecipeRequest): void {
         if (!this.selectedRecipe) return;
-        this.recipeService.update(this.selectedRecipe.id, recipeRequest).subscribe({
+
+        const editingRecipeId = this.selectedRecipe.id;
+        const keepDetailOpen = this.showDetailModal;
+
+        this.recipeService.update(editingRecipeId, recipeRequest).subscribe({
             next: (recipe: Recipe) => {
                 this.messageService.showSuccess(`Receta "${recipe.name}" actualizada con éxito`);
-                this.closeEditModal();
+
+                this.showEditModal = false;
+
+                if (keepDetailOpen) {
+                    this.selectedRecipe = recipe;
+                } else {
+                    this.selectedRecipe = null;
+                }
+
                 this.loadRecipes();
                 this.loadStats();
             },
@@ -826,6 +843,13 @@ export class RecipesManagementComponent implements OnInit {
                 this.messageService.showError(msg);
             }
         });
+    }
+
+    onEditFromDetail(): void {
+        if (!this.selectedRecipe) return;
+
+        // Keep detail modal open and stack edit modal above it.
+        this.openEditModal(this.selectedRecipe);
     }
 
     // ── Delete ──

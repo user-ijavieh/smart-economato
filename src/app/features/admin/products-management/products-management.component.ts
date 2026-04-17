@@ -530,18 +530,36 @@ export class ProductsManagementComponent implements OnInit {
 
   onCloseEditModal(): void {
     this.showEditModal = false;
-    this.selectedProduct = null;
+
+    // If detail modal is still open, keep selected product so parent modal remains mounted.
+    if (!this.showDetailModal) {
+      this.selectedProduct = null;
+    }
+
     this.presenceTrackingService.clearContext();
   }
 
   onSaveEditedProduct(productData: ProductRequest): void {
     if (!this.selectedProduct) return;
 
-    this.productService.update(this.selectedProduct.id, productData).subscribe({
+    const editingProductId = this.selectedProduct.id;
+    const keepDetailOpen = this.showDetailModal;
+
+    this.productService.update(editingProductId, productData).subscribe({
       next: () => {
         this.messageService.showSuccess('Producto actualizado correctamente');
         this.showEditModal = false;
-        this.selectedProduct = null;
+
+        if (keepDetailOpen && this.selectedProduct) {
+          this.selectedProduct = {
+            ...this.selectedProduct,
+            ...productData,
+            supplier: this.suppliers.find(s => s.id === productData.supplierId) || this.selectedProduct.supplier
+          } as Product;
+        } else {
+          this.selectedProduct = null;
+        }
+
         this.presenceTrackingService.clearContext();
         this.loadProducts(this.currentPage);
         this.loadStats();
@@ -594,7 +612,7 @@ export class ProductsManagementComponent implements OnInit {
   }
 
   onEditFromDetail(product: Product): void {
-    this.showDetailModal = false;
+    // Keep detail open and show edit as a stacked modal above it.
     this.openEditModal(product);
   }
 

@@ -123,7 +123,7 @@
         <span class="detail-value">{{ selectedSupplierForMobile.phone || '—' }}</span>
     </div>
     <div modal-footer class="detail-actions">
-        <button class="btn-editar btn-full" (click)="showMobileModal = false; openEditModal(selectedSupplierForMobile)">
+        <button class="btn-editar btn-full" (click)="openEditFromMobile()">
             Editar Proveedor
         </button>
         <button class="btn-eliminar btn-full" (click)="deleteSupplier(selectedSupplierForMobile); closeMobileModal()">
