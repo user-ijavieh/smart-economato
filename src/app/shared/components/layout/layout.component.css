@@ -90,6 +90,37 @@ main.main-expanded {
   transition: transform 0.2s;
 }
 
+.logout-utility {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--color-danger) 25%, transparent);
+  background: color-mix(in srgb, var(--color-danger) 10%, transparent);
+  color: var(--color-danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+:host-context([data-theme="light"]) .logout-utility {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.15);
+}
+
+.logout-utility:hover {
+  transform: translateY(-1px);
+  background: var(--color-danger);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+}
+
+:host-context([data-theme="light"]) .logout-utility:hover {
+  background: var(--color-danger);
+  color: #fff;
+}
+
 .notifications-bell {
   position: relative;
   top: auto;
@@ -382,7 +413,8 @@ main.main-expanded {
 
   .utilities-toggle, 
   .mobile-theme-toggle, 
-  .notifications-bell {
+  .notifications-bell,
+  .logout-utility {
     width: 32px;
     height: 32px;
   }

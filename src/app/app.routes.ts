@@ -151,6 +151,33 @@ export const routes: Routes = [
         data: { animation: 25 }
       },
       {
+        path: 'weekly-plans',
+        canActivate: [roleGuard('CHEF', 'ELEVATED')],
+        data: { animation: 28 },
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/general/weekly-plans/weekly-plans.component').then(m => m.WeeklyPlansComponent)
+          },
+          {
+            path: 'wizard',
+            loadComponent: () =>
+              import('./features/general/weekly-plans/weekly-plan-wizard.component').then(m => m.WeeklyPlanWizardComponent)
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./features/general/weekly-plans/weekly-plan-detail.component').then(m => m.WeeklyPlanDetailComponent)
+          },
+          {
+            path: ':id/edit',
+            loadComponent: () =>
+              import('./features/general/weekly-plans/weekly-plan-wizard.component').then(m => m.WeeklyPlanWizardComponent)
+          }
+        ]
+      },
+      {
         path: 'incidents',
         loadComponent: () =>
           import('./features/admin/incidents/incidents.component').then(m => m.IncidentsComponent),

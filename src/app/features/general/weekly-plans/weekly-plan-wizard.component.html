@@ -1,0 +1,508 @@
+<div class="wizard-container" [class.is-loading]="loadingInitial">
+  <div class="wizard-header">
+    <button class="btn-back" (click)="cancel()" aria-label="Cancelar y volver a planes semanales">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Volver a planes
+    </button>
+    <h1>{{ duplicateMode ? 'Duplicar Plan Semanal' : (editMode ? 'Editar Plan Semanal' : 'Nuevo Plan Semanal') }}</h1>
+    <p class="wizard-subtitle">Organiza la semana paso a paso. Puedes ajustar las sesiones antes de guardar.</p>
+
+    <div class="stepper">
+      <div class="step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">1. Semana</div>
+      <div class="stepper-line"></div>
+      <div class="step" [class.active]="currentStep === 2">2. Configurar Sesiones</div>
+    </div>
+  </div>
+
+  <div class="wizard-content">
+    @if (currentStep === 1 && !loadingInitial) {
+      <div class="step-card glassmorphism fadeInStaggered">
+        <h2>Paso 1: Selecciona la semana</h2>
+
+        <div class="form-group">
+          <label for="weekStartDate">Semana de inicio (obligatorio)</label>
+          <input id="weekStartDate" type="date" class="form-input" [(ngModel)]="weekStartDate" />
+          <p class="field-hint">Selecciona una fecha dentro de la semana que quieres planificar.</p>
+        </div>
+
+        <div class="wizard-actions step1-actions">
+          <button class="modal-btn modal-btn-secondary" type="button" (click)="weekStartToday()">Seleccionar la semana actual</button>
+        </div>
+
+        @if (role === 'ADMIN') {
+          <div class="form-group">
+            <label for="chefId">ID del responsable (solo admin)</label>
+            <input id="chefId" type="number" class="form-input" [(ngModel)]="chefId" />
+          </div>
+        }
+
+        <div class="wizard-actions">
+          <button class="modal-btn modal-btn-primary" (click)="nextStep()" [disabled]="!weekStartDate">Continuar</button>
+        </div>
+      </div>
+    }
+
+    @if (currentStep === 2 && !loadingInitial) {
+      <div class="step-card glassmorphism step2-flex fadeInStaggered">
+        @let participation = getParticipationSummary();
+        @let stockUsage = getStockUsageSummary();
+
+        <section class="participation-card stock-usage-card">
+          <div class="participation-header">
+            <button class="participation-toggle" type="button" (click)="toggleStockUsage()" [attr.aria-expanded]="!isStockUsageCollapsed()" aria-label="Abrir o cerrar el panel de uso de stock">
+              <span class="collapse-icon" [class.is-collapsed]="isStockUsageCollapsed()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </span>
+              <div class="participation-title">
+                <h2>Uso de stock</h2>
+                <p>Este panel avisa si el plan supera el stock disponible. Mas tarde podras crear una orden automatica.</p>
+              </div>
+            </button>
+
+            @if (stockUsage.hasWarnings) {
+              <span class="warning-badge" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M12 2 1 21h22L12 2Zm0 6 1 7h-2l1-7Zm0 11a1.25 1.25 0 1 1 0-2.5A1.25 1.25 0 0 1 12 19Z" />
+                </svg>
+              </span>
+            }
+          </div>
+
+          @if (!isStockUsageCollapsed()) {
+            @if (stockUsage.rows.length > 0) {
+              <div class="stock-table-wrap">
+                <table class="stock-table">
+                  <thead>
+                    <tr>
+                      <th>Producto</th>
+                      <th>Necesario</th>
+                      <th>Disponible</th>
+                      <th>En pedidos</th>
+                      <th>Faltante</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (row of stockUsage.rows; track row.productId) {
+                      <tr [class.has-shortage]="row.shortage > 0">
+                        <td>{{ row.productName }}</td>
+                        <td>{{ row.required | number:'1.0-2' }} {{ row.unit }}</td>
+                        <td>{{ row.available | number:'1.0-2' }} {{ row.unit }}</td>
+                        <td>{{ row.pendingOrdered | number:'1.0-2' }} {{ row.unit }}</td>
+                        <td>{{ row.shortage > 0 ? (row.shortage | number:'1.0-2') : '0.00' }} {{ row.unit }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            } @else {
+              <p class="field-hint">Añade sesiones para ver el uso de stock proyectado.</p>
+            }
+          }
+        </section>
+
+        <section class="participation-card">
+          <div class="participation-header">
+            <button class="participation-toggle" type="button" (click)="toggleParticipation()" [attr.aria-expanded]="!isParticipationCollapsed()" aria-label="Abrir o cerrar el panel de participación de alumnos">
+              <span class="collapse-icon" [class.is-collapsed]="isParticipationCollapsed()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </span>
+              <div class="participation-title">
+                <h2>Participación de alumnos</h2>
+                <p>La distribución se va llenando a medida que asignas alumnos a las sesiones.</p>
+              </div>
+            </button>
+          </div>
+
+          @if (!isParticipationCollapsed()) {
+            @if (participation.rows.length > 0) {
+              <div class="participation-bars">
+                @for (student of participation.rows; track student.id) {
+                  <div class="participation-row">
+                    <div class="participation-row-head">
+                      <span class="participation-name">{{ student.name }}</span>
+                      <span class="participation-detail">{{ student.assignments }} asignaciones · {{ student.historicalRate | number:'1.0-0' }}% histórico</span>
+                    </div>
+                    <div class="participation-track">
+                      <div class="participation-fill" [class.is-selected]="student.selected" [style.width.%]="participation.totalAssignments > 0 ? (student.assignments / participation.totalAssignments) * 100 : 0"></div>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="field-hint">Añade alumnos para ver cómo se distribuye la participación.</p>
+            }
+          }
+        </section>
+
+        <div class="step2-header">
+          <h2>Paso 2: Configura las sesiones de cocina</h2>
+        </div>
+
+        <p class="field-hint step2-hint">Crea una o varias sesiones por día. Puedes añadir más sesiones en el mismo día o moverlas después.</p>
+
+        <div class="slots-list">
+          @if (slots.length === 0) {
+            <div class="empty-slots">Todavía no hay sesiones. Usa el botón de cada día para empezar.</div>
+          }
+
+          @for (day of days; track day.value) {
+            @let daySlots = getDaySlots(day.value);
+            <section class="day-group">
+              <div class="day-group-header">
+                <div class="day-group-title">
+                  <button class="day-collapse-toggle" type="button" (click)="toggleDay(day.value)" [attr.aria-expanded]="!isDayCollapsed(day.value)" [attr.aria-label]="(isDayCollapsed(day.value) ? 'Abrir' : 'Cerrar') + ' sesiones de ' + day.label">
+                    <span class="collapse-icon" [class.is-collapsed]="isDayCollapsed(day.value)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </span>
+                    <span class="day-title-text">
+                      {{ day.label }}
+                      <span class="day-count">{{ daySlots.length }} sesiones</span>
+                    </span>
+                  </button>
+
+                  @if (dayHasOverlap(day.value)) {
+                    <button type="button" class="warning-badge button-badge" (click)="setWarning('day-' + day.value, getOverlapDetails(day.value))" [attr.aria-label]="'Ver problema de solapamiento en ' + day.label">
+                      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M12 2 1 21h22L12 2Zm0 6 1 7h-2l1-7Zm0 11a1.25 1.25 0 1 1 0-2.5A1.25 1.25 0 0 1 12 19Z" />
+                      </svg>
+                    </button>
+                  }
+                </div>
+
+                <div class="day-actions">
+                  <button class="modal-btn modal-btn-secondary btn-icon" (click)="addSlotForDay(day.value)" aria-label="Añadir sesión para {{ day.label }}">
+                    <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M11 5a1 1 0 1 1 2 0v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H5a1 1 0 1 1 0-2h6V5Z" />
+                    </svg>
+                    Añadir sesión
+                  </button>
+
+                  <button class="modal-btn modal-btn-primary btn-icon" (click)="openAutoCreateModal(day.value)" aria-label="Crear sesión automática para {{ day.label }}">
+                    <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M12.7 2.6a1 1 0 0 1 1.8 0l1.2 2.8a1 1 0 0 0 .53.53l2.8 1.2a1 1 0 0 1 0 1.84l-2.8 1.2a1 1 0 0 0-.53.53l-1.2 2.8a1 1 0 0 1-1.84 0l-1.2-2.8a1 1 0 0 0-.53-.53l-2.8-1.2a1 1 0 0 1 0-1.84l2.8-1.2a1 1 0 0 0 .53-.53l1.2-2.8ZM6 14a1 1 0 0 1 .94.66L7.8 17.2l2.54.86a1 1 0 0 1 0 1.88l-2.54.86-.86 2.54a1 1 0 0 1-1.88 0l-.86-2.54-2.54-.86a1 1 0 0 1 0-1.88l2.54-.86.86-2.54A1 1 0 0 1 6 14Z" />
+                    </svg>
+                    Crear día automáticamente
+                  </button>
+                </div>
+              </div>
+
+              @if (activeWarning?.key === 'day-' + day.value) {
+                <div class="warning-popover">{{ activeWarning?.message }}</div>
+              }
+
+              @if (dayHasOverlap(day.value)) {
+                <div class="day-overlap-warning">
+                  <span class="warning-title">Sesiones solapadas</span>
+                  <p>{{ getOverlapMessage(day.value) }}</p>
+                </div>
+              }
+
+              @if (!isDayCollapsed(day.value)) {
+                <div class="day-group-content">
+                  @if (daySlots.length === 0) {
+                    <div class="empty-day-slot">No hay sesiones en {{ day.label.toLowerCase() }}.</div>
+                  }
+
+                  @for (slot of daySlots; track trackBySlotIdOrIndex($index, slot)) {
+                    <div class="slot-item slideDown" [class.is-collapsed]="isSlotCollapsed(slot)">
+                      <div class="slot-header">
+                        <button class="slot-collapse-toggle" type="button" (click)="toggleSlot(slot)" [attr.aria-expanded]="!isSlotCollapsed(slot)" [attr.aria-label]="(isSlotCollapsed(slot) ? 'Abrir' : 'Cerrar') + ' sesión ' + ($index + 1) + ' de ' + day.label">
+                          <span class="collapse-icon" [class.is-collapsed]="isSlotCollapsed(slot)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                          </span>
+                          <span class="slot-title-text">
+                            Sesión {{ $index + 1 }}
+                            <span class="slot-summary">{{ getSlotSummary(slot) }}</span>
+                          </span>
+                        </button>
+
+                        <div class="slot-header-actions">
+                          @if (isSlotCollapsed(slot) && !isSlotComplete(slot)) {
+                            <button type="button" class="warning-badge button-badge" (click)="setWarning(getSlotUiKey(slot), getSlotWarningMessage(slot))" [attr.aria-label]="'Ver problemas de la sesión ' + ($index + 1)">
+                              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M12 2 1 21h22L12 2Zm0 6 1 7h-2l1-7Zm0 11a1.25 1.25 0 1 1 0-2.5A1.25 1.25 0 0 1 12 19Z" />
+                              </svg>
+                            </button>
+                          }
+
+                          <button class="btn-delete" (click)="removeSlot(slots.indexOf(slot))" [attr.aria-label]="'Eliminar sesión ' + ($index + 1) + ' de ' + day.label">Eliminar</button>
+                        </div>
+                      </div>
+
+                      @if (activeWarning?.key === getSlotUiKey(slot)) {
+                        <div class="warning-popover">{{ activeWarning?.message }}</div>
+                      }
+
+                      @if (!isSlotCollapsed(slot)) {
+                        <div class="slot-body">
+                          <div class="form-row">
+                            <div class="form-group flex-2">
+                              <label>Receta de la sesión</label>
+                              <app-searchable-dropdown
+                                [items]="recipeSearchResults"
+                                [loading]="loadingRecipes"
+                                [loadingMore]="loadingMoreRecipes"
+                                [placeholder]="'Buscar receta por nombre...'"
+                                [initialText]="slot.recipeName"
+                                (search)="searchRecipes($event)"
+                                (scrollNearBottom)="loadMoreRecipes()"
+                                (itemSelected)="selectRecipeForSlot(slot, $event)"
+                              ></app-searchable-dropdown>
+                            </div>
+
+                            <div class="form-group flex-1">
+                              <label [attr.for]="'slot-qty-' + slots.indexOf(slot)">Cantidad de raciones</label>
+                              <input [id]="'slot-qty-' + slots.indexOf(slot)" type="number" class="form-input" [(ngModel)]="slot.quantity" min="1" (ngModelChange)="onSlotChanged(slot)" />
+                            </div>
+                          </div>
+
+                          <div class="form-row">
+                            <div class="form-group flex-1">
+                              <label [attr.for]="'slot-start-' + slots.indexOf(slot)">Hora de inicio</label>
+                              <input [id]="'slot-start-' + slots.indexOf(slot)" type="time" class="form-input" [(ngModel)]="slot.startTime" (ngModelChange)="onSlotChanged(slot)" />
+                            </div>
+
+                            <div class="form-group flex-1">
+                              <label [attr.for]="'slot-end-' + slots.indexOf(slot)">Hora de fin</label>
+                              <input [id]="'slot-end-' + slots.indexOf(slot)" type="time" class="form-input" [(ngModel)]="slot.endTime" (ngModelChange)="onSlotChanged(slot)" />
+                            </div>
+                          </div>
+
+                          <div class="students-assignment">
+                            <label class="assignment-label">Alumnos asignados: {{ slot.studentIds.length }}</label>
+                            @if (myStudents.length === 0) {
+                              <p class="field-hint">No hay alumnos disponibles para asignar.</p>
+                            } @else {
+                              <div class="students-pills">
+                                @for (student of myStudents; track student.id) {
+                                  <div class="student-pill"
+                                    role="button"
+                                    tabindex="0"
+                                    [class.selected]="slot.studentIds.includes(student.id)"
+                                    (click)="toggleStudent(slot, student.id)"
+                                    (keydown)="onStudentPillKeydown($event, slot, student.id)"
+                                    [attr.aria-label]="'Asignar alumno ' + student.name">
+                                    <div class="student-name">{{ student.name }}</div>
+                                    @if (studentMetrics[student.id]) {
+                                      <div class="student-metric" [class.low]="studentMetrics[student.id].participationRate < 50">
+                                        Participación histórica: {{ studentMetrics[student.id].participationRate | number:'1.0-0' }}%
+                                      </div>
+                                    }
+                                  </div>
+                                }
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            </section>
+          }
+        </div>
+
+        <div class="wizard-actions space-between">
+          <button class="modal-btn modal-btn-secondary" (click)="prevStep()">Volver a semana</button>
+          <button class="modal-btn modal-btn-success" (click)="save()" [disabled]="saving">
+            {{ saving ? 'Guardando...' : (editMode ? 'Actualizar Plan' : 'Crear Plan Semanal') }}
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (showAutoCreateModal) {
+    <app-base-modal
+      [title]="'Crear sesión automática para ' + getDayLabel(autoCreateDayOfWeek || 1)"
+      size="lg"
+      (closed)="closeAutoCreateModal()"
+    >
+      <p class="field-hint">Configura el día automático, evita el recreo y reparte a todos los alumnos de forma equitativa.</p>
+
+      <section class="auto-create-section">
+        <h3 class="auto-create-section-title">Configuración del día</h3>
+        <div class="auto-create-grid">
+          <div class="form-group">
+            <label for="auto-session-count">Número de sesiones a crear</label>
+            <input id="auto-session-count" type="number" class="form-input" min="1" max="24" [(ngModel)]="autoCreateSessionCount" />
+          </div>
+
+          <div class="form-group">
+            <label for="auto-plates-per-session">Número de platos por sesión</label>
+            <input id="auto-plates-per-session" type="number" class="form-input" min="1" max="999" [(ngModel)]="autoCreatePlatesPerSession" />
+          </div>
+
+          <div class="form-group">
+            <label for="auto-max-students">Número máximo de alumnos por sesión</label>
+            <input id="auto-max-students" type="number" class="form-input" min="1" max="999" [(ngModel)]="autoCreateMaxStudentsPerSession" />
+          </div>
+
+          <div class="form-group">
+            <label for="auto-start-time">Hora de inicio</label>
+            <input id="auto-start-time" type="time" class="form-input" [(ngModel)]="autoCreateStartTime" />
+          </div>
+
+          <div class="form-group">
+            <label for="auto-end-time">Hora de fin</label>
+            <input id="auto-end-time" type="time" class="form-input" [(ngModel)]="autoCreateEndTime" />
+          </div>
+
+          <div class="form-group">
+            <label for="auto-duration">Duración de cada sesión (minutos)</label>
+            <input id="auto-duration" type="number" class="form-input" min="5" step="5" [(ngModel)]="autoCreateSessionDurationMinutes" />
+          </div>
+
+          <div class="form-group">
+            <label for="auto-break-start">Inicio del recreo (opcional)</label>
+            <input id="auto-break-start" type="time" class="form-input" [(ngModel)]="autoCreateBreakStartTime" />
+          </div>
+
+          <div class="form-group">
+            <label for="auto-break-end">Fin del recreo (opcional)</label>
+            <input id="auto-break-end" type="time" class="form-input" [(ngModel)]="autoCreateBreakEndTime" />
+          </div>
+        </div>
+        <p class="field-hint">Si rellenas el recreo, no se colocarán sesiones dentro de esa franja.</p>
+
+        <div class="recipe-stock-toggle">
+          <label class="check-item">
+            <input type="checkbox" [(ngModel)]="autoCreateUseCurrentStock" />
+            <span>Tener en cuenta el stock actual</span>
+          </label>
+          <p class="field-hint">Si lo desactivas, se generará con cualquier receta visible aunque luego pueda faltar stock.</p>
+        </div>
+      </section>
+
+      <section class="auto-create-section">
+        <h3 class="auto-create-section-title">Recetas a usar</h3>
+        <div class="distribution-options">
+          <label class="check-item">
+            <input type="radio" name="recipeSelectionMode" value="EXCLUDE" [(ngModel)]="autoCreateRecipeSelectionMode" />
+            <span>Excluir estas recetas</span>
+          </label>
+          <label class="check-item">
+            <input type="radio" name="recipeSelectionMode" value="INCLUDE" [(ngModel)]="autoCreateRecipeSelectionMode" />
+            <span>Solo incluir estas recetas</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="recipe-filter-search">Buscar receta</label>
+          <input
+            id="recipe-filter-search"
+            type="text"
+            class="form-input"
+            [ngModel]="autoCreateRecipeSearchQuery"
+            (ngModelChange)="onAutoCreateRecipeSearchChange($event)"
+            placeholder="Buscar por nombre..."
+          />
+        </div>
+
+        <div class="recipe-picker-list" (scroll)="onAutoCreateRecipeScroll($event)">
+          @if (autoCreateRecipeLoading) {
+            <div class="recipe-picker-state">Cargando recetas...</div>
+          } @else if (autoCreateRecipeResults.length === 0) {
+            <div class="recipe-picker-state">No hay recetas para mostrar.</div>
+          } @else {
+            @for (recipe of autoCreateRecipeResults; track recipe.id) {
+              <label class="recipe-picker-item">
+                <input
+                  type="checkbox"
+                  [checked]="isAutoCreateRecipeSelected(recipe.id)"
+                  (change)="toggleAutoCreateRecipeSelection(recipe.id)"
+                />
+                <span>{{ recipe.name }}</span>
+              </label>
+            }
+
+            @if (autoCreateRecipeLoadingMore) {
+              <div class="recipe-picker-state">Cargando más...</div>
+            } @else if (autoCreateRecipeHasMore) {
+              <div class="recipe-picker-state">Desliza para cargar más recetas.</div>
+            }
+          }
+        </div>
+      </section>
+
+      <section class="auto-create-section">
+        <h3 class="auto-create-section-title">Alergias a excluir</h3>
+        <label>Excluir recetas con alérgenos:</label>
+        @if (getAutoCreateAllergenOptions().length === 0) {
+          <p class="field-hint">No hay alérgenos registrados en el catálogo de recetas.</p>
+        } @else {
+          <div class="allergen-grid">
+            @for (allergen of getAutoCreateAllergenOptions(); track allergen.id) {
+              <label class="check-item">
+                <input
+                  type="checkbox"
+                  [checked]="autoCreateExcludedAllergenIds.includes(allergen.id)"
+                  (change)="toggleExcludedAllergen(allergen.id)"
+                />
+                <span>{{ allergen.name }}</span>
+              </label>
+            }
+          </div>
+        }
+      </section>
+
+      <section class="auto-create-section">
+        <h3 class="auto-create-section-title">Distribución de alumnos</h3>
+        <div class="distribution-options">
+          <label class="check-item">
+            <input type="radio" name="distributionMode" value="EQUITATIVE" [(ngModel)]="autoCreateDistributionMode" />
+            <span>Equitativa</span>
+          </label>
+          <label class="check-item">
+            <input type="radio" name="distributionMode" value="HISTORICAL" [(ngModel)]="autoCreateDistributionMode" />
+            <span>Balanceada por histórico</span>
+          </label>
+          <label class="check-item">
+            <input type="radio" name="distributionMode" value="RANDOM" [(ngModel)]="autoCreateDistributionMode" />
+            <span>Aleatoria</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="auto-create-section">
+        <h3 class="auto-create-section-title">Excluir alumnos</h3>
+        <label>Los alumnos excluidos no recibirán asignaciones automáticas:</label>
+        @if (getAutoCreateStudentOptions().length === 0) {
+          <p class="field-hint">No hay alumnos disponibles.</p>
+        } @else {
+          <div class="allergen-grid">
+            @for (student of getAutoCreateStudentOptions(); track student.id) {
+              <label class="check-item">
+                <input
+                  type="checkbox"
+                  [checked]="autoCreateExcludedStudentIds.includes(student.id)"
+                  (change)="toggleExcludedStudent(student.id)"
+                />
+                <span>{{ student.name }}</span>
+              </label>
+            }
+          </div>
+        }
+      </section>
+
+      <div modal-footer class="modal-actions">
+        <button class="modal-btn modal-btn-secondary" type="button" (click)="closeAutoCreateModal()">Cancelar</button>
+        <button class="modal-btn modal-btn-primary" type="button" [disabled]="loadingCookableRecipes" (click)="createDayAutomatically()">
+          {{ loadingCookableRecipes ? 'Cargando...' : 'Crear sesión automática' }}
+        </button>
+      </div>
+    </app-base-modal>
+  }
+</div>
