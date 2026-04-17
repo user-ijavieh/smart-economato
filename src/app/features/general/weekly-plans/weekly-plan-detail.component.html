@@ -185,7 +185,7 @@
                  </div>
                  <div class="item-status">
                    @if (req.sufficient) {
-                     <span class="stock-ok"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: text-bottom;"><polyline points="20 6 9 17 4 12"></polyline></svg>Hay stock real ({{ getRealAvailableStock(req) | number:'1.2-2' }})</span>
+                     <span class="stock-ok"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: text-bottom;"><polyline points="20 6 9 17 4 12"></polyline></svg>Hay stock ({{ getRealAvailableStock(req) | number:'1.2-2' }})</span>
                    } @else {
                      <span class="stock-warning">
                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
