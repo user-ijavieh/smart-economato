@@ -454,6 +454,11 @@ tr.depleted-row:hover td {
   pointer-events: none;
 }
 
+.btn-icon-only {
+  width: 32px;
+  height: 32px;
+}
+
 .btn-editar,
 .btn-eliminar,
 .btn-ver {
@@ -466,8 +471,6 @@ tr.depleted-row:hover td {
   justify-content: center;
   transition: all 0.2s;
   box-shadow: none;
-  width: 32px;
-  height: 32px;
 }
 
 .btn-editar {
@@ -947,4 +950,80 @@ tr.depleted-row:hover td {
     padding: 8px 6px;
     font-size: 0.78rem;
   }
+}
+
+/** ===== MODAL TRACEABILITY (VIEW BATCH) ===== */
+.traceability-modal-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.crisis-detail-content {
+  padding: 0;
+}
+.detail-grid-standard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  background: var(--theme-surface-glass-active);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--theme-border-glass);
+}
+.detail-col strong {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--theme-text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.detail-col p {
+  font-size: 1rem;
+  color: var(--theme-text-primary);
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+.detail-col p:last-child {
+  margin-bottom: 0;
+}
+.traceability-table-wrap {
+  border: 1px solid var(--theme-border-glass);
+  border-radius: 12px;
+  overflow: auto;
+  background: var(--theme-surface-glass);
+  max-height: 400px;
+}
+.traceability-sub-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.traceability-sub-table th, .traceability-sub-table td {
+  padding: 12px;
+  text-align: left;
+  font-size: 0.85rem;
+  border-bottom: 1px solid var(--theme-surface-glass-hover);
+}
+.traceability-sub-table th {
+  background: var(--theme-section-header-bg-strong, #1a1a1a);
+  color: var(--theme-text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.btn-cancel {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--theme-border-medium);
+  background: transparent;
+  color: var(--theme-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 600;
+}
+.btn-cancel:hover {
+  background: var(--theme-surface-glass-hover);
+  color: var(--theme-text-primary);
 }

@@ -93,6 +93,11 @@
                 <div class="plan-stats">
                   <span>{{ plan.slots.length || 0 }} sesiones</span>
                 </div>
+                <div class="plan-card-actions">
+                  <button type="button" class="modal-btn modal-btn-secondary modal-btn-small" (click)="$event.stopPropagation(); duplicatePlan(plan)">
+                    Duplicar
+                  </button>
+                </div>
               </div>
             </div>
           }

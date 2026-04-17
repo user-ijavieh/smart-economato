@@ -194,7 +194,7 @@ main.main-expanded {
   right: 16px;
   width: min(390px, calc(100vw - 24px));
   max-height: min(70vh, 620px);
-  z-index: 12000;
+  z-index: 40000;
   border-radius: 14px;
   border: 1px solid var(--theme-border-glass);
   background: var(--theme-section-header-bg-strong);
@@ -214,7 +214,7 @@ main.main-expanded {
 .notifications-overlay {
   position: fixed;
   inset: 0;
-  z-index: 1001;
+  z-index: 39999;
   background: rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(1px);
   animation: notificationsOverlayIn 180ms ease-out both;

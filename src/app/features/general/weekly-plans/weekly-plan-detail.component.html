@@ -38,10 +38,17 @@
                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                Editar
              </button>
-             <button class="modal-btn modal-btn-primary modal-btn-small" (click)="openActivateModal()">
+             @if (plan.status === 'DRAFT') {
+             <button class="modal-btn modal-btn-primary modal-btn-small" (click)="activatePlan()" [disabled]="activatingPlan">
                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-               Activar
+               {{ activatingPlan ? 'Activando...' : 'Activar' }}
              </button>
+             }
+             @if (plan.status === 'ACTIVE') {
+             <button class="modal-btn modal-btn-secondary modal-btn-small" (click)="deactivatePlan()" [disabled]="deactivatingPlan">
+               {{ deactivatingPlan ? 'Revirtiendo...' : 'Volver a borrador' }}
+             </button>
+             }
           </div>
         }
       </div>
@@ -72,7 +79,7 @@
         </div>
       </div>
 
-      <div class="kanban-board fadeInPage">
+      <div class="kanban-board fadeInPage" (click)="closeAllMenus()">
         @for (day of days; track day.value) {
           <div class="kanban-column" [class.collapsed]="isDayCollapsed(day.value)" [class.mobile-hidden]="selectedDayTab !== day.value">
             <div class="column-header" (click)="toggleDayCollapse(day.value)">
@@ -84,7 +91,44 @@
                 </span>
                 <h3>{{ day.label }}</h3>
               </div>
-              <span class="slot-count">{{ slotsByDay[day.value]?.length || 0 }} sesiones</span>
+              <div class="column-header-right">
+                <span class="slot-count">{{ slotsByDay[day.value]?.length || 0 }} sesiones</span>
+                
+                <div class="column-actions-dropdown" [class.is-active]="activeDayMenu === day.value" (click)="$event.stopPropagation()">
+                  <button class="btn-icon btn-menu-trigger" (click)="toggleDayMenu(day.value, $event)" aria-label="Acciones de columna">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="1"></circle>
+                      <circle cx="12" cy="5" r="1"></circle>
+                      <circle cx="12" cy="19" r="1"></circle>
+                    </svg>
+                  </button>
+                  
+                  @if (activeDayMenu === day.value) {
+                    <div class="dropdown-menu glassmorphism slideDown">
+                      <div class="dropdown-header">Acciones del {{ day.label }}</div>
+                      
+                      @if (hasActionableSlots(day.value)) {
+                        <button class="dropdown-item success" (click)="confirmDay(day.value); closeAllMenus()">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                          Confirmar todo el día
+                        </button>
+                      }
+                      
+                      @if (isDayConfirmedSome(day.value)) {
+                        <button class="dropdown-item danger" (click)="unconfirmDay(day.value); closeAllMenus()">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><polyline points="3 3 3 8 8 8"></polyline></svg>
+                          Revertir confirmaciones
+                        </button>
+                      }
+                      
+                      <button class="dropdown-item" (click)="toggleDayCollapse(day.value); closeAllMenus()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 12 15 20 7"></polyline></svg>
+                        {{ isDayCollapsed(day.value) ? 'Expandir columna' : 'Contraer columna' }}
+                      </button>
+                    </div>
+                  }
+                </div>
+              </div>
             </div>
             
             <div class="column-content" [class.is-collapsed]="isDayCollapsed(day.value)">
@@ -104,12 +148,12 @@
                       <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                       <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                     </svg>
-                    {{ slot.students.length || 0 }} alumnos
+                    {{ getActiveStudents(slot).length }} alumnos
                   </div>
 
-                  @if (slot.students.length > 0) {
+                  @if (getActiveStudents(slot).length > 0) {
                     <div class="slot-student-list">
-                      @for (student of slot.students; track student.studentId) {
+                      @for (student of getActiveStudents(slot); track student.studentId) {
                         <span class="student-pill compact">{{ student.studentName }}</span>
                       }
                     </div>
@@ -119,6 +163,12 @@
                     @if ((slot.status === 'PENDING' || slot.status === 'IN_PROGRESS') && isSlotActionable(slot)) {
                       <button class="modal-btn modal-btn-success modal-btn-small" (click)="confirmSlot(slot)" aria-label="Confirmar sesión">Confirmar</button>
                       <button class="modal-btn modal-btn-danger modal-btn-small" (click)="cancelSlot(slot)" aria-label="Cancelar sesión">Cancelar</button>
+                    }
+                    @if (slot.status === 'CONFIRMED') {
+                      <button class="modal-btn modal-btn-secondary modal-btn-small" (click)="unconfirmSlot(slot)" aria-label="Revertir confirmación">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="M3 2v6h6"></path><path d="M3 13a9 9 0 1 0 3-7.7L3 8"></path></svg>
+                        Revertir
+                      </button>
                     }
                   </div>
                 </div>
@@ -145,11 +195,24 @@
           </button>
         </div>
 
+        <div class="stock-search-row">
+          <input
+            type="text"
+            class="form-control stock-search-input"
+            [(ngModel)]="stockSearchTerm"
+            placeholder="Buscar producto por nombre..."
+          />
+          @if (stockSearchTerm) {
+            <button type="button" class="btn-clear-search" (click)="stockSearchTerm = ''">Limpiar</button>
+          }
+          <span class="pool-search-count">{{ filteredStockRequirements.length }}</span>
+        </div>
+
         @if (loadingStock) {
            <p>Cargando lista de la compra...</p>
-        } @else if (stockRequirements.length > 0) {
+        } @else if (filteredStockRequirements.length > 0) {
            <div class="stock-list">
-             @for (req of stockRequirements; track req.productId) {
+             @for (req of filteredStockRequirements; track req.productId) {
                <div class="stock-item" [class.insufficient]="!req.sufficient">
                  <div class="item-info">
                    <div class="item-name">{{ req.productName }}</div>
@@ -198,8 +261,8 @@
                </div>
              }
            </div>
-        } @else {
-           <p class="empty-state">No hay requisitos de stock para este plan.</p>
+          } @else {
+            <p class="empty-state">{{ stockRequirements.length > 0 ? 'No hay productos que coincidan con la búsqueda.' : 'No hay requisitos de stock para este plan.' }}</p>
         }
       </div>
     }
@@ -213,11 +276,24 @@
               <h3>Alumnos del plan</h3>
               <p>Gestiona ausencias por día sin romper las sesiones compartidas.</p>
             </div>
-            <span class="attendance-count">{{ rosterStudents.length }} alumnos</span>
+            <span class="attendance-count">{{ filteredRosterStudents.length }} alumnos</span>
+          </div>
+
+          <div class="attendance-search-row">
+            <input
+              type="text"
+              class="form-control attendance-search-input"
+              [(ngModel)]="attendanceSearchTerm"
+              placeholder="Buscar alumno por nombre..."
+            />
+            @if (attendanceSearchTerm) {
+              <button type="button" class="btn-clear-search" (click)="attendanceSearchTerm = ''">Limpiar</button>
+            }
+            <span class="pool-search-count">{{ filteredRosterStudents.length }}</span>
           </div>
 
           <div class="attendance-accordion-list">
-            @for (student of rosterStudents; track student.studentId) {
+            @for (student of filteredRosterStudents; track student.studentId) {
               <article class="attendance-student-accordion">
                 <button type="button" class="attendance-student-trigger" (click)="toggleAttendanceStudent(student.studentId)" [attr.aria-expanded]="isAttendanceStudentExpanded(student.studentId)">
                   <span class="accordion-caret">
@@ -247,18 +323,36 @@
                           <div class="attendance-day-content expanded">
                             <div class="attendance-slot-tags">
                               @for (slot of day.slotSummaries; track slot.id) {
-                                <div class="attendance-session-row">
-                                  <span class="slot-tag">Sesión {{ slot.sortOrder + 1 }}: {{ slot.recipeName }} ({{ slot.startTime }})</span>
-                                  <button type="button" class="modal-btn modal-btn-secondary modal-btn-small attendance-cancel-btn" (click)="cancelStudentFromSession(student.studentId, student.studentName, slot.id, slot.recipeName, slot.sortOrder)">
-                                    Cancelar sesión
+                                  <div class="attendance-session-row">
+                                    <span class="slot-tag">Sesión {{ slot.sortOrder + 1 }}: {{ slot.recipeName }} ({{ slot.startTime }})</span>
+                                    @if (canManageAttendanceCancellation()) {
+                                      @if (isSessionConfirmed(slot.id)) {
+                                        <span class="confirmed-label">
+                                          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                          Confirmado
+                                        </span>
+                                      } @else {
+                                        <button type="button" class="modal-btn modal-btn-secondary modal-btn-small attendance-cancel-btn" (click)="cancelStudentFromSession(student.studentId, student.studentName, slot.id, slot.recipeName, slot.sortOrder)" [disabled]="cancellingAttendance.has('slot-' + student.studentId + '-' + slot.id)">
+                                          {{ cancellingAttendance.has('slot-' + student.studentId + '-' + slot.id) ? 'Cancelando...' : 'Cancelar sesión' }}
+                                        </button>
+                                      }
+                                    }
+                                  </div>
+                              }
+                              </div>
+                              @if (canManageAttendanceCancellation()) {
+                                @if (isDayConfirmedSome(day.dayOfWeek)) {
+                                  <div class="attendance-info-box">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                    Hay sesiones confirmadas. Revierte la confirmación en el cronograma para gestionar ausencias.
+                                  </div>
+                                } @else {
+                                  <button type="button" class="modal-btn modal-btn-secondary modal-btn-small attendance-cancel-btn" (click)="cancelStudentFromDay(student.studentId, student.studentName, day.dayOfWeek)" [disabled]="cancellingAttendance.has(student.studentId + '-' + day.dayOfWeek)">
+                                    {{ cancellingAttendance.has(student.studentId + '-' + day.dayOfWeek) ? 'Cancelando...' : 'Cancelar día' }}
                                   </button>
-                                </div>
+                                }
                               }
                             </div>
-                            <button type="button" class="modal-btn modal-btn-secondary modal-btn-small attendance-cancel-btn" (click)="cancelStudentFromDay(student.studentId, student.studentName, day.dayOfWeek)">
-                              Cancelar día
-                            </button>
-                          </div>
                         }
                       </article>
                     }
@@ -268,7 +362,7 @@
             }
           </div>
         } @else {
-          <p class="empty-state">No hay alumnos asignados todavía.</p>
+          <p class="empty-state">{{ attendanceSearchTerm ? 'No hay alumnos que coincidan con la búsqueda.' : 'No hay alumnos asignados todavía.' }}</p>
         }
       </div>
     }
@@ -433,30 +527,6 @@
             </button>
           </div>
         </div>
-      </div>
-    </app-base-modal>
-  }
-  @if (showActivateModal) {
-    <app-base-modal title="Duplicar plan" size="md" (closed)="closeActivateModal()">
-      <div class="activate-modal">
-        <p class="modal-copy">Usa este plan como base para una nueva planificación en otra semana.</p>
-
-        <div class="form-group">
-          <label for="activate-week-start">Semana de destino</label>
-          <input id="activate-week-start" type="date" class="form-input" [(ngModel)]="activateTargetWeekStartDate" />
-        </div>
-
-        <label class="toggle-option">
-          <input type="checkbox" [(ngModel)]="activateKeepStudents" />
-          <span>Conservar los alumnos asignados</span>
-        </label>
-      </div>
-
-      <div modal-footer class="modal-footer-actions">
-        <button class="modal-btn modal-btn-secondary" type="button" (click)="closeActivateModal()">Cancelar</button>
-        <button class="modal-btn modal-btn-primary" type="button" (click)="confirmActivatePlanCopy()" [disabled]="activatingPlanCopy">
-          {{ activatingPlanCopy ? 'Duplicando...' : 'Confirmar duplicación' }}
-        </button>
       </div>
     </app-base-modal>
   }
