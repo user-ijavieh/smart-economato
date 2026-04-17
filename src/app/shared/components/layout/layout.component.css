@@ -36,7 +36,7 @@ main.main-expanded {
   position: fixed;
   top: 12px;
   right: 16px;
-  z-index: 1002;
+  z-index: 11000;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -194,7 +194,7 @@ main.main-expanded {
   right: 16px;
   width: min(390px, calc(100vw - 24px));
   max-height: min(70vh, 620px);
-  z-index: 1002;
+  z-index: 12000;
   border-radius: 14px;
   border: 1px solid var(--theme-border-glass);
   background: var(--theme-section-header-bg-strong);

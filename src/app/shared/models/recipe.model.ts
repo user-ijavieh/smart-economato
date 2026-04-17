@@ -47,6 +47,7 @@ export interface CookableRecipeComponent {
   unit: string;
   requiredQuantity: number;
   availableStock: number;
+  reservedByOtherPlans?: number;
 }
 
 export interface CookableRecipe {

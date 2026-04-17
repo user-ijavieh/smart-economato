@@ -116,7 +116,7 @@
                   }
                   
                   <div class="slot-actions">
-                    @if (slot.status === 'PENDING' || slot.status === 'IN_PROGRESS') {
+                    @if ((slot.status === 'PENDING' || slot.status === 'IN_PROGRESS') && isSlotActionable(slot)) {
                       <button class="modal-btn modal-btn-success modal-btn-small" (click)="confirmSlot(slot)" aria-label="Confirmar sesión">Confirmar</button>
                       <button class="modal-btn modal-btn-danger modal-btn-small" (click)="cancelSlot(slot)" aria-label="Cancelar sesión">Cancelar</button>
                     }
@@ -154,6 +154,8 @@
                  <div class="item-info">
                    <div class="item-name">{{ req.productName }}</div>
                    <div class="item-qty">Requerido: {{ req.requiredQuantity | number:'1.2-2' }}</div>
+                   <div class="item-qty">Reservado por otros planes: {{ req.reservedByOtherPlans | number:'1.2-2' }}</div>
+                   <div class="item-qty">Disponible real: {{ getRealAvailableStock(req) | number:'1.2-2' }}</div>
                    @if (getUncoveredStockShortage(req) > 0) {
                      <div class="item-qty shortage">Faltan por cubrir: {{ getUncoveredStockShortage(req) | number:'1.2-2' }} unidades</div>
                    }
@@ -183,7 +185,7 @@
                  </div>
                  <div class="item-status">
                    @if (req.sufficient) {
-                     <span class="stock-ok"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: text-bottom;"><polyline points="20 6 9 17 4 12"></polyline></svg>Hay stock ({{ req.availableStock | number:'1.2-2' }})</span>
+                     <span class="stock-ok"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: text-bottom;"><polyline points="20 6 9 17 4 12"></polyline></svg>Hay stock real ({{ getRealAvailableStock(req) | number:'1.2-2' }})</span>
                    } @else {
                      <span class="stock-warning">
                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
