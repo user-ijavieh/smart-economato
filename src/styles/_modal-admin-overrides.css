@@ -14,17 +14,6 @@
   --color-border-glass: rgba(90, 120, 220, 0.15);
 }
 
-/* Header gradient admin */
-.admin-theme app-base-modal .modal-header {
-  background: linear-gradient(to right, rgba(90, 120, 220, 0.15), transparent);
-}
-
-/* Shell gradient admin */
-.admin-theme app-base-modal .modal-dialog {
-  background:
-    linear-gradient(135deg, color-mix(in srgb, rgba(90, 120, 220, 0.95) 10%, transparent), transparent 42%),
-    var(--theme-surface-glass);
-}
 
 /* Boton primario (save/cocinar) en admin */
 .admin-theme app-base-modal .modal-btn-primary,
@@ -88,20 +77,17 @@
 
 /* ===== ADMIN THEME - LIGHT MODE MODAL OVERRIDES ===== */
 
-/* Dialog admin light: blanco solido */
 [data-theme="light"] .admin-theme app-base-modal .modal-dialog {
   background: #ffffff;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
 
-/* Header admin light: mantener gradiente azul */
 [data-theme="light"] .admin-theme app-base-modal .modal-header {
-  background: linear-gradient(to right, rgba(37, 99, 235, 0.08), transparent);
-  border-bottom: 1px solid rgba(37, 99, 235, 0.08);
+  background: linear-gradient(to right, rgba(37, 99, 235, 0.18), rgba(37, 99, 235, 0.05));
+  border-bottom: 2px solid rgba(37, 99, 235, 0.20);
 }
 
-/* Boton primario admin light: azul solido con texto blanco */
 [data-theme="light"] .admin-theme app-base-modal .modal-btn-primary,
 [data-theme="light"] .admin-theme app-base-modal .btn-save,
 [data-theme="light"] .admin-theme app-base-modal .btn-cocinar,
@@ -120,7 +106,6 @@
   box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
 }
 
-/* Boton secundario/editar admin light */
 [data-theme="light"] .admin-theme app-base-modal .modal-btn-cancel,
 [data-theme="light"] .admin-theme app-base-modal .btn-editar {
   background: rgba(37, 99, 235, 0.06);
@@ -134,7 +119,6 @@
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.10);
 }
 
-/* Boton eliminar admin light */
 [data-theme="light"] .admin-theme app-base-modal .modal-btn-danger,
 [data-theme="light"] .admin-theme app-base-modal .btn-eliminar {
   background: rgba(220, 38, 38, 0.06);
@@ -148,13 +132,11 @@
   box-shadow: 0 2px 8px rgba(220, 38, 38, 0.12);
 }
 
-/* Opciones seleccionadas admin light */
 [data-theme="light"] .admin-theme app-base-modal .product-option.selected {
   background: rgba(37, 99, 235, 0.06);
   color: #2563eb;
 }
 
-/* Boton anadir componente admin light */
 [data-theme="light"] .admin-theme app-base-modal .btn-add-component:hover {
   border-color: #2563eb;
   color: #2563eb;
