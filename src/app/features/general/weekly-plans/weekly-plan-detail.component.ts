@@ -362,12 +362,12 @@ export class WeeklyPlanDetailComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/weekly-plans']);
+    this.router.navigate([this.getBaseRoute()]);
   }
 
   editPlan() {
     if (!this.planId) return;
-    this.router.navigate(['/weekly-plans', this.planId, 'edit']);
+    this.router.navigate([this.getBaseRoute(), this.planId, 'edit']);
   }
 
   async activatePlan() {
@@ -1098,6 +1098,12 @@ export class WeeklyPlanDetailComponent implements OnInit {
 
   canManageAttendanceCancellation(): boolean {
     return this.plan?.status !== 'DRAFT';
+  }
+
+  private getBaseRoute(): string {
+    return this.router.url.startsWith('/admin-panel/weekly-plans')
+      ? '/admin-panel/weekly-plans'
+      : '/weekly-plans';
   }
 
   isSessionConfirmed(slotId: number): boolean {

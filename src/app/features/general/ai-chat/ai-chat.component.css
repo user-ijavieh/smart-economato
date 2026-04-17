@@ -2,7 +2,7 @@
   display: block;
   height: 100dvh;
   width: 100%;
-  background: var(--theme-surface-primary, #0f0f0f);
+  background: var(--theme-bg-page);
   position: relative;
   overflow: hidden;
 }
@@ -215,7 +215,7 @@
   width: fit-content;
   max-width: 90%;
   margin-left: auto;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--theme-shadow-card);
   color: var(--theme-text-primary);
 }
 
@@ -251,13 +251,13 @@
   display: flex;
   align-items: flex-end;
   padding: 8px 12px 8px 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--theme-shadow-card);
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .chat-composer:focus-within {
-  border-color: rgba(184, 75, 68, 0.5);
-  box-shadow: 0 4px 24px rgba(184, 75, 68, 0.15);
+  border-color: color-mix(in srgb, var(--brand-primary) 50%, transparent);
+  box-shadow: 0 4px 24px color-mix(in srgb, var(--brand-primary) 15%, transparent);
 }
 
 .chat-composer textarea {
@@ -318,12 +318,12 @@
 }
 
 .send-btn {
-  background: rgba(184, 75, 68, 0.9);
+  background: color-mix(in srgb, var(--brand-primary) 90%, transparent);
   color: white;
 }
 
 .send-btn:hover:not(:disabled) {
-  background: rgba(184, 75, 68, 1);
+  background: var(--brand-primary);
 }
 
 .stop-btn {
@@ -336,7 +336,7 @@
 .history-drawer-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--theme-overlay-bg);
   backdrop-filter: blur(2px);
   z-index: 900;
   animation: fadeIn 0.2s ease;
@@ -364,7 +364,7 @@
   z-index: 901;
   display: flex;
   flex-direction: column;
-  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--theme-shadow-card);
   animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -431,7 +431,7 @@
 }
 
 .history-search-row input:focus {
-  border-color: rgba(184, 75, 68, 0.5);
+  border-color: color-mix(in srgb, var(--brand-primary) 50%, transparent);
 }
 
 .ai-chat-list {
@@ -446,7 +446,7 @@
 .ai-chat-list-item {
   padding: 12px;
   border-radius: 12px;
-  background: var(--theme-surface-subtle);
+  background: var(--theme-surface-glass-hover);
   border: 1px solid var(--theme-border-subtle);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -462,8 +462,8 @@
 }
 
 .ai-chat-list-item.active {
-  border-color: rgba(184, 75, 68, 0.45);
-  background: color-mix(in srgb, var(--brand-primary) 12%, var(--theme-surface-subtle));
+  border-color: color-mix(in srgb, var(--brand-primary) 45%, transparent);
+  background: color-mix(in srgb, var(--brand-primary) 12%, var(--theme-surface-glass-hover));
 }
 
 .ai-chat-item-head {
@@ -532,14 +532,14 @@
 }
 
 .btn-incident-primary {
-  background: rgba(184, 75, 68, 0.16);
-  border-color: rgba(184, 75, 68, 0.34);
+  background: color-mix(in srgb, var(--brand-primary) 16%, transparent);
+  border-color: color-mix(in srgb, var(--brand-primary) 34%, transparent);
   color: var(--theme-text-primary);
 }
 
 .btn-incident-primary:hover:not(:disabled) {
-  background: rgba(184, 75, 68, 0.24);
-  border-color: rgba(184, 75, 68, 0.48);
+  background: color-mix(in srgb, var(--brand-primary) 24%, transparent);
+  border-color: color-mix(in srgb, var(--brand-primary) 48%, transparent);
 }
 
 .icon-btn {
@@ -553,7 +553,7 @@
 }
 
 .danger {
-  color: #ef4444;
+  color: var(--color-danger);
 }
 
 .incident-pill {
@@ -588,15 +588,15 @@
 }
 
 .status-thinking {
-  background: rgba(100, 150, 200, 0.16);
-  color: #a8d5ff;
-  border-color: rgba(100, 150, 200, 0.3);
+  background: var(--color-info-bg);
+  color: var(--color-info);
+  border-color: var(--color-info-border);
 }
 
 .status-tool {
-  background: rgba(150, 120, 200, 0.16);
-  color: #d8b8ff;
-  border-color: rgba(150, 120, 200, 0.3);
+  background: color-mix(in srgb, var(--color-accent-admin) 16%, transparent);
+  color: var(--color-accent-admin);
+  border-color: var(--color-accent-admin-border);
 }
 
 /* OTROS ESTILOS IA REUSADOS */
@@ -610,7 +610,7 @@
   padding: 0;
   border: 1px solid var(--theme-border-subtle);
   border-radius: 12px;
-  background: var(--theme-surface-subtle);
+  background: var(--theme-surface-glass-hover);
   cursor: pointer;
   transition: all 0.3s ease;
   overflow: hidden;
@@ -698,8 +698,8 @@
 
 .tool-call-item {
   padding: 4px 6px;
-  background: var(--theme-surface-subtle);
-  border-left: 3px solid rgba(150, 120, 200, 0.6);
+  background: var(--theme-surface-glass-hover);
+  border-left: 3px solid color-mix(in srgb, var(--color-accent-admin) 60%, transparent);
   border-radius: 3px;
   font-size: 0.85rem;
   margin-top: 4px;
@@ -733,7 +733,12 @@
   width: 100%;
   height: 14px;
   border-radius: 6px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.06));
+  background: linear-gradient(
+    90deg,
+    var(--theme-surface-glass-hover) 25%,
+    var(--theme-border-subtle) 50%,
+    var(--theme-surface-glass-hover) 75%
+  );
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s ease infinite;
 }

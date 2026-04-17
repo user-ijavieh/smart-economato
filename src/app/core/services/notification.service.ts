@@ -7,12 +7,15 @@ import { MessageService } from './message.service';
 import { NotificationApiService, NotificationResponseDTO } from './notification-api.service';
 
 export type AppRole = 'ADMIN' | 'CHEF' | 'ELEVATED' | 'USER';
-export type NotificationCode = 'FOOD_CRISIS_ACTIVATED' | 'FOOD_CRISIS_LIFTED' | null;
+export type RoleEscalationReason = 'MANUAL_GRANTED' | 'MANUAL_REVOKED' | 'AUTO_EXPIRED';
+export type NotificationCode = 'FOOD_CRISIS_ACTIVATED' | 'FOOD_CRISIS_LIFTED' | 'ROLE_ESCALATION_CHANGED' | null;
 
 export interface RoleNotificationMessage {
   title: string;
   message: string;
   code: NotificationCode;
+  newRole?: AppRole;
+  reason?: RoleEscalationReason | string;
   timestamp: string;
 }
 
@@ -266,7 +269,7 @@ export class NotificationService {
   }
 
   private mapNotificationTypeToCode(type: string): NotificationCode {
-    if (type === 'FOOD_CRISIS_ACTIVATED' || type === 'FOOD_CRISIS_LIFTED') {
+    if (type === 'FOOD_CRISIS_ACTIVATED' || type === 'FOOD_CRISIS_LIFTED' || type === 'ROLE_ESCALATION_CHANGED') {
       return type;
     }
 
@@ -287,6 +290,14 @@ export class NotificationService {
 
     if (notification.code === 'FOOD_CRISIS_LIFTED') {
       this.messageService.showSuccess(notification.message, undefined, {
+        title,
+        persistent: true
+      });
+      return;
+    }
+
+    if (notification.code === 'ROLE_ESCALATION_CHANGED') {
+      this.messageService.showInfo(notification.message, 9000, {
         title,
         persistent: true
       });
@@ -337,9 +348,12 @@ export class NotificationService {
       return null;
     }
 
-    const code = payload.code === 'FOOD_CRISIS_ACTIVATED' || payload.code === 'FOOD_CRISIS_LIFTED'
+    const code = payload.code === 'FOOD_CRISIS_ACTIVATED' ||
+      payload.code === 'FOOD_CRISIS_LIFTED' ||
+      payload.code === 'ROLE_ESCALATION_CHANGED'
       ? payload.code
       : null;
+    const newRole = this.normalizeRole(payload.newRole ?? null) ?? undefined;
 
     const timestamp = this.normalizeTimestamp(payload.timestamp);
 
@@ -347,6 +361,8 @@ export class NotificationService {
       title: payload.title?.trim() || 'Notificación',
       message: payload.message,
       code,
+      newRole,
+      reason: payload.reason,
       timestamp
     };
   }
