@@ -259,8 +259,6 @@
 </app-base-modal>
 }
 
-<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
-
 @if (showCrisisDetailModal && selectedCrisis) {
 <app-base-modal [title]="'Crisis / ' + (selectedCrisis.crisisCode || ('CRISIS-' + selectedCrisis.crisisId))" size="lg" (closed)="closeCrisisDetail()">
   <div class="modal-container traceability-modal-container">

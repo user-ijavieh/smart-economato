@@ -12,8 +12,6 @@ import { Order, OrderStatus } from '../../../shared/models/order.model';
 import { OrderAudit } from '../../../shared/models/order-audit.model';
 import { Supplier } from '../../../shared/models/supplier.model';
 import { User } from '../../../shared/models/user.model';
-import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
-import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { finalize } from 'rxjs';
 
@@ -29,7 +27,7 @@ const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
 @Component({
   selector: 'app-orders-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, ConfirmDialogComponent, ToastComponent, BaseModalComponent],
+  imports: [CommonModule, FormsModule, BaseModalComponent],
   templateUrl: './orders-management.component.html',
   styleUrl: './orders-management.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -616,7 +614,6 @@ export class OrdersManagementComponent implements OnInit {
   openStatusEditorFromDetail(): void {
     if (!this.selectedOrder) return;
     const selected = this.selectedOrder;
-    this.closeOrderDetail();
     this.openChangeStatusModal(selected);
   }
 
