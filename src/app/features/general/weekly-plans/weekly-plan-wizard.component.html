@@ -82,6 +82,8 @@
                       <th>Producto</th>
                       <th>Necesario</th>
                       <th>Disponible</th>
+                      <th>Reservado</th>
+                      <th>Disponible real</th>
                       <th>En pedidos</th>
                       <th>Faltante</th>
                     </tr>
@@ -92,6 +94,8 @@
                         <td>{{ row.productName }}</td>
                         <td>{{ row.required | number:'1.0-2' }} {{ row.unit }}</td>
                         <td>{{ row.available | number:'1.0-2' }} {{ row.unit }}</td>
+                        <td>{{ row.reservedByOtherPlans | number:'1.0-2' }} {{ row.unit }}</td>
+                        <td>{{ row.realAvailable | number:'1.0-2' }} {{ row.unit }}</td>
                         <td>{{ row.pendingOrdered | number:'1.0-2' }} {{ row.unit }}</td>
                         <td>{{ row.shortage > 0 ? (row.shortage | number:'1.0-2') : '0.00' }} {{ row.unit }}</td>
                       </tr>

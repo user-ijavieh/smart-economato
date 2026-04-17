@@ -150,6 +150,14 @@
   flex-wrap: wrap;
   justify-content: flex-end;
 }
+
+.modal-btn-small {
+  padding: 0.45rem 0.85rem !important;
+  font-size: 0.82rem !important;
+  min-height: auto !important;
+  width: auto !important;
+}
+
 .detail-stats.glassmorphism {
   backdrop-filter: blur(10px);
 }
@@ -732,7 +740,7 @@
 .attendance-cancel-btn {
   min-height: 32px;
   height: 32px;
-  min-width: 126px;
+  width: fit-content;
   padding-inline: 12px;
   display: inline-flex;
   align-items: center;

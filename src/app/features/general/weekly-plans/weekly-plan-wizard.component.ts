@@ -34,6 +34,8 @@ interface StockUsageRow {
   unit: string;
   required: number;
   available: number;
+  reservedByOtherPlans: number;
+  realAvailable: number;
   pendingOrdered: number;
   shortage: number;
 }
@@ -1093,6 +1095,8 @@ export class WeeklyPlanWizardComponent implements OnInit {
             unit: component.unit || '',
             required,
             available: Number(component.availableStock || 0),
+            reservedByOtherPlans: Number(component.reservedByOtherPlans || 0),
+            realAvailable: 0,
             pendingOrdered: 0,
             shortage: 0
           });
@@ -1107,12 +1111,14 @@ export class WeeklyPlanWizardComponent implements OnInit {
 
     const rows = Array.from(rowsByProduct.values())
       .map(row => {
+        const realAvailable = Math.max(0, row.available - row.reservedByOtherPlans);
         const pendingOrdered = Number(this.pendingOrdersByProduct[row.productId] || 0);
-        const rawShortage = row.required - row.available - pendingOrdered;
+        const rawShortage = row.required - realAvailable - pendingOrdered;
         const shortage = this.normalizeShortage(rawShortage);
 
         return {
           ...row,
+          realAvailable,
           pendingOrdered,
           shortage
         };

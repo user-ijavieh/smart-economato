@@ -298,7 +298,11 @@ export class WeeklyPlanDetailComponent implements OnInit {
   }
 
   getStockShortage(requirement: WeeklyPlanStockRequirement): number {
-    return Math.max(0, requirement.requiredQuantity - requirement.availableStock);
+    return Math.max(0, requirement.requiredQuantity - this.getRealAvailableStock(requirement));
+  }
+
+  getRealAvailableStock(requirement: WeeklyPlanStockRequirement): number {
+    return Math.max(0, (requirement.availableStock || 0) - (requirement.reservedByOtherPlans || 0));
   }
 
   getUncoveredStockShortage(requirement: WeeklyPlanStockRequirement): number {
@@ -373,6 +377,7 @@ export class WeeklyPlanDetailComponent implements OnInit {
       const product = await firstValueFrom(this.productService.getById(requirement.productId));
       return {
         ...requirement,
+        availableStock: this.getRealAvailableStock(requirement),
         unit: product.unit || requirement.productName,
         unitPrice: product.unitPrice || 0,
         supplierId: product.supplier?.id ?? null,
@@ -812,6 +817,24 @@ export class WeeklyPlanDetailComponent implements OnInit {
         };
       })
       .filter(payload => payload.details.length > 0);
+  }
+
+  isSlotActionable(slot: WeeklyPlanSlotResponse): boolean {
+    if (!this.plan || this.plan.status === 'DRAFT') {
+      return false;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // weekStartDate es YYYY-MM-DD (Lunes de esa semana)
+    const [year, month, day] = this.plan.weekStartDate.split('-').map(Number);
+    const slotDate = new Date(year, month - 1, day);
+    // dayOfWeek: 1=Lunes, 2=Martes, etc.
+    slotDate.setDate(slotDate.getDate() + (slot.dayOfWeek - 1));
+    slotDate.setHours(0, 0, 0, 0);
+
+    return today >= slotDate;
   }
 
   async confirmSlot(slot: WeeklyPlanSlotResponse) {

@@ -7,7 +7,7 @@
   inset: 0;
   background: color-mix(in srgb, var(--theme-overlay-bg) 92%, transparent);
   backdrop-filter: blur(10px);
-  z-index: 10000;
+  z-index: 20000;
   display: flex;
   align-items: center;
   justify-content: center;
