@@ -491,12 +491,28 @@
   .diff-container {
     padding: 16px 20px;
     gap: 16px;
+    overflow-x: hidden;
+  }
+
+  .diff-table {
+    table-layout: fixed;
+  }
+
+  .diff-label-col,
+  .diff-prev-col,
+  .diff-next-col {
+    width: auto;
   }
 
   .diff-table th,
   .diff-table td {
     font-size: 0.8rem;
     padding: 8px 10px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+    line-height: 1.3;
   }
 }
 
