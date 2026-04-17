@@ -7,6 +7,7 @@ import {
   CrisisLiftRequest,
   CrisisResponseDTO
 } from '../../shared/models/crisis.model';
+import { RecipeCookingAudit } from '../../shared/models/kitchen.model';
 
 @Injectable({ providedIn: 'root' })
 export class TraceabilityService {
@@ -64,5 +65,9 @@ export class TraceabilityService {
 
   getReverseTraceability(cookingAuditId: number): Observable<unknown> {
     return this.http.get<unknown>(`${this.url}/reverse/${cookingAuditId}`);
+  }
+
+  getBatchCookings(batchId: number): Observable<RecipeCookingAudit[]> {
+    return this.http.get<RecipeCookingAudit[]>(`${this.url}/batch/${batchId}/cookings`);
   }
 }

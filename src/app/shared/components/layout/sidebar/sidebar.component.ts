@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -23,7 +23,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private themeService = inject(ThemeService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
   private routerSub!: Subscription;
+  private roleSub!: Subscription;
 
   isOpen = window.innerWidth > 800;
   isAdminRoute = false;
@@ -34,9 +36,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
   // Items para la vista normal
   private defaultNavItems: NavItem[] = [
     { label: 'Inicio', route: '/welcome', icon: 'home' },
-    { label: 'Inventario', route: '/inventario', icon: 'inventory', section: 'Gestión' },
-
+    { label: 'Inventario', route: '/inventario', icon: 'inventory' },
     { label: 'Recetas', route: '/recipes', icon: 'book' },
+    { label: 'Plan Semanal', route: '/weekly-plans', icon: 'calendar' },
     { label: 'Pedidos', route: '/orders', icon: 'cart' },
     { label: 'Recepción', route: '/reception', icon: 'truck' },
     { label: 'Chat IA', route: '/ai-chat', icon: 'chat' },
@@ -47,6 +49,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private adminNavItems: NavItem[] = [
     { label: 'Vista General', route: '/welcome', icon: 'home' },
     { label: 'Órdenes', route: '/admin-panel/orders', icon: 'cart', section: 'OPERACIONES' },
+    { label: 'Planes Semanales', route: '/admin-panel/weekly-plans', icon: 'calendar' },
     { label: 'Cocina', route: '/admin-panel/kitchen', icon: 'kitchen' },
     { label: 'Incidencias', route: '/admin-panel/incidents', icon: 'alert' },
     { label: 'Stock', route: '/admin-panel/stock', icon: 'inventory', section: 'INVENTARIO' },
@@ -61,7 +64,16 @@ export class SidebarComponent implements OnInit, OnDestroy {
   ];
 
   ngOnInit(): void {
+    this.authService.syncSessionProfile().subscribe({
+      next: () => this.cdr.markForCheck(),
+      error: () => this.cdr.markForCheck()
+    });
+
     this.checkRoute(this.router.url);
+    this.roleSub = this.authService.roleChanges$.subscribe(() => {
+      this.cdr.markForCheck();
+    });
+
     this.routerSub = this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event) => {
@@ -72,6 +84,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.routerSub) {
       this.routerSub.unsubscribe();
+    }
+    if (this.roleSub) {
+      this.roleSub.unsubscribe();
     }
   }
 
@@ -86,7 +101,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
     const userRole = this.getUserRole();
     if (userRole === 'ADMIN') {
-      return this.defaultNavItems;
+      return this.defaultNavItems.filter(item => item.label !== 'Plan Semanal');
     }
     if (userRole === 'USER') {
       return this.defaultNavItems.filter(item =>
@@ -95,7 +110,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
         item.label !== 'Perfil' &&
         item.label !== 'Incidencias' &&
         item.label !== 'Chat IA' &&
-        item.label !== 'Recepción' && item.label !== 'Pedidos' && item.label !== 'Perfil'
+        item.label !== 'Perfil' &&
+        item.label !== 'Plan Semanal'
       );
     }
     return this.defaultNavItems;

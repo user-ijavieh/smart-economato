@@ -40,6 +40,9 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   @Output() closeModal = new EventEmitter<void>();
   @Output() orderCreated = new EventEmitter<void>();
   @Input() editOrder: Order | null = null;
+  @Input() initialUserId: number | null = null;
+  @Input() initialSupplierId: number | null = null;
+  @Input() initialItems: Array<{ productId: number; productName: string; unit: string; quantity: number; unitPrice: number }> = [];
 
   users: User[] = [];
   selectedUserId: number | null = null;
@@ -83,6 +86,10 @@ export class OrderModalComponent implements OnInit, OnDestroy {
         quantity: d.quantity,
         unitPrice: d.unitPrice
       }));
+    } else if (this.initialItems.length > 0) {
+      this.selectedUserId = this.initialUserId;
+      this.selectedSupplierId = this.initialSupplierId;
+      this.orderItems = this.initialItems.map(item => ({ ...item }));
     }
 
     // Listener para cerrar dropdown al hacer clic fuera

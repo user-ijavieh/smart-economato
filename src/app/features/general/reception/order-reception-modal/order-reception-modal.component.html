@@ -13,7 +13,11 @@
             <div class="summary-item">
               <div class="summary-product-name">{{ detail.productName }}</div>
               <div class="summary-quantity">
-                <span class="quantity-value">{{ getFormattedQuantity(detail) }}</span>
+                <span class="quantity-value"
+                      [class.total-match]="getTotalReceived(detail) === detail.quantity"
+                      [class.total-excess]="getTotalReceived(detail) > detail.quantity">
+                  {{ getFormattedQuantity(detail) }}
+                </span>
                 <span class="comparison-symbol" [class.symbol-match]="getComparisonSymbol(detail) === '✓'" [class.symbol-missing]="getComparisonSymbol(detail) === '✕'" [class.symbol-excess]="getComparisonSymbol(detail) === '▲'">
                   {{ getComparisonSymbol(detail) }}
                 </span>
@@ -65,7 +69,9 @@
               <td><strong>{{ detail.productName }}</strong></td>
               <td class="text-center">{{ detail.quantity }} {{ detail.unit || 'uds' }}</td>
               <td class="text-center">
-                 <span class="total-badge" [class.total-match]="getTotalReceived(detail) === detail.quantity">
+                 <span class="total-badge" 
+                       [class.total-match]="getTotalReceived(detail) === detail.quantity"
+                       [class.total-excess]="getTotalReceived(detail) > detail.quantity">
                     {{ getTotalReceived(detail) }}
                  </span>
               </td>
@@ -136,7 +142,9 @@
                 </div>
                 <div class="mobile-product-meta">
                   Recibido total:
-                  <span class="total-badge" [class.total-match]="getTotalReceived(detail) === detail.quantity">
+                  <span class="total-badge" 
+                        [class.total-match]="getTotalReceived(detail) === detail.quantity"
+                        [class.total-excess]="getTotalReceived(detail) > detail.quantity">
                     {{ getTotalReceived(detail) }}
                   </span>
                 </div>

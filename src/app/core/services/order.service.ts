@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { Order, OrderRequest, OrderReceptionRequest, OrderDetail } from '../../shared/models/order.model';
+import { Order, OrderRequest, OrderReceptionRequest, OrderDetail, OrdersByProductsRequest, OrdersByProductsResponse } from '../../shared/models/order.model';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
@@ -90,5 +90,9 @@ export class OrderService {
     return this.http.get(`${this.url}/${id}/pdf`, {
       responseType: 'blob'
     });
+  }
+
+  searchByProducts(request: OrdersByProductsRequest): Observable<OrdersByProductsResponse> {
+    return this.http.post<OrdersByProductsResponse>(`${this.url}/search-by-products`, request);
   }
 }

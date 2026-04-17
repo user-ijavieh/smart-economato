@@ -1,4 +1,5 @@
 import { Page } from './page.model';
+import { OrderStatus } from './order.model';
 
 export interface WeeklyPlanRequest {
   chefId?: number;
@@ -68,6 +69,17 @@ export interface WeeklyPlanStockRequirement {
   availableStock: number;
   reservedByOtherPlans: number;
   sufficient: boolean;
+  pendingOrderQuantity?: number;
+  pendingOrderCount?: number;
+  relatedOrders?: WeeklyPlanProductPendingOrder[];
+}
+
+export interface WeeklyPlanProductPendingOrder {
+  orderId: number;
+  status: OrderStatus;
+  quantity: number;
+  supplierName?: string | null;
+  orderDate?: string;
 }
 
 export interface StudentMetrics {

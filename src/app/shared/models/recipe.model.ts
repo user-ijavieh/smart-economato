@@ -40,3 +40,22 @@ export interface CookRequest {
   quantity: number;
   details: string;
 }
+
+export interface CookableRecipeComponent {
+  productId: number;
+  productName: string;
+  unit: string;
+  requiredQuantity: number;
+  availableStock: number;
+  reservedByOtherPlans?: number;
+}
+
+export interface CookableRecipe {
+  id: number;
+  name: string;
+  portions?: number;
+  cookableQuantity: number;
+  cookable: boolean;
+  components: CookableRecipeComponent[];
+  allergens: Allergen[];
+}

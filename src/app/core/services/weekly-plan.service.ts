@@ -30,6 +30,10 @@ export class WeeklyPlanService {
     return this.http.patch<WeeklyPlanResponse>(`${this.url}/${planId}/activate`, {});
   }
 
+  deactivatePlan(planId: number): Observable<WeeklyPlanResponse> {
+    return this.http.patch<WeeklyPlanResponse>(`${this.url}/${planId}/deactivate`, {});
+  }
+
   confirmSlot(planId: number, slotId: number): Observable<WeeklyPlanSlotResponse> {
     return this.http.patch<WeeklyPlanSlotResponse>(`${this.url}/${planId}/slots/${slotId}/confirm`, {});
   }
@@ -40,6 +44,10 @@ export class WeeklyPlanService {
 
   confirmDay(planId: number, dayOfWeek: number): Observable<ConfirmDayResponse> {
     return this.http.patch<ConfirmDayResponse>(`${this.url}/${planId}/days/${dayOfWeek}/confirm`, {});
+  }
+
+  unconfirmDay(planId: number, dayOfWeek: number): Observable<ConfirmDayResponse> {
+    return this.http.patch<ConfirmDayResponse>(`${this.url}/${planId}/days/${dayOfWeek}/unconfirm`, {});
   }
 
   getPlanById(planId: number): Observable<WeeklyPlanResponse> {

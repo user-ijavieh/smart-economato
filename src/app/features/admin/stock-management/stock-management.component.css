@@ -630,6 +630,23 @@ tbody.loading { opacity: 0.6; }
   gap: 10px;
 }
 
+.summary-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--theme-surface-glass-hover);
+  border: 1px solid var(--theme-border-glass);
+  color: var(--theme-text-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.summary-toggle input {
+  accent-color: var(--brand-primary);
+}
+
 .summary-chip {
   padding: 6px 12px;
   border-radius: 999px;
@@ -696,6 +713,112 @@ tbody.loading { opacity: 0.6; }
   font-size: 0.85rem;
 }
 
+.pool-search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid var(--theme-border-glass);
+  background: var(--theme-surface-glass-hover);
+}
+
+.pool-search-row:focus-within {
+  border-color: color-mix(in srgb, var(--brand-primary) 65%, white 35%);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand-primary) 30%, transparent 70%);
+}
+
+.search-icon {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  margin-left: 4px;
+}
+
+.pool-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  color: var(--theme-text-primary);
+  min-height: 34px;
+}
+
+.pool-search-input:focus {
+  outline: none;
+}
+
+.pool-search-row .pool-search-input.form-control {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 4px 0 !important;
+}
+
+.btn-clear-search {
+  border: none;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: var(--theme-surface-glass-active);
+  color: var(--theme-text-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-clear-search:hover {
+  background: color-mix(in srgb, var(--brand-primary) 22%, var(--theme-surface-glass-active));
+}
+
+.pool-search-count {
+  min-width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: var(--theme-surface-glass-hover);
+  border: 1px solid var(--theme-border-glass);
+  color: var(--theme-text-primary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.supplier-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-radius: 14px;
+  border: 1px solid var(--theme-border-glass);
+  background: var(--theme-surface-glass);
+  padding: 8px;
+}
+
+.supplier-section-trigger {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  background: var(--theme-surface-glass-hover);
+  color: var(--theme-text-primary);
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.supplier-section-meta {
+  font-size: 0.75rem;
+  color: var(--theme-text-secondary);
+}
+
+.supplier-section-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .order-card-list {
   display: flex;
   flex-direction: column;
@@ -712,6 +835,29 @@ tbody.loading { opacity: 0.6; }
   padding: 14px;
   cursor: grab;
   transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.order-item-card.selected {
+  border-color: var(--brand-primary);
+  background: color-mix(in srgb, var(--brand-primary) 12%, var(--theme-surface-glass-active));
+}
+
+.item-selector {
+  align-self: flex-start;
+  display: inline-flex;
+  padding-top: 2px;
+}
+
+.item-selector input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brand-primary);
+  cursor: pointer;
+}
+
+.item-selector input:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
 }
 
 .order-item-card:active {
@@ -782,11 +928,34 @@ tbody.loading { opacity: 0.6; }
 .order-groups {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
 }
 
 .order-group-card {
-  padding: 14px;
+  padding: 16px;
+}
+
+.panel-actions-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.order-destinations-panel .toolbar-btn {
+  min-height: 36px;
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.order-destinations-panel .btn-crear-completa {
+  background: color-mix(in srgb, var(--brand-primary) 18%, var(--theme-surface-glass-active));
+  border-color: color-mix(in srgb, var(--brand-primary) 40%, var(--theme-border-glass));
+  color: var(--theme-text-primary);
 }
 
 .order-group-header {

@@ -877,8 +877,15 @@ export class RecipesManagementComponent implements OnInit {
 
     // ── Cook ──
 
-    onCookRecipe(event: { quantity: number; details: string }): void {
+    async onCookRecipe(event: { quantity: number; details: string }): Promise<void> {
         if (!this.selectedRecipe) return;
+
+        const confirmed = await this.messageService.confirm(
+            'Confirmar cocinado',
+            `¿Deseas cocinar ${event.quantity} unidad(es) de "${this.selectedRecipe.name}"?`
+        );
+
+        if (!confirmed) return;
 
         this.recipeService.cook({
             recipeId: this.selectedRecipe.id,
