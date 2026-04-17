@@ -801,8 +801,8 @@ tbody tr:hover {
   font-family: var(--font-heading);
 }
 
-.ingredients-table th { background: rgba(0,0,0,0.3); }
-.ingredients-table tfoot { background: rgba(0,0,0,0.3); font-weight: bold; }
+.ingredients-table th { background: var(--theme-section-header-bg-strong); }
+.ingredients-table tfoot { background: var(--theme-section-header-bg-strong); font-weight: bold; }
 .text-right { text-align: right; }
 
 /** ===== AUDIT DETAIL MODAL ===== */
@@ -833,7 +833,7 @@ tbody tr:hover {
   align-items: flex-start;
   justify-content: space-between;
   padding: 20px 28px;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--theme-section-header-bg-strong);
   color: white;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -947,14 +947,14 @@ tbody tr:hover {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--theme-section-header-bg);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   overflow: hidden;
 }
 
 .diff-table th {
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--theme-table-header-bg);
   color: var(--text-secondary);
   font-weight: 600;
   text-align: left;

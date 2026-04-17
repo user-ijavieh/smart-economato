@@ -342,3 +342,45 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ===== LIGHT MODE OVERRIDES ===== */
+[data-theme="light"] .section-card {
+  background: #f8fafc;
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .dropdown-item {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .dropdown-item:hover {
+  background: #f8fafc;
+}
+
+[data-theme="light"] .summary-box {
+  background: #f8fafc;
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .detail-row,
+[data-theme="light"] .summary-row,
+[data-theme="light"] .credential-row {
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .variant-toggle {
+  background: #f8fafc;
+  border-color: rgba(0, 0, 0, 0.10);
+  color: #475569;
+}
+
+[data-theme="light"] .form-stack input,
+[data-theme="light"] .form-stack select,
+[data-theme="light"] .form-grid-two input,
+[data-theme="light"] .form-grid-two select,
+[data-theme="light"] .section-card input,
+[data-theme="light"] .section-card select {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.10);
+}
