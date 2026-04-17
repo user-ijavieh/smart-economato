@@ -7,8 +7,6 @@ import { Observable } from 'rxjs';
 import { Page } from '../../../shared/models/page.model';
 import { Supplier, SupplierRequest } from '../../../shared/models/supplier.model';
 import { SupplierFormModalComponent } from './supplier-form-modal/supplier-form-modal.component';
-import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
-import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 
@@ -19,9 +17,7 @@ import { BaseModalComponent } from '../../../shared/components/base-modal/base-m
         CommonModule,
         FormsModule,
         SupplierFormModalComponent,
-        BaseModalComponent,
-        ConfirmDialogComponent,
-        ToastComponent
+        BaseModalComponent
     ],
     templateUrl: './suppliers-management.component.html',
     styleUrl: './suppliers-management.component.css'
