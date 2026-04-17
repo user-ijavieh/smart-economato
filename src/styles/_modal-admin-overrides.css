@@ -85,3 +85,78 @@
   color: var(--color-accent-admin);
   background: rgba(90, 120, 220, 0.1);
 }
+
+/* ===== ADMIN THEME - LIGHT MODE MODAL OVERRIDES ===== */
+
+/* Dialog admin light: blanco solido */
+[data-theme="light"] .admin-theme app-base-modal .modal-dialog {
+  background: #ffffff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Header admin light: mantener gradiente azul */
+[data-theme="light"] .admin-theme app-base-modal .modal-header {
+  background: linear-gradient(to right, rgba(37, 99, 235, 0.08), transparent);
+  border-bottom: 1px solid rgba(37, 99, 235, 0.08);
+}
+
+/* Boton primario admin light: azul solido con texto blanco */
+[data-theme="light"] .admin-theme app-base-modal .modal-btn-primary,
+[data-theme="light"] .admin-theme app-base-modal .btn-save,
+[data-theme="light"] .admin-theme app-base-modal .btn-cocinar,
+[data-theme="light"] .admin-theme app-base-modal .btn-imprimir {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+}
+
+[data-theme="light"] .admin-theme app-base-modal .modal-btn-primary:hover:not(:disabled),
+[data-theme="light"] .admin-theme app-base-modal .btn-save:hover:not(:disabled),
+[data-theme="light"] .admin-theme app-base-modal .btn-cocinar:hover:not(:disabled),
+[data-theme="light"] .admin-theme app-base-modal .btn-imprimir:hover:not(:disabled) {
+  background: #1d4ed8;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+}
+
+/* Boton secundario/editar admin light */
+[data-theme="light"] .admin-theme app-base-modal .modal-btn-cancel,
+[data-theme="light"] .admin-theme app-base-modal .btn-editar {
+  background: rgba(37, 99, 235, 0.06);
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.18);
+}
+
+[data-theme="light"] .admin-theme app-base-modal .modal-btn-cancel:hover:not(:disabled),
+[data-theme="light"] .admin-theme app-base-modal .btn-editar:hover {
+  background: rgba(37, 99, 235, 0.12);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.10);
+}
+
+/* Boton eliminar admin light */
+[data-theme="light"] .admin-theme app-base-modal .modal-btn-danger,
+[data-theme="light"] .admin-theme app-base-modal .btn-eliminar {
+  background: rgba(220, 38, 38, 0.06);
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.18);
+}
+
+[data-theme="light"] .admin-theme app-base-modal .modal-btn-danger:hover:not(:disabled),
+[data-theme="light"] .admin-theme app-base-modal .btn-eliminar:hover {
+  background: rgba(220, 38, 38, 0.12);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.12);
+}
+
+/* Opciones seleccionadas admin light */
+[data-theme="light"] .admin-theme app-base-modal .product-option.selected {
+  background: rgba(37, 99, 235, 0.06);
+  color: #2563eb;
+}
+
+/* Boton anadir componente admin light */
+[data-theme="light"] .admin-theme app-base-modal .btn-add-component:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.04);
+}
