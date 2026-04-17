@@ -15,8 +15,6 @@ import { ProductEditModalComponent } from '../../general/inventory/product-edit-
 import { ProductDetailModalComponent } from '../../general/inventory/product-detail-modal/product-detail-modal.component';
 import { BarcodeScannerComponent } from '../../general/barcode-scanner/barcode-scanner.component';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
-import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
-import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { PresenceTrackingService } from '../../../core/services/presence-tracking.service';
 import { finalize, catchError, forkJoin } from 'rxjs';
@@ -32,9 +30,7 @@ import { of } from 'rxjs';
     ProductEditModalComponent,
     ProductDetailModalComponent,
     BarcodeScannerComponent,
-    BaseModalComponent,
-    ConfirmDialogComponent,
-    ToastComponent
+    BaseModalComponent
   ],
   templateUrl: './products-management.component.html',
   styleUrl: './products-management.component.css',

@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
-import { AsyncPipe, DatePipe, DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize, debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { SupplierService } from '../../../core/services/supplier.service';
@@ -8,7 +8,6 @@ import { ProductService } from '../../../core/services/product.service';
 import { MessageService } from '../../../core/services/message.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { BarcodeScannerComponent } from '../../general/barcode-scanner/barcode-scanner.component';
-import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import {
   CrisisActivationRequest,
   CrisisResponseDTO
@@ -21,7 +20,7 @@ type CrisisView = 'active' | 'history';
 @Component({
   selector: 'app-traceability-management',
   standalone: true,
-  imports: [FormsModule, ToastComponent, BaseModalComponent, BarcodeScannerComponent, AsyncPipe, DatePipe, DecimalPipe],
+  imports: [FormsModule, BaseModalComponent, BarcodeScannerComponent, DatePipe, DecimalPipe],
   templateUrl: './traceability-management.component.html',
   styleUrl: './traceability-management.component.css'
 })

@@ -10,7 +10,6 @@ import { ProductService } from '../../../core/services/product.service';
 import { OrderService } from '../../../core/services/order.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { MessageService } from '../../../core/services/message.service';
-import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { ProductBatchService } from '../../../core/services/product-batch.service';
 import { BatchTypeaheadDTO } from '../../../core/services/product-batch.service';
 import { SupplierService } from '../../../core/services/supplier.service';
@@ -61,7 +60,7 @@ interface RepositionOrderGroup {
 @Component({
     selector: 'app-stock-management',
     standalone: true,
-    imports: [CommonModule, FormsModule, ToastComponent, BaseChartDirective, BaseModalComponent, BarcodeScannerComponent],
+    imports: [CommonModule, FormsModule, BaseChartDirective, BaseModalComponent, BarcodeScannerComponent],
     templateUrl: './stock-management.component.html',
     styleUrl: './stock-management.component.css'
 })
