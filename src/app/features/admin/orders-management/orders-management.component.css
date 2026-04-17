@@ -680,20 +680,12 @@ tbody tr:hover {
   font-family: var(--font-heading);
 }
 
-.ingredients-table {
-  background: var(--theme-surface-glass-hover);
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid var(--theme-surface-glass-active);
-}
-
-.ingredients-table th {
-  background: var(--theme-section-header-bg-strong);
-}
-
-.ingredients-table tfoot {
-  background: var(--theme-section-header-bg-strong);
-  font-weight: bold;
+.order-detail-layout .modal-section h4 {
+  margin: 14px 0 16px;
+  font-size: 2rem;
+  line-height: 1.1;
+  color: var(--theme-text-primary);
+  font-family: var(--font-heading);
 }
 
 .text-right {
