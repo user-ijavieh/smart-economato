@@ -91,7 +91,7 @@
                 [class.expired-row]="batch.expired" 
                 [class.depleted-row]="batch.depleted" 
                 class="clickable-row"
-                (click)="openEditModal(batch)">
+                (click)="onRowClick(batch)">
                 <td><span class="id-badge">#{{batch.id}}</span></td>
                 <td>
                   <div class="product-name-with-icon">
@@ -129,13 +129,13 @@
                   </span>
                 </td>
                 <td class="actions-cell">
-                  <button class="btn-editar" (click)="$event.stopPropagation(); openEditModal(batch)" title="Editar Caducidad">
+                  <button class="btn-editar" (click)="$event.stopPropagation(); onRowClick(batch)" title="Editar Caducidad">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12|6.813-6.814z"/>
                     </svg>
                   </button>
                   @if (!batch.depleted) {
-                    <button class="btn-eliminar" (click)="$event.stopPropagation(); onWithdraw(batch)" title="Desechar Lote">
+                    <button class="btn-eliminar btn-icon-only" (click)="$event.stopPropagation(); onWithdraw(batch)" title="Desechar Lote">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                         <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
@@ -179,7 +179,7 @@
             class="batch-card" 
             [class.card-expired]="batch.expired" 
             [class.card-depleted]="batch.depleted"
-            (click)="openEditModal(batch)">
+            (click)="onRowClick(batch)">
             <div class="card-header">
               <span class="id-badge">#{{ batch.id }}</span>
               <span class="action-badge" [class.badge-delete]="batch.expired" [class.badge-update]="batch.daysUntilExpiration <= 7 && !batch.expired" [class.badge-create]="!batch.expired && batch.daysUntilExpiration > 7 && !batch.depleted" [class.badge-default]="batch.depleted">
@@ -311,7 +311,7 @@
             }
           } @else {
             @for (batch of controlBatches; track batch.id) {
-              <tr class="clickable-row" (click)="openEditModal(batch)">
+              <tr class="clickable-row" (click)="onRowClick(batch)">
                 <td>
                   <div class="product-cell">
                     <strong class="product-name-text">{{ batch.productName }}</strong>
@@ -341,12 +341,12 @@
                   </span>
                 </td>
                 <td class="actions-cell">
-                  <button class="btn-editar" (click)="$event.stopPropagation(); openEditModal(batch)" title="Editar Caducidad">
+                  <button class="btn-editar" (click)="$event.stopPropagation(); onRowClick(batch)" title="Editar Caducidad">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                     </svg>
                   </button>
-                  <button class="btn-eliminar" (click)="$event.stopPropagation(); onWithdraw(batch)" title="Desechar Lote">
+                  <button class="btn-eliminar btn-icon-only" (click)="$event.stopPropagation(); onWithdraw(batch)" title="Desechar Lote">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                       <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
@@ -383,7 +383,7 @@
         }
       } @else {
         @for (batch of controlBatches; track batch.id) {
-          <div class="batch-card" (click)="openEditModal(batch)">
+          <div class="batch-card" (click)="onRowClick(batch)">
             <div class="card-header">
               <span class="id-badge">#{{ batch.id }}</span>
               <span class="action-badge" [class.badge-delete]="batch.expired" [class.badge-update]="batch.daysUntilExpiration <= 7 && !batch.expired" [class.badge-create]="!batch.expired && batch.daysUntilExpiration > 7">
@@ -441,5 +441,70 @@
     (close)="onModalClosed()"
     (save)="onSaveBatch($event)">
   </app-batch-expiration-modal>
+}
+
+<!-- MODAL VISUALIZACION -->
+@if (showViewModal && selectedBatch) {
+  <app-base-modal title="Información de Lote #{{ selectedBatch.id }}" size="lg" (closed)="onViewModalClosed()">
+    <div class="modal-container traceability-modal-container">
+      <div class="crisis-detail-content" style="border-left: none; padding: 0;">
+        <div class="detail-grid-standard">
+          <div class="detail-col">
+            <strong>Producto:</strong>
+            <p>{{ selectedBatch.productName }}</p>
+            <strong>Código de lote:</strong>
+            <p>{{ selectedBatch.batchCode || '-' }}</p>
+            <strong>Estado:</strong>
+            <p>{{ getStatusText(selectedBatch) }}</p>
+          </div>
+          <div class="detail-col">
+            <strong>Cantidad Original:</strong>
+            <p>{{ selectedBatch.initialQuantity | number:'1.0-2' }}</p>
+            <strong>Stock Restante:</strong>
+            <p>{{ selectedBatch.remainingQuantity | number:'1.0-2' }}</p>
+            <strong>Caducidad:</strong>
+            <p>{{ (selectedBatch.expirationDate | date:'dd/MM/yyyy') || 'Sin fecha' }}</p>
+          </div>
+        </div>
+
+        <div class="affected-batches-section" style="margin-top: 20px;">
+          <strong>Trazabilidad: Historial de Cocinado</strong>
+          
+          @if (loadingCookings) {
+            <p style="margin-top: 10px; color: #666;">Cargando trazabilidad...</p>
+          } @else if (batchCookings.length > 0) {
+            <div class="traceability-table-wrap" style="margin-top: 10px;">
+              <table class="traceability-sub-table">
+                <thead><tr><th>#ID</th><th>Receta</th><th>Cocinero</th><th>Fecha</th><th>Cantidad</th></tr></thead>
+                <tbody>
+                  @for (cook of batchCookings; track cook.id) {
+                    <tr>
+                      <td><span class="id-badge">#{{ cook.id }}</span></td>
+                      <td><strong>{{ cook.recipeName }}</strong></td>
+                      <td>{{ cook.userName }}</td>
+                      <td>{{ cook.cookingDate | date:'dd/MM/yyyy HH:mm' }}</td>
+                      <td>{{ cook.quantityCooked | number:'1.0-2' }} raciones</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+             <p style="margin-top: 10px; color: #666; font-style: italic;">No se han registrado cocinados con este lote.</p>
+          }
+        </div>
+      </div>
+    </div>
+    <div modal-footer>
+      <div style="display: flex; justify-content: flex-end;">
+        <button type="button" class="modal-btn modal-btn-primary" (click)="openEditModalFromView()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+          </svg>
+          Editar Caducidad
+        </button>
+      </div>
+    </div>
+  </app-base-modal>
 }
 

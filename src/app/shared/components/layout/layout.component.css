@@ -36,7 +36,7 @@ main.main-expanded {
   position: fixed;
   top: 12px;
   right: 16px;
-  z-index: 1002;
+  z-index: 11000;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -88,6 +88,37 @@ main.main-expanded {
   justify-content: center;
   cursor: pointer;
   transition: transform 0.2s;
+}
+
+.logout-utility {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--color-danger) 25%, transparent);
+  background: color-mix(in srgb, var(--color-danger) 10%, transparent);
+  color: var(--color-danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+:host-context([data-theme="light"]) .logout-utility {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.15);
+}
+
+.logout-utility:hover {
+  transform: translateY(-1px);
+  background: var(--color-danger);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+}
+
+:host-context([data-theme="light"]) .logout-utility:hover {
+  background: var(--color-danger);
+  color: #fff;
 }
 
 .notifications-bell {
@@ -163,7 +194,7 @@ main.main-expanded {
   right: 16px;
   width: min(390px, calc(100vw - 24px));
   max-height: min(70vh, 620px);
-  z-index: 1002;
+  z-index: 40000;
   border-radius: 14px;
   border: 1px solid var(--theme-border-glass);
   background: var(--theme-section-header-bg-strong);
@@ -183,7 +214,7 @@ main.main-expanded {
 .notifications-overlay {
   position: fixed;
   inset: 0;
-  z-index: 1001;
+  z-index: 39999;
   background: rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(1px);
   animation: notificationsOverlayIn 180ms ease-out both;
@@ -382,7 +413,8 @@ main.main-expanded {
 
   .utilities-toggle, 
   .mobile-theme-toggle, 
-  .notifications-bell {
+  .notifications-bell,
+  .logout-utility {
     width: 32px;
     height: 32px;
   }

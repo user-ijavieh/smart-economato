@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Page } from '../../shared/models/page.model';
-import { Recipe, RecipeRequest, CookRequest } from '../../shared/models/recipe.model';
+import { Recipe, RecipeRequest, CookRequest, CookableRecipe } from '../../shared/models/recipe.model';
 import { map } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -54,6 +54,10 @@ export class RecipeService {
 
   getById(id: number): Observable<Recipe> {
     return this.http.get<Recipe>(`${this.url}/${id}`);
+  }
+
+  getCookableRecipes(): Observable<CookableRecipe[]> {
+    return this.http.get<CookableRecipe[]>(`${this.url}/cookable`);
   }
 
   create(recipe: RecipeRequest): Observable<Recipe> {

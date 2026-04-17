@@ -7,8 +7,6 @@ import { UserService } from '../../../core/services/user.service';
 import { MessageService } from '../../../core/services/message.service';
 import { User, UserRequest, BatchAssignResponse } from '../../../shared/models/user.model';
 import { UserFormModalComponent } from './user-form-modal/user-form-modal.component';
-import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
-import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { WebSocketService } from '../../../core/services/websocket.service';
 import { UserPresenceSnapshot } from '../../../shared/models/presence.model';
@@ -25,8 +23,6 @@ import { BaseModalComponent } from '../../../shared/components/base-modal/base-m
         FormsModule,
         UserFormModalComponent,
         BaseModalComponent,
-        ConfirmDialogComponent,
-        ToastComponent
     ],
     templateUrl: './users-management.component.html',
     styleUrl: './users-management.component.css'
