@@ -1,5 +1,18 @@
 /* ===== ADMIN THEME - MODAL OVERRIDES ===== */
 
+/* Shell de confirm dialog en admin */
+.admin-theme app-confirm-dialog .dialog-content {
+  background: linear-gradient(135deg, color-mix(in srgb, rgba(90, 120, 220, 0.18) 18%, transparent), transparent 42%), var(--theme-modal-glass-bg);
+  border: 1px solid rgba(90, 120, 220, 0.2);
+  box-shadow: 0 12px 40px rgba(90, 120, 220, 0.18), 0 4px 20px var(--theme-table-header-bg);
+}
+
+.admin-theme app-confirm-dialog .dialog-header {
+  background: linear-gradient(to right, rgba(90, 120, 220, 0.16), transparent);
+  border-bottom-color: rgba(90, 120, 220, 0.16);
+}
+
+
 /* Variables de marca admin para modales general-feature que se usan en contexto admin */
 .admin-theme app-product-create-modal,
 .admin-theme app-product-detail-modal,
@@ -19,7 +32,15 @@
 .admin-theme app-base-modal .modal-btn-primary,
 .admin-theme app-base-modal .btn-save,
 .admin-theme app-base-modal .btn-cocinar,
-.admin-theme app-base-modal .btn-imprimir {
+.admin-theme app-base-modal .btn-imprimir,
+.admin-theme app-base-modal .btn-confirm,
+.admin-theme app-base-modal .draft-modal-btn-primary,
+.admin-theme app-base-modal .btn-save-draft,
+.admin-theme app-base-modal .btn-confirm-assignments,
+.admin-theme app-base-modal .adjustment-confirm-btn,
+.admin-theme app-base-modal .btn-lift,
+.admin-theme app-base-modal .btn-incident-primary,
+.admin-theme app-confirm-dialog .btn-confirm {
   background: var(--theme-surface-glass-active);
   border: none;
   box-shadow: 0 4px 18px rgba(90, 120, 220, 0.2);
@@ -29,21 +50,37 @@
 .admin-theme app-base-modal .modal-btn-primary:hover:not(:disabled),
 .admin-theme app-base-modal .btn-save:hover:not(:disabled),
 .admin-theme app-base-modal .btn-cocinar:hover:not(:disabled),
-.admin-theme app-base-modal .btn-imprimir:hover:not(:disabled) {
+.admin-theme app-base-modal .btn-imprimir:hover:not(:disabled),
+.admin-theme app-base-modal .btn-confirm:hover:not(:disabled),
+.admin-theme app-base-modal .draft-modal-btn-primary:hover:not(:disabled),
+.admin-theme app-base-modal .btn-save-draft:hover:not(:disabled),
+.admin-theme app-base-modal .btn-confirm-assignments:hover:not(:disabled),
+.admin-theme app-base-modal .adjustment-confirm-btn:hover:not(:disabled),
+.admin-theme app-base-modal .btn-lift:hover:not(:disabled),
+.admin-theme app-base-modal .btn-incident-primary:hover:not(:disabled),
+.admin-theme app-confirm-dialog .btn-confirm:hover:not(:disabled) {
   background: rgba(90, 120, 220, 0.8);
   box-shadow: 0 8px 25px rgba(90, 120, 220, 0.4);
 }
 
 /* Boton secundario/editar en admin */
 .admin-theme app-base-modal .modal-btn-cancel,
-.admin-theme app-base-modal .btn-editar {
+.admin-theme app-base-modal .btn-editar,
+.admin-theme app-base-modal .btn-cancel,
+.admin-theme app-base-modal .btn-cancel-assignments,
+.admin-theme app-base-modal .btn-incident-ghost,
+.admin-theme app-confirm-dialog .btn-cancel {
   background: rgba(90, 120, 220, 0.15);
   color: var(--color-accent-admin);
   border: 1px solid rgba(90, 120, 220, 0.3);
 }
 
 .admin-theme app-base-modal .modal-btn-cancel:hover:not(:disabled),
-.admin-theme app-base-modal .btn-editar:hover {
+.admin-theme app-base-modal .btn-editar:hover,
+.admin-theme app-base-modal .btn-cancel:hover,
+.admin-theme app-base-modal .btn-cancel-assignments:hover,
+.admin-theme app-base-modal .btn-incident-ghost:hover,
+.admin-theme app-confirm-dialog .btn-cancel:hover {
   background: rgba(90, 120, 220, 0.25);
   box-shadow: 0 8px 25px rgba(90, 120, 220, 0.15);
 }
@@ -77,6 +114,19 @@
 
 /* ===== ADMIN THEME - LIGHT MODE MODAL OVERRIDES ===== */
 
+[data-theme="light"] .admin-theme app-confirm-dialog .dialog-content {
+  background: #ffffff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  box-shadow: 0 12px 40px rgba(37, 99, 235, 0.10), 0 4px 20px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="light"] .admin-theme app-confirm-dialog .dialog-header {
+  background: linear-gradient(to right, rgba(37, 99, 235, 0.18), rgba(37, 99, 235, 0.05));
+  border-bottom-color: rgba(37, 99, 235, 0.18);
+}
+
 [data-theme="light"] .admin-theme app-base-modal .modal-dialog {
   background: #ffffff;
   backdrop-filter: none;
@@ -91,7 +141,15 @@
 [data-theme="light"] .admin-theme app-base-modal .modal-btn-primary,
 [data-theme="light"] .admin-theme app-base-modal .btn-save,
 [data-theme="light"] .admin-theme app-base-modal .btn-cocinar,
-[data-theme="light"] .admin-theme app-base-modal .btn-imprimir {
+[data-theme="light"] .admin-theme app-base-modal .btn-imprimir,
+[data-theme="light"] .admin-theme app-base-modal .btn-confirm,
+[data-theme="light"] .admin-theme app-base-modal .draft-modal-btn-primary,
+[data-theme="light"] .admin-theme app-base-modal .btn-save-draft,
+[data-theme="light"] .admin-theme app-base-modal .btn-confirm-assignments,
+[data-theme="light"] .admin-theme app-base-modal .adjustment-confirm-btn,
+[data-theme="light"] .admin-theme app-base-modal .btn-lift,
+[data-theme="light"] .admin-theme app-base-modal .btn-incident-primary,
+[data-theme="light"] .admin-theme app-confirm-dialog .btn-confirm {
   background: #2563eb;
   color: #ffffff;
   border: none;
@@ -101,20 +159,36 @@
 [data-theme="light"] .admin-theme app-base-modal .modal-btn-primary:hover:not(:disabled),
 [data-theme="light"] .admin-theme app-base-modal .btn-save:hover:not(:disabled),
 [data-theme="light"] .admin-theme app-base-modal .btn-cocinar:hover:not(:disabled),
-[data-theme="light"] .admin-theme app-base-modal .btn-imprimir:hover:not(:disabled) {
+[data-theme="light"] .admin-theme app-base-modal .btn-imprimir:hover:not(:disabled),
+[data-theme="light"] .admin-theme app-base-modal .btn-confirm:hover:not(:disabled),
+[data-theme="light"] .admin-theme app-base-modal .draft-modal-btn-primary:hover:not(:disabled),
+[data-theme="light"] .admin-theme app-base-modal .btn-save-draft:hover:not(:disabled),
+[data-theme="light"] .admin-theme app-base-modal .btn-confirm-assignments:hover:not(:disabled),
+[data-theme="light"] .admin-theme app-base-modal .adjustment-confirm-btn:hover:not(:disabled),
+[data-theme="light"] .admin-theme app-base-modal .btn-lift:hover:not(:disabled),
+[data-theme="light"] .admin-theme app-base-modal .btn-incident-primary:hover:not(:disabled),
+[data-theme="light"] .admin-theme app-confirm-dialog .btn-confirm:hover:not(:disabled) {
   background: #1d4ed8;
   box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
 }
 
 [data-theme="light"] .admin-theme app-base-modal .modal-btn-cancel,
-[data-theme="light"] .admin-theme app-base-modal .btn-editar {
+[data-theme="light"] .admin-theme app-base-modal .btn-editar,
+[data-theme="light"] .admin-theme app-base-modal .btn-cancel,
+[data-theme="light"] .admin-theme app-base-modal .btn-cancel-assignments,
+[data-theme="light"] .admin-theme app-base-modal .btn-incident-ghost,
+[data-theme="light"] .admin-theme app-confirm-dialog .btn-cancel {
   background: rgba(37, 99, 235, 0.06);
   color: #2563eb;
   border: 1px solid rgba(37, 99, 235, 0.18);
 }
 
 [data-theme="light"] .admin-theme app-base-modal .modal-btn-cancel:hover:not(:disabled),
-[data-theme="light"] .admin-theme app-base-modal .btn-editar:hover {
+[data-theme="light"] .admin-theme app-base-modal .btn-editar:hover,
+[data-theme="light"] .admin-theme app-base-modal .btn-cancel:hover,
+[data-theme="light"] .admin-theme app-base-modal .btn-cancel-assignments:hover,
+[data-theme="light"] .admin-theme app-base-modal .btn-incident-ghost:hover,
+[data-theme="light"] .admin-theme app-confirm-dialog .btn-cancel:hover {
   background: rgba(37, 99, 235, 0.12);
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.10);
 }
