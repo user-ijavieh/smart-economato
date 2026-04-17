@@ -5,7 +5,6 @@ import { RouterModule, RouterOutlet, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { MessageService, Toast } from '../../../core/services/message.service';
 import { SidebarComponent } from './sidebar/sidebar.component';
-import { ToastComponent } from './toast/toast.component';
 import { ThemeService } from '../../../core/services/theme.service';
 import { BaseModalComponent } from '../base-modal/base-modal.component';
 import { slideInAnimation } from '../../animations/route-animations';
@@ -15,7 +14,7 @@ import { PresenceTrackingService } from '../../../core/services/presence-trackin
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [AsyncPipe, RouterModule, SidebarComponent, ToastComponent, BaseModalComponent],
+  imports: [AsyncPipe, RouterModule, SidebarComponent, BaseModalComponent],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.css',
   animations: [slideInAnimation],

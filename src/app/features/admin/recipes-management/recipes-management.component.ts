@@ -14,8 +14,6 @@ import { RecipeCreateModalComponent } from '../../general/recipes/recipe-create-
 import { RecipeEditModalComponent } from '../../general/recipes/recipe-edit-modal/recipe-edit-modal.component';
 import { RecipeDetailModalComponent } from '../../general/recipes/recipe-detail-modal/recipe-detail-modal.component';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
-import { ConfirmDialogComponent } from '../../../shared/components/layout/confirm-dialog/confirm-dialog.component';
-import { ToastComponent } from '../../../shared/components/layout/toast/toast.component';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { finalize, catchError, forkJoin } from 'rxjs';
 import { of } from 'rxjs';
@@ -30,8 +28,6 @@ import { of } from 'rxjs';
         RecipeEditModalComponent,
         RecipeDetailModalComponent,
         BaseModalComponent,
-        ConfirmDialogComponent,
-        ToastComponent
     ],
     templateUrl: './recipes-management.component.html',
     styleUrl: './recipes-management.component.css',
