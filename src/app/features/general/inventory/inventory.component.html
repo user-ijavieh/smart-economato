@@ -303,18 +303,6 @@
   ></app-product-edit-modal>
 }
 
-<!-- Confirm Dialog -->
-<app-confirm-dialog></app-confirm-dialog>
-
-<!-- Toast Notifications -->
-<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
-
-<!-- Confirm Dialog -->
-<app-confirm-dialog></app-confirm-dialog>
-
-<!-- Toast Notifications -->
-<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
-
 <!-- Modal de detalles del producto -->
 @if (showDetailModal && selectedProduct) {
   <app-product-detail-modal

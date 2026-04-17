@@ -1,5 +1,6 @@
 <div
   class="modal-overlay"
+  [style.z-index]="overlayZIndex"
   [class.closing]="isClosing"
   [class.modal-overlay-fullscreen]="size === 'fullscreen'"
   (click)="onOverlayClick($event)"

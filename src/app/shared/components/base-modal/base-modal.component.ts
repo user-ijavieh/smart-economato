@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  inject
+} from '@angular/core';
+import { ModalStackService } from '../../../core/services/modal-stack.service';
 
 @Component({
   selector: 'app-base-modal',
@@ -10,10 +21,11 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, In
     '(document:keydown.escape)': 'onEscapeKey()'
   }
 })
-export class BaseModalComponent {
+export class BaseModalComponent implements OnInit, OnDestroy {
   @Input() title = '';
   @Input() headerClass = '';
   @Input() size: 'sm' | 'md' | 'lg' | 'fullscreen' = 'md';
+  @Input() zIndex: number | null = null;
   @Input() closeOnBackdrop = true;
   @Input() showCloseButton = true;
   @Input() showHeader = true;
@@ -21,10 +33,34 @@ export class BaseModalComponent {
   @Output() closed = new EventEmitter<void>();
 
   private cdr = inject(ChangeDetectorRef);
+  private modalStack = inject(ModalStackService);
+  private readonly modalId = `modal-${Math.random().toString(36).slice(2)}-${Date.now()}`;
+
   isClosing = false;
 
+  ngOnInit(): void {
+    this.modalStack.register(this.modalId);
+    this.cdr.markForCheck();
+  }
+
+  ngOnDestroy(): void {
+    this.modalStack.unregister(this.modalId);
+  }
+
+  private canHandleCloseEvents(): boolean {
+    return this.modalStack.isTop(this.modalId);
+  }
+
+  get overlayZIndex(): number {
+    if (this.zIndex !== null) {
+      return this.zIndex;
+    }
+
+    return this.modalStack.getZIndex(this.modalId);
+  }
+
   onOverlayClick(event: MouseEvent): void {
-    if (!this.closeOnBackdrop || this.isClosing) {
+    if (!this.closeOnBackdrop || this.isClosing || !this.canHandleCloseEvents()) {
       return;
     }
 
@@ -34,7 +70,7 @@ export class BaseModalComponent {
   }
 
   onEscapeKey(): void {
-    if (!this.isClosing) {
+    if (!this.isClosing && this.canHandleCloseEvents()) {
       this.close();
     }
   }

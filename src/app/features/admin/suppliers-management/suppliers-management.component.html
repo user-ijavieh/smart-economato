@@ -111,12 +111,6 @@
     (close)="closeFormModal()"></app-supplier-form-modal>
 }
 
-<!-- Confirm Dialog -->
-<app-confirm-dialog></app-confirm-dialog>
-
-<!-- Toasts -->
-<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
-
 <!-- Mobile Detail Modal -->
 @if (showMobileModal && selectedSupplierForMobile) {
 <app-base-modal [title]="selectedSupplierForMobile.name" size="sm" (closed)="closeMobileModal()">

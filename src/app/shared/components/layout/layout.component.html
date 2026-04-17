@@ -112,9 +112,6 @@
   </div>
 </main>
 
-<!-- Toast Notifications -->
-<app-toast [toasts]="(messageService.toasts | async) || []"></app-toast>
-
 <!-- Logout Confirmation Modal -->
 @if (showLogoutModal) {
 <app-base-modal [showHeader]="false" size="sm" (closed)="cancelLogout()">

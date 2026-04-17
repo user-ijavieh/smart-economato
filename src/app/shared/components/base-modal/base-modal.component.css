@@ -1,5 +1,12 @@
 :host {
   display: block;
+  --base-modal-dialog-bg:
+    linear-gradient(135deg, color-mix(in srgb, var(--brand-primary) 10%, transparent), transparent 42%),
+    var(--theme-surface-glass);
+  --base-modal-header-bg: transparent;
+  --base-modal-light-dialog-bg: #ffffff;
+  --base-modal-light-header-bg: linear-gradient(to right, rgba(184, 75, 68, 0.25), rgb(184 75 68 / 52%));
+  --base-modal-light-header-border: 2px solid rgba(184, 75, 68, 0.28);
 }
 
 .modal-overlay {
@@ -24,9 +31,7 @@
 
 .modal-dialog {
   width: min(100%, 560px);
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--brand-primary) 10%, transparent), transparent 42%),
-    var(--theme-surface-glass);
+  background: var(--base-modal-dialog-bg);
   max-height: 92dvh;
   backdrop-filter: var(--theme-effect-glass);
   -webkit-backdrop-filter: var(--theme-effect-glass);
@@ -62,6 +67,7 @@
 
 .modal-header {
   padding: 0.9rem 1.05rem;
+  background: var(--base-modal-header-bg);
   border-bottom: 1px solid var(--theme-border-subtle);
   display: flex;
   justify-content: space-between;
@@ -185,6 +191,64 @@
     opacity: 0;
     transform: translateY(10px) scale(0.98);
   }
+}
+
+/* ===== LIGHT MODE ===== */
+
+:host-context([data-theme="light"]) .modal-dialog {
+  background: var(--base-modal-light-dialog-bg);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 40px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+:host-context([data-theme="light"]) .modal-header {
+  background: var(--base-modal-light-header-bg);
+  border-bottom: var(--base-modal-light-header-border);
+}
+
+/* ===== ADMIN THEME (modal shell) ===== */
+:host-context(body.admin-theme) {
+  --base-modal-dialog-bg:
+    linear-gradient(135deg, color-mix(in srgb, rgba(90, 120, 220, 0.95) 10%, transparent), transparent 42%),
+    var(--theme-surface-glass);
+  --base-modal-header-bg: linear-gradient(to right, rgba(90, 120, 220, 0.15), transparent);
+  --base-modal-light-header-bg: linear-gradient(to right, rgba(37, 99, 235, 0.18), rgb(37 99 235 / 67%));
+  --base-modal-light-header-border: 2px solid rgba(37, 99, 235, 0.20);
+}
+
+/* Body: blanco plano */
+:host-context([data-theme="light"]) .modal-body {
+  background: #ffffff;
+}
+
+/* Footer: blanco plano con borde superior sutil */
+:host-context([data-theme="light"]) .modal-footer {
+  background: #ffffff;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Boton cerrar */
+:host-context([data-theme="light"]) .modal-close-btn {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #64748B;
+}
+
+:host-context([data-theme="light"]) .modal-close-btn:hover {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.20);
+  color: #ef4444;
+}
+
+/* Scrollbar light */
+:host-context([data-theme="light"]) .modal-body::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.3);
+}
+
+:host-context([data-theme="light"]) .modal-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(71, 85, 105, 0.5);
 }
 
 @media (max-width: 768px) {
