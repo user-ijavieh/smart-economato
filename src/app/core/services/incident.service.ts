@@ -70,7 +70,7 @@ export class IncidentService {
     return this.http.post(`${this.incidentsUrl}/${id}/audits/${attachmentId}/revert`, request);
   }
 
-  getChatHistory(id: number, page = 0, size = 200): Observable<Page<IncidentChatMessage>> {
+  getChatHistory(id: number, page = 0, size = 50): Observable<Page<IncidentChatMessage>> {
     const params = new HttpParams()
       .set('page', String(page))
       .set('size', String(size))

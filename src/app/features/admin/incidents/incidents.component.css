@@ -358,6 +358,14 @@
   border: 1px solid var(--theme-border-subtle);
   background: rgba(255, 255, 255, 0.03);
   padding: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.incident-mobile-card:hover {
+  border-color: rgba(90, 120, 220, 0.45);
+  background: var(--theme-table-row-hover);
+  transform: translateY(-1px);
 }
 
 .incident-mobile-head {
@@ -424,8 +432,13 @@
   animation: rowFadeIn 0.35s ease;
 }
 
-.incident-table tbody tr:hover {
+.incident-table tbody tr.incident-row-clickable {
+  cursor: pointer;
+}
+
+.incident-table tbody tr.incident-row-clickable:hover {
   background: var(--theme-table-row-hover);
+  box-shadow: inset 3px 0 0 rgba(90, 120, 220, 0.45);
 }
 
 @keyframes rowFadeIn {
@@ -1252,7 +1265,7 @@
   }
 }
 
-@media (max-width: 960px) {
+@media (max-width: 1024px) {
   .incidents-top-actions {
     flex-direction: column;
     align-items: stretch;

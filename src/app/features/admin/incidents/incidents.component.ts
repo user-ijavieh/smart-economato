@@ -37,6 +37,7 @@ import { Page } from '../../../shared/models/page.model';
 import { User } from '../../../shared/models/user.model';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
+import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
 type IncidentTab = 'incidents' | 'types';
 type DetailTab = 'summary' | 'chat' | 'audits';
@@ -180,12 +181,13 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.activeTab = 'incidents';
+    this.showFilters = false;
     this.loadUsers();
     this.loadIncidentTypes();
     this.loadIncidents();
 
     this.notificationService.incoming$
-      .pipe(debounceTime(350), takeUntil(this.destroy$))
+      .pipe(debounceTime(SEARCH_DEBOUNCE_MS), takeUntil(this.destroy$))
       .subscribe(() => {
         this.refreshFromRealtimeEvent();
       });
@@ -377,7 +379,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.loadingChat = true;
 
     const detail$ = this.incidentService.getIncident(id);
-    const chat$ = this.incidentService.getChatHistory(id, 0, 200);
+    const chat$ = this.incidentService.getChatHistory(id, 0, 50);
     const audits$ = this.canAttachAudits() ? this.incidentService.getAttachableAudits(id) : null;
 
     const request$ = audits$
@@ -1049,9 +1051,9 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   loadUsers(): void {
-    this.userService.getAllUnpaged().subscribe({
-      next: users => {
-        this.users = users || [];
+    this.userService.search('', 0, 50).subscribe({
+      next: page => {
+        this.users = page.content || [];
         this.cdr.markForCheck();
       },
       error: () => { }

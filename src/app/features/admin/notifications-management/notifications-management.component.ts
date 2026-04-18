@@ -1,12 +1,13 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { finalize } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 import { NotificationApiService } from '../../../core/services/notification-api.service';
 import { MessageService } from '../../../core/services/message.service';
 import { UserService } from '../../../core/services/user.service';
 import { AppRole } from '../../../core/services/notification.service';
 import { User } from '../../../shared/models/user.model';
+import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
 type NotificationTargetRole = Exclude<AppRole, 'ELEVATED'>;
 
@@ -17,7 +18,7 @@ type NotificationTargetRole = Exclude<AppRole, 'ELEVATED'>;
   templateUrl: './notifications-management.component.html',
   styleUrl: './notifications-management.component.css'
 })
-export class NotificationsManagementComponent {
+export class NotificationsManagementComponent implements OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly notificationApiService = inject(NotificationApiService);
   private readonly userService = inject(UserService);
@@ -35,8 +36,8 @@ export class NotificationsManagementComponent {
 
   filteredUsers: User[] = [];
   showUserSuggestions = false;
-  private usernameSearchTimer?: ReturnType<typeof setTimeout>;
   private usernameSearchRequestId = 0;
+  private usernameSearchSubject = new Subject<string>();
 
   readonly roleForm = this.fb.group({
     role: this.fb.nonNullable.control<NotificationTargetRole>('CHEF'),
@@ -50,6 +51,19 @@ export class NotificationsManagementComponent {
     message: this.fb.nonNullable.control('', [Validators.required, Validators.maxLength(500)])
   });
 
+  constructor() {
+    this.usernameSearchSubject.pipe(
+      debounceTime(SEARCH_DEBOUNCE_MS),
+      distinctUntilChanged()
+    ).subscribe((username) => {
+      this.searchUsers(username);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.usernameSearchSubject.complete();
+  }
+
   setActiveTab(tab: 'role' | 'user'): void {
     this.activeTab = tab;
   }
@@ -57,21 +71,12 @@ export class NotificationsManagementComponent {
   onUsernameInput(): void {
     const username = this.userForm.controls.username.value.trim();
     if (username.length < 2) {
-      if (this.usernameSearchTimer) {
-        clearTimeout(this.usernameSearchTimer);
-      }
       this.filteredUsers = [];
       this.showUserSuggestions = false;
       return;
     }
 
-    if (this.usernameSearchTimer) {
-      clearTimeout(this.usernameSearchTimer);
-    }
-
-    this.usernameSearchTimer = setTimeout(() => {
-      this.searchUsers(username);
-    }, 250);
+    this.usernameSearchSubject.next(username);
   }
 
   selectUser(user: User): void {

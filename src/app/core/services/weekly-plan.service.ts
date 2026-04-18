@@ -75,12 +75,28 @@ export class WeeklyPlanService {
     return this.http.patch<WeeklyPlanSlotResponse>(`${this.url}/${planId}/slots/${slotId}/cancel`, {});
   }
 
+  restoreSlot(planId: number, slotId: number): Observable<WeeklyPlanSlotResponse> {
+    return this.http.patch<WeeklyPlanSlotResponse>(`${this.url}/${planId}/slots/${slotId}/restore`, {});
+  }
+
   cancelStudentFromSlot(planId: number, slotId: number, studentId: number): Observable<WeeklyPlanSlotStudentResponse> {
     return this.http.patch<WeeklyPlanSlotStudentResponse>(`${this.url}/${planId}/slots/${slotId}/students/${studentId}/cancel`, {});
   }
 
+  restoreStudentFromSlot(planId: number, slotId: number, studentId: number): Observable<WeeklyPlanSlotStudentResponse> {
+    return this.http.patch<WeeklyPlanSlotStudentResponse>(`${this.url}/${planId}/slots/${slotId}/students/${studentId}/restore`, {});
+  }
+
   cancelStudentFromDay(planId: number, dayOfWeek: number, studentId: number): Observable<void> {
     return this.http.patch<void>(`${this.url}/${planId}/days/${dayOfWeek}/students/${studentId}/cancel`, {});
+  }
+
+  restoreStudentFromDay(planId: number, dayOfWeek: number, studentId: number): Observable<void> {
+    return this.http.patch<void>(`${this.url}/${planId}/days/${dayOfWeek}/students/${studentId}/restore`, {});
+  }
+
+  restoreDay(planId: number, dayOfWeek: number): Observable<void> {
+    return this.http.patch<void>(`${this.url}/${planId}/days/${dayOfWeek}/restore`, {});
   }
 
   getStudentMetrics(chefId?: number | null, page = 0, size = 10, sort = 'studentName,asc'): Observable<StudentMetricsPage> {

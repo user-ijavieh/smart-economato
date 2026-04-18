@@ -11,14 +11,61 @@
 /** ===== CONTENEDOR ===== */
 .alert-stack {
   position: fixed;
-  top: 1.5rem;
-  right: 1.5rem;
+  top: calc(12px + 36px + 12px + 12px);
+  right: 1rem;
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   gap: 8px;
   width: 340px;
   z-index: 32000; /* toasts sit above at 31000 */
   pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.alert-stack.collapsed {
+  transform: translateX(calc(100% - 14px));
+}
+
+.alert-stack.collapsed:hover {
+  transform: translateX(calc(100% - 24px));
+}
+
+.alert-toggle {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--theme-border-glass);
+  background: var(--theme-section-header-bg-strong);
+  color: var(--theme-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.alert-toggle:hover {
+  background: var(--theme-surface-glass-hover);
+  color: var(--theme-text-primary);
+}
+
+.alert-toggle__badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--color-danger);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  padding: 0 4px;
 }
 
 /** ===== CARD BASE ===== */
@@ -109,9 +156,17 @@
   .alert-stack {
     width: 220px;
     right: 0.5rem;
-    top: 0.5rem;
+    top: calc(8px + 36px + 8px + 8px);
     bottom: auto;
     gap: 4px;
+  }
+
+  .alert-stack.collapsed {
+    transform: translateX(calc(100% - 16px));
+  }
+
+  .alert-stack.collapsed:hover {
+    transform: translateX(calc(100% - 22px));
   }
 
   .alert-card {

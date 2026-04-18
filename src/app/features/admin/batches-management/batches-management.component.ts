@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductBatchService } from '../../../core/services/product-batch.service';
@@ -9,6 +9,8 @@ import { BatchExpirationModalComponent } from '../stock-management/batch-expirat
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { MessageService } from '../../../core/services/message.service';
 import { ScrollService } from '../../../core/services/scroll.service';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
 type ManagementTab = 'all' | 'control';
 type ControlSubTab = 'expiring' | 'expired';
@@ -20,7 +22,7 @@ type ControlSubTab = 'expiring' | 'expired';
   templateUrl: './batches-management.component.html',
   styleUrl: './batches-management.component.css'
 })
-export class BatchesManagementComponent implements OnInit {
+export class BatchesManagementComponent implements OnInit, OnDestroy {
   private batchService = inject(ProductBatchService);
   private traceabilityService = inject(TraceabilityService);
   private cdr = inject(ChangeDetectorRef);
@@ -38,6 +40,7 @@ export class BatchesManagementComponent implements OnInit {
   
   // Filters & Search
   searchTerm = '';
+  private searchSubject = new Subject<string>();
   statusFilter: 'all' | 'active' | 'depleted' | 'expired' = 'active';
   expiringDays = 7;
 
@@ -64,8 +67,19 @@ export class BatchesManagementComponent implements OnInit {
   loadingCookings = false;
 
   ngOnInit(): void {
+    this.searchSubject.pipe(
+      debounceTime(SEARCH_DEBOUNCE_MS),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.loadBatches(0);
+    });
+
     this.loadBatches();
     this.updateCounters();
+  }
+
+  ngOnDestroy(): void {
+    this.searchSubject.complete();
   }
 
   updateCounters(): void {
@@ -169,7 +183,7 @@ export class BatchesManagementComponent implements OnInit {
   }
 
   onSearch(): void {
-    this.loadBatches(0);
+    this.searchSubject.next(this.searchTerm);
   }
 
   clearFilters(): void {

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { forkJoin, of, switchMap } from 'rxjs';
 import { Subscription } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { UserService } from '../../../core/services/user.service';
 import { MessageService } from '../../../core/services/message.service';
 import { User, UserRequest, BatchAssignResponse } from '../../../shared/models/user.model';
@@ -14,6 +15,7 @@ import { UserActivityService } from '../../../core/services/user-activity.servic
 import { UserActivityLogResponse } from '../../../shared/models/user-activity.model';
 import { PresenceTrackingService } from '../../../core/services/presence-tracking.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
+import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
 @Component({
     selector: 'app-users-management',
@@ -36,6 +38,10 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
     private presenceTrackingService = inject(PresenceTrackingService);
     messageService = inject(MessageService);
     private presenceSubscription?: Subscription;
+    private searchSubscription?: Subscription;
+    private searchSubject = new Subject<string>();
+    private assignmentSearchSubscription?: Subscription;
+    private assignmentSearchSubject = new Subject<string>();
     private wsActivityRefreshTimer: ReturnType<typeof setTimeout> | null = null;
     private lastActivityRefreshAt = 0;
 
@@ -87,12 +93,18 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
 
     // ── Assignments state ──
     unassignedStudents: User[] = [];
+    filteredUnassignedStudents: User[] = [];
+    visibleUnassignedStudents: User[] = [];
     teachers: User[] = [];
     teachersLoaded = false;
     pendingAssignments: Map<number, User[]> = new Map(); // teacherId → students pendientes
     loadingAssignments = false;
     assignmentsLoaded = false;
     assigningInProgress = false;
+    assignmentStudentSearchTerm = '';
+    unassignedPageSize = 20;
+    unassignedHasMore = false;
+    unassignedLoadingMore = false;
     dragOverTeacherId: number | null = null;
     dragOverUnassigned = false;
     draggedStudent: User | null = null;
@@ -101,6 +113,22 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
     lastSelectedIndex: number | null = null;
 
     ngOnInit(): void {
+        this.searchSubscription = this.searchSubject.pipe(
+            debounceTime(SEARCH_DEBOUNCE_MS),
+            distinctUntilChanged()
+        ).subscribe(() => {
+            this.currentPage = 0;
+            this.loadUsers(0);
+        });
+
+        this.assignmentSearchSubscription = this.assignmentSearchSubject.pipe(
+            debounceTime(SEARCH_DEBOUNCE_MS),
+            distinctUntilChanged()
+        ).subscribe(() => {
+            this.refreshUnassignedStudentsView(true);
+            this.cdr.detectChanges();
+        });
+
         this.loadUsers();
         this.loadTeachers();
 
@@ -114,6 +142,10 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.presenceSubscription?.unsubscribe();
+        this.searchSubscription?.unsubscribe();
+        this.assignmentSearchSubscription?.unsubscribe();
+        this.searchSubject.complete();
+        this.assignmentSearchSubject.complete();
         if (this.wsActivityRefreshTimer) {
             clearTimeout(this.wsActivityRefreshTimer);
             this.wsActivityRefreshTimer = null;
@@ -272,8 +304,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
     }
 
     onSearch(): void {
-        this.currentPage = 0;
-        this.loadUsers();
+        this.searchSubject.next(this.searchTerm);
     }
 
     onRoleFilterChange(): void {
@@ -464,9 +495,11 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
         }).subscribe({
             next: ({ students, teachers }) => {
                 this.unassignedStudents = students;
+                this.assignmentStudentSearchTerm = '';
                 this.teachers = teachers;
                 this.teachersLoaded = true;
                 this.pendingAssignments = new Map();
+                this.refreshUnassignedStudentsView(true);
                 this.clearSelection();
                 this.loadingAssignments = false;
                 this.assignmentsLoaded = true;
@@ -608,6 +641,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
 
         this.draggedStudent = null;
         this.draggedStudentIds = [];
+        this.refreshUnassignedStudentsView();
         this.clearSelection();
         this.cdr.detectChanges();
     }
@@ -637,15 +671,80 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
 
         this.draggedStudent = null;
         this.draggedStudentIds = [];
+        this.refreshUnassignedStudentsView();
         this.clearSelection();
         this.cdr.detectChanges();
+    }
+
+    onAssignmentSearch(): void {
+        this.assignmentSearchSubject.next(this.assignmentStudentSearchTerm);
+    }
+
+    onUnassignedScroll(event: Event): void {
+        if (this.unassignedLoadingMore || !this.unassignedHasMore) {
+            return;
+        }
+
+        const target = event.target as HTMLElement;
+        const nearBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 80;
+        if (nearBottom) {
+            this.loadMoreUnassignedStudents();
+        }
+    }
+
+    private refreshUnassignedStudentsView(resetPagination = false): void {
+        const term = this.assignmentStudentSearchTerm.trim().toLowerCase();
+        this.filteredUnassignedStudents = term
+            ? this.unassignedStudents.filter(student => student.name.toLowerCase().includes(term))
+            : [...this.unassignedStudents];
+
+        const validIds = new Set(this.filteredUnassignedStudents.map(student => student.id));
+        for (const selectedId of Array.from(this.selectedStudentIds)) {
+            if (!validIds.has(selectedId)) {
+                this.selectedStudentIds.delete(selectedId);
+            }
+        }
+
+        if (this.lastSelectedIndex !== null && this.lastSelectedIndex >= this.filteredUnassignedStudents.length) {
+            this.lastSelectedIndex = null;
+        }
+
+        const currentVisible = resetPagination ? 0 : this.visibleUnassignedStudents.length;
+        const visibleCount = Math.min(currentVisible, this.filteredUnassignedStudents.length);
+        this.visibleUnassignedStudents = this.filteredUnassignedStudents.slice(0, visibleCount);
+        this.unassignedHasMore = visibleCount < this.filteredUnassignedStudents.length;
+
+        if (resetPagination || visibleCount === 0) {
+            this.loadMoreUnassignedStudents();
+        }
+    }
+
+    private loadMoreUnassignedStudents(): void {
+        if (this.unassignedLoadingMore || !this.unassignedHasMore && this.visibleUnassignedStudents.length > 0) {
+            return;
+        }
+
+        if (this.filteredUnassignedStudents.length === 0) {
+            this.unassignedHasMore = false;
+            return;
+        }
+
+        this.unassignedLoadingMore = true;
+
+        const start = this.visibleUnassignedStudents.length;
+        const end = Math.min(start + this.unassignedPageSize, this.filteredUnassignedStudents.length);
+        const nextChunk = this.filteredUnassignedStudents.slice(start, end);
+        this.visibleUnassignedStudents = [...this.visibleUnassignedStudents, ...nextChunk];
+        this.unassignedHasMore = end < this.filteredUnassignedStudents.length;
+
+        this.unassignedLoadingMore = false;
     }
 
     toggleStudentSelection(student: User, event: MouseEvent): void {
         event.preventDefault();
         event.stopPropagation();
 
-        const currentIndex = this.unassignedStudents.findIndex(s => s.id === student.id);
+        const currentIndex = this.filteredUnassignedStudents.findIndex(s => s.id === student.id);
         if (currentIndex === -1) {
             return;
         }
@@ -663,11 +762,15 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 this.selectedStudentIds.add(student.id);
             }
         } else {
-            this.selectedStudentIds.clear();
-            this.selectedStudentIds.add(student.id);
+            if (this.selectedStudentIds.has(student.id) && this.selectedStudentIds.size === 1) {
+                this.selectedStudentIds.delete(student.id);
+            } else {
+                this.selectedStudentIds.clear();
+                this.selectedStudentIds.add(student.id);
+            }
         }
 
-        this.lastSelectedIndex = currentIndex;
+        this.lastSelectedIndex = this.selectedStudentIds.has(student.id) ? currentIndex : null;
     }
 
     selectAllStudents(): void {
@@ -677,10 +780,10 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
         }
 
         this.selectedStudentIds.clear();
-        for (const student of this.unassignedStudents) {
+        for (const student of this.filteredUnassignedStudents) {
             this.selectedStudentIds.add(student.id);
         }
-        this.lastSelectedIndex = this.unassignedStudents.length ? this.unassignedStudents.length - 1 : null;
+        this.lastSelectedIndex = this.filteredUnassignedStudents.length ? this.filteredUnassignedStudents.length - 1 : null;
     }
 
     clearSelection(): void {
@@ -689,8 +792,8 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
     }
 
     get isAllSelected(): boolean {
-        return this.unassignedStudents.length > 0
-            && this.unassignedStudents.every(student => this.selectedStudentIds.has(student.id));
+        return this.filteredUnassignedStudents.length > 0
+            && this.filteredUnassignedStudents.every(student => this.selectedStudentIds.has(student.id));
     }
 
     get selectionCount(): number {
@@ -714,6 +817,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
             if (!this.unassignedStudents.find(s => s.id === student.id)) {
                 this.unassignedStudents.push(student);
             }
+            this.refreshUnassignedStudentsView();
             this.cdr.detectChanges();
         }
     }
@@ -748,6 +852,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
             }
         }
         this.pendingAssignments = new Map();
+        this.refreshUnassignedStudentsView();
         this.cdr.detectChanges();
     }
 

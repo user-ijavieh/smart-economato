@@ -5,12 +5,12 @@ import { Router } from '@angular/router';
 import { WeeklyPlanService } from '../../../core/services/weekly-plan.service';
 import { UserService } from '../../../core/services/user.service';
 import { WeeklyPlanResponse } from '../../../shared/models/weekly-plan.model';
-import { User } from '../../../shared/models/user.model';
+import { SearchableDropdownComponent, SearchableItem } from '../../../shared/components/searchable-dropdown/searchable-dropdown.component';
 
 @Component({
   selector: 'app-weekly-plans-management',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SearchableDropdownComponent],
   templateUrl: './weekly-plans-management.html',
   styleUrl: './weekly-plans-management.css',
 })
@@ -20,7 +20,13 @@ export class WeeklyPlansManagement implements OnInit {
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
 
-  teachers: User[] = [];
+  teacherItems: SearchableItem[] = [];
+  teacherSearchQuery = '';
+  teacherPage = 0;
+  teacherPageSize = 10;
+  teacherHasMore = true;
+  loadingMoreTeachers = false;
+  selectedTeacherName = '';
   selectedTeacherId: number | null = null;
   loadingTeachers = false;
 
@@ -28,15 +34,8 @@ export class WeeklyPlansManagement implements OnInit {
   loadingPlans = false;
 
   ngOnInit(): void {
-    this.loadTeachers();
+    this.loadTeacherPage('', true);
     this.loadPlans();
-  }
-
-  get selectedTeacher(): User | null {
-    if (!this.selectedTeacherId) {
-      return null;
-    }
-    return this.teachers.find(teacher => teacher.id === this.selectedTeacherId) || null;
   }
 
   get visiblePlans(): WeeklyPlanResponse[] {
@@ -74,14 +73,34 @@ export class WeeklyPlansManagement implements OnInit {
   }
 
   get viewTitle(): string {
-    if (!this.selectedTeacher) {
+    if (!this.selectedTeacherId) {
       return 'Vista global';
     }
-    return `Vista del profesor: ${this.selectedTeacher.name}`;
+    const teacherLabel = this.selectedTeacherName || `#${this.selectedTeacherId}`;
+    return `Vista del profesor: ${teacherLabel}`;
   }
 
-  onTeacherChange(rawValue: string): void {
-    this.selectedTeacherId = rawValue ? Number(rawValue) : null;
+  onTeacherSearch(query: string): void {
+    this.loadTeacherPage(query, true);
+  }
+
+  onTeacherScrollNearBottom(): void {
+    if (!this.teacherHasMore || this.loadingTeachers || this.loadingMoreTeachers) {
+      return;
+    }
+
+    this.teacherPage++;
+    this.loadTeacherPage(this.teacherSearchQuery, false);
+  }
+
+  onTeacherSelected(item: SearchableItem): void {
+    this.selectedTeacherId = item.id;
+    this.selectedTeacherName = item.name;
+  }
+
+  clearTeacherSelection(): void {
+    this.selectedTeacherId = null;
+    this.selectedTeacherName = '';
   }
 
   createPlan(): void {
@@ -122,16 +141,34 @@ export class WeeklyPlansManagement implements OnInit {
     return labels[status] || status;
   }
 
-  private loadTeachers(): void {
-    this.loadingTeachers = true;
-    this.userService.getTeachers().subscribe({
-      next: (teachers) => {
-        this.teachers = teachers || [];
+  private loadTeacherPage(query: string, reset: boolean): void {
+    const normalizedQuery = query.trim();
+
+    if (this.loadingTeachers || this.loadingMoreTeachers) {
+      return;
+    }
+
+    if (reset) {
+      this.teacherSearchQuery = normalizedQuery;
+      this.teacherPage = 0;
+      this.teacherHasMore = true;
+      this.loadingTeachers = true;
+    } else {
+      this.loadingMoreTeachers = true;
+    }
+
+    this.userService.searchTeachers(normalizedQuery, this.teacherPage, this.teacherPageSize).subscribe({
+      next: (page) => {
+        const mapped = (page.content || []).map(teacher => ({ id: teacher.id, name: teacher.name }));
+        this.teacherItems = reset ? mapped : [...this.teacherItems, ...mapped];
+        this.teacherHasMore = !page.last;
         this.loadingTeachers = false;
+        this.loadingMoreTeachers = false;
         this.cdr.detectChanges();
       },
       error: () => {
         this.loadingTeachers = false;
+        this.loadingMoreTeachers = false;
         this.cdr.detectChanges();
       }
     });
@@ -139,7 +176,7 @@ export class WeeklyPlansManagement implements OnInit {
 
   private loadPlans(): void {
     this.loadingPlans = true;
-    this.weeklyPlanService.getAllPlans(0, 300).subscribe({
+    this.weeklyPlanService.getAllPlans(0, 50).subscribe({
       next: (page) => {
         this.plans = (page.content || []).sort((a, b) => b.weekStartDate.localeCompare(a.weekStartDate));
         this.loadingPlans = false;

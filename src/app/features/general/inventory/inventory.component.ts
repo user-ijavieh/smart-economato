@@ -18,6 +18,7 @@ import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.mo
 import { ScrollService } from '../../../core/services/scroll.service';
 import { finalize, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
+import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
 @Component({
   selector: 'app-inventory',
@@ -89,7 +90,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.loadExpirations();
     
     this.searchSubject.pipe(
-      debounceTime(400),
+      debounceTime(SEARCH_DEBOUNCE_MS),
       distinctUntilChanged()
     ).subscribe(term => {
       this.performSearch(term);
@@ -203,7 +204,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   loadSuppliers(): void {
-    this.supplierService.getAll(0, 100).subscribe({
+    this.supplierService.getAll(0, 50).subscribe({
       next: (page) => {
         this.suppliers = page.content;
       },
