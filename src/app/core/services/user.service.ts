@@ -110,10 +110,6 @@ export class UserService {
     return this.http.patch<User>(`${this.url}/${id}/hidden`, hidden);
   }
 
-  getAllUnpaged(): Observable<User[]> {
-    return this.getAll(0, 10000).pipe(map(page => page.content));
-  }
-
   search(term: string, page = 0, size = 8): Observable<Page<User>> {
     const params = new HttpParams()
       .set('term', term)
@@ -150,6 +146,16 @@ export class UserService {
 
   getTeachers(): Observable<User[]> {
     return this.http.get<User[]>(`${this.url}/teachers`);
+  }
+
+  searchTeachers(term: string, page = 0, size = 8): Observable<Page<User>> {
+    const params = new HttpParams()
+      .set('term', term)
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sort', 'name,asc');
+
+    return this.http.get<Page<User>>(`${this.url}/teachers/search`, { params });
   }
 
   assignTeacher(studentId: number, teacherId: number | null): Observable<void> {

@@ -18,6 +18,7 @@ import { ReverseTraceabilityDTO } from '../../../shared/models/traceability.mode
 import { ScrollService } from '../../../core/services/scroll.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { OrderDetailsModalComponent } from '../../general/orders/order-details-modal/order-details-modal.component';
+import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
 @Component({
   selector: 'app-kitchen-management',
@@ -82,7 +83,7 @@ export class KitchenManagementComponent implements OnInit {
     // Configurar debounce para búsqueda - esperar 400ms sin cambios
     this.searchTerm$
       .pipe(
-        debounceTime(400),
+        debounceTime(SEARCH_DEBOUNCE_MS),
         distinctUntilChanged()
       )
       .subscribe(() => {

@@ -94,6 +94,14 @@ export class WeeklyPlanWizardComponent implements OnInit {
   // Step 1 data
   weekStartDate: string = '';
   chefId: number | null = null;
+  selectedChefName: string = '';
+  chefSearchItems: SearchableItem[] = [];
+  chefSearchQuery: string = '';
+  chefSearchPage: number = 0;
+  chefSearchPageSize: number = 8;
+  chefSearchHasMore: boolean = true;
+  loadingChefSearch: boolean = false;
+  loadingChefSearchMore: boolean = false;
   role: string | null = null;
 
   // Step 2 data
@@ -167,6 +175,9 @@ export class WeeklyPlanWizardComponent implements OnInit {
     }
 
     this.loadCatalogs();
+    if (this.role === 'ADMIN') {
+      this.loadChefPage('', true);
+    }
 
     this.route.paramMap.subscribe(params => {
       const idStr = params.get('id');
@@ -180,6 +191,8 @@ export class WeeklyPlanWizardComponent implements OnInit {
         const queryChefId = this.route.snapshot.queryParamMap.get('chefId');
         if (queryChefId) {
           this.chefId = Number(queryChefId);
+          this.resolveChefSelection(this.chefId);
+          this.loadStudentMetricsForChef();
         }
         if (duplicateFrom) {
           const keepStudents = this.route.snapshot.queryParamMap.get('keepStudents') !== '0';
@@ -207,15 +220,47 @@ export class WeeklyPlanWizardComponent implements OnInit {
     });
 
     if (this.chefId) {
-      this.weeklyPlanService.getStudentMetrics(this.chefId, 0, 100).subscribe({
-        next: (page) => {
-          const map: Record<number, StudentMetrics> = {};
-          page.content.forEach(m => map[m.studentId] = m);
-          this.studentMetrics = map;
-          this.cdr.detectChanges();
-        }
-      });
+      this.loadStudentMetricsForChef();
     }
+  }
+
+  private loadStudentMetricsForChef() {
+    if (!this.chefId) {
+      this.studentMetrics = {};
+      return;
+    }
+
+    this.weeklyPlanService.getStudentMetrics(this.chefId, 0, 50).subscribe({
+      next: (page) => {
+        const map: Record<number, StudentMetrics> = {};
+        page.content.forEach(m => map[m.studentId] = m);
+        this.studentMetrics = map;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.studentMetrics = {};
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  onChefSearch(query: string) {
+    this.loadChefPage(query, true);
+  }
+
+  onChefScrollNearBottom() {
+    if (!this.chefSearchHasMore || this.loadingChefSearch || this.loadingChefSearchMore) {
+      return;
+    }
+
+    this.chefSearchPage++;
+    this.loadChefPage(this.chefSearchQuery, false);
+  }
+
+  onChefSelected(item: SearchableItem) {
+    this.chefId = item.id;
+    this.selectedChefName = item.name;
+    this.loadStudentMetricsForChef();
   }
 
   // RECIPE SEARCH
@@ -274,6 +319,8 @@ export class WeeklyPlanWizardComponent implements OnInit {
       next: (plan) => {
         this.weekStartDate = plan.weekStartDate;
         this.chefId = plan.chefId;
+        this.resolveChefSelection(this.chefId);
+        this.loadStudentMetricsForChef();
         
         this.slots = plan.slots.map(s => ({
           uiKey: `slot-${this.nextSlotUiId++}`,
@@ -309,6 +356,8 @@ export class WeeklyPlanWizardComponent implements OnInit {
       next: (plan) => {
         this.weekStartDate = targetWeekStartDate || this.addDaysToDate(plan.weekStartDate, 7);
         this.chefId = plan.chefId;
+        this.resolveChefSelection(this.chefId);
+        this.loadStudentMetricsForChef();
         this.slots = plan.slots.map(s => ({
           uiKey: `slot-${this.nextSlotUiId++}`,
           dayOfWeek: s.dayOfWeek,
@@ -365,7 +414,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
     }
 
     this.loadingInitial = true;
-    this.weeklyPlanService.getAllPlans(0, 200).subscribe({
+    this.weeklyPlanService.getAllPlans(0, 50).subscribe({
       next: (page) => {
         const existingPlan = (page.content || []).find(plan => plan.weekStartDate === selectedWeek);
 
@@ -1334,6 +1383,11 @@ export class WeeklyPlanWizardComponent implements OnInit {
   save() {
     if (!this.weekStartDate) return;
 
+    if (this.role === 'ADMIN' && !this.chefId) {
+      this.messageService.showWarning('Selecciona un chef responsable antes de guardar el plan.');
+      return;
+    }
+
     // Basic validation
     for (const slot of this.slots) {
       if (!slot.recipeId) {
@@ -1437,5 +1491,69 @@ export class WeeklyPlanWizardComponent implements OnInit {
     return this.router.url.startsWith('/admin-panel/weekly-plans')
       ? '/admin-panel/weekly-plans'
       : '/weekly-plans';
+  }
+
+  private loadChefPage(query: string, reset: boolean) {
+    const normalizedQuery = query.trim();
+
+    if (this.loadingChefSearch || this.loadingChefSearchMore) {
+      return;
+    }
+
+    if (reset) {
+      this.chefSearchQuery = normalizedQuery;
+      this.chefSearchPage = 0;
+      this.chefSearchHasMore = true;
+      this.loadingChefSearch = true;
+    } else {
+      this.loadingChefSearchMore = true;
+    }
+
+    this.userService.searchTeachers(normalizedQuery, this.chefSearchPage, this.chefSearchPageSize).subscribe({
+      next: (page) => {
+        const mapped = (page.content || []).map(user => ({ id: user.id, name: user.name }));
+        this.chefSearchItems = reset ? mapped : [...this.chefSearchItems, ...mapped];
+        this.chefSearchHasMore = !page.last;
+        this.loadingChefSearch = false;
+        this.loadingChefSearchMore = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.loadingChefSearch = false;
+        this.loadingChefSearchMore = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  private resolveChefSelection(chefId: number | null): void {
+    if (!chefId) {
+      this.selectedChefName = '';
+      return;
+    }
+
+    const existing = this.chefSearchItems.find(item => item.id === chefId);
+    if (existing) {
+      this.selectedChefName = existing.name;
+      return;
+    }
+
+    this.userService.getById(chefId).subscribe({
+      next: (chef) => {
+        this.selectedChefName = chef?.name || '';
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.selectedChefName = '';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  clearChefSelection() {
+    this.chefId = null;
+    this.selectedChefName = '';
+    this.studentMetrics = {};
+    this.cdr.detectChanges();
   }
 }

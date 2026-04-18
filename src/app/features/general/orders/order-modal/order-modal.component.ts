@@ -13,6 +13,7 @@ import { Order, OrderRequest } from '../../../../shared/models/order.model';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.component';
+import { SEARCH_DEBOUNCE_MS } from '../../../../core/constants/search.constants';
 
 interface OrderItem {
   productId: number;
@@ -103,7 +104,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
 
   private initialiseSearchSubscription(): void {
     this.searchSubject.pipe(
-      debounceTime(400),
+      debounceTime(SEARCH_DEBOUNCE_MS),
       distinctUntilChanged()
     ).subscribe(term => {
       this.performSearch(term);
@@ -120,9 +121,9 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   }
 
   loadUsers(): void {
-    this.userService.getAllUnpaged().subscribe({
-      next: (users) => {
-        this.users = users;
+    this.userService.search('', 0, 50).subscribe({
+      next: (page) => {
+        this.users = page.content || [];
         this.cdr.markForCheck();
       },
       error: () => {
@@ -133,7 +134,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   }
 
   loadSuppliers(): void {
-    this.supplierService.getAll(0, 100).subscribe({
+    this.supplierService.getAll(0, 50).subscribe({
       next: (page) => {
         this.suppliers = page.content;
         this.cdr.markForCheck();

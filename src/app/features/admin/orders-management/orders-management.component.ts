@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,7 +13,8 @@ import { OrderAudit } from '../../../shared/models/order-audit.model';
 import { Supplier } from '../../../shared/models/supplier.model';
 import { User } from '../../../shared/models/user.model';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
-import { finalize } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
+import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
 const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
   { value: 'CREATED', label: 'Creada' },
@@ -32,7 +33,7 @@ const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
   styleUrl: './orders-management.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OrdersManagementComponent implements OnInit {
+export class OrdersManagementComponent implements OnInit, OnDestroy {
   private orderService = inject(OrderService);
   private orderAuditService = inject(OrderAuditService);
   private kitchenService = inject(KitchenService);
@@ -105,12 +106,33 @@ export class OrdersManagementComponent implements OnInit {
   private auditCache: Map<string, any> = new Map();
   private pendingOrderIdFromQuery: number | null = null;
   private hasProcessedOrderQueryParam = false;
+  private orderSearchSubject = new Subject<string>();
+  private auditSearchSubject = new Subject<string>();
 
   ngOnInit(): void {
+    this.orderSearchSubject.pipe(
+      debounceTime(SEARCH_DEBOUNCE_MS),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.applyOrderFilters();
+    });
+
+    this.auditSearchSubject.pipe(
+      debounceTime(SEARCH_DEBOUNCE_MS),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.applyAuditOrderFilters();
+    });
+
     this.consumeOrderIdFromQuery();
     this.loadAllOrders();
     this.loadSuppliers();
     this.loadUsers();
+  }
+
+  ngOnDestroy(): void {
+    this.orderSearchSubject.complete();
+    this.auditSearchSubject.complete();
   }
 
   private consumeOrderIdFromQuery(): void {
@@ -149,7 +171,7 @@ export class OrdersManagementComponent implements OnInit {
       userId?: number;
       supplierId?: number;
       size: number;
-    } = { size: 500 };
+    } = { size: 50 };
 
     if (this.orderStartDate)
       filters.startDate = this.orderStartDate + 'T00:00:00';
@@ -241,7 +263,7 @@ export class OrdersManagementComponent implements OnInit {
   }
 
   // Keep for backward compat (HTML uses it for text search)
-  onOrderSearch(): void { this.applyOrderFilters(); }
+  onOrderSearch(): void { this.orderSearchSubject.next(this.orderSearchTerm); }
 
   clearOrderFilters(): void {
     this.orderSearchTerm = '';
@@ -264,15 +286,15 @@ export class OrdersManagementComponent implements OnInit {
 
   // ── Dropdown loaders ──
   private loadSuppliers(): void {
-    this.supplierService.getAll(0, 200, 'name,asc').subscribe({
+    this.supplierService.getAll(0, 50, 'name,asc').subscribe({
       next: (page) => { this.suppliersList = page.content; this.cdr.markForCheck(); },
       error: () => { }
     });
   }
 
   private loadUsers(): void {
-    this.userService.getAllUnpaged().subscribe({
-      next: (users) => { this.usersList = users; this.cdr.markForCheck(); },
+    this.userService.search('', 0, 50).subscribe({
+      next: (page) => { this.usersList = page.content || []; this.cdr.markForCheck(); },
       error: () => { }
     });
   }
@@ -412,7 +434,7 @@ export class OrdersManagementComponent implements OnInit {
     });
   }
 
-  onAuditSearch(): void { this.applyAuditOrderFilters(); }
+  onAuditSearch(): void { this.auditSearchSubject.next(this.auditSearchTerm); }
   onAuditDateFilter(): void { this.applyAuditOrderFilters(); }
 
   applyAuditOrderFilters(): void {

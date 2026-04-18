@@ -1126,7 +1126,7 @@ tbody.loading { opacity: 0.6; }
   .ledger-summary-row { grid-template-columns: 1fr 1fr; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .hide-on-mobile { display: none !important; }
   .show-on-mobile-only { display: table-cell !important; }
 
@@ -1169,4 +1169,80 @@ tbody.loading { opacity: 0.6; }
   .detail-table td { display: block; width: 100%; }
   .detail-td-label { border-bottom: none; padding-bottom: 0; }
   .detail-td-value { padding-top: 5px; font-size: 1.1rem; }
+}
+.custom-qty-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.custom-qty-wrapper span {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--theme-text-secondary);
+}
+
+.custom-qty-input {
+  width: 80px !important;
+  height: 32px !important;
+  padding: 4px 8px !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  text-align: center;
+  border-radius: 8px !important;
+  background: var(--theme-surface-glass-hover) !important;
+  border: 1px solid var(--theme-border-glass) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+.custom-qty-input:focus {
+  border-color: var(--brand-primary) !important;
+  background: var(--theme-surface-glass-active) !important;
+}
+
+.custom-qty-input.qty-below {
+  color: var(--color-danger) !important;
+  border-color: color-mix(in srgb, var(--color-danger) 40%, transparent) !important;
+  background: color-mix(in srgb, var(--color-danger-bg) 20%, var(--theme-surface-glass-hover)) !important;
+}
+
+.btn-send-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: auto !important;
+  min-width: 0 !important;
+  padding: 0 12px !important;
+  height: 32px !important;
+}
+
+.btn-send-back .btn-icon {
+  display: none;
+}
+
+@media (min-width: 1025px) {
+  .btn-send-back {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .btn-send-back {
+    width: 36px !important;
+    height: 36px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+  }
+  
+  .btn-send-back .btn-text {
+    display: none;
+  }
+  
+  .btn-send-back .btn-icon {
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
 }

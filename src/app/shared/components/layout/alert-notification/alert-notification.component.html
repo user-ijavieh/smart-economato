@@ -1,4 +1,23 @@
-<div class="alert-stack" aria-live="assertive" aria-atomic="false">
+<div class="alert-stack" [class.collapsed]="!showAlerts()" aria-live="assertive" aria-atomic="false" (click)="stopPropagation($event)">
+  <button
+    type="button"
+    class="alert-toggle"
+    [attr.aria-label]="showAlerts() ? 'Ocultar alertas' : 'Mostrar alertas'"
+    (click)="toggleAlerts($event)"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+      @if (showAlerts()) {
+      <path d="m600-240-57-56 184-184-184-184 57-56 240 240-240 240Z"/>
+      } @else {
+      <path d="M360-240 120-480l240-240 57 56-184 184 184 184-57 56Z"/>
+      }
+    </svg>
+    @if (!showAlerts() && getCollapsedBadgeCount() > 0) {
+    <span class="alert-toggle__badge">{{ getCollapsedBadgeCount() }}</span>
+    }
+  </button>
+
+  @if (showAlerts()) {
   @for (alert of getFailureList(); track alert.id) {
     <section [class]="'alert-card ' + getFailureClass(alert)" role="alert">
       <!-- Icono -->
@@ -47,5 +66,6 @@
         <p class="alert-time">{{ alert.timestamp | date: 'dd/MM/yyyy HH:mm:ss' }}</p>
       </div>
     </section>
+  }
   }
 </div>

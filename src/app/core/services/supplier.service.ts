@@ -66,9 +66,18 @@ export class SupplierService {
     });
   }
 
+  search(term: string, page = 0, size = 20, sort = 'name,asc'): Observable<Page<Supplier>> {
+    const params = new HttpParams()
+      .set('term', term)
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sort', sort);
+
+    return this.http.get<Page<Supplier>>(`${this.url}/search`, { params });
+  }
+
+  // Backward-compatible helper for consumers that still expect a plain list.
   searchByTerm(term: string): Observable<Supplier[]> {
-    return this.http.get<Supplier[]>(`${this.url}/search`, {
-      params: new HttpParams().set('term', term)
-    });
+    return this.search(term, 0, 50, 'name,asc').pipe(map(page => page.content));
   }
 }

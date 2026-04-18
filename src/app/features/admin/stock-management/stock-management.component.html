@@ -723,12 +723,12 @@
 
 <!-- Order Modal -->
 @if (showOrderModal) {
-<app-base-modal title="Generar una Orden de Reposición" size="lg" (closed)="closeOrderModal()">
+<app-base-modal title="Generar una Orden de Reposición" size="lg" [beforeClose]="beforeCloseOrderModal.bind(this)" (closed)="closeOrderModal()">
   <div class="modal-container order-builder-modal">
       <div class="days-control">
         <label>¿Para cuántos días deseas cubrir el stock estimado?</label>
         <div class="days-input-group">
-          <input type="number" [(ngModel)]="daysAhead" min="1" max="90" class="days-input" />
+          <input type="number" [(ngModel)]="daysAhead" (ngModelChange)="onDaysAheadChange($event)" min="1" max="90" class="days-input" />
           <span>días</span>
         </div>
       </div>
@@ -739,12 +739,97 @@
         <span class="summary-chip">Órdenes: {{ orderGroups.length }}</span>
         <span class="summary-chip">Seleccionados: {{ getSelectedOrderCount() }}</span>
         <label class="summary-toggle">
-          <input type="checkbox" [(ngModel)]="roundUpOrderQuantities" />
+          <input type="checkbox" [(ngModel)]="roundUpOrderQuantities" (ngModelChange)="onRoundUpOrderQuantitiesChange($event)" />
           <span>Redondear hacia arriba</span>
+        </label>
+        <label class="summary-toggle">
+          <input type="checkbox" [(ngModel)]="showCustomQuantities" (ngModelChange)="onShowCustomQuantitiesChange($event)" />
+          <span>Cantidad personalizada</span>
         </label>
       </div>
 
       <div class="order-builder-grid">
+        <section class="order-destinations-panel">
+          <div class="panel-header panel-header-actions">
+            <h3>Órdenes</h3>
+            <div class="panel-actions-inline">
+              <button type="button" class="toolbar-btn btn-crear-completa" (click)="createCompleteOrderBySupplier()">Crear orden completa</button>
+              <button type="button" class="toolbar-btn btn-crear-orden" (click)="addOrderGroup()">+ Añadir orden</button>
+            </div>
+          </div>
+
+          <div class="order-groups">
+            @for (group of orderGroups; track group.id) {
+              <article class="order-group-card" (dragover)="allowOrderDrop($event)" (drop)="dropOnGroup($event, group.id)">
+                <div class="order-group-header">
+                  <div class="order-group-title-block">
+                    <strong>{{ group.title }}</strong>
+                    <span class="group-subtitle">{{ group.items.length }} producto{{ group.items.length === 1 ? '' : 's' }}</span>
+                  </div>
+                  <button type="button" class="btn-remove-group" (click)="removeOrderGroup(group.id)" [disabled]="orderGroups.length === 1">
+                    Quitar
+                  </button>
+                </div>
+
+                <div class="form-group order-supplier-field">
+                  <label>Proveedor</label>
+                  <select [(ngModel)]="group.supplierId" (ngModelChange)="onOrderGroupSupplierChange()" class="form-control" (click)="$event.stopPropagation()">
+                    <option [ngValue]="null">Sin proveedor</option>
+                    @for (supplier of suppliers; track supplier.id) {
+                      <option [ngValue]="supplier.id">{{ supplier.name }}</option>
+                    }
+                  </select>
+                </div>
+
+                <div class="order-card-list bucket-list">
+                  @if (group.items.length) {
+                    @for (item of group.items; track item.productId) {
+                      <article class="order-item-card bucket-card" [class.selected]="isOrderItemSelected(item.productId)" draggable="true" (click)="toggleOrderItemSelection(item, $event)" (dragstart)="onOrderDragStart($event, item, group.id)" (dragend)="onOrderDragEnd()">
+                        <label class="item-selector" (click)="$event.stopPropagation()">
+                          <input type="checkbox" [checked]="isOrderItemSelected(item.productId)" (change)="onOrderItemCheckboxChange(item, $event)" />
+                        </label>
+                        <div class="order-item-main">
+                          <strong>{{ item.productName }}</strong>
+                          <div class="order-badges">
+                            <span class="chip">{{ getAlertTypeLabel(item.alertType) }}</span>
+                            @if (item.supplierName) {
+                              <span class="chip">{{ item.supplierName }}</span>
+                            }
+                          </div>
+                        </div>
+                        <div class="order-item-meta">
+                          @if (!showCustomQuantities) {
+                            <div><span>A pedir</span><strong>{{ getOrderQuantity(item) | number:'1.0-2' }} {{ item.unit }}</strong></div>
+                          } @else {
+                            <div class="custom-qty-wrapper">
+                              <span>Cantidad</span>
+                              <input type="number" [(ngModel)]="item.customQuantity" (ngModelChange)="onOrderQuantityInputChange()" (click)="$event.stopPropagation()" class="form-control custom-qty-input" [class.qty-below]="(item.customQuantity || 0) < getOriginalRequirement(item)" />
+                            </div>
+                          }
+                          <div><span>Subtotal</span><strong>{{ (getOrderQuantity(item) * (item.unitPrice || 0)) | currency:'EUR' }}</strong></div>
+                        </div>
+                        <button type="button" class="btn-send-back" (click)="$event.stopPropagation(); moveItemToPool(item, group.id)" title="Devolver a pendientes">
+                          <span class="btn-text">Volver</span>
+                          <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><polyline points="3 3 3 8 8 8"></polyline></svg>
+                        </button>
+                      </article>
+                    }
+                  } @else {
+                    <div class="empty-drop-zone compact">
+                      <p>Suelta aquí los productos de esta orden.</p>
+                    </div>
+                  }
+                </div>
+
+                <div class="bucket-footer">
+                  <span>Total: <strong>{{ getGroupTotal(group) | currency:'EUR' }}</strong></span>
+                  <span>{{ group.items.length }} productos</span>
+                </div>
+              </article>
+            }
+          </div>
+        </section>
+
         <section class="order-source-panel" (dragover)="allowOrderDrop($event)" (drop)="dropOnPool($event)">
           <div class="panel-header">
             <h3>Productos pendientes</h3>
@@ -783,7 +868,6 @@
                           </label>
                           <div class="order-item-main">
                             <strong>{{ alert.productName }}</strong>
-                            <span class="unit-label">{{ alert.unit }}</span>
                             <div class="order-badges">
                               <span class="chip">{{ getAlertTypeLabel(alert.alertType) }}</span>
                               @if (alert.supplierName) {
@@ -792,8 +876,15 @@
                             </div>
                           </div>
                           <div class="order-item-meta">
-                            <div><span>Stock</span><strong>{{ alert.currentStock | number:'1.0-2' }}</strong></div>
-                            <div><span>A pedir</span><strong>{{ getOrderQuantity(alert) | number:'1.0-2' }}</strong></div>
+                            <div><span>Disponible</span><strong>{{ alert.currentStock | number:'1.0-2' }} {{ alert.unit }}</strong></div>
+                            @if (!showCustomQuantities) {
+                              <div><span>A pedir</span><strong>{{ getOrderQuantity(alert) | number:'1.0-2' }} {{ alert.unit }}</strong></div>
+                            } @else {
+                              <div class="custom-qty-wrapper">
+                                <span>Cantidad</span>
+                                <input type="number" [(ngModel)]="alert.customQuantity" (ngModelChange)="onOrderQuantityInputChange()" (click)="$event.stopPropagation()" class="form-control custom-qty-input" [class.qty-below]="(alert.customQuantity || 0) < getOriginalRequirement(alert)" />
+                              </div>
+                            }
                           </div>
                         </article>
                       }
@@ -808,79 +899,8 @@
             }
           </div>
         </section>
-
-        <section class="order-destinations-panel">
-          <div class="panel-header panel-header-actions">
-            <h3>Órdenes</h3>
-            <div class="panel-actions-inline">
-              <button type="button" class="toolbar-btn btn-crear-completa" (click)="createCompleteOrderBySupplier()">Crear orden completa</button>
-              <button type="button" class="toolbar-btn btn-crear-orden" (click)="addOrderGroup()">+ Añadir orden</button>
-            </div>
-          </div>
-
-          <div class="order-groups">
-            @for (group of orderGroups; track group.id) {
-              <article class="order-group-card" (dragover)="allowOrderDrop($event)" (drop)="dropOnGroup($event, group.id)">
-                <div class="order-group-header">
-                  <div class="order-group-title-block">
-                    <strong>{{ group.title }}</strong>
-                    <span class="group-subtitle">{{ group.items.length }} producto{{ group.items.length === 1 ? '' : 's' }}</span>
-                  </div>
-                  <button type="button" class="btn-remove-group" (click)="removeOrderGroup(group.id)" [disabled]="orderGroups.length === 1">
-                    Quitar
-                  </button>
-                </div>
-
-                <div class="form-group order-supplier-field">
-                  <label>Proveedor</label>
-                  <select [(ngModel)]="group.supplierId" class="form-control" (click)="$event.stopPropagation()">
-                    <option [ngValue]="null">Sin proveedor</option>
-                    @for (supplier of suppliers; track supplier.id) {
-                      <option [ngValue]="supplier.id">{{ supplier.name }}</option>
-                    }
-                  </select>
-                </div>
-
-                <div class="order-card-list bucket-list">
-                  @if (group.items.length) {
-                    @for (item of group.items; track item.productId) {
-                      <article class="order-item-card bucket-card" [class.selected]="isOrderItemSelected(item.productId)" draggable="true" (click)="toggleOrderItemSelection(item, $event)" (dragstart)="onOrderDragStart($event, item, group.id)" (dragend)="onOrderDragEnd()">
-                        <label class="item-selector" (click)="$event.stopPropagation()">
-                          <input type="checkbox" [checked]="isOrderItemSelected(item.productId)" (change)="onOrderItemCheckboxChange(item, $event)" />
-                        </label>
-                        <div class="order-item-main">
-                          <strong>{{ item.productName }}</strong>
-                          <span class="unit-label">{{ item.unit }}</span>
-                          <div class="order-badges">
-                            <span class="chip">{{ getAlertTypeLabel(item.alertType) }}</span>
-                            @if (item.supplierName) {
-                              <span class="chip">{{ item.supplierName }}</span>
-                            }
-                          </div>
-                        </div>
-                        <div class="order-item-meta">
-                          <div><span>A pedir</span><strong>{{ getOrderQuantity(item) | number:'1.0-2' }}</strong></div>
-                          <div><span>Subtotal</span><strong>{{ (getOrderQuantity(item) * (item.unitPrice || 0)) | currency:'EUR' }}</strong></div>
-                        </div>
-                        <button type="button" class="btn-send-back" (click)="$event.stopPropagation(); moveItemToPool(item, group.id)">Volver</button>
-                      </article>
-                    }
-                  } @else {
-                    <div class="empty-drop-zone compact">
-                      <p>Suelta aquí los productos de esta orden.</p>
-                    </div>
-                  }
-                </div>
-
-                <div class="bucket-footer">
-                  <span>Total: <strong>{{ getGroupTotal(group) | currency:'EUR' }}</strong></span>
-                  <span>{{ group.items.length }} productos</span>
-                </div>
-              </article>
-            }
-          </div>
-        </section>
       </div>
+
   </div>
   <div modal-footer>
     <div class="order-modal-footer">

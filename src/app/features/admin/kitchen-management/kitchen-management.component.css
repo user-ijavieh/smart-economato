@@ -885,7 +885,7 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
   padding: 10px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .mobile-detail-modal-overlay {
     align-items: stretch;
     padding: 0;
@@ -934,7 +934,7 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
   table { width: 100%; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .hide-on-mobile { display: none !important; }
   .show-on-mobile-only { display: table-cell !important; }
   .clickable-row { cursor: pointer; }
