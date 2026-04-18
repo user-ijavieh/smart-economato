@@ -33,6 +33,8 @@ export class WeeklyPlanDetailComponent implements OnInit {
   plan: WeeklyPlanResponse | null = null;
   loading = true;
   downloadingPdf = false;
+  showDownloadPdfModal = false;
+  downloadPdfOrientation: 'horizontal' | 'vertical' = 'horizontal';
   activatingPlan = false;
   deactivatingPlan = false;
   
@@ -384,11 +386,22 @@ export class WeeklyPlanDetailComponent implements OnInit {
     this.router.navigate([this.getBaseRoute(), this.planId, 'edit']);
   }
 
+  openDownloadPdfModal() {
+    if (!this.planId || this.downloadingPdf) return;
+    this.downloadPdfOrientation = 'horizontal';
+    this.showDownloadPdfModal = true;
+  }
+
+  closeDownloadPdfModal() {
+    this.showDownloadPdfModal = false;
+  }
+
   downloadPlanPdf() {
     if (!this.planId || this.downloadingPdf) return;
 
+    this.showDownloadPdfModal = false;
     this.downloadingPdf = true;
-    this.weeklyPlanService.downloadPlanPdf(this.planId).subscribe({
+    this.weeklyPlanService.downloadPlanPdf(this.planId, this.downloadPdfOrientation).subscribe({
       next: (response) => {
         const blob = response.body;
         if (!blob) {
