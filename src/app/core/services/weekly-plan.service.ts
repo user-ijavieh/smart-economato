@@ -54,8 +54,9 @@ export class WeeklyPlanService {
     return this.http.get<WeeklyPlanResponse>(`${this.url}/${planId}`);
   }
 
-  downloadPlanPdf(planId: number): Observable<HttpResponse<Blob>> {
+  downloadPlanPdf(planId: number, orientation: 'horizontal' | 'vertical' = 'horizontal'): Observable<HttpResponse<Blob>> {
     return this.http.get(`${this.url}/${planId}/pdf`, {
+      params: new HttpParams().set('orientation', orientation),
       responseType: 'blob',
       observe: 'response'
     });

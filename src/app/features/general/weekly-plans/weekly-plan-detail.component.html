@@ -33,7 +33,7 @@
       <div class="stat-item stat-actions">
         <span class="status-badge" [ngClass]="'status-' + plan.status.toLowerCase()">{{ getStatusLabel(plan.status) }}</span>
         <div class="header-actions">
-          <button class="modal-btn modal-btn-secondary modal-btn-small" (click)="downloadPlanPdf()" [disabled]="downloadingPdf" aria-label="Descargar plan semanal en PDF">
+          <button class="modal-btn modal-btn-secondary modal-btn-small" (click)="openDownloadPdfModal()" [disabled]="downloadingPdf" aria-label="Descargar plan semanal en PDF">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
             {{ downloadingPdf ? 'Descargando...' : 'Descargar PDF' }}
           </button>
@@ -404,6 +404,37 @@
   }
 
 </div>
+
+@if (showDownloadPdfModal) {
+  <app-base-modal title="Descargar plan semanal" size="md" (closed)="closeDownloadPdfModal()">
+    <div class="modal-container pdf-download-modal">
+      <p class="pdf-download-help">Elige el formato de orientación para descargar el PDF del plan semanal.</p>
+
+      <div class="pdf-orientation-options" role="radiogroup" aria-label="Orientación del PDF">
+        <label class="pdf-orientation-option" [class.is-selected]="downloadPdfOrientation === 'horizontal'">
+          <input type="radio" name="pdfOrientation" [value]="'horizontal'" [(ngModel)]="downloadPdfOrientation" />
+          <span class="option-title">Horizontal</span>
+          <span class="option-desc">Ideal para ver más sesiones por fila.</span>
+        </label>
+
+        <label class="pdf-orientation-option" [class.is-selected]="downloadPdfOrientation === 'vertical'">
+          <input type="radio" name="pdfOrientation" [value]="'vertical'" [(ngModel)]="downloadPdfOrientation" />
+          <span class="option-title">Vertical</span>
+          <span class="option-desc">Ideal para impresión tradicional en páginas largas.</span>
+        </label>
+      </div>
+
+      <div class="modal-actions-end">
+        <button type="button" class="modal-btn modal-btn-secondary" (click)="closeDownloadPdfModal()" [disabled]="downloadingPdf">
+          Cancelar
+        </button>
+        <button type="button" class="modal-btn modal-btn-primary" (click)="downloadPlanPdf()" [disabled]="downloadingPdf">
+          {{ downloadingPdf ? 'Descargando...' : 'Descargar PDF' }}
+        </button>
+      </div>
+    </div>
+  </app-base-modal>
+}
 
 @if (showStockOrderModal) {
   <app-base-modal title="Generar una orden de reposición" size="lg" [beforeClose]="beforeCloseStockOrderModal.bind(this)" (closed)="closeStockOrderModal()">

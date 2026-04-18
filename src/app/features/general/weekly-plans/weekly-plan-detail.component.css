@@ -1631,6 +1631,59 @@
   color: var(--theme-text-secondary);
 }
 
+.pdf-download-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pdf-download-help {
+  margin: 0;
+  color: var(--theme-text-secondary);
+  font-size: 0.9rem;
+}
+
+.pdf-orientation-options {
+  display: grid;
+  gap: 10px;
+}
+
+.pdf-orientation-option {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  column-gap: 10px;
+  row-gap: 2px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--theme-border-glass);
+  background: var(--theme-surface-base);
+  cursor: pointer;
+}
+
+.pdf-orientation-option.is-selected {
+  border-color: color-mix(in srgb, var(--brand-primary) 55%, var(--theme-border-glass));
+  background: color-mix(in srgb, var(--brand-primary) 8%, var(--theme-surface-base));
+}
+
+.pdf-orientation-option input {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  margin: 0;
+}
+
+.pdf-orientation-option .option-title {
+  grid-column: 2;
+  font-weight: 700;
+  color: var(--theme-text-primary);
+}
+
+.pdf-orientation-option .option-desc {
+  grid-column: 2;
+  font-size: 0.8rem;
+  color: var(--theme-text-secondary);
+}
+
 .custom-qty-wrapper {
   display: flex;
   flex-direction: column;
