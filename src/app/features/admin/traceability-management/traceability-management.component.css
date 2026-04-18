@@ -398,7 +398,7 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 }
 
 /** ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .hide-on-mobile { display: none !important; }
   .contenedor-principal { padding: 16px; }
   .action-header { padding: 16px; flex-direction: column; align-items: stretch; }

@@ -13,6 +13,7 @@ import { RecipeEditModalComponent } from './recipe-edit-modal/recipe-edit-modal.
 import { RecipeCreateModalComponent } from './recipe-create-modal/recipe-create-modal.component';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { finalize, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
 @Component({
   selector: 'app-recipes',
@@ -86,7 +87,7 @@ export class RecipesComponent implements OnInit {
 
   initialiseSearchSubscription(): void {
     this.searchSubject.pipe(
-      debounceTime(400),
+      debounceTime(SEARCH_DEBOUNCE_MS),
       distinctUntilChanged()
     ).subscribe(term => {
       this.performSearch(term);

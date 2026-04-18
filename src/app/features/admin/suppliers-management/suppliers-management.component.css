@@ -288,7 +288,7 @@ tr:hover { background: var(--theme-surface-glass-hover); }
   button { font-size: 0.85rem; padding: 8px 16px; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .header-proveedores { height: 60px; padding: 0 15px; }
   .contenedor-principal { padding: 15px; }
   .controles { padding: 15px; gap: 10px; }
@@ -304,7 +304,7 @@ tr:hover { background: var(--theme-surface-glass-hover); }
   .supplier-avatar-small { display: none; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .hide-on-mobile { display: none !important; }
   .show-on-mobile-only { display: table-cell !important; }
   .clickable-row { cursor: pointer; }

@@ -10,6 +10,7 @@ import { MessageService } from '../../../../core/services/message.service';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.component';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { SEARCH_DEBOUNCE_MS } from '../../../../core/constants/search.constants';
 
 interface FormComponent {
   productId: number;
@@ -75,7 +76,7 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
 
   private initialiseSearchSubscription(): void {
     this.searchSubject.pipe(
-      debounceTime(400),
+      debounceTime(SEARCH_DEBOUNCE_MS),
       distinctUntilChanged((prev, curr) => prev.query === curr.query && prev.index === curr.index)
     ).subscribe(({ query, index }) => {
       this.performSearch(query, index);
@@ -153,7 +154,7 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
 
   private loadAllergens(): void {
     this.loadingAllergens = true;
-    this.allergenService.getAll(0, 100).subscribe({
+    this.allergenService.getAll(0, 50).subscribe({
       next: (page) => {
         this.availableAllergens = page.content;
         this.loadingAllergens = false;

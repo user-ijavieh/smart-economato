@@ -1,14 +1,15 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupplierService } from '../../../core/services/supplier.service';
 import { MessageService } from '../../../core/services/message.service';
-import { Observable } from 'rxjs';
+import { Observable, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { Page } from '../../../shared/models/page.model';
 import { Supplier, SupplierRequest } from '../../../shared/models/supplier.model';
 import { SupplierFormModalComponent } from './supplier-form-modal/supplier-form-modal.component';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
+import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
 @Component({
     selector: 'app-suppliers-management',
@@ -22,7 +23,7 @@ import { BaseModalComponent } from '../../../shared/components/base-modal/base-m
     templateUrl: './suppliers-management.component.html',
     styleUrl: './suppliers-management.component.css'
 })
-export class SuppliersManagementComponent implements OnInit {
+export class SuppliersManagementComponent implements OnInit, OnDestroy {
     private supplierService = inject(SupplierService);
     private cdr = inject(ChangeDetectorRef);
     private scrollService = inject(ScrollService);
@@ -32,6 +33,7 @@ export class SuppliersManagementComponent implements OnInit {
     filteredSuppliers: Supplier[] = [];
     loading = true;
     searchTerm = '';
+    private searchSubject = new Subject<string>();
 
     // Pagination
     currentPage = 0;
@@ -57,7 +59,19 @@ export class SuppliersManagementComponent implements OnInit {
     sortInteracted = false;
 
     ngOnInit(): void {
+        this.searchSubject.pipe(
+            debounceTime(SEARCH_DEBOUNCE_MS),
+            distinctUntilChanged()
+        ).subscribe(() => {
+            this.currentPage = 0;
+            this.loadSuppliers(0);
+        });
+
         this.loadSuppliers();
+    }
+
+    ngOnDestroy(): void {
+        this.searchSubject.complete();
     }
 
     loadSuppliers(page: number = 0): void {
@@ -72,25 +86,15 @@ export class SuppliersManagementComponent implements OnInit {
         const sortParam = `${this.sortColumn},${this.sortDir}`;
         const term = this.searchTerm.trim();
 
-        const source$: Observable<Supplier[] | Page<Supplier>> = term 
-            ? this.supplierService.searchByTerm(term)
+        const source$: Observable<Page<Supplier>> = term
+            ? this.supplierService.search(term, this.currentPage, this.pageSize, sortParam)
             : this.supplierService.getAll(this.currentPage, this.pageSize, sortParam);
 
-        (source$ as Observable<any>).subscribe({
-            next: (response: any) => {
-                if (term) {
-                    // Search endpoint returns Supplier[] array
-                    const result = Array.isArray(response) ? response : (response as any).content || [];
-                    this.suppliers = result;
-                    this.serverTotalElements = result.length;
-                    this.serverTotalPages = 1;
-                } else {
-                    // Page<Supplier>
-                    const pageData = response as any;
-                    this.suppliers = pageData.content;
-                    this.serverTotalElements = pageData.totalElements;
-                    this.serverTotalPages = pageData.totalPages;
-                }
+        source$.subscribe({
+            next: (pageData) => {
+                this.suppliers = pageData.content;
+                this.serverTotalElements = pageData.totalElements;
+                this.serverTotalPages = pageData.totalPages;
                 this.applyFilter();
                 this.loading = false;
                 this.cdr.markForCheck();
@@ -134,8 +138,7 @@ export class SuppliersManagementComponent implements OnInit {
     }
 
     onSearch(): void {
-        this.currentPage = 0;
-        this.loadSuppliers(0);
+        this.searchSubject.next(this.searchTerm);
     }
 
     clearFilters(): void {

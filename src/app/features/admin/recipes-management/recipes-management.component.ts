@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RecipeService } from '../../../core/services/recipe.service';
@@ -16,7 +16,8 @@ import { RecipeDetailModalComponent } from '../../general/recipes/recipe-detail-
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { finalize, catchError, forkJoin } from 'rxjs';
-import { of } from 'rxjs';
+import { of, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
 @Component({
     selector: 'app-recipes-management',
@@ -33,7 +34,7 @@ import { of } from 'rxjs';
     styleUrl: './recipes-management.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RecipesManagementComponent implements OnInit {
+export class RecipesManagementComponent implements OnInit, OnDestroy {
     private recipeService = inject(RecipeService);
     private recipeDraftService = inject(RecipeDraftService);
     private recipeAuditService = inject(RecipeAuditService);
@@ -51,6 +52,7 @@ export class RecipesManagementComponent implements OnInit {
     filteredRecipes: Recipe[] = [];
     loading = true;
     searchTerm = '';
+    private searchSubject = new Subject<string>();
 
     // Pagination state (Recipes)
     currentPage = 0;
@@ -103,6 +105,7 @@ export class RecipesManagementComponent implements OnInit {
     loadingAudits = false;
     auditsLoaded = false;
     auditSearchTerm = '';
+    private auditSearchSubject = new Subject<string>();
     auditActionFilter = '';
     auditStartDate = '';
     auditEndDate = '';
@@ -136,8 +139,28 @@ export class RecipesManagementComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.searchSubject.pipe(
+            debounceTime(SEARCH_DEBOUNCE_MS),
+            distinctUntilChanged()
+        ).subscribe(() => {
+            this.currentPage = 0;
+            this.loadRecipes();
+        });
+
+        this.auditSearchSubject.pipe(
+            debounceTime(SEARCH_DEBOUNCE_MS),
+            distinctUntilChanged()
+        ).subscribe(() => {
+            this.applyAuditFilters();
+        });
+
         this.loadRecipes();
         this.loadStats();
+    }
+
+    ngOnDestroy(): void {
+        this.searchSubject.complete();
+        this.auditSearchSubject.complete();
     }
 
     loadStats(): void {
@@ -264,8 +287,7 @@ export class RecipesManagementComponent implements OnInit {
     }
 
     onSearch(): void {
-        this.currentPage = 0;
-        this.loadRecipes();
+        this.searchSubject.next(this.searchTerm);
     }
 
     clearFilters(): void {
@@ -427,7 +449,7 @@ export class RecipesManagementComponent implements OnInit {
     }
 
     onAuditSearch(): void {
-        this.applyAuditFilters();
+        this.auditSearchSubject.next(this.auditSearchTerm);
     }
 
     onAuditActionFilterChange(): void {

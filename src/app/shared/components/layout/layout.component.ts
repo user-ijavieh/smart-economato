@@ -81,9 +81,20 @@ export class LayoutComponent {
     }
   }
 
-  @HostListener('document:click')
-  onDocumentClick(): void {
-    if (this.isNotificationPanelOpen() || this.isNotificationPanelRendered()) {
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement | null;
+    if (!target) {
+      return;
+    }
+
+    if (this.showUtilities() && !target.closest('.utilities-container')) {
+      this.closeUtilities();
+    }
+
+    if ((this.isNotificationPanelOpen() || this.isNotificationPanelRendered())
+      && !target.closest('.notifications-panel')
+      && !target.closest('.notifications-bell')) {
       this.closeNotificationPanel();
     }
   }
@@ -147,6 +158,11 @@ export class LayoutComponent {
     const newValue = !this.showUtilities();
     this.showUtilities.set(newValue);
     localStorage.setItem('layout_utilities_visible', String(newValue));
+  }
+
+  closeUtilities(): void {
+    this.showUtilities.set(false);
+    localStorage.setItem('layout_utilities_visible', 'false');
   }
 
   toggleNotificationPanel(event: MouseEvent): void {

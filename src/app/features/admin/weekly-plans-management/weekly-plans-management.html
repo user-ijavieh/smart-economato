@@ -16,19 +16,23 @@
 		</div>
 
 		<div class="teacher-toggle-controls">
-			<label for="teacherSelector">Profesor</label>
-			<select
-				id="teacherSelector"
-				class="teacher-select"
-				[disabled]="loadingTeachers"
-				[ngModel]="selectedTeacherId"
-				(ngModelChange)="onTeacherChange($event || '')"
-			>
-				<option [ngValue]="null">Vista global (todos los profesores)</option>
-				@for (teacher of teachers; track teacher.id) {
-					<option [ngValue]="teacher.id">{{ teacher.name }}</option>
-				}
-			</select>
+			<label>Profesor</label>
+			<app-searchable-dropdown
+				[items]="teacherItems"
+				[selectedIds]="selectedTeacherId ? [selectedTeacherId] : []"
+				[loading]="loadingTeachers"
+				[loadingMore]="loadingMoreTeachers"
+				[initialText]="selectedTeacherName"
+				placeholder="Buscar profesor por nombre o usuario"
+				(search)="onTeacherSearch($event)"
+				(scrollNearBottom)="onTeacherScrollNearBottom()"
+				(itemSelected)="onTeacherSelected($event)"
+			></app-searchable-dropdown>
+			<div class="teacher-toggle-actions">
+				<button class="modal-btn modal-btn-secondary modal-btn-small" type="button" (click)="clearTeacherSelection()" [disabled]="!selectedTeacherId">
+					Vista global
+				</button>
+			</div>
 		</div>
 	</section>
 

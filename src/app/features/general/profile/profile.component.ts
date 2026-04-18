@@ -11,6 +11,7 @@ import { WebSocketService } from '../../../core/services/websocket.service';
 import { UserPresenceSnapshot } from '../../../shared/models/presence.model';
 import { UserActivityService } from '../../../core/services/user-activity.service';
 import { UserActivityLogResponse } from '../../../shared/models/user-activity.model';
+import { MessageService } from '../../../core/services/message.service';
 
 @Component({
   selector: 'app-profile',
@@ -25,6 +26,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private webSocketService = inject(WebSocketService);
   private userActivityService = inject(UserActivityService);
+  private messageService = inject(MessageService);
   private presenceSubscription?: Subscription;
 
   currentUser: User | null = null;
@@ -34,6 +36,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   students: (User & { initials?: string })[] = [];
   loadingStudents = false;
   studentPresence: UserPresenceSnapshot[] = [];
+  studentSearchTerm = '';
 
   activityLogs: UserActivityLogResponse[] = [];
   activityPage = 0;
@@ -48,6 +51,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
   
   // Control de estado loading por botón de alumno
   processingIds = new Set<number>();
+
+  get filteredStudents(): (User & { initials?: string })[] {
+    const term = this.studentSearchTerm.trim().toLowerCase();
+    if (!term) {
+      return this.students;
+    }
+    return this.students.filter(student =>
+      student.name.toLowerCase().includes(term)
+    );
+  }
 
   ngOnInit(): void {
     const role = this.authService.getRole();
@@ -102,6 +115,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
           ...s,
           initials: this.getInitials(s.name)
         }));
+        this.sortStudents();
         this.loadingStudents = false;
         this.cdr.detectChanges();
       },
@@ -124,6 +138,24 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   isProcessing(id: number): boolean {
     return this.processingIds.has(id);
+  }
+
+  getOnlineStudentsCount(): number {
+    const studentIds = new Set(this.students.map(student => student.id));
+    return this.studentPresence.filter(presence => studentIds.has(presence.userId)).length;
+  }
+
+  private sortStudents(): void {
+    this.students.sort((a, b) => {
+      const aElevated = a.role === 'ELEVATED';
+      const bElevated = b.role === 'ELEVATED';
+
+      if (aElevated !== bElevated) {
+        return aElevated ? -1 : 1;
+      }
+
+      return a.name.localeCompare(b.name, 'es', { sensitivity: 'base' });
+    });
   }
 
   openEscalateModal(student: User) {
@@ -167,7 +199,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
       });
   }
 
-  deescalate(student: User) {
+  async deescalate(student: User): Promise<void> {
+    const confirmed = await this.messageService.confirm(
+      '¿Revocar permisos temporales?',
+      `¿Seguro que quieres revocar los permisos de "${student.name}"?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
     this.processingIds.add(student.id);
     this.cdr.detectChanges();
     this.userService.deescalateRoles(student.id)

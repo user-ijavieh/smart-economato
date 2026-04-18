@@ -323,14 +323,22 @@
                     Seleccionar todos
                 </button>
             </div>
-            <div class="students-list" role="listbox" aria-label="Alumnos sin asignar">
+            <div class="students-search">
+                <input
+                    type="text"
+                    [(ngModel)]="assignmentStudentSearchTerm"
+                    (ngModelChange)="onAssignmentSearch()"
+                    placeholder="Buscar alumno por nombre..."
+                    aria-label="Buscar alumnos por nombre"
+                />
+            </div>
+            <div class="students-list" role="listbox" aria-label="Alumnos sin asignar" (scroll)="onUnassignedScroll($event)">
                 @if (selectionCount > 0) {
                 <div class="selection-actions">
                     <span>{{ selectionCount }} seleccionados</span>
-                    <button type="button" (click)="clearSelection()">Deseleccionar</button>
                 </div>
                 }
-                @for (student of unassignedStudents; track student.id) {
+                @for (student of visibleUnassignedStudents; track student.id) {
                 <div class="student-card"
                     [class.selected]="isSelected(student.id)"
                     draggable="true"
@@ -355,7 +363,14 @@
                     </svg>
                 </div>
                 }
-                @if (unassignedStudents.length === 0 && !hasPendingAssignments()) {
+                @if (unassignedLoadingMore) {
+                <div class="students-list-status">Cargando alumnos...</div>
+                }
+                @if (filteredUnassignedStudents.length === 0 && assignmentStudentSearchTerm.trim()) {
+                <div class="empty-state">
+                    <span>No se encontraron alumnos con ese nombre</span>
+                </div>
+                } @else if (filteredUnassignedStudents.length === 0 && !hasPendingAssignments()) {
                 <div class="empty-state">
                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
@@ -363,7 +378,7 @@
                     <span>Todos los alumnos tienen profesor</span>
                 </div>
                 }
-                @if (unassignedStudents.length === 0 && hasPendingAssignments()) {
+                @if (filteredUnassignedStudents.length === 0 && !assignmentStudentSearchTerm.trim() && hasPendingAssignments()) {
                 <div class="empty-state drop-hint-state">
                     <span>Arrastra aquí para desasignar</span>
                 </div>

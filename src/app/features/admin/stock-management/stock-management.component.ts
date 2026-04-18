@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { finalize, forkJoin, Subject, of } from 'rxjs';
 import { map, switchMap, debounceTime, distinctUntilChanged, catchError } from 'rxjs/operators';
+import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartOptions } from 'chart.js';
 import { StockAlertService } from '../../../core/services/stock-alert.service';
@@ -50,6 +51,7 @@ interface RepositionOrderItem extends StockAlertDTO {
     unitPrice: number;
     supplierId: number | null;
     supplierName: string | null;
+    customQuantity?: number;
 }
 
 interface RepositionOrderGroup {
@@ -120,6 +122,8 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     private draggedOrderItems: RepositionOrderItem[] = [];
     creatingOrder = false;
     roundUpOrderQuantities = false;
+    showCustomQuantities = false;
+    orderBuilderDirty = false;
     orderSearchTerm = '';
     collapsedPoolSuppliers = new Set<string>();
     selectedOrderItemIds = new Set<number>();
@@ -272,7 +276,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         this.loadSuppliers();
         
         this.searchSubscription = this.searchSubject.pipe(
-            debounceTime(300),
+            debounceTime(SEARCH_DEBOUNCE_MS),
             distinctUntilChanged()
         ).subscribe(() => {
             this.ledgerProductsPage = 0;
@@ -280,7 +284,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         });
 
         this.adjustmentBatchSearchSubscription = this.adjustmentBatchSearchSubject.pipe(
-            debounceTime(250),
+            debounceTime(SEARCH_DEBOUNCE_MS),
             distinctUntilChanged()
         ).subscribe((query: string) => {
             this.loadBatchTypeahead(query);
@@ -503,6 +507,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             next: (data: any) => {
                 this.orderAlerts = data as RepositionOrderItem[];
                 this.orderGroups = [this.createOrderGroup()];
+                this.orderBuilderDirty = false;
                 this.showOrderModal = true;
                 this.loadingOrderData = false;
                 this.cdr.detectChanges();
@@ -514,7 +519,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     loadSuppliers(): void {
         if (this.loadingSuppliers || this.suppliers.length > 0) return;
         this.loadingSuppliers = true;
-        this.supplierService.getAll(0, 200, 'name,asc').pipe(
+        this.supplierService.getAll(0, 50, 'name,asc').pipe(
             finalize(() => {
                 this.loadingSuppliers = false;
                 this.cdr.detectChanges();
@@ -540,9 +545,67 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         this.draggedSourceGroupId = null;
         this.draggedOrderItems = [];
         this.roundUpOrderQuantities = false;
+        this.showCustomQuantities = false;
         this.selectedOrderItemIds.clear();
         this.lastSelectedOrderItemId = null;
         this.nextOrderGroupId = 1;
+        this.orderBuilderDirty = false;
+    }
+
+    async beforeCloseOrderModal(): Promise<boolean> {
+        if (!this.orderBuilderDirty) {
+            return true;
+        }
+
+        return this.messageService.confirm(
+            'Descartar cambios',
+            'Tienes cambios sin guardar en la orden de reposicion. Si cierras ahora, se perderan. ¿Deseas salir?',
+            'Descartar',
+            'Seguir editando'
+        );
+    }
+
+    onDaysAheadChange(value: number): void {
+        this.daysAhead = value;
+        this.markOrderBuilderDirty();
+    }
+
+    onRoundUpOrderQuantitiesChange(enabled: boolean): void {
+        this.roundUpOrderQuantities = enabled;
+        this.markOrderBuilderDirty();
+    }
+
+    onShowCustomQuantitiesChange(enabled: boolean): void {
+        if (enabled) {
+            this.initializeOrderCustomQuantitiesFromCurrent();
+        }
+
+        this.showCustomQuantities = enabled;
+        this.markOrderBuilderDirty();
+    }
+
+    onOrderQuantityInputChange(): void {
+        this.markOrderBuilderDirty();
+    }
+
+    onOrderGroupSupplierChange(): void {
+        this.markOrderBuilderDirty();
+    }
+
+    private initializeOrderCustomQuantitiesFromCurrent(): void {
+        const allItems = [...this.orderAlerts, ...this.orderGroups.flatMap(group => group.items)];
+
+        for (const item of allItems) {
+            if (item.customQuantity === undefined) {
+                item.customQuantity = this.getOrderQuantity(item);
+            }
+        }
+    }
+
+    private markOrderBuilderDirty(): void {
+        if (this.showOrderModal) {
+            this.orderBuilderDirty = true;
+        }
     }
 
     private createOrderGroup(): RepositionOrderGroup {
@@ -558,6 +621,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     addOrderGroup(): void {
         this.orderGroups = [this.createOrderGroup(), ...this.orderGroups];
         this.reindexOrderGroups();
+        this.markOrderBuilderDirty();
         this.cdr.detectChanges();
     }
 
@@ -571,6 +635,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             this.orderGroups = [this.createOrderGroup()];
         }
         this.reindexOrderGroups();
+        this.markOrderBuilderDirty();
         this.cdr.detectChanges();
     }
 
@@ -623,6 +688,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         this.draggedSourceGroupId = null;
         this.draggedOrderItems = [];
         this.clearOrderSelection();
+        this.markOrderBuilderDirty();
         this.cdr.detectChanges();
     }
 
@@ -638,6 +704,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         this.draggedSourceGroupId = null;
         this.draggedOrderItems = [];
         this.clearOrderSelection();
+        this.markOrderBuilderDirty();
         this.cdr.detectChanges();
     }
 
@@ -647,6 +714,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
 
         group.items = group.items.filter(entry => entry.productId !== item.productId);
         this.orderAlerts = [...this.orderAlerts, item];
+        this.markOrderBuilderDirty();
         this.cdr.detectChanges();
     }
 
@@ -741,15 +809,23 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         return group?.items || null;
     }
 
-    getOrderQuantity(a: StockAlertDTO): number {
-        const daily = a.projectedConsumption / 14;
-        const raw = Math.ceil(Math.max(0, daily * this.daysAhead - a.currentStock - a.pendingOrderQuantity) * 100) / 100;
+    getOriginalRequirement(item: StockAlertDTO): number {
+        const daily = (item.projectedConsumption || 0) / 14;
+        return Math.max(0, daily * this.daysAhead - (item.currentStock || 0) - (item.pendingOrderQuantity || 0));
+    }
+
+    getOrderQuantity(item: RepositionOrderItem): number {
+        if (this.showCustomQuantities && item.customQuantity !== undefined) {
+            return item.customQuantity;
+        }
+        const needed = this.getOriginalRequirement(item);
+        const raw = Math.ceil(needed * 100) / 100;
         return this.roundUpOrderQuantities ? Math.ceil(raw) : raw;
     }
 
     getOrderTotal(items: Array<StockAlertDTO | RepositionOrderItem> = this.orderAlerts): number {
         return items.reduce((sum, a) => {
-            const qty = this.getOrderQuantity(a);
+            const qty = this.getOrderQuantity(a as RepositionOrderItem);
             return sum + (qty > 0 ? qty * (a.unitPrice || 0) : 0);
         }, 0);
     }
@@ -846,6 +922,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         this.orderAlerts = [];
         this.reindexOrderGroups();
         this.clearOrderSelection();
+        this.markOrderBuilderDirty();
         this.cdr.detectChanges();
     }
 
@@ -879,6 +956,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         ).subscribe({
             next: () => {
                 this.messageService.showSuccess('Órdenes creadas correctamente');
+                this.orderBuilderDirty = false;
                 this.closeOrderModal();
                 this.loadAlerts();
             },

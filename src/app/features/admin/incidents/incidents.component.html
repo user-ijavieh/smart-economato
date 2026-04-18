@@ -111,7 +111,7 @@
               }
             } @else {
               @for (incident of visibleIncidents; track incident.id) {
-              <tr>
+              <tr class="incident-row-clickable" (click)="openIncidentDetail(incident.id)">
                 <td><span class="incident-id">#{{ incident.id }}</span></td>
                 <td>
                   <div class="incident-title-cell">
@@ -129,7 +129,7 @@
                 <td><span class="incident-count">{{ incident.chatMessageCount || 0 }}</span></td>
                 <td>
                   <div class="incident-actions">
-                    <button class="toolbar-btn btn-incident-secondary toolbar-btn-small" type="button" (click)="openIncidentDetail(incident.id)">Ver</button>
+                    <button class="toolbar-btn btn-incident-secondary toolbar-btn-small" type="button" (click)="$event.stopPropagation(); openIncidentDetail(incident.id)">Ver</button>
                   </div>
                 </td>
               </tr>

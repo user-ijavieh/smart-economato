@@ -58,6 +58,11 @@
   min-width: 300px;
 }
 
+.teacher-toggle-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .teacher-select {
   border-radius: var(--theme-radius-input);
   border: 1px solid var(--theme-border-glass);
