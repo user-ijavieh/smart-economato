@@ -20,7 +20,15 @@
   <div class="students-section">
     <div class="section-header">
       <h2>Mis Alumnos</h2>
-      <span class="students-count">{{ students.length }} total · {{ studentPresence.length }} en línea</span>
+      <span class="students-count">{{ filteredStudents.length }} visibles · {{ students.length }} total · {{ getOnlineStudentsCount() }} en línea</span>
+    </div>
+    <div class="students-toolbar">
+      <input
+        type="text"
+        [(ngModel)]="studentSearchTerm"
+        placeholder="Buscar alumno por nombre..."
+        aria-label="Buscar alumno por nombre"
+      />
     </div>
 
     @if (loadingStudents) {
@@ -30,9 +38,7 @@
           <tr>
             <th>Alumno</th>
             <th>Usuario</th>
-            <th>Rol Actual</th>
             <th>Estado</th>
-            <th>Pantalla</th>
             <th>Permisos Temporales</th>
           </tr>
         </thead>
@@ -46,9 +52,7 @@
               </div>
             </td>
             <td data-label="Usuario"><span class="skeleton-text" style="width: 90px"></span></td>
-            <td data-label="Rol Actual"><span class="skeleton-text" style="width: 60px"></span></td>
             <td data-label="Estado"><span class="skeleton-text" style="width: 80px"></span></td>
-            <td data-label="Pantalla"><span class="skeleton-text" style="width: 100px"></span></td>
             <td data-label="Permisos Temporales"><span class="skeleton-text" style="width: 100px"></span></td>
           </tr>
           }
@@ -59,6 +63,10 @@
     <div class="empty-state">
       <p>No tienes alumnos asignados actualmente.</p>
     </div>
+    } @else if (filteredStudents.length === 0) {
+    <div class="empty-state">
+      <p>No se encontraron alumnos con ese nombre.</p>
+    </div>
     } @else {
     <div class="table-container tabla-contenedor">
       <table class="students-table">
@@ -66,14 +74,12 @@
           <tr>
             <th>Alumno</th>
             <th>Usuario</th>
-            <th>Rol Actual</th>
             <th>Estado</th>
-            <th>Pantalla</th>
             <th>Permisos Temporales</th>
           </tr>
         </thead>
         <tbody>
-          @for (student of students; track student.id) {
+          @for (student of filteredStudents; track student.id) {
           <tr>
             <td data-label="Alumno">
               <div class="student-name">
@@ -82,23 +88,11 @@
               </div>
             </td>
             <td data-label="Usuario">{{ student.user }}</td>
-            <td data-label="Rol Actual">
-              <span class="role-badge" [class.elevated]="student.role === 'ELEVATED'">
-                {{ student.role === 'ELEVATED' ? 'TEMPORAL (CHEF)' : student.role }}
-              </span>
-            </td>
             <td data-label="Estado">
               @if (getStudentPresence(student.id); as presence) {
               <span class="presence-pill connected">En línea</span>
               } @else {
               <span class="presence-pill disconnected">Desconectado</span>
-              }
-            </td>
-            <td data-label="Pantalla">
-              @if (getStudentPresence(student.id); as presence) {
-              <span>{{ getStudentCurrentScreen(presence) }}</span>
-              } @else {
-              <span>-</span>
               }
             </td>
             <td data-label="Permisos Temporales">

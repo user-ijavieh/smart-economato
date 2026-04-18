@@ -45,6 +45,7 @@ export class AlertNotificationComponent {
 
   readonly failures = this.activeFailures.asReadonly();
   readonly recoveries = this.recoveredAlerts.asReadonly();
+  readonly showAlerts = signal<boolean>(localStorage.getItem('layout_alerts_visible') !== 'false');
 
   constructor() {
     this.webSocketService.alerts$
@@ -83,6 +84,21 @@ export class AlertNotificationComponent {
 
   getRecoveryList(): AlertViewModel[] {
     return this.recoveries();
+  }
+
+  getCollapsedBadgeCount(): number {
+    return this.getFailureList().length + this.getRecoveryList().length;
+  }
+
+  toggleAlerts(event: MouseEvent): void {
+    event.stopPropagation();
+    const newValue = !this.showAlerts();
+    this.showAlerts.set(newValue);
+    localStorage.setItem('layout_alerts_visible', String(newValue));
+  }
+
+  stopPropagation(event: MouseEvent): void {
+    event.stopPropagation();
   }
 
   getFailureClass(alert: AlertViewModel): string {

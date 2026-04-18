@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
@@ -54,6 +54,14 @@ export class WeeklyPlanService {
     return this.http.get<WeeklyPlanResponse>(`${this.url}/${planId}`);
   }
 
+  downloadPlanPdf(planId: number, orientation: 'horizontal' | 'vertical' = 'horizontal'): Observable<HttpResponse<Blob>> {
+    return this.http.get(`${this.url}/${planId}/pdf`, {
+      params: new HttpParams().set('orientation', orientation),
+      responseType: 'blob',
+      observe: 'response'
+    });
+  }
+
   getAllPlans(page = 0, size = 10, sort = 'weekStartDate,desc'): Observable<WeeklyPlanPage> {
     const params = new HttpParams()
       .set('page', page.toString())
@@ -75,12 +83,28 @@ export class WeeklyPlanService {
     return this.http.patch<WeeklyPlanSlotResponse>(`${this.url}/${planId}/slots/${slotId}/cancel`, {});
   }
 
+  restoreSlot(planId: number, slotId: number): Observable<WeeklyPlanSlotResponse> {
+    return this.http.patch<WeeklyPlanSlotResponse>(`${this.url}/${planId}/slots/${slotId}/restore`, {});
+  }
+
   cancelStudentFromSlot(planId: number, slotId: number, studentId: number): Observable<WeeklyPlanSlotStudentResponse> {
     return this.http.patch<WeeklyPlanSlotStudentResponse>(`${this.url}/${planId}/slots/${slotId}/students/${studentId}/cancel`, {});
   }
 
+  restoreStudentFromSlot(planId: number, slotId: number, studentId: number): Observable<WeeklyPlanSlotStudentResponse> {
+    return this.http.patch<WeeklyPlanSlotStudentResponse>(`${this.url}/${planId}/slots/${slotId}/students/${studentId}/restore`, {});
+  }
+
   cancelStudentFromDay(planId: number, dayOfWeek: number, studentId: number): Observable<void> {
     return this.http.patch<void>(`${this.url}/${planId}/days/${dayOfWeek}/students/${studentId}/cancel`, {});
+  }
+
+  restoreStudentFromDay(planId: number, dayOfWeek: number, studentId: number): Observable<void> {
+    return this.http.patch<void>(`${this.url}/${planId}/days/${dayOfWeek}/students/${studentId}/restore`, {});
+  }
+
+  restoreDay(planId: number, dayOfWeek: number): Observable<void> {
+    return this.http.patch<void>(`${this.url}/${planId}/days/${dayOfWeek}/restore`, {});
   }
 
   getStudentMetrics(chefId?: number | null, page = 0, size = 10, sort = 'studentName,asc'): Observable<StudentMetricsPage> {

@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize, debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 import { SupplierService } from '../../../core/services/supplier.service';
 import { TraceabilityService } from '../../../core/services/traceability.service';
 import { ProductService } from '../../../core/services/product.service';
@@ -120,7 +121,7 @@ export class TraceabilityManagementComponent implements OnInit {
 
   private setupSearchDebounce(): void {
     this.supplierSearchSubject.pipe(
-      debounceTime(300),
+      debounceTime(SEARCH_DEBOUNCE_MS),
       distinctUntilChanged()
     ).subscribe((_: string) => {
       this.supplierPage = 0;
@@ -129,7 +130,7 @@ export class TraceabilityManagementComponent implements OnInit {
     });
 
     this.productSearchSubject.pipe(
-      debounceTime(300),
+      debounceTime(SEARCH_DEBOUNCE_MS),
       distinctUntilChanged()
     ).subscribe((_: string) => {
       this.productPage = 0;
@@ -138,7 +139,7 @@ export class TraceabilityManagementComponent implements OnInit {
     });
 
     this.historySearchSubject.pipe(
-      debounceTime(300),
+      debounceTime(SEARCH_DEBOUNCE_MS),
       distinctUntilChanged()
     ).subscribe((_: string) => {
       this.historyPage = 0;

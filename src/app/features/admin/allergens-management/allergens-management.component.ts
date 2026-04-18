@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AllergenService } from '../../../core/services/allergen.service';
@@ -7,9 +7,10 @@ import { Allergen, AllergenRequest } from '../../../shared/models/allergen.model
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { SuppliersManagementComponent } from '../suppliers-management/suppliers-management.component';
 import { ScrollService } from '../../../core/services/scroll.service';
-import { finalize, Observable, of } from 'rxjs';
+import { finalize, Observable, of, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { Page } from '../../../shared/models/page.model';
 import { catchError, map } from 'rxjs/operators';
+import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
 @Component({
     selector: 'app-allergens-management',
@@ -24,7 +25,7 @@ import { catchError, map } from 'rxjs/operators';
     styleUrl: './allergens-management.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AllergensManagementComponent implements OnInit {
+export class AllergensManagementComponent implements OnInit, OnDestroy {
     private allergenService = inject(AllergenService);
     private cdr = inject(ChangeDetectorRef);
     private scrollService = inject(ScrollService);
@@ -35,6 +36,7 @@ export class AllergensManagementComponent implements OnInit {
     filteredAllergens: Allergen[] = [];
     loading = true;
     searchTerm = '';
+    private searchSubject = new Subject<string>();
 
     // Pagination
     currentPage = 0;
@@ -69,7 +71,19 @@ export class AllergensManagementComponent implements OnInit {
     get totalAllergens(): number { return this.totalElements; }
 
     ngOnInit(): void {
+        this.searchSubject.pipe(
+            debounceTime(SEARCH_DEBOUNCE_MS),
+            distinctUntilChanged()
+        ).subscribe(() => {
+            this.currentPage = 0;
+            this.loadAllergens(0);
+        });
+
         this.loadAllergens();
+    }
+
+    ngOnDestroy(): void {
+        this.searchSubject.complete();
     }
 
     // ── Load ──
@@ -194,8 +208,7 @@ export class AllergensManagementComponent implements OnInit {
     }
 
     onSearch(): void { 
-        this.currentPage = 0;
-        this.loadAllergens(0);
+        this.searchSubject.next(this.searchTerm);
     }
 
     clearFilters(): void {

@@ -41,6 +41,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     { label: 'Plan Semanal', route: '/weekly-plans', icon: 'calendar' },
     { label: 'Pedidos', route: '/orders', icon: 'cart' },
     { label: 'Recepción', route: '/reception', icon: 'truck' },
+    { label: 'Incidencias', route: '/incidents', icon: 'alert' },
     { label: 'Chat IA', route: '/ai-chat', icon: 'chat' },
     { label: 'Perfil', route: '/profile', icon: 'person' }
   ];
@@ -113,6 +114,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
         item.label !== 'Perfil' &&
         item.label !== 'Plan Semanal'
       );
+    }
+    if (userRole === 'CHEF' || userRole === 'ELEVATED') {
+      return this.defaultNavItems;
     }
     return this.defaultNavItems;
   }

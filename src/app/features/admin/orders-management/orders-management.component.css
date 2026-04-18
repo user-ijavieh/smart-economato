@@ -763,7 +763,7 @@
   .audit-modal { width: 95%; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .hide-on-mobile { display: none !important; }
   .show-on-mobile-only { display: table-cell !important; }
 .header-recetas { height: 60px; padding: 10px; }  

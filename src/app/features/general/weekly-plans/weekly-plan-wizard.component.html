@@ -34,8 +34,22 @@
 
         @if (role === 'ADMIN') {
           <div class="form-group">
-            <label for="chefId">ID del responsable (solo admin)</label>
-            <input id="chefId" type="number" class="form-input" [(ngModel)]="chefId" />
+            <label>Responsable (chef)</label>
+            <app-searchable-dropdown
+              [items]="chefSearchItems"
+              [selectedIds]="chefId ? [chefId] : []"
+              [loading]="loadingChefSearch"
+              [loadingMore]="loadingChefSearchMore"
+              [initialText]="selectedChefName"
+              placeholder="Buscar chef por nombre o usuario"
+              (search)="onChefSearch($event)"
+              (scrollNearBottom)="onChefScrollNearBottom()"
+              (itemSelected)="onChefSelected($event)"
+            ></app-searchable-dropdown>
+            <div class="wizard-actions step1-actions">
+              <button class="modal-btn modal-btn-secondary" type="button" (click)="clearChefSelection()" [disabled]="!chefId">Limpiar chef</button>
+            </div>
+            <p class="field-hint">Usa coincidencia parcial: escribir "fran" traerá "Franchesco", "Francisco", etc.</p>
           </div>
         }
 

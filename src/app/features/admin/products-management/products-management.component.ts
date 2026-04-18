@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../../core/services/product.service';
@@ -18,7 +18,8 @@ import { BaseModalComponent } from '../../../shared/components/base-modal/base-m
 import { ScrollService } from '../../../core/services/scroll.service';
 import { PresenceTrackingService } from '../../../core/services/presence-tracking.service';
 import { finalize, catchError, forkJoin } from 'rxjs';
-import { of } from 'rxjs';
+import { of, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
 @Component({
   selector: 'app-products-management',
@@ -36,7 +37,7 @@ import { of } from 'rxjs';
   styleUrl: './products-management.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProductsManagementComponent implements OnInit {
+export class ProductsManagementComponent implements OnInit, OnDestroy {
   private productService = inject(ProductService);
   private productAuditService = inject(ProductAuditService);
   private supplierService = inject(SupplierService);
@@ -56,6 +57,7 @@ export class ProductsManagementComponent implements OnInit {
   suppliers: Supplier[] = [];
   loading = true;
   searchTerm = '';
+  private searchSubject = new Subject<string>();
   showHiddenProducts = false; // Estado para mostrar/ocultar productos ocultos
 
   // Pagination state (Products)
@@ -91,6 +93,7 @@ export class ProductsManagementComponent implements OnInit {
   loadingAudits = false;
   auditsLoaded = false;
   auditSearchTerm = '';
+  private auditSearchSubject = new Subject<string>();
   auditMovementTypeFilter = '';
   auditStartDate = '';
   auditEndDate = '';
@@ -119,9 +122,30 @@ export class ProductsManagementComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.searchSubject.pipe(
+      debounceTime(SEARCH_DEBOUNCE_MS),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.currentPage = 0;
+      this.loadProducts();
+    });
+
+    this.auditSearchSubject.pipe(
+      debounceTime(SEARCH_DEBOUNCE_MS),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.currentAuditPage = 0;
+      this.loadAudits(0);
+    });
+
     this.loadProducts();
     this.loadSuppliers();
     this.loadStats();
+  }
+
+  ngOnDestroy(): void {
+    this.searchSubject.complete();
+    this.auditSearchSubject.complete();
   }
 
   // ── Tab switching ──
@@ -193,7 +217,7 @@ export class ProductsManagementComponent implements OnInit {
   }
 
   loadSuppliers(): void {
-    this.supplierService.getAll(0, 100).subscribe({
+    this.supplierService.getAll(0, 50).subscribe({
       next: (page) => {
         this.suppliers = page.content;
         this.cdr.markForCheck();
@@ -236,8 +260,7 @@ export class ProductsManagementComponent implements OnInit {
   }
 
   onSearch(): void {
-    this.currentPage = 0;
-    this.loadProducts();
+    this.searchSubject.next(this.searchTerm);
   }
 
   openBarcodeScanner(): void {
@@ -370,8 +393,7 @@ export class ProductsManagementComponent implements OnInit {
   }
 
   onAuditSearch(): void {
-    this.currentAuditPage = 0;
-    this.loadAudits(0);
+    this.auditSearchSubject.next(this.auditSearchTerm);
   }
 
   onAuditMovementTypeFilterChange(): void {

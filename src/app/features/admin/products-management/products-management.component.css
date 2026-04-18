@@ -732,7 +732,7 @@ tr.low-stock-row:hover td {
   th, td { padding: 12px 10px; font-size: 0.85rem; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .contenedor-principal { padding: 15px; }
   .controles { flex-direction: column; padding: 15px; gap: 10px; align-items: stretch; }
   .controles input[type='text'], .action-select, .date-range-group { width: 100%; min-width: 0; }

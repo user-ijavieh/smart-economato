@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, OnInit, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
 export interface SearchableItem {
   id: number;
@@ -155,7 +156,7 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.searchSubject.pipe(
-      debounceTime(400),
+      debounceTime(SEARCH_DEBOUNCE_MS),
       distinctUntilChanged()
     ).subscribe(query => {
       this.search.emit(query);
