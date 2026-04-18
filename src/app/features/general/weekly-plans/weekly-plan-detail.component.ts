@@ -32,6 +32,7 @@ export class WeeklyPlanDetailComponent implements OnInit {
   planId: number | null = null;
   plan: WeeklyPlanResponse | null = null;
   loading = true;
+  downloadingPdf = false;
   activatingPlan = false;
   deactivatingPlan = false;
   
@@ -381,6 +382,41 @@ export class WeeklyPlanDetailComponent implements OnInit {
   editPlan() {
     if (!this.planId) return;
     this.router.navigate([this.getBaseRoute(), this.planId, 'edit']);
+  }
+
+  downloadPlanPdf() {
+    if (!this.planId || this.downloadingPdf) return;
+
+    this.downloadingPdf = true;
+    this.weeklyPlanService.downloadPlanPdf(this.planId).subscribe({
+      next: (response) => {
+        const blob = response.body;
+        if (!blob) {
+          this.messageService.showError('No se pudo generar el PDF del plan.');
+          return;
+        }
+
+        const contentDisposition = response.headers.get('content-disposition') || '';
+        const fileNameMatch = contentDisposition.match(/filename\*?=(?:UTF-8''|\")?([^\";]+)/i);
+        const fileName = fileNameMatch ? decodeURIComponent(fileNameMatch[1].replace(/"/g, '')) : `plan_semanal_${this.planId}.pdf`;
+
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        this.messageService.showError(err.error?.message || 'No se pudo descargar el plan semanal en PDF.');
+      },
+      complete: () => {
+        this.downloadingPdf = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   async activatePlan() {

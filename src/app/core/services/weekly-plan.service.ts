@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
@@ -52,6 +52,13 @@ export class WeeklyPlanService {
 
   getPlanById(planId: number): Observable<WeeklyPlanResponse> {
     return this.http.get<WeeklyPlanResponse>(`${this.url}/${planId}`);
+  }
+
+  downloadPlanPdf(planId: number): Observable<HttpResponse<Blob>> {
+    return this.http.get(`${this.url}/${planId}/pdf`, {
+      responseType: 'blob',
+      observe: 'response'
+    });
   }
 
   getAllPlans(page = 0, size = 10, sort = 'weekStartDate,desc'): Observable<WeeklyPlanPage> {
