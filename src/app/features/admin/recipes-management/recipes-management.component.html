@@ -432,7 +432,7 @@
 <!-- Modal de detalle -->
 @if (showDetailModal && selectedRecipe) {
 <app-recipe-detail-modal [recipe]="selectedRecipe" [canEdit]="true" [isAdmin]="true" [canCook]="false" (close)="closeDetailModal()"
-    (print)="downloadPdf(selectedRecipe)" (edit)="showDetailModal = false; openEditModal(selectedRecipe)"
+    (print)="downloadPdf(selectedRecipe)" (edit)="onEditFromDetail()"
     (cook)="onCookRecipe($event)" />
 }
 

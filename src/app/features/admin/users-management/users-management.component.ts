@@ -24,7 +24,7 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
         CommonModule,
         FormsModule,
         UserFormModalComponent,
-        BaseModalComponent,
+        BaseModalComponent
     ],
     templateUrl: './users-management.component.html',
     styleUrl: './users-management.component.css'
@@ -945,6 +945,15 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
     closeMobileModal(): void {
         this.showMobileModal = false;
         this.selectedUserForMobile = null;
+    }
+
+    openEditFromMobile(): void {
+        if (!this.selectedUserForMobile) {
+            return;
+        }
+
+        // Keep mobile detail modal open and stack edit modal above it.
+        this.openEditModal(this.selectedUserForMobile);
     }
 
     onSaveUser(data: any): void {

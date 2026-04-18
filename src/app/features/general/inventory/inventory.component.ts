@@ -312,7 +312,11 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   onCloseEditModal(): void {
     this.showEditModal = false;
-    this.selectedProduct = null;
+
+    // Keep selected product if the detail modal is still open underneath.
+    if (!this.showDetailModal) {
+      this.selectedProduct = null;
+    }
   }
 
   onToggleHiddenFromModal(): void {
@@ -337,13 +341,25 @@ export class InventoryComponent implements OnInit, OnDestroy {
   onSaveEditedProduct(productData: ProductRequest): void {
     if (!this.selectedProduct) return;
 
-    this.productService.update(this.selectedProduct.id, productData).subscribe({
+    const editingProductId = this.selectedProduct.id;
+    const keepDetailOpen = this.showDetailModal;
+
+    this.productService.update(editingProductId, productData).subscribe({
       next: (response) => {
         this.messageService.showSuccess('Producto actualizado correctamente');
 
-        // Cerrar modal inmediatamente
+        // Close child modal and preserve parent detail modal state when stacked.
         this.showEditModal = false;
-        this.selectedProduct = null;
+
+        if (keepDetailOpen && this.selectedProduct) {
+          this.selectedProduct = {
+            ...this.selectedProduct,
+            ...productData,
+            supplier: this.suppliers.find(s => s.id === productData.supplierId) || this.selectedProduct.supplier
+          } as Product;
+        } else {
+          this.selectedProduct = null;
+        }
 
         // Recargar la lista completa para asegurar que los datos estén sincronizados
         this.loadProducts();
@@ -381,8 +397,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   onEditFromDetail(product: Product): void {
-    // Close detail modal and open edit modal
-    this.showDetailModal = false;
+    // Keep detail modal open and stack edit modal above it.
     this.editProduct(product);
   }
 
