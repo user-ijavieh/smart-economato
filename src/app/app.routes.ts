@@ -33,6 +33,13 @@ export const routes: Routes = [
         canActivate: [roleGuard('ADMIN')]
       },
       {
+        path: 'admin-panel/dashboard',
+        loadComponent: () =>
+          import('./features/admin/dashboard-management/dashboard-management.component').then(m => m.DashboardManagementComponent),
+        canActivate: [roleGuard('ADMIN')],
+        data: { animation: 1 }
+      },
+      {
         path: 'admin-panel/users',
         loadComponent: () =>
           import('./features/admin/users-management/users-management.component').then(m => m.UsersManagementComponent),
