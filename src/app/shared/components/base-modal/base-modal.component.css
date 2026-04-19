@@ -23,6 +23,12 @@
   animation: fadeInOverlay 0.2s ease;
 }
 
+.modal-overlay.modal-overlay-soft {
+  background: color-mix(in srgb, var(--theme-overlay-bg) 96%, transparent);
+  backdrop-filter: blur(14px) saturate(0.95);
+  -webkit-backdrop-filter: blur(14px) saturate(0.95);
+}
+
 .modal-overlay-fullscreen {
   align-items: stretch;
   justify-content: stretch;
@@ -240,6 +246,21 @@
   background: rgba(239, 68, 68, 0.08);
   border-color: rgba(239, 68, 68, 0.20);
   color: #ef4444;
+}
+
+/* Admin override for close hover (no !important needed, same component stylesheet) */
+:host-context(body.admin-theme) .modal-close-btn:hover {
+  background: rgba(90, 120, 220, 0.22);
+  border-color: rgba(90, 120, 220, 0.40);
+  color: #ffffff;
+}
+
+:host-context(body.admin-theme[data-theme="light"]) .modal-close-btn:hover,
+:host-context([data-theme="light"] body.admin-theme) .modal-close-btn:hover,
+:host-context([data-theme="light"] .admin-theme) .modal-close-btn:hover {
+  background: rgba(37, 99, 235, 0.12);
+  border-color: rgba(37, 99, 235, 0.30);
+  color: #2563eb;
 }
 
 /* Scrollbar light */

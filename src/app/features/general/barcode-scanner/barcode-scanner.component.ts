@@ -1,7 +1,8 @@
-import { Component, inject, ViewChild, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ZXingScannerComponent, ZXingScannerModule } from '@zxing/ngx-scanner';
 import { BarcodeFormat } from '@zxing/library';
+import { MessageService } from '../../../core/services/message.service';
 import { ProductService } from '../../../core/services/product.service';
 import { Product } from '../../../shared/models/product.model';
 
@@ -14,9 +15,11 @@ import { Product } from '../../../shared/models/product.model';
 })
 export class BarcodeScannerComponent implements OnInit {
   @ViewChild('scanner') scanner!: ZXingScannerComponent;
+  @Input() compact = true;
   @Output() productFound = new EventEmitter<Product>();
   @Output() codeScanned = new EventEmitter<string>();
 
+  private messageService = inject(MessageService);
   private productService = inject(ProductService);
 
   // Scanner state
@@ -43,7 +46,6 @@ export class BarcodeScannerComponent implements OnInit {
   scannedCode: string | null = null;
   product: Product | null = null;
   loading = false;
-  error: string | null = null;
 
   ngOnInit(): void {}
 
@@ -60,14 +62,16 @@ export class BarcodeScannerComponent implements OnInit {
   }
 
   onCamerasNotFound(): void {
-    this.error = 'No se encontraron cámaras disponibles.';
+    this.messageService.showError('No se encontraron cámaras disponibles para el scanner.');
+    this.scannerEnabled = false;
   }
 
   onPermissionResponse(perm: boolean): void {
     this.hasPermission = perm;
     if (!perm) {
       this.permissionDenied = true;
-      this.error = 'Se necesitan permisos de cámara para escanear códigos de barras.';
+      this.scannerEnabled = false;
+      this.messageService.showError('Se necesitan permisos de cámara para escanear códigos de barras.');
     }
   }
 
@@ -77,7 +81,6 @@ export class BarcodeScannerComponent implements OnInit {
     this.scannedCode = code;
     this.scannerEnabled = false;
     this.loading = true;
-    this.error = null;
     this.product = null;
 
     this.codeScanned.emit(code);
@@ -91,10 +94,11 @@ export class BarcodeScannerComponent implements OnInit {
       error: (err) => {
         this.loading = false;
         if (err.status === 404) {
-          this.error = `No se encontró ningún producto con el código: ${code}`;
+          this.messageService.showWarning(`No se encontró ningún producto con el código: ${code}`);
         } else {
-          this.error = 'Error al consultar el producto. Inténtalo de nuevo.';
+          this.messageService.showError('Error al consultar el producto. Inténtalo de nuevo.');
         }
+        this.scanAgain();
       }
     });
   }
@@ -106,7 +110,6 @@ export class BarcodeScannerComponent implements OnInit {
   scanAgain(): void {
     this.scannedCode = null;
     this.product = null;
-    this.error = null;
     this.loading = false;
     this.scannerEnabled = true;
   }

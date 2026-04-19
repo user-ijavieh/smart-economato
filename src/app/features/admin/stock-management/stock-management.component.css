@@ -29,6 +29,18 @@
 
 .info-card svg { fill: #38bdf8; flex-shrink: 0; }
 
+:host-context([data-theme="light"]) .info-card {
+  color: #1e3a5f;
+}
+
+:host-context([data-theme="light"]) .info-card strong {
+  color: #122844;
+}
+
+:host-context([data-theme="light"]) .info-card svg {
+  fill: #0284c7;
+}
+
 /** ===== CONTROLS ===== */
 .controles, .controles-ledger {
   margin-bottom: 2rem;

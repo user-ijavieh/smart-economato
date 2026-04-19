@@ -492,7 +492,7 @@
         <span class="detail-value">{{ showingHidden ? 'Desactivado' : 'Activo' }}</span>
     </div>
     <div modal-footer class="detail-actions">
-        <button *ngIf="!showingHidden" class="btn-editar btn-full" (click)="showMobileModal = false; openEditModal(selectedUserForMobile)">
+        <button *ngIf="!showingHidden" class="btn-editar btn-full" (click)="openEditFromMobile()">
             Editar Usuario
         </button>
         <button *ngIf="!showingHidden" class="btn-ocultar btn-full" (click)="toggleUserVisibility(selectedUserForMobile); closeMobileModal()">

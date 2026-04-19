@@ -19,7 +19,7 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
         CommonModule,
         FormsModule,
         SupplierFormModalComponent,
-        BaseModalComponent,
+        BaseModalComponent
     ],
     templateUrl: './suppliers-management.component.html',
     styleUrl: './suppliers-management.component.css'
@@ -213,6 +213,15 @@ export class SuppliersManagementComponent implements OnInit, OnDestroy {
     closeMobileModal(): void {
         this.showMobileModal = false;
         this.selectedSupplierForMobile = null;
+    }
+
+    openEditFromMobile(): void {
+        if (!this.selectedSupplierForMobile) {
+            return;
+        }
+
+        // Keep mobile detail modal open and stack edit modal above it.
+        this.openEditModal(this.selectedSupplierForMobile);
     }
 
     onSaveSupplier(data: any): void {

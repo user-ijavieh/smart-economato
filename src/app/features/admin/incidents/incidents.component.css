@@ -199,17 +199,6 @@
 .stats-row .stat-card:nth-child(2) { animation: fadeInStaggered 0.28s ease both; animation-delay: 0.08s; }
 .stats-row .stat-card:nth-child(3) { animation: fadeInStaggered 0.28s ease both; animation-delay: 0.13s; }
 
-.stat-card::after {
-  content: '';
-  position: absolute;
-  inset: auto -42px -42px auto;
-  width: 120px;
-  height: 120px;
-  border-radius: 999px;
-  opacity: 0.16;
-  background: currentColor;
-}
-
 .stat-card:hover {
   transform: translateY(-2px);
 }
