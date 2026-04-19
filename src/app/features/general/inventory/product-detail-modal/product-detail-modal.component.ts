@@ -66,7 +66,7 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
     }
   }
 
-  getAvailabilityPercentage(): number | null {
+  getUsablePercentage(): number | null {
     if (!this.product) return null;
     const rawValue = (this.product as any).availabilityPercentage
       ?? (this.product as any).availability
@@ -76,6 +76,18 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
 
     const parsed = Number(rawValue);
     return Number.isNaN(parsed) ? null : parsed;
+  }
+
+  getMermaPercentage(): number | null {
+    const usable = this.getUsablePercentage();
+    if (usable === null) return null;
+    return 100 - usable;
+  }
+
+  getUsableStock(): number | null {
+    if (!this.product || this.product.currentStock === undefined || this.product.currentStock === null) return null;
+    const usablePct = this.getUsablePercentage() ?? 100;
+    return (this.product.currentStock * usablePct) / 100;
   }
 
   isLowStock(): boolean {

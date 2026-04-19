@@ -15,8 +15,9 @@ import { RecipeEditModalComponent } from '../../general/recipes/recipe-edit-moda
 import { RecipeDetailModalComponent } from '../../general/recipes/recipe-detail-modal/recipe-detail-modal.component';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { ScrollService } from '../../../core/services/scroll.service';
-import { finalize, catchError, forkJoin } from 'rxjs';
+import { finalize, catchError, forkJoin, takeUntil } from 'rxjs';
 import { of, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
 @Component({
@@ -42,7 +43,9 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
     private statsService = inject(StatsService);
     private cdr = inject(ChangeDetectorRef);
     private scrollService = inject(ScrollService);
+    private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
     messageService = inject(MessageService);
+    private destroy$ = new Subject<void>();
 
     // ── Tab state ──
     activeTab: 'recipes' | 'audits' | 'drafts' = 'recipes';
@@ -156,11 +159,22 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
 
         this.loadRecipes();
         this.loadStats();
+
+        this.syncCacheInvalidationService.invalidatedDomains$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(({ domains }) => {
+                if (domains.includes('recipe')) {
+                    this.loadRecipes(this.currentPage);
+                    this.loadStats();
+                }
+            });
     }
 
     ngOnDestroy(): void {
         this.searchSubject.complete();
         this.auditSearchSubject.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     loadStats(): void {

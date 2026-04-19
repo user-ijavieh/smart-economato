@@ -10,6 +10,7 @@ import { BaseModalComponent } from '../base-modal/base-modal.component';
 import { slideInAnimation } from '../../animations/route-animations';
 import { NotificationService, SessionNotification } from '../../../core/services/notification.service';
 import { PresenceTrackingService } from '../../../core/services/presence-tracking.service';
+import { HttpQueryCacheService } from '../../../core/services/http-query-cache.service';
 
 @Component({
   selector: 'app-layout',
@@ -27,12 +28,14 @@ export class LayoutComponent {
   private themeService = inject(ThemeService);
   private notificationService = inject(NotificationService);
   private presenceTrackingService = inject(PresenceTrackingService);
+  private httpQueryCacheService = inject(HttpQueryCacheService);
   private destroyRef = inject(DestroyRef);
 
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
 
   sidebarOpen = window.innerWidth > 800;
   showLogoutModal = false;
+  showClearCacheModal = false;
 
   readonly notifications$ = this.notificationService.notifications$;
   readonly unreadCount$ = this.notificationService.unreadCount$;
@@ -152,6 +155,23 @@ export class LayoutComponent {
 
   cancelLogout(): void {
     this.showLogoutModal = false;
+  }
+
+  openClearCacheModal(): void {
+    if (this.isNotificationPanelOpen()) {
+      this.closeNotificationPanel();
+    }
+    this.showClearCacheModal = true;
+  }
+
+  cancelClearCache(): void {
+    this.showClearCacheModal = false;
+  }
+
+  confirmClearCache(): void {
+    this.httpQueryCacheService.clearAll();
+    this.showClearCacheModal = false;
+    this.messageService.showSuccess('Cache limpiada. Si habias datos antiguos, se recargaran en la siguiente consulta.');
   }
 
   toggleUtilities(): void {

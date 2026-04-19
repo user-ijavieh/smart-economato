@@ -1,8 +1,9 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { firstValueFrom, forkJoin } from 'rxjs';
+import { firstValueFrom, forkJoin, Subject, takeUntil } from 'rxjs';
+import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { WeeklyPlanService } from '../../../core/services/weekly-plan.service';
 import { ProductService } from '../../../core/services/product.service';
 import { OrderService } from '../../../core/services/order.service';
@@ -19,15 +20,17 @@ import { Supplier } from '../../../shared/models/supplier.model';
   templateUrl: './weekly-plan-detail.component.html',
   styleUrls: ['./weekly-plan-detail.component.css']
 })
-export class WeeklyPlanDetailComponent implements OnInit {
+export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private weeklyPlanService = inject(WeeklyPlanService);
   private productService = inject(ProductService);
   private orderService = inject(OrderService);
   private supplierService = inject(SupplierService);
+  private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
   private cdr = inject(ChangeDetectorRef);
   private messageService = inject(MessageService);
+  private destroy$ = new Subject<void>();
 
   planId: number | null = null;
   plan: WeeklyPlanResponse | null = null;
@@ -227,6 +230,23 @@ export class WeeklyPlanDetailComponent implements OnInit {
         this.loadPlan();
       }
     });
+
+    this.syncCacheInvalidationService.invalidatedDomains$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ domains }) => {
+        if (!this.planId) return;
+
+        if (domains.includes('weekly_plan')) {
+          this.loadPlan();
+        } else if ((domains.includes('order') || domains.includes('batch') || domains.includes('product')) && this.activeTab === 'stock') {
+          this.loadStock();
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadPlan() {

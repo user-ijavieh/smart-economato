@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupplierService } from '../../../core/services/supplier.service';
 import { MessageService } from '../../../core/services/message.service';
-import { Observable, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Observable, Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { Page } from '../../../shared/models/page.model';
 import { Supplier, SupplierRequest } from '../../../shared/models/supplier.model';
 import { SupplierFormModalComponent } from './supplier-form-modal/supplier-form-modal.component';
@@ -27,7 +28,9 @@ export class SuppliersManagementComponent implements OnInit, OnDestroy {
     private supplierService = inject(SupplierService);
     private cdr = inject(ChangeDetectorRef);
     private scrollService = inject(ScrollService);
+    private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
     messageService = inject(MessageService);
+    private destroy$ = new Subject<void>();
 
     suppliers: Supplier[] = [];
     filteredSuppliers: Supplier[] = [];
@@ -68,10 +71,20 @@ export class SuppliersManagementComponent implements OnInit, OnDestroy {
         });
 
         this.loadSuppliers();
+
+        this.syncCacheInvalidationService.invalidatedDomains$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(({ domains }) => {
+                if (domains.includes('supplier')) {
+                    this.loadSuppliers(this.currentPage);
+                }
+            });
     }
 
     ngOnDestroy(): void {
         this.searchSubject.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     loadSuppliers(page: number = 0): void {

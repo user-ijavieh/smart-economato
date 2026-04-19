@@ -15,9 +15,10 @@ import { ProductEditModalComponent } from '../../general/inventory/product-edit-
 import { ProductDetailModalComponent } from '../../general/inventory/product-detail-modal/product-detail-modal.component';
 import { BarcodeScannerComponent } from '../../general/barcode-scanner/barcode-scanner.component';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
+import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { PresenceTrackingService } from '../../../core/services/presence-tracking.service';
-import { finalize, catchError, forkJoin } from 'rxjs';
+import { finalize, catchError, forkJoin, takeUntil } from 'rxjs';
 import { of, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
@@ -46,7 +47,9 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private scrollService = inject(ScrollService);
   private presenceTrackingService = inject(PresenceTrackingService);
+  private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
   messageService = inject(MessageService);
+  private destroy$ = new Subject<void>();
 
   // ── Tab state ──
   activeTab: 'products' | 'audits' = 'products';
@@ -141,11 +144,43 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
     this.loadProducts();
     this.loadSuppliers();
     this.loadStats();
+
+    this.syncCacheInvalidationService.invalidatedDomains$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ domains, event }) => {
+        let shouldReloadProducts = false;
+
+        if (domains.includes('product')) {
+          if (event.entityIds && event.entityIds.length > 0) {
+            const hasVisibleIds = event.entityIds.some(id => this.products.some(p => p.id === id));
+            if (hasVisibleIds) {
+              shouldReloadProducts = true;
+            } else if (event.action === 'CREATE' && this.currentPage === 0 && !this.searchTerm) {
+              shouldReloadProducts = true;
+            } else if (event.entityType !== 'product') {
+              // If it comes from another entity (like Order), and we have IDs but none visible, don't reload.
+              // Wait, if it comes from an order, maybe it affected stats of visible products?
+              // `hasVisibleIds` handles it because the IDs extracted are product IDs!
+              // So if none of our visible products were in the order, we don't need to reload.
+            }
+          } else {
+            // No specific entity IDs provided = global invalidation or operation like DELETE order
+            // that affects products but couldn't isolate the IDs. Reload to be safe.
+            shouldReloadProducts = true;
+          }
+        }
+
+        if (shouldReloadProducts && !this.loading) {
+          this.loadProducts(this.currentPage);
+        }
+      });
   }
 
   ngOnDestroy(): void {
     this.searchSubject.complete();
     this.auditSearchSubject.complete();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   // ── Tab switching ──
