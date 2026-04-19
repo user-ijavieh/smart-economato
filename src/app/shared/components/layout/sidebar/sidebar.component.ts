@@ -59,7 +59,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     { label: 'Productos', route: '/admin-panel/products', icon: 'inventory' },
     { label: 'Recetas', route: '/admin-panel/recipes', icon: 'menu_book' },
     { label: 'Datos Maestros', route: '/admin-panel/master-data', icon: 'database', section: 'GESTIÓN' },
-    { label: 'Usuarios', route: '/admin-panel/users', icon: 'people' },
+    { label: 'Gestión de alumnos', route: '/admin-panel/users', icon: 'people' },
     { label: 'Notificaciones', route: '/admin-panel/notifications', icon: 'notifications' },
     { label: 'Configuraciones', route: '/admin-panel/settings', icon: 'settings' },
     { label: 'Trazabilidad', route: '/admin-panel/traceability', icon: 'shield', section: 'TRAZABILIDAD' }
@@ -103,7 +103,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
     const userRole = this.getUserRole();
     if (userRole === 'ADMIN') {
-      return this.defaultNavItems.filter(item => item.label !== 'Plan Semanal');
+      return this.defaultNavItems.filter(item => item.label !== 'Plan Semanal' && item.label !== 'Perfil');
     }
     if (userRole === 'USER') {
       return this.defaultNavItems.filter(item =>
@@ -112,7 +112,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
         item.label !== 'Perfil' &&
         item.label !== 'Incidencias' &&
         item.label !== 'Chat IA' &&
-        item.label !== 'Perfil' &&
         item.label !== 'Plan Semanal'
       );
     }
