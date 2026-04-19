@@ -51,12 +51,12 @@ export class App implements OnInit {
       style.textContent = `
         ::-webkit-scrollbar {
           width: 8px;
-          display: none !important;
+          display: none;
         }
         [class*="modal"] ::-webkit-scrollbar,
         .modal-overlay ::-webkit-scrollbar,
         .modal-body ::-webkit-scrollbar {
-          display: block !important;
+          display: block;
         }
         ::-webkit-scrollbar-track {
           background: var(--admin-scrollbar-track);

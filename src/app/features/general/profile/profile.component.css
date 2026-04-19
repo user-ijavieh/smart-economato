@@ -1,4 +1,4 @@
-﻿:host {
+:host {
   display: block;
 }
 
@@ -322,7 +322,7 @@ tr:last-child td {
 button:disabled {  
   opacity: 0.4;  
   cursor: not-allowed;  
-  transform: none !important;  
+  transform: none;  
 }  
   
 button:focus-visible,  

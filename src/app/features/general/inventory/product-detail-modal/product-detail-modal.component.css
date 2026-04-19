@@ -42,7 +42,7 @@
 }
 
 .low-stock-row td {
-  color: var(--color-danger-muted) !important;
+  color: var(--color-danger-muted);
   font-weight: 600;
 }
 
