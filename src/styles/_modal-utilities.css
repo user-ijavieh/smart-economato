@@ -174,14 +174,16 @@
   padding: 0.625rem 0.75rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .modal-table th,
   .modal-table td,
   .catalog-table th,
   .catalog-table td {
     padding: 0.75rem 0.625rem;
     font-size: 0.85rem;
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 }
 
@@ -487,7 +489,7 @@
   background: rgba(239, 68, 68, 0.08);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .diff-container {
     padding: 1rem 1.25rem;
     gap: 1rem;
@@ -516,7 +518,7 @@
   }
 }
 
-@media (max-width: 920px) {
+@media (max-width: 800px) {
   .form-grid-two {
     grid-template-columns: 1fr;
   }

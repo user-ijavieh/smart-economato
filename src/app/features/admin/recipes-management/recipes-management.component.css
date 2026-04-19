@@ -969,6 +969,14 @@ tr.clickable-row {
   margin-left: 12px;
 }
 
+@media (max-width: 800px) {
+  .audit-modal-body {
+    grid-template-columns: 1fr;
+    padding: 16px;
+    gap: 12px;
+  }
+}
+
 @media (max-width: 480px) {
   .stats-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
   .stat-card { padding: 12px; }

@@ -78,7 +78,7 @@ form {
   box-shadow: 0 4px 12px color-mix(in srgb, var(--color-danger) 40%, transparent);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .form-row {
     grid-template-columns: 1fr;
   }

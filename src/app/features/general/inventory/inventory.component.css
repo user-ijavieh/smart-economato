@@ -365,7 +365,7 @@ tfoot td {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .hide-on-mobile { display: none; }
   .show-on-mobile-only { display: table-cell; }
   .mobile-unit {

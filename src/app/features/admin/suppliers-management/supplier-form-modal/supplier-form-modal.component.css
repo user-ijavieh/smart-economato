@@ -69,7 +69,7 @@ input.input-error:focus {
 }
 
 /** ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   form > .form-group:first-child {
     margin-top: 0;
   }

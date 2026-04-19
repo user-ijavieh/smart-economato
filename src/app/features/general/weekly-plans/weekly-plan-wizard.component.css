@@ -830,7 +830,7 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .participation-header,
   .day-group-header,
   .participation-row-head {

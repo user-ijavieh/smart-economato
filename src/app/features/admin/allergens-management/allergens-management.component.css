@@ -509,7 +509,7 @@ tr:hover { background: var(--theme-surface-glass-hover); }
   button { font-size: 0.85rem; padding: 8px 16px; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .contenedor-principal { padding: 15px; }
   .controles { padding: 15px; }
   .stats-row { grid-template-columns: repeat(2, 1fr); }
