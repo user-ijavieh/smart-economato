@@ -81,7 +81,11 @@ export class RecipesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(({ domains }) => {
         if (domains.includes('recipe')) {
-          this.loadRecipes();
+          if (this.searchTerm && this.searchTerm.trim() !== '') {
+            this.performSearch(this.searchTerm);
+          } else {
+            this.loadRecipes();
+          }
         }
       });
   }

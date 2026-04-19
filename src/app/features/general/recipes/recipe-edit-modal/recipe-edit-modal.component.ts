@@ -16,7 +16,9 @@ interface FormComponent {
   productId: number;
   quantity: number;
   searchText: string;
+  availabilityPercentage?: number;
 }
+
 
 @Component({
   selector: 'app-recipe-edit-modal',
@@ -43,8 +45,10 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
     elaboration: '',
     presentation: '',
     components: [],
-    allergenIds: []
+    allergenIds: [],
+    sellingPrice: 0
   };
+
 
   formComponents: FormComponent[] = [];
 
@@ -60,7 +64,9 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
   showProductDropdown: { [key: number]: boolean } = {};
   activeComponentIndex: number | null = null;
   productNamesMap: { [key: number]: string } = {};
+  productsCache: Map<number, Product> = new Map();
   showScannerModal = false;
+
   scannerComponentIndex: number | null = null;
   private searchSubject = new Subject<{ query: string, index: number }>();
 
@@ -92,20 +98,34 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
         productId: c.productId,
         quantity: c.quantity
       })),
-      allergenIds: this.recipe.allergens?.map(a => a.id) || []
+      allergenIds: this.recipe.allergens?.map(a => a.id) || [],
+      sellingPrice: this.recipe.sellingPrice || 0,
+      portions: 1
     };
+
+
 
     // Initialize formComponents
     this.formComponents = this.recipe.components.map(c => ({
       productId: c.productId,
       quantity: c.quantity,
-      searchText: c.productName || ''
+      searchText: c.productName || '',
+      availabilityPercentage: c.availabilityPercentage
     }));
 
-    // Map existing product names
+
+    // Map existing product names and populate cache
     this.recipe.components.forEach(c => {
       this.productNamesMap[c.productId] = c.productName;
+      // Pre-populate cache with basic data we have
+      this.productsCache.set(c.productId, {
+        id: c.productId,
+        name: c.productName,
+        unitPrice: c.subtotal / (c.quantity > 0 ? c.quantity : 1), // Rough estimate if not loaded
+        availabilityPercentage: c.availabilityPercentage
+      } as Product);
     });
+
   }
 
   private loadFormData(): void {
@@ -136,13 +156,19 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
         } else {
           this.availableProducts = response.content;
           this.productSearchResults = response.content;
+          
+          // Cache all loaded products
+          response.content.forEach(p => this.productsCache.set(p.id, p));
+
+          this.currentProductPage = page;
+
+          this.totalProductPages = response.totalPages;
+          this.loadingProducts = false;
+          this.loadingMoreProducts = false;
+          this.cdr.markForCheck();
         }
-        this.currentProductPage = page;
-        this.totalProductPages = response.totalPages;
-        this.loadingProducts = false;
-        this.loadingMoreProducts = false;
-        this.cdr.markForCheck();
       },
+
       error: () => {
         this.messageService.showError('Error al cargar productos');
         this.loadingProducts = false;
@@ -173,9 +199,10 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
   }
 
   addComponent(): void {
-    this.formComponents.push({ productId: 0, quantity: 0, searchText: '' });
+    this.formComponents.push({ productId: 0, quantity: 0, searchText: '', availabilityPercentage: 100 });
     this.cdr.markForCheck();
   }
+
 
   removeComponent(index: number): void {
     this.formComponents.splice(index, 1);
@@ -217,11 +244,13 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
     this.productService.searchByName(query.trim(), 0, 50).subscribe({
       next: (response) => {
         this.productSearchResults = response.content;
-        // Actualizar mapa de nombres
+        // Actualizar mapa de nombres y cache
         response.content.forEach(p => {
           this.productNamesMap[p.id] = p.name;
+          this.productsCache.set(p.id, p);
         });
         this.cdr.markForCheck();
+
       },
       error: () => {
         // Fallback a filtro local
@@ -237,11 +266,14 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
     this.formComponents[index].productId = productId;
 
     // Actualizar el mapa de nombres con el nuevo producto
-    const selectedProduct = this.availableProducts.find(p => p.id === productId);
+    const selectedProduct = this.productsCache.get(productId);
     if (selectedProduct) {
       this.productNamesMap[productId] = selectedProduct.name;
       this.formComponents[index].searchText = selectedProduct.name;
+      this.formComponents[index].availabilityPercentage = selectedProduct.availabilityPercentage != null ? selectedProduct.availabilityPercentage : 100;
     }
+
+
 
     this.showProductDropdown[index] = false;
     this.activeComponentIndex = null;
@@ -271,7 +303,11 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
     const index = this.scannerComponentIndex;
     this.formComponents[index].productId = product.id;
     this.formComponents[index].searchText = product.name;
+    this.formComponents[index].availabilityPercentage = product.availabilityPercentage != null ? product.availabilityPercentage : 100;
     this.productNamesMap[product.id] = product.name;
+    this.productsCache.set(product.id, product);
+
+
     this.showProductDropdown[index] = false;
     this.activeComponentIndex = null;
     this.productSearchQuery = '';
@@ -347,6 +383,25 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
     this.save.emit(this.editForm);
   }
 
+  suggestSellingPrice(): void {
+    const totalCost = this.calculateEstimatedTotalCost();
+    this.editForm.sellingPrice = Math.ceil(totalCost * 1.20 * 100) / 100;
+    this.cdr.markForCheck();
+  }
+
+  calculateEstimatedTotalCost(): number {
+    return this.formComponents.reduce((acc, comp) => {
+      const product = this.productsCache.get(comp.productId);
+      if (!product || !product.unitPrice) return acc;
+
+      
+      const availability = product.availabilityPercentage || 100;
+      const grossQuantity = comp.quantity * 100 / (availability > 0 ? availability : 100);
+      return acc + (grossQuantity * product.unitPrice);
+    }, 0);
+  }
+
+
   private validateForm(): boolean {
     if (!this.editForm.name.trim()) {
       this.messageService.showError('El nombre es requerido');
@@ -384,4 +439,12 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
   getToggleButtonText(): string {
     return this.showingHidden ? 'Mostrar' : 'Ocultar';
   }
+
+  getGrossQuantity(net: number, availability?: number): number {
+    if (!availability || availability <= 0 || availability >= 100) {
+      return net;
+    }
+    return net * 100 / availability;
+  }
 }
+

@@ -76,6 +76,11 @@ export interface KitchenReport {
   distinctUsersCooking: number;
   distinctProductsUsed: number;
   totalEstimatedCost: number;
+  totalWasteCost: number;
+  totalSales: number;
+  grossProfit: number;
+  netProfit: number;
+
   topRecipes: KitchenRecipeStat[];
   topUsers: KitchenUserStat[];
   topProducts: KitchenProductStat[];

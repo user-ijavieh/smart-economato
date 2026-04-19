@@ -99,9 +99,13 @@
 
           <!-- Precio -->
           <div class="card-footer">
-            <span class="card-price">{{ recipe.totalCost | number:'1.2-2' }} €</span>
+            <div class="card-pricing-group">
+              <span class="card-selling-price">{{ recipe.sellingPrice | number:'1.2-2' }} €</span>
+              <span class="card-cost-price">Coste: {{ recipe.totalCost | number:'1.2-2' }} €</span>
+            </div>
             <span class="card-components">{{ recipe.components.length }} ingredientes</span>
           </div>
+
         </div>
       }
 

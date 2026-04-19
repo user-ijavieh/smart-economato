@@ -7,7 +7,7 @@ import { Order, OrderReviewLockStatus, OrderStatus } from '../../../shared/model
 import { OrderDetailsModalComponent } from '../orders/order-details-modal/order-details-modal.component';
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { OrderReviewLockStateService } from '../../../core/services/order-review-lock-state.service';
-import { OrderReviewCollaborationStateService } from '../../../core/services/order-review-collaboration-state.service';
+// DESHABILITADO: import { OrderReviewCollaborationStateService } from '../../../core/services/order-review-collaboration-state.service';
 import { WebSocketService } from '../../../core/services/websocket.service';
 import { Subject, takeUntil } from 'rxjs';
 import { OrderReceptionModalComponent } from './order-reception-modal/order-reception-modal.component';
@@ -31,7 +31,7 @@ export class ReceptionComponent implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
   private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
   private orderReviewLockStateService = inject(OrderReviewLockStateService);
-  private orderReviewCollaborationStateService = inject(OrderReviewCollaborationStateService);
+  // DESHABILITADO: private orderReviewCollaborationStateService = inject(OrderReviewCollaborationStateService);
   private webSocketService = inject(WebSocketService);
   private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
@@ -62,12 +62,13 @@ export class ReceptionComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadOrders();
 
-    this.orderReviewLockStateService.state$
+    // DESHABILITADO: Sistema de locks y colaboración compartida
+    /* this.orderReviewLockStateService.state$
       .pipe(takeUntil(this.destroy$))
       .subscribe(state => {
         this.reviewLocks = state;
         this.cdr.markForCheck();
-      });
+      }); */
 
     this.syncCacheInvalidationService.invalidatedDomains$
       .pipe(takeUntil(this.destroy$))
@@ -77,7 +78,8 @@ export class ReceptionComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.webSocketService.connected$
+    // DESHABILITADO: Sistema de locks y colaboración compartida
+    /* this.webSocketService.connected$
       .pipe(takeUntil(this.destroy$))
       .subscribe(isConnected => {
         if (!isConnected || this.ordersByStatus.REVIEW.length === 0) {
@@ -85,7 +87,7 @@ export class ReceptionComponent implements OnInit, OnDestroy {
         }
 
         this.refreshReviewLocks(this.ordersByStatus.REVIEW);
-      });
+      }); */
   }
 
   ngOnDestroy(): void {
@@ -205,12 +207,16 @@ export class ReceptionComponent implements OnInit, OnDestroy {
   }
 
   getReviewLockInfo(order: Order): OrderReviewLockStatus | null {
-    return this.reviewLocks[order.id] ?? null;
+    // DESHABILITADO: Sistema de locks y colaboración compartida
+    return null; // Siempre sin bloqueo
+    // return this.reviewLocks[order.id] ?? null;
   }
 
   isReviewBlocked(order: Order): boolean {
-    const lock = this.getReviewLockInfo(order);
-    return !!lock?.locked && !lock.currentUserOwner && !lock.currentUserAdmin;
+    // DESHABILITADO: Sistema de locks y colaboración compartida
+    return false; // Siempre permite acceso
+    /* const lock = this.getReviewLockInfo(order);
+    return !!lock?.locked && !lock.currentUserOwner && !lock.currentUserAdmin; */
   }
 
   getReviewLockLabel(order: Order): string {
@@ -250,6 +256,7 @@ export class ReceptionComponent implements OnInit, OnDestroy {
     return `${owner} está revisando esta orden en este momento.`;
   }
 
+  /* DESHABILITADO: canRequestCollaborationFromList feature
   canRequestCollaborationFromList(order: Order): boolean {
     const lock = this.getReviewLockInfo(order);
     if (!lock?.locked) {
@@ -262,6 +269,7 @@ export class ReceptionComponent implements OnInit, OnDestroy {
 
     return true;
   }
+  */
 
   // Action handlers
   async reviewOrder(order: Order): Promise<void> {
@@ -292,6 +300,7 @@ export class ReceptionComponent implements OnInit, OnDestroy {
     this.showReceptionModal = true;
   }
 
+  /* DESHABILITADO: requestCollaborationFromList feature
   requestCollaborationFromList(order: Order): void {
     this.orderReviewCollaborationStateService.requestSharedReview(order.id).subscribe({
       next: () => {
@@ -302,6 +311,7 @@ export class ReceptionComponent implements OnInit, OnDestroy {
       }
     });
   }
+  */
 
   closeReceptionModal(): void {
     this.showReceptionModal = false;
