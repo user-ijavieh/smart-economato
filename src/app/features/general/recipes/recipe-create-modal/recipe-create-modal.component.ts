@@ -11,16 +11,19 @@ import { BaseModalComponent } from '../../../../shared/components/base-modal/bas
 import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.component';
 import { SEARCH_DEBOUNCE_MS } from '../../../../core/constants/search.constants';
 
+import { CommonModule, DecimalPipe } from '@angular/common';
+
 interface FormComponent {
   productId: number;
   quantity: number;
   searchText: string;
+  availabilityPercentage?: number;
 }
 
 @Component({
   selector: 'app-recipe-create-modal',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent, BarcodeScannerComponent],
+  imports: [CommonModule, FormsModule, BaseModalComponent, BarcodeScannerComponent],
   templateUrl: './recipe-create-modal.component.html',
   styleUrl: './recipe-create-modal.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -101,11 +104,15 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
       isHidden: this.initialRecipe.isHidden ?? false
     };
 
-    this.formComponents = (this.initialRecipe.components ?? []).map(c => ({
-      productId: c.productId,
-      quantity: c.quantity,
-      searchText: ''
-    }));
+    this.formComponents = (this.initialRecipe.components ?? []).map(c => {
+      const product = this.availableProducts.find(p => p.id === c.productId);
+      return {
+        productId: c.productId,
+        quantity: c.quantity,
+        searchText: product ? product.name : '',
+        availabilityPercentage: product?.availabilityPercentage ?? 100
+      };
+    });
   }
 
   private loadProducts(page: number = 0, append: boolean = false): void {
@@ -226,6 +233,8 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
       this.formComponents[index].searchText = product.name;
     }
 
+    this.formComponents[index].availabilityPercentage = product?.availabilityPercentage ?? 100;
+
     this.showProductDropdown[index] = false;
     this.activeComponentIndex = null;
     this.productSearchQuery = '';
@@ -340,5 +349,10 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
     }
 
     this.save.emit(this.createForm);
+  }
+
+  getGrossQuantity(netQuantity: number, availabilityPercentage?: number): number {
+    if (!availabilityPercentage || availabilityPercentage <= 0) return netQuantity;
+    return (netQuantity * 100) / availabilityPercentage;
   }
 }

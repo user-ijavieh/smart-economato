@@ -63,7 +63,8 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
   lockBlockedForCurrentUser = false;
   requestingSharedReview = false;
   admittingUserIds = new Set<number>();
-  displayMode: 'editing' | 'viewing_locked' = 'editing';
+  // DESHABILITADO: displayMode feature - Modo lectura en viewing_locked
+  // displayMode: 'editing' | 'viewing_locked' = 'editing';
 
   private scaleSubscription?: Subscription;
   private listeningSubscription?: Subscription;
@@ -121,8 +122,9 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     }
 
     this.applySearch();
-    this.initializeReviewLock();
-    this.initializeCollaboration();
+    // DESHABILITADO: Sistema de locks y colaboración compartida
+    // this.initializeReviewLock();
+    // this.initializeCollaboration();
   }
 
   ngOnDestroy(): void {
@@ -133,10 +135,11 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     this.collaborationStatusSubscription?.unsubscribe();
     this.websocketConnectionSubscription?.unsubscribe();
     this.syncEventSubscription?.unsubscribe();
-    this.stopLockHeartbeat();
-    this.releaseAllFieldLocks();
+    // DESHABILITADO: Sistema de locks y colaboración compartida
+    // this.stopLockHeartbeat();
+    // this.releaseAllFieldLocks();
     void this.scaleService.stopListening();
-    this.releaseLockIfOwned();
+    // this.releaseLockIfOwned();
   }
 
   onSearchTermChange(term: string): void {
@@ -544,6 +547,17 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         if (error?.status === 409) {
+          const currentStatus = error?.error?.currentStatus;
+          if (currentStatus === 'CONFIRMED' || currentStatus === 'INCOMPLETE') {
+            const statusText = currentStatus === 'CONFIRMED' ? 'confirmada' : 'incompleta';
+            const serverMessage = typeof error?.error?.message === 'string' ? error.error.message : null;
+            this.messageService.showError(serverMessage || `La orden #${this.order.id} ya esta ${statusText}.`);
+            this.receptionProcessed.emit();
+            this.close();
+            this.isProcessing = false;
+            return;
+          }
+
           this.processCooldownUntil = Date.now() + OrderReceptionModalComponent.CONFLICT_COOLDOWN_MS;
           const lockedBy = error?.error?.lockedBy;
           const lockText = lockedBy
@@ -560,6 +574,9 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
   }
 
   private initializeReviewLock(): void {
+    // DESHABILITADO: Sistema de locks y colaboración compartida
+    return;
+    /*
     this.lockStatusSubscription = this.orderReviewLockStateService.watchOrder(this.order.id).subscribe(status => {
       this.reviewLockStatus = status;
       this.applyLockUiStatus(status);
@@ -580,9 +597,13 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
         this.tryAcquireReviewLock();
       }
     });
+    */
   }
 
   private initializeCollaboration(): void {
+    // DESHABILITADO: Sistema de locks y colaboración compartida
+    return;
+    /*
     this.collaborationStatusSubscription = this.orderReviewCollaborationStateService.watchOrder(this.order.id).subscribe(state => {
       this.collaborationState = state;
       this.applyCollaborationUiState(state);
@@ -613,9 +634,13 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
         this.refreshOrderStatusAndCloseIfNeeded();
       }
     });
+    */
   }
 
   private refreshOrderStatusAndCloseIfNeeded(): void {
+    // DESHABILITADO: Sistema de locks y colaboración compartida
+    return;
+    /*
     this.orderService.getById(this.order.id).subscribe({
       next: latestOrder => {
         this.order.status = latestOrder.status;
@@ -627,9 +652,13 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
       },
       error: () => {}
     });
+    */
   }
 
   private requestSharedReviewIfNeeded(): void {
+    // DESHABILITADO: Sistema de locks y colaboración compartida
+    return;
+    /*
     if (this.sharedReviewAutoRequested || !this.canRequestSharedReview) {
       return;
     }
@@ -645,9 +674,13 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
         this.sharedReviewAutoRequested = false;
       }
     });
+    */
   }
 
   private tryAcquireReviewLock(force = false): void {
+    // DESHABILITADO: Sistema de locks y colaboración compartida
+    return;
+    /*
     if (this.order.status !== 'REVIEW') {
       return;
     }
@@ -694,17 +727,20 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
         this.acquireRetryBlockedUntil = Date.now() + OrderReceptionModalComponent.ACQUIRE_RETRY_COOLDOWN_MS;
       }
     });
+    */
   }
 
   private applyLockUiStatus(status: OrderReviewLockStatus | null): void {
-    if (!status || !status.locked) {
+    // DESHABILITADO: Sistema de locks y colaboración compartida
+    return;
+    /*
       this.stopLockHeartbeat();
       this.conflictBlockedByOtherUser = false;
       this.lockBlockedForCurrentUser = false;
       this.lockInfoTitle = '';
       this.lockInfoDetail = '';
       this.sharedReviewAutoRequested = false;
-      this.displayMode = 'editing';
+      // DESHABILITADO: this.displayMode = 'editing';
       
       if (this.order.status === 'REVIEW') {
         this.tryAcquireReviewLock();
@@ -718,7 +754,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
       this.lockBlockedForCurrentUser = false;
       this.lockInfoTitle = 'Bloqueo activo';
       this.lockInfoDetail = 'Se liberará al salir de esta ventana.';
-      this.displayMode = 'editing';
+      // DESHABILITADO: this.displayMode = 'editing';
       return;
     }
 
@@ -730,17 +766,21 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
       this.lockBlockedForCurrentUser = false;
       this.lockInfoTitle = 'Revisión compartida';
       this.lockInfoDetail = `${lockOwner} la está revisando. Puedes continuar y confirmar en paralelo como ADMIN.`;
-      this.displayMode = 'editing';
+      // DESHABILITADO: this.displayMode = 'editing';
       return;
     }
 
     this.lockBlockedForCurrentUser = true;
     this.lockInfoTitle = 'Revisión en curso';
     this.lockInfoDetail = `${lockOwner} está revisando esta orden en este momento.`;
-    this.displayMode = 'viewing_locked';
+    // DESHABILITADO: this.displayMode = 'viewing_locked';
+    */
   }
 
   private applyCollaborationUiState(state: OrderReviewCollaborationState | null): void {
+    // DESHABILITADO: Sistema de locks y colaboración compartida
+    return;
+    /*
     if (!this.reviewLockStatus?.locked || !state) {
       return;
     }
@@ -754,9 +794,13 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     if (!this.canEditCollaboratively && this.lockBlockedForCurrentUser) {
       this.requestSharedReviewIfNeeded();
     }
+    */
   }
 
   private applyFieldValuesFromCollaboration(): void {
+    // DESHABILITADO: Sistema de locks y colaboración compartida
+    return;
+    /*
     if (!this.collaborationState?.fieldValues || !this.order.details) {
       return;
     }
@@ -764,9 +808,13 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     Object.entries(this.collaborationState.fieldValues).forEach(([fieldPath, value]) => {
       this.applyFieldPatch(fieldPath, value);
     });
+    */
   }
 
   private applyFieldPatch(fieldPath: string, value: unknown): void {
+    // DESHABILITADO: Sistema de locks y colaboración compartida
+    return;
+    /*
     const parsed = this.parseFieldPath(fieldPath);
     if (!parsed || !this.order.details) {
       return;
@@ -790,6 +838,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     }
 
     lot.batchCode = value ? String(value) : null;
+    */
   }
 
   private buildFieldPath(productId: number, lotIndex: number, fieldName: 'quantity' | 'expirationDate' | 'batchCode'): string {

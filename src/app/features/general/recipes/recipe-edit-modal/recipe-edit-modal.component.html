@@ -16,12 +16,39 @@
           <small>Cada línea será un paso de elaboración</small>
         </div>
 
+        <div class="form-row">
+          <div class="form-group flex-1" style="display: none;">
+            <label for="recipe-portions">Raciones</label>
+            <input id="recipe-portions" type="number" [(ngModel)]="editForm.portions" name="portions" min="1" step="0.5" />
+          </div>
+          <div class="form-group flex-1">
+            <label for="recipe-selling-price">Precio de Venta (€)</label>
+            <div class="input-with-button">
+              <input id="recipe-selling-price" type="number" [(ngModel)]="editForm.sellingPrice" name="sellingPrice" min="0" step="0.01" />
+              <button type="button" class="btn-suggest" (click)="suggestSellingPrice()" title="Sugerir precio (Margen 20%)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.21 1.21 0 0 0 1.72 0L21.64 5.36a1.21 1.21 0 0 0 0-1.72Z"/>
+                  <path d="m14 7 3 3"/>
+                  <path d="M5 6v4"/>
+                  <path d="M19 14v4"/>
+                  <path d="M10 2v2"/>
+                  <path d="M7 8H3"/>
+                  <path d="M21 16h-4"/>
+                  <path d="M11 3H9"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+
         <!-- Presentación -->
         <div class="form-group">
           <label for="recipe-presentation">Presentación</label>
           <textarea id="recipe-presentation" [(ngModel)]="editForm.presentation" name="presentation" rows="3"
             placeholder="Describe cómo presentar el plato"></textarea>
         </div>
+
 
         <!-- Componentes -->
         <div class="form-group">
@@ -71,7 +98,19 @@
               <input type="number" [(ngModel)]="component.quantity" [name]="'quantity-' + i" placeholder="Cantidad"
                 min="0" step="0.01" class="quantity-input" />
 
+              <div class="merma-preview" *ngIf="component.productId !== 0">
+                @if (component.availabilityPercentage && component.availabilityPercentage < 100) {
+                  <span class="merma-badge" [title]="((100 - component.availabilityPercentage) | number:'1.1-2') + '% de reducción por merma'">
+                    {{ (100 - component.availabilityPercentage) | number:'1.1-2' }}% Merma
+                  </span>
+                  <span class="gross-preview">
+                    Bruto: <strong>{{ getGrossQuantity(component.quantity, component.availabilityPercentage) | number:'1.2-3' }}</strong>
+                  </span>
+                }
+              </div>
+
               <button type="button" class="btn-remove" (click)="removeComponent(i)" title="Eliminar componente">
+
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18" />

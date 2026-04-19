@@ -1,17 +1,20 @@
 <app-base-modal [title]="'Procesar Recepción de Orden #' + order.id" size="lg" [closeOnBackdrop]="false" headerClass="reception-header" [beforeClose]="beforeCloseHandler" (closed)="close()">
 
   <div class="order-reception-content">
+      <!-- DESHABILITADO: displayMode feature - Modo lectura en viewing_locked
       @if (displayMode === 'viewing_locked') {
         <div class="viewing-locked-banner">
           <p><strong>Modo lectura:</strong> Esta orden está siendo revisada. Puedes solicitar colaboración para poder contribuir con los cambios.</p>
         </div>
       }
+      -->
       
       <div class="detail-group">
         <p><strong>Usuario:</strong> {{ order.userName }}</p>
         <p><strong>Fecha Solicitud:</strong> {{ order.orderDate | date:'dd/MM/yyyy' }}</p>
       </div>
 
+      <!-- DESHABILITADO: Sistema de locks y colaboración compartida
       @if (lockInfoTitle) {
         <div class="review-lock-banner" [class.review-lock-banner-blocking]="lockBlockedForCurrentUser">
           <div class="review-lock-banner-icon" aria-hidden="true">
@@ -25,7 +28,9 @@
           </div>
         </div>
       }
+      -->
 
+      <!-- DESHABILITADO: Sistema de locks y colaboración compartida
       <div class="collaboration-panel">
         <div class="collaboration-panel-header">
           <span class="collaboration-title">Revisión compartida</span>
@@ -79,6 +84,7 @@
           </div>
         </div>
       </div>
+      -->
 
       <div class="reception-summary">
         <h3 class="summary-title">Resumen de Productos</h3>
@@ -113,7 +119,6 @@
             [(ngModel)]="searchTerm"
             (ngModelChange)="onSearchTermChange($event)"
             placeholder="Buscar producto por nombre o código"
-            [disabled]="displayMode === 'viewing_locked'"
           />
           <button type="button" class="btn-barcode" (click)="openBarcodeScanner()" [disabled]="isInputDisabled()" title="Buscar por código de barras">
             <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
@@ -326,7 +331,9 @@
   }
 
   <div modal-footer>
+    <!-- DESHABILITADO: displayMode feature - Botón condicionalmente visible solo si editing
     @if (displayMode === 'editing') {
+    -->
       <button class="modal-btn modal-btn-success" (click)="processReception()" [disabled]="isProcessing || !canConfirmReception()">
         @if (isProcessing) {
           <span>Procesando...</span>
@@ -336,6 +343,8 @@
           <span>Procesar Recepción</span>
         }
       </button>
+    <!-- DESHABILITADO: displayMode feature
     }
+    -->
   </div>
 </app-base-modal>

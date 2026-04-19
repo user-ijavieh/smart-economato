@@ -66,8 +66,13 @@ export interface WeeklyPlanStockRequirement {
   productId: number;
   productName: string;
   requiredQuantity: number;
+  grossRequiredQuantity: number;
+  availabilityPercentage: number;
   availableStock: number;
+  grossAvailableStock: number;
   reservedByOtherPlans: number;
+  grossReservedByOtherPlans: number;
+
   sufficient: boolean;
   pendingOrderQuantity?: number;
   pendingOrderCount?: number;

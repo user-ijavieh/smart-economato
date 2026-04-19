@@ -56,7 +56,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     { label: 'Incidencias', route: '/admin-panel/incidents', icon: 'alert' },
     { label: 'Stock', route: '/admin-panel/stock', icon: 'inventory', section: 'INVENTARIO' },
     { label: 'Lotes', route: '/admin-panel/batches', icon: 'batches' },
-    { label: 'Productos', route: '/admin-panel/products', icon: 'inventory' },
+    { label: 'Productos', route: '/admin-panel/products', icon: 'products' },
     { label: 'Recetas', route: '/admin-panel/recipes', icon: 'menu_book' },
     { label: 'Datos Maestros', route: '/admin-panel/master-data', icon: 'database', section: 'GESTIÓN' },
     { label: 'Usuarios', route: '/admin-panel/users', icon: 'people' },
@@ -103,7 +103,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
     const userRole = this.getUserRole();
     if (userRole === 'ADMIN') {
-      return this.defaultNavItems.filter(item => item.label !== 'Plan Semanal');
+      return this.defaultNavItems.filter(item => 
+        item.label !== 'Plan Semanal' && 
+        item.label !== 'Incidencias' && 
+        item.label !== 'Perfil'
+      );
     }
     if (userRole === 'USER') {
       return this.defaultNavItems.filter(item =>
