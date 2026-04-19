@@ -33,19 +33,19 @@
 }
 
 .btn-back-compact {
-  display: inline-flex !important;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  width: auto !important;
+  width: auto;
   min-width: 100px;
-  height: 40px !important;
-  padding: 0 16px !important;
-  font-size: 0.85rem !important;
-  border-radius: 12px !important;
+  height: 40px;
+  padding: 0 16px;
+  font-size: 0.85rem;
+  border-radius: 12px;
   flex-shrink: 0;
-  background: var(--theme-surface-glass) !important;
-  border: 1px solid var(--theme-border-glass) !important;
+  background: var(--theme-surface-glass);
+  border: 1px solid var(--theme-border-glass);
   transition: all 0.2s ease;
 }
 
@@ -63,8 +63,8 @@
 
 @media (max-width: 640px) {
   .btn-back-compact {
-    width: 56px !important;
-    height: 56px !important;
+    width: 56px;
+    height: 56px;
     gap: 2px;
   }
   .btn-back-compact svg {
@@ -72,7 +72,7 @@
     height: 18px;
   }
   .btn-back-compact span {
-    font-size: 0.6rem !important;
+    font-size: 0.6rem;
   }
   .header-planes-detail {
     gap: 1rem;
@@ -151,10 +151,10 @@
 }
 
 .modal-btn-small {
-  padding: 0.45rem 0.85rem !important;
-  font-size: 0.82rem !important;
-  min-height: auto !important;
-  width: auto !important;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.82rem;
+  min-height: auto;
+  width: auto;
 }
 
 .detail-stats.glassmorphism {
@@ -459,14 +459,14 @@
 .attendance-search-input,
 .pool-search-input {
   flex: 1;
-  background: transparent !important;
-  border: none !important;
-  color: var(--theme-text-primary) !important;
-  font-size: 0.92rem !important;
-  font-weight: 500 !important;
-  padding: 10px 0 !important;
-  outline: none !important;
-  box-shadow: none !important;
+  background: transparent;
+  border: none;
+  color: var(--theme-text-primary);
+  font-size: 0.92rem;
+  font-weight: 500;
+  padding: 10px 0;
+  outline: none;
+  box-shadow: none;
 }
 
 .stock-search-input::placeholder,
@@ -941,13 +941,6 @@
 
 .pool-search-input:focus {
   outline: none;
-}
-
-.pool-search-row .pool-search-input.form-control {
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  padding: 4px 0 !important;
 }
 
 .btn-clear-search {
@@ -1458,7 +1451,7 @@
   }
 
   .column-content {
-    display: flex !important; /* Always show in mobile tab view */
+    display: flex; /* Always show in mobile tab view */
   }
 }
 
@@ -1618,7 +1611,7 @@
   border-bottom: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .column-header-right {
     flex-direction: column;
     align-items: flex-end;
@@ -1697,66 +1690,3 @@
   color: var(--theme-text-secondary);
 }
 
-.custom-qty-input {
-  width: 80px !important;
-  height: 32px !important;
-  padding: 4px 8px !important;
-  font-size: 0.85rem !important;
-  font-weight: 700 !important;
-  text-align: center;
-  border-radius: 8px !important;
-  background: var(--theme-surface-glass-hover) !important;
-  border: 1px solid var(--theme-border-glass) !important;
-  color: var(--theme-text-primary) !important;
-}
-
-.custom-qty-input:focus {
-  border-color: var(--brand-primary) !important;
-  background: var(--theme-surface-glass-active) !important;
-}
-
-.custom-qty-input.qty-below {
-  color: var(--color-danger) !important;
-  border-color: color-mix(in srgb, var(--color-danger) 40%, transparent) !important;
-  background: color-mix(in srgb, var(--color-danger-bg) 20%, var(--theme-surface-glass-hover)) !important;
-}
-
-.btn-send-back {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: auto !important;
-  min-width: 0 !important;
-  padding: 0 12px !important;
-  height: 32px !important;
-}
-
-.btn-send-back .btn-icon {
-  display: none;
-}
-
-@media (min-width: 1025px) {
-  .btn-send-back {
-    display: none;
-  }
-}
-
-@media (max-width: 640px) {
-  .btn-send-back {
-    width: 36px !important;
-    height: 36px !important;
-    padding: 0 !important;
-    border-radius: 50% !important;
-  }
-  
-  .btn-send-back .btn-text {
-    display: none;
-  }
-  
-  .btn-send-back .btn-icon {
-    display: block;
-    width: 16px;
-    height: 16px;
-  }
-}

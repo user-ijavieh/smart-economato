@@ -448,8 +448,8 @@
   display: none;
 }
 
-.text-right { text-align: right !important; }
-.text-center { text-align: center !important; }
+.text-right { text-align: right; }
+.text-center { text-align: center; }
 
 .received-col { width: 140px; }
 .expiry-col { width: 160px; }
@@ -503,7 +503,7 @@
   border-bottom: 1px solid var(--theme-surface-glass-active);  
 }  
 .lot-indent {  
-  padding-left: 36px !important;  
+  padding-left: 36px;  
 }  
 .lot-label {  
   font-size: 0.85rem;  
@@ -536,7 +536,7 @@
   border-radius: 8px;  
 }  
 .lot-actions-cell {  
-  display: flex !important;  
+  display: flex;  
   align-items: center;  
   gap: 8px;  
   justify-content: center;  
@@ -612,7 +612,7 @@
   box-shadow: none;
 }
 /** ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .collaboration-body {
     grid-template-columns: 1fr;
   }

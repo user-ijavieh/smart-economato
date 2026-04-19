@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable({ providedIn: 'root' })
 export class ModalStackService {
   private stack: string[] = [];
-  private readonly baseZIndex = 10000;
+  private readonly baseZIndex = 60000;
   private readonly zIndexStep = 20;
 
   register(id: string): void {

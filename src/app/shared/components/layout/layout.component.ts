@@ -34,6 +34,8 @@ export class LayoutComponent {
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
 
   sidebarOpen = window.innerWidth > 800;
+  mobileMenuOpen = false;
+  isMobile = window.innerWidth <= 800;
   showLogoutModal = false;
   showClearCacheModal = false;
 
@@ -61,7 +63,7 @@ export class LayoutComponent {
   }
 
   // Cache para evitar crear nuevos objetos en cada detección de cambios
-  private isMobile = window.innerWidth <= 768;
+  private isMobileAnimation = window.innerWidth <= 768;
   private mobileAnimParams = {
     enterTransform: 'translateX(100%)',
     leaveTransform: 'translateX(-10%)',
@@ -102,6 +104,16 @@ export class LayoutComponent {
     }
   }
 
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    this.isMobile = window.innerWidth <= 800;
+    this.isMobileAnimation = window.innerWidth <= 768;
+
+    if (!this.isMobile) {
+      this.mobileMenuOpen = false;
+    }
+  }
+
   private navigateWithShortcut(direction: number) {
     if (!this.sidebar) return;
 
@@ -124,6 +136,20 @@ export class LayoutComponent {
 
   onSidebarToggled(isOpen: boolean): void {
     this.sidebarOpen = isOpen;
+  }
+
+  openMobileMenu(): void {
+    if (this.isMobile) {
+      this.mobileMenuOpen = true;
+    }
+  }
+
+  closeMobileMenu(): void {
+    this.mobileMenuOpen = false;
+  }
+
+  onMobileOverlayClick(): void {
+    this.closeMobileMenu();
   }
 
   toggleTheme(): void {
@@ -281,7 +307,7 @@ export class LayoutComponent {
     // Retorna el mismo objeto cached porque los parámetros son siempre los mismos
     return {
       value: animation,
-      params: this.isMobile ? this.mobileAnimParams : this.desktopAnimParams
+      params: this.isMobileAnimation ? this.mobileAnimParams : this.desktopAnimParams
     };
   }
 }

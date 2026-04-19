@@ -289,7 +289,7 @@ tr:hover {
 }
 
 .clickable-row:hover {
-  background: var(--theme-surface-glass-active) !important;
+  background: var(--theme-surface-glass-active);
 }
 
 tr.expired-row td {
@@ -441,11 +441,11 @@ tr.depleted-row:hover td {
   align-items: center;
   justify-content: center;
   vertical-align: middle;
-  width: 32px !important;
+  width: 32px;
   min-width: 32px;
-  height: 32px !important;
-  padding: 8px !important;
-  box-shadow: none !important;
+  height: 32px;
+  padding: 8px;
+  box-shadow: none;
   flex: 0 0 auto;
 }
 
@@ -566,7 +566,7 @@ tr.depleted-row:hover td {
 .days-input {
   width: 60px;
   padding: 8px 10px;
-  border: none !important;
+  border: none;
   font-weight: 700;
   text-align: center;
   background: var(--theme-surface-glass-hover);
@@ -855,7 +855,7 @@ tr.depleted-row:hover td {
   td {
     padding: 12px 8px;
     font-size: 0.85rem;
-    min-width: auto !important;
+    min-width: auto;
   }
 
   button {

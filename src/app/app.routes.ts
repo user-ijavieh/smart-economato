@@ -223,7 +223,7 @@ export const routes: Routes = [
         path: 'ai-chat',
         loadComponent: () =>
           import('./features/general/ai-chat/ai-chat.component').then(m => m.AiChatComponent),
-        canActivate: [roleGuard('ADMIN', 'CHEF', 'ELEVATED')],
+        canActivate: [roleGuard('ADMIN', 'CHEF', 'ELEVATED', 'USER')],
         data: { animation: 27 }
       },
       {

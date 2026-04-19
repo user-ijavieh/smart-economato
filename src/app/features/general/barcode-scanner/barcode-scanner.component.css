@@ -1,4 +1,4 @@
-﻿:host {
+:host {
   display: block;
   height: 100%;
 }
@@ -37,11 +37,11 @@
   width: 64px;
   height: 64px;
   border-radius: 16px;
-  background: color-mix(in srgb, var(--brand-primary) 15%, transparent) !important;
-  border: 1px solid color-mix(in srgb, var(--brand-primary) 30%, transparent) !important;
+  background: color-mix(in srgb, var(--brand-primary) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 30%, transparent);
   color: var(--theme-text-primary);
   margin-bottom: 1rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(8px);
 }
 
@@ -418,11 +418,11 @@
 }
 
 .btn-scan-again:hover {
-  background: color-mix(in srgb, var(--brand-primary) 25%, transparent) !important;
-  border-color: color-mix(in srgb, var(--brand-primary) 50%, transparent) !important;
+  background: color-mix(in srgb, var(--brand-primary) 25%, transparent);
+  border-color: color-mix(in srgb, var(--brand-primary) 50%, transparent);
   filter: brightness(1.2);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px var(--brand-glow) !important;
+  box-shadow: 0 8px 25px var(--brand-glow);
 }
 
 /* ===== Responsive ===== */

@@ -570,9 +570,9 @@
   justify-content: center;
   gap: 50px;
   padding: 30px;
-  background: var(--theme-input-bg) !important;
+  background: var(--theme-input-bg);
   border-radius: 16px;
-  border: 1px solid var(--theme-surface-glass-hover) !important;
+  border: 1px solid var(--theme-surface-glass-hover);
 }
 
 .status-change-container .info-label {
@@ -580,7 +580,7 @@
 }
 
 .audit-info-grid {
-  border-bottom: 1px solid var(--theme-surface-glass-hover) !important;
+  border-bottom: 1px solid var(--theme-surface-glass-hover);
 }
 
 .info-item {
@@ -780,8 +780,8 @@
 }
 
 @media (max-width: 1024px) {
-  .hide-on-mobile { display: none !important; }
-  .show-on-mobile-only { display: table-cell !important; }
+  .hide-on-mobile { display: none; }
+  .show-on-mobile-only { display: table-cell; }
 .header-recetas { height: 60px; padding: 10px; }  
   .contenedor-principal { padding: 15px; }  
   
@@ -834,8 +834,12 @@
   .btn-ver, .btn-pdf, .btn-edit-status, .btn-revert { padding: 7px; }  
   .btn-textual { padding: 6px 10px; font-size: 0.78rem; }  
   .modal-actions button { width: 100%; justify-content: center; }
-}  
-  
+}
+
+@media (max-width: 800px) {
+  .audit-modal-body { grid-template-columns: 1fr; padding: 16px; gap: 12px; }
+}
+
 @media (max-width: 480px) {  
   .stats-row { flex-direction: column; }  
   .modal-actions { flex-direction: column; }  
