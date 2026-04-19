@@ -1,0 +1,252 @@
+:host {
+    display: block;
+    height: 100%;
+}
+
+/* Dashboard Specific Layout */
+.welcome-banner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2.5rem;
+    background: var(--theme-surface-glass);
+    backdrop-filter: var(--theme-effect-glass);
+    border-radius: var(--theme-radius-card);
+    margin-bottom: 2rem;
+    border: 1px solid var(--theme-border-glass);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.user-avatar-large {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--admin-primary), var(--brand-primary));
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(var(--admin-rgb), 0.3);
+}
+
+.welcome-banner-text h2 {
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    margin: 0;
+    color: var(--theme-text-primary);
+}
+
+.welcome-banner-text p {
+    color: var(--theme-text-secondary);
+    margin: 0.2rem 0 0 0;
+}
+
+/* Stats Row Overrides/Additions */
+.stat-card {
+    border: 1px solid var(--theme-border-glass);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.stat-card.stat-incident {
+    border-left: 4px solid var(--theme-role-admin-bg);
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr) 300px;
+    grid-template-rows: auto auto;
+    gap: 1.5rem;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.tabla-contenedor {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--theme-border-glass);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.card-header-flex h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* Chart Styles */
+.chart-card {
+    grid-column: span 2;
+}
+
+.chart-wrapper {
+    flex: 1;
+    min-height: 250px;
+}
+
+.period-selector {
+    display: flex;
+    gap: 5px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px;
+    border-radius: 8px;
+}
+
+.period-selector button {
+    background: transparent;
+    border: none;
+    color: var(--theme-text-secondary);
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.period-selector button.active {
+    background: var(--admin-primary);
+    color: white;
+}
+
+/* Ranking List Styles */
+.ranking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.ranking-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+}
+
+.rank-pos {
+    font-weight: 700;
+    color: var(--theme-text-muted);
+    font-size: 0.8rem;
+    width: 20px;
+}
+
+.item-avatar {
+    width: 36px;
+    height: 36px;
+    background: var(--theme-surface-glass-active);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.student-avatar-box {
+    position: relative;
+    width: 36px;
+    height: 36px;
+}
+
+.student-avatar-box img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.status-dot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background: #10b981;
+    border: 2px solid #080D1C;
+    border-radius: 50%;
+}
+
+.item-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.item-primary {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.item-secondary {
+    font-size: 0.75rem;
+    color: var(--theme-text-secondary);
+}
+
+/* Inventory Table Customizations */
+.inventory-card .table-container {
+    padding: 0;
+}
+
+.inventory-card table th {
+    background: transparent;
+    padding: 0.75rem 0.5rem;
+}
+
+.inventory-card table td {
+    padding: 0.75rem 0.5rem;
+}
+
+.badge-admin { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+.badge-chef { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+
+.empty-msg {
+    text-align: center;
+    color: var(--theme-text-secondary);
+    padding: 2rem;
+}
+
+/* Animation */
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsiveness */
+@media (max-width: 1200px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .chart-card { grid-column: span 2; }
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-card, .ranking-card { grid-column: span 1; }
+    
+    .welcome-banner {
+        padding: 1.5rem;
+        flex-direction: column;
+        text-align: center;
+    }
+}
