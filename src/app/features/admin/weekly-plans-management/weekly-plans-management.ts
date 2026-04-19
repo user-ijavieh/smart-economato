@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -6,6 +6,8 @@ import { WeeklyPlanService } from '../../../core/services/weekly-plan.service';
 import { UserService } from '../../../core/services/user.service';
 import { WeeklyPlanResponse } from '../../../shared/models/weekly-plan.model';
 import { SearchableDropdownComponent, SearchableItem } from '../../../shared/components/searchable-dropdown/searchable-dropdown.component';
+import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-weekly-plans-management',
@@ -14,11 +16,13 @@ import { SearchableDropdownComponent, SearchableItem } from '../../../shared/com
   templateUrl: './weekly-plans-management.html',
   styleUrl: './weekly-plans-management.css',
 })
-export class WeeklyPlansManagement implements OnInit {
+export class WeeklyPlansManagement implements OnInit, OnDestroy {
   private weeklyPlanService = inject(WeeklyPlanService);
   private userService = inject(UserService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+  private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
+  private destroy$ = new Subject<void>();
 
   teacherItems: SearchableItem[] = [];
   teacherSearchQuery = '';
@@ -36,6 +40,19 @@ export class WeeklyPlansManagement implements OnInit {
   ngOnInit(): void {
     this.loadTeacherPage('', true);
     this.loadPlans();
+
+    this.syncCacheInvalidationService.invalidatedDomains$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ domains }) => {
+        if (domains.includes('weekly_plan')) {
+          this.loadPlans();
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   get visiblePlans(): WeeklyPlanResponse[] {

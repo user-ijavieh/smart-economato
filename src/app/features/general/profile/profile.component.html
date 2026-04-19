@@ -26,6 +26,7 @@
       <input
         type="text"
         [(ngModel)]="studentSearchTerm"
+        (ngModelChange)="onStudentSearchChange()"
         placeholder="Buscar alumno por nombre..."
         aria-label="Buscar alumno por nombre"
       />
@@ -79,7 +80,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (student of filteredStudents; track student.id) {
+          @for (student of pagedFilteredStudents; track student.id) {
           <tr>
             <td data-label="Alumno">
               <div class="student-name">
@@ -113,6 +114,14 @@
         </tbody>
       </table>
     </div>
+
+    @if (filteredStudentsTotalPages > 1) {
+    <div class="students-pagination">
+      <button class="btn-success" type="button" (click)="prevStudentsPage()" [disabled]="studentsPage === 0">Anterior</button>
+      <span>Pagina {{ studentsPage + 1 }} de {{ filteredStudentsTotalPages }} · 50 por pagina</span>
+      <button class="btn-success" type="button" (click)="nextStudentsPage()" [disabled]="studentsPage >= filteredStudentsTotalPages - 1">Siguiente</button>
+    </div>
+    }
     }
 
     <div class="students-activity-panel">

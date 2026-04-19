@@ -21,6 +21,19 @@ function resetSessionAndRedirectToLogin(): void {
   }
 }
 
+function isAllowedUserScopedRequest(method: string, apiPath: string, userRole: Role): boolean {
+  const userIdRaw = localStorage.getItem('user_id');
+  const currentUserId = userIdRaw ? Number(userIdRaw) : NaN;
+
+  const userByIdMatch = apiPath.match(/^\/api\/users\/(\d+)$/);
+  if (method === 'GET' && userByIdMatch) {
+    const requestedId = Number(userByIdMatch[1]);
+    return userRole === 'ADMIN' || (!Number.isNaN(currentUserId) && requestedId === currentUserId);
+  }
+
+  return false;
+}
+
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = localStorage.getItem('auth_token');
   const userRole = localStorage.getItem('user_role') as Role;
@@ -47,6 +60,20 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const apiPath = isRelativeApiRequest
       ? requestUrl.split('?')[0]
       : requestUrl.replace(environment.apiUrl, '').split('?')[0];
+
+    if (isAllowedUserScopedRequest(method, apiPath, userRole)) {
+      return next(req).pipe(
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 401) {
+            resetSessionAndRedirectToLogin();
+          } else if (error.status === 403) {
+            console.error('Acceso denegado:', error.error?.message);
+          }
+          return throwError(() => error);
+        })
+      );
+    }
+
     const urlPattern = getUrlPattern(apiPath);
 
     if (!hasPermission(userRole, method, urlPattern)) {

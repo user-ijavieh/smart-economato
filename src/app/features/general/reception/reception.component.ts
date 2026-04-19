@@ -1,10 +1,15 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OrderService } from '../../../core/services/order.service';
 import { MessageService } from '../../../core/services/message.service';
-import { Order, OrderStatus } from '../../../shared/models/order.model';
+import { Order, OrderReviewLockStatus, OrderStatus } from '../../../shared/models/order.model';
 import { OrderDetailsModalComponent } from '../orders/order-details-modal/order-details-modal.component';
+import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
+import { OrderReviewLockStateService } from '../../../core/services/order-review-lock-state.service';
+import { OrderReviewCollaborationStateService } from '../../../core/services/order-review-collaboration-state.service';
+import { WebSocketService } from '../../../core/services/websocket.service';
+import { Subject, takeUntil } from 'rxjs';
 import { OrderReceptionModalComponent } from './order-reception-modal/order-reception-modal.component';
 interface OrdersByStatus {
   PENDING: Order[];
@@ -21,10 +26,15 @@ interface OrdersByStatus {
   templateUrl: './reception.component.html',
   styleUrl: './reception.component.css'
 })
-export class ReceptionComponent implements OnInit {
+export class ReceptionComponent implements OnInit, OnDestroy {
   private orderService = inject(OrderService);
   private messageService = inject(MessageService);
+  private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
+  private orderReviewLockStateService = inject(OrderReviewLockStateService);
+  private orderReviewCollaborationStateService = inject(OrderReviewCollaborationStateService);
+  private webSocketService = inject(WebSocketService);
   private cdr = inject(ChangeDetectorRef);
+  private destroy$ = new Subject<void>();
 
   ordersByStatus: OrdersByStatus = {
     PENDING: [],
@@ -38,6 +48,7 @@ export class ReceptionComponent implements OnInit {
   showDetailsModal = false;
   showReceptionModal = false;
   selectedOrder: Order | null = null;
+  reviewLocks: Record<number, OrderReviewLockStatus> = {};
 
   // Paginación por sección
   displayCounts: Record<string, number> = {
@@ -50,6 +61,36 @@ export class ReceptionComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadOrders();
+
+    this.orderReviewLockStateService.state$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(state => {
+        this.reviewLocks = state;
+        this.cdr.markForCheck();
+      });
+
+    this.syncCacheInvalidationService.invalidatedDomains$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ domains }) => {
+        if (domains.includes('order')) {
+          this.loadOrders();
+        }
+      });
+
+    this.webSocketService.connected$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(isConnected => {
+        if (!isConnected || this.ordersByStatus.REVIEW.length === 0) {
+          return;
+        }
+
+        this.refreshReviewLocks(this.ordersByStatus.REVIEW);
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadOrders(): void {
@@ -76,6 +117,7 @@ export class ReceptionComponent implements OnInit {
           CANCELLED: sortedOrders.filter(o => o.status === 'CANCELLED'),
           INCOMPLETE: sortedOrders.filter(o => o.status === 'INCOMPLETE')
         };
+        this.refreshReviewLocks(this.ordersByStatus.REVIEW);
         this.resetDisplayCounts();
         this.loading = false;
         this.cdr.markForCheck();
@@ -162,6 +204,65 @@ export class ReceptionComponent implements OnInit {
     return orders.length - (this.displayCounts[status] || 1);
   }
 
+  getReviewLockInfo(order: Order): OrderReviewLockStatus | null {
+    return this.reviewLocks[order.id] ?? null;
+  }
+
+  isReviewBlocked(order: Order): boolean {
+    const lock = this.getReviewLockInfo(order);
+    return !!lock?.locked && !lock.currentUserOwner && !lock.currentUserAdmin;
+  }
+
+  getReviewLockLabel(order: Order): string {
+    const lock = this.getReviewLockInfo(order);
+    if (!lock?.locked) {
+      return '';
+    }
+
+    if (lock.currentUserOwner) {
+      return 'Bloqueo activo';
+    }
+
+    const owner = lock.lockedByDisplayName || lock.lockedByUsername || 'Otro usuario';
+    if (lock.currentUserAdmin) {
+      return `Revisión compartida`;
+    }
+
+    return 'Revisión en curso';
+  }
+
+  getReviewLockDetail(order: Order): string {
+    const lock = this.getReviewLockInfo(order);
+    if (!lock?.locked) {
+      return '';
+    }
+
+    const owner = lock.lockedByDisplayName || lock.lockedByUsername || 'Otro usuario';
+
+    if (lock.currentUserOwner) {
+      return 'Se liberará al salir de esta ventana.';
+    }
+
+    if (lock.currentUserAdmin) {
+      return `${owner} la está revisando. Puedes continuar y confirmar en paralelo como ADMIN.`;
+    }
+
+    return `${owner} está revisando esta orden en este momento.`;
+  }
+
+  canRequestCollaborationFromList(order: Order): boolean {
+    const lock = this.getReviewLockInfo(order);
+    if (!lock?.locked) {
+      return false;
+    }
+
+    if (lock.currentUserOwner || lock.currentUserAdmin) {
+      return false;
+    }
+
+    return true;
+  }
+
   // Action handlers
   async reviewOrder(order: Order): Promise<void> {
     const confirmed = await this.messageService.confirm(
@@ -189,6 +290,17 @@ export class ReceptionComponent implements OnInit {
   openReceptionModal(order: Order): void {
     this.selectedOrder = order;
     this.showReceptionModal = true;
+  }
+
+  requestCollaborationFromList(order: Order): void {
+    this.orderReviewCollaborationStateService.requestSharedReview(order.id).subscribe({
+      next: () => {
+        this.messageService.showSuccess('Solicitud de colaboración enviada.');
+      },
+      error: () => {
+        this.messageService.showError('Error al enviar solicitud de colaboración.');
+      }
+    });
   }
 
   closeReceptionModal(): void {
@@ -284,6 +396,12 @@ export class ReceptionComponent implements OnInit {
   viewOrderDetails(order: Order): void {
     this.selectedOrder = order;
     this.showDetailsModal = true;
+  }
+
+  private refreshReviewLocks(orders: Order[]): void {
+    orders.forEach(order => {
+      this.orderReviewLockStateService.refresh(order.id).subscribe({ error: () => {} });
+    });
   }
 
   closeDetailsModal(): void {

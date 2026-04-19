@@ -4,101 +4,179 @@ import { Observable, map, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Page } from '../../shared/models/page.model';
 import { Product, ProductRequest } from '../../shared/models/product.model';
+import { HttpQueryCacheService } from './http-query-cache.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
   private http = inject(HttpClient);
+  private cache = inject(HttpQueryCacheService);
   private url = `${environment.apiUrl}/api/products`;
 
   getAll(page = 0, size = 10, sort = 'name,asc'): Observable<Page<Product>> {
-    // Manually construct query string to ensure exact format and avoid encoding issues
-    const queryString = `page=${page}&size=${size}&sort=${sort}`;
-    const fullUrl = `${this.url}?${queryString}`;
+    return this.cache.getOrFetch('product', `all:${page}:${size}:${sort}`, () => {
+      // Manually construct query string to ensure exact format and avoid encoding issues
+      const queryString = `page=${page}&size=${size}&sort=${sort}`;
+      const fullUrl = `${this.url}?${queryString}`;
 
-    return this.http.get<any>(fullUrl).pipe(
-      // tap(response => console.log('📦 Raw API Response (Inventory):', response)),
-      map(response => {
-        // 1. Extract content array reliably
-        const rawContent = response.content || (Array.isArray(response) ? response : []);
-        
+      return this.http.get<any>(fullUrl).pipe(
+        map(response => {
+          // 1. Extract content array reliably
+          const rawContent = response.content || (Array.isArray(response) ? response : []);
+
           // 2. Map items to ensure valid Product models
-        const mappedContent: Product[] = rawContent.map((item: any) => this.mapToProduct(item));
+          const mappedContent: Product[] = rawContent.map((item: any) => this.mapToProduct(item));
 
-        // 3. Return valid Page object
-        return {
-          content: mappedContent,
-          totalElements: response.totalElements ?? mappedContent.length,
-          totalPages: response.totalPages ?? 1,
-          size: response.size ?? size,
-          number: response.number ?? page,
-          first: response.first ?? true,
-          last: response.last ?? true,
-          empty: mappedContent.length === 0
-        };
-      })
-    );
+          // 3. Return valid Page object
+          return {
+            content: mappedContent,
+            totalElements: response.totalElements ?? mappedContent.length,
+            totalPages: response.totalPages ?? 1,
+            size: response.size ?? size,
+            number: response.number ?? page,
+            first: response.first ?? true,
+            last: response.last ?? true,
+            empty: mappedContent.length === 0
+          };
+        })
+      );
+    });
   }
 
   getById(id: number): Observable<Product> {
-    return this.http.get<Product>(`${this.url}/${id}`);
+    return this.cache.getOrFetch('product', `byId:${id}`, () => this.http.get<Product>(`${this.url}/${id}`));
   }
 
   getWithLedger(name = '', page = 0, size = 20, sort = 'name,asc'): Observable<Page<Product>> {
-    const params: any = {
-      page: page.toString(),
-      size: size.toString(),
-      sort
-    };
+    return this.cache.getOrFetch('product', `withLedger:${name}:${page}:${size}:${sort}`, () => {
+      const params: any = {
+        page: page.toString(),
+        size: size.toString(),
+        sort
+      };
 
-    if (name.trim()) {
-      params.name = name.trim();
-    }
+      if (name.trim()) {
+        params.name = name.trim();
+      }
 
-    return this.http.get<any>(`${this.url}/with-ledger`, { params }).pipe(
-      map(response => {
-        const rawContent = response.content || (Array.isArray(response) ? response : []);
-        const mappedContent: Product[] = rawContent.map((item: any) => this.mapToProduct(item));
+      return this.http.get<any>(`${this.url}/with-ledger`, { params }).pipe(
+        map(response => {
+          const rawContent = response.content || (Array.isArray(response) ? response : []);
+          const mappedContent: Product[] = rawContent.map((item: any) => this.mapToProduct(item));
 
-        return {
-          content: mappedContent,
-          totalElements: response.totalElements ?? mappedContent.length,
-          totalPages: response.totalPages ?? 1,
-          size: response.size ?? size,
-          number: response.number ?? page,
-          first: response.first ?? true,
-          last: response.last ?? true,
-          empty: mappedContent.length === 0
-        };
-      })
-    );
+          return {
+            content: mappedContent,
+            totalElements: response.totalElements ?? mappedContent.length,
+            totalPages: response.totalPages ?? 1,
+            size: response.size ?? size,
+            number: response.number ?? page,
+            first: response.first ?? true,
+            last: response.last ?? true,
+            empty: mappedContent.length === 0
+          };
+        })
+      );
+    });
   }
 
   getByBarcode(barcode: string): Observable<Product> {
-    return this.http.get<Product>(`${this.url}/codebar/${barcode}`);
+    return this.cache.getOrFetch('product', `byBarcode:${barcode}`, () => this.http.get<Product>(`${this.url}/codebar/${barcode}`));
   }
 
   searchByName(name: string, page = 0, size = 10, sort = 'name,asc'): Observable<Page<Product>> {
-    const queryString = `name=${encodeURIComponent(name)}&page=${page}&size=${size}&sort=${sort}`;
-    const fullUrl = `${this.url}/search?${queryString}`;
+    return this.cache.getOrFetch('product', `search:${name}:${page}:${size}:${sort}`, () => {
+      const queryString = `name=${encodeURIComponent(name)}&page=${page}&size=${size}&sort=${sort}`;
+      const fullUrl = `${this.url}/search?${queryString}`;
 
-    return this.http.get<any>(fullUrl).pipe(
-      map(response => {
-        const rawContent = response.content || (Array.isArray(response) ? response : []);
-        
-        const mappedContent: Product[] = rawContent.map((item: any) => this.mapToProduct(item));
+      return this.http.get<any>(fullUrl).pipe(
+        map(response => {
+          const rawContent = response.content || (Array.isArray(response) ? response : []);
 
-        return {
-          content: mappedContent,
-          totalElements: response.totalElements ?? mappedContent.length,
-          totalPages: response.totalPages ?? 1,
-          size: response.size ?? size,
-          number: response.number ?? page,
-          first: response.first ?? true,
-          last: response.last ?? true,
-          empty: mappedContent.length === 0
-        };
-      })
+          const mappedContent: Product[] = rawContent.map((item: any) => this.mapToProduct(item));
+
+          return {
+            content: mappedContent,
+            totalElements: response.totalElements ?? mappedContent.length,
+            totalPages: response.totalPages ?? 1,
+            size: response.size ?? size,
+            number: response.number ?? page,
+            first: response.first ?? true,
+            last: response.last ?? true,
+            empty: mappedContent.length === 0
+          };
+        })
+      );
+    });
+  }
+
+  create(product: ProductRequest): Observable<Product> {
+    return this.http.post<Product>(this.url, product).pipe(
+      tap(() => this.cache.invalidateDomains(['product']))
     );
+  }
+
+  update(id: number, product: ProductRequest): Observable<Product> {
+    return this.http.put<any>(`${this.url}/${id}`, product).pipe(
+      map(response => ({
+        ...response,
+        id: response.id,
+        name: response.name || response.nombre || 'Sin nombre',
+        productCode: response.productCode || response.codigo || '',
+        unitPrice: Number(response.unitPrice ?? response.price ?? response.precio ?? 0),
+        currentStock: Number(response.currentStock ?? response.stock ?? 0),
+        minStock: response.minStock !== undefined ? Number(response.minStock) : undefined,
+        unit: response.unit || response.unidad || 'Ud',
+        supplier: response.supplier ? {
+          id: response.supplier.id,
+          name: response.supplier.name || response.supplier.nombre,
+          contactPerson: response.supplier.contact || response.supplier.contacto,
+          phone: response.supplier.phone || response.supplier.telefono
+        } : undefined
+      })),
+      tap(() => this.cache.invalidateDomains(['product', 'recipe', 'weekly_plan']))
+    );
+  }
+
+  toggleHidden(id: number, hidden: boolean): Observable<void> {
+    return this.http.patch<void>(`${this.url}/${id}/toggle-hidden?hidden=${hidden}`, null).pipe(
+      tap(() => this.cache.invalidateDomains(['product', 'recipe', 'weekly_plan']))
+    );
+  }
+
+  getHidden(page = 0, size = 10, sort = 'name,asc'): Observable<Page<Product>> {
+    return this.cache.getOrFetch('product', `hidden:${page}:${size}:${sort}`, () => {
+      const queryString = `page=${page}&size=${size}&sort=${sort}`;
+      const fullUrl = `${this.url}/hidden?${queryString}`;
+
+      return this.http.get<any>(fullUrl).pipe(
+        map(response => {
+          const rawContent = response.content || (Array.isArray(response) ? response : []);
+          const mappedContent: Product[] = rawContent.map((item: any) => this.mapToProduct(item));
+
+          return {
+            content: mappedContent,
+            totalElements: response.totalElements ?? mappedContent.length,
+            totalPages: response.totalPages ?? 1,
+            size: response.size ?? size,
+            number: response.number ?? page,
+            first: response.first ?? true,
+            last: response.last ?? true,
+            empty: mappedContent.length === 0
+          };
+        })
+      );
+    });
+  }
+
+  updateStockManually(id: number, product: ProductRequest): Observable<Product> {
+    return this.http.put<Product>(`${this.url}/${id}/stock-manual`, product).pipe(
+      tap(() => this.cache.invalidateDomains(['product', 'ledger', 'weekly_plan', 'stock_alerts']))
+    );
+  }
+
+  exportToExcel(): Observable<Blob> {
+    return this.http.get(`${this.url}/export/excel`, {
+      responseType: 'blob'
+    });
   }
 
   private mapToProduct(item: any): Product {
@@ -121,66 +199,5 @@ export class ProductService {
         contact: item.supplier.contact || item.supplier.contacto
       } : undefined
     };
-  }
-  create(product: ProductRequest): Observable<Product> {
-    return this.http.post<Product>(this.url, product);
-  }
-
-  update(id: number, product: ProductRequest): Observable<Product> {
-    return this.http.put<any>(`${this.url}/${id}`, product).pipe(
-      map(response => ({
-        ...response,
-        id: response.id,
-        name: response.name || response.nombre || 'Sin nombre',
-        productCode: response.productCode || response.codigo || '',
-        unitPrice: Number(response.unitPrice ?? response.price ?? response.precio ?? 0),
-        currentStock: Number(response.currentStock ?? response.stock ?? 0),
-        minStock: response.minStock !== undefined ? Number(response.minStock) : undefined,
-        unit: response.unit || response.unidad || 'Ud',
-        supplier: response.supplier ? {
-          id: response.supplier.id,
-          name: response.supplier.name || response.supplier.nombre,
-          contactPerson: response.supplier.contact || response.supplier.contacto,
-          phone: response.supplier.phone || response.supplier.telefono
-        } : undefined
-      }))
-    );
-  }
-
-  toggleHidden(id: number, hidden: boolean): Observable<void> {
-    return this.http.patch<void>(`${this.url}/${id}/toggle-hidden?hidden=${hidden}`, null);
-  }
-
-  getHidden(page = 0, size = 10, sort = 'name,asc'): Observable<Page<Product>> {
-    const queryString = `page=${page}&size=${size}&sort=${sort}`;
-    const fullUrl = `${this.url}/hidden?${queryString}`;
-
-    return this.http.get<any>(fullUrl).pipe(
-      map(response => {
-        const rawContent = response.content || (Array.isArray(response) ? response : []);
-        const mappedContent: Product[] = rawContent.map((item: any) => this.mapToProduct(item));
-
-        return {
-          content: mappedContent,
-          totalElements: response.totalElements ?? mappedContent.length,
-          totalPages: response.totalPages ?? 1,
-          size: response.size ?? size,
-          number: response.number ?? page,
-          first: response.first ?? true,
-          last: response.last ?? true,
-          empty: mappedContent.length === 0
-        };
-      })
-    );
-  }
-
-  updateStockManually(id: number, product: ProductRequest): Observable<Product> {
-    return this.http.put<Product>(`${this.url}/${id}/stock-manual`, product);
-  }
-
-  exportToExcel(): Observable<Blob> {
-    return this.http.get(`${this.url}/export/excel`, {
-      responseType: 'blob'
-    });
   }
 }

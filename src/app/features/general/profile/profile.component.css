@@ -308,6 +308,17 @@ tr:last-child td {
   margin-top: 12px;
 }
 
+.students-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 20px 18px;
+  border-top: 1px solid var(--theme-border-glass);
+  color: var(--theme-text-secondary);
+  font-size: 0.85rem;
+}
+
 button:disabled {  
   opacity: 0.4;  
   cursor: not-allowed;  
