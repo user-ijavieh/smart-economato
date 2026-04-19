@@ -1,4 +1,9 @@
-<nav id="sidebar" [class.close]="!isOpen" [class.admin-mode]="isAdminRoute">
+<nav id="sidebar" [class.close]="!isOpen && !isMobile" [class.admin-mode]="isAdminRoute" [class.mobile-open]="mobileOpen">
+  <button class="mobile-close-btn" (click)="closeMobileMenu()" aria-label="Cerrar menú">
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
+      <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+    </svg>
+  </button>
   <ul>
     <!-- Toggle -->
     <li class="toggle-item">
@@ -27,7 +32,7 @@
         <div class="user-avatar">
           {{ getUserInitials() }}
         </div>
-        <div class="user-details" *ngIf="isOpen">
+        <div class="user-details" *ngIf="isOpen || isMobile">
           <span class="user-name">{{ getUserName() }}</span>
           <span *ngIf="isAdminRoute" class="user-role">Administrador</span>
         </div>
@@ -46,6 +51,7 @@
           [routerLink]="item.route"
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: item.route === '/welcome' }"
+          (click)="closeMobileMenu()"
         >
           <!-- Inicio / Vista General -->
           @if (item.icon === 'home') {
@@ -268,7 +274,7 @@
 
     <!-- Panel Admin (solo en modo normal y si eres admin) -->
     <li *ngIf="isAdmin() && !isAdminRoute">
-      <a routerLink="/admin-panel" routerLinkActive="active">
+      <a routerLink="/admin-panel" routerLinkActive="active" (click)="closeMobileMenu()">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           height="24px"

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, OnInit, OnDestroy, ChangeDetectorRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -28,10 +28,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private roleSub!: Subscription;
 
   isOpen = window.innerWidth > 800;
+  isMobile = window.innerWidth <= 800;
   isAdminRoute = false;
 
+  @Input() mobileOpen = false;
   @Output() sidebarToggled = new EventEmitter<boolean>();
   @Output() logoutClicked = new EventEmitter<void>();
+  @Output() mobileMenuClosed = new EventEmitter<void>();
 
   // Items para la vista normal
   private defaultNavItems: NavItem[] = [
@@ -66,6 +69,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
   ];
 
   ngOnInit(): void {
+    if (this.isMobile) {
+      this.isOpen = false;
+    }
+
     this.authService.syncSessionProfile().subscribe({
       next: () => this.cdr.markForCheck(),
       error: () => this.cdr.markForCheck()
@@ -124,6 +131,20 @@ export class SidebarComponent implements OnInit, OnDestroy {
   toggleSidebar(): void {
     this.isOpen = !this.isOpen;
     this.sidebarToggled.emit(this.isOpen);
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    this.isMobile = window.innerWidth <= 800;
+    if (this.isMobile) {
+      this.isOpen = false;
+    }
+  }
+
+  closeMobileMenu(): void {
+    if (this.isMobile) {
+      this.mobileMenuClosed.emit();
+    }
   }
 
   toggleTheme(): void {
