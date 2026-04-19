@@ -37,6 +37,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
   loadingStudents = false;
   studentPresence: UserPresenceSnapshot[] = [];
   studentSearchTerm = '';
+  studentsPage = 0;
+  studentsPageSize = 50;
+  studentsTotalPages = 1;
+  studentsTotalElements = 0;
 
   activityLogs: UserActivityLogResponse[] = [];
   activityPage = 0;
@@ -60,6 +64,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
     return this.students.filter(student =>
       student.name.toLowerCase().includes(term)
     );
+  }
+
+  get pagedFilteredStudents(): (User & { initials?: string })[] {
+    const start = this.studentsPage * this.studentsPageSize;
+    return this.filteredStudents.slice(start, start + this.studentsPageSize);
+  }
+
+  get filteredStudentsTotalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredStudents.length / this.studentsPageSize));
   }
 
   ngOnInit(): void {
@@ -105,16 +118,21 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadStudents() {
+  loadStudents(): void {
     this.loadingStudents = true;
     this.cdr.detectChanges();
 
     this.userService.getMyStudents().subscribe({
       next: (data) => {
-        this.students = data.map(s => ({
+        this.students = (data || []).map(s => ({
           ...s,
           initials: this.getInitials(s.name)
         }));
+        this.studentsTotalElements = this.students.length;
+        this.studentsTotalPages = Math.max(1, Math.ceil(this.studentsTotalElements / this.studentsPageSize));
+        if (this.studentsPage >= this.studentsTotalPages) {
+          this.studentsPage = this.studentsTotalPages - 1;
+        }
         this.sortStudents();
         this.loadingStudents = false;
         this.cdr.detectChanges();
@@ -141,8 +159,26 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   getOnlineStudentsCount(): number {
-    const studentIds = new Set(this.students.map(student => student.id));
+    const studentIds = new Set(this.filteredStudents.map(student => student.id));
     return this.studentPresence.filter(presence => studentIds.has(presence.userId)).length;
+  }
+
+  prevStudentsPage(): void {
+    if (this.studentsPage <= 0) {
+      return;
+    }
+    this.studentsPage -= 1;
+  }
+
+  nextStudentsPage(): void {
+    if (this.studentsPage >= this.filteredStudentsTotalPages - 1) {
+      return;
+    }
+    this.studentsPage += 1;
+  }
+
+  onStudentSearchChange(): void {
+    this.studentsPage = 0;
   }
 
   private sortStudents(): void {

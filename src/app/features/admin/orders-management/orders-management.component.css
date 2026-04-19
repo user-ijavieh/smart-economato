@@ -349,6 +349,22 @@
 }
 .btn-imprimir:hover { background: rgba(76, 175, 80, 0.25); color: var(--theme-text-primary); transform: translateY(-2px); }
 
+.review-lock-banner {
+  margin: 20px 0 16px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--theme-text-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.review-lock-banner-blocking {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.1);
+}
+
 /* ===== PAGINATION ===== */
 .pagination-controls {
   display: flex;

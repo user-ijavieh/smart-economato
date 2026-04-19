@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RecipeService } from '../../../core/services/recipe.service';
@@ -12,7 +12,8 @@ import { RecipeDetailModalComponent } from './recipe-detail-modal/recipe-detail-
 import { RecipeEditModalComponent } from './recipe-edit-modal/recipe-edit-modal.component';
 import { RecipeCreateModalComponent } from './recipe-create-modal/recipe-create-modal.component';
 import { ScrollService } from '../../../core/services/scroll.service';
-import { finalize, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
+import { finalize, Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
 @Component({
@@ -23,13 +24,15 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
   styleUrl: './recipes.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RecipesComponent implements OnInit {
+export class RecipesComponent implements OnInit, OnDestroy {
   private recipeService = inject(RecipeService);
   private recipeDraftService = inject(RecipeDraftService);
   private messageService = inject(MessageService);
   private authService = inject(AuthService);
+  private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
   private cdr = inject(ChangeDetectorRef);
   private scrollService = inject(ScrollService);
+  private destroy$ = new Subject<void>();
 
   recipes: Recipe[] = [];
   // filteredRecipes no longer needed as we filter on backend or just show current page
@@ -73,6 +76,19 @@ export class RecipesComponent implements OnInit {
   ngOnInit(): void {
     this.initialiseSearchSubscription();
     this.loadRecipes();
+
+    this.syncCacheInvalidationService.invalidatedDomains$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ domains }) => {
+        if (domains.includes('recipe')) {
+          this.loadRecipes();
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   switchTab(tab: 'recipes' | 'drafts'): void {
@@ -88,7 +104,8 @@ export class RecipesComponent implements OnInit {
   initialiseSearchSubscription(): void {
     this.searchSubject.pipe(
       debounceTime(SEARCH_DEBOUNCE_MS),
-      distinctUntilChanged()
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
     ).subscribe(term => {
       this.performSearch(term);
     });

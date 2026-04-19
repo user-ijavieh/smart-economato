@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { forkJoin, of, switchMap } from 'rxjs';
+import { forkJoin, of, switchMap, takeUntil } from 'rxjs';
 import { Subscription } from 'rxjs';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { UserService } from '../../../core/services/user.service';
@@ -14,6 +14,7 @@ import { UserPresenceSnapshot } from '../../../shared/models/presence.model';
 import { UserActivityService } from '../../../core/services/user-activity.service';
 import { UserActivityLogResponse } from '../../../shared/models/user-activity.model';
 import { PresenceTrackingService } from '../../../core/services/presence-tracking.service';
+import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
@@ -36,7 +37,9 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
     private webSocketService = inject(WebSocketService);
     private userActivityService = inject(UserActivityService);
     private presenceTrackingService = inject(PresenceTrackingService);
+    private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
     messageService = inject(MessageService);
+    private destroy$ = new Subject<void>();
     private presenceSubscription?: Subscription;
     private searchSubscription?: Subscription;
     private searchSubject = new Subject<string>();
@@ -138,9 +141,19 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
             this.scheduleActivityRefreshFromWebSocket();
             this.cdr.detectChanges();
         });
+
+        this.syncCacheInvalidationService.invalidatedDomains$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(({ domains }) => {
+                if (domains.includes('user')) {
+                    this.loadUsers(this.currentPage);
+                }
+            });
     }
 
     ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
         this.presenceSubscription?.unsubscribe();
         this.searchSubscription?.unsubscribe();
         this.assignmentSearchSubscription?.unsubscribe();

@@ -1,7 +1,8 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { finalize, debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { finalize, debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
+import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 import { SupplierService } from '../../../core/services/supplier.service';
 import { TraceabilityService } from '../../../core/services/traceability.service';
@@ -25,12 +26,15 @@ type CrisisView = 'active' | 'history';
   templateUrl: './traceability-management.component.html',
   styleUrl: './traceability-management.component.css'
 })
-export class TraceabilityManagementComponent implements OnInit {
+export class TraceabilityManagementComponent implements OnInit, OnDestroy {
   private traceabilityService = inject(TraceabilityService);
   private supplierService = inject(SupplierService);
   private productService = inject(ProductService);
   private cdr = inject(ChangeDetectorRef);
+  private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
   messageService = inject(MessageService);
+
+  private destroy$ = new Subject<void>();
 
   activeView: CrisisView = 'active';
   activating = false;
@@ -102,6 +106,23 @@ export class TraceabilityManagementComponent implements OnInit {
     previousWeek.setDate(now.getDate() - 7);
     this.dateFrom = this.toDateTimeLocal(previousWeek);
     this.dateTo = this.toDateTimeLocal(now);
+
+    this.syncCacheInvalidationService.invalidatedDomains$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ domains }) => {
+        if (domains.includes('crisis')) {
+          if (this.activeView === 'active') {
+            this.loadCrises();
+          } else {
+            this.loadHistory();
+          }
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadCrises(): void {

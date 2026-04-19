@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, NgZone, inject } from '@angular/core';
 import { Client, IMessage, ReconnectionTimeMode, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { BehaviorSubject, Observable, Subject, distinctUntilChanged, map } from 'rxjs';
@@ -34,6 +34,7 @@ interface PersistedSessionNotification extends SessionNotification {
 export class NotificationService {
   private readonly messageService = inject(MessageService);
   private readonly notificationApiService = inject(NotificationApiService);
+  private readonly ngZone = inject(NgZone);
 
   private client?: Client;
   private roleSubscription?: StompSubscription;
@@ -222,9 +223,11 @@ export class NotificationService {
         receivedAt: Date.now()
       };
 
-      this.notificationsSubject.next([sessionItem, ...this.notificationsSubject.value].slice(0, this.maxNotifications));
-      this.incomingSubject.next(normalized);
-      this.showIncomingToast(normalized);
+      this.ngZone.run(() => {
+        this.notificationsSubject.next([sessionItem, ...this.notificationsSubject.value].slice(0, this.maxNotifications));
+        this.incomingSubject.next(normalized);
+        this.showIncomingToast(normalized);
+      });
     } catch (error) {
       console.error('Invalid notification payload:', error);
     }

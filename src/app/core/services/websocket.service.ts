@@ -1,8 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone, inject } from '@angular/core';
 import { Client, IMessage, ReconnectionTimeMode, StompSubscription } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { PresenceUpdateRequest, UserPresenceSnapshot } from '../../shared/models/presence.model';
+import { SyncEvent } from '../../shared/models/sync-event.model';
 
 export interface AlertMessage {
   code: string;
@@ -12,21 +14,26 @@ export interface AlertMessage {
 
 @Injectable({ providedIn: 'root' })
 export class WebSocketService {
+  private readonly ngZone = inject(NgZone);
   private client?: Client;
   private broadcastSubscription?: StompSubscription;
   private personalSubscription?: StompSubscription;
+  private syncSubscription?: StompSubscription;
   private adminPresenceSubscription?: StompSubscription;
   private chefStudentPresenceSubscription?: StompSubscription;
   private connectedToken?: string;
   private connectedRole?: string | null;
   private readonly alertSubject = new Subject<AlertMessage>();
+  private readonly syncEventSubject = new Subject<SyncEvent>();
   private readonly adminPresenceSubject = new BehaviorSubject<UserPresenceSnapshot[]>([]);
   private readonly studentPresenceSubject = new BehaviorSubject<UserPresenceSnapshot[]>([]);
-  private readonly brokerUrl = this.getBrokerUrl();
+  private readonly connectedSubject = new BehaviorSubject<boolean>(false);
 
   readonly alerts$: Observable<AlertMessage> = this.alertSubject.asObservable();
+  readonly syncEvents$: Observable<SyncEvent> = this.syncEventSubject.asObservable();
   readonly adminPresence$: Observable<UserPresenceSnapshot[]> = this.adminPresenceSubject.asObservable();
   readonly studentPresence$: Observable<UserPresenceSnapshot[]> = this.studentPresenceSubject.asObservable();
+  readonly connected$: Observable<boolean> = this.connectedSubject.asObservable();
 
   connect(jwtToken: string, role: string | null = null): void {
     if (!jwtToken) {
@@ -43,9 +50,19 @@ export class WebSocketService {
     this.connectedRole = normalizedRole;
 
     this.client = new Client({
-      brokerURL: this.brokerUrl,
+      webSocketFactory: () => new SockJS(this.getSockJsUrl()),
       connectHeaders: {
         Authorization: `Bearer ${jwtToken}`
+      },
+      beforeConnect: async () => {
+        const freshToken = localStorage.getItem('auth_token') || jwtToken;
+        this.connectedToken = freshToken;
+
+        if (this.client) {
+          this.client.connectHeaders = {
+            Authorization: `Bearer ${freshToken}`
+          };
+        }
       },
       reconnectDelay: 1000,
       reconnectTimeMode: ReconnectionTimeMode.EXPONENTIAL,
@@ -55,6 +72,7 @@ export class WebSocketService {
       onConnect: () => {
         this.broadcastSubscription?.unsubscribe();
         this.personalSubscription?.unsubscribe();
+        this.syncSubscription?.unsubscribe();
         this.adminPresenceSubscription?.unsubscribe();
         this.chefStudentPresenceSubscription?.unsubscribe();
         
@@ -68,6 +86,10 @@ export class WebSocketService {
           this.handleAlertMessage(message);
         });
 
+        this.syncSubscription = this.client?.subscribe('/topic/sync', (message: IMessage) => {
+          this.handleSyncMessage(message);
+        });
+
         if (this.connectedRole === 'ADMIN') {
           this.adminPresenceSubscription = this.client?.subscribe('/topic/roles/ADMIN/presence', (message: IMessage) => {
             this.handleAdminPresenceMessage(message);
@@ -79,6 +101,11 @@ export class WebSocketService {
             this.handleStudentPresenceMessage(message);
           });
         }
+
+        this.ngZone.run(() => this.connectedSubject.next(true));
+      },
+      onWebSocketClose: () => {
+        this.ngZone.run(() => this.connectedSubject.next(false));
       },
       onStompError: frame => {
         console.error('STOMP error:', frame.headers['message'] || frame.body);
@@ -91,16 +118,19 @@ export class WebSocketService {
   disconnect(): void {
     this.broadcastSubscription?.unsubscribe();
     this.personalSubscription?.unsubscribe();
+    this.syncSubscription?.unsubscribe();
     this.adminPresenceSubscription?.unsubscribe();
     this.chefStudentPresenceSubscription?.unsubscribe();
     this.broadcastSubscription = undefined;
     this.personalSubscription = undefined;
+    this.syncSubscription = undefined;
     this.adminPresenceSubscription = undefined;
     this.chefStudentPresenceSubscription = undefined;
     this.connectedToken = undefined;
     this.connectedRole = undefined;
     this.adminPresenceSubject.next([]);
     this.studentPresenceSubject.next([]);
+    this.connectedSubject.next(false);
 
     if (this.client) {
       void this.client.deactivate();
@@ -111,16 +141,33 @@ export class WebSocketService {
   private handleAlertMessage(message: IMessage): void {
     try {
       const alert: AlertMessage = JSON.parse(message.body) as AlertMessage;
-      this.alertSubject.next(alert);
+      this.ngZone.run(() => this.alertSubject.next(alert));
     } catch (error) {
       console.error('Invalid alert payload:', error);
+    }
+  }
+
+  private handleSyncMessage(message: IMessage): void {
+    try {
+      const payload = JSON.parse(message.body) as SyncEvent;
+      if (!Array.isArray(payload.affectedDomains) || typeof payload.changedBy !== 'string') {
+        return;
+      }
+
+      if (!Array.isArray(payload.entityIds)) {
+        payload.entityIds = [];
+      }
+
+      this.ngZone.run(() => this.syncEventSubject.next(payload));
+    } catch (error) {
+      console.error('Invalid sync payload:', error);
     }
   }
 
   private handleAdminPresenceMessage(message: IMessage): void {
     try {
       const payload = JSON.parse(message.body) as UserPresenceSnapshot[];
-      this.adminPresenceSubject.next(Array.isArray(payload) ? payload : []);
+      this.ngZone.run(() => this.adminPresenceSubject.next(Array.isArray(payload) ? payload : []));
     } catch (error) {
       console.error('Invalid admin presence payload:', error);
     }
@@ -129,7 +176,7 @@ export class WebSocketService {
   private handleStudentPresenceMessage(message: IMessage): void {
     try {
       const payload = JSON.parse(message.body) as UserPresenceSnapshot[];
-      this.studentPresenceSubject.next(Array.isArray(payload) ? payload : []);
+      this.ngZone.run(() => this.studentPresenceSubject.next(Array.isArray(payload) ? payload : []));
     } catch (error) {
       console.error('Invalid student presence payload:', error);
     }
@@ -152,16 +199,13 @@ export class WebSocketService {
     });
   }
 
-  private getBrokerUrl(): string {
+  private getSockJsUrl(): string {
     const configuredApiUrl = (environment.apiUrl || '').trim();
 
     if (!configuredApiUrl) {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      return `${protocol}//${window.location.host}/ws-alerts/websocket`;
+      return `${window.location.protocol}//${window.location.host}/ws-alerts`;
     }
 
-    const wsProtocol = configuredApiUrl.startsWith('https://') ? 'wss://' : 'ws://';
-    const host = configuredApiUrl.replace(/^https?:\/\//, '');
-    return `${wsProtocol}${host}/ws-alerts/websocket`;
+    return `${configuredApiUrl.replace(/\/$/, '')}/ws-alerts`;
   }
 }

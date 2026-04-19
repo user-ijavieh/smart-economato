@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { finalize, forkJoin, Subject, of } from 'rxjs';
-import { map, switchMap, debounceTime, distinctUntilChanged, catchError } from 'rxjs/operators';
+import { map, switchMap, debounceTime, distinctUntilChanged, catchError, takeUntil } from 'rxjs/operators';
+import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartOptions } from 'chart.js';
@@ -85,7 +86,10 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     private supplierService = inject(SupplierService);
     private scrollService = inject(ScrollService);
     private route = inject(ActivatedRoute);
+    private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
     messageService = inject(MessageService);
+
+    private destroy$ = new Subject<void>();
 
     loadingAlerts = true;
     loadingPredictions = true;
@@ -288,9 +292,26 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         ).subscribe((query: string) => {
             this.loadBatchTypeahead(query);
         });
+
+        this.syncCacheInvalidationService.invalidatedDomains$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(({ domains }) => {
+                if (domains.includes('product') || domains.includes('batch') || domains.includes('order') || domains.includes('recipe')) {
+                    if (this.activeTab === 'alerts' && !this.loadingAlerts) {
+                        this.loadAlerts();
+                    } else if (this.activeTab === 'predictions' && !this.loadingPredictions) {
+                        this.loadPredictions();
+                    } else if (this.activeTab === 'ledger' && !this.loadingLedger && this.selectedProductId) {
+                        this.loadLedgerHistory(this.selectedProductId);
+                        this.loadLedgerSnapshot(this.selectedProductId);
+                    }
+                }
+            });
     }
 
     ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
         if (this.searchSubscription) {
             this.searchSubscription.unsubscribe();
         }

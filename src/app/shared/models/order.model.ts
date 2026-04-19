@@ -13,6 +13,51 @@ export interface Order {
   details?: OrderDetail[];
 }
 
+export interface OrderReviewLockStatus {
+  orderId: number;
+  locked: boolean;
+  lockedByUserId?: number;
+  lockedByUsername?: string;
+  lockedByDisplayName?: string;
+  acquiredAt?: string;
+  lastSeenAt?: string;
+  expiresAt?: string;
+  currentUserOwner?: boolean;
+  currentUserAdmin?: boolean;
+}
+
+export interface OrderCollaborationUser {
+  userId: number;
+  username: string;
+  displayName: string;
+  joinedAt?: string;
+}
+
+export interface OrderCollaborationFieldLock {
+  fieldPath: string;
+  lockedByUserId: number;
+  lockedByUsername: string;
+  lockedByDisplayName: string;
+  lockedAt?: string;
+  expiresAt?: string;
+}
+
+export interface OrderReviewCollaborationState {
+  orderId: number;
+  locked: boolean;
+  lockedByUserId?: number;
+  lockedByUsername?: string;
+  lockedByDisplayName?: string;
+  currentUserOwner?: boolean;
+  currentUserAdmin?: boolean;
+  currentUserCollaborator?: boolean;
+  currentUserCanAdmit?: boolean;
+  collaborators: OrderCollaborationUser[];
+  pendingRequests: OrderCollaborationUser[];
+  fieldLocks: OrderCollaborationFieldLock[];
+  fieldValues: Record<string, unknown>;
+}
+
 export interface OrderDetail {
   id?: number;
   orderId?: number;

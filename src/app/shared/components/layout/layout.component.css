@@ -104,9 +104,34 @@ main.main-expanded {
   transition: all 0.2s;
 }
 
+.cache-utility {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--color-warning-muted) 28%, transparent);
+  background: color-mix(in srgb, var(--color-warning-muted) 12%, transparent);
+  color: var(--color-warning-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cache-utility:hover {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--color-warning-muted) 22%, transparent);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.28);
+}
+
 :host-context([data-theme="light"]) .logout-utility {
   background: rgba(239, 68, 68, 0.08);
   border-color: rgba(239, 68, 68, 0.15);
+}
+
+:host-context([data-theme="light"]) .cache-utility {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.2);
 }
 
 .logout-utility:hover {
@@ -119,6 +144,26 @@ main.main-expanded {
 :host-context([data-theme="light"]) .logout-utility:hover {
   background: var(--color-danger);
   color: #fff;
+}
+
+.cache-modal-icon {
+  color: var(--color-warning-muted);
+}
+
+.btn-cache-confirm {
+  background: color-mix(in srgb, var(--color-warning-muted) 20%, transparent);
+  color: var(--theme-text-primary);
+  border: 1px solid color-mix(in srgb, var(--color-warning-muted) 36%, transparent);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-cache-confirm:hover {
+  background: color-mix(in srgb, var(--color-warning-muted) 28%, transparent);
+  transform: translateY(-1px);
 }
 
 .notifications-bell {

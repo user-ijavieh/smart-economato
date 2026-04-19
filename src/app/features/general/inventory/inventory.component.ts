@@ -13,10 +13,11 @@ import { ProductEditModalComponent } from './product-edit-modal/product-edit-mod
 import { ProductCreateModalComponent } from './product-create-modal/product-create-modal.component';
 import { ProductDetailModalComponent } from './product-detail-modal/product-detail-modal.component';
 import { BarcodeScannerComponent } from '../barcode-scanner/barcode-scanner.component';
+import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { ProductBatchService } from '../../../core/services/product-batch.service';
 import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.model';
 import { ScrollService } from '../../../core/services/scroll.service';
-import { finalize, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { finalize, Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
@@ -44,8 +45,10 @@ export class InventoryComponent implements OnInit, OnDestroy {
   messageService = inject(MessageService);
   private authService = inject(AuthService);
   private productBatchService = inject(ProductBatchService);
+  private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
   private cdr = inject(ChangeDetectorRef);
   private scrollService = inject(ScrollService);
+  private destroy$ = new Subject<void>();
 
   // Listas de datos
   products: Product[] = [];
@@ -91,14 +94,44 @@ export class InventoryComponent implements OnInit, OnDestroy {
     
     this.searchSubject.pipe(
       debounceTime(SEARCH_DEBOUNCE_MS),
-      distinctUntilChanged()
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
     ).subscribe(term => {
       this.performSearch(term);
     });
+
+    this.syncCacheInvalidationService.invalidatedDomains$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ domains, event }) => {
+        let shouldReloadProducts = false;
+        let shouldReloadBatches = false;
+
+        if (domains.includes('product')) {
+          if (event.entityIds && event.entityIds.length > 0) {
+            const hasVisibleIds = event.entityIds.some(id => this.products.some(p => p.id === id));
+            if (hasVisibleIds) {
+              shouldReloadProducts = true;
+            } else if (event.action === 'CREATE' && this.page === 0 && !this.searchTerm) {
+              shouldReloadProducts = true;
+            }
+          } else {
+            shouldReloadProducts = true;
+          }
+        }
+
+        if (domains.includes('batch')) {
+          shouldReloadBatches = true;
+        }
+
+        if (shouldReloadProducts) this.loadProducts();
+        if (shouldReloadBatches) this.loadExpirations();
+      });
   }
 
   ngOnDestroy(): void {
     this.searchSubject.complete();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadProducts(): void {

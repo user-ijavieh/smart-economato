@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { AsyncPipe, CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { finalize, Observable, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { finalize, Observable, Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { KitchenService } from '../../../core/services/kitchen.service';
 import { RecipeService } from '../../../core/services/recipe.service';
 import { OrderService } from '../../../core/services/order.service';
@@ -28,14 +29,16 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
   styleUrl: './kitchen-management.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class KitchenManagementComponent implements OnInit {
+export class KitchenManagementComponent implements OnInit, OnDestroy {
   private kitchenService = inject(KitchenService);
   private recipeService = inject(RecipeService);
   private orderService = inject(OrderService);
   private traceabilityService = inject(TraceabilityService);
   private cdr = inject(ChangeDetectorRef);
   private scrollService = inject(ScrollService);
+  private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
   messageService = inject(MessageService);
+  private destroy$ = new Subject<void>();
 
   activeTab: 'history' | 'reports' = 'history';
 
@@ -84,11 +87,35 @@ export class KitchenManagementComponent implements OnInit {
     this.searchTerm$
       .pipe(
         debounceTime(SEARCH_DEBOUNCE_MS),
-        distinctUntilChanged()
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
       )
       .subscribe(() => {
         this.performSearch();
       });
+
+    this.syncCacheInvalidationService.invalidatedDomains$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ domains }) => {
+        if (domains.includes('recipe') || domains.includes('batch') || domains.includes('order') || 
+            domains.includes('weekly_plan') || domains.includes('ledger')) {
+          if (this.activeTab === 'history') {
+            if (this.hasActiveHistoryFilters()) {
+               this.applyServerFilters();
+            } else {
+               this.loadHistory(this.currentPage);
+            }
+          } else {
+            this.loadReport();
+          }
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.searchTerm$.complete();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   switchTab(tab: 'history' | 'reports'): void {
@@ -118,7 +145,7 @@ export class KitchenManagementComponent implements OnInit {
         this.cdr.markForCheck();
       }))
       .subscribe({
-        next: (pageData) => {
+        next: (pageData: any) => {
           this.audits = pageData.content;
           this.filteredAudits = [...pageData.content];
           this.totalElements = pageData.totalElements;
@@ -251,7 +278,7 @@ export class KitchenManagementComponent implements OnInit {
     // Use search endpoint directly
     this.loadingHistory = true;
     this.kitchenService.searchCookingAuditsByName(this.searchTerm).subscribe({
-      next: (response) => {
+      next: (response: RecipeCookingAudit[]) => {
         this.audits = response.length > 0 ? response : [];
         this.setFilteredHistory(this.audits);
         this.loadingHistory = false;
@@ -384,7 +411,7 @@ export class KitchenManagementComponent implements OnInit {
         this.messageService.showSuccess('Audit reverted successfully');
         this.loadHistory(this.currentPage);
       },
-      error: (err) => {
+      error: (err: any) => {
         const msg = err.error?.message || err.error || 'Error al revertir el cocinado';
         this.messageService.showError(msg);
         this.loadingHistory = false;
@@ -419,7 +446,7 @@ export class KitchenManagementComponent implements OnInit {
           this.report = report;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Error loading report:', error);
           this.messageService.showError('No se pudo generar el informe de cocina');
         }
@@ -440,7 +467,7 @@ export class KitchenManagementComponent implements OnInit {
 
     this.kitchenService.downloadKitchenReportPdf(this.reportRange, this.reportStartDate, this.reportEndDate)
       .subscribe({
-        next: (blob) => {
+        next: (blob: Blob) => {
           const url = window.URL.createObjectURL(blob);
           const anchor = document.createElement('a');
           anchor.href = url;
@@ -449,7 +476,8 @@ export class KitchenManagementComponent implements OnInit {
           window.URL.revokeObjectURL(url);
           this.messageService.showSuccess('Informe PDF descargado');
         },
-        error: () => {
+        error: (err: any) => {
+          console.error('Error downloading report PDF:', err);
           this.messageService.showError('No se pudo descargar el informe PDF');
         }
       });
@@ -541,7 +569,7 @@ export class KitchenManagementComponent implements OnInit {
     }
 
     this.orderService.getById(orderId).subscribe({
-      next: (order) => {
+      next: (order: Order) => {
         this.selectedOrder = order;
         this.showOrderDetailsModal = true;
         this.showTraceabilityModal = false;
