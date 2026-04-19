@@ -248,7 +248,7 @@
   color: #ef4444;
 }
 
-/* Admin override for close hover (no !important needed, same component stylesheet) */
+/* Admin override for close hover (no needed, same component stylesheet) */
 :host-context(body.admin-theme) .modal-close-btn:hover {
   background: rgba(90, 120, 220, 0.22);
   border-color: rgba(90, 120, 220, 0.40);

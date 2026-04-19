@@ -935,12 +935,12 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 }
 
 @media (max-width: 1024px) {
-  .hide-on-mobile { display: none !important; }
-  .show-on-mobile-only { display: table-cell !important; }
+  .hide-on-mobile { display: none; }
+  .show-on-mobile-only { display: table-cell; }
   .clickable-row { cursor: pointer; }
-  .clickable-row:hover { background: var(--theme-surface-glass-hover) !important; }
+  .clickable-row:hover { background: var(--theme-surface-glass-hover); }
 
-  .mobile-icon-col { width: 40px; text-align: center; padding: 8px !important; }
+  .mobile-icon-col { width: 40px; text-align: center; padding: 8px; }
   .mobile-icon-col svg { color: var(--theme-text-secondary); vertical-align: middle; }
   
   .header-recetas { height: 60px; padding: 0 16px; }

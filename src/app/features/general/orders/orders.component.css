@@ -1,4 +1,4 @@
-﻿:host {
+:host {
   display: block;
 }
 
@@ -17,7 +17,7 @@
 }
 
 .skeleton-header {
-  background: var(--theme-surface-glass-hover) !important;
+  background: var(--theme-surface-glass-hover);
   display: flex;
   justify-content: space-between;
   align-items: center;

@@ -103,7 +103,7 @@
 
 .dropdown-trigger {
   cursor: pointer;
-  padding-right: 72px !important;
+  padding-right: 72px;
   border: 1.5px solid var(--theme-border-glass);
   border-radius: var(--theme-radius-input);
   background: var(--theme-input-bg);

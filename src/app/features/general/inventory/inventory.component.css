@@ -367,7 +367,7 @@ tfoot td {
 
 @media (max-width: 768px) {
   .hide-on-mobile { display: none; }
-  .show-on-mobile-only { display: table-cell !important; }
+  .show-on-mobile-only { display: table-cell; }
   .mobile-unit {
     display: inline;
     margin-left: 4px;
@@ -379,7 +379,7 @@ tfoot td {
   .pagination-controls { 
     flex-wrap: wrap;
     gap: 16px;
-    flex-direction: row !important;
+    flex-direction: row;
   }
   .page-info {
     width: 100%;
