@@ -533,6 +533,11 @@
   color: #1E293B;
 }
 
+:host-context([data-theme="light"]) #sidebar.admin-mode .user-avatar,
+:host-context([data-theme="light"]) #sidebar.admin-mode .user-name {
+  color: #3B82F6;
+}
+
 :host-context([data-theme="light"]) .user-role {
   color: #B84B44;
 }
