@@ -4,7 +4,7 @@
     <div class="welcome-banner animate-fade-in">
         <div class="user-avatar-large">{{ userInitials }}</div>
         <div class="welcome-banner-text">
-            <h2>Bienvenido, {{ userName }}</h2>
+            <h2>Bienvenid@, {{ userName }}</h2>
             <p>Monitorea y gestiona el estado operativo de Smart Economato</p>
         </div>
     </div>
@@ -28,7 +28,7 @@
         <!-- Top Recetas -->
         <div class="tabla-contenedor ranking-card">
             <div class="card-header-flex">
-                <h3>Top Recetas (Ventas)</h3>
+                <h3>Top Recetas</h3>
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                     <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
@@ -37,7 +37,6 @@
             <div class="ranking-list" [class.loading]="loading">
                 <div class="ranking-item" *ngFor="let recipe of dashboardData?.topRecipes; let i = index">
                     <div class="rank-pos">#{{ i + 1 }}</div>
-                    <div class="item-avatar">{{ recipe.name[0] }}</div>
                     <div class="item-details">
                         <span class="item-primary">{{ recipe.name }}</span>
                         <span class="item-secondary">{{ recipe.elaborations }} pedidos</span>
@@ -72,7 +71,7 @@
                     </div>
                     <div class="item-details">
                         <span class="item-primary">{{ student.name }}</span>
-                        <span class="item-secondary">Activo</span>
+                        <span class="item-secondary">{{ student.elaborations || 0 }} recetas</span>
                     </div>
                 </div>
                 <div class="empty-msg" *ngIf="!loading && dashboardData?.topStudents?.length === 0">No hay usuarios registrados.</div>
@@ -82,13 +81,14 @@
         <!-- Inventory Control Table -->
         <div class="tabla-contenedor inventory-card full-width">
             <div class="card-header-flex">
-                <h3>Control de Inventario (Próximos 15 días - REAL)</h3>
+                <h3>Control de Inventario (Próximos 15 días)</h3>
             </div>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th>Producto</th>
+                            <th class="hide-on-mobile">Lote</th>
                             <th class="hide-on-mobile">Caducidad</th>
                             <th>Días</th>
                             <th>Stock</th>
@@ -98,6 +98,7 @@
                     <tbody>
                         <tr *ngFor="let p of dashboardData?.expiringProducts">
                             <td><strong>{{ p.name }}</strong></td>
+                            <td class="hide-on-mobile">{{ p.batchCode || '-' }}</td>
                             <td class="hide-on-mobile">{{ p.expirationDate | date:'dd/MM/yyyy' }}</td>
                             <td>{{ p.daysRemaining }} días</td>
                             <td>{{ p.stock }} {{ p.unit }}</td>
@@ -108,29 +109,29 @@
                             </td>
                         </tr>
                         <tr *ngIf="dashboardData?.expiringProducts?.length === 0">
-                            <td colspan="5" class="empty-msg">No hay productos con caducidad próxima en los lotes activos.</td>
+                            <td colspan="6" class="empty-msg">No hay productos con caducidad próxima en los lotes activos.</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Expenses Chart Card (MOVED BOTTOM) -->
-        <div class="tabla-contenedor chart-card full-width">
-            <div class="card-header-flex">
-                <h3>Gasto Total por Proveedor (Datos Reales)</h3>
-            </div>
-            <div class="chart-wrapper">
-                <canvas baseChart
-                    [data]="barChartData"
-                    [options]="barChartOptions"
-                    [type]="barChartType">
-                </canvas>
-            </div>
-            <div class="empty-msg" *ngIf="!loading && barChartData.labels?.length === 0">
-                No hay órdenes de compra registradas para mostrar estadísticas de gastos.
-            </div>
-        </div>
+    </div>
 
+    <!-- Expenses Chart Card (MOVED OUTSIDE GRID) -->
+    <div class="tabla-contenedor chart-card-standalone animate-fade-in" style="margin-top: 1.5rem;">
+        <div class="card-header-flex">
+            <h3>Gasto Total por Proveedor</h3>
+        </div>
+        <div class="chart-wrapper">
+            <canvas baseChart
+                [data]="barChartData"
+                [options]="barChartOptions"
+                [type]="barChartType">
+            </canvas>
+        </div>
+        <div class="empty-msg" *ngIf="!loading && barChartData.labels?.length === 0">
+            No hay órdenes de compra registradas para mostrar estadísticas de gastos.
+        </div>
     </div>
 </div>

@@ -26,7 +26,8 @@ export class DashboardService {
             kitchenAudits: this.kitchenService.getCookingAudits(0, 50).pipe(catchError(() => of({ content: [] }))),
             expiringBatches: this.batchService.getExpiringBatches(15).pipe(catchError(() => of([]))),
             students: this.userService.getByRole('USER').pipe(catchError(() => of([]))),
-            suppliers: this.supplierService.getAll(0, 50).pipe(catchError(() => of({ content: [] })))
+            suppliers: this.supplierService.getAll(0, 50).pipe(catchError(() => of({ content: [] }))),
+            kitchenReport: this.kitchenService.getKitchenReport('ALL_TIME').pipe(catchError(() => of(null)))
         });
 
         // Step 2: Fetch real Total Costs for each supplier
@@ -83,18 +84,31 @@ export class DashboardService {
             elaborations: val.count
         })).sort((a, b) => b.elaborations - a.elaborations).slice(0, 5);
 
-        // Map real students
-        const topStudents: TopStudent[] = (data.students || []).slice(0, 5).map((u: any) => ({
-            id: u.id,
-            name: u.name,
-            activePlans: 0,
-            avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=random`
-        }));
+        // Map real students ranking from kitchen report if available, else from user list
+        let topStudents: TopStudent[] = [];
+        if (data.kitchenReport && data.kitchenReport.topUsers) {
+            topStudents = data.kitchenReport.topUsers.slice(0, 5).map((u: any) => ({
+                id: u.userId,
+                name: u.userName,
+                activePlans: 0,
+                elaborations: u.timesCooked || 0,
+                avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(u.userName)}&background=random`
+            }));
+        } else {
+            topStudents = (data.students || []).slice(0, 5).map((u: any) => ({
+                id: u.id,
+                name: u.name,
+                activePlans: 0,
+                elaborations: 0,
+                avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=random`
+            }));
+        }
 
         // Map real expiring batches
         const expiringProducts: ExpiringProduct[] = data.expiringBatches.slice(0, 10).map((b: any) => ({
             id: b.id,
             name: b.productName || 'Producto',
+            batchCode: b.batchCode,
             expirationDate: b.expirationDate,
             daysRemaining: this.calculateDays(b.expirationDate),
             stock: b.remainingQuantity,

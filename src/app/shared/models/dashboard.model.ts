@@ -14,12 +14,14 @@ export interface TopStudent {
     id: number;
     name: string;
     activePlans: number;
+    elaborations: number;
     avatar?: string;
 }
 
 export interface ExpiringProduct {
     id: number;
     name: string;
+    batchCode?: string | null;
     expirationDate: string;
     daysRemaining: number;
     stock: number;

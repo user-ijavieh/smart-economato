@@ -10,9 +10,11 @@
 
 .welcome-banner {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
-    padding: 2.5rem;
+    text-align: center;
+    gap: 1rem;
+    padding: 3.5rem 2rem;
     background: var(--theme-surface-glass);
     backdrop-filter: var(--theme-effect-glass);
     border-radius: var(--theme-radius-card);
@@ -35,16 +37,24 @@
     box-shadow: 0 4px 15px rgba(var(--admin-rgb), 0.3);
 }
 
+.welcome-banner-text {
+    width: 100%;
+}
+
 .welcome-banner-text h2 {
     font-family: var(--font-heading);
-    font-size: 1.8rem;
+    font-size: 3rem;
+    font-weight: 800;
     margin: 0;
     color: var(--theme-text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
 }
 
 .welcome-banner-text p {
     color: var(--theme-text-secondary);
-    margin: 0.2rem 0 0 0;
+    margin: 0.5rem 0 0 0;
+    font-size: 1.2rem;
 }
 
 /* Stats Row Overrides/Additions */
@@ -128,9 +138,16 @@
     margin: 0;
 }
 
-/* Chart Styles */
-.chart-card {
-    grid-column: span 2;
+/* Standalone Chart Section */
+.chart-card-standalone {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+
+.chart-card-standalone .chart-wrapper {
+    flex: 1;
+    min-height: 400px;
+    padding: 1rem 0;
 }
 
 .chart-wrapper {
@@ -240,15 +257,35 @@
 /* Inventory Table Customizations */
 .inventory-card .table-container {
     padding: 0;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.inventory-card table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
 }
 
 .inventory-card table th {
     background: transparent;
-    padding: 0.75rem 0.5rem;
+    padding: 1rem 0.75rem;
+    text-align: left;
+    color: var(--theme-text-secondary);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--theme-border-glass);
 }
 
 .inventory-card table td {
-    padding: 0.75rem 0.5rem;
+    padding: 1rem 0.75rem;
+    color: var(--theme-text-primary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.inventory-card table tr:last-child td {
+    border-bottom: none;
 }
 
 .badge-admin { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
