@@ -150,7 +150,7 @@
 
   <!-- Mobile Detail Modal para Alertas -->
   @if (showMobileModal && selectedAlertForMobile) {
-    <app-base-modal [title]="selectedAlertForMobile.productName" size="md" (closed)="closeMobileModal()">
+    <app-base-modal [title]="selectedAlertForMobile.productName" size="lg" (closed)="closeMobileModal()">
       <div class="detail-table-container">
                 <table class="detail-table">
                   <tbody>
@@ -316,7 +316,7 @@
 
   <!-- Mobile Detail Modal para Predictions -->
   @if (showPredictionMobileModal && selectedPredictionForMobile) {
-    <app-base-modal [title]="selectedPredictionForMobile.productName" size="md" (closed)="closePredictionMobileModal()">
+    <app-base-modal [title]="selectedPredictionForMobile.productName" size="lg" (closed)="closePredictionMobileModal()">
       <div class="detail-table-container">
                 <table class="detail-table">
                   <tbody>
