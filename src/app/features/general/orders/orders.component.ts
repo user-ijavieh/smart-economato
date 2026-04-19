@@ -1,12 +1,14 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService } from '../../../core/services/order.service';
 import { MessageService } from '../../../core/services/message.service';
+import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { Order, OrderStatus } from '../../../shared/models/order.model';
 import { OrderModalComponent } from './order-modal/order-modal.component';
 import { OrderDetailsModalComponent } from './order-details-modal/order-details-modal.component';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-orders',
@@ -15,7 +17,7 @@ import { OrderDetailsModalComponent } from './order-details-modal/order-details-
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.css'
 })
-export class OrdersComponent implements OnInit {
+export class OrdersComponent implements OnInit, OnDestroy {
   public orders: Order[] = [];
   public loading = false;
   public showModal = false;
@@ -28,10 +30,12 @@ export class OrdersComponent implements OnInit {
 
   private orderService = inject(OrderService);
   private messageService = inject(MessageService);
+  private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private pendingOpenOrderId: number | null = null;
+  private destroy$ = new Subject<void>();
 
   // Paginación
   public displayCount = 1;
@@ -46,6 +50,16 @@ export class OrdersComponent implements OnInit {
 
     this.loadOrders();
 
+    this.syncCacheInvalidationService.invalidatedDomains$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ domains }) => {
+        if (!domains.includes('order')) {
+          return;
+        }
+
+        this.loadOrders();
+      });
+
     const orderPrefill = history.state?.orderPrefill;
     if (orderPrefill) {
       this.prefillUserId = orderPrefill.userId ?? null;
@@ -54,6 +68,11 @@ export class OrdersComponent implements OnInit {
       this.openCreateOrderModal();
       history.replaceState({}, '', this.router.url);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   public loadOrders(): void {

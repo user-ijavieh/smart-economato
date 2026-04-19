@@ -34,13 +34,25 @@
             <td class="detail-label">Stock Actual</td>
             <td>{{ product.currentStock }} {{ product.unit }}</td>
           </tr>
-          @if (getAvailabilityPercentage() !== null) {
+          @if (getMermaPercentage() !== null) {
           <tr>
-            <td class="detail-label">Disponibilidad</td>
+            <td class="detail-label">Merma</td>
             <td>
-              <span class="availability-badge" [class.availability-high]="getAvailabilityPercentage()! >= 70" [class.availability-medium]="getAvailabilityPercentage()! >= 40 && getAvailabilityPercentage()! < 70" [class.availability-low]="getAvailabilityPercentage()! < 40">
-                {{ getAvailabilityPercentage()! | number:'1.2-2' }}%
-              </span>
+              <div class="merma-display">
+                <div class="merma-header">
+                  <span class="merma-badge" [class.merma-low]="getMermaPercentage()! <= 10" [class.merma-medium]="getMermaPercentage()! > 10 && getMermaPercentage()! <= 30" [class.merma-high]="getMermaPercentage()! > 30">
+                    {{ getMermaPercentage()! | number:'1.0-1' }}% de merma
+                  </span>
+                  <span class="usable-pct">{{ getUsablePercentage()! | number:'1.0-1' }}% aprovechable</span>
+                </div>
+                <div class="merma-bar-track">
+                  <div class="merma-bar-fill" [style.width.%]="getUsablePercentage()" [class.merma-bar-low]="getMermaPercentage()! <= 10" [class.merma-bar-medium]="getMermaPercentage()! > 10 && getMermaPercentage()! <= 30" [class.merma-bar-high]="getMermaPercentage()! > 30"></div>
+                </div>
+                <div class="merma-stocks">
+                  <span>Bruto: <strong>{{ product.currentStock }} {{ product.unit }}</strong></span>
+                  <span>Neto utilizable: <strong>{{ getUsableStock()! | number:'1.2-2' }} {{ product.unit }}</strong></span>
+                </div>
+              </div>
             </td>
           </tr>
           }

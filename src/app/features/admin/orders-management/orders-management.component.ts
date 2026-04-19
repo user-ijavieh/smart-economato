@@ -8,13 +8,17 @@ import { KitchenService } from '../../../core/services/kitchen.service';
 import { SupplierService } from '../../../core/services/supplier.service';
 import { UserService } from '../../../core/services/user.service';
 import { MessageService } from '../../../core/services/message.service';
+import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { OrderReviewLockStateService } from '../../../core/services/order-review-lock-state.service';
 import { Order, OrderStatus } from '../../../shared/models/order.model';
 import { OrderAudit } from '../../../shared/models/order-audit.model';
 import { Supplier } from '../../../shared/models/supplier.model';
 import { User } from '../../../shared/models/user.model';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
-import { Subject, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
+import { Subject, Subscription, debounceTime, distinctUntilChanged, finalize, takeUntil } from 'rxjs';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
+import { OrderReviewLockStatus } from '../../../shared/models/order.model';
 
 const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
   { value: 'CREATED', label: 'Creada' },
@@ -39,6 +43,9 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   private kitchenService = inject(KitchenService);
   private supplierService = inject(SupplierService);
   private userService = inject(UserService);
+  private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
+  private authService = inject(AuthService);
+  private orderReviewLockStateService = inject(OrderReviewLockStateService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
@@ -96,6 +103,9 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   showOrderDetailModal = false;
   selectedOrderVisibleLines = 20;
   readonly selectedOrderLinesStep = 20;
+  reviewLockStatus: OrderReviewLockStatus | null = null;
+  lockInfoMessage = '';
+  lockBlockedForCurrentUser = false;
 
   // ── Change-Status Modal ──
   showChangeStatusModal = false;
@@ -108,6 +118,9 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   private hasProcessedOrderQueryParam = false;
   private orderSearchSubject = new Subject<string>();
   private auditSearchSubject = new Subject<string>();
+  private destroy$ = new Subject<void>();
+  private lockStatusSubscription?: Subscription;
+  private heartbeatTimerId: ReturnType<typeof setInterval> | null = null;
 
   ngOnInit(): void {
     this.orderSearchSubject.pipe(
@@ -128,11 +141,31 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     this.loadAllOrders();
     this.loadSuppliers();
     this.loadUsers();
+
+    this.syncCacheInvalidationService.invalidatedDomains$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ domains }) => {
+        if (!domains.includes('order')) {
+          return;
+        }
+
+        this.loadAllOrders();
+
+        if (this.activeTab === 'audits') {
+          this.auditCache.clear();
+          this.auditsLoaded = false;
+          this.loadAudits(this.currentAuditPage);
+        }
+      });
   }
 
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
     this.orderSearchSubject.complete();
     this.auditSearchSubject.complete();
+    this.stopLockHeartbeat();
+    this.lockStatusSubscription?.unsubscribe();
   }
 
   private consumeOrderIdFromQuery(): void {
@@ -546,9 +579,12 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     this.selectedOrderVisibleLines = this.selectedOrderLinesStep;
     this.cdr.markForCheck();
 
+    this.initializeReviewLock(this.selectedOrder);
+
     this.orderService.getById(order.id).subscribe({
       next: (fullOrder) => {
         this.selectedOrder = this.normalizeOrderPayload(fullOrder as any);
+        this.initializeReviewLock(this.selectedOrder);
         this.cdr.markForCheck();
       },
       error: () => {
@@ -747,10 +783,116 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   }
 
   closeOrderDetail(): void {
+    this.stopLockHeartbeat();
+    this.releaseLockIfOwned();
     this.showOrderDetailModal = false;
     this.selectedOrder = null;
     this.selectedOrderVisibleLines = this.selectedOrderLinesStep;
+    this.lockInfoMessage = '';
+    this.lockBlockedForCurrentUser = false;
     this.cdr.markForCheck();
+  }
+
+  private initializeReviewLock(order: Order | null): void {
+    if (!order) {
+      return;
+    }
+
+    this.lockStatusSubscription?.unsubscribe();
+    this.lockStatusSubscription = this.orderReviewLockStateService.watchOrder(order.id).subscribe(status => {
+      this.reviewLockStatus = status;
+      this.applyLockUiStatus(status);
+    });
+
+    this.orderReviewLockStateService.refresh(order.id).subscribe({
+      next: status => {
+        if (!status.locked || status.currentUserOwner) {
+          this.tryAcquireReviewLock(order.id);
+        } else {
+          this.applyLockUiStatus(status);
+        }
+      },
+      error: () => {
+        this.tryAcquireReviewLock(order.id);
+      }
+    });
+  }
+
+  private tryAcquireReviewLock(orderId: number): void {
+    this.orderReviewLockStateService.acquire(orderId).subscribe({
+      next: status => {
+        this.reviewLockStatus = status;
+        this.applyLockUiStatus(status);
+      },
+      error: error => {
+        if (error?.status === 409) {
+          const lockedBy = error?.error?.lockedBy;
+          this.lockInfoMessage = lockedBy
+            ? `${lockedBy} está revisando este pedido en este momento.`
+            : 'Este pedido está siendo revisado por otro usuario.';
+          this.lockBlockedForCurrentUser = false;
+          this.orderReviewLockStateService.refresh(orderId).subscribe({ error: () => {} });
+        }
+      }
+    });
+  }
+
+  private applyLockUiStatus(status: OrderReviewLockStatus | null): void {
+    if (!status || !status.locked) {
+      this.stopLockHeartbeat();
+      this.lockBlockedForCurrentUser = false;
+      this.lockInfoMessage = '';
+      return;
+    }
+
+    if (status.currentUserOwner) {
+      this.lockBlockedForCurrentUser = false;
+      this.lockInfoMessage = 'Estás revisando este pedido.';
+      this.startLockHeartbeat(status.orderId);
+      return;
+    }
+
+    const lockOwner = status.lockedByDisplayName || status.lockedByUsername || 'Otro usuario';
+    this.lockBlockedForCurrentUser = false;
+    this.lockInfoMessage = `${lockOwner} está revisando este pedido en este momento.`;
+    this.stopLockHeartbeat();
+  }
+
+  private startLockHeartbeat(orderId: number): void {
+    if (this.heartbeatTimerId !== null) {
+      return;
+    }
+
+    this.heartbeatTimerId = setInterval(() => {
+      this.orderReviewLockStateService.heartbeat(orderId).subscribe({
+        next: status => {
+          this.reviewLockStatus = status;
+          this.applyLockUiStatus(status);
+        },
+        error: () => {
+          this.orderReviewLockStateService.refresh(orderId).subscribe({ error: () => {} });
+        }
+      });
+    }, 30000);
+  }
+
+  private stopLockHeartbeat(): void {
+    if (this.heartbeatTimerId === null) {
+      return;
+    }
+
+    clearInterval(this.heartbeatTimerId);
+    this.heartbeatTimerId = null;
+  }
+
+  private releaseLockIfOwned(): void {
+    if (!this.selectedOrder || !this.reviewLockStatus?.currentUserOwner) {
+      return;
+    }
+
+    this.orderReviewLockStateService.release(this.selectedOrder.id).subscribe({
+      error: () => {}
+    });
   }
 
   getAuditOrderStatus(audit: OrderAudit): OrderStatus {

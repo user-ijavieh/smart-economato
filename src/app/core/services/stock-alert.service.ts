@@ -12,76 +12,94 @@ import {
     StockPredictionResponseDTO,
     WeeklyConsumptionResponse
 } from '../../shared/models/stock-alert.model';
+import { HttpQueryCacheService } from './http-query-cache.service';
 
 @Injectable({ providedIn: 'root' })
 export class StockAlertService {
     private http = inject(HttpClient);
+    private cache = inject(HttpQueryCacheService);
     private url = `${environment.apiUrl}/api/stock-alerts`;
 
     getActiveAlerts(severity?: AlertSeverity): Observable<StockAlertDTO[]> {
-        let params = new HttpParams();
-        if (severity) {
-            params = params.set('severity', severity);
-        }
-        return this.http.get<StockAlertDTO[]>(this.url, { params });
+        return this.cache.getOrFetch('stock_alerts', `alerts:active:${severity ?? ''}`, () => {
+            let params = new HttpParams();
+            if (severity) {
+                params = params.set('severity', severity);
+            }
+            return this.http.get<StockAlertDTO[]>(this.url, { params });
+        });
     }
 
     getProductAlert(productId: number): Observable<StockAlertDTO | null> {
-        return this.http.get<StockAlertDTO>(`${this.url}/${productId}`, { observe: 'response' }).pipe(
-            map(response => response.status === 204 ? null : response.body),
-            catchError(() => of(null))
+        return this.cache.getOrFetch('stock_alerts', `alerts:product:${productId}`, () =>
+            this.http.get<StockAlertDTO>(`${this.url}/${productId}`, { observe: 'response' }).pipe(
+                map(response => response.status === 204 ? null : response.body),
+                catchError(() => of(null))
+            )
         );
     }
 
     getBatchAlerts(productIds: number[]): Observable<StockAlertDTO[]> {
-        return this.http.post<StockAlertDTO[]>(`${this.url}/batch`, productIds);
-    }
-
-    getPredictions(page: number, size: number, sort?: string): Observable<Page<StockPredictionResponseDTO>> {
-        let params = new HttpParams()
-            .set('page', page.toString())
-            .set('size', size.toString());
-        
-        if (sort) {
-            params = params.set('sort', sort);
-        }
-        return this.http.get<any>(`${this.url}/predictions`, { params }).pipe(
-            map(response => ({
-                content: response.content ?? [],
-                totalElements: response.totalElements ?? 0,
-                totalPages: response.totalPages ?? 1,
-                size: response.size ?? size,
-                number: response.number ?? page,
-                first: response.first ?? true,
-                last: response.last ?? true,
-                empty: (response.content ?? []).length === 0
-            }))
+        return this.cache.getOrFetch('stock_alerts', `alerts:batch:${productIds.join(',')}`, () =>
+            this.http.post<StockAlertDTO[]>(`${this.url}/batch`, productIds)
         );
     }
 
-    getWeeklyHistory(page = 0, size = 50, sort = 'productId,asc'): Observable<PageResponse<WeeklyConsumptionResponse>> {
-        const params = new HttpParams()
-            .set('page', page.toString())
-            .set('size', size.toString())
-            .set('sort', sort);
+    getPredictions(page: number, size: number, sort?: string): Observable<Page<StockPredictionResponseDTO>> {
+        return this.cache.getOrFetch('stock_alerts', `alerts:predictions:${page}:${size}:${sort ?? ''}`, () => {
+            let params = new HttpParams()
+                .set('page', page.toString())
+                .set('size', size.toString());
 
-        return this.http.get<PageResponse<WeeklyConsumptionResponse>>(`${this.url}/history`, { params });
+            if (sort) {
+                params = params.set('sort', sort);
+            }
+            return this.http.get<any>(`${this.url}/predictions`, { params }).pipe(
+                map(response => ({
+                    content: response.content ?? [],
+                    totalElements: response.totalElements ?? 0,
+                    totalPages: response.totalPages ?? 1,
+                    size: response.size ?? size,
+                    number: response.number ?? page,
+                    first: response.first ?? true,
+                    last: response.last ?? true,
+                    empty: (response.content ?? []).length === 0
+                }))
+            );
+        });
+    }
+
+    getWeeklyHistory(page = 0, size = 50, sort = 'productId,asc'): Observable<PageResponse<WeeklyConsumptionResponse>> {
+        return this.cache.getOrFetch('stock_alerts', `alerts:weeklyHistory:${page}:${size}:${sort}`, () => {
+            const params = new HttpParams()
+                .set('page', page.toString())
+                .set('size', size.toString())
+                .set('sort', sort);
+
+            return this.http.get<PageResponse<WeeklyConsumptionResponse>>(`${this.url}/history`, { params });
+        });
     }
 
     getWeeklyHistoryByProduct(productId: number): Observable<WeeklyConsumptionResponse> {
-        return this.http.get<WeeklyConsumptionResponse>(`${this.url}/history/${productId}`);
+        return this.cache.getOrFetch('stock_alerts', `alerts:weeklyHistoryByProduct:${productId}`, () =>
+            this.http.get<WeeklyConsumptionResponse>(`${this.url}/history/${productId}`)
+        );
     }
 
     getDailyForecast(page = 0, size = 50, sort = 'productId,asc'): Observable<PageResponse<DailyForecastResponse>> {
-        const params = new HttpParams()
-            .set('page', page.toString())
-            .set('size', size.toString())
-            .set('sort', sort);
+        return this.cache.getOrFetch('stock_alerts', `alerts:dailyForecast:${page}:${size}:${sort}`, () => {
+            const params = new HttpParams()
+                .set('page', page.toString())
+                .set('size', size.toString())
+                .set('sort', sort);
 
-        return this.http.get<PageResponse<DailyForecastResponse>>(`${this.url}/forecast`, { params });
+            return this.http.get<PageResponse<DailyForecastResponse>>(`${this.url}/forecast`, { params });
+        });
     }
 
     getDailyForecastByProduct(productId: number): Observable<DailyForecastResponse> {
-        return this.http.get<DailyForecastResponse>(`${this.url}/forecast/${productId}`);
+        return this.cache.getOrFetch('stock_alerts', `alerts:dailyForecastByProduct:${productId}`, () =>
+            this.http.get<DailyForecastResponse>(`${this.url}/forecast/${productId}`)
+        );
     }
 }

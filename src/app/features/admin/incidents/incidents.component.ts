@@ -9,6 +9,7 @@ import { IncidentService } from '../../../core/services/incident.service';
 import { MessageService } from '../../../core/services/message.service';
 import { UserService } from '../../../core/services/user.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import {
   AttachAuditRequest,
@@ -67,6 +68,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly userService = inject(UserService);
   private readonly messageService = inject(MessageService);
   private readonly notificationService = inject(NotificationService);
+  private readonly syncCacheInvalidationService = inject(SyncCacheInvalidationService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
   private readonly destroy$ = new Subject<void>();
@@ -189,6 +191,19 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.notificationService.incoming$
       .pipe(debounceTime(SEARCH_DEBOUNCE_MS), takeUntil(this.destroy$))
       .subscribe(() => {
+        this.refreshFromRealtimeEvent();
+      });
+
+    this.syncCacheInvalidationService.invalidatedDomains$
+      .pipe(debounceTime(SEARCH_DEBOUNCE_MS), takeUntil(this.destroy$))
+      .subscribe(({ domains }) => {
+        const hasIncidentImpact = domains.includes('incident');
+        const hasBatchImpact = domains.includes('batch') || domains.includes('product');
+
+        if (!hasIncidentImpact && !hasBatchImpact) {
+          return;
+        }
+
         this.refreshFromRealtimeEvent();
       });
   }
@@ -1051,14 +1066,26 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   loadUsers(): void {
-    this.userService.search('', 0, 50).subscribe({
-      next: page => {
-        this.users = page.content || [];
+    if (this.isAdminUser) {
+      this.userService.search('', 0, 50).subscribe({
+        next: page => {
+          this.users = page.content || [];
+          this.cdr.markForCheck();
+        },
+        error: () => { }
+      });
+      return;
+    }
+
+    this.userService.getTeachers().subscribe({
+      next: users => {
+        this.users = users || [];
         this.cdr.markForCheck();
       },
       error: () => { }
     });
   }
+
 
   formatDate(value?: string | null): string {
     if (!value) return '-';

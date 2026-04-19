@@ -1,9 +1,11 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WeeklyPlanService } from '../../../core/services/weekly-plan.service';
 import { WeeklyPlanResponse } from '../../../shared/models/weekly-plan.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
+import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-weekly-plans',
@@ -12,11 +14,13 @@ import { Router } from '@angular/router';
   templateUrl: './weekly-plans.component.html',
   styleUrls: ['./weekly-plans.component.css']
 })
-export class WeeklyPlansComponent implements OnInit {
+export class WeeklyPlansComponent implements OnInit, OnDestroy {
   private weeklyPlanService = inject(WeeklyPlanService);
   private authService = inject(AuthService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+  private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
+  private destroy$ = new Subject<void>();
 
   currentPlan: WeeklyPlanResponse | null = null;
   loadingCurrent = true;
@@ -29,6 +33,20 @@ export class WeeklyPlansComponent implements OnInit {
   ngOnInit() {
     this.loadCurrentPlan();
     this.loadAllPlans();
+
+    this.syncCacheInvalidationService.invalidatedDomains$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ domains }) => {
+        if (domains.includes('weekly_plan')) {
+          this.loadCurrentPlan();
+          this.loadAllPlans();
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadCurrentPlan() {

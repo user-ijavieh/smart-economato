@@ -7,6 +7,10 @@ import { Role, hasPermission } from '../../shared/models/role-permissions';
 import { WebSocketService } from './websocket.service';
 import { NotificationService } from './notification.service';
 import { PresenceTrackingService } from './presence-tracking.service';
+import { SyncCacheInvalidationService } from './sync-cache-invalidation.service';
+import { HttpQueryCacheService } from './http-query-cache.service';
+import { OrderReviewLockStateService } from './order-review-lock-state.service';
+import { OrderReviewCollaborationStateService } from './order-review-collaboration-state.service';
 
 interface LoginRequest {
   name: string;
@@ -44,10 +48,15 @@ export class AuthService {
   private webSocketService = inject(WebSocketService);
   private notificationService = inject(NotificationService);
   private presenceTrackingService = inject(PresenceTrackingService);
+  private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
+  private httpQueryCacheService = inject(HttpQueryCacheService);
+  private orderReviewLockStateService = inject(OrderReviewLockStateService);
+  private orderReviewCollaborationStateService = inject(OrderReviewCollaborationStateService);
   private apiUrl = environment.apiUrl;
   private TOKEN_KEY = 'auth_token';
   private ROLE_KEY = 'user_role';
   private NAME_KEY = 'user_name';
+  private USERNAME_KEY = 'user_username';
   private ID_KEY = 'user_id';
   private FIRST_LOGIN_KEY = 'first_login';
 
@@ -55,6 +64,9 @@ export class AuthService {
   private role$Subject = new BehaviorSubject<string | null>(this.getRole());
 
   constructor() {
+    this.syncCacheInvalidationService.initialize();
+    this.orderReviewLockStateService.initialize();
+    this.orderReviewCollaborationStateService.initialize();
     this.bindRoleEscalationEvents();
 
     const token = this.getToken();
@@ -75,6 +87,7 @@ export class AuthService {
     return this.http.get<UserProfileResponse>(`${this.apiUrl}/api/users/me`).pipe(
       tap(profile => {
         localStorage.setItem(this.NAME_KEY, profile.name);
+        localStorage.setItem(this.USERNAME_KEY, profile.user);
         this.setRole(profile.role);
         localStorage.setItem(this.ID_KEY, profile.id.toString());
         localStorage.setItem(this.FIRST_LOGIN_KEY, String(profile.firstLogin));
@@ -97,7 +110,11 @@ export class AuthService {
           localStorage.removeItem(this.TOKEN_KEY);
           throw new Error('user_hidden');
         }
+        this.syncCacheInvalidationService.initialize();
+        this.orderReviewLockStateService.initialize();
+        this.orderReviewCollaborationStateService.initialize();
         localStorage.setItem(this.NAME_KEY, profile.name);
+        localStorage.setItem(this.USERNAME_KEY, profile.user);
         this.setRole(profile.role);
         localStorage.setItem(this.ID_KEY, profile.id.toString());
         localStorage.setItem(this.FIRST_LOGIN_KEY, String(profile.firstLogin));
@@ -133,9 +150,14 @@ export class AuthService {
     this.presenceTrackingService.destroy();
     this.webSocketService.disconnect();
     this.notificationService.disconnect();
+    this.syncCacheInvalidationService.destroy();
+    this.orderReviewLockStateService.destroy();
+    this.orderReviewCollaborationStateService.destroy();
+    this.httpQueryCacheService.clearAll();
     localStorage.removeItem(this.TOKEN_KEY);
     this.setRole(null);
     localStorage.removeItem(this.NAME_KEY);
+    localStorage.removeItem(this.USERNAME_KEY);
     localStorage.removeItem(this.ID_KEY);
     localStorage.removeItem(this.FIRST_LOGIN_KEY);
     localStorage.removeItem('ai_last_chat_id');
@@ -153,6 +175,10 @@ export class AuthService {
 
   getName(): string | null {
     return localStorage.getItem(this.NAME_KEY);
+  }
+
+  getUsername(): string | null {
+    return localStorage.getItem(this.USERNAME_KEY);
   }
 
   getUserId(): number | null {

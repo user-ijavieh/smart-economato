@@ -9,7 +9,8 @@ import { BatchExpirationModalComponent } from '../stock-management/batch-expirat
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { MessageService } from '../../../core/services/message.service';
 import { ScrollService } from '../../../core/services/scroll.service';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
 type ManagementTab = 'all' | 'control';
@@ -28,6 +29,8 @@ export class BatchesManagementComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private messageService = inject(MessageService);
   private scrollService = inject(ScrollService);
+  private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
+  private destroy$ = new Subject<void>();
 
   // Tabs
   activeTab: ManagementTab = 'all';
@@ -76,10 +79,20 @@ export class BatchesManagementComponent implements OnInit, OnDestroy {
 
     this.loadBatches();
     this.updateCounters();
+
+    this.syncCacheInvalidationService.invalidatedDomains$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ domains }) => {
+        if (domains.includes('batch') || domains.includes('product')) {
+          this.refreshData();
+        }
+      });
   }
 
   ngOnDestroy(): void {
     this.searchSubject.complete();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   updateCounters(): void {

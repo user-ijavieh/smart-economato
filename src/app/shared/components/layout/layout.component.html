@@ -38,6 +38,16 @@
   </button>
 
   <button
+    class="cache-utility"
+    [attr.aria-label]="'Limpiar cache local'"
+    (click)="openClearCacheModal()"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+      <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm80-160h80v-360h-80v360Zm160 0h80v-360h-80v360Z"/>
+    </svg>
+  </button>
+
+  <button
     class="logout-utility"
     [attr.aria-label]="'Cerrar sesión'"
     (click)="logout()"
@@ -141,6 +151,31 @@
   <div modal-footer class="logout-modal-actions">
     <button class="btn-logout-cancel" (click)="cancelLogout()">Cancelar</button>
     <button class="btn-logout-confirm" (click)="confirmLogout()">Cerrar Sesión</button>
+  </div>
+</app-base-modal>
+}
+
+@if (showClearCacheModal) {
+<app-base-modal [showHeader]="false" size="sm" (closed)="cancelClearCache()">
+  <div class="logout-modal">
+    <div class="logout-modal-icon cache-modal-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 6h18" />
+        <path d="M8 6V4h8v2" />
+        <path d="M19 6l-1 14H6L5 6" />
+      </svg>
+    </div>
+    <h2>¿Limpiar cache local?</h2>
+    <p>
+      Si ves datos antiguos, puedes usar este boton para limpiar toda la cache.
+      La siguiente vez que entres o recargues una pantalla, los datos se pediran de nuevo al servidor.
+    </p>
+  </div>
+
+  <div modal-footer class="logout-modal-actions">
+    <button class="btn-logout-cancel" (click)="cancelClearCache()">Cancelar</button>
+    <button class="btn-cache-confirm" (click)="confirmClearCache()">Limpiar cache</button>
   </div>
 </app-base-modal>
 }

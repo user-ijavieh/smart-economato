@@ -455,6 +455,12 @@
     </div>
     <div class="modal-container order-detail-layout">
         <div class="modal-content">
+            @if (lockInfoMessage) {
+                <div class="review-lock-banner" [class.review-lock-banner-blocking]="lockBlockedForCurrentUser">
+                    {{ lockInfoMessage }}
+                </div>
+            }
+
                 <!-- Información General -->
                 <div class="modal-section">
                     <div class="order-info-grid">
@@ -517,7 +523,7 @@
     </div>
     <div modal-footer>
         <div class="modal-actions">
-            <button class="btn-editar" (click)="openStatusEditorFromDetail()">
+            <button class="btn-editar" (click)="openStatusEditorFromDetail()" [disabled]="lockBlockedForCurrentUser">
                 Editar
             </button>
             <button class="btn-imprimir" (click)="onDownloadPdf(selectedOrder)">

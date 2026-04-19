@@ -7,7 +7,8 @@ import { Allergen, AllergenRequest } from '../../../shared/models/allergen.model
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { SuppliersManagementComponent } from '../suppliers-management/suppliers-management.component';
 import { ScrollService } from '../../../core/services/scroll.service';
-import { finalize, Observable, of, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
+import { finalize, Observable, of, Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { Page } from '../../../shared/models/page.model';
 import { catchError, map } from 'rxjs/operators';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
@@ -29,7 +30,9 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
     private allergenService = inject(AllergenService);
     private cdr = inject(ChangeDetectorRef);
     private scrollService = inject(ScrollService);
+    private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
     messageService = inject(MessageService);
+    private destroy$ = new Subject<void>();
 
     // ── Allergens state ──
     allergens: Allergen[] = [];
@@ -80,10 +83,20 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
         });
 
         this.loadAllergens();
+
+        this.syncCacheInvalidationService.invalidatedDomains$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(({ domains }) => {
+                if (domains.includes('allergen')) {
+                    this.loadAllergens(this.currentPage);
+                }
+            });
     }
 
     ngOnDestroy(): void {
         this.searchSubject.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     // ── Load ──
