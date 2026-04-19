@@ -129,7 +129,7 @@
 .catalog-table th,
 .catalog-table td {
   border-bottom: 1px solid var(--theme-surface-glass-active);
-  padding: 14px 16px;
+  padding: 0.875rem 1rem;
   text-align: left;
   font-size: 0.95rem;
 }
@@ -171,7 +171,7 @@
 .modal-table.compact th,
 .catalog-table.compact td,
 .catalog-table.compact th {
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
 }
 
 @media (max-width: 768px) {
@@ -179,7 +179,7 @@
   .modal-table td,
   .catalog-table th,
   .catalog-table td {
-    padding: 12px 10px;
+    padding: 0.75rem 0.625rem;
     font-size: 0.85rem;
     white-space: nowrap;
   }
@@ -253,8 +253,8 @@
 }
 
 .result-icon {
-  width: 56px;
-  height: 56px;
+  width: 3.5rem;
+  height: 3.5rem;
   border-radius: 999px;
   border: 1px solid var(--theme-border-subtle);
   background: var(--theme-surface-glass-hover);
@@ -283,8 +283,8 @@
 }
 
 .dialog-visual {
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   border-radius: 999px;
   border: 1px solid var(--color-warning-border);
   background: var(--color-warning-bg);
@@ -379,11 +379,11 @@
 /* ===== DIFF TABLE (audit views) ===== */
 
 .diff-container {
-  padding: 20px 28px;
+  padding: 1.25rem 1.75rem;
   overflow: auto;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 1.5rem;
   background: color-mix(in srgb, var(--theme-surface-glass) 65%, transparent);
 }
 
@@ -399,7 +399,7 @@
 
 .diff-table th,
 .diff-table td {
-  padding: 14px 16px;
+  padding: 0.875rem 1rem;
   border-bottom: 1px solid var(--theme-surface-glass-active);
   vertical-align: middle;
 }
@@ -449,8 +449,8 @@
 }
 
 .diff-section-title {
-  margin: 20px 0 10px;
-  padding: 0 18px;
+  margin: 1.25rem 0 0.625rem;
+  padding: 0 1.125rem;
   font-size: 1.05rem;
   color: var(--theme-text-primary);
   font-family: var(--font-heading);
@@ -458,8 +458,8 @@
 
 .diff-tag {
   display: inline-flex;
-  margin-left: 8px;
-  padding: 2px 8px;
+  margin-left: 0.5rem;
+  padding: 0.125rem 0.5rem;
   border-radius: 999px;
   font-size: 0.7rem;
   font-weight: 700;
@@ -489,8 +489,8 @@
 
 @media (max-width: 768px) {
   .diff-container {
-    padding: 16px 20px;
-    gap: 16px;
+    padding: 1rem 1.25rem;
+    gap: 1rem;
     overflow-x: hidden;
   }
 
@@ -507,7 +507,7 @@
   .diff-table th,
   .diff-table td {
     font-size: 0.8rem;
-    padding: 8px 10px;
+    padding: 0.5rem 0.625rem;
     white-space: normal;
     overflow-wrap: anywhere;
     word-break: break-word;

@@ -593,7 +593,7 @@ body::-webkit-scrollbar {
 
 /* Custom scrollbar - Default (rojo) - HIDDEN BY DEFAULT FOR PAGES */
 ::-webkit-scrollbar {
-  width: 8px !important;
+  width: 0.5rem !important;
   display: none !important;
   /* Hide by default */
 }
@@ -914,7 +914,7 @@ body::-webkit-scrollbar {
   background: #1a1a1a;
   border: 1px solid var(--theme-border-card);
   border-radius: 22px;
-  padding: 40px 28px 10px;
+  padding: 2.5rem 1.75rem 0.625rem;
   text-align: center;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
   animation: logoutSlideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.1);
@@ -934,27 +934,27 @@ body::-webkit-scrollbar {
 }
 
 .logout-modal-icon {
-  width: 72px;
-  height: 72px;
+  width: 4.5rem;
+  height: 4.5rem;
   border-radius: 50%;
   background: var(--color-danger-bg);
   border: 1.5px solid rgba(239, 68, 68, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
+  margin: 0 auto 1.25rem;
   color: var(--color-danger);
 }
 
 .logout-modal h2 {
-  margin: 0 0 10px;
+  margin: 0 0 0.625rem;
   font-size: 1.4rem;
   font-weight: 700;
   color: var(--theme-text-primary);
 }
 
 .logout-modal p {
-  margin: 0 0 30px;
+  margin: 0 0 1.875rem;
   font-size: 0.95rem;
   color: var(--theme-text-secondary);
   line-height: 1.6;
@@ -971,7 +971,7 @@ body::-webkit-scrollbar {
 .btn-logout-cancel,
 .btn-logout-confirm {
   flex: 1;
-  padding: 14px 20px;
+  padding: 0.875rem 1.25rem;
   font-family: var(--font-body);
   font-size: 0.95rem;
   font-weight: 600;
@@ -1062,7 +1062,7 @@ body::-webkit-scrollbar {
 
 @media (max-width: 480px) {
   .logout-modal {
-    padding: 30px 20px 8px;
+    padding: 1.875rem 1.25rem 0.5rem;
   }
 
   .logout-modal-actions {
