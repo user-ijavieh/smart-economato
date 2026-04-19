@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { AsyncPipe, CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
+import { AsyncPipe, CommonModule, CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize, Observable, Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
@@ -24,7 +24,8 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 @Component({
   selector: 'app-kitchen-management',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent, DatePipe, DecimalPipe, CurrencyPipe, OrderDetailsModalComponent],
+  imports: [FormsModule, CommonModule, BaseModalComponent, OrderDetailsModalComponent],
+
   templateUrl: './kitchen-management.component.html',
   styleUrl: './kitchen-management.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

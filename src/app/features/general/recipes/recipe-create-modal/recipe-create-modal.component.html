@@ -66,6 +66,17 @@
             <input type="number" [(ngModel)]="component.quantity" [name]="'quantity-' + i" placeholder="Cantidad"
               min="0" step="0.01" class="quantity-input" />
 
+            <div class="merma-preview" *ngIf="component.productId !== 0">
+                @if (component.availabilityPercentage && component.availabilityPercentage < 100) {
+                  <span class="merma-badge" [title]="((100 - component.availabilityPercentage) | number:'1.1-2') + '% de reducción por merma'">
+                    {{ (100 - component.availabilityPercentage) | number:'1.1-2' }}% Merma
+                  </span>
+                  <span class="gross-preview">
+                    Bruto: <strong>{{ getGrossQuantity(component.quantity, component.availabilityPercentage) | number:'1.2-3' }}</strong>
+                  </span>
+                }
+            </div>
+
             <button type="button" class="btn-remove" (click)="removeComponent(i)" title="Eliminar componente">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

@@ -15,6 +15,10 @@
   margin-left: 2px;
 }
 
+.form-group label .required {
+  color: #f44336;
+}
+
 .form-group small {
   color: var(--theme-text-secondary);
   font-size: 0.85rem;
@@ -35,14 +39,15 @@
 
 .component-row {
   display: grid;
-  grid-template-columns: 1fr auto 40px;
-  gap: 10px;
+  grid-template-columns: 1fr 100px 100px 40px;
+  gap: 12px;
   align-items: center;
   padding: 10px;
   background: var(--theme-surface-glass-hover);
   border-radius: 8px;
   border: 1px solid var(--theme-surface-glass-hover);
 }
+
 
 .product-select-wrapper {
   position: relative;
@@ -184,7 +189,39 @@
   padding: 0.75rem 1rem 1rem;
 }
 
-.quantity-input { width: 120px; }
+/* Merma Edit Styles */
+.merma-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 90px;
+  justify-content: center;
+}
+
+.merma-badge {
+  font-size: 0.7rem;
+  color: #ff9800;
+  background: rgba(255, 152, 0, 0.1);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  width: fit-content;
+  white-space: nowrap;
+}
+
+.gross-preview {
+  font-size: 0.7rem;
+  color: var(--theme-text-secondary);
+  white-space: nowrap;
+}
+
+.gross-preview strong {
+  color: var(--theme-text-primary);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.quantity-input { width: 100%; }
+
 
 .btn-remove {
   width: 36px;
@@ -322,3 +359,40 @@
   .quantity-input { width: 100%; }
 }
 
+
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.flex-1 { flex: 1; }
+.flex-2 { flex: 2; }
+
+.input-with-button {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.input-with-button input {
+  flex: 1;
+}
+
+.btn-suggest {
+  background: var(--surface-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.btn-suggest:hover {
+  background: var(--primary-light);
+  border-color: var(--primary-color);
+}

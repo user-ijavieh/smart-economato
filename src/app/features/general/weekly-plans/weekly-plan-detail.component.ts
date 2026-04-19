@@ -372,12 +372,24 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
   }
 
   getStockShortage(requirement: WeeklyPlanStockRequirement): number {
-    return Math.max(0, requirement.requiredQuantity - this.getRealAvailableStock(requirement));
+    const grossTrulyAvailable = this.getGrossAvailableStock(requirement);
+    return Math.max(0, (requirement.grossRequiredQuantity || requirement.requiredQuantity) - grossTrulyAvailable);
   }
 
+
   getRealAvailableStock(requirement: WeeklyPlanStockRequirement): number {
+    // Neto realmente disponible para este plan = Stock Neto Total - Reservado Neto Otros
     return Math.max(0, (requirement.availableStock || 0) - (requirement.reservedByOtherPlans || 0));
   }
+
+  getGrossAvailableStock(requirement: WeeklyPlanStockRequirement): number {
+    // Bruto realmente disponible para este plan = Stock Bruto Total - Reservado Bruto Otros
+    // Usamos los campos calculados del backend para mayor precisión
+    const totalPhysical = requirement.grossAvailableStock || 0;
+    const reservedGross = requirement.grossReservedByOtherPlans || 0;
+    return Math.max(0, totalPhysical - reservedGross);
+  }
+
 
   getUncoveredStockShortage(requirement: WeeklyPlanStockRequirement): number {
     return Math.max(0, this.getStockShortage(requirement) - this.getPendingOrderQuantity(requirement));

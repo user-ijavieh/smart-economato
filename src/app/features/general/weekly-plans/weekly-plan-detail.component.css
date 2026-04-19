@@ -522,9 +522,53 @@
 }
 .stock-item.insufficient { border-left-color: var(--color-warning-muted); }
 
-.item-name { font-weight: 600; font-size: 0.95rem; }
-.item-qty { font-size: 0.8rem; color: var(--theme-text-secondary); margin-top: 4px; }
-.item-qty.shortage { color: var(--color-danger); font-weight: 700; }
+.item-name { 
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700; 
+  font-size: 1.05rem; 
+  color: var(--theme-text-primary);
+}
+
+.merma-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-warning-muted) 15%, transparent);
+  color: var(--color-warning-muted);
+  border: 1px solid color-mix(in srgb, var(--color-warning-muted) 30%, transparent);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.item-qty { font-size: 0.85rem; color: var(--theme-text-secondary); margin-top: 4px; }
+
+.item-qty.highlight {
+  color: var(--theme-text-primary);
+  font-size: 0.95rem;
+  margin-top: 8px;
+  padding-left: 4px;
+  border-left: 2px solid var(--brand-primary);
+}
+
+.item-qty.secondary {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  padding-left: 6px;
+}
+
+.item-qty.shortage { 
+  color: var(--color-danger); 
+  font-weight: 700; 
+  background: color-mix(in srgb, var(--color-danger-bg) 40%, transparent);
+  padding: 4px 10px;
+  border-radius: 8px;
+  width: fit-content;
+  margin-top: 10px;
+}
+
 .item-order-summary {
   display: flex;
   flex-wrap: wrap;
@@ -623,6 +667,39 @@
   align-items: center;
   justify-content: flex-end;
   min-height: 100%;
+}
+
+.stock-item .item-info > .item-status {
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+
+.stock-item > .item-status {
+  justify-content: flex-end;
+}
+
+.sufficient-label,
+.insufficient-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.sufficient-label {
+  color: var(--color-success);
+  border: 1px solid color-mix(in srgb, var(--color-success) 35%, transparent);
+  background: color-mix(in srgb, var(--color-success-bg) 55%, transparent);
+}
+
+.insufficient-label {
+  color: var(--color-danger);
+  border: 1px solid color-mix(in srgb, var(--color-danger) 35%, transparent);
+  background: color-mix(in srgb, var(--color-danger-bg) 50%, transparent);
 }
 
 .stock-ok {

@@ -544,11 +544,26 @@
   border-top: 1px solid var(--theme-border-glass);
 }
 
-.card-price {
-  font-size: 1.2rem;
+.card-pricing-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.card-selling-price {
+  font-size: 1.25rem;
   font-weight: 800;
-  color: var(--color-danger-muted);
+  color: var(--brand-primary);
   font-family: var(--font-heading);
+  line-height: 1.1;
+}
+
+.card-cost-price {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--theme-text-secondary);
+  font-family: var(--font-body);
+  opacity: 0.8;
 }
 
 .card-components {
@@ -556,7 +571,9 @@
   color: var(--theme-text-secondary);
   font-weight: 500;
   font-family: var(--font-body);
+  text-align: right;
 }
+
 
 /** ===== EMPTY STATE & LOADING ===== */
 .loading {
