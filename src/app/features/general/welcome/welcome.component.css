@@ -581,9 +581,9 @@
   }
 }
 
-/* ===== RESPONSIVE - 768px ===== */
+/* ===== RESPONSIVE - 800px ===== */
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .mainContent {
     padding: 36px 16px;
     gap: 30px;

@@ -11,6 +11,7 @@
 @import 'styles/_empty-states.css';
 @import 'styles/_modal-utilities.css';
 @import 'styles/_modal-admin-overrides.css';
+@import 'styles/_shared-components.css';
 
 /* ===== MODAL BUTTON BASE ===== */
 .modal-btn {
@@ -32,8 +33,8 @@
 .modal-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
+  transform: none;
+  box-shadow: none;
 }
 
 /* Secondary */
@@ -113,7 +114,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .modal-btn {
     padding: 0.75rem 1.25rem;
     width: 100%;
@@ -573,28 +574,28 @@ html.admin-theme {
   --scrollbar-thumb: var(--admin-scrollbar-thumb);
   --scrollbar-thumb-hover: var(--admin-scrollbar-thumb-hover);
 
-  background-color: var(--theme-bg-page) !important;
-  color: var(--theme-text-primary) !important;
+  background-color: var(--theme-bg-page);
+  color: var(--theme-text-primary);
 }
 
 /* Aggressive scrollbar hide for root elements */
 html,
 body {
-  scrollbar-width: none !important;
-  -ms-overflow-style: none !important;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 /* Custom scrollbar - Default (rojo) - HIDDEN BY DEFAULT FOR PAGES */
 ::-webkit-scrollbar {
-  width: 8px !important;
-  display: none !important;
+  width: 0.5rem;
+  display: none;
   /* Hide by default */
 }
 
@@ -603,41 +604,41 @@ body::-webkit-scrollbar {
 [class*="modal"] ::-webkit-scrollbar,
 .modal-dialog ::-webkit-scrollbar,
 .modal-body ::-webkit-scrollbar {
-  display: block !important;
+  display: block;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--scrollbar-track) !important;
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb) !important;
-  border-radius: 4px !important;
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover) !important;
+  background: var(--scrollbar-thumb-hover);
 }
 
 /* Custom scrollbar - Admin Theme - HIDDEN BY DEFAULT */
 .admin-theme ::-webkit-scrollbar {
-  display: none !important;
+  display: none;
 }
 
 .admin-theme [class*="modal"] ::-webkit-scrollbar {
-  display: block !important;
+  display: block;
 }
 
 .admin-theme ::-webkit-scrollbar-track {
-  background: var(--scrollbar-track) !important;
+  background: var(--scrollbar-track);
 }
 
 .admin-theme ::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb) !important;
+  background: var(--scrollbar-thumb);
 }
 
 .admin-theme ::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover) !important;
+  background: var(--scrollbar-thumb-hover);
 }
 
 /* ===== PAGE LAYOUT PRIMITIVES ===== */
@@ -884,7 +885,7 @@ body::-webkit-scrollbar {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .page-content {
     padding: 0.9375rem;
   }
@@ -914,7 +915,7 @@ body::-webkit-scrollbar {
   background: #1a1a1a;
   border: 1px solid var(--theme-border-card);
   border-radius: 22px;
-  padding: 40px 28px 10px;
+  padding: 2.5rem 1.75rem 0.625rem;
   text-align: center;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
   animation: logoutSlideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.1);
@@ -934,27 +935,27 @@ body::-webkit-scrollbar {
 }
 
 .logout-modal-icon {
-  width: 72px;
-  height: 72px;
+  width: 4.5rem;
+  height: 4.5rem;
   border-radius: 50%;
   background: var(--color-danger-bg);
   border: 1.5px solid rgba(239, 68, 68, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
+  margin: 0 auto 1.25rem;
   color: var(--color-danger);
 }
 
 .logout-modal h2 {
-  margin: 0 0 10px;
+  margin: 0 0 0.625rem;
   font-size: 1.4rem;
   font-weight: 700;
   color: var(--theme-text-primary);
 }
 
 .logout-modal p {
-  margin: 0 0 30px;
+  margin: 0 0 1.875rem;
   font-size: 0.95rem;
   color: var(--theme-text-secondary);
   line-height: 1.6;
@@ -971,7 +972,7 @@ body::-webkit-scrollbar {
 .btn-logout-cancel,
 .btn-logout-confirm {
   flex: 1;
-  padding: 14px 20px;
+  padding: 0.875rem 1.25rem;
   font-family: var(--font-body);
   font-size: 0.95rem;
   font-weight: 600;
@@ -1062,7 +1063,7 @@ body::-webkit-scrollbar {
 
 @media (max-width: 480px) {
   .logout-modal {
-    padding: 30px 20px 8px;
+    padding: 1.875rem 1.25rem 0.5rem;
   }
 
   .logout-modal-actions {

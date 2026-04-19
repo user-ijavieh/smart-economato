@@ -1143,7 +1143,7 @@
 }
 
 .toggle-row {
-  flex-direction: row !important;
+  flex-direction: row;
   align-items: center;
   justify-content: flex-start;
 }
@@ -1326,6 +1326,10 @@
 
   .summary-mobile-actions {
     display: block;
+  }
+
+  .side-actions .btn-pdf {
+    display: none;
   }
 
   .side-card-audits {

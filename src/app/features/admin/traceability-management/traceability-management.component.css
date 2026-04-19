@@ -1,4 +1,4 @@
-﻿:host {
+:host {
   display: block;
 }
 
@@ -399,7 +399,7 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 
 /** ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
-  .hide-on-mobile { display: none !important; }
+  .hide-on-mobile { display: none; }
   .contenedor-principal { padding: 16px; }
   .action-header { padding: 16px; flex-direction: column; align-items: stretch; }
   .search-group-standard { max-width: 100%; }

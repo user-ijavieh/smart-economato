@@ -44,6 +44,11 @@ export class WelcomeComponent implements OnInit, OnDestroy {
     return role === 'CHEF' || role === 'ADMIN';
   }
 
+  get isTeacher(): boolean {
+    const role = this.authService.getRole();
+    return role === 'CHEF' || role === 'ELEVATED';
+  }
+
   get isAdmin(): boolean {
     return this.authService.getRole() === 'ADMIN';
   }

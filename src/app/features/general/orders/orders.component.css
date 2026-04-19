@@ -1,4 +1,4 @@
-﻿:host {
+:host {
   display: block;
 }
 
@@ -17,7 +17,7 @@
 }
 
 .skeleton-header {
-  background: var(--theme-surface-glass-hover) !important;
+  background: var(--theme-surface-glass-hover);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -345,7 +345,7 @@
 }
 
 /** ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .contenedor-principal { padding: 20px; }
   .orders-grid { grid-template-columns: 1fr; gap: 16px; }
   .header-pedidos h1 { font-size: 1.5rem; }

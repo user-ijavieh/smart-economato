@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, OnInit, OnDestroy, ChangeDetectorRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -28,10 +28,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private roleSub!: Subscription;
 
   isOpen = window.innerWidth > 800;
+  isMobile = window.innerWidth <= 800;
   isAdminRoute = false;
 
+  @Input() mobileOpen = false;
   @Output() sidebarToggled = new EventEmitter<boolean>();
   @Output() logoutClicked = new EventEmitter<void>();
+  @Output() mobileMenuClosed = new EventEmitter<void>();
 
   // Items para la vista normal
   private defaultNavItems: NavItem[] = [
@@ -48,8 +51,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   // Items para la vista admin
   private adminNavItems: NavItem[] = [
-    { label: 'Vista General', route: '/welcome', icon: 'home' },
     { label: 'Dashboard', route: '/admin-panel/dashboard', icon: 'dashboard' },
+    { label: 'Vista General', route: '/welcome', icon: 'home' },
     { label: 'Órdenes', route: '/admin-panel/orders', icon: 'cart', section: 'OPERACIONES' },
     { label: 'Planes Semanales', route: '/admin-panel/weekly-plans', icon: 'calendar' },
     { label: 'Cocina', route: '/admin-panel/kitchen', icon: 'kitchen' },
@@ -59,13 +62,17 @@ export class SidebarComponent implements OnInit, OnDestroy {
     { label: 'Productos', route: '/admin-panel/products', icon: 'inventory' },
     { label: 'Recetas', route: '/admin-panel/recipes', icon: 'menu_book' },
     { label: 'Datos Maestros', route: '/admin-panel/master-data', icon: 'database', section: 'GESTIÓN' },
-    { label: 'Usuarios', route: '/admin-panel/users', icon: 'people' },
+    { label: 'Gestión de alumnos', route: '/admin-panel/users', icon: 'people' },
     { label: 'Notificaciones', route: '/admin-panel/notifications', icon: 'notifications' },
     { label: 'Configuraciones', route: '/admin-panel/settings', icon: 'settings' },
     { label: 'Trazabilidad', route: '/admin-panel/traceability', icon: 'shield', section: 'TRAZABILIDAD' }
   ];
 
   ngOnInit(): void {
+    if (this.isMobile) {
+      this.isOpen = false;
+    }
+
     this.authService.syncSessionProfile().subscribe({
       next: () => this.cdr.markForCheck(),
       error: () => this.cdr.markForCheck()
@@ -103,7 +110,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
     const userRole = this.getUserRole();
     if (userRole === 'ADMIN') {
-      return this.defaultNavItems.filter(item => item.label !== 'Plan Semanal');
+      return this.defaultNavItems.filter(item => item.label !== 'Plan Semanal' && item.label !== 'Perfil');
     }
     if (userRole === 'USER') {
       return this.defaultNavItems.filter(item =>
@@ -112,7 +119,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
         item.label !== 'Perfil' &&
         item.label !== 'Incidencias' &&
         item.label !== 'Chat IA' &&
-        item.label !== 'Perfil' &&
         item.label !== 'Plan Semanal'
       );
     }
@@ -125,6 +131,20 @@ export class SidebarComponent implements OnInit, OnDestroy {
   toggleSidebar(): void {
     this.isOpen = !this.isOpen;
     this.sidebarToggled.emit(this.isOpen);
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    this.isMobile = window.innerWidth <= 800;
+    if (this.isMobile) {
+      this.isOpen = false;
+    }
+  }
+
+  closeMobileMenu(): void {
+    if (this.isMobile) {
+      this.mobileMenuClosed.emit();
+    }
   }
 
   toggleTheme(): void {

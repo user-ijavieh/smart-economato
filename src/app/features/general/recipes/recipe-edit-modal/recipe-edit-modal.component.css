@@ -307,7 +307,7 @@
 }
 
 /** ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .recipe-edit-footer {
     flex-direction: column;
     align-items: stretch;

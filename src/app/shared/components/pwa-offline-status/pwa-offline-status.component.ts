@@ -34,7 +34,7 @@ import { OfflineSyncService } from '../../../core/services/offline-sync.service'
   styles: [`
     .offline-badge {
       position: fixed;
-      top: 1rem;
+      top: 4rem;
       right: 1rem;
       background: linear-gradient(135deg, #ff9500 0%, #ff7500 100%);
       color: white;
