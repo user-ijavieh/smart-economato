@@ -318,7 +318,7 @@
   </div>
 
   @if (showScannerModal) {
-    <app-base-modal title="Buscar por código de barras" size="md" (closed)="closeBarcodeScanner()">
+    <app-base-modal title="Buscar por código de barras" size="md" backdropVariant="soft" (closed)="closeBarcodeScanner()">
       <div class="scanner-modal-body">
         <app-barcode-scanner (productFound)="onProductFound($event)"></app-barcode-scanner>
       </div>

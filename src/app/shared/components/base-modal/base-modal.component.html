@@ -4,6 +4,7 @@
   [style.z-index]="overlayZIndex"
   [class.closing]="isClosing"
   [class.modal-overlay-fullscreen]="size === 'fullscreen'"
+  [class.modal-overlay-soft]="backdropVariant === 'soft'"
   (click)="onOverlayClick($event)"
 >
   <div class="modal-dialog" [class]="'modal-dialog modal-' + size" (click)="$event.stopPropagation()">
