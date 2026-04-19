@@ -834,8 +834,12 @@
   .btn-ver, .btn-pdf, .btn-edit-status, .btn-revert { padding: 7px; }  
   .btn-textual { padding: 6px 10px; font-size: 0.78rem; }  
   .modal-actions button { width: 100%; justify-content: center; }
-}  
-  
+}
+
+@media (max-width: 800px) {
+  .audit-modal-body { grid-template-columns: 1fr; padding: 16px; gap: 12px; }
+}
+
 @media (max-width: 480px) {  
   .stats-row { flex-direction: column; }  
   .modal-actions { flex-direction: column; }  

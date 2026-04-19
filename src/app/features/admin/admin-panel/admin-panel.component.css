@@ -230,7 +230,7 @@ a.master-card:hover .master-card-arrow {
 
 /** ===== CONTENEDOR PRINCIPAL ===== */
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .welcome-card {
     padding: 30px 25px;
   }

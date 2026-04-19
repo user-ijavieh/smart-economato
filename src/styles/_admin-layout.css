@@ -98,7 +98,7 @@
 	}
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
 	.admin-page-header {
 		height: 4.375rem;
 		padding: 0 0.9375rem;

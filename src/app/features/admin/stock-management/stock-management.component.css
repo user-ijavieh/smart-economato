@@ -1026,7 +1026,7 @@ tbody.loading { opacity: 0.6; }
   background: var(--theme-surface-glass-hover);
   border-radius: 16px;
   border: 1px solid var(--theme-surface-glass-hover);
-  max-height: min(34vh, 300px);
+  max-height: min(42vh, 420px);
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -1048,10 +1048,10 @@ tbody.loading { opacity: 0.6; }
   background: var(--scrollbar-thumb-hover);
 }
 
-.detail-table { width: 100%; border-collapse: collapse; }
-.detail-table td { padding: 16px; border-bottom: 1px solid var(--theme-surface-glass-hover); }
-.detail-td-label { color: var(--theme-text-secondary); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; width: 40%; }
-.detail-td-value { font-weight: bold; color: var(--theme-text-primary); }
+.detail-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.detail-table td { padding: 18px 16px; border-bottom: 1px solid var(--theme-surface-glass-hover); }
+.detail-td-label { color: var(--theme-text-secondary); font-weight: 600; font-size: 0.82rem; text-transform: uppercase; width: 42%; }
+.detail-td-value { font-weight: bold; color: var(--theme-text-primary); overflow-wrap: anywhere; }
 .detail-val-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
 .detail-val-badge.severity-critical { background: var(--color-danger-bg); color: var(--color-danger-soft); }
 
@@ -1170,7 +1170,7 @@ tbody.loading { opacity: 0.6; }
 
 @media (max-width: 576px) {
   .info-card { flex-direction: column; text-align: center; }
-  .detail-table-container { max-height: min(36dvh, 280px); }
+  .detail-table-container { max-height: min(46dvh, 420px); }
   .detail-table td { display: block; width: 100%; }
   .detail-td-label { border-bottom: none; padding-bottom: 0; }
   .detail-td-value { padding-top: 5px; font-size: 1.1rem; }

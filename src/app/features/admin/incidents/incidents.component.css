@@ -1328,6 +1328,10 @@
     display: block;
   }
 
+  .side-actions .btn-pdf {
+    display: none;
+  }
+
   .side-card-audits {
     display: none;
   }

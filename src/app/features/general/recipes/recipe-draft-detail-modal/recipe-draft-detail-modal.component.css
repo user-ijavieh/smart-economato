@@ -162,7 +162,7 @@
   border-color: var(--theme-border-hover);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .draft-summary-grid {
     grid-template-columns: 1fr;
   }

@@ -612,7 +612,7 @@
   box-shadow: none;
 }
 /** ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .collaboration-body {
     grid-template-columns: 1fr;
   }

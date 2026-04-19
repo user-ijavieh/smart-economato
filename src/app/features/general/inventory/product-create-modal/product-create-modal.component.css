@@ -106,7 +106,7 @@
 }
 
 /** ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .form-grid {
     grid-template-columns: 1fr;
   }
