@@ -669,6 +669,39 @@
   min-height: 100%;
 }
 
+.stock-item .item-info > .item-status {
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+
+.stock-item > .item-status {
+  justify-content: flex-end;
+}
+
+.sufficient-label,
+.insufficient-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.sufficient-label {
+  color: var(--color-success);
+  border: 1px solid color-mix(in srgb, var(--color-success) 35%, transparent);
+  background: color-mix(in srgb, var(--color-success-bg) 55%, transparent);
+}
+
+.insufficient-label {
+  color: var(--color-danger);
+  border: 1px solid color-mix(in srgb, var(--color-danger) 35%, transparent);
+  background: color-mix(in srgb, var(--color-danger-bg) 50%, transparent);
+}
+
 .stock-ok {
   color: var(--color-success);
   font-weight: 700;
