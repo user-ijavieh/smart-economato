@@ -693,53 +693,6 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
   color: var(--color-accent-admin);
 }
 
-/* ===== MOBILE DETAIL MODAL RESULT ===== */
-.mobile-detail-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--theme-overlay-bg);
-  backdrop-filter: blur(8px);
-  z-index: 9999;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  animation: fadeInOverlay 0.2s ease;
-  padding: 0.5rem;
-}
-
-.mobile-detail-modal {
-  background: var(--theme-surface-glass);
-  backdrop-filter: var(--theme-effect-glass);
-  border: 1px solid var(--theme-border-glass);
-  border-radius: 20px 20px 0 0;
-  width: 100%;
-  max-height: none;
-  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
-  animation: slideUpModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-  overflow: visible;
-  display: flex;
-  flex-direction: column;
-  color: var(--theme-text-primary);
-}
-
-@media (min-width: 768px) {
-  .mobile-detail-modal {
-    border-radius: var(--theme-radius-card);
-    max-width: 450px;
-    align-self: center;
-    margin-bottom: 2rem;
-  }
-}
-
-.mobile-detail-modal-body {
-  padding: 24px;
-  overflow: visible;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-height: auto;
-}
-
 .detail-field {
   display: flex;
   flex-direction: column;
@@ -887,20 +840,6 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 }
 
 @media (max-width: 1024px) {
-  .mobile-detail-modal-overlay {
-    align-items: stretch;
-    padding: 0;
-  }
-
-  .mobile-detail-modal {
-    max-height: none;
-    border-radius: 0;
-  }
-
-  .mobile-detail-modal-body {
-    padding: 16px;
-  }
-
   .mobile-trace-item {
     flex-direction: column;
     align-items: flex-start;
@@ -936,12 +875,12 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
 }
 
 @media (max-width: 1024px) {
-  .hide-on-mobile { display: none !important; }
-  .show-on-mobile-only { display: table-cell !important; }
+  .hide-on-mobile { display: none; }
+  .show-on-mobile-only { display: table-cell; }
   .clickable-row { cursor: pointer; }
-  .clickable-row:hover { background: var(--theme-surface-glass-hover) !important; }
+  .clickable-row:hover { background: var(--theme-surface-glass-hover); }
 
-  .mobile-icon-col { width: 40px; text-align: center; padding: 8px !important; }
+  .mobile-icon-col { width: 40px; text-align: center; padding: 8px; }
   .mobile-icon-col svg { color: var(--theme-text-secondary); vertical-align: middle; }
   
   .header-recetas { height: 60px; padding: 0 16px; }

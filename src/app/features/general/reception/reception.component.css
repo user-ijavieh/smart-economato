@@ -454,7 +454,7 @@
   .reception-content { padding: 20px; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .reception-content {
     padding: 15px;
   }

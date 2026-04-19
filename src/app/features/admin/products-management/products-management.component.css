@@ -523,11 +523,11 @@ tr.low-stock-row:hover td {
   align-items: center;
   justify-content: center;
   vertical-align: middle;
-  width: 32px !important;
+  width: 32px;
   min-width: 32px;
-  height: 32px !important;
-  padding: 8px !important;
-  box-shadow: none !important;
+  height: 32px;
+  padding: 8px;
+  box-shadow: none;
   flex: 0 0 auto;
 }
 
@@ -596,7 +596,7 @@ tr.low-stock-row:hover td {
 }
 
 .audit-row:hover {
-  background: var(--theme-surface-glass-hover) !important;
+  background: var(--theme-surface-glass-hover);
 }
 
 /** ===== AUDIT DETAIL MODAL ===== */
@@ -740,12 +740,20 @@ tr.low-stock-row:hover td {
   .date-input { flex: 1; min-width: 120px; }
   .btn-date-filter { width: 100%; justify-content: center; margin-top: 4px; }
   button { width: 100%; justify-content: center; }
-  .hide-on-mobile { display: none !important; }
-  .show-on-mobile-only { display: table-cell !important; }
+  .hide-on-mobile { display: none; }
+  .show-on-mobile-only { display: table-cell; }
   .tabla-contenedor { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
   th, td { padding: 12px 10px; font-size: 0.85rem; white-space: nowrap; }
   .audit-modal { width: 95%; max-height: 90vh; }
   .audit-modal-body { grid-template-columns: 1fr; gap: 12px; padding: 20px; }
+}
+
+@media (max-width: 800px) {
+  .audit-modal-body {
+    grid-template-columns: 1fr;
+    padding: 16px;
+    gap: 12px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -758,7 +766,7 @@ tr.low-stock-row:hover td {
 .mobile-icon-col {
   width: 40px;
   text-align: center;
-  padding: 8px !important;
+  padding: 8px;
 }
 
 .mobile-icon-col svg {

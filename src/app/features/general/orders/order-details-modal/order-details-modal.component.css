@@ -205,7 +205,7 @@
 }
 
 /** ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .info-grid { grid-template-columns: 1fr; gap: 1rem; padding: 15px; }
   .details-table th, .details-table td { white-space: normal; }
 }

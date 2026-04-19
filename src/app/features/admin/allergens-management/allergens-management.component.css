@@ -303,11 +303,11 @@ tr:hover { background: var(--theme-surface-glass-hover); }
   align-items: center;
   justify-content: center;
   vertical-align: middle;
-  width: 32px !important;
+  width: 32px;
   min-width: 32px;
-  height: 32px !important;
-  padding: 8px !important;
-  box-shadow: none !important;
+  height: 32px;
+  padding: 8px;
+  box-shadow: none;
   flex: 0 0 auto;
 }
 
@@ -505,11 +505,11 @@ tr:hover { background: var(--theme-surface-glass-hover); }
 /** ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
   .contenedor-principal { padding: 20px; }
-  th, td { padding: 12px 8px; font-size: 0.85rem; min-width: auto !important; }
+  th, td { padding: 12px 8px; font-size: 0.85rem; min-width: auto; }
   button { font-size: 0.85rem; padding: 8px 16px; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .contenedor-principal { padding: 15px; }
   .controles { padding: 15px; }
   .stats-row { grid-template-columns: repeat(2, 1fr); }
