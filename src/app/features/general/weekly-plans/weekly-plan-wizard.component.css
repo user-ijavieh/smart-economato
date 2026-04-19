@@ -534,8 +534,27 @@
 }
 
 .stock-table tr.has-shortage td {
-  background: color-mix(in srgb, var(--color-warning-bg) 55%, transparent);
+  background: color-mix(in srgb, var(--color-danger-bg) 25%, transparent);
 }
+
+.merma-hint-wizard {
+  font-size: 0.7rem;
+  color: var(--color-warning-muted);
+  font-weight: 700;
+  margin-top: 2px;
+  text-transform: uppercase;
+}
+
+.shortage-value {
+  color: var(--color-danger);
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.product-cell-main {
+  font-weight: 600;
+}
+
 
 .day-group-header {
   align-items: flex-start;

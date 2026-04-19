@@ -54,7 +54,7 @@
         }
 
         <div class="wizard-actions">
-          <button class="modal-btn modal-btn-primary" (click)="nextStep()" [disabled]="!weekStartDate">Continuar</button>
+          <button class="modal-btn modal-btn-primary" (click)="nextStep()" [disabled]="!weekStartDate || (role === 'ADMIN' && !chefId)">Continuar</button>
         </div>
       </div>
     }
@@ -94,26 +94,34 @@
                   <thead>
                     <tr>
                       <th>Producto</th>
-                      <th>Necesario</th>
-                      <th>Disponible</th>
-                      <th>Reservado</th>
-                      <th>Disponible real</th>
-                      <th>En pedidos</th>
-                      <th>Faltante</th>
+                      <th>Necesario (Bruto)</th>
+                      <th>Necesario (Neto)</th>
+                      <th>Disponible Real (Neto)</th>
+                      <th>En pedidos (Bruto)</th>
+                      <th>Faltante (Bruto)</th>
                     </tr>
                   </thead>
                   <tbody>
                     @for (row of stockUsage.rows; track row.productId) {
                       <tr [class.has-shortage]="row.shortage > 0">
-                        <td>{{ row.productName }}</td>
+                        <td>
+                          <div class="product-cell-main">{{ row.productName }}</div>
+                          @if (row.availabilityPercentage < 100) {
+                            <div class="merma-hint-wizard">Merma: {{ 100 - row.availabilityPercentage | number:'1.0-0' }}%</div>
+                          }
+                        </td>
+                        <td>{{ row.grossRequired | number:'1.0-2' }} {{ row.unit }}</td>
                         <td>{{ row.required | number:'1.0-2' }} {{ row.unit }}</td>
-                        <td>{{ row.available | number:'1.0-2' }} {{ row.unit }}</td>
-                        <td>{{ row.reservedByOtherPlans | number:'1.0-2' }} {{ row.unit }}</td>
                         <td>{{ row.realAvailable | number:'1.0-2' }} {{ row.unit }}</td>
                         <td>{{ row.pendingOrdered | number:'1.0-2' }} {{ row.unit }}</td>
-                        <td>{{ row.shortage > 0 ? (row.shortage | number:'1.0-2') : '0.00' }} {{ row.unit }}</td>
+                        <td>
+                          <span [class.shortage-value]="row.shortage > 0">
+                            {{ row.shortage > 0 ? (row.shortage | number:'1.0-2') : '0.00' }} {{ row.unit }}
+                          </span>
+                        </td>
                       </tr>
                     }
+
                   </tbody>
                 </table>
               </div>

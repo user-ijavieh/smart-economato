@@ -49,13 +49,17 @@ interface StockUsageRow {
   productId: number;
   productName: string;
   unit: string;
-  required: number;
-  available: number;
+  required: number; // Neto
+  grossRequired: number;
+  availabilityPercentage: number;
+  available: number; // Neto utilizable
+  grossAvailable: number;
   reservedByOtherPlans: number;
   realAvailable: number;
   pendingOrdered: number;
-  shortage: number;
+  shortage: number; // Faltante bruto
 }
+
 
 @Component({
   selector: 'app-weekly-plan-wizard',
@@ -393,6 +397,10 @@ export class WeeklyPlanWizardComponent implements OnInit {
     }
 
     if (this.currentStep === 1 && !this.editMode && !this.duplicateMode) {
+      if (this.role === 'ADMIN' && !this.chefId) {
+        this.messageService.showWarning('Selecciona un responsable (chef) para continuar.');
+        return;
+      }
       this.redirectToExistingPlanIfWeekTaken();
       return;
     }
@@ -416,7 +424,9 @@ export class WeeklyPlanWizardComponent implements OnInit {
     this.loadingInitial = true;
     this.weeklyPlanService.getAllPlans(0, 50).subscribe({
       next: (page) => {
-        const existingPlan = (page.content || []).find(plan => plan.weekStartDate === selectedWeek);
+        const existingPlan = (page.content || []).find(plan => 
+          plan.weekStartDate === selectedWeek && (!this.chefId || plan.chefId === this.chefId)
+        );
 
         this.loadingInitial = false;
         if (existingPlan) {
@@ -1233,12 +1243,18 @@ export class WeeklyPlanWizardComponent implements OnInit {
         const required = Number(component.requiredQuantity || 0) * Number(slot.quantity || 0);
         const existing = rowsByProduct.get(component.productId);
         if (!existing) {
+          const availPct = component.availabilityPercentage || 100;
+          const grossRequired = availPct > 0 ? (required * 100) / availPct : required;
+          
           rowsByProduct.set(component.productId, {
             productId: component.productId,
             productName: component.productName,
             unit: component.unit || '',
             required,
+            grossRequired,
+            availabilityPercentage: availPct,
             available: Number(component.availableStock || 0),
+            grossAvailable: Number(component.grossAvailableStock || 0),
             reservedByOtherPlans: Number(component.reservedByOtherPlans || 0),
             realAvailable: 0,
             pendingOrdered: 0,
@@ -1246,8 +1262,11 @@ export class WeeklyPlanWizardComponent implements OnInit {
           });
         } else {
           existing.required += required;
+          const availPct = existing.availabilityPercentage || 100;
+          existing.grossRequired += availPct > 0 ? (required * 100) / availPct : required;
         }
       }
+
     }
 
     const productIds = Array.from(rowsByProduct.keys()).sort((a, b) => a - b);
@@ -1257,7 +1276,13 @@ export class WeeklyPlanWizardComponent implements OnInit {
       .map(row => {
         const realAvailable = Math.max(0, row.available - row.reservedByOtherPlans);
         const pendingOrdered = Number(this.pendingOrdersByProduct[row.productId] || 0);
-        const rawShortage = row.required - realAvailable - pendingOrdered;
+        
+        // El faltante que mostrare y que se pedira es el BRUTO
+        const netShortage = Math.max(0, row.required - realAvailable - pendingOrdered);
+        const rawShortage = row.availabilityPercentage > 0 
+          ? (netShortage * 100) / row.availabilityPercentage 
+          : netShortage;
+        
         const shortage = this.normalizeShortage(rawShortage);
 
         return {
@@ -1268,6 +1293,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
         };
       })
       .sort((a, b) => b.shortage - a.shortage || a.productName.localeCompare(b.productName));
+
 
     const riskCount = rows.filter(row => row.shortage > 0).length;
     const totalShortage = rows.reduce((total, row) => total + row.shortage, 0);

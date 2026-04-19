@@ -52,4 +52,12 @@ export class RecipeDetailModalComponent {
   getElaborationSteps(elaboration: string): string[] {
     return elaboration.split('\n').filter(step => step.trim() !== '');
   }
+
+  getGrossQuantity(net: number, availability?: number): number {
+    if (!availability || availability <= 0 || availability >= 100) {
+      return net;
+    }
+    return net * 100 / availability;
+  }
 }
+

@@ -200,14 +200,16 @@
             <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
               Ver Detalles
             </button>
+            <!-- DESHABILITADO: Solicitar colaboración feature
             @if (canRequestCollaborationFromList(order)) {
               <button class="btn-action btn-warning" (click)="requestCollaborationFromList(order)" title="Solicitar colaboración con el usuario que está revisando">
                 Solicitar colaboración
               </button>
             }
-                <button class="btn-action btn-success" (click)="openReceptionModal(order)">
+            -->
+                <button class="btn-action btn-success" (click)="openReceptionModal(order)" [disabled]="isReviewBlocked(order)">
               @if (isReviewBlocked(order)) {
-                Ver en revisión
+                En revisión
               } @else {
                 Procesar Recepción
               }

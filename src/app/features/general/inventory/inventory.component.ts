@@ -123,7 +123,13 @@ export class InventoryComponent implements OnInit, OnDestroy {
           shouldReloadBatches = true;
         }
 
-        if (shouldReloadProducts) this.loadProducts();
+        if (shouldReloadProducts) {
+          if (this.searchTerm && this.searchTerm.trim() !== '') {
+            this.performSearch(this.searchTerm);
+          } else {
+            this.loadProducts();
+          }
+        }
         if (shouldReloadBatches) this.loadExpirations();
       });
   }

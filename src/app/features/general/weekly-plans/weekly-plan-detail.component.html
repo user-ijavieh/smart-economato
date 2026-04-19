@@ -235,13 +235,34 @@
              @for (req of filteredStockRequirements; track req.productId) {
                <div class="stock-item" [class.insufficient]="!req.sufficient">
                  <div class="item-info">
-                   <div class="item-name">{{ req.productName }}</div>
-                   <div class="item-qty">Requerido: {{ req.requiredQuantity | number:'1.2-2' }}</div>
-                   <div class="item-qty">Reservado por otros planes: {{ req.reservedByOtherPlans | number:'1.2-2' }}</div>
-                   <div class="item-qty">Disponible real: {{ getRealAvailableStock(req) | number:'1.2-2' }}</div>
-                   @if (getUncoveredStockShortage(req) > 0) {
-                     <div class="item-qty shortage">Faltan por cubrir: {{ getUncoveredStockShortage(req) | number:'1.2-2' }} unidades</div>
-                   }
+                   <div class="item-name">
+                     {{ req.productName }}
+                     @if (req.availabilityPercentage < 100) {
+                       <span class="merma-tag" [title]="'Este producto tiene una merma del ' + (100 - (req.availabilityPercentage || 100)) + '% (parte no utilizable)'">
+                         Merma: {{ 100 - (req.availabilityPercentage || 100) | number:'1.0-0' }}%
+                       </span>
+                     }
+                   </div>
+                   <div class="item-qty highlight">Requerido Bruto (compra): <strong>{{ req.grossRequiredQuantity | number:'1.2-2' }}</strong></div>
+                   <div class="item-qty secondary">Requerido Neto (receta): {{ req.requiredQuantity | number:'1.2-2' }}</div>
+                   <div class="item-qty">
+                     Reservado por otros planes: 
+                     <strong>{{ req.grossReservedByOtherPlans | number:'1.2-2' }}</strong> (Bruto) 
+                     <small>/ {{ req.reservedByOtherPlans | number:'1.2-2' }} (Neto)</small>
+                   </div>
+                   <div class="item-qty">
+                     Disponible real: 
+                     <strong>{{ (req.grossAvailableStock - req.grossReservedByOtherPlans) | number:'1.2-2' }}</strong> (Bruto)
+                     <small>/ {{ (req.availableStock - req.reservedByOtherPlans) | number:'1.2-2' }} (Neto)</small>
+                   </div>
+                   <div class="item-status" [class.insufficient]="!req.sufficient">
+                       @if (req.sufficient) {
+                         <span class="sufficient-label">Hay stock ({{ getRealAvailableStock(req) | number:'1.2-2' }} Neto)</span>
+                       } @else {
+                         <span class="insufficient-label">Stock insuficiente (Faltan: {{ getUncoveredStockShortage(req) | number:'1.2-2' }} Bruto)</span>
+                       }
+                   </div>
+
                    @if (getPendingOrderCount(req) > 0) {
                      <div class="item-order-summary">
                        <span class="order-chip total">{{ getPendingOrderCount(req) }} pedido{{ getPendingOrderCount(req) > 1 ? 's' : '' }}</span>

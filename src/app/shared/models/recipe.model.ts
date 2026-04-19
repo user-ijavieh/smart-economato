@@ -5,7 +5,9 @@ export interface Recipe {
   presentation?: string;
   portions?: number;
   totalCost: number;
+  sellingPrice?: number;
   isHidden: boolean;
+
   components: RecipeComponent[];
   allergens: Allergen[];
 }
@@ -17,14 +19,18 @@ export interface RecipeComponent {
   productName: string;
   quantity: number;
   subtotal: number;
+  availabilityPercentage?: number;
 }
+
 
 export interface RecipeRequest {
   name: string;
   elaboration?: string;
   presentation?: string;
   portions?: number;
+  sellingPrice?: number;
   isHidden?: boolean;
+
   components: { productId: number; quantity: number }[];
   allergenIds?: number[];
 }
@@ -47,8 +53,11 @@ export interface CookableRecipeComponent {
   unit: string;
   requiredQuantity: number;
   availableStock: number;
+  grossAvailableStock: number;
+  availabilityPercentage: number;
   reservedByOtherPlans?: number;
 }
+
 
 export interface CookableRecipe {
   id: number;
