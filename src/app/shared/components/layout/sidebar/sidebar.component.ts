@@ -48,6 +48,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   // Items para la vista admin
   private adminNavItems: NavItem[] = [
     { label: 'Vista General', route: '/welcome', icon: 'home' },
+    { label: 'Dashboard', route: '/admin-panel/dashboard', icon: 'dashboard' },
     { label: 'Órdenes', route: '/admin-panel/orders', icon: 'cart', section: 'OPERACIONES' },
     { label: 'Planes Semanales', route: '/admin-panel/weekly-plans', icon: 'calendar' },
     { label: 'Cocina', route: '/admin-panel/kitchen', icon: 'kitchen' },
