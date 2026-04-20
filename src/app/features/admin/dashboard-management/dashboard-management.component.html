@@ -16,6 +16,11 @@
             <span class="skeleton-text" *ngIf="loading" style="width: 40px; height: 32px; display: block; margin-bottom: 8px"></span>
             <span class="stat-label">Profesores Activos</span>
         </div>
+        <div class="stat-card" [class.stat-incident]="(dashboardData?.kpis?.openIncidentsCount || 0) > 0">
+            <span class="stat-number" *ngIf="!loading">{{ dashboardData?.kpis?.openIncidentsCount || 0 }}</span>
+            <span class="skeleton-text" *ngIf="loading" style="width: 40px; height: 32px; display: block; margin-bottom: 8px"></span>
+            <span class="stat-label">Incidencias Abiertas</span>
+        </div>
         <div class="stat-card" [class.stat-incident]="(dashboardData?.kpis?.expiringProductsCount || 0) > 0">
             <span class="stat-number" *ngIf="!loading">{{ dashboardData?.kpis?.expiringProductsCount || 0 }}</span>
             <span class="skeleton-text" *ngIf="loading" style="width: 40px; height: 32px; display: block; margin-bottom: 8px"></span>
@@ -39,7 +44,7 @@
                     <div class="rank-pos">#{{ i + 1 }}</div>
                     <div class="item-details">
                         <span class="item-primary">{{ recipe.name }}</span>
-                        <span class="item-secondary">{{ recipe.elaborations }} pedidos</span>
+                        <span class="item-secondary">{{ recipe.elaborations }} pedidos • {{ recipe.portions }} raciones</span>
                     </div>
                 </div>
                 <div *ngIf="loading || dashboardData?.topRecipes?.length === 0" class="skeleton-list">

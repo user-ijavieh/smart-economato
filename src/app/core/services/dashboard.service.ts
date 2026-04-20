@@ -9,6 +9,7 @@ import { OrderService } from './order.service';
 import { ProductBatchService } from './product-batch.service';
 import { SupplierService } from './supplier.service';
 import { KitchenService } from './kitchen.service';
+import { IncidentService } from './incident.service';
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
@@ -18,6 +19,7 @@ export class DashboardService {
     private batchService = inject(ProductBatchService);
     private supplierService = inject(SupplierService);
     private kitchenService = inject(KitchenService);
+    private incidentService = inject(IncidentService);
 
     getDashboardData(): Observable<DashboardData> {
         // Step 1: Base data (Teachers, Kitchen Audits, Batches, Students, Suppliers)
@@ -26,7 +28,8 @@ export class DashboardService {
             kitchenAudits: this.kitchenService.getCookingAudits(0, 50).pipe(catchError(() => of({ content: [] }))),
             expiringBatches: this.batchService.getExpiringBatches(15).pipe(catchError(() => of([]))),
             suppliers: this.supplierService.getAll(0, 50).pipe(catchError(() => of({ content: [] }))),
-            kitchenReport: this.kitchenService.getKitchenReport('ALL_TIME').pipe(catchError(() => of(null)))
+            kitchenReport: this.kitchenService.getKitchenReport('ALL_TIME').pipe(catchError(() => of(null))),
+            openIncidents: this.incidentService.getIncidents({ status: 'ABIERTO', size: 1 }).pipe(catchError(() => of({ totalElements: 0 })))
         });
 
         // Step 2: Fetch real Total Costs for each supplier
@@ -63,24 +66,30 @@ export class DashboardService {
     private processAggregation(data: any, expensePoints: ExpenseDataPoint[]): DashboardData {
         const kpis: DashboardKpis = {
             activeTeachers: data.teachers.length,
-            expiringProductsCount: data.expiringBatches.length
+            expiringProductsCount: data.expiringBatches.length,
+            openIncidentsCount: data.openIncidents?.totalElements || 0
         };
 
-        // Aggregated Top Recipes from KITCHEN AUDITS (REAL) - This was the missing part
-        const recipeMap = new Map<number, { name: string, count: number }>();
+        // Aggregated Top Recipes from KITCHEN AUDITS (REAL)
+        const recipeMap = new Map<number, { name: string, count: number, portions: number }>();
         const audits = data.kitchenAudits.content || [];
         
         audits.forEach((audit: any) => {
             if (audit.recipeId) {
-                const current = recipeMap.get(audit.recipeId) || { name: audit.recipeName || 'Receta', count: 0 };
-                recipeMap.set(audit.recipeId, { ...current, count: current.count + 1 });
+                const current = recipeMap.get(audit.recipeId) || { name: audit.recipeName || 'Receta', count: 0, portions: 0 };
+                recipeMap.set(audit.recipeId, { 
+                    ...current, 
+                    count: current.count + 1,
+                    portions: current.portions + (audit.quantityCooked || 0)
+                });
             }
         });
 
         const topRecipes: TopRecipe[] = Array.from(recipeMap.entries()).map(([id, val]) => ({
             id,
             name: val.name,
-            elaborations: val.count
+            elaborations: val.count,
+            portions: val.portions
         })).sort((a, b) => b.elaborations - a.elaborations).slice(0, 5);
 
 
