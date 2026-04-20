@@ -1051,6 +1051,12 @@ tbody tr:hover { background: var(--theme-surface-glass-hover); }
   border: 1px solid rgba(248, 113, 113, 0.2);
 }
 
+.card-icon.expired { 
+  background: rgba(251, 146, 60, 0.15); 
+  color: #fb923c;
+  border: 1px solid rgba(251, 146, 60, 0.25);
+}
+
 .card-icon.profit { 
   background: rgba(250, 204, 21, 0.1); 
   color: #facc15;

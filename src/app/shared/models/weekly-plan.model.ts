@@ -72,6 +72,8 @@ export interface WeeklyPlanStockRequirement {
   grossAvailableStock: number;
   reservedByOtherPlans: number;
   grossReservedByOtherPlans: number;
+  expiredStock?: number;
+  grossExpiredStock?: number;
 
   sufficient: boolean;
   pendingOrderQuantity?: number;

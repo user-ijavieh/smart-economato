@@ -281,9 +281,15 @@ export class BatchesManagementComponent implements OnInit, OnDestroy {
   }
 
   async onWithdraw(batch: ProductBatchResponseDTO): Promise<void> {
+    const isExpired = batch.expired;
+    const actionName = isExpired ? 'Retirar Lote Caducado' : 'Desechar Lote';
+    const warningText = isExpired 
+      ? `¿Estás seguro de que deseas retirar el lote #${batch.id} de ${batch.productName} por caducidad? Se registrará como pérdida (merma).`
+      : `¿Estás seguro de que deseas desechar el lote #${batch.id} de ${batch.productName}? Esta acción es irreversible y se registrará como merma.`;
+
     const confirmed = await this.messageService.confirm(
-      'Desechar Lote',
-      `¿Estás seguro de que deseas desechar el lote #${batch.id} de ${batch.productName}? Esta acción es irreversible y se registrará como merma.`
+      actionName,
+      warningText
     );
 
     if (confirmed) {
