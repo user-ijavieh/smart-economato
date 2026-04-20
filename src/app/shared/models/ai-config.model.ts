@@ -1,6 +1,6 @@
 /** AI Configuration related models */
 
-export type AiProvider = 'OPENAI' | 'ANTHROPIC' | 'DEEPSEEK' | 'GOOGLE';
+export type AiProvider = 'OPENAI' | 'ANTHROPIC' | 'DEEPSEEK' | 'GOOGLE' | 'GROK';
 
 /**
  * API Key metadata
