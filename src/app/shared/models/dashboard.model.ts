@@ -27,10 +27,17 @@ export interface ExpenseDataPoint {
     value: number;
 }
 
+export interface RecentOrder {
+    id: number;
+    userName: string;
+    orderDate: string;
+}
+
 export interface DashboardData {
     kpis: DashboardKpis;
     topRecipes: TopRecipe[];
     expiringProducts: ExpiringProduct[];
+    recentOrders: RecentOrder[];
     expenses: {
         week: ExpenseDataPoint[];
         month: ExpenseDataPoint[];
