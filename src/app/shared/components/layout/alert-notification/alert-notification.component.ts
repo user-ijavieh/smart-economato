@@ -1,7 +1,9 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AlertMessage, WebSocketService } from '../../../../core/services/websocket.service';
+import { ModalStackService } from '../../../../core/services/modal-stack.service';
 
 interface AlertViewModel {
   id: string;
@@ -39,13 +41,18 @@ const SERVICE_NAMES: Record<string, string> = {
 export class AlertNotificationComponent {
   private readonly webSocketService = inject(WebSocketService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly modalStack = inject(ModalStackService);
 
   private readonly activeFailures = signal<Record<string, AlertViewModel>>({});
   private readonly recoveredAlerts = signal<AlertViewModel[]>([]);
+  private readonly modalStackCount = toSignal(this.modalStack.stackCount$, {
+    initialValue: this.modalStack.hasActiveModals() ? 1 : 0
+  });
 
   readonly failures = this.activeFailures.asReadonly();
   readonly recoveries = this.recoveredAlerts.asReadonly();
   readonly showAlerts = signal<boolean>(localStorage.getItem('layout_alerts_visible') !== 'false');
+  readonly zIndex = computed(() => (this.modalStackCount() > 0 ? 80010 : 32000));
 
   constructor() {
     this.webSocketService.alerts$

@@ -18,7 +18,6 @@
   align-items: flex-end;
   gap: 8px;
   width: 340px;
-  z-index: 32000; /* toasts sit above at 31000 */
   pointer-events: none;
   transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
 }

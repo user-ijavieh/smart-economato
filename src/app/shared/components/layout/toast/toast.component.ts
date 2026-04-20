@@ -1,7 +1,9 @@
-import { Component, Input, OnDestroy, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Toast, MessageService } from '../../../../core/services/message.service';
+import { ModalStackService } from '../../../../core/services/modal-stack.service';
 
 @Component({
   selector: 'app-toast',
@@ -14,7 +16,14 @@ export class ToastComponent implements OnInit, OnDestroy {
   @Input() toasts: Toast[] = [];
 
   private messageService = inject(MessageService);
+  private modalStack = inject(ModalStackService);
   private expiredSub?: Subscription;
+
+  private readonly modalStackCount = toSignal(this.modalStack.stackCount$, {
+    initialValue: this.modalStack.hasActiveModals() ? 1 : 0
+  });
+
+  readonly zIndex = computed(() => (this.modalStackCount() > 0 ? 80020 : 31000));
 
   /** Signal con el Set de IDs en animación de salida — notifica al scheduler zoneless */
   private exitingIds = signal<ReadonlySet<number>>(new Set());
