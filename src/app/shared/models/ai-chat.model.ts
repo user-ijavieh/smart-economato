@@ -1,7 +1,7 @@
 /** AI Chat related DTOs and models */
 
 /** Provider types supported by backend */
-export type AiProvider = 'OPENAI' | 'ANTHROPIC' | 'DEEPSEEK' | 'GOOGLE';
+export type AiProvider = 'OPENAI' | 'ANTHROPIC' | 'DEEPSEEK' | 'GOOGLE' | 'GROK';
 
 /** Chat status */
 export type AiChatStatus = 'ACTIVE' | 'ARCHIVED';
