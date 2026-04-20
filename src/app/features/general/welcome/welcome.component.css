@@ -712,13 +712,13 @@
 
 :host-context([data-theme="light"]) .overlay {
   background: linear-gradient(155deg,
-    rgba(255, 255, 255, 0.82) 0%,
-    rgba(241, 245, 249, 0.75) 48%,
-    rgba(255, 255, 255, 0.85) 100%);
+    rgba(255, 255, 255, 0.44) 0%,
+    rgba(241, 245, 249, 0.36) 48%,
+    rgba(255, 255, 255, 0.48) 100%);
 }
 
 :host-context([data-theme="light"]) .overlay::after {
-  background: radial-gradient(ellipse at center, transparent 38%, rgba(241, 245, 249, 0.70) 100%);
+  background: radial-gradient(ellipse at center, transparent 38%, rgba(241, 245, 249, 0.34) 100%);
 }
 
 :host-context([data-theme="light"]) .header {
@@ -746,7 +746,7 @@
 }
 
 :host-context([data-theme="light"]) .btn-card {
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.56);
   border-color: rgba(0, 0, 0, 0.06);
   color: #1E293B;
   box-shadow:
@@ -760,8 +760,19 @@
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, transparent 100%);
 }
 
+:host-context([data-theme="light"]) .btn-card::after {
+  background: linear-gradient(110deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0) 30%,
+      rgba(255, 255, 255, 0.45) 45%,
+      color-mix(in srgb, var(--brand-primary) 24%, white) 50%,
+      rgba(255, 255, 255, 0.45) 55%,
+      rgba(255, 255, 255, 0) 70%,
+      transparent 100%);
+}
+
 :host-context([data-theme="light"]) .btn-card:hover {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.74);
   border-color: color-mix(in srgb, var(--brand-primary) 25%, transparent);
   box-shadow:
     0 22px 55px rgba(15, 23, 42, 0.10),
@@ -790,7 +801,7 @@
 }
 
 :host-context([data-theme="light"]) .btn-admin:hover {
-  background: rgba(239, 246, 255, 0.92);
+  background: rgba(239, 246, 255, 0.78);
   border-color: rgba(59, 130, 246, 0.30);
   box-shadow:
     0 22px 55px rgba(59, 130, 246, 0.08),
