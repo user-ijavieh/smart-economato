@@ -1096,10 +1096,6 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
         return this.filteredUsers.filter(u => u.role === role).length;
     }
 
-    getExistingUsers(): string[] {
-        return this.users.map(u => u.user);
-    }
-
     isStudentRole(role: string): boolean {
         return role === 'USER' || role === 'ELEVATED';
     }

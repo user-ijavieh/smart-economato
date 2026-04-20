@@ -16,6 +16,129 @@
     <h1>Inicio</h1>
   </div>
 
+  <div class="utilities-container" [class.collapsed]="!showUtilities()">
+    <button class="utilities-toggle" (click)="toggleUtilities()" [attr.aria-label]="showUtilities() ? 'Ocultar utilidades' : 'Mostrar utilidades'">
+      <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+        @if (showUtilities()) {
+          <path d="m600-240-57-56 184-184-184-184 57-56 240 240-240 240Z"/>
+        } @else {
+          <path d="M360-240 120-480l240-240 57 56-184 184 184 184-57 56Z"/>
+        }
+      </svg>
+    </button>
+
+    <button class="mobile-theme-toggle" (click)="toggleTheme()" [attr.aria-label]="isDarkMode() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+      @if (isDarkMode()) {
+        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+          <path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z" />
+        </svg>
+      } @else {
+        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+          <path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z" />
+        </svg>
+      }
+    </button>
+
+    <button
+      class="notifications-bell"
+      [attr.aria-label]="'Abrir notificaciones'"
+      (click)="toggleNotificationPanel($event)"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+        <path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z" />
+      </svg>
+      @if (unreadCount() > 0) {
+        <span class="notifications-bell__badge">{{ unreadCount() }}</span>
+      }
+    </button>
+
+    <button
+      class="cache-utility"
+      [attr.aria-label]="'Limpiar cache local'"
+      (click)="openClearCacheModal()"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+        <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm80-160h80v-360h-80v360Zm160 0h80v-360h-80v360Z"/>
+      </svg>
+    </button>
+
+    <button
+      class="logout-utility"
+      [attr.aria-label]="'Cerrar sesión'"
+      (click)="logout()"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+        <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
+      </svg>
+    </button>
+  </div>
+
+  @if (isNotificationPanelRendered()) {
+    <div
+      class="notifications-overlay"
+      [class.notifications-overlay--closing]="isNotificationPanelClosing()"
+      (click)="closeNotificationPanel($event)"
+    ></div>
+    <aside
+      class="notifications-panel"
+      [class.notifications-panel--closing]="isNotificationPanelClosing()"
+      (click)="stopPanelPropagation($event)"
+    >
+      <header class="notifications-panel__header">
+        <h2>Notificaciones</h2>
+        <button type="button" (click)="markAllNotificationsAsRead()">Marcar todo como leído</button>
+      </header>
+
+      @if (notifications().length === 0) {
+        <div class="notifications-empty">No tienes notificaciones</div>
+      } @else {
+        <ul class="notifications-list">
+          @for (notification of notifications(); track notification.id) {
+            <li
+              class="notification-item"
+              [class.notification-item--unread]="!notification.read"
+              [class.notification-item--crisis]="notification.code === 'FOOD_CRISIS_ACTIVATED'"
+              [class.notification-item--success]="notification.code === 'FOOD_CRISIS_LIFTED'"
+              [class.notification-item--info]="!notification.code"
+              (click)="onNotificationClick(notification)"
+            >
+              <div class="notification-item__icon">
+                @switch (notificationIcon(notification)) {
+                  @case ('crisis') {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 2L2 20h20L12 2Z"/>
+                      <line x1="12" y1="9" x2="12" y2="13"/>
+                      <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                  }
+                  @case ('success') {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  }
+                  @default {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"/>
+                      <line x1="12" y1="16" x2="12" y2="12"/>
+                      <line x1="12" y1="8" x2="12.01" y2="8"/>
+                    </svg>
+                  }
+                }
+              </div>
+              <div class="notification-item__content">
+                <div class="notification-item__head">
+                  <strong>{{ notification.title }}</strong>
+                  <time>{{ formatNotificationTimestamp(notification.timestamp) }}</time>
+                </div>
+                <p [class.collapsed]="!notification.expanded">{{ notification.message }}</p>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </aside>
+  }
+
   <!-- Contenido -->
   <div class="mainContent">
     <h2 class="welcome-title">¡Bienvenido a Smart Economato!</h2>
@@ -50,7 +173,7 @@
       </a>
       }
 
-      @if (isChefOrAdmin) {
+      @if (isChef) {
       <a routerLink="/profile" class="btn-card">
         <div class="btn-card-icon">
           <img src="/assets/img/icons/students-white.svg" alt="Gestión de alumnos">
@@ -69,12 +192,6 @@
         <span>Panel Admin</span>
       </a>
       }
-      <a href="javascript:void(0)" (click)="logout()" class="btn-card btn-logout">
-        <div class="btn-card-icon">
-          <img src="/assets/img/icons/arrow.svg" alt="Cerrar Sesión">
-        </div>
-        <span>Cerrar Sesión</span>
-      </a>
     </div>
   </div>
 </div>
@@ -98,6 +215,31 @@
   <div modal-footer class="logout-modal-actions">
     <button class="btn-logout-cancel" (click)="cancelLogout()">Cancelar</button>
     <button class="btn-logout-confirm" (click)="confirmLogout()">Cerrar Sesión</button>
+  </div>
+</app-base-modal>
+}
+
+@if (showClearCacheModal) {
+<app-base-modal [showHeader]="false" size="sm" (closed)="cancelClearCache()">
+  <div class="logout-modal">
+    <div class="logout-modal-icon cache-modal-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 6h18" />
+        <path d="M8 6V4h8v2" />
+        <path d="M19 6l-1 14H6L5 6" />
+      </svg>
+    </div>
+    <h2>¿Limpiar cache local?</h2>
+    <p>
+      Si ves datos antiguos, puedes usar este botón para limpiar toda la cache.
+      La siguiente vez que entres o recargues una pantalla, los datos se pedirán de nuevo al servidor.
+    </p>
+  </div>
+
+  <div modal-footer class="logout-modal-actions">
+    <button class="btn-logout-cancel" (click)="cancelClearCache()">Cancelar</button>
+    <button class="btn-cache-confirm" (click)="confirmClearCache()">Limpiar cache</button>
   </div>
 </app-base-modal>
 }
