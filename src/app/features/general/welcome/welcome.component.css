@@ -459,18 +459,6 @@
     inset 0 1px 0 var(--theme-border-light);
 }
 
-.btn-card-icon img {
-  width: 55%;
-  height: 55%;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.40));
-  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.btn-card:hover .btn-card-icon img {
-  filter: drop-shadow(0 3px 10px color-mix(in srgb, var(--brand-primary) 55%, transparent));
-}
-
 .btn-card-icon svg {
   width: 54%;
   height: 54%;
@@ -480,31 +468,6 @@
 
 .btn-card:hover .btn-card-icon svg {
   filter: drop-shadow(0 3px 10px color-mix(in srgb, var(--brand-primary) 55%, transparent));
-}
-
-/* ===== CARD LOGOUT ===== */
-
-.btn-logout {
-  border-color: rgba(200, 60, 60, 0.25);
-}
-
-.btn-logout:hover {
-  background: rgba(85, 12, 12, 0.88);
-  border-color: rgba(220, 80, 80, 0.90);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  box-shadow:
-    0 22px 55px rgba(0, 0, 0, 0.65),
-    0 0 35px rgba(220, 80, 80, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.20);
-}
-
-.btn-logout:hover .btn-card-icon {
-  background: rgba(220, 80, 80, 0.28);
-  border-color: rgba(220, 80, 80, 0.60);
-  box-shadow:
-    0 0 18px rgba(220, 80, 80, 0.35),
-    inset 0 1px 0 var(--theme-border-light);
 }
 
 /* ===== CARD ADMIN ===== */
@@ -673,8 +636,8 @@
   }
 
   .welcome-title {
-    font-size: 1.1rem;
-    letter-spacing: 1.5px;
+    font-size: 1.35rem;
+    letter-spacing: 1px;
     white-space: normal;
     overflow: visible;
     max-width: 100%;
@@ -694,17 +657,17 @@
 
   .btn-card {
     width: 100%;
-    max-width: 145px;
-    height: 138px;
-    font-size: 0.80rem;
-    gap: 9px;
-    padding: 12px;
+    max-width: 132px;
+    height: 126px;
+    font-size: 0.76rem;
+    gap: 8px;
+    padding: 10px;
     border-radius: 14px;
   }
 
   .btn-card-icon {
-    width: 46px;
-    height: 46px;
+    width: 40px;
+    height: 40px;
   }
 
 }
@@ -792,12 +755,16 @@
   box-shadow: 0 0 15px color-mix(in srgb, var(--brand-primary) 8%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
-:host-context([data-theme="light"]) .btn-card-icon img {
-  filter: brightness(0) saturate(100%) invert(15%) sepia(10%) saturate(500%) hue-rotate(180deg);
+:host-context([data-theme="light"]) svg {
+  color: #000;
 }
 
-:host-context([data-theme="light"]) .btn-card:hover .btn-card-icon img {
-  filter: brightness(0) saturate(100%) invert(35%) sepia(80%) saturate(500%) hue-rotate(335deg) brightness(85%);
+:host-context([data-theme="light"]) .btn-card-icon img[src$='.svg'] {
+  filter: brightness(0) saturate(100%);
+}
+
+:host-context([data-theme="light"]) .btn-card:hover .btn-card-icon img[src$='.svg'] {
+  filter: brightness(0) saturate(100%) drop-shadow(0 3px 10px color-mix(in srgb, var(--brand-primary) 55%, transparent));
 }
 
 :host-context([data-theme="light"]) .btn-admin:hover {
