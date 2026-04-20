@@ -10,14 +10,6 @@ export interface TopRecipe {
     image?: string;
 }
 
-export interface TopStudent {
-    id: number;
-    name: string;
-    activePlans: number;
-    elaborations: number;
-    avatar?: string;
-}
-
 export interface ExpiringProduct {
     id: number;
     name: string;
@@ -36,7 +28,6 @@ export interface ExpenseDataPoint {
 export interface DashboardData {
     kpis: DashboardKpis;
     topRecipes: TopRecipe[];
-    topStudents: TopStudent[];
     expiringProducts: ExpiringProduct[];
     expenses: {
         week: ExpenseDataPoint[];
