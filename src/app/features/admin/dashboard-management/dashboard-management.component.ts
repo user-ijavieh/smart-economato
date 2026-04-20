@@ -1,10 +1,12 @@
-import { Component, OnInit, inject, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardService } from '../../../core/services/dashboard.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { DashboardData } from '../../../shared/models/dashboard.model';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+import { ThemeService } from '../../../core/services/theme.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard-management',
@@ -13,10 +15,13 @@ import { BaseChartDirective } from 'ng2-charts';
   templateUrl: './dashboard-management.component.html',
   styleUrl: './dashboard-management.component.css'
 })
-export class DashboardManagementComponent implements OnInit {
+export class DashboardManagementComponent implements OnInit, OnDestroy {
   private dashboardService = inject(DashboardService);
   private authService = inject(AuthService);
+  private themeService = inject(ThemeService);
   private cdr = inject(ChangeDetectorRef);
+
+  private destroy$ = new Subject<void>();
 
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
@@ -48,17 +53,32 @@ export class DashboardManagementComponent implements OnInit {
         }
       }
     },
+
     scales: {
       x: {
         grid: { display: false },
-        ticks: { color: 'rgba(255, 255, 255, 0.4)', font: { size: 10 } }
+        ticks: { color: 'rgba(255, 255, 255, 0.4)', font: { size: 12 } },
+        title: {
+          display: true,
+          text: 'Proveedores',
+          color: 'rgba(255, 255, 255, 0.7)',
+          font: { size: 16, weight: 500 },
+          padding: { top: 15 }
+        }
       },
       y: {
         grid: { color: 'rgba(255, 255, 255, 0.05)' },
-        ticks: { 
-          color: 'rgba(255, 255, 255, 0.4)', 
-          font: { size: 10 },
+        ticks: {
+          color: 'rgba(255, 255, 255, 0.4)',
+          font: { size: 12 },
           callback: (value: any) => value + ' €'
+        },
+        title: {
+          display: true,
+          text: 'Total gastos en euros',
+          color: 'rgba(255, 255, 255, 0.7)',
+          font: { size: 16, weight: 500 },
+          padding: { bottom: 15 }
         }
       }
     }
@@ -68,9 +88,9 @@ export class DashboardManagementComponent implements OnInit {
   public barChartData: ChartData<'bar'> = {
     labels: [],
     datasets: [
-      { 
-        data: [], 
-        backgroundColor: 'rgba(90, 120, 220, 0.7)', 
+      {
+        data: [],
+        backgroundColor: 'rgba(90, 120, 220, 0.7)',
         hoverBackgroundColor: 'rgba(90, 120, 220, 0.9)',
         borderRadius: 6,
       }
@@ -79,6 +99,45 @@ export class DashboardManagementComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDashboardData();
+    this.listenToThemeChanges();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private listenToThemeChanges(): void {
+    this.themeService.theme$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(theme => {
+        this.updateChartTheme(theme);
+      });
+  }
+
+  private updateChartTheme(theme: 'dark' | 'light'): void {
+    const isDark = theme === 'dark';
+
+    // Axis title colors
+    const titleColor = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(51, 65, 85, 0.8)';
+    const tickColor = isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(100, 116, 139, 0.6)';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+
+    if (this.barChartOptions?.scales?.['x']) {
+      const xScale: any = this.barChartOptions.scales['x'];
+      xScale.ticks.color = tickColor;
+      xScale.title.color = titleColor;
+    }
+
+    if (this.barChartOptions?.scales?.['y']) {
+      const yScale: any = this.barChartOptions.scales['y'];
+      yScale.ticks.color = tickColor;
+      yScale.title.color = titleColor;
+      yScale.grid.color = gridColor;
+    }
+
+    this.chart?.update();
+    this.cdr.detectChanges();
   }
 
   get userName(): string {
@@ -125,7 +184,7 @@ export class DashboardManagementComponent implements OnInit {
     const periodData = this.dashboardData.expenses[this.currentPeriod];
     this.barChartData.labels = periodData.map(d => d.label);
     this.barChartData.datasets[0].data = periodData.map(d => d.value);
-    
+
     this.chart?.update();
     this.cdr.detectChanges();
   }
