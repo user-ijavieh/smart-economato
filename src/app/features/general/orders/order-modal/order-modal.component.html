@@ -5,14 +5,17 @@
         <h3>Seleccionar Usuario</h3>
         <div class="form-group">
           <label for="userSelect">Usuario *</label>
-          <select id="userSelect" [(ngModel)]="selectedUserId" class="form-control">
-            <option [ngValue]="null">-- Seleccionar usuario --</option>
-            @for (user of users; track user.id) {
-            <option [ngValue]="user.id">
-              {{ user.name }} ({{ user.user }}) - {{ user.role }}
-            </option>
-            }
-          </select>
+          <app-searchable-dropdown
+            [items]="userSearchItems"
+            [selectedIds]="selectedUserId ? [selectedUserId] : []"
+            [loading]="isLoadingUsers"
+            [loadingMore]="isLoadingUsers"
+            [initialText]="selectedUserName"
+            placeholder="Buscar usuario por nombre o usuario"
+            (search)="onUserSearch($event)"
+            (scrollNearBottom)="loadUsers()"
+            (itemSelected)="onUserSelected($event)"
+          ></app-searchable-dropdown>
         </div>
       </div>
 
@@ -21,14 +24,17 @@
         <h3>Seleccionar Proveedor</h3>
         <div class="form-group">
           <label for="supplierSelect">Proveedor</label>
-          <select id="supplierSelect" [(ngModel)]="selectedSupplierId" class="form-control">
-            <option [ngValue]="null">-- Sin proveedor --</option>
-            @for (supplier of suppliers; track supplier.id) {
-            <option [ngValue]="supplier.id">
-              {{ supplier.name }}
-            </option>
-            }
-          </select>
+          <app-searchable-dropdown
+            [items]="supplierSearchItems"
+            [selectedIds]="selectedSupplierId ? [selectedSupplierId] : []"
+            [loading]="isLoadingSuppliers"
+            [loadingMore]="isLoadingSuppliers"
+            [initialText]="selectedSupplierName"
+            placeholder="Buscar proveedor por nombre"
+            (search)="onSupplierSearch($event)"
+            (scrollNearBottom)="loadSuppliers()"
+            (itemSelected)="onSupplierSelected($event)"
+          ></app-searchable-dropdown>
         </div>
       </div>
 
@@ -38,38 +44,23 @@
         <div class="form-row">
           <div class="form-group flex-2">
             <label for="productSearch">Producto *</label>
-            <div class="autocomplete-container">
-              <input type="text" id="productSearch" [(ngModel)]="itemForm.productName"
-                (input)="onProductSearch($any($event.target).value)" (focus)="showProductDropdown = true"
-                placeholder="Buscar producto..." autocomplete="off" class="form-control dropdown-trigger">
-              <span class="dropdown-arrow" (click)="toggleProductDropdown()">▼</span>
+            <div class="autocomplete-container product-dropdown-container">
+              <app-searchable-dropdown
+                [items]="productSearchItems"
+                [selectedIds]="itemForm.productId ? [itemForm.productId] : []"
+                [loading]="isLoadingProducts"
+                [loadingMore]="isLoadingProducts"
+                [initialText]="itemForm.productName"
+                placeholder="Buscar producto..."
+                (search)="onProductSearch($event)"
+                (scrollNearBottom)="loadProducts()"
+                (itemSelected)="onProductSelected($event)"
+              ></app-searchable-dropdown>
               <button type="button" class="btn-scan-inline" (click)="openBarcodeScanner()" title="Escanear código de barras">
                 <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor">
                   <path d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z" />
                 </svg>
               </button>
-              @if (showProductDropdown) {
-              <div class="autocomplete-dropdown" (scroll)="onProductDropdownScroll($event)">
-                @for (product of filteredProducts; track product.id) {
-                <div class="autocomplete-item" (click)="selectProduct(product)">
-                  <div class="autocomplete-item-name">{{ product.name }}</div>
-                  <div class="autocomplete-item-info">
-                    {{ product.unitPrice | number:'1.2-2' }} € - Stock: {{ product.currentStock | number:'1.0-3' }}
-                  </div>
-                </div>
-                }
-                @if (isLoadingProducts) {
-                <div class="autocomplete-loading">
-                  <span>Cargando más productos...</span>
-                </div>
-                }
-                @if (!isLoadingProducts && filteredProducts.length === 0) {
-                <div class="autocomplete-empty">
-                  <span>No hay productos disponibles</span>
-                </div>
-                }
-              </div>
-              }
             </div>
           </div>
 

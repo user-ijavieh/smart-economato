@@ -14,6 +14,7 @@ import { BaseModalComponent } from '../../../../shared/components/base-modal/bas
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.component';
 import { SEARCH_DEBOUNCE_MS } from '../../../../core/constants/search.constants';
+import { SearchableDropdownComponent, SearchableItem } from '../../../../shared/components/searchable-dropdown/searchable-dropdown.component';
 
 interface OrderItem {
   productId: number;
@@ -26,7 +27,7 @@ interface OrderItem {
 @Component({
   selector: 'app-order-modal',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent, DecimalPipe, BarcodeScannerComponent],
+  imports: [FormsModule, BaseModalComponent, DecimalPipe, BarcodeScannerComponent, SearchableDropdownComponent],
   templateUrl: './order-modal.component.html',
   styleUrl: './order-modal.component.css'
 })
@@ -51,7 +52,6 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   selectedSupplierId: number | null = null;
   products: Product[] = [];
   orderItems: OrderItem[] = [];
-  showProductDropdown = false;
   isSubmitting = false;
   showScannerModal = false;
 
@@ -61,6 +61,20 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   isLoadingProducts = false;
   private searchSubject = new Subject<string>();
   private productSearchResults: Product[] | null = null;
+
+  // Pagination for Users
+  usersCurrentPage = 0;
+  usersHasMore = true;
+  isLoadingUsers = false;
+  userSearchResults: User[] | null = null;
+  private userSearchSubject = new Subject<string>();
+
+  // Pagination for Suppliers
+  suppliersCurrentPage = 0;
+  suppliersHasMore = true;
+  isLoadingSuppliers = false;
+  supplierSearchResults: Supplier[] | null = null;
+  private supplierSearchSubject = new Subject<string>();
 
   // Form for adding products
   itemForm = {
@@ -73,6 +87,8 @@ export class OrderModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initialiseSearchSubscription();
+    this.initialiseUserSearchSubscription();
+    this.initialiseSupplierSearchSubscription();
     this.loadUsers();
     this.loadSuppliers();
     this.loadProducts();
@@ -92,14 +108,12 @@ export class OrderModalComponent implements OnInit, OnDestroy {
       this.selectedSupplierId = this.initialSupplierId;
       this.orderItems = this.initialItems.map(item => ({ ...item }));
     }
-
-    // Listener para cerrar dropdown al hacer clic fuera
-    document.addEventListener('click', this.onDocumentClick.bind(this));
   }
 
   ngOnDestroy(): void {
-    document.removeEventListener('click', this.onDocumentClick.bind(this));
     this.searchSubject.complete();
+    this.userSearchSubject.complete();
+    this.supplierSearchSubject.complete();
   }
 
   private initialiseSearchSubscription(): void {
@@ -111,39 +125,149 @@ export class OrderModalComponent implements OnInit, OnDestroy {
     });
   }
 
-  onDocumentClick(event: MouseEvent): void {
-    const target = event.target as HTMLElement;
-    const dropdown = target.closest('.autocomplete-container');
-    if (!dropdown && this.showProductDropdown) {
-      this.showProductDropdown = false;
-      this.cdr.markForCheck();
-    }
+  private initialiseUserSearchSubscription(): void {
+    this.userSearchSubject.pipe(
+      debounceTime(SEARCH_DEBOUNCE_MS),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.performUserSearch(term);
+    });
   }
 
+  private initialiseSupplierSearchSubscription(): void {
+    this.supplierSearchSubject.pipe(
+      debounceTime(SEARCH_DEBOUNCE_MS),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.performSupplierSearch(term);
+    });
+  }
+
+
+
   loadUsers(): void {
-    this.userService.search('', 0, 50).subscribe({
+    if (this.isLoadingUsers || !this.usersHasMore) return;
+
+    this.isLoadingUsers = true;
+    this.userService.search('', this.usersCurrentPage, 20).subscribe({
       next: (page) => {
-        this.users = page.content || [];
+        this.users = [...this.users, ...page.content];
+        this.usersHasMore = !page.last;
+        this.usersCurrentPage++;
+        this.isLoadingUsers = false;
         this.cdr.markForCheck();
       },
       error: () => {
         this.messageService.showError('Error al cargar usuarios');
+        this.isLoadingUsers = false;
         this.cdr.markForCheck();
       }
     });
   }
 
-  loadSuppliers(): void {
-    this.supplierService.getAll(0, 50).subscribe({
+  onUserSearch(term: string): void {
+    this.userSearchSubject.next(term);
+  }
+
+  private performUserSearch(term: string): void {
+    if (!term || term.trim() === '') {
+      this.userSearchResults = null;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.userService.search(term.trim(), 0, 20).subscribe({
       next: (page) => {
-        this.suppliers = page.content;
+        this.userSearchResults = page.content;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.userSearchResults = this.users.filter(u => 
+          u.name.toLowerCase().includes(term.toLowerCase()) || 
+          u.user.toLowerCase().includes(term.toLowerCase())
+        );
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  onUserSelected(item: SearchableItem): void {
+    this.selectedUserId = item.id;
+  }
+
+  get userSearchItems(): SearchableItem[] {
+    const list = this.userSearchResults ?? this.users;
+    return list.map(u => ({
+      id: u.id,
+      name: `${u.name} (${u.user}) - ${u.role}`
+    }));
+  }
+
+  get selectedUserName(): string {
+    const user = this.users.find(u => u.id === this.selectedUserId);
+    return user ? `${user.name} (${user.user}) - ${user.role}` : '';
+  }
+
+  loadSuppliers(): void {
+    if (this.isLoadingSuppliers || !this.suppliersHasMore) return;
+
+    this.isLoadingSuppliers = true;
+    this.supplierService.getAll(this.suppliersCurrentPage, 20).subscribe({
+      next: (page) => {
+        this.suppliers = [...this.suppliers, ...page.content];
+        this.suppliersHasMore = !page.last;
+        this.suppliersCurrentPage++;
+        this.isLoadingSuppliers = false;
         this.cdr.markForCheck();
       },
       error: () => {
         this.messageService.showError('Error al cargar proveedores');
+        this.isLoadingSuppliers = false;
         this.cdr.markForCheck();
       }
     });
+  }
+
+  onSupplierSearch(term: string): void {
+    this.supplierSearchSubject.next(term);
+  }
+
+  private performSupplierSearch(term: string): void {
+    if (!term || term.trim() === '') {
+      this.supplierSearchResults = null;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.supplierService.search(term.trim(), 0, 20).subscribe({
+      next: (page) => {
+        this.supplierSearchResults = page.content;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.supplierSearchResults = this.suppliers.filter(s => 
+          s.name.toLowerCase().includes(term.toLowerCase())
+        );
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  onSupplierSelected(item: SearchableItem): void {
+    this.selectedSupplierId = item.id;
+  }
+
+  get supplierSearchItems(): SearchableItem[] {
+    const list = this.supplierSearchResults ?? this.suppliers;
+    return list.map(s => ({
+      id: s.id,
+      name: s.name
+    }));
+  }
+
+  get selectedSupplierName(): string {
+    const supplier = this.suppliers.find(s => s.id === this.selectedSupplierId);
+    return supplier ? supplier.name : '';
   }
 
   loadProducts(): void {
@@ -166,19 +290,13 @@ export class OrderModalComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleProductDropdown(): void {
-    this.showProductDropdown = !this.showProductDropdown;
-    if (this.showProductDropdown) {
-      this.productSearchResults = null; // Show all products
-    }
-  }
+
 
   get filteredProducts(): Product[] {
     return this.productSearchResults ?? this.products;
   }
 
   onProductSearch(query: string): void {
-    this.showProductDropdown = true;
     this.searchSubject.next(query);
   }
 
@@ -221,8 +339,21 @@ export class OrderModalComponent implements OnInit, OnDestroy {
     this.itemForm.productName = product.name;
     this.itemForm.unitPrice = product.unitPrice;
     this.itemForm.unit = product.unit || 'unidad';
-    this.showProductDropdown = false;
     this.productSearchResults = null;
+  }
+
+  onProductSelected(item: SearchableItem): void {
+    const product = this.filteredProducts.find(p => p.id === item.id);
+    if (product) {
+      this.selectProduct(product);
+    }
+  }
+
+  get productSearchItems(): SearchableItem[] {
+    return this.filteredProducts.map(p => ({
+      id: p.id,
+      name: p.name
+    }));
   }
 
   openBarcodeScanner(): void {

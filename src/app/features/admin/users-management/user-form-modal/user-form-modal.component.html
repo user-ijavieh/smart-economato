@@ -103,12 +103,13 @@
         @if (showTeacherField) {
         <div class="form-group">
             <label for="teacherId">Profesor asignado</label>
-            <select id="teacherId" formControlName="teacherId">
-                <option [ngValue]="null">Sin profesor</option>
-                @for (teacher of teachers; track teacher.id) {
-                <option [ngValue]="teacher.id">{{ teacher.name }}</option>
-                }
-            </select>
+            <app-searchable-dropdown
+                [items]="teacherSearchItems"
+                [selectedIds]="userForm.get('teacherId')?.value ? [userForm.get('teacherId')?.value] : []"
+                [initialText]="selectedTeacherName"
+                placeholder="Seleccionar profesor..."
+                (itemSelected)="onTeacherSelected($event)"
+            ></app-searchable-dropdown>
         </div>
         }
     </form>
