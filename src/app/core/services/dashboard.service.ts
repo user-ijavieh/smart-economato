@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, map, of, switchMap, catchError } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { DashboardData, DashboardKpis, TopRecipe, TopStudent, ExpiringProduct, ExpenseDataPoint } from '../../shared/models/dashboard.model';
+import { DashboardData, DashboardKpis, TopRecipe, ExpiringProduct, ExpenseDataPoint } from '../../shared/models/dashboard.model';
 import { UserService } from './user.service';
 import { StockAlertService } from './stock-alert.service';
 import { OrderService } from './order.service';
@@ -25,7 +25,6 @@ export class DashboardService {
             teachers: this.userService.getTeachers().pipe(catchError(() => of([]))),
             kitchenAudits: this.kitchenService.getCookingAudits(0, 50).pipe(catchError(() => of({ content: [] }))),
             expiringBatches: this.batchService.getExpiringBatches(15).pipe(catchError(() => of([]))),
-            students: this.userService.getByRole('USER').pipe(catchError(() => of([]))),
             suppliers: this.supplierService.getAll(0, 50).pipe(catchError(() => of({ content: [] }))),
             kitchenReport: this.kitchenService.getKitchenReport('ALL_TIME').pipe(catchError(() => of(null)))
         });
@@ -84,25 +83,6 @@ export class DashboardService {
             elaborations: val.count
         })).sort((a, b) => b.elaborations - a.elaborations).slice(0, 5);
 
-        // Map real students ranking from kitchen report if available, else from user list
-        let topStudents: TopStudent[] = [];
-        if (data.kitchenReport && data.kitchenReport.topUsers) {
-            topStudents = data.kitchenReport.topUsers.slice(0, 5).map((u: any) => ({
-                id: u.userId,
-                name: u.userName,
-                activePlans: 0,
-                elaborations: u.timesCooked || 0,
-                avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(u.userName)}&background=random`
-            }));
-        } else {
-            topStudents = (data.students || []).slice(0, 5).map((u: any) => ({
-                id: u.id,
-                name: u.name,
-                activePlans: 0,
-                elaborations: 0,
-                avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=random`
-            }));
-        }
 
         // Map real expiring batches
         const expiringProducts: ExpiringProduct[] = data.expiringBatches.slice(0, 10).map((b: any) => ({
@@ -120,7 +100,6 @@ export class DashboardService {
         return {
             kpis,
             topRecipes,
-            topStudents,
             expiringProducts,
             expenses: {
                 week: sortedExpenses,
