@@ -77,6 +77,7 @@ export interface KitchenReport {
   distinctProductsUsed: number;
   totalEstimatedCost: number;
   totalWasteCost: number;
+  totalExpiredWasteCost: number;
   totalSales: number;
   grossProfit: number;
   netProfit: number;

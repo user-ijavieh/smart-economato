@@ -724,6 +724,14 @@
   background: color-mix(in srgb, var(--color-danger-bg) 50%, transparent);
 }
 
+.stock-expired-warning {
+  color: var(--color-warning-muted);
+  border-color: color-mix(in srgb, var(--color-warning-muted) 35%, transparent);
+  background: color-mix(in srgb, var(--color-warning-bg) 50%, transparent);
+  margin-top: 8px;
+  cursor: help;
+}
+
 .stock-warning svg {
   width: 14px;
   height: 14px;
