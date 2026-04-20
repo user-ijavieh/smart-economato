@@ -20,7 +20,6 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 8px;
-  z-index: 31000;
   width: 340px;
   pointer-events: none;
 }

@@ -1,4 +1,4 @@
-<div class="alert-stack" [class.collapsed]="!showAlerts()" aria-live="assertive" aria-atomic="false" (click)="stopPropagation($event)">
+<div class="alert-stack" [class.collapsed]="!showAlerts()" [style.z-index]="zIndex()" aria-live="assertive" aria-atomic="false" (click)="stopPropagation($event)">
   <button
     type="button"
     class="alert-toggle"
