@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, map, of, switchMap, catchError } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { DashboardData, DashboardKpis, TopRecipe, ExpiringProduct, ExpenseDataPoint } from '../../shared/models/dashboard.model';
+import { DashboardData, DashboardKpis, TopRecipe, ExpiringProduct, ExpenseDataPoint, RecentOrder } from '../../shared/models/dashboard.model';
 import { UserService } from './user.service';
 import { StockAlertService } from './stock-alert.service';
 import { OrderService } from './order.service';
@@ -29,7 +29,8 @@ export class DashboardService {
             expiringBatches: this.batchService.getExpiringBatches(15).pipe(catchError(() => of([]))),
             suppliers: this.supplierService.getAll(0, 50).pipe(catchError(() => of({ content: [] }))),
             kitchenReport: this.kitchenService.getKitchenReport('ALL_TIME').pipe(catchError(() => of(null))),
-            openIncidents: this.incidentService.getIncidents({ status: 'ABIERTO', size: 1 }).pipe(catchError(() => of({ totalElements: 0 })))
+            openIncidents: this.incidentService.getIncidents({ status: 'ABIERTO', size: 1 }).pipe(catchError(() => of({ totalElements: 0 }))),
+            recentOrders: this.orderService.getAll(0, 5).pipe(catchError(() => of({ content: [] })))
         });
 
         // Step 2: Fetch real Total Costs for each supplier
@@ -104,12 +105,19 @@ export class DashboardService {
             unit: 'uds'
         }));
 
+        const recentOrders: RecentOrder[] = (Array.isArray(data.recentOrders) ? data.recentOrders : (data.recentOrders?.content || [])).map((o: any) => ({
+            id: o.id,
+            userName: o.userName || 'Usuario',
+            orderDate: o.orderDate
+        }));
+
         const sortedExpenses = [...expensePoints].sort((a, b) => b.value - a.value).slice(0, 10);
 
         return {
             kpis,
             topRecipes,
             expiringProducts,
+            recentOrders,
             expenses: {
                 week: sortedExpenses,
                 month: sortedExpenses,

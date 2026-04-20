@@ -290,19 +290,101 @@
         grid-template-columns: repeat(2, 1fr);
     }
     
-    .chart-card { grid-column: span 2; }
+    .chart-card-standalone, .inventory-card.full-width { grid-column: span 2; }
+
+    .welcome-banner-text h2 {
+        font-size: 2.5rem;
+    }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1024px) {
+    .admin-dashboard-clean.page-content {
+        padding: 1.5rem 1rem;
+    }
+
+    .stats-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .stat-card {
+        padding: 1.5rem;
+    }
+
+    .stat-card .stat-number {
+        font-size: 2.2rem;
+    }
+
     .dashboard-grid {
         grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
     
-    .chart-card, .ranking-card { grid-column: span 1; }
+    .chart-card, .ranking-card, .inventory-card, .chart-card-standalone { 
+        grid-column: span 1 !important; 
+    }
     
     .welcome-banner {
-        padding: 1.5rem;
-        flex-direction: column;
-        text-align: center;
+        padding: 2.5rem 1.5rem;
+    }
+
+    .welcome-banner-text h2 {
+        font-size: 2rem;
+    }
+
+    .hide-on-mobile {
+        display: none !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .welcome-banner-text h2 {
+        font-size: 1.5rem;
+    }
+
+    .welcome-banner-text p {
+        font-size: 0.9rem;
+    }
+
+    .tabla-contenedor {
+        padding: 1rem;
+    }
+
+    .card-header-flex h3 {
+        font-size: 1.2rem;
+    }
+    
+    .item-primary {
+        font-size: 0.85rem;
+    }
+
+    .stat-card .stat-number {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .welcome-banner-text h2 {
+        font-size: 1.5rem;
+    }
+
+    .welcome-banner-text p {
+        font-size: 0.9rem;
+    }
+
+    .tabla-contenedor {
+        padding: 1rem;
+    }
+
+    .card-header-flex h3 {
+        font-size: 1.2rem;
+    }
+    
+    .item-primary {
+        font-size: 0.85rem;
+    }
+
+    .stat-card .stat-number {
+        font-size: 2rem;
     }
 }
