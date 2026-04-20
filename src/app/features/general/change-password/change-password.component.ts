@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators, AbstractContro
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { MessageService } from '../../../core/services/message.service';
+import { ThemeService } from '../../../core/services/theme.service';
 
 export function robustPasswordValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
@@ -43,6 +44,7 @@ export class ChangePasswordComponent {
     private router = inject(Router);
     private route = inject(ActivatedRoute);
     private messageService = inject(MessageService);
+    private themeService = inject(ThemeService);
 
     loading = false;
 
@@ -53,6 +55,14 @@ export class ChangePasswordComponent {
     }, { validators: passwordMatchValidator });
 
     get newPasswordCtrl() { return this.form.get('newPassword'); }
+
+    toggleTheme(): void {
+        this.themeService.toggleTheme();
+    }
+
+    isDarkMode(): boolean {
+        return this.themeService.isDark();
+    }
 
     onSubmit() {
         if (this.form.invalid) {
