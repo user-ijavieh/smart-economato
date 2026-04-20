@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Product, ProductRequest } from '../../../../shared/models/product.model';
 import { Supplier } from '../../../../shared/models/supplier.model';
+import { SearchableDropdownComponent, SearchableItem } from '../../../../shared/components/searchable-dropdown/searchable-dropdown.component';
 
 export interface ProductFormState {
   name: string;
@@ -17,7 +18,7 @@ export interface ProductFormState {
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SearchableDropdownComponent],
   templateUrl: './product-form.component.html',
   styleUrl: './product-form.component.css'
 })
@@ -53,6 +54,22 @@ export class ProductFormComponent implements OnChanges {
     // Formas específicas de cocina
     "MANOJO", "HOJA", "LONCHA", "DIENTE", "RAMA", "FILETE", "RODAJA", "REBANADA"
   ];
+  
+  get supplierSearchItems(): SearchableItem[] {
+    return this.suppliers.map(s => ({
+      id: s.id,
+      name: s.name
+    }));
+  }
+
+  get selectedSupplierName(): string {
+    const supplier = this.suppliers.find(s => s.id === this.formProduct.supplierId);
+    return supplier ? supplier.name : '';
+  }
+
+  onSupplierSelected(item: SearchableItem): void {
+    this.formProduct.supplierId = item.id;
+  }
   
   isEditing = false;
 

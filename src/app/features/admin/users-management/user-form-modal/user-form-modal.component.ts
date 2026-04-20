@@ -4,14 +4,16 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { User } from '../../../../shared/models/user.model';
 import { generateUsername, generatePassword } from '../../../../core/utils/credentials-generator';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
+import { SearchableDropdownComponent, SearchableItem } from '../../../../shared/components/searchable-dropdown/searchable-dropdown.component';
 
 @Component({
     selector: 'app-user-form-modal',
     standalone: true,
-    imports: [ReactiveFormsModule, BaseModalComponent],
+    imports: [ReactiveFormsModule, BaseModalComponent, SearchableDropdownComponent],
     templateUrl: './user-form-modal.component.html',
     styleUrl: './user-form-modal.component.css'
 })
+/** Component for user creation and editing with searchable teacher selection */
 export class UserFormModalComponent implements OnInit {
     private destroyRef = inject(DestroyRef);
 
@@ -56,6 +58,24 @@ export class UserFormModalComponent implements OnInit {
             return [...this.roleOptions, { value: 'ELEVATED', label: 'Alumno' }];
         }
         return this.roleOptions;
+    }
+
+    get teacherSearchItems(): SearchableItem[] {
+        return this.teachers.map(t => ({
+            id: t.id,
+            name: `${t.name} (${t.user})`
+        }));
+    }
+
+    get selectedTeacherName(): string {
+        const teacherId = this.userForm?.get('teacherId')?.value;
+        const teacher = this.teachers.find(t => t.id === teacherId);
+        return teacher ? `${teacher.name} (${teacher.user})` : '';
+    }
+
+    onTeacherSelected(item: SearchableItem): void {
+        this.userForm.get('teacherId')?.setValue(item.id);
+        this.userForm.get('teacherId')?.markAsDirty();
     }
 
     ngOnInit(): void {

@@ -5,11 +5,12 @@ import { Supplier } from '../../../../shared/models/supplier.model';
 import { MessageService } from '../../../../core/services/message.service';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.component';
+import { SearchableDropdownComponent, SearchableItem } from '../../../../shared/components/searchable-dropdown/searchable-dropdown.component';
 
 @Component({
   selector: 'app-product-edit-modal',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent, BarcodeScannerComponent],
+  imports: [FormsModule, BaseModalComponent, BarcodeScannerComponent, SearchableDropdownComponent],
   templateUrl: './product-edit-modal.component.html',
   styleUrl: './product-edit-modal.component.css'
 })
@@ -53,6 +54,22 @@ export class ProductEditModalComponent implements OnChanges {
     // Formas específicas de cocina
     "MANOJO", "HOJA", "LONCHA", "DIENTE", "RAMA", "FILETE", "RODAJA", "REBANADA"
   ];
+
+  get supplierSearchItems(): SearchableItem[] {
+    return this.suppliers.map(s => ({
+      id: s.id,
+      name: s.name
+    }));
+  }
+
+  get selectedSupplierName(): string {
+    const supplier = this.suppliers.find(s => s.id === this.formData.supplierId);
+    return supplier ? supplier.name : '';
+  }
+
+  onSupplierSelected(item: SearchableItem): void {
+    this.formData.supplierId = item.id;
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['product'] && this.product) {
