@@ -785,6 +785,14 @@
     overflow: hidden;
   }
 
+  .gpt-top-left .toolbar-btn {
+    margin-left: 56px;
+  }
+
+  .gpt-top-right .toolbar-btn {
+    margin-right: 56px;
+  }
+
   .gpt-top-bar {
     padding-right: 30px;
   }
@@ -822,10 +830,10 @@
   }
 
   .gpt-composer-wrapper {
-    bottom: 10px;
+    bottom: 0px;
     /* Se posiciona justo encima de la navbar */
     padding-top: 10px;
-    padding-bottom: 10px;
+    padding-bottom: env(safe-area-inset-bottom);
     /* Añade el margen estético superior */
   }
 

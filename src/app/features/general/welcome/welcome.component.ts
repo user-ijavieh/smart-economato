@@ -1,7 +1,12 @@
-import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
+import { ThemeService } from '../../../core/services/theme.service';
+import { NotificationService, SessionNotification } from '../../../core/services/notification.service';
+import { HttpQueryCacheService } from '../../../core/services/http-query-cache.service';
+import { MessageService } from '../../../core/services/message.service';
 
 @Component({
   selector: 'app-welcome',
@@ -13,6 +18,10 @@ import { BaseModalComponent } from '../../../shared/components/base-modal/base-m
 export class WelcomeComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
+  private themeService = inject(ThemeService);
+  private notificationService = inject(NotificationService);
+  private httpQueryCacheService = inject(HttpQueryCacheService);
+  private messageService = inject(MessageService);
 
   slides = [
     '/assets/img/carousel/carousel1.jpg',
@@ -21,6 +30,7 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   ];
   currentSlide = 0;
   private intervalId: ReturnType<typeof setInterval> | null = null;
+  private notificationCloseTimer?: ReturnType<typeof setTimeout>;
 
   navCards = [
     { label: 'Inventario', route: '/inventario', icon: '/assets/img/icons/inventory.svg' },
@@ -39,9 +49,8 @@ export class WelcomeComponent implements OnInit, OnDestroy {
     return this.navCards;
   }
 
-  get isChefOrAdmin(): boolean {
-    const role = this.authService.getRole();
-    return role === 'CHEF' || role === 'ADMIN';
+  get isChef(): boolean {
+    return this.authService.getRole() === 'CHEF';
   }
 
   get isTeacher(): boolean {
@@ -64,11 +73,27 @@ export class WelcomeComponent implements OnInit, OnDestroy {
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
+
+    if (this.notificationCloseTimer) {
+      clearTimeout(this.notificationCloseTimer);
+      this.notificationCloseTimer = undefined;
+    }
   }
 
   showLogoutModal = false;
+  showClearCacheModal = false;
+
+  readonly notifications = toSignal(this.notificationService.notifications$, { initialValue: [] as SessionNotification[] });
+  readonly unreadCount = toSignal(this.notificationService.unreadCount$, { initialValue: 0 });
+  readonly isNotificationPanelOpen = signal(false);
+  readonly isNotificationPanelRendered = signal(false);
+  readonly isNotificationPanelClosing = signal(false);
+  readonly showUtilities = signal<boolean>(localStorage.getItem('welcome_utilities_visible') !== 'false');
 
   logout(): void {
+    if (this.isNotificationPanelOpen()) {
+      this.closeNotificationPanel();
+    }
     this.showLogoutModal = true;
   }
 
@@ -79,5 +104,125 @@ export class WelcomeComponent implements OnInit, OnDestroy {
 
   cancelLogout(): void {
     this.showLogoutModal = false;
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+  }
+
+  isDarkMode(): boolean {
+    return this.themeService.isDark();
+  }
+
+  toggleUtilities(): void {
+    const newValue = !this.showUtilities();
+    this.showUtilities.set(newValue);
+    localStorage.setItem('welcome_utilities_visible', String(newValue));
+  }
+
+  toggleNotificationPanel(event: MouseEvent): void {
+    event.stopPropagation();
+
+    if (this.isNotificationPanelOpen()) {
+      this.closeNotificationPanel();
+      return;
+    }
+
+    if (this.notificationCloseTimer) {
+      clearTimeout(this.notificationCloseTimer);
+      this.notificationCloseTimer = undefined;
+    }
+
+    this.isNotificationPanelRendered.set(true);
+    this.isNotificationPanelClosing.set(false);
+    this.isNotificationPanelOpen.set(true);
+    this.notificationService.refreshNotifications();
+  }
+
+  stopPanelPropagation(event: MouseEvent): void {
+    event.stopPropagation();
+  }
+
+  closeNotificationPanel(event?: MouseEvent): void {
+    event?.stopPropagation();
+
+    if (!this.isNotificationPanelRendered()) {
+      return;
+    }
+
+    this.isNotificationPanelOpen.set(false);
+    this.isNotificationPanelClosing.set(true);
+
+    if (this.notificationCloseTimer) {
+      clearTimeout(this.notificationCloseTimer);
+    }
+
+    this.notificationCloseTimer = setTimeout(() => {
+      this.isNotificationPanelClosing.set(false);
+      this.isNotificationPanelRendered.set(false);
+      this.notificationCloseTimer = undefined;
+    }, 220);
+  }
+
+  onNotificationClick(notification: SessionNotification): void {
+    this.notificationService.markAsRead(notification.id);
+    this.notificationService.toggleExpanded(notification.id);
+  }
+
+  markAllNotificationsAsRead(): void {
+    this.notificationService.markAllAsRead();
+  }
+
+  notificationIcon(notification: SessionNotification): string {
+    if (notification.code === 'FOOD_CRISIS_ACTIVATED') {
+      return 'crisis';
+    }
+
+    if (notification.code === 'FOOD_CRISIS_LIFTED') {
+      return 'success';
+    }
+
+    return 'info';
+  }
+
+  formatNotificationTimestamp(timestamp: string): string {
+    const date = new Date(timestamp);
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+
+    const diffMs = Date.now() - date.getTime();
+    const diffMinutes = Math.floor(diffMs / 60000);
+
+    if (diffMinutes < 1) {
+      return 'Ahora';
+    }
+
+    if (diffMinutes < 60) {
+      return `Hace ${diffMinutes} min`;
+    }
+
+    if (diffMinutes < 24 * 60) {
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    return date.toLocaleDateString([], { day: '2-digit', month: '2-digit' });
+  }
+
+  openClearCacheModal(): void {
+    if (this.isNotificationPanelOpen()) {
+      this.closeNotificationPanel();
+    }
+    this.showClearCacheModal = true;
+  }
+
+  cancelClearCache(): void {
+    this.showClearCacheModal = false;
+  }
+
+  confirmClearCache(): void {
+    this.httpQueryCacheService.clearAll();
+    this.showClearCacheModal = false;
+    this.messageService.showSuccess('Cache limpiada. Si habias datos antiguos, se recargaran en la siguiente consulta.');
   }
 }

@@ -1,4 +1,4 @@
-<div class="toast-container" role="region" aria-label="Notificaciones" aria-live="polite">
+<div class="toast-container" [style.z-index]="zIndex()" role="region" aria-label="Notificaciones" aria-live="polite">
   @for (toast of toasts; track toast.id) {
   <div [class]="'toast toast-' + toast.type + (isExiting(toast.id) ? ' toast-exit' : '')" role="alert">
 
