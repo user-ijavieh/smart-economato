@@ -1,12 +1,14 @@
 export interface DashboardKpis {
     activeTeachers: number;
     expiringProductsCount: number;
+    openIncidentsCount: number;
 }
 
 export interface TopRecipe {
     id: number;
     name: string;
     elaborations: number;
+    portions: number;
     image?: string;
 }
 
