@@ -1,22 +1,12 @@
 /**
- * Genera un nombre de usuario único con el formato:
- * [Letra][timestamp en base36][número aleatorio][Letra]
- *
- * Ejemplo: "A-lk2f8x-42-M"
- *
- * - La letra inicial y final son aleatorias (A-Z)
- * - El timestamp (Date.now()) se convierte a base36 para acortar
- * - El número aleatorio es de 2 dígitos (10-99)
+ * Genera un nombre de usuario con formato SE + 8 dígitos aleatorios.
+ * Ejemplo: SE48301572, SE00293847
+ * Combinaciones posibles: 100,000,000
  */
 export function generateUsername(): string {
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-    const firstLetter = letters[Math.floor(Math.random() * letters.length)];
-    const lastLetter = letters[Math.floor(Math.random() * letters.length)];
-    const timestamp = Date.now().toString(36);
-    const randomNumber = Math.floor(Math.random() * 90 + 10); // 10–99
-
-    return `${firstLetter}${timestamp}${randomNumber}${lastLetter}`;
+    const prefix = 'SE';
+    const randomNumber = Math.floor(Math.random() * 100_000_000);
+    return `${prefix}${String(randomNumber).padStart(8, '0')}`;
 }
 
 /**

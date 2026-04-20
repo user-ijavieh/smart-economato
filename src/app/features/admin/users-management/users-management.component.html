@@ -464,7 +464,7 @@
 
 <!-- Modal de creación/edición -->
 @if (showFormModal) {
-<app-user-form-modal [user]="selectedUser" [teachers]="teachers" [existingUsers]="getExistingUsers()" (save)="onSaveUser($event)"
+<app-user-form-modal [user]="selectedUser" [teachers]="teachers" (save)="onSaveUser($event)"
     (close)="closeFormModal()"></app-user-form-modal>
 }
 

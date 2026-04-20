@@ -1,7 +1,9 @@
 import { Component, Input, Output, EventEmitter, OnInit, DestroyRef, inject } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Observable, of, switchMap } from 'rxjs';
 import { User } from '../../../../shared/models/user.model';
+import { UserService } from '../../../../core/services/user.service';
 import { generateUsername, generatePassword } from '../../../../core/utils/credentials-generator';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 
@@ -14,10 +16,10 @@ import { BaseModalComponent } from '../../../../shared/components/base-modal/bas
 })
 export class UserFormModalComponent implements OnInit {
     private destroyRef = inject(DestroyRef);
+    private userService = inject(UserService);
 
     @Input() user: User | null = null;
     @Input() teachers: User[] = [];
-    @Input() existingUsers: string[] = [];
     @Output() save = new EventEmitter<any>();
     @Output() close = new EventEmitter<void>();
 
@@ -109,38 +111,33 @@ export class UserFormModalComponent implements OnInit {
 
             this.save.emit(payload);
         } else {
-            // Generate unique credentials
-            this.generatedUser = this.generateUniqueUser();
-            this.generatedPassword = generatePassword();
+            this.generateUniqueUser().subscribe(username => {
+                this.generatedUser = username;
+                this.generatedPassword = generatePassword();
 
-            const formValue = this.userForm.value;
-            const payload: any = {
-                name: formValue.name,
-                user: this.generatedUser,
-                password: this.generatedPassword,
-                role: formValue.role
-            };
+                const formValue = this.userForm.value;
+                const payload: any = {
+                    name: formValue.name,
+                    user: this.generatedUser,
+                    password: this.generatedPassword,
+                    role: formValue.role
+                };
 
-            if (this.showTeacherField) {
-                payload.teacherId = formValue.teacherId === '' ? null : formValue.teacherId;
-            }
+                if (this.showTeacherField) {
+                    payload.teacherId = formValue.teacherId === '' ? null : formValue.teacherId;
+                }
 
-            this.save.emit(payload);
-
-            this.showCredentials = true;
+                this.save.emit(payload);
+                this.showCredentials = true;
+            });
         }
     }
 
-    private generateUniqueUser(): string {
-        let username: string;
-        let attempts = 0;
-
-        do {
-            username = generateUsername();
-            attempts++;
-        } while (this.existingUsers.includes(username) && attempts < 100);
-
-        return username;
+    private generateUniqueUser(): Observable<string> {
+        const username = generateUsername();
+        return this.userService.checkUsernameExists(username).pipe(
+            switchMap(exists => exists ? this.generateUniqueUser() : of(username))
+        );
     }
 
     copyCredentials(): void {
