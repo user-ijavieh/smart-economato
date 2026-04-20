@@ -335,7 +335,7 @@
   transform: scale(1.06);
 }
 /** ===== Responsive ===== */
-@media (max-width: 800px) {
+@media (max-width: 767px) {
   .login-wrapper {
     justify-content: center;
     padding: 24px 20px;

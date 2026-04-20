@@ -138,6 +138,21 @@ export class UserService {
     });
   }
 
+  checkUsernameExists(username: string): Observable<boolean> {
+    const params = new HttpParams()
+      .set('term', username)
+      .set('page', '0')
+      .set('size', '1')
+      .set('sort', 'name,asc');
+
+    const role = (localStorage.getItem('user_role') || '').toUpperCase();
+    const endpoint = role === 'CHEF' ? `${this.url}/teachers/search` : `${this.url}/search`;
+
+    return this.http.get<Page<User>>(endpoint, { params }).pipe(
+      map(page => page.content.some(u => u.user === username))
+    );
+  }
+
   getMyStudents(): Observable<User[]> {
     return this.cache.getOrFetch('weekly_plan', 'users:myStudents', () => this.http.get<User[]>(`${this.url}/students`));
   }
