@@ -46,7 +46,7 @@ export interface SearchableItem {
       } @else if (isOpen && loading) {
         <div class="dropdown-menu">
           <div class="dropdown-item loading">
-            <span>Cargando recetas...</span>
+            <span>{{ loadingText }}</span>
           </div>
         </div>
       } @else if (isOpen && searchResults.length === 0 && !loading) {
@@ -135,6 +135,7 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy {
     return this._items;
   }
   @Input() placeholder = 'Buscar...';
+  @Input() loadingText = 'Cargando...';
   @Input() selectedIds: number[] = [];
   @Input() loading = false;
   @Input() loadingMore = false;

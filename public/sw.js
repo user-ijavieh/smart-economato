@@ -123,7 +123,7 @@ self.addEventListener('fetch', (event) => {
   // Static assets & app shell: Cache-First
   if (
     url.pathname.includes('/assets/') ||
-    url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|ico|woff2?|ttf)$/)
+    url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|ico|webmanifest|woff2?|ttf)$/)
   ) {
     event.respondWith(cacheFirstStrategy(request, STATIC_CACHE));
     return;

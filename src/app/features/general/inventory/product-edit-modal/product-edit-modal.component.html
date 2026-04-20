@@ -65,12 +65,13 @@
 
       <div class="form-group full-width">
         <label for="supplierId">Proveedor</label>
-        <select id="supplierId" [(ngModel)]="formData.supplierId" name="supplierId">
-          <option [value]="undefined">Sin proveedor</option>
-          @for (supplier of suppliers; track supplier.id) {
-          <option [value]="supplier.id">{{ supplier.name }}</option>
-          }
-        </select>
+        <app-searchable-dropdown
+          [items]="supplierSearchItems"
+          [selectedIds]="formData.supplierId ? [formData.supplierId] : []"
+          [initialText]="selectedSupplierName"
+          placeholder="Seleccionar proveedor..."
+          (itemSelected)="onSupplierSelected($event)"
+        ></app-searchable-dropdown>
       </div>
     </div>
   </form>
