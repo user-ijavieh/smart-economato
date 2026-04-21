@@ -251,8 +251,9 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  formatUnit(unit: string | undefined): string {
+  formatUnit(unit: string | undefined, compact = true): string {
     if (!unit) return '';
+    if (!compact) return unit;
     return unit.length > 5 ? unit.substring(0, 4) + '.' : unit;
   }
 

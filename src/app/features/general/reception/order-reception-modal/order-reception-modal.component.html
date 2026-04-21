@@ -103,7 +103,7 @@
                       [class.total-match]="getTotalReceived(detail) === detail.quantity"
                       [class.total-excess]="getTotalReceived(detail) > detail.quantity">
                   @if (roundingMode === 'lots' && detail.lotQuantity) {
-                    {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} / {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} lotes de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }} ({{ detail.quantity | number:'1.0-2' }} / {{ getTotalReceived(detail) | number:'1.0-2' }} {{ formatUnit(detail.unit) }})
+                    {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} / {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} lotes de {{ detail.lotQuantity }} {{ formatUnit(detail.unit, false) }} ({{ detail.quantity | number:'1.0-2' }} / {{ getTotalReceived(detail) | number:'1.0-2' }} {{ formatUnit(detail.unit, false) }})
                   } @else {
                     {{ getFormattedQuantity(detail) }}
                   }
@@ -159,7 +159,7 @@
               <td><strong>{{ detail.productName }}</strong> @if (detail.lotQuantity) { <small>(Lote: {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }})</small> }</td>
               <td class="text-center">
                 @if (roundingMode === 'lots' && detail.lotQuantity) {
-                   {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} L. de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }} ({{ detail.quantity | number:'1.0-2' }} {{ formatUnit(detail.unit) }})
+                   {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} L. de {{ detail.lotQuantity }} {{ formatUnit(detail.unit, false) }} ({{ detail.quantity | number:'1.0-2' }} {{ formatUnit(detail.unit, false) }})
                 } @else {
                    {{ detail.quantity }} {{ formatUnit(detail.unit) }}
                 }
@@ -169,7 +169,7 @@
                        [class.total-match]="getTotalReceived(detail) === detail.quantity"
                        [class.total-excess]="getTotalReceived(detail) > detail.quantity">
                     @if (roundingMode === 'lots' && detail.lotQuantity) {
-                      {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} L. de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }} ({{ getTotalReceived(detail) | number:'1.0-2' }} {{ formatUnit(detail.unit) }})
+                      {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} L. de {{ detail.lotQuantity }} {{ formatUnit(detail.unit, false) }} ({{ getTotalReceived(detail) | number:'1.0-2' }} {{ formatUnit(detail.unit, false) }})
                     } @else {
                       {{ getTotalReceived(detail) }}
                     }
@@ -202,7 +202,7 @@
                         step="0.1"
                         [disabled]="isInputDisabled(quantityPath)"
                         [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)" />
-                      <span class="inline-unit lot-unit">L. de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }}</span>
+                      <span class="inline-unit lot-unit">L. de {{ detail.lotQuantity }} {{ formatUnit(detail.unit, false) }}</span>
                     </div>
                   } @else {
                     <input 
@@ -275,9 +275,9 @@
                 <div class="mobile-product-meta">
                   Solicitado: 
                   @if (roundingMode === 'lots' && detail.lotQuantity) {
-                    {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} lotes de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }} ({{ detail.quantity | number:'1.0-2' }} {{ formatUnit(detail.unit) }})
+                    {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} lotes de {{ detail.lotQuantity }} {{ formatUnit(detail.unit, false) }} ({{ detail.quantity | number:'1.0-2' }} {{ formatUnit(detail.unit, false) }})
                   } @else {
-                    {{ detail.quantity }} {{ formatUnit(detail.unit) }}
+                    {{ detail.quantity }} {{ formatUnit(detail.unit, false) }}
                   }
                 </div>
                 <div class="mobile-product-meta">
@@ -286,7 +286,7 @@
                         [class.total-match]="getTotalReceived(detail) === detail.quantity"
                         [class.total-excess]="getTotalReceived(detail) > detail.quantity">
                     @if (roundingMode === 'lots' && detail.lotQuantity) {
-                      {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} L. de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }} ({{ getTotalReceived(detail) | number:'1.0-2' }} {{ formatUnit(detail.unit) }})
+                      {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} L. de {{ detail.lotQuantity }} {{ formatUnit(detail.unit, false) }} ({{ getTotalReceived(detail) | number:'1.0-2' }} {{ formatUnit(detail.unit, false) }})
                     } @else {
                       {{ getTotalReceived(detail) }}
                     }
@@ -333,7 +333,7 @@
                           step="0.1"
                           [disabled]="isInputDisabled(quantityPath)"
                           [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)" />
-                        <span class="inline-unit lot-unit">L. de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }}</span>
+                        <span class="inline-unit lot-unit">Lote de {{ detail.lotQuantity }} {{ formatUnit(detail.unit, false) }}</span>
                       </div>
                     } @else {
                       <input
