@@ -142,6 +142,12 @@ export class UserService {
     return this.cache.getOrFetch('weekly_plan', 'users:myStudents', () => this.http.get<User[]>(`${this.url}/students`));
   }
 
+  getStudentsByTeacherId(teacherId: number): Observable<User[]> {
+    return this.cache.getOrFetch('weekly_plan', `users:teacherStudents:${teacherId}`, () =>
+      this.http.get<User[]>(`${this.url}/teachers/${teacherId}/students`)
+    );
+  }
+
   getMyStudentsPage(page = 0, size = 50): Observable<Page<User>> {
     return this.getMyStudents().pipe(
       map(students => {
