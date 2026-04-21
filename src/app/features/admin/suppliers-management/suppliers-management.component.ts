@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { SupplierService } from '../../../core/services/supplier.service';
 import { MessageService } from '../../../core/services/message.service';
 import { Observable, Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
@@ -19,7 +20,8 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
         CommonModule,
         FormsModule,
         SupplierFormModalComponent,
-        BaseModalComponent
+        BaseModalComponent,
+        TranslateModule
     ],
     templateUrl: './suppliers-management.component.html',
     styleUrl: './suppliers-management.component.css'
@@ -29,6 +31,7 @@ export class SuppliersManagementComponent implements OnInit, OnDestroy {
     private cdr = inject(ChangeDetectorRef);
     private scrollService = inject(ScrollService);
     private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
+    private translate = inject(TranslateService);
     messageService = inject(MessageService);
     private destroy$ = new Subject<void>();
 
@@ -92,8 +95,6 @@ export class SuppliersManagementComponent implements OnInit, OnDestroy {
         this.currentPage = page;
         this.serverCurrentPage = page;
         
-        // Clear lists to force skeleton loader
-        // Removed array clear to prevent layout shift
         this.cdr.detectChanges();
 
         const sortParam = `${this.sortColumn},${this.sortDir}`;
@@ -114,7 +115,7 @@ export class SuppliersManagementComponent implements OnInit, OnDestroy {
             },
             error: (err: any) => {
                 console.error('Error loading suppliers:', err);
-                this.messageService.showError('Error al cargar los proveedores');
+                this.messageService.showError(this.translate.instant('SUPPLIERS.LOAD_ERROR') || 'Error al cargar los proveedores');
                 this.loading = false;
                 this.cdr.detectChanges();
             }
@@ -124,7 +125,6 @@ export class SuppliersManagementComponent implements OnInit, OnDestroy {
     applyFilter(): void {
         let result = [...this.suppliers];
         
-        // Sorting fallback
         const factor = this.sortDir === 'asc' ? 1 : -1;
         result.sort((a, b) => {
             const valA = (a as any)[this.sortColumn];
@@ -220,7 +220,6 @@ export class SuppliersManagementComponent implements OnInit, OnDestroy {
             return;
         }
 
-        // Keep mobile detail modal open and stack edit modal above it.
         this.openEditModal(this.selectedSupplierForMobile);
     }
 
@@ -235,26 +234,26 @@ export class SuppliersManagementComponent implements OnInit, OnDestroy {
             // Edit mode
             this.supplierService.update(this.selectedSupplier.id, request).subscribe({
                 next: () => {
-                    this.messageService.showSuccess('Proveedor actualizado correctamente');
+                    this.messageService.showSuccess(this.translate.instant('SUPPLIER_FORM.UPDATE_SUCCESS'));
                     this.closeFormModal();
                     this.loadSuppliers(this.currentPage);
                 },
                 error: (err) => {
                     console.error('Error updating supplier:', err);
-                    this.messageService.showError('Error al actualizar el proveedor');
+                    this.messageService.showError(this.translate.instant('SUPPLIER_FORM.UPDATE_ERROR') || 'Error al actualizar el proveedor');
                 }
             });
         } else {
             // Create mode
             this.supplierService.create(request).subscribe({
                 next: () => {
-                    this.messageService.showSuccess('Proveedor creado correctamente');
+                    this.messageService.showSuccess(this.translate.instant('SUPPLIER_FORM.CREATE_SUCCESS'));
                     this.closeFormModal();
                     this.loadSuppliers();
                 },
                 error: (err) => {
                     console.error('Error creating supplier:', err);
-                    this.messageService.showError('Error al crear el proveedor');
+                    this.messageService.showError(this.translate.instant('SUPPLIER_FORM.CREATE_ERROR') || 'Error al crear el proveedor');
                 }
             });
         }
@@ -262,20 +261,20 @@ export class SuppliersManagementComponent implements OnInit, OnDestroy {
 
     async deleteSupplier(supplier: Supplier): Promise<void> {
         const confirmed = await this.messageService.confirm(
-            '¿Eliminar proveedor?',
-            `¿Estás seguro de que quieres eliminar a "${supplier.name}"? Esta acción no se puede deshacer.`
+            this.translate.instant('SUPPLIERS.ACTIONS.DELETE_CONFIRM_TITLE'),
+            this.translate.instant('SUPPLIERS.ACTIONS.DELETE_CONFIRM_MSG', { name: supplier.name })
         );
 
         if (!confirmed) return;
 
         this.supplierService.delete(supplier.id).subscribe({
             next: () => {
-                this.messageService.showSuccess('Proveedor eliminado correctamente');
+                this.messageService.showSuccess(this.translate.instant('SUPPLIER_FORM.DELETE_SUCCESS'));
                 this.loadSuppliers(this.currentPage);
             },
             error: (err) => {
                 console.error('Error deleting supplier:', err);
-                const errorMessage = err.error?.message || 'Error al eliminar el proveedor. Puede tener productos asociados.';
+                const errorMessage = err.error?.message || this.translate.instant('SUPPLIER_FORM.DELETE_ERROR_ASSOCIATED') || 'Error al eliminar el proveedor. Puede tener productos asociados.';
                 this.messageService.showError(errorMessage);
             }
         });
