@@ -220,5 +220,11 @@ export class UserService {
     );
   }
 
+  getStudentsByTeacher(teacherId: number): Observable<User[]> {
+    return this.cache.getOrFetch('weekly_plan', `users:studentsByTeacher:${teacherId}`, () => 
+      this.http.get<User[]>(`${this.url}/teachers/${teacherId}/students`)
+    );
+  }
+
 }
 
