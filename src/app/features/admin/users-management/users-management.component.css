@@ -393,6 +393,19 @@ tr.row-hidden .user-avatar-small {
   border: 1px solid transparent;
 }
 
+.btn-ver {
+  background: var(--color-accent-admin-bg);
+  color: var(--color-accent-admin);
+  border: 1px solid rgba(90, 120, 220, 0.35);
+}
+
+.btn-ver:hover {
+  background: var(--color-accent-admin-hover-bg);
+  border-color: var(--color-accent-admin-hover-border);
+  color: var(--theme-text-primary);
+  transform: translateY(-2px);
+}
+
 .btn-editar {
   background: var(--color-accent-admin-bg);
   color: var(--color-accent-admin);
@@ -571,6 +584,24 @@ tr.row-hidden .user-avatar-small {
 .detail-field:last-of-type { border-bottom: none; }
 .detail-label { color: var(--theme-text-secondary); font-size: 0.85rem; }
 .detail-value { font-weight: 500; color: var(--theme-text-primary); }
+.teacher-students-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.teacher-student-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--theme-border-glass);
+  background: var(--theme-surface-glass-hover);
+  color: var(--theme-text-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
 .detail-actions {
   display: flex;
   flex-direction: row;
