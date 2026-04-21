@@ -109,8 +109,8 @@
                                 <span class="quantity-slash">/</span>
                                 <span class="quantity-secondary">{{ getReceivedQuantity(detail) }}</span>
                               }
+                              <span class="quantity-unit">{{ formatUnit(detail.unit) }}</span>
                             </div>
-                            <span class="quantity-unit">{{ formatUnit(detail.unit) }}</span>
                           }
 
                           @if (getComparisonSymbol(detail)) {

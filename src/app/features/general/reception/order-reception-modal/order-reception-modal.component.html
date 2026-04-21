@@ -1,20 +1,21 @@
-<app-base-modal [title]="'Procesar Recepción de Orden #' + order.id" size="lg" [closeOnBackdrop]="false" headerClass="reception-header" [beforeClose]="beforeCloseHandler" (closed)="close()">
+<app-base-modal [title]="'Procesar Recepción de Orden #' + order.id" size="lg" [closeOnBackdrop]="false"
+  headerClass="reception-header" [beforeClose]="beforeCloseHandler" (closed)="close()">
 
   <div class="order-reception-content">
-      <!-- DESHABILITADO: displayMode feature - Modo lectura en viewing_locked
+    <!-- DESHABILITADO: displayMode feature - Modo lectura en viewing_locked
       @if (displayMode === 'viewing_locked') {
         <div class="viewing-locked-banner">
           <p><strong>Modo lectura:</strong> Esta orden está siendo revisada. Puedes solicitar colaboración para poder contribuir con los cambios.</p>
         </div>
       }
       -->
-      
-      <div class="detail-group">
-        <p><strong>Usuario:</strong> {{ order.userName }}</p>
-        <p><strong>Fecha Solicitud:</strong> {{ order.orderDate | date:'dd/MM/yyyy' }}</p>
-      </div>
 
-      <!-- DESHABILITADO: Sistema de locks y colaboración compartida
+    <div class="detail-group">
+      <p><strong>Usuario:</strong> {{ order.userName }}</p>
+      <p><strong>Fecha Solicitud:</strong> {{ order.orderDate | date:'dd/MM/yyyy' }}</p>
+    </div>
+
+    <!-- DESHABILITADO: Sistema de locks y colaboración compartida
       @if (lockInfoTitle) {
         <div class="review-lock-banner" [class.review-lock-banner-blocking]="lockBlockedForCurrentUser">
           <div class="review-lock-banner-icon" aria-hidden="true">
@@ -30,7 +31,7 @@
       }
       -->
 
-      <!-- DESHABILITADO: Sistema de locks y colaboración compartida
+    <!-- DESHABILITADO: Sistema de locks y colaboración compartida
       <div class="collaboration-panel">
         <div class="collaboration-panel-header">
           <span class="collaboration-title">Revisión compartida</span>
@@ -86,326 +87,298 @@
       </div>
       -->
 
-      <div class="reception-summary">
-        <div class="section-header-row">
-          <h3 class="summary-title">Resumen de Productos</h3>
-          <div class="view-mode-toggle">
-            <button type="button" [class.active]="roundingMode === 'units'" (click)="onRoundingModeChange('units')">Unidades</button>
-            <button type="button" [class.active]="roundingMode === 'lots'" (click)="onRoundingModeChange('lots')">Lotes</button>
+    <div class="reception-summary">
+      <div class="section-header-row">
+        <h3 class="summary-title">Resumen de Productos</h3>
+        <div class="view-mode-toggle">
+          <button type="button" [class.active]="roundingMode === 'units'"
+            (click)="onRoundingModeChange('units')">Unidades</button>
+          <button type="button" [class.active]="roundingMode === 'lots'"
+            (click)="onRoundingModeChange('lots')">Lotes</button>
+        </div>
+      </div>
+      <div class="summary-items">
+        @for (detail of order.details; track detail.productId) {
+        <div class="summary-item">
+          <div class="summary-product-name">{{ detail.productName }}</div>
+          <div class="summary-quantity">
+            <span class="quantity-value" [class.total-match]="getTotalReceived(detail) === detail.quantity"
+              [class.total-excess]="getTotalReceived(detail) > detail.quantity">
+              @if (roundingMode === 'lots' && detail.lotQuantity) {
+              {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} L. ({{ detail.quantity |
+              number:'1.0-2' }}{{ formatUnit(detail.unit, false) }}) /
+              {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} L. ({{
+              getTotalReceived(detail) | number:'1.0-2' }}{{ formatUnit(detail.unit, false) }})
+              } @else {
+              {{ getFormattedQuantity(detail) }}
+              }
+            </span>
+            <span class="comparison-symbol" [class.symbol-match]="getComparisonSymbol(detail) === '✓'"
+              [class.symbol-missing]="getComparisonSymbol(detail) === '✕'"
+              [class.symbol-excess]="getComparisonSymbol(detail) === '▲'">
+              {{ getComparisonSymbol(detail) }}
+            </span>
           </div>
         </div>
-        <div class="summary-items">
-          @for (detail of order.details; track detail.productId) {
-            <div class="summary-item">
-              <div class="summary-product-name">{{ detail.productName }}</div>
-              <div class="summary-quantity">
-                <span class="quantity-value"
-                      [class.total-match]="getTotalReceived(detail) === detail.quantity"
-                      [class.total-excess]="getTotalReceived(detail) > detail.quantity">
-                  @if (roundingMode === 'lots' && detail.lotQuantity) {
-                    {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} / {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} lotes de {{ detail.lotQuantity }} {{ formatUnit(detail.unit, false) }} ({{ detail.quantity | number:'1.0-2' }} / {{ getTotalReceived(detail) | number:'1.0-2' }} {{ formatUnit(detail.unit, false) }})
-                  } @else {
-                    {{ getFormattedQuantity(detail) }}
-                  }
-                </span>
-                <span class="comparison-symbol" [class.symbol-match]="getComparisonSymbol(detail) === '✓'" [class.symbol-missing]="getComparisonSymbol(detail) === '✕'" [class.symbol-excess]="getComparisonSymbol(detail) === '▲'">
-                  {{ getComparisonSymbol(detail) }}
-                </span>
-              </div>
-            </div>
-          }
-        </div>
-      </div>
-
-      <div class="reception-search-bar">
-        <div class="search-bar-header">
-          <span class="search-bar-title">Buscar productos a procesar</span>
-          <span class="search-bar-hint">Escribe un nombre o usa el escáner</span>
-        </div>
-        <div class="search-input-group">
-          <input
-            type="text"
-            class="form-control search-input"
-            [(ngModel)]="searchTerm"
-            (ngModelChange)="onSearchTermChange($event)"
-            placeholder="Buscar producto por nombre o código"
-          />
-          <button type="button" class="btn-barcode" (click)="openBarcodeScanner()" [disabled]="isInputDisabled()" title="Buscar por código de barras">
-            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
-              <path d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z"/>
-            </svg>
-            Escanear
-          </button>
-          @if (searchTerm) {
-            <button type="button" class="btn-clear-search" (click)="clearSearch()" [disabled]="isInputDisabled()">Limpiar</button>
-          }
-        </div>
-      </div>
-
-      <div class="table-container desktop-table-container">
-        <table class="modal-table details-table">
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th class="text-center">Solicitado</th>
-              <th class="text-center received-col">Recibido (Total)</th>
-              <th class="text-center expiry-col">F. Caducidad <span class="required-asterisk">*</span></th>
-              <th class="text-center">Codigo de lote (opcional)</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (detail of visibleDetails; track detail.productId) {
-            <tr class="product-base-row">
-              <td><strong>{{ detail.productName }}</strong> @if (detail.lotQuantity) { <small>(Lote: {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }})</small> }</td>
-              <td class="text-center">
-                @if (roundingMode === 'lots' && detail.lotQuantity) {
-                   {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} L. de {{ detail.lotQuantity }} {{ formatUnit(detail.unit, false) }} ({{ detail.quantity | number:'1.0-2' }} {{ formatUnit(detail.unit, false) }})
-                } @else {
-                   {{ detail.quantity }} {{ formatUnit(detail.unit) }}
-                }
-              </td>
-              <td class="text-center">
-                 <span class="total-badge" 
-                       [class.total-match]="getTotalReceived(detail) === detail.quantity"
-                       [class.total-excess]="getTotalReceived(detail) > detail.quantity">
-                    @if (roundingMode === 'lots' && detail.lotQuantity) {
-                      {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} L. de {{ detail.lotQuantity }} {{ formatUnit(detail.unit, false) }} ({{ getTotalReceived(detail) | number:'1.0-2' }} {{ formatUnit(detail.unit, false) }})
-                    } @else {
-                      {{ getTotalReceived(detail) }}
-                    }
-                 </span>
-              </td>
-              <td class="text-right" colspan="2">
-                <button type="button" class="btn btn-sm btn-secondary add-lot-btn" (click)="addLot(detail)" [disabled]="isInputDisabled()">+ Lote</button>
-              </td>
-            </tr>
-            @for (lot of detail.lots; track $index) {
-            @let quantityPath = 'detail:' + detail.productId + ':lot:' + $index + ':quantity';
-            @let expirationPath = 'detail:' + detail.productId + ':lot:' + $index + ':expirationDate';
-            @let batchPath = 'detail:' + detail.productId + ':lot:' + $index + ':batchCode';
-            <tr class="lot-row">
-              <td class="lot-indent" colspan="2">
-                <span class="lot-label">↳ Lote {{ $index + 1 }}</span>
-              </td>
-              <td class="text-center received-col">
-                <div class="quantity-cell-actions">
-                  @if (roundingMode === 'lots' && detail.lotQuantity) {
-                    <div class="input-with-unit">
-                      <input 
-                        type="number" 
-                        class="form-control quantity-input" 
-                        [ngModel]="getLotCount(lot.quantity, detail.lotQuantity)" 
-                        (ngModelChange)="updateLotQuantity(detail, $index, $event)"
-                        (focus)="onFieldFocus(detail, $index, 'quantity')"
-                        (blur)="onFieldBlur(detail, $index, 'quantity')"
-                        min="0"
-                        step="0.1"
-                        [disabled]="isInputDisabled(quantityPath)"
-                        [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)" />
-                      <span class="inline-unit lot-unit">Lót.×{{ detail.lotQuantity }}{{ formatUnit(detail.unit) }}</span>
-                    </div>
-                  } @else {
-                    <input 
-                      type="number" 
-                      class="form-control quantity-input" 
-                      [(ngModel)]="lot.quantity" 
-                      (ngModelChange)="onLotFieldChange(detail, $index, 'quantity', $event)"
-                      (focus)="onFieldFocus(detail, $index, 'quantity')"
-                      (blur)="onFieldBlur(detail, $index, 'quantity')"
-                      min="0"
-                      [disabled]="isInputDisabled(quantityPath)"
-                      [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)"
-                      [title]="isFieldLockedByAnotherUser(quantityPath) ? ('Bloqueado por ' + getFieldLockOwner(quantityPath)) : ''" />
-                  }
-                  <button
-                    type="button"
-                    class="btn-scale"
-                    [class.btn-scale-active]="isScaleActiveForLot(detail, $index)"
-                    [disabled]="isInputDisabled(quantityPath)"
-                    [title]="isScaleActiveForLot(detail, $index) ? 'Detener lectura de báscula' : 'Iniciar lectura de báscula'"
-                    (click)="toggleScaleForLot(detail, $index)">
-                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                      <path d="M4 8a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8Zm4-2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H8Zm1.2 7.2A2.8 2.8 0 1 1 14.8 13.2L12 10.8l-2.8 2.4Z" />
-                    </svg>
-                  </button>
-                </div>
-              </td>
-              <td class="text-center expiry-col lot-actions-cell">
-                <input
-                  type="date"
-                  class="form-control quantity-input"
-                  [(ngModel)]="lot.expirationDate"
-                  (ngModelChange)="onLotFieldChange(detail, $index, 'expirationDate', $event)"
-                  (focus)="onFieldFocus(detail, $index, 'expirationDate')"
-                  (blur)="onFieldBlur(detail, $index, 'expirationDate')"
-                  [disabled]="isInputDisabled(expirationPath)"
-                  [class.field-locked]="isFieldLockedByAnotherUser(expirationPath)"
-                  [title]="isFieldLockedByAnotherUser(expirationPath) ? ('Bloqueado por ' + getFieldLockOwner(expirationPath)) : ''" />
-                @if (detail.lots!.length > 1) {
-                  <button type="button" class="btn-remove-lot" (click)="removeLot(detail, $index)" [disabled]="isInputDisabled()" title="Eliminar lote">✕</button>
-                }
-              </td>
-              <td class="text-center">
-                <input
-                  type="text"
-                  class="form-control quantity-input"
-                  [(ngModel)]="lot.batchCode"
-                  (ngModelChange)="onLotFieldChange(detail, $index, 'batchCode', $event)"
-                  (focus)="onFieldFocus(detail, $index, 'batchCode')"
-                  (blur)="onFieldBlur(detail, $index, 'batchCode')"
-                  maxlength="100"
-                  placeholder="Ej. LOT-2026-001"
-                  [disabled]="isInputDisabled(batchPath)"
-                  [class.field-locked]="isFieldLockedByAnotherUser(batchPath)"
-                  [title]="isFieldLockedByAnotherUser(batchPath) ? ('Bloqueado por ' + getFieldLockOwner(batchPath)) : ''" />
-              </td>
-            </tr>
-            }
-            }
-          </tbody>
-        </table>
-      </div>
-
-      <div class="mobile-reception-list">
-            @for (detail of visibleDetails; track detail.productId) {
-          <section class="mobile-product-section">
-            <div class="mobile-product-header">
-              <div>
-                <div class="mobile-product-name">{{ detail.productName }}</div>
-                <div class="mobile-product-meta">
-                  Solicitado: 
-                  @if (roundingMode === 'lots' && detail.lotQuantity) {
-                    {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} lotes de {{ detail.lotQuantity }} {{ formatUnit(detail.unit, false) }} ({{ detail.quantity | number:'1.0-2' }} {{ formatUnit(detail.unit, false) }})
-                  } @else {
-                    {{ detail.quantity }} {{ formatUnit(detail.unit, false) }}
-                  }
-                </div>
-                <div class="mobile-product-meta">
-                  Recibido total:
-                  <span class="total-badge" 
-                        [class.total-match]="getTotalReceived(detail) === detail.quantity"
-                        [class.total-excess]="getTotalReceived(detail) > detail.quantity">
-                    @if (roundingMode === 'lots' && detail.lotQuantity) {
-                      {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} L. de {{ detail.lotQuantity }} {{ formatUnit(detail.unit, false) }} ({{ getTotalReceived(detail) | number:'1.0-2' }} {{ formatUnit(detail.unit, false) }})
-                    } @else {
-                      {{ getTotalReceived(detail) }}
-                    }
-                  </span>
-                </div>
-              </div>
-              <button type="button" class="btn btn-sm btn-secondary add-lot-btn" (click)="addLot(detail)" [disabled]="isInputDisabled()">+ Lote</button>
-            </div>
-
-            <div class="mobile-lots-list">
-              @for (lot of detail.lots; track $index) {
-                @let quantityPath = 'detail:' + detail.productId + ':lot:' + $index + ':quantity';
-                @let expirationPath = 'detail:' + detail.productId + ':lot:' + $index + ':expirationDate';
-                @let batchPath = 'detail:' + detail.productId + ':lot:' + $index + ':batchCode';
-                <article class="mobile-lot-card">
-                  <div class="mobile-lot-title">Lote {{ $index + 1 }}</div>
-
-                  <label class="mobile-field-label">CODIGO</label>
-                  <input
-                    type="text"
-                    class="form-control quantity-input"
-                    [(ngModel)]="lot.batchCode"
-                    (ngModelChange)="onLotFieldChange(detail, $index, 'batchCode', $event)"
-                    (focus)="onFieldFocus(detail, $index, 'batchCode')"
-                    (blur)="onFieldBlur(detail, $index, 'batchCode')"
-                    maxlength="100"
-                    placeholder="Ej. LOT-2026-001"
-                    [disabled]="isInputDisabled(batchPath)"
-                    [class.field-locked]="isFieldLockedByAnotherUser(batchPath)"
-                    [title]="isFieldLockedByAnotherUser(batchPath) ? ('Bloqueado por ' + getFieldLockOwner(batchPath)) : ''" />
-
-                  <label class="mobile-field-label">RECIBIDO</label>
-                  <div class="quantity-cell-actions mobile-quantity-actions">
-                    @if (roundingMode === 'lots' && detail.lotQuantity) {
-                      <div class="input-with-unit">
-                        <input 
-                          type="number" 
-                          class="form-control quantity-input" 
-                          [ngModel]="getLotCount(lot.quantity, detail.lotQuantity)" 
-                          (ngModelChange)="updateLotQuantity(detail, $index, $event)"
-                          (focus)="onFieldFocus(detail, $index, 'quantity')"
-                          (blur)="onFieldBlur(detail, $index, 'quantity')"
-                          min="0"
-                          step="0.1"
-                          [disabled]="isInputDisabled(quantityPath)"
-                          [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)" />
-                        <span class="inline-unit lot-unit">Lote de {{ detail.lotQuantity }} {{ formatUnit(detail.unit, false) }}</span>
-                      </div>
-                    } @else {
-                      <input
-                        type="number"
-                        class="form-control quantity-input"
-                        [(ngModel)]="lot.quantity"
-                        (ngModelChange)="onLotFieldChange(detail, $index, 'quantity', $event)"
-                        (focus)="onFieldFocus(detail, $index, 'quantity')"
-                        (blur)="onFieldBlur(detail, $index, 'quantity')"
-                        min="0"
-                        [disabled]="isInputDisabled(quantityPath)"
-                        [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)"
-                        [title]="isFieldLockedByAnotherUser(quantityPath) ? ('Bloqueado por ' + getFieldLockOwner(quantityPath)) : ''" />
-                    }
-                    <button
-                      type="button"
-                      class="btn-scale"
-                      [class.btn-scale-active]="isScaleActiveForLot(detail, $index)"
-                      [disabled]="isInputDisabled(quantityPath)"
-                      [title]="isScaleActiveForLot(detail, $index) ? 'Detener lectura de báscula' : 'Iniciar lectura de báscula'"
-                      (click)="toggleScaleForLot(detail, $index)">
-                      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <path d="M4 8a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8Zm4-2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H8Zm1.2 7.2A2.8 2.8 0 1 1 14.8 13.2L12 10.8l-2.8 2.4Z" />
-                      </svg>
-                    </button>
-                  </div>
-
-                  <label class="mobile-field-label">FECHA DE CADUCIDAD <span class="required-asterisk">*</span></label>
-                  <div class="mobile-expiration-row">
-                    <input
-                      type="date"
-                      class="form-control quantity-input"
-                      [(ngModel)]="lot.expirationDate"
-                      (ngModelChange)="onLotFieldChange(detail, $index, 'expirationDate', $event)"
-                      (focus)="onFieldFocus(detail, $index, 'expirationDate')"
-                      (blur)="onFieldBlur(detail, $index, 'expirationDate')"
-                      [disabled]="isInputDisabled(expirationPath)"
-                      [class.field-locked]="isFieldLockedByAnotherUser(expirationPath)"
-                      [title]="isFieldLockedByAnotherUser(expirationPath) ? ('Bloqueado por ' + getFieldLockOwner(expirationPath)) : ''" />
-                    @if (detail.lots!.length > 1) {
-                      <button type="button" class="btn-remove-lot" (click)="removeLot(detail, $index)" [disabled]="isInputDisabled()" title="Eliminar lote">✕</button>
-                    }
-                  </div>
-                </article>
-              }
-            </div>
-          </section>
         }
       </div>
+    </div>
+
+    <div class="reception-search-bar">
+      <div class="search-bar-header">
+        <span class="search-bar-title">Buscar productos a procesar</span>
+        <span class="search-bar-hint">Escribe un nombre o usa el escáner</span>
+      </div>
+      <div class="search-input-group">
+        <input type="text" class="form-control search-input" [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchTermChange($event)" placeholder="Buscar producto por nombre o código" />
+        <button type="button" class="btn-barcode" (click)="openBarcodeScanner()" [disabled]="isInputDisabled()"
+          title="Buscar por código de barras">
+          <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"
+            fill="currentColor">
+            <path
+              d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z" />
+          </svg>
+          Escanear
+        </button>
+        @if (searchTerm) {
+        <button type="button" class="btn-clear-search" (click)="clearSearch()"
+          [disabled]="isInputDisabled()">Limpiar</button>
+        }
+      </div>
+    </div>
+
+    <div class="table-container desktop-table-container">
+      <table class="modal-table details-table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th class="text-center">Solicitado</th>
+            <th class="text-center received-col">Recibido (Total)</th>
+            <th class="text-center expiry-col">F. Caducidad <span class="required-asterisk">*</span></th>
+            <th class="text-center">Codigo de lote (opcional)</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (detail of visibleDetails; track detail.productId) {
+          <tr class="product-base-row">
+            <td><strong>{{ detail.productName }}</strong> @if (detail.lotQuantity) { <small>(Lote: {{ detail.lotQuantity
+                }} {{ formatUnit(detail.unit) }})</small> }</td>
+            <td class="text-center">
+              @if (roundingMode === 'lots' && detail.lotQuantity) {
+              {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} L. ({{ detail.quantity |
+              number:'1.0-2' }}{{ formatUnit(detail.unit, false) }})
+              } @else {
+              {{ detail.quantity }} {{ formatUnit(detail.unit) }}
+              }
+            </td>
+            <td class="text-center">
+              <span class="total-badge" [class.total-match]="getTotalReceived(detail) === detail.quantity"
+                [class.total-excess]="getTotalReceived(detail) > detail.quantity">
+                @if (roundingMode === 'lots' && detail.lotQuantity) {
+                {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} L. ({{
+                getTotalReceived(detail) | number:'1.0-2' }}{{ formatUnit(detail.unit, false) }})
+                } @else {
+                {{ getTotalReceived(detail) }}
+                }
+              </span>
+            </td>
+            <td class="text-right" colspan="2">
+              <button type="button" class="btn btn-sm btn-secondary add-lot-btn" (click)="addLot(detail)"
+                [disabled]="isInputDisabled()">+ Lote</button>
+            </td>
+          </tr>
+          @for (lot of detail.lots; track $index) {
+          @let quantityPath = 'detail:' + detail.productId + ':lot:' + $index + ':quantity';
+          @let expirationPath = 'detail:' + detail.productId + ':lot:' + $index + ':expirationDate';
+          @let batchPath = 'detail:' + detail.productId + ':lot:' + $index + ':batchCode';
+          <tr class="lot-row">
+            <td class="lot-indent" colspan="2">
+              <span class="lot-label">↳ Lote {{ $index + 1 }}</span>
+            </td>
+            <td class="text-center received-col">
+              <div class="quantity-cell-actions">
+                @if (roundingMode === 'lots' && detail.lotQuantity) {
+                <div class="input-with-unit">
+                  <input type="number" class="form-control quantity-input"
+                    [ngModel]="getLotCount(lot.quantity, detail.lotQuantity)"
+                    (ngModelChange)="updateLotQuantity(detail, $index, $event)"
+                    (focus)="onFieldFocus(detail, $index, 'quantity')" (blur)="onFieldBlur(detail, $index, 'quantity')"
+                    min="0" step="0.1" [disabled]="isInputDisabled(quantityPath)"
+                    [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)" />
+                  <span class="inline-unit lot-unit">Lote × {{ detail.lotQuantity }}{{ formatUnit(detail.unit) }}</span>
+                </div>
+                } @else {
+                <input type="number" class="form-control quantity-input" [(ngModel)]="lot.quantity"
+                  (ngModelChange)="onLotFieldChange(detail, $index, 'quantity', $event)"
+                  (focus)="onFieldFocus(detail, $index, 'quantity')" (blur)="onFieldBlur(detail, $index, 'quantity')"
+                  min="0" [disabled]="isInputDisabled(quantityPath)"
+                  [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)"
+                  [title]="isFieldLockedByAnotherUser(quantityPath) ? ('Bloqueado por ' + getFieldLockOwner(quantityPath)) : ''" />
+                }
+                <button type="button" class="btn-scale" [class.btn-scale-active]="isScaleActiveForLot(detail, $index)"
+                  [disabled]="isInputDisabled(quantityPath)"
+                  [title]="isScaleActiveForLot(detail, $index) ? 'Detener lectura de báscula' : 'Iniciar lectura de báscula'"
+                  (click)="toggleScaleForLot(detail, $index)">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path
+                      d="M4 8a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8Zm4-2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H8Zm1.2 7.2A2.8 2.8 0 1 1 14.8 13.2L12 10.8l-2.8 2.4Z" />
+                  </svg>
+                </button>
+              </div>
+            </td>
+            <td class="text-center expiry-col lot-actions-cell">
+              <input type="date" class="form-control quantity-input" [(ngModel)]="lot.expirationDate"
+                (ngModelChange)="onLotFieldChange(detail, $index, 'expirationDate', $event)"
+                (focus)="onFieldFocus(detail, $index, 'expirationDate')"
+                (blur)="onFieldBlur(detail, $index, 'expirationDate')" [disabled]="isInputDisabled(expirationPath)"
+                [class.field-locked]="isFieldLockedByAnotherUser(expirationPath)"
+                [title]="isFieldLockedByAnotherUser(expirationPath) ? ('Bloqueado por ' + getFieldLockOwner(expirationPath)) : ''" />
+              @if (detail.lots!.length > 1) {
+              <button type="button" class="btn-remove-lot" (click)="removeLot(detail, $index)"
+                [disabled]="isInputDisabled()" title="Eliminar lote">✕</button>
+              }
+            </td>
+            <td class="text-center">
+              <input type="text" class="form-control quantity-input" [(ngModel)]="lot.batchCode"
+                (ngModelChange)="onLotFieldChange(detail, $index, 'batchCode', $event)"
+                (focus)="onFieldFocus(detail, $index, 'batchCode')" (blur)="onFieldBlur(detail, $index, 'batchCode')"
+                maxlength="100" placeholder="Ej. LOT-2026-001" [disabled]="isInputDisabled(batchPath)"
+                [class.field-locked]="isFieldLockedByAnotherUser(batchPath)"
+                [title]="isFieldLockedByAnotherUser(batchPath) ? ('Bloqueado por ' + getFieldLockOwner(batchPath)) : ''" />
+            </td>
+          </tr>
+          }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mobile-reception-list">
+      @for (detail of visibleDetails; track detail.productId) {
+      <section class="mobile-product-section">
+        <div class="mobile-product-header">
+          <div>
+            <div class="mobile-product-name">{{ detail.productName }}</div>
+            <div class="mobile-product-meta">
+              Solicitado:
+              @if (roundingMode === 'lots' && detail.lotQuantity) {
+              {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} lotes de {{ detail.lotQuantity }}
+              {{ formatUnit(detail.unit, false) }} ({{ detail.quantity | number:'1.0-2' }} {{ formatUnit(detail.unit,
+              false) }})
+              } @else {
+              {{ detail.quantity }} {{ formatUnit(detail.unit, false) }}
+              }
+            </div>
+            <div class="mobile-product-meta">
+              Recibido total:
+              <span class="total-badge" [class.total-match]="getTotalReceived(detail) === detail.quantity"
+                [class.total-excess]="getTotalReceived(detail) > detail.quantity">
+                @if (roundingMode === 'lots' && detail.lotQuantity) {
+                {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} L. de {{
+                detail.lotQuantity }} {{ formatUnit(detail.unit, false) }} ({{ getTotalReceived(detail) | number:'1.0-2'
+                }} {{ formatUnit(detail.unit, false) }})
+                } @else {
+                {{ getTotalReceived(detail) }}
+                }
+              </span>
+            </div>
+          </div>
+          <button type="button" class="btn btn-sm btn-secondary add-lot-btn" (click)="addLot(detail)"
+            [disabled]="isInputDisabled()">+ Lote</button>
+        </div>
+
+        <div class="mobile-lots-list">
+          @for (lot of detail.lots; track $index) {
+          @let quantityPath = 'detail:' + detail.productId + ':lot:' + $index + ':quantity';
+          @let expirationPath = 'detail:' + detail.productId + ':lot:' + $index + ':expirationDate';
+          @let batchPath = 'detail:' + detail.productId + ':lot:' + $index + ':batchCode';
+          <article class="mobile-lot-card">
+            <div class="mobile-lot-title">Lote {{ $index + 1 }}</div>
+
+            <label class="mobile-field-label">CODIGO</label>
+            <input type="text" class="form-control quantity-input" [(ngModel)]="lot.batchCode"
+              (ngModelChange)="onLotFieldChange(detail, $index, 'batchCode', $event)"
+              (focus)="onFieldFocus(detail, $index, 'batchCode')" (blur)="onFieldBlur(detail, $index, 'batchCode')"
+              maxlength="100" placeholder="Ej. LOT-2026-001" [disabled]="isInputDisabled(batchPath)"
+              [class.field-locked]="isFieldLockedByAnotherUser(batchPath)"
+              [title]="isFieldLockedByAnotherUser(batchPath) ? ('Bloqueado por ' + getFieldLockOwner(batchPath)) : ''" />
+
+            <label class="mobile-field-label">RECIBIDO</label>
+            <div class="quantity-cell-actions mobile-quantity-actions">
+              @if (roundingMode === 'lots' && detail.lotQuantity) {
+              <div class="input-with-unit">
+                <input type="number" class="form-control quantity-input"
+                  [ngModel]="getLotCount(lot.quantity, detail.lotQuantity)"
+                  (ngModelChange)="updateLotQuantity(detail, $index, $event)"
+                  (focus)="onFieldFocus(detail, $index, 'quantity')" (blur)="onFieldBlur(detail, $index, 'quantity')"
+                  min="0" step="0.1" [disabled]="isInputDisabled(quantityPath)"
+                  [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)" />
+                <span class="inline-unit lot-unit">Lote de {{ detail.lotQuantity }} {{ formatUnit(detail.unit, false)
+                  }}</span>
+              </div>
+              } @else {
+              <input type="number" class="form-control quantity-input" [(ngModel)]="lot.quantity"
+                (ngModelChange)="onLotFieldChange(detail, $index, 'quantity', $event)"
+                (focus)="onFieldFocus(detail, $index, 'quantity')" (blur)="onFieldBlur(detail, $index, 'quantity')"
+                min="0" [disabled]="isInputDisabled(quantityPath)"
+                [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)"
+                [title]="isFieldLockedByAnotherUser(quantityPath) ? ('Bloqueado por ' + getFieldLockOwner(quantityPath)) : ''" />
+              }
+              <button type="button" class="btn-scale" [class.btn-scale-active]="isScaleActiveForLot(detail, $index)"
+                [disabled]="isInputDisabled(quantityPath)"
+                [title]="isScaleActiveForLot(detail, $index) ? 'Detener lectura de báscula' : 'Iniciar lectura de báscula'"
+                (click)="toggleScaleForLot(detail, $index)">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path
+                    d="M4 8a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8Zm4-2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H8Zm1.2 7.2A2.8 2.8 0 1 1 14.8 13.2L12 10.8l-2.8 2.4Z" />
+                </svg>
+              </button>
+            </div>
+
+            <label class="mobile-field-label">FECHA DE CADUCIDAD <span class="required-asterisk">*</span></label>
+            <div class="mobile-expiration-row">
+              <input type="date" class="form-control quantity-input" [(ngModel)]="lot.expirationDate"
+                (ngModelChange)="onLotFieldChange(detail, $index, 'expirationDate', $event)"
+                (focus)="onFieldFocus(detail, $index, 'expirationDate')"
+                (blur)="onFieldBlur(detail, $index, 'expirationDate')" [disabled]="isInputDisabled(expirationPath)"
+                [class.field-locked]="isFieldLockedByAnotherUser(expirationPath)"
+                [title]="isFieldLockedByAnotherUser(expirationPath) ? ('Bloqueado por ' + getFieldLockOwner(expirationPath)) : ''" />
+              @if (detail.lots!.length > 1) {
+              <button type="button" class="btn-remove-lot" (click)="removeLot(detail, $index)"
+                [disabled]="isInputDisabled()" title="Eliminar lote">✕</button>
+              }
+            </div>
+          </article>
+          }
+        </div>
+      </section>
+      }
+    </div>
   </div>
 
   @if (showScannerModal) {
-    <app-base-modal title="Buscar por código de barras" size="md" backdropVariant="soft" (closed)="closeBarcodeScanner()">
-      <div class="scanner-modal-body">
-        <app-barcode-scanner (productFound)="onProductFound($event)"></app-barcode-scanner>
-      </div>
-    </app-base-modal>
+  <app-base-modal title="Buscar por código de barras" size="md" backdropVariant="soft" (closed)="closeBarcodeScanner()">
+    <div class="scanner-modal-body">
+      <app-barcode-scanner (productFound)="onProductFound($event)"></app-barcode-scanner>
+    </div>
+  </app-base-modal>
   }
 
   <div modal-footer>
     <!-- DESHABILITADO: displayMode feature - Botón condicionalmente visible solo si editing
     @if (displayMode === 'editing') {
     -->
-      <button class="modal-btn modal-btn-success" (click)="processReception()" [disabled]="isProcessing || !canConfirmReception()">
-        @if (isProcessing) {
-          <span>Procesando...</span>
-        } @else if (!canConfirmReception()) {
-          <span>En revisión</span>
-        } @else {
-          <span>Procesar Recepción</span>
-        }
-      </button>
+    <button class="modal-btn modal-btn-success" (click)="processReception()"
+      [disabled]="isProcessing || !canConfirmReception()">
+      @if (isProcessing) {
+      <span>Procesando...</span>
+      } @else if (!canConfirmReception()) {
+      <span>En revisión</span>
+      } @else {
+      <span>Procesar Recepción</span>
+      }
+    </button>
     <!-- DESHABILITADO: displayMode feature
     }
     -->
