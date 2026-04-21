@@ -58,6 +58,7 @@
     "REFRESH": "Refrescar",
     "NO_DATA": "Sin datos",
     "NO_DATE": "Sin fecha",
+    "N_A": "N/D",
     "RECEIVED": "Recibido",
     "NOW": "Ahora",
     "AGO_MINS": "Hace {{count}} min",
