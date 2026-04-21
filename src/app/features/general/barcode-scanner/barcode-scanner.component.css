@@ -7,13 +7,14 @@
 .scanner-page {
   max-width: 680px;
   width: 100%;
-  min-height: 0;
+  min-height: 420px;
   margin: 0 auto;
   padding: 1rem 1.25rem 1.25rem;
   color: var(--theme-text-primary);
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  overflow-y: auto;
 }
 
 .scanner-page.compact {
@@ -74,7 +75,9 @@
 .scanner-viewport {
   position: relative;
   width: 100%;
-  height: clamp(260px, 42dvh, 360px);
+  aspect-ratio: 4 / 3;
+  min-height: 240px;
+  max-height: 50vh;
   border-radius: 20px;
   overflow: hidden;
   background: #000;
@@ -83,7 +86,9 @@
 }
 
 .scanner-page.compact .scanner-viewport {
-  height: clamp(220px, 34dvh, 300px);
+  aspect-ratio: 4 / 3;
+  min-height: 200px;
+  max-height: 40vh;
 }
 
 .scanner-viewport ::ng-deep video {

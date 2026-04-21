@@ -42,35 +42,18 @@ import { Supplier } from '../../../shared/models/supplier.model';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { BarcodeScannerComponent } from '../../general/barcode-scanner/barcode-scanner.component';
+import { OrderBuilderComponent } from '../../../shared/components/order-builder/order-builder.component';
+import { WeeklyPlanRepositionOrderItem } from '../../../shared/models/weekly-plan.model';
 
 
 type Tab = 'alerts' | 'predictions' | 'ledger';
 type AlertChartMode = 'prediction' | 'expiration' | 'combined';
 
-interface RepositionOrderItem extends StockAlertDTO {
-    unitPrice: number;
-    supplierId: number | null;
-    supplierName: string | null;
-    customQuantity?: number;
-}
-
-interface RepositionOrderGroup {
-    id: number;
-    title: string;
-    supplierId: number | null;
-    items: RepositionOrderItem[];
-}
-
-interface PoolSupplierSection {
-    key: string;
-    label: string;
-    items: RepositionOrderItem[];
-}
 
 @Component({
     selector: 'app-stock-management',
     standalone: true,
-    imports: [CommonModule, FormsModule, BaseChartDirective, BaseModalComponent, BarcodeScannerComponent],
+    imports: [CommonModule, FormsModule, BaseChartDirective, BaseModalComponent, BarcodeScannerComponent, OrderBuilderComponent],
     templateUrl: './stock-management.component.html',
     styleUrl: './stock-management.component.css'
 })
@@ -115,22 +98,10 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     // ── Order modal ──
     showOrderModal = false;
     daysAhead = 14;
-    orderAlerts: RepositionOrderItem[] = [];
-    orderGroups: RepositionOrderGroup[] = [];
+    orderItems: WeeklyPlanRepositionOrderItem[] = [];
     suppliers: Supplier[] = [];
     loadingSuppliers = false;
-    private nextOrderGroupId = 1;
-    private draggedOrderItem: RepositionOrderItem | null = null;
-    private draggedSourceGroupId: number | 'pool' | null = null;
-    private draggedOrderItems: RepositionOrderItem[] = [];
-    creatingOrder = false;
-    roundUpOrderQuantities = false;
-    showCustomQuantities = false;
     orderBuilderDirty = false;
-    orderSearchTerm = '';
-    collapsedPoolSuppliers = new Set<string>();
-    selectedOrderItemIds = new Set<number>();
-    lastSelectedOrderItemId: number | null = null;
 
     // ── Predictions tab state ──
     predictions: StockPredictionResponseDTO[] = [];
@@ -499,40 +470,52 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     }
 
     openOrderModal(): void {
-        if (this.loadingOrderData) return;
         const ids = this.alerts
             .filter(a => (a.alertType || 'PREDICTION') !== 'EXPIRATION')
             .filter(a => a.resolution === 'UNCOVERED' || a.resolution === 'PARTIALLY_COVERED')
             .map(a => a.productId);
-        if (!ids.length) { this.messageService.showError('No hay productos sin cubrir para generar una orden.'); return; }
+            
+        if (!ids.length) { 
+            this.messageService.showError('No hay productos sin cubrir para generar una orden.'); 
+            return; 
+        }
 
         this.loadingOrderData = true;
-
         this.stockAlertService.getBatchAlerts(ids).pipe(
             switchMap((alerts: StockAlertDTO[]) => {
-                if (!alerts.length) return forkJoin([]);
-
-                // Fetch product details for each alert to get unitPrice
                 const priceRequests = alerts.map((a: StockAlertDTO) => this.productService.getById(a.productId).pipe(
-                    map((product: Product) => ({
-                        ...a,
-                        unitPrice: product.unitPrice || 0,
-                        supplierId: product.supplier?.id ?? null,
-                        supplierName: product.supplier?.name ?? null
-                    } as RepositionOrderItem))
+                    map((product: Product) => {
+                        const item: WeeklyPlanRepositionOrderItem = {
+                            ...a,
+                            unitPrice: product.unitPrice || 0,
+                            supplierId: product.supplier?.id ?? null,
+                            supplierName: product.supplier?.name ?? null,
+                            orderQuantity: 0,
+                            // Populate mandatory WeeklyPlanStockRequirement fields
+                            requiredQuantity: a.effectiveGap || 0,
+                            grossRequiredQuantity: a.effectiveGap || 0,
+                            availabilityPercentage: a.currentStock > 0 ? 100 : 0,
+                            availableStock: a.currentStock || 0,
+                            grossAvailableStock: a.currentStock || 0,
+                            reservedByOtherPlans: 0,
+                            grossReservedByOtherPlans: 0,
+                            sufficient: a.severity === 'OK'
+                        };
+                        return item;
+                    })
                 ));
                 return forkJoin(priceRequests);
-            })
-        ).subscribe({
-            next: (data: any) => {
-                this.orderAlerts = data as RepositionOrderItem[];
-                this.orderGroups = [this.createOrderGroup()];
-                this.orderBuilderDirty = false;
-                this.showOrderModal = true;
+            }),
+            finalize(() => {
                 this.loadingOrderData = false;
                 this.cdr.detectChanges();
+            })
+        ).subscribe({
+            next: (data: WeeklyPlanRepositionOrderItem[]) => {
+                this.orderItems = data;
+                this.showOrderModal = true;
             },
-            error: () => { this.messageService.showError('Error al calcular los productos'); this.loadingOrderData = false; this.cdr.detectChanges(); }
+            error: () => this.messageService.showError('Error al cargar datos de productos')
         });
     }
 
@@ -554,457 +537,61 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         });
     }
 
-    closeOrderModal(): void {
-        this.showOrderModal = false;
-        this.orderAlerts = [];
-        this.orderGroups = [];
-        this.daysAhead = 14;
-        this.orderSearchTerm = '';
-        this.collapsedPoolSuppliers.clear();
-        this.draggedOrderItem = null;
-        this.draggedSourceGroupId = null;
-        this.draggedOrderItems = [];
-        this.roundUpOrderQuantities = false;
-        this.showCustomQuantities = false;
-        this.selectedOrderItemIds.clear();
-        this.lastSelectedOrderItemId = null;
-        this.nextOrderGroupId = 1;
-        this.orderBuilderDirty = false;
+    openOrderModalForSingleProduct(alert: StockAlertDTO): void {
+        this.loadingOrderData = true;
+        this.productService.getById(alert.productId).pipe(
+            map((product: Product) => {
+                const item: WeeklyPlanRepositionOrderItem = {
+                    ...alert,
+                    unitPrice: product.unitPrice || 0,
+                    supplierId: product.supplier?.id ?? null,
+                    supplierName: product.supplier?.name ?? null,
+                    orderQuantity: 0,
+                    requiredQuantity: alert.effectiveGap || 0,
+                    grossRequiredQuantity: alert.effectiveGap || 0,
+                    availabilityPercentage: 100,
+                    availableStock: alert.currentStock || 0,
+                    grossAvailableStock: alert.currentStock || 0,
+                    reservedByOtherPlans: 0,
+                    grossReservedByOtherPlans: 0,
+                    sufficient: false
+                };
+                return item;
+            }),
+            finalize(() => {
+                this.loadingOrderData = false;
+                this.cdr.detectChanges();
+            })
+        ).subscribe({
+            next: (item: WeeklyPlanRepositionOrderItem) => {
+                this.orderItems = [item];
+                this.showOrderModal = true;
+                this.closeMobileModal();
+            },
+            error: () => this.messageService.showError('Error al cargar datos del producto')
+        });
     }
 
-    async beforeCloseOrderModal(): Promise<boolean> {
-        if (!this.orderBuilderDirty) {
-            return true;
-        }
-
-        return this.messageService.confirm(
-            'Descartar cambios',
-            'Tienes cambios sin guardar en la orden de reposicion. Si cierras ahora, se perderan. ¿Deseas salir?',
-            'Descartar',
-            'Seguir editando'
-        );
+    closeOrderModal(): void {
+        this.showOrderModal = false;
+        this.orderItems = [];
+        this.daysAhead = 14;
     }
 
     onDaysAheadChange(value: number): void {
         this.daysAhead = value;
-        this.markOrderBuilderDirty();
-    }
-
-    onRoundUpOrderQuantitiesChange(enabled: boolean): void {
-        this.roundUpOrderQuantities = enabled;
-        this.markOrderBuilderDirty();
-    }
-
-    onShowCustomQuantitiesChange(enabled: boolean): void {
-        if (enabled) {
-            this.initializeOrderCustomQuantitiesFromCurrent();
-        }
-
-        this.showCustomQuantities = enabled;
-        this.markOrderBuilderDirty();
-    }
-
-    onOrderQuantityInputChange(): void {
-        this.markOrderBuilderDirty();
-    }
-
-    onOrderGroupSupplierChange(): void {
-        this.markOrderBuilderDirty();
-    }
-
-    private initializeOrderCustomQuantitiesFromCurrent(): void {
-        const allItems = [...this.orderAlerts, ...this.orderGroups.flatMap(group => group.items)];
-
-        for (const item of allItems) {
-            if (item.customQuantity === undefined) {
-                item.customQuantity = this.getOrderQuantity(item);
-            }
-        }
-    }
-
-    private markOrderBuilderDirty(): void {
-        if (this.showOrderModal) {
-            this.orderBuilderDirty = true;
-        }
-    }
-
-    private createOrderGroup(): RepositionOrderGroup {
-        const groupId = this.nextOrderGroupId++;
-        return {
-            id: groupId,
-            title: `Pedido ${groupId}`,
-            supplierId: null,
-            items: []
-        };
-    }
-
-    addOrderGroup(): void {
-        this.orderGroups = [this.createOrderGroup(), ...this.orderGroups];
-        this.reindexOrderGroups();
-        this.markOrderBuilderDirty();
         this.cdr.detectChanges();
     }
 
-    removeOrderGroup(groupId: number): void {
-        const target = this.orderGroups.find(group => group.id === groupId);
-        if (!target) return;
-
-        this.orderAlerts = [...this.orderAlerts, ...target.items];
-        this.orderGroups = this.orderGroups.filter(group => group.id !== groupId);
-        if (this.orderGroups.length === 0) {
-            this.orderGroups = [this.createOrderGroup()];
-        }
-        this.reindexOrderGroups();
-        this.markOrderBuilderDirty();
-        this.cdr.detectChanges();
-    }
-
-    private reindexOrderGroups(): void {
-        this.orderGroups = this.orderGroups.map((group, index) => ({
-            ...group,
-            title: `Pedido ${index + 1}`
-        }));
-    }
-
-    onOrderDragStart(event: DragEvent, item: RepositionOrderItem, source: 'pool' | number): void {
-        this.draggedOrderItem = item;
-        this.draggedSourceGroupId = source;
-        this.draggedOrderItems = this.resolveDraggedOrderItems(item, source);
-        if (event.dataTransfer) {
-            event.dataTransfer.effectAllowed = 'move';
-            event.dataTransfer.setData('text/plain', String(item.productId));
-        }
-    }
-
-    onOrderDragEnd(): void {
-        this.draggedOrderItem = null;
-        this.draggedSourceGroupId = null;
-        this.draggedOrderItems = [];
-    }
-
-    allowOrderDrop(event: DragEvent): void {
-        event.preventDefault();
-        event.stopPropagation();
-        if (event.dataTransfer) {
-            event.dataTransfer.dropEffect = 'move';
-        }
-    }
-
-    dropOnGroup(event: DragEvent, groupId: number): void {
-        event.preventDefault();
-        event.stopPropagation();
-        if (!this.draggedOrderItem) return;
-
-        const targetGroup = this.orderGroups.find(group => group.id === groupId);
-        if (!targetGroup) return;
-
-        const itemsToMove = this.draggedOrderItems.length ? this.draggedOrderItems : [this.draggedOrderItem];
-        this.removeDraggedItemsFromSource(itemsToMove);
-        targetGroup.items = [...targetGroup.items, ...itemsToMove.filter(item => !targetGroup.items.some(existing => existing.productId === item.productId))];
-        if (!targetGroup.supplierId && itemsToMove[0]?.supplierId) {
-            targetGroup.supplierId = itemsToMove[0].supplierId;
-        }
-        this.draggedOrderItem = null;
-        this.draggedSourceGroupId = null;
-        this.draggedOrderItems = [];
-        this.clearOrderSelection();
-        this.markOrderBuilderDirty();
-        this.cdr.detectChanges();
-    }
-
-    dropOnPool(event: DragEvent): void {
-        event.preventDefault();
-        event.stopPropagation();
-        if (!this.draggedOrderItem) return;
-
-        const itemsToMove = this.draggedOrderItems.length ? this.draggedOrderItems : [this.draggedOrderItem];
-        this.removeDraggedItemsFromSource(itemsToMove);
-        this.orderAlerts = [...this.orderAlerts, ...itemsToMove.filter(item => !this.orderAlerts.some(existing => existing.productId === item.productId))];
-        this.draggedOrderItem = null;
-        this.draggedSourceGroupId = null;
-        this.draggedOrderItems = [];
-        this.clearOrderSelection();
-        this.markOrderBuilderDirty();
-        this.cdr.detectChanges();
-    }
-
-    moveItemToPool(item: RepositionOrderItem, groupId: number): void {
-        const group = this.orderGroups.find(entry => entry.id === groupId);
-        if (!group) return;
-
-        group.items = group.items.filter(entry => entry.productId !== item.productId);
-        this.orderAlerts = [...this.orderAlerts, item];
-        this.markOrderBuilderDirty();
-        this.cdr.detectChanges();
-    }
-
-    private removeDraggedItemsFromSource(items: RepositionOrderItem[]): void {
-        if (!items.length) return;
-        const productIds = new Set(items.map(item => item.productId));
-
-        if (this.draggedSourceGroupId === 'pool') {
-            this.orderAlerts = this.orderAlerts.filter(item => !productIds.has(item.productId));
-            return;
-        }
-
-        if (typeof this.draggedSourceGroupId === 'number') {
-            const sourceGroup = this.orderGroups.find(group => group.id === this.draggedSourceGroupId);
-            if (sourceGroup) {
-                sourceGroup.items = sourceGroup.items.filter(item => !productIds.has(item.productId));
-            }
-        }
-    }
-
-    private resolveDraggedOrderItems(item: RepositionOrderItem, source: 'pool' | number): RepositionOrderItem[] {
-        if (!this.selectedOrderItemIds.has(item.productId)) {
-            return [item];
-        }
-
-        const sourceItems = source === 'pool'
-            ? this.orderAlerts
-            : (this.orderGroups.find(group => group.id === source)?.items || []);
-        const selected = sourceItems.filter(entry => this.selectedOrderItemIds.has(entry.productId));
-        return selected.length ? selected : [item];
-    }
-
-    isOrderItemSelected(productId: number): boolean {
-        return this.selectedOrderItemIds.has(productId);
-    }
-
-    toggleOrderItemSelection(item: RepositionOrderItem, event?: MouseEvent): void {
-        const sourceItems = this.findOrderItemSource(item.productId);
-        if (!sourceItems) return;
-
-        const clickedIndex = sourceItems.findIndex(entry => entry.productId === item.productId);
-        const shiftKey = !!event?.shiftKey;
-        if (shiftKey && this.lastSelectedOrderItemId !== null) {
-            const lastIndex = sourceItems.findIndex(entry => entry.productId === this.lastSelectedOrderItemId);
-            if (lastIndex !== -1 && clickedIndex !== -1) {
-                const start = Math.min(lastIndex, clickedIndex);
-                const end = Math.max(lastIndex, clickedIndex);
-                for (let i = start; i <= end; i += 1) {
-                    this.selectedOrderItemIds.add(sourceItems[i].productId);
-                }
-                return;
-            }
-        }
-
-        if (this.selectedOrderItemIds.has(item.productId)) {
-            this.selectedOrderItemIds.delete(item.productId);
-        } else {
-            this.selectedOrderItemIds.add(item.productId);
-        }
-        this.lastSelectedOrderItemId = item.productId;
-    }
-
-    onOrderItemCheckboxChange(item: RepositionOrderItem, event: Event): void {
-        event.stopPropagation();
-        const target = event.target as HTMLInputElement;
-        if (target.checked) {
-            this.selectedOrderItemIds.add(item.productId);
-            this.lastSelectedOrderItemId = item.productId;
-        } else {
-            this.selectedOrderItemIds.delete(item.productId);
-            if (this.lastSelectedOrderItemId === item.productId) {
-                this.lastSelectedOrderItemId = null;
-            }
-        }
-    }
-
-    clearOrderSelection(): void {
-        this.selectedOrderItemIds.clear();
-        this.lastSelectedOrderItemId = null;
-    }
-
-    getSelectedOrderCount(): number {
-        return this.selectedOrderItemIds.size;
-    }
-
-    private findOrderItemSource(productId: number): RepositionOrderItem[] | null {
-        if (this.orderAlerts.some(item => item.productId === productId)) {
-            return this.orderAlerts;
-        }
-
-        const group = this.orderGroups.find(entry => entry.items.some(item => item.productId === productId));
-        return group?.items || null;
-    }
-
-    getOriginalRequirement(item: StockAlertDTO): number {
+    getOrderQuantityCalculator = (item: WeeklyPlanRepositionOrderItem): number => {
         const daily = (item.projectedConsumption || 0) / 14;
-        return Math.max(0, daily * this.daysAhead - (item.currentStock || 0) - (item.pendingOrderQuantity || 0));
+        const needed = Math.max(0, daily * this.daysAhead - (item.currentStock || 0) - (item.pendingOrderQuantity || 0));
+        return Math.ceil(needed * 100) / 100;
     }
 
-    getOrderQuantity(item: RepositionOrderItem): number {
-        if (this.showCustomQuantities && item.customQuantity !== undefined) {
-            return item.customQuantity;
-        }
-        const needed = this.getOriginalRequirement(item);
-        const raw = Math.ceil(needed * 100) / 100;
-        return this.roundUpOrderQuantities ? Math.ceil(raw) : raw;
-    }
-
-    getOrderTotal(items: Array<StockAlertDTO | RepositionOrderItem> = this.orderAlerts): number {
-        return items.reduce((sum, a) => {
-            const qty = this.getOrderQuantity(a as RepositionOrderItem);
-            return sum + (qty > 0 ? qty * (a.unitPrice || 0) : 0);
-        }, 0);
-    }
-
-    getGroupTotal(group: RepositionOrderGroup): number {
-        return this.getOrderTotal(group.items);
-    }
-
-    getOrderGrandTotal(): number {
-        return this.orderGroups.reduce((sum, group) => sum + this.getGroupTotal(group), 0);
-    }
-
-    getAssignedItemCount(): number {
-        return this.orderGroups.reduce((sum, group) => sum + group.items.length, 0);
-    }
-
-    getPendingItemCount(): number {
-        return this.orderAlerts.length;
-    }
-
-    getPoolSupplierSections(): PoolSupplierSection[] {
-        const term = this.orderSearchTerm.trim().toLowerCase();
-        const filtered = term
-            ? this.orderAlerts.filter(item => item.productName.toLowerCase().includes(term) || (item.supplierName || '').toLowerCase().includes(term))
-            : this.orderAlerts;
-
-        const grouped = new Map<string, PoolSupplierSection>();
-        for (const item of filtered) {
-            const supplierKey = item.supplierId ? String(item.supplierId) : 'none';
-            const section = grouped.get(supplierKey);
-            if (section) {
-                section.items.push(item);
-                continue;
-            }
-
-            grouped.set(supplierKey, {
-                key: supplierKey,
-                label: item.supplierName || 'Sin proveedor',
-                items: [item]
-            });
-        }
-
-        return Array.from(grouped.values()).sort((a, b) => a.label.localeCompare(b.label));
-    }
-
-    togglePoolSupplierCollapse(key: string): void {
-        if (this.collapsedPoolSuppliers.has(key)) {
-            this.collapsedPoolSuppliers.delete(key);
-        } else {
-            this.collapsedPoolSuppliers.add(key);
-        }
-    }
-
-    isPoolSupplierCollapsed(key: string): boolean {
-        return this.collapsedPoolSuppliers.has(key);
-    }
-
-    getVisiblePoolItemsCount(): number {
-        return this.getPoolSupplierSections().reduce((sum, section) => sum + section.items.length, 0);
-    }
-
-    async createCompleteOrderBySupplier(): Promise<void> {
-        if (!this.orderAlerts.length) {
-            this.messageService.showInfo('No hay productos pendientes para agrupar.');
-            return;
-        }
-
-        const confirmed = await this.messageService.confirm(
-            'Crear orden completa',
-            'Se agruparán los productos pendientes por proveedor y se añadirán como nuevas órdenes. ¿Continuar?',
-            'Crear órdenes',
-            'Cancelar'
-        );
-        if (!confirmed) return;
-
-        const groupedBySupplier = new Map<number | null, RepositionOrderItem[]>();
-        for (const item of this.orderAlerts) {
-            const key = item.supplierId ?? null;
-            const bucket = groupedBySupplier.get(key) || [];
-            bucket.push(item);
-            groupedBySupplier.set(key, bucket);
-        }
-
-        const generatedGroups: RepositionOrderGroup[] = Array.from(groupedBySupplier.entries()).map(([supplierId, items]) => {
-            const group = this.createOrderGroup();
-            return {
-                ...group,
-                supplierId,
-                items: [...items]
-            };
-        });
-
-        this.orderGroups = [...generatedGroups, ...this.orderGroups];
-        this.orderAlerts = [];
-        this.reindexOrderGroups();
-        this.clearOrderSelection();
-        this.markOrderBuilderDirty();
-        this.cdr.detectChanges();
-    }
-
-    async confirmCreateOrder(): Promise<void> {
-        const payloads = this.buildOrderPayloads();
-        if (!payloads.length) {
-            this.messageService.showError('Asigna los productos a al menos una orden con cantidades válidas.');
-            return;
-        }
-
-        if (this.orderAlerts.length > 0) {
-            this.messageService.showError('Arrastra todos los productos a una orden antes de crearla.');
-            return;
-        }
-
-        const totalOrders = payloads.length;
-        const totalItems = payloads.reduce((sum, payload) => sum + payload.details.length, 0);
-        const confirmed = await this.messageService.confirm(
-            'Confirmar órdenes de reposición',
-            `Se crearán ${totalOrders} orden${totalOrders > 1 ? 'es' : ''} con ${totalItems} producto${totalItems > 1 ? 's' : ''}. ¿Continuar?`
-        );
-
-        if (!confirmed) return;
-
-        this.creatingOrder = true;
-        forkJoin(payloads.map(payload => this.orderService.create(payload))).pipe(
-            finalize(() => {
-                this.creatingOrder = false;
-                this.cdr.detectChanges();
-            })
-        ).subscribe({
-            next: () => {
-                this.messageService.showSuccess('Órdenes creadas correctamente');
-                this.orderBuilderDirty = false;
-                this.closeOrderModal();
-                this.loadAlerts();
-            },
-            error: (err: any) => {
-                this.messageService.showError(err.error?.message || 'Error al crear las órdenes');
-            }
-        });
-    }
-
-    private buildOrderPayloads(): any[] {
-        const userId = this.authService.getUserId() || 1;
-        return this.orderGroups
-            .map(group => {
-                const details = group.items
-                    .map(item => ({
-                        productId: item.productId,
-                        quantity: this.getOrderQuantity(item),
-                        unitPrice: item.unitPrice || 0
-                    }))
-                    .filter(detail => detail.quantity > 0);
-
-                return {
-                    userId,
-                    supplierId: group.supplierId || undefined,
-                    details
-                };
-            })
-            .filter(payload => payload.details.length > 0);
+    onStockOrderBuilderCompleted(): void {
+        this.closeOrderModal();
+        this.loadAlerts();
     }
 
     // ================================================================
@@ -1020,7 +607,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         });
         
         const backendCols: Record<string, string> = {
-            'productName': 'product.name'
+            'productName': 'productName'
         };
         const backendCol = backendCols[this.sortColumnPredictions] || this.sortColumnPredictions;
         const sortParam = `${backendCol},${this.sortDirPredictions}`;

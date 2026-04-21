@@ -11,6 +11,7 @@ export interface Product {
   // Stock property - favoring currentStock as per recent changes but keeping stock for compatibility if backend sends it
   stock?: number; 
   currentStock: number;
+  lotQuantity?: number;
   availabilityPercentage?: number;
   hidden?: boolean;
   
@@ -39,6 +40,7 @@ export interface ProductRequest {
   currentStock: number;
   availabilityPercentage?: number;
   hidden?: boolean;
+  lotQuantity?: number;
 
   unit: string;
   supplierId?: number;

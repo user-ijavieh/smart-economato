@@ -1,5 +1,6 @@
 import { Page } from './page.model';
 import { OrderStatus } from './order.model';
+import { AlertSeverity, AlertType, AlertResolution } from './stock-alert.model';
 
 export interface WeeklyPlanRequest {
   chefId?: number;
@@ -79,6 +80,16 @@ export interface WeeklyPlanStockRequirement {
   pendingOrderQuantity?: number;
   pendingOrderCount?: number;
   relatedOrders?: WeeklyPlanProductPendingOrder[];
+  // Alert fields (for Stock Management)
+  projectedConsumption?: number;
+  currentStock?: number;
+  effectiveGap?: number;
+  estimatedDaysRemaining?: number;
+  severity?: AlertSeverity;
+  alertType?: AlertType;
+  resolution?: AlertResolution;
+  lotQuantity?: number;
+  message?: string;
 }
 
 export interface WeeklyPlanProductPendingOrder {
@@ -100,3 +111,24 @@ export interface StudentMetrics {
 
 export type WeeklyPlanPage = Page<WeeklyPlanResponse>;
 export type StudentMetricsPage = Page<StudentMetrics>;
+export interface WeeklyPlanRepositionOrderItem extends WeeklyPlanStockRequirement {
+  unit: string;
+  unitPrice: number;
+  supplierId: number | null;
+  supplierName: string | null;
+  orderQuantity: number;
+  customQuantity?: number;
+}
+
+export interface WeeklyPlanRepositionOrderGroup {
+  id: number;
+  title: string;
+  supplierId: number | null;
+  items: WeeklyPlanRepositionOrderItem[];
+}
+
+export interface WeeklyPlanPoolSupplierSection {
+  key: string;
+  label: string;
+  items: WeeklyPlanRepositionOrderItem[];
+}

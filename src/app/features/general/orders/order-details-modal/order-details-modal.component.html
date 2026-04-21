@@ -67,14 +67,20 @@
 
         <!-- Products List -->
         <div class="info-section">
-          <h3>Productos ({{ order.details?.length || 0 }})</h3>
+          <div class="section-header">
+            <h3>Productos ({{ order.details?.length || 0 }})</h3>
+            <div class="view-mode-toggle">
+              <button type="button" [class.active]="roundingMode === 'units'" (click)="onRoundingModeChange('units')">Unidades</button>
+              <button type="button" [class.active]="roundingMode === 'lots'" (click)="onRoundingModeChange('lots')">Lotes</button>
+            </div>
+          </div>
           <div class="table-container">
             <table class="modal-table details-table">
               <thead>
                 <tr>
                   <th>Producto</th>
                   <th>Cantidad</th>
-                  <th>Precio Unit.</th>
+                  <th>P. Unit.</th>
                   <th>Subtotal</th>
                 </tr>
               </thead>
@@ -84,11 +90,32 @@
                     <tr>
                       <td>{{ detail.productName }}</td>
                       <td>
-                        <div style="display: flex; align-items: center; gap: 0.6rem;">
-                          <span style="font-family: 'Courier New', monospace; font-weight: 600; font-size: 0.9rem; background: var(--theme-surface-glass); padding: 0.3rem 0.6rem; border-radius: 6px;">{{ getFormattedQuantity(detail) }}</span>
+                        <div class="quantity-cell">
+                          @if (roundingMode === 'lots' && detail.lotQuantity) {
+                            <div class="quantity-value-group">
+                              <span class="quantity-primary">{{ getLotCount(detail) | number:'1.1-2' }} lotes</span>
+                              <span class="quantity-label">de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }}</span>
+                              @if (getReceivedLotCount(detail) !== null) {
+                                <span class="quantity-slash">/</span>
+                                <span class="quantity-secondary">{{ getReceivedLotCount(detail) | number:'1.1-2' }} lotes</span>
+                                <span class="quantity-label">de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }}</span>
+                              }
+                            </div>
+                            <span class="quantity-unit-detail">({{ detail.quantity }}{{ getReceivedQuantity(detail) !== null ? ' / ' + getReceivedQuantity(detail) : '' }} {{ formatUnit(detail.unit) }})</span>
+                          } @else {
+                            <div class="quantity-value-group">
+                              <span class="quantity-primary">{{ detail.quantity }}</span>
+                              @if (getReceivedQuantity(detail) !== null) {
+                                <span class="quantity-slash">/</span>
+                                <span class="quantity-secondary">{{ getReceivedQuantity(detail) }}</span>
+                              }
+                              <span class="quantity-unit">{{ formatUnit(detail.unit) }}</span>
+                            </div>
+                          }
+
                           @if (getComparisonSymbol(detail)) {
                             <span 
-                              style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; font-weight: bold; font-size: 1rem; border: 1.5px solid; transition: all 0.2s ease;"
+                              class="comparison-indicator"
                               [style.background]="getComparisonSymbol(detail) === '✓' ? 'color-mix(in srgb, #10b981 20%, transparent)' : (getComparisonSymbol(detail) === '✕' ? 'color-mix(in srgb, #ef4444 20%, transparent)' : 'color-mix(in srgb, #f59e0b 20%, transparent)')"
                               [style.color]="getComparisonSymbol(detail) === '✓' ? '#10b981' : (getComparisonSymbol(detail) === '✕' ? '#ef4444' : '#f59e0b')"
                               [style.border-color]="getComparisonSymbol(detail) === '✓' ? '#10b981' : (getComparisonSymbol(detail) === '✕' ? '#ef4444' : '#f59e0b')"

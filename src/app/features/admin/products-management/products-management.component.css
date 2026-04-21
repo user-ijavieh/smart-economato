@@ -775,3 +775,23 @@ tr.low-stock-row:hover td {
 }
 
 .show-on-mobile-only { display: none; }
+
+.lot-badge {
+    display: inline-flex;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--brand-primary) 8%, transparent);
+    color: var(--brand-primary);
+    font-size: 0.72rem;
+    font-weight: 800;
+    border: 1px solid color-mix(in srgb, var(--brand-primary) 25%, transparent);
+    letter-spacing: 0.3px;
+}
+
+.lot-badge.lot-none {
+    background: transparent;
+    color: var(--theme-text-secondary);
+    border-color: var(--theme-border-glass);
+    font-weight: 400;
+    opacity: 0.5;
+}

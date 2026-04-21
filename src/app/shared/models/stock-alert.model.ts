@@ -6,6 +6,7 @@ export interface StockAlertDTO {
     productId: number;
     productName: string;
     unit: string;
+    lotQuantity?: number;
     unitPrice?: number;
     currentStock: number;
     pendingOrderQuantity: number;
@@ -27,6 +28,7 @@ export interface StockPredictionResponseDTO {
     projectedConsumption: number;
     projectedConsumptionUnit: string;
     currentStock: number;
+    lotQuantity?: number;
     updatedAt: string;
 }
 
