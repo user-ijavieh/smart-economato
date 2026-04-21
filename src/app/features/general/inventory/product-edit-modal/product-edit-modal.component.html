@@ -61,6 +61,14 @@
         <small class="field-hint">Múltiplo mínimo de compra.</small>
       </div>
 
+      @if (formData.lotQuantity && formData.lotQuantity > 0) {
+      <div class="form-group">
+        <label for="pricePerLot">Precio por Lote (€)</label>
+        <input type="number" id="pricePerLot" [(ngModel)]="pricePerLot" name="pricePerLot" step="0.01" min="0" placeholder="0.00" />
+        <small class="field-hint">Se sincroniza con el precio unitario.</small>
+      </div>
+      }
+
       <div class="form-group merma-group">
         <label for="availabilityPercentage">
           Disponibilidad (%)

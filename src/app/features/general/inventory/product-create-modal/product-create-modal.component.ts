@@ -112,6 +112,10 @@ export class ProductCreateModalComponent {
       return;
     }
 
+    const lotQuantity = (this.formData.lotQuantity !== undefined && this.formData.lotQuantity !== null && String(this.formData.lotQuantity) !== '')
+      ? Number(this.formData.lotQuantity)
+      : undefined;
+
     // Enviar JSON en el formato exacto del backend
     const productData: ProductRequest = {
       availabilityPercentage: availabilityPercentage,
@@ -123,7 +127,7 @@ export class ProductCreateModalComponent {
       currentStock: currentStock,
       supplierId: supplierId,
       expirationDate: this.formData.expirationDate || undefined,
-      lotQuantity: this.formData.lotQuantity || 1
+      lotQuantity: lotQuantity
     };
 
     this.save.emit(productData);
@@ -160,5 +164,18 @@ export class ProductCreateModalComponent {
       expirationDate: '',
       lotQuantity: 1
     };
+  }
+
+  get pricePerLot(): number {
+    const price = Number(this.formData.unitPrice) || 0;
+    const lot = Number(this.formData.lotQuantity) || 1;
+    return Number((price * lot).toFixed(4));
+  }
+
+  set pricePerLot(value: number) {
+    const lot = Number(this.formData.lotQuantity) || 1;
+    if (lot > 0) {
+      this.formData.unitPrice = Number((value / lot).toFixed(4));
+    }
   }
 }
