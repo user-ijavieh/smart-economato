@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { WeeklyPlanService } from '../../../core/services/weekly-plan.service';
 import { WeeklyPlanResponse } from '../../../shared/models/weekly-plan.model';
 import { AuthService } from '../../../core/services/auth.service';
@@ -10,7 +11,7 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-weekly-plans',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './weekly-plans.component.html',
   styleUrls: ['./weekly-plans.component.css']
 })
@@ -20,6 +21,7 @@ export class WeeklyPlansComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
   private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
+  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   currentPlan: WeeklyPlanResponse | null = null;
@@ -67,17 +69,15 @@ export class WeeklyPlansComponent implements OnInit, OnDestroy {
 
   loadAllPlans() {
     this.loadingList = true;
-    // For chef/elevated we just want their plans, but currently API returns all or filtered by role logic in backend.
     this.weeklyPlanService.getAllPlans(0, 50).subscribe({
       next: (page) => {
-        const now = new Date();
         const plans = page.content;
         
         // Split into upcoming (drafts, active future) vs past (completed, cancelled)
         // Sort upcoming by date descending (furthest first)
         this.upcomingPlans = plans
-          .filter(p => p.status === 'DRAFT' || p.status === 'ACTIVE')
-          .sort((a, b) => a.weekStartDate.localeCompare(b.weekStartDate));
+           .filter(p => p.status === 'DRAFT' || p.status === 'ACTIVE' || p.status === 'IN_PROGRESS')
+           .sort((a, b) => a.weekStartDate.localeCompare(b.weekStartDate));
         
         this.pastPlans = plans.filter(p => p.status === 'COMPLETED' || p.status === 'CANCELLED');
         
@@ -105,12 +105,11 @@ export class WeeklyPlansComponent implements OnInit, OnDestroy {
 
   private getCurrentMondayString(): string {
     const now = new Date();
-    const day = now.getDay(); // 0-6 (Sun-Sat)
-    const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday (0) to get Monday
+    const day = now.getDay();
+    const diff = now.getDate() - day + (day === 0 ? -6 : 1);
     
     const monday = new Date(now.setDate(diff));
     
-    // Format as YYYY-MM-DD manually to avoid timezone issues
     const year = monday.getFullYear();
     const month = String(monday.getMonth() + 1).padStart(2, '0');
     const date = String(monday.getDate()).padStart(2, '0');
@@ -119,7 +118,6 @@ export class WeeklyPlansComponent implements OnInit, OnDestroy {
   }
 
   createNew() {
-    // Navigate to wizard
     this.router.navigate(['/weekly-plans/wizard']);
   }
 
@@ -148,11 +146,11 @@ export class WeeklyPlansComponent implements OnInit, OnDestroy {
 
   getStatusLabel(status: string): string {
     const labels: Record<string, string> = {
-      DRAFT: 'Borrador',
-      ACTIVE: 'Activo',
-      IN_PROGRESS: 'En curso',
-      COMPLETED: 'Finalizado',
-      CANCELLED: 'Cancelado'
+      DRAFT: this.translate.instant('WEEKLY_PLANS.STATUS.DRAFT'),
+      ACTIVE: this.translate.instant('WEEKLY_PLANS.STATUS.ACTIVE'),
+      IN_PROGRESS: this.translate.instant('WEEKLY_PLANS.STATUS.IN_PROGRESS'),
+      COMPLETED: this.translate.instant('WEEKLY_PLANS.STATUS.COMPLETED'),
+      CANCELLED: this.translate.instant('WEEKLY_PLANS.STATUS.CANCELLED')
     };
 
     return labels[status] || status;

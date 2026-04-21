@@ -1,19 +1,19 @@
 <div class="page-header header-planes-detail">
   <button class="modal-btn modal-btn-secondary modal-btn-small btn-back-compact" (click)="goBack()"
-    aria-label="Volver al listado de planes semanales">
+    [aria-label]="'WEEKLY_PLANS.DETAIL.BACK_ARIA' | translate">
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <line x1="19" y1="12" x2="5" y2="12"></line>
       <polyline points="12 19 5 12 12 5"></polyline>
     </svg>
-    <span>Volver</span>
+    <span>{{ 'COMMON.BACK' | translate }}</span>
   </button>
 
   <div class="title-area">
     @if (loading) {
     <div class="skeleton-line" style="width: 200px; height: 24px;"></div>
     } @else if (plan) {
-    <h1>Semana del {{ plan.weekStartDate }}</h1>
+    <h1>{{ 'WEEKLY_PLANS.DETAIL.WEEK_OF' | translate: { date: plan.weekStartDate } }}</h1>
     }
   </div>
 </div>
@@ -23,13 +23,13 @@
   @if (plan) {
   <div class="detail-stats glassmorphism fadeInStaggered">
     <div class="stat-item stat-main">
-      <span class="stat-label">Chef Responsable</span>
+      <span class="stat-label">{{ 'WEEKLY_PLANS.WIZARD.CHEF' | translate }}</span>
       <span class="stat-value">{{ plan.chefName }}</span>
       <div class="stat-progress">
         <div class="progress-bar-bg">
           <div class="progress-bar-fill" [style.width.%]="calculateProgress()"></div>
         </div>
-        <span class="progress-text">{{ calculateProgress() }}% completado</span>
+        <span class="progress-text">{{ calculateProgress() }}% {{ 'COMMON.COMPLETED' | translate }}</span>
       </div>
     </div>
     <div class="stat-item stat-actions">
@@ -37,14 +37,14 @@
         }}</span>
       <div class="header-actions">
         <button class="modal-btn modal-btn-secondary modal-btn-small" (click)="openDownloadPdfModal()"
-          [disabled]="downloadingPdf" aria-label="Descargar plan semanal en PDF">
+          [disabled]="downloadingPdf" [aria-label]="'WEEKLY_PLANS.DETAIL.DOWNLOAD_PDF_ARIA' | translate">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
             <polyline points="7 10 12 15 17 10"></polyline>
             <line x1="12" y1="15" x2="12" y2="3"></line>
           </svg>
-          {{ downloadingPdf ? 'Descargando...' : 'Descargar PDF' }}
+          {{ (downloadingPdf ? 'COMMON.DOWNLOADING' : 'COMMON.DOWNLOAD_PDF') | translate }}
         </button>
       </div>
       @if (plan.status === 'DRAFT' || plan.status === 'ACTIVE') {
@@ -55,7 +55,7 @@
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
           </svg>
-          Editar
+          {{ 'COMMON.EDIT' | translate }}
         </button>
         @if (plan.status === 'DRAFT') {
         <button class="modal-btn modal-btn-primary modal-btn-small" (click)="activatePlan()"
@@ -64,13 +64,13 @@
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
-          {{ activatingPlan ? 'Activando...' : 'Activar' }}
+          {{ (activatingPlan ? 'WEEKLY_PLANS.DETAIL.ACTIVATING' : 'COMMON.ACTIVATE') | translate }}
         </button>
         }
         @if (plan.status === 'ACTIVE') {
         <button class="modal-btn modal-btn-secondary modal-btn-small" (click)="deactivatePlan()"
           [disabled]="deactivatingPlan">
-          {{ deactivatingPlan ? 'Revirtiendo...' : 'Volver a borrador' }}
+          {{ (deactivatingPlan ? 'COMMON.REVERTING' : 'WEEKLY_PLANS.DETAIL.BACK_TO_DRAFT') | translate }}
         </button>
         }
       </div>
@@ -81,11 +81,11 @@
   <!-- PESTAÑAS -->
   <div class="tabs">
     <button class="tab-btn" [class.active]="activeTab === 'tablero'" (click)="switchTab('tablero')"
-      aria-label="Ver cronograma semanal">Cronograma semanal</button>
+      [aria-label]="'WEEKLY_PLANS.DETAIL.TAB_BOARD_ARIA' | translate">{{ 'WEEKLY_PLANS.DETAIL.TAB_BOARD' | translate }}</button>
     <button class="tab-btn" [class.active]="activeTab === 'stock'" (click)="switchTab('stock')"
-      aria-label="Ver inventario requerido">Inventario requerido</button>
+      [aria-label]="'WEEKLY_PLANS.DETAIL.TAB_STOCK_ARIA' | translate">{{ 'WEEKLY_PLANS.DETAIL.TAB_STOCK' | translate }}</button>
     <button class="tab-btn" [class.active]="activeTab === 'asistencia'" (click)="switchTab('asistencia')"
-      aria-label="Ver asistencia de alumnos">Asistencia de alumnos</button>
+      [aria-label]="'WEEKLY_PLANS.DETAIL.TAB_ATTENDANCE_ARIA' | translate">{{ 'WEEKLY_PLANS.DETAIL.TAB_ATTENDANCE' | translate }}</button>
   </div>
 
   <!-- TABLERO VIEWS (Kanban like) -->
@@ -96,7 +96,7 @@
       <select id="daySelect" class="day-select-input" (change)="onDayMobileChange($event)">
         @for (day of days; track day.value) {
         <option [value]="day.value" [selected]="selectedDayTab === day.value">
-          {{ day.label }}
+          {{ day.label | translate }}
         </option>
         }
       </select>
@@ -121,15 +121,15 @@
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
           </span>
-          <h3>{{ day.label }}</h3>
+          <h3>{{ day.label | translate }}</h3>
         </div>
         <div class="column-header-right">
-          <span class="slot-count">{{ slotsByDay[day.value]?.length || 0 }} sesiones</span>
+          <span class="slot-count">{{ 'WEEKLY_PLANS.SESSIONS_COUNT' | translate: { count: slotsByDay[day.value]?.length || 0 } }}</span>
 
           <div class="column-actions-dropdown" [class.is-active]="activeDayMenu === day.value"
             (click)="$event.stopPropagation()">
             <button class="btn-icon btn-menu-trigger" (click)="toggleDayMenu(day.value, $event)"
-              aria-label="Acciones de columna">
+              [aria-label]="'COMMON.COLUMN_ACTIONS' | translate">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="1"></circle>
@@ -140,7 +140,7 @@
 
             @if (activeDayMenu === day.value) {
             <div class="dropdown-menu glassmorphism slideDown">
-              <div class="dropdown-header">Acciones del {{ day.label }}</div>
+              <div class="dropdown-header">{{ 'WEEKLY_PLANS.DETAIL.ACTIONS_OF' | translate: { day: (day.label | translate) } }}</div>
 
               @if (hasActionableSlots(day.value)) {
               <button class="dropdown-item success" (click)="confirmDay(day.value); closeAllMenus()">
@@ -148,7 +148,7 @@
                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
-                Confirmar todo el día
+                {{ 'WEEKLY_PLANS.DETAIL.CONFIRM_ALL_DAY' | translate }}
               </button>
               }
 
@@ -159,7 +159,7 @@
                   <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
                   <polyline points="3 3 3 8 8 8"></polyline>
                 </svg>
-                Revertir confirmaciones
+                {{ 'WEEKLY_PLANS.DETAIL.REVERT_CONFIRMATIONS' | translate }}
               </button>
               }
 
@@ -170,7 +170,7 @@
                   <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
                   <polyline points="3 3 3 8 8 8"></polyline>
                 </svg>
-                Restaurar canceladas
+                {{ 'WEEKLY_PLANS.DETAIL.RESTORE_CANCELLED' | translate }}
               </button>
               }
 
@@ -179,7 +179,7 @@
                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="4 7 12 15 20 7"></polyline>
                 </svg>
-                {{ isDayCollapsed(day.value) ? 'Expandir columna' : 'Contraer columna' }}
+                {{ (isDayCollapsed(day.value) ? 'COMMON.EXPAND_COLUMN' : 'COMMON.COLLAPSE_COLUMN') | translate }}
               </button>
             </div>
             }
@@ -194,9 +194,9 @@
             <div class="slot-time">{{ slot.startTime }} - {{ slot.endTime }}</div>
           </div>
           <div class="slot-recipe">{{ slot.recipeName }}</div>
-          <div class="slot-qty">{{ slot.quantity }} u.</div>
+          <div class="slot-qty">{{ 'COMMON.UNITS_COUNT' | translate: { count: slot.quantity } }}</div>
           @if (slot.status === 'CANCELLED') {
-          <div class="slot-cancelled-label">Cancelado</div>
+          <div class="slot-cancelled-label">{{ 'COMMON.CANCELLED' | translate }}</div>
           }
 
           <div class="slot-students-summary">
@@ -207,7 +207,7 @@
               <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
               <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
             </svg>
-            {{ getActiveStudents(slot).length }} alumnos
+            {{ 'COMMON.STUDENTS_COUNT' | translate: { count: getActiveStudents(slot).length } }}
           </div>
 
           @if (getActiveStudents(slot).length > 0) {
@@ -221,33 +221,33 @@
           <div class="slot-actions">
             @if ((slot.status === 'PENDING' || slot.status === 'IN_PROGRESS') && isSlotActionable(slot)) {
             <button class="modal-btn modal-btn-success modal-btn-small" (click)="confirmSlot(slot)"
-              aria-label="Confirmar sesión">Confirmar</button>
+              [aria-label]="'WEEKLY_PLANS.DETAIL.CONFIRM_SESSION' | translate">{{ 'COMMON.CONFIRM' | translate }}</button>
             <button class="modal-btn modal-btn-danger modal-btn-small" (click)="cancelSlot(slot)"
-              aria-label="Cancelar sesión">Cancelar</button>
+              [aria-label]="'WEEKLY_PLANS.DETAIL.CANCEL_SESSION' | translate">{{ 'COMMON.CANCEL' | translate }}</button>
             }
             @if (slot.status === 'CONFIRMED') {
             <button class="modal-btn modal-btn-secondary modal-btn-small" (click)="unconfirmSlot(slot)"
-              aria-label="Revertir confirmación">
+              [aria-label]="'WEEKLY_PLANS.DETAIL.REVERT_CONFIRM_ARIA' | translate">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
                 style="margin-right: 4px;">
                 <path d="M3 2v6h6"></path>
                 <path d="M3 13a9 9 0 1 0 3-7.7L3 8"></path>
               </svg>
-              Revertir
+              {{ 'COMMON.REVERT' | translate }}
             </button>
             }
             @if (slot.status === 'CANCELLED') {
             <button class="modal-btn modal-btn-secondary modal-btn-small" (click)="restoreSlot(slot)"
-              aria-label="Restaurar sesión">
-              Restaurar
+              [aria-label]="'WEEKLY_PLANS.DETAIL.RESTORE_SESSION_ARIA' | translate">
+              {{ 'COMMON.RESTORE' | translate }}
             </button>
             }
           </div>
         </div>
         }
         @if (!slotsByDay[day.value] || slotsByDay[day.value].length === 0) {
-        <div class="empty-day">Sin sesiones</div>
+        <div class="empty-day">{{ 'WEEKLY_PLANS.DETAIL.NO_SESSIONS' | translate }}</div>
         }
       </div>
     </div>
@@ -260,44 +260,44 @@
   <div class="stock-tab fadeInPage">
     <div class="stock-toolbar">
       <div>
-        <h3>Inventario requerido</h3>
-        <p>Revisa los productos con faltante y genera una orden de reposición si hace falta.</p>
+        <h3>{{ 'WEEKLY_PLANS.DETAIL.TAB_STOCK' | translate }}</h3>
+        <p>{{ 'WEEKLY_PLANS.DETAIL.STOCK_HINT' | translate }}</p>
       </div>
       <button class="modal-btn modal-btn-primary" type="button" (click)="openStockOrderModal()"
         [disabled]="loadingStock || loadingStockOrderData || !canCreateStockOrder()">
-        {{ loadingStockOrderData ? 'Preparando...' : 'Crear orden de reposición' }}
+        {{ (loadingStockOrderData ? 'COMMON.PREPARING' : 'WEEKLY_PLANS.DETAIL.CREATE_ORDER') | translate }}
       </button>
     </div>
 
     <div class="stock-search-row">
       <div class="search-input-group">
         <input type="text" class="form-control stock-search-input" [(ngModel)]="stockSearchTerm"
-          placeholder="Buscar producto por nombre..." />
+          [placeholder]="'COMMON.SEARCH_PRODUCT_PLACEHOLDER' | translate" />
         @if (stockSearchTerm) {
-        <button type="button" class="btn-clear-search" (click)="stockSearchTerm = ''">Limpiar</button>
+        <button type="button" class="btn-clear-search" (click)="stockSearchTerm = ''">{{ 'COMMON.CLEAR' | translate }}</button>
         }
       </div>
 
       <div class="stock-sort-controls">
         <button class="sort-btn" [class.active]="stockSortMode === 'name'" (click)="setStockSortMode('name')"
-          title="Ordenar alfabéticamente">
+          [title]="'COMMON.SORT_ALPHA' | translate">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="4" y1="6" x2="20" y2="6"></line>
             <line x1="4" y1="12" x2="14" y2="12"></line>
             <line x1="4" y1="18" x2="8" y2="18"></line>
           </svg>
-          Nombre
+          {{ 'COMMON.NAME' | translate }}
         </button>
         <button class="sort-btn" [class.active]="stockSortMode === 'shortage'" (click)="setStockSortMode('shortage')"
-          title="Priorizar productos con faltantes">
+          [title]="'COMMON.SORT_SHORTAGE' | translate">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 2v20"></path>
             <path d="m17 7-5-5-5 5"></path>
             <path d="m7 17 5 5 5-5"></path>
           </svg>
-          Faltantes
+          {{ 'COMMON.SHORTAGES' | translate }}
         </button>
       </div>
 
@@ -305,7 +305,7 @@
     </div>
 
     @if (loadingStock) {
-    <p>Cargando lista de la compra...</p>
+    <p>{{ 'WEEKLY_PLANS.DETAIL.LOADING_STOCK' | translate }}...</p>
     } @else if (filteredStockRequirements.length > 0) {
     <div class="stock-list">
       @for (req of filteredStockRequirements; track req.productId) {
@@ -314,29 +314,29 @@
           <div class="item-name">
             {{ req.productName }}
             @if (req.availabilityPercentage < 100) { <span class="merma-tag"
-              [title]="'Este producto tiene una merma del ' + (100 - (req.availabilityPercentage || 100)) + '% (parte no utilizable)'">
-              Merma: {{ 100 - (req.availabilityPercentage || 100) | number:'1.0-0' }}%
+              [title]="'WEEKLY_PLANS.DETAIL.MERMA_TITLE' | translate: { percent: (100 - (req.availabilityPercentage || 100)) }">
+              {{ 'COMMON.MERMA' | translate }}: {{ 100 - (req.availabilityPercentage || 100) | number:'1.0-0' }}%
               </span>
               }
           </div>
-          <div class="item-qty highlight">Requerido Bruto: <strong>{{ req.grossRequiredQuantity | number:'1.2-2'
+          <div class="item-qty highlight">{{ 'WEEKLY_PLANS.DETAIL.GROSS_REQUIRED' | translate }}: <strong>{{ req.grossRequiredQuantity | number:'1.2-2'
               }}</strong></div>
-          <div class="item-qty secondary">Requerido Neto: {{ req.requiredQuantity | number:'1.2-2' }}</div>
+          <div class="item-qty secondary">{{ 'WEEKLY_PLANS.DETAIL.NET_REQUIRED' | translate }}: {{ req.requiredQuantity | number:'1.2-2' }}</div>
           <div class="item-qty">
-            Reservado por otros planes:
-            <strong>{{ req.grossReservedByOtherPlans | number:'1.2-2' }}</strong> (Bruto)
-            <small>/ {{ req.reservedByOtherPlans | number:'1.2-2' }} (Neto)</small>
+            {{ 'WEEKLY_PLANS.DETAIL.RESERVED_BY_OTHERS' | translate }}:
+            <strong>{{ req.grossReservedByOtherPlans | number:'1.2-2' }}</strong> ({{ 'COMMON.GROSS' | translate }})
+            <small>/ {{ req.reservedByOtherPlans | number:'1.2-2' }} ({{ 'COMMON.NET' | translate }})</small>
           </div>
           <div class="item-qty">
-            Disponible real:
-            <strong>{{ (req.grossAvailableStock - req.grossReservedByOtherPlans) | number:'1.2-2' }}</strong> (Bruto)
-            <small>/ {{ (req.availableStock - req.reservedByOtherPlans) | number:'1.2-2' }} (Neto)</small>
+            {{ 'WEEKLY_PLANS.DETAIL.REAL_AVAILABLE' | translate }}:
+            <strong>{{ (req.grossAvailableStock - req.grossReservedByOtherPlans) | number:'1.2-2' }}</strong> ({{ 'COMMON.GROSS' | translate }})
+            <small>/ {{ (req.availableStock - req.reservedByOtherPlans) | number:'1.2-2' }} ({{ 'COMMON.NET' | translate }})</small>
           </div>
 
           @if (req.expiredStock && req.expiredStock > 0) {
           <div class="item-qty">
             <span class="stock-warning stock-expired-warning"
-              [title]="'Hay ' + (req.grossExpiredStock | number:'1.2-2') + ' unidades caducadas que se incluyen en el stock físico pero el sistema NO permitirá usarlas para cocinar.'">
+              [title]="'WEEKLY_PLANS.DETAIL.EXPIRED_STOCK_TITLE' | translate: { qty: (req.grossExpiredStock | number:'1.2-2') }">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                 style="margin-right: 4px; vertical-align: text-bottom;">
@@ -345,30 +345,27 @@
                 <line x1="12" y1="9" x2="12" y2="13"></line>
                 <line x1="12" y1="17" x2="12.01" y2="17"></line>
               </svg>
-              Stock caducado: <strong>{{ req.grossExpiredStock | number:'1.2-2' }}</strong>
+              {{ 'COMMON.EXPIRED_STOCK' | translate }}: <strong>{{ req.grossExpiredStock | number:'1.2-2' }}</strong>
             </span>
           </div>
           }
           <div class="item-status" [class.insufficient]="!req.sufficient">
             @if (req.sufficient) {
-            <span class="sufficient-label">Hay stock ({{ getRealAvailableStock(req) | number:'1.2-2' }} Neto)</span>
+            <span class="sufficient-label">{{ 'WEEKLY_PLANS.DETAIL.HAVE_STOCK' | translate: { qty: (getRealAvailableStock(req) | number:'1.2-2') } }}</span>
             } @else {
-            <span class="insufficient-label">Stock insuficiente (Faltan: {{ getUncoveredStockShortage(req) |
-              number:'1.2-2' }} Bruto)</span>
+            <span class="insufficient-label">{{ 'WEEKLY_PLANS.DETAIL.INSUFFICIENT_STOCK' | translate: { qty: (getUncoveredStockShortage(req) | number:'1.2-2') } }}</span>
             }
           </div>
 
           @if (getPendingOrderCount(req) > 0) {
           <div class="item-order-summary">
-            <span class="order-chip total">{{ getPendingOrderCount(req) }} pedido{{ getPendingOrderCount(req) > 1 ? 's'
-              : '' }}</span>
-            <span class="order-chip qty">En pedidos: {{ getPendingOrderQuantity(req) | number:'1.2-2' }}</span>
+            <span class="order-chip total">{{ 'COMMON.ORDERS_COUNT' | translate: { count: getPendingOrderCount(req) } }}</span>
+            <span class="order-chip qty">{{ 'WEEKLY_PLANS.DETAIL.IN_ORDERS' | translate }}: {{ getPendingOrderQuantity(req) | number:'1.2-2' }}</span>
             @if (hasInTransitOrders(req)) {
-            <span class="order-chip in-transit">En camino: {{ getInTransitQuantity(req) | number:'1.2-2' }}</span>
+            <span class="order-chip in-transit">{{ 'ORDERS.STATUS.PENDING' | translate }}: {{ getInTransitQuantity(req) | number:'1.2-2' }}</span>
             }
             @if (hasPendingConfirmationOrders(req)) {
-            <span class="order-chip pending-confirmation">Pendiente confirmar: {{ getPendingConfirmationQuantity(req) |
-              number:'1.2-2' }}</span>
+            <span class="order-chip pending-confirmation">{{ 'ORDERS.STATUS.CREATED' | translate }}: {{ getPendingConfirmationQuantity(req) | number:'1.2-2' }}</span>
             }
           </div>
           <div class="order-breakdown-list">
@@ -379,8 +376,7 @@
               <span class="order-breakdown-id">#{{ order.orderId }}</span>
               <span class="order-breakdown-status" [class.pending-confirmation]="order.status === 'CREATED'"
                 [class.in-transit]="order.status === 'PENDING' || order.status === 'REVIEW'">
-                {{ order.status === 'CREATED' ? 'Pendiente confirmar' : (order.status === 'PENDING' || order.status ===
-                'REVIEW' ? 'En camino' : order.status) }}
+                {{ (order.status === 'CREATED' ? 'ORDERS.STATUS.CREATED' : (order.status === 'PENDING' || order.status === 'REVIEW' ? 'ORDERS.STATUS.PENDING' : order.status)) | translate }}
               </span>
               <span class="order-breakdown-qty">{{ order.quantity | number:'1.2-2' }}</span>
             </div>
@@ -394,13 +390,13 @@
               fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
               style="margin-right: 4px; vertical-align: text-bottom;">
               <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>Hay stock ({{ getRealAvailableStock(req) | number:'1.2-2' }})</span>
+            </svg>{{ 'WEEKLY_PLANS.DETAIL.HAVE_STOCK_LABEL' | translate: { qty: (getRealAvailableStock(req) | number:'1.2-2') } }}</span>
           } @else {
           <span class="stock-warning">
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
               <path d="M12 2 1 21h22L12 2Zm0 6 1 7h-2l1-7Zm0 11a1.25 1.25 0 1 1 0-2.5A1.25 1.25 0 0 1 12 19Z" />
             </svg>
-            Faltan unidades
+            {{ 'WEEKLY_PLANS.DETAIL.MISSING_UNITS' | translate }}
           </span>
           }
         </div>
@@ -408,8 +404,7 @@
       }
     </div>
     } @else {
-    <p class="empty-state">{{ stockRequirements.length > 0 ? 'No hay productos que coincidan con la búsqueda.' : 'No hay
-      requisitos de stock para este plan.' }}</p>
+    <p class="empty-state">{{ (stockRequirements.length > 0 ? 'COMMON.NO_RESULTS_SEARCH' : 'WEEKLY_PLANS.DETAIL.NO_STOCK_REQS') | translate }}</p>
     }
   </div>
   }
@@ -420,19 +415,18 @@
     @if (rosterStudents.length > 0) {
     <div class="attendance-toolbar">
       <div>
-        <h3>Alumnos del plan</h3>
-        <p>Gestiona ausencias por día sin romper las sesiones compartidas.</p>
+        <h3>{{ 'WEEKLY_PLANS.DETAIL.STUDENTS_OF_PLAN' | translate }}</h3>
+        <p>{{ 'WEEKLY_PLANS.DETAIL.ATTENDANCE_HINT' | translate }}</p>
       </div>
-      <span class="attendance-count">{{ filteredRosterStudents.length }} alumnos</span>
+      <span class="attendance-count">{{ 'COMMON.STUDENTS_COUNT' | translate: { count: filteredRosterStudents.length } }}</span>
     </div>
 
     <div class="attendance-search-row">
       <input type="text" class="form-control attendance-search-input" [(ngModel)]="attendanceSearchTerm"
-        placeholder="Buscar alumno por nombre..." />
+        [placeholder]="'WEEKLY_PLANS.DETAIL.SEARCH_STUDENT' | translate" />
       @if (attendanceSearchTerm) {
-      <button type="button" class="btn-clear-search" (click)="attendanceSearchTerm = ''">Limpiar</button>
+      <button type="button" class="btn-clear-search" (click)="attendanceSearchTerm = ''">{{ 'COMMON.CLEAR' | translate }}</button>
       }
-      <span class="pool-search-count">{{ filteredRosterStudents.length }}</span>
     </div>
 
     <div class="attendance-accordion-list">
@@ -447,7 +441,7 @@
             </svg>
           </span>
           <strong class="attendance-student-name">{{ student.studentName }}</strong>
-          <span class="attendance-badge">{{ student.totalAssignments }} sesiones</span>
+          <span class="attendance-badge">{{ 'WEEKLY_PLANS.DETAIL.SESSIONS_COUNT' | translate: { count: student.totalAssignments } }}</span>
         </button>
 
         @if (isAttendanceStudentExpanded(student.studentId)) {
@@ -463,8 +457,8 @@
                   <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
               </span>
-              <span class="attendance-day-name">{{ day.dayLabel }}</span>
-              <span class="attendance-day-count">{{ day.slotSummaries.length }} sesiones</span>
+              <span class="attendance-day-name">{{ day.dayLabel | translate }}</span>
+              <span class="attendance-day-count">{{ 'WEEKLY_PLANS.DETAIL.SESSIONS_COUNT' | translate: { count: day.slotSummaries.length } }}</span>
             </button>
 
             @if (isAttendanceDayExpanded(student.studentId, day.dayOfWeek)) {
@@ -475,28 +469,26 @@
                   <span class="slot-tag">{{ slot.recipeName }} · {{ slot.startTime }} - {{ slot.endTime }}</span>
                   @if (canManageAttendanceCancellation()) {
                   @if (slot.status === 'CANCELLED') {
-                  <span class="confirmed-label cancelled-label-inline">Sesión cancelada</span>
+                  <span class="confirmed-label cancelled-label-inline">{{ 'WEEKLY_PLANS.DETAIL.SESSION_CANCELLED' | translate }}</span>
                   } @else if (isSessionConfirmed(slot.id)) {
                   <span class="confirmed-label">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
                       stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                       <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
-                    Confirmado
+                    {{ 'COMMON.CONFIRMED' | translate }}
                   </span>
                   } @else if (slot.studentStatus === 'CANCELLED') {
                   <button type="button" class="modal-btn modal-btn-secondary modal-btn-small attendance-cancel-btn"
                     (click)="restoreStudentFromSession(student.studentId, student.studentName, slot.id, slot.recipeName, slot.sortOrder)"
                     [disabled]="restoringAttendance.has('restore-slot-' + student.studentId + '-' + slot.id)">
-                    {{ restoringAttendance.has('restore-slot-' + student.studentId + '-' + slot.id) ? 'Restaurando...' :
-                    'Restaurar sesión' }}
+                    {{ (restoringAttendance.has('restore-slot-' + student.studentId + '-' + slot.id) ? 'COMMON.RESTORING' : 'WEEKLY_PLANS.DETAIL.RESTORE_SESSION') | translate }}
                   </button>
                   } @else {
                   <button type="button" class="modal-btn modal-btn-secondary modal-btn-small attendance-cancel-btn"
                     (click)="cancelStudentFromSession(student.studentId, student.studentName, slot.id, slot.recipeName, slot.sortOrder)"
                     [disabled]="cancellingAttendance.has('slot-' + student.studentId + '-' + slot.id)">
-                    {{ cancellingAttendance.has('slot-' + student.studentId + '-' + slot.id) ? 'Cancelando...' :
-                    'Cancelar sesión' }}
+                    {{ (cancellingAttendance.has('slot-' + student.studentId + '-' + slot.id) ? 'COMMON.CANCELLING' : 'WEEKLY_PLANS.DETAIL.CANCEL_SESSION') | translate }}
                   </button>
                   }
                   }
@@ -512,15 +504,14 @@
                   <line x1="12" y1="16" x2="12" y2="12"></line>
                   <line x1="12" y1="8" x2="12.01" y2="8"></line>
                 </svg>
-                Hay sesiones confirmadas. Revierte la confirmación en el cronograma para gestionar ausencias.
+                {{ 'WEEKLY_PLANS.DETAIL.ATTENDANCE_LOCK_MSG' | translate }}
               </div>
               } @else {
               @if (hasActiveStudentInDay(student.studentId, day.dayOfWeek)) {
               <button type="button" class="modal-btn modal-btn-secondary modal-btn-small attendance-cancel-btn"
                 (click)="cancelStudentFromDay(student.studentId, student.studentName, day.dayOfWeek)"
                 [disabled]="cancellingAttendance.has(student.studentId + '-' + day.dayOfWeek)">
-                {{ cancellingAttendance.has(student.studentId + '-' + day.dayOfWeek) ? 'Cancelando...' : 'Cancelar día'
-                }}
+                {{ (cancellingAttendance.has(student.studentId + '-' + day.dayOfWeek) ? 'COMMON.CANCELLING' : 'WEEKLY_PLANS.DETAIL.CANCEL_DAY') | translate }}
               </button>
               }
 
@@ -528,8 +519,7 @@
               <button type="button" class="modal-btn modal-btn-secondary modal-btn-small attendance-cancel-btn"
                 (click)="restoreStudentFromDay(student.studentId, student.studentName, day.dayOfWeek)"
                 [disabled]="restoringAttendance.has('restore-day-' + student.studentId + '-' + day.dayOfWeek)">
-                {{ restoringAttendance.has('restore-day-' + student.studentId + '-' + day.dayOfWeek) ? 'Restaurando...'
-                : 'Restaurar día' }}
+                {{ (restoringAttendance.has('restore-day-' + student.studentId + '-' + day.dayOfWeek) ? 'COMMON.RESTORING' : 'WEEKLY_PLANS.DETAIL.RESTORE_DAY') | translate }}
               </button>
               }
               }
@@ -544,8 +534,7 @@
       }
     </div>
     } @else {
-    <p class="empty-state">{{ attendanceSearchTerm ? 'No hay alumnos que coincidan con la búsqueda.' : 'No hay alumnos
-      asignados todavía.' }}</p>
+    <p class="empty-state">{{ (attendanceSearchTerm ? 'COMMON.NO_RESULTS_SEARCH' : 'WEEKLY_PLANS.DETAIL.NO_STUDENTS_ASSIGNED') | translate }}</p>
     }
 
   </div>
@@ -555,31 +544,31 @@
 </div>
 
 @if (showDownloadPdfModal) {
-<app-base-modal title="Descargar plan semanal" size="md" (closed)="closeDownloadPdfModal()">
+<app-base-modal [title]="'COMMON.DOWNLOAD_PDF' | translate" size="md" (closed)="closeDownloadPdfModal()">
   <div class="modal-container pdf-download-modal">
-    <p class="pdf-download-help">Elige el formato de orientación para descargar el PDF del plan semanal.</p>
+    <p class="pdf-download-help">{{ 'WEEKLY_PLANS.DETAIL.PDF_HINT' | translate }}</p>
 
-    <div class="pdf-orientation-options" role="radiogroup" aria-label="Orientación del PDF">
+    <div class="pdf-orientation-options" role="radiogroup" [aria-label]="'WEEKLY_PLANS.DETAIL.PDF_ORIENTATION_ARIA' | translate">
       <label class="pdf-orientation-option" [class.is-selected]="downloadPdfOrientation === 'horizontal'">
         <input type="radio" name="pdfOrientation" [value]="'horizontal'" [(ngModel)]="downloadPdfOrientation" />
-        <span class="option-title">Horizontal</span>
-        <span class="option-desc">Ideal para ver más sesiones por fila.</span>
+        <span class="option-title">{{ 'COMMON.HORIZONTAL' | translate }}</span>
+        <span class="option-desc">{{ 'WEEKLY_PLANS.DETAIL.PDF_HORIZONTAL_DESC' | translate }}</span>
       </label>
 
       <label class="pdf-orientation-option" [class.is-selected]="downloadPdfOrientation === 'vertical'">
         <input type="radio" name="pdfOrientation" [value]="'vertical'" [(ngModel)]="downloadPdfOrientation" />
-        <span class="option-title">Vertical</span>
-        <span class="option-desc">Ideal para impresión tradicional en páginas largas.</span>
+        <span class="option-title">{{ 'COMMON.VERTICAL' | translate }}</span>
+        <span class="option-desc">{{ 'WEEKLY_PLANS.DETAIL.PDF_VERTICAL_DESC' | translate }}</span>
       </label>
     </div>
 
     <div class="modal-actions-end">
       <button type="button" class="modal-btn modal-btn-secondary" (click)="closeDownloadPdfModal()"
         [disabled]="downloadingPdf">
-        Cancelar
+        {{ 'COMMON.CANCEL' | translate }}
       </button>
       <button type="button" class="modal-btn modal-btn-primary" (click)="downloadPlanPdf()" [disabled]="downloadingPdf">
-        {{ downloadingPdf ? 'Descargando...' : 'Descargar PDF' }}
+        {{ (downloadingPdf ? 'COMMON.DOWNLOADING' : 'COMMON.DOWNLOAD_PDF') | translate }}
       </button>
     </div>
   </div>
@@ -587,12 +576,12 @@
 }
 
 @if (showStockOrderModal) {
-<app-base-modal title="Generar una orden de reposición" size="lg" (closed)="closeStockOrderModal()">
+<app-base-modal [title]="'WEEKLY_PLANS.DETAIL.ORDER_TITLE' | translate" size="lg" (closed)="closeStockOrderModal()">
   <div class="modal-container">
     @if (loadingStockOrderData) {
     <div class="loading-state">
       <div class="spinner"></div>
-      <p>Calculando requisitos de stock...</p>
+      <p>{{ 'WEEKLY_PLANS.DETAIL.CALCULATING_STOCK' | translate }}...</p>
     </div>
     } @else {
     <app-order-builder [stockOrderItems]="stockOrderItems" [suppliers]="suppliers" [userId]="plan?.chefId || 1"
