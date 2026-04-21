@@ -3,11 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OrderService } from '../../../core/services/order.service';
 import { MessageService } from '../../../core/services/message.service';
-import { Order, OrderReviewLockStatus, OrderStatus } from '../../../shared/models/order.model';
+import { Order, OrderStatus } from '../../../shared/models/order.model';
 import { OrderDetailsModalComponent } from '../orders/order-details-modal/order-details-modal.component';
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
-import { OrderReviewLockStateService } from '../../../core/services/order-review-lock-state.service';
-// DESHABILITADO: import { OrderReviewCollaborationStateService } from '../../../core/services/order-review-collaboration-state.service';
 import { WebSocketService } from '../../../core/services/websocket.service';
 import { Subject, takeUntil } from 'rxjs';
 import { OrderReceptionModalComponent } from './order-reception-modal/order-reception-modal.component';
@@ -30,8 +28,6 @@ export class ReceptionComponent implements OnInit, OnDestroy {
   private orderService = inject(OrderService);
   private messageService = inject(MessageService);
   private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
-  private orderReviewLockStateService = inject(OrderReviewLockStateService);
-  // DESHABILITADO: private orderReviewCollaborationStateService = inject(OrderReviewCollaborationStateService);
   private webSocketService = inject(WebSocketService);
   private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
@@ -48,27 +44,26 @@ export class ReceptionComponent implements OnInit, OnDestroy {
   showDetailsModal = false;
   showReceptionModal = false;
   selectedOrder: Order | null = null;
-  reviewLocks: Record<number, OrderReviewLockStatus> = {};
 
   // Paginación por sección
-  displayCounts: Record<string, number> = {
-    PENDING: 1,
-    REVIEW: 1,
-    CONFIRMED: 1,
-    CANCELLED: 1,
-    INCOMPLETE: 1
+  pages: Record<string, number> = {
+    PENDING: 0,
+    REVIEW: 0,
+    CONFIRMED: 0,
+    CANCELLED: 0,
+    INCOMPLETE: 0
+  };
+
+  hasMoreByStatus: Record<string, boolean> = {
+    PENDING: false,
+    REVIEW: false,
+    CONFIRMED: false,
+    CANCELLED: false,
+    INCOMPLETE: false
   };
 
   ngOnInit(): void {
     this.loadOrders();
-
-    // DESHABILITADO: Sistema de locks y colaboración compartida
-    /* this.orderReviewLockStateService.state$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(state => {
-        this.reviewLocks = state;
-        this.cdr.markForCheck();
-      }); */
 
     this.syncCacheInvalidationService.invalidatedDomains$
       .pipe(takeUntil(this.destroy$))
@@ -78,16 +73,7 @@ export class ReceptionComponent implements OnInit, OnDestroy {
         }
       });
 
-    // DESHABILITADO: Sistema de locks y colaboración compartida
-    /* this.webSocketService.connected$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(isConnected => {
-        if (!isConnected || this.ordersByStatus.REVIEW.length === 0) {
-          return;
-        }
 
-        this.refreshReviewLocks(this.ordersByStatus.REVIEW);
-      }); */
   }
 
   ngOnDestroy(): void {
@@ -96,36 +82,45 @@ export class ReceptionComponent implements OnInit, OnDestroy {
   }
 
   loadOrders(): void {
-    this.loading = true;
-    this.orderService.getAll().subscribe({
+    const statuses: (keyof OrdersByStatus)[] = ['PENDING', 'REVIEW', 'CONFIRMED', 'CANCELLED', 'INCOMPLETE'];
+    statuses.forEach(status => this.loadStatus(status, 0));
+  }
+
+  loadStatus(status: keyof OrdersByStatus, page: number, append: boolean = false): void {
+    if (!append) {
+      this.loading = true;
+    }
+    
+    this.orderService.getByStatus(status, page, 1).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
       next: (response) => {
         const normalizeOrders = (orders: any[]): Order[] => orders.map(order => this.normalizeOrderPayload(order));
-
-        // Verificar si la respuesta es un array directo o un objeto paginado
-        let ordersArray: Order[] = [];
-        if (Array.isArray(response)) {
-          ordersArray = normalizeOrders(response);
-        } else if (response && Array.isArray((response as any).content)) {
-          // Respuesta paginada con estructura {content: [], ...}
-          ordersArray = normalizeOrders((response as any).content);
+        let newOrders: Order[] = [];
+        
+        if (response && Array.isArray(response.content)) {
+          newOrders = normalizeOrders(response.content);
+          this.hasMoreByStatus[status] = !response.last;
+        } else if (Array.isArray(response)) {
+          newOrders = normalizeOrders(response);
+          this.hasMoreByStatus[status] = false;
         }
 
-        // Ordenar las órdenes de más reciente a más antigua (creando una copia)
-        const sortedOrders = [...ordersArray].sort((a, b) => b.id - a.id);
-        this.ordersByStatus = {
-          PENDING: sortedOrders.filter(o => o.status === 'PENDING'),
-          REVIEW: sortedOrders.filter(o => o.status === 'REVIEW'),
-          CONFIRMED: sortedOrders.filter(o => o.status === 'CONFIRMED'),
-          CANCELLED: sortedOrders.filter(o => o.status === 'CANCELLED'),
-          INCOMPLETE: sortedOrders.filter(o => o.status === 'INCOMPLETE')
-        };
-        this.refreshReviewLocks(this.ordersByStatus.REVIEW);
-        this.resetDisplayCounts();
+        if (append) {
+          // Filtrar duplicados preventivamente
+          const existingIds = new Set(this.ordersByStatus[status].map(o => o.id));
+          const uniqueNewOrders = newOrders.filter(o => !existingIds.has(o.id));
+          this.ordersByStatus[status] = [...this.ordersByStatus[status], ...uniqueNewOrders];
+        } else {
+          this.ordersByStatus[status] = newOrders;
+        }
+        
+        this.pages[status] = page;
         this.loading = false;
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError('Error al cargar órdenes');
+        this.messageService.showError(`Error al cargar órdenes (${status})`);
         this.loading = false;
         this.cdr.markForCheck();
       }
@@ -182,94 +177,33 @@ export class ReceptionComponent implements OnInit, OnDestroy {
 
   // Paginación
   resetDisplayCounts(): void {
-    for (const key of Object.keys(this.displayCounts)) {
-      this.displayCounts[key] = 1;
-    }
+    const statuses: (keyof OrdersByStatus)[] = ['PENDING', 'REVIEW', 'CONFIRMED', 'CANCELLED', 'INCOMPLETE'];
+    statuses.forEach(s => {
+      this.pages[s] = 0;
+      this.hasMoreByStatus[s] = false;
+    });
   }
 
   getDisplayedOrders(status: string): Order[] {
-    const orders = (this.ordersByStatus as any)[status] || [];
-    return orders.slice(0, this.displayCounts[status] || 1);
+    return (this.ordersByStatus as any)[status] || [];
   }
 
   hasMore(status: string): boolean {
-    const orders = (this.ordersByStatus as any)[status] || [];
-    return (this.displayCounts[status] || 1) < orders.length;
+    return this.hasMoreByStatus[status] || false;
   }
 
   loadMoreOrders(status: string): void {
-    this.displayCounts[status] = (this.displayCounts[status] || 1) + 10;
+    const nextPage = this.pages[status] + 1;
+    this.loadStatus(status as keyof OrdersByStatus, nextPage, true);
   }
 
   getRemainingCount(status: string): number {
-    const orders = (this.ordersByStatus as any)[status] || [];
-    return orders.length - (this.displayCounts[status] || 1);
+    return 0; // Ya no aplica con paginación de servidor pura
   }
 
-  getReviewLockInfo(order: Order): OrderReviewLockStatus | null {
-    // DESHABILITADO: Sistema de locks y colaboración compartida
-    return null; // Siempre sin bloqueo
-    // return this.reviewLocks[order.id] ?? null;
-  }
 
-  isReviewBlocked(order: Order): boolean {
-    // DESHABILITADO: Sistema de locks y colaboración compartida
-    return false; // Siempre permite acceso
-    /* const lock = this.getReviewLockInfo(order);
-    return !!lock?.locked && !lock.currentUserOwner && !lock.currentUserAdmin; */
-  }
 
-  getReviewLockLabel(order: Order): string {
-    const lock = this.getReviewLockInfo(order);
-    if (!lock?.locked) {
-      return '';
-    }
 
-    if (lock.currentUserOwner) {
-      return 'Bloqueo activo';
-    }
-
-    const owner = lock.lockedByDisplayName || lock.lockedByUsername || 'Otro usuario';
-    if (lock.currentUserAdmin) {
-      return `Revisión compartida`;
-    }
-
-    return 'Revisión en curso';
-  }
-
-  getReviewLockDetail(order: Order): string {
-    const lock = this.getReviewLockInfo(order);
-    if (!lock?.locked) {
-      return '';
-    }
-
-    const owner = lock.lockedByDisplayName || lock.lockedByUsername || 'Otro usuario';
-
-    if (lock.currentUserOwner) {
-      return 'Se liberará al salir de esta ventana.';
-    }
-
-    if (lock.currentUserAdmin) {
-      return `${owner} la está revisando. Puedes continuar y confirmar en paralelo como ADMIN.`;
-    }
-
-    return `${owner} está revisando esta orden en este momento.`;
-  }
-
-  /* DESHABILITADO: canRequestCollaborationFromList feature
-  canRequestCollaborationFromList(order: Order): boolean {
-    const lock = this.getReviewLockInfo(order);
-    if (!lock?.locked) {
-      return false;
-    }
-
-    if (lock.currentUserOwner || lock.currentUserAdmin) {
-      return false;
-    }
-
-    return true;
-  }
-  */
 
   // Action handlers
   async reviewOrder(order: Order): Promise<void> {
@@ -300,18 +234,7 @@ export class ReceptionComponent implements OnInit, OnDestroy {
     this.showReceptionModal = true;
   }
 
-  /* DESHABILITADO: requestCollaborationFromList feature
-  requestCollaborationFromList(order: Order): void {
-    this.orderReviewCollaborationStateService.requestSharedReview(order.id).subscribe({
-      next: () => {
-        this.messageService.showSuccess('Solicitud de colaboración enviada.');
-      },
-      error: () => {
-        this.messageService.showError('Error al enviar solicitud de colaboración.');
-      }
-    });
-  }
-  */
+
 
   closeReceptionModal(): void {
     this.showReceptionModal = false;
@@ -408,11 +331,7 @@ export class ReceptionComponent implements OnInit, OnDestroy {
     this.showDetailsModal = true;
   }
 
-  private refreshReviewLocks(orders: Order[]): void {
-    orders.forEach(order => {
-      this.orderReviewLockStateService.refresh(order.id).subscribe({ error: () => {} });
-    });
-  }
+
 
   closeDetailsModal(): void {
     this.showDetailsModal = false;

@@ -17,18 +17,7 @@
     @if (order) {
         <div class="modal-container order-detail-layout">
             <div class="modal-content">
-                @if (lockInfoMessage) {
-                    <div class="review-lock-banner" [class.review-lock-banner-blocking]="lockBlockedForCurrentUser">
-                        <div class="review-lock-banner-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" focusable="false" width="16" height="16" fill="currentColor">
-                                <path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm-6 8.5V15a1 1 0 1 1 2 0v2.5h-2ZM10 9V7a2 2 0 0 1 4 0v2h-4Z" />
-                            </svg>
-                        </div>
-                        <div class="review-lock-banner-text">
-                            {{ lockInfoMessage }}
-                        </div>
-                    </div>
-                }
+
 
                 <!-- Información General -->
                 <div class="modal-section">
@@ -96,7 +85,7 @@
     <div modal-footer>
         @if (order) {
             <div class="modal-actions">
-                <button class="btn-editar" (click)="onStatusChange()" [disabled]="lockBlockedForCurrentUser">
+                <button class="btn-editar" (click)="onStatusChange()">
                     Cambiar Estado
                 </button>
                 <button class="btn-imprimir" (click)="onDownloadPdf()">

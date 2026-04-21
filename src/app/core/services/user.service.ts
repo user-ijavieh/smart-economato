@@ -124,14 +124,19 @@ export class UserService {
     );
   }
 
-  search(term: string, page = 0, size = 8): Observable<Page<User>> {
-    return this.cache.getOrFetch('weekly_plan', `users:search:${term}:${page}:${size}`, () => {
+  search(term: string, page = 0, size = 20, sort?: string): Observable<Page<User>> {
+    return this.cache.getOrFetch('weekly_plan', `users:search:${term}:${page}:${size}:${sort ?? ''}`, () => {
       const role = (localStorage.getItem('user_role') || '').toUpperCase();
-      const params = new HttpParams()
+      let params = new HttpParams()
         .set('term', term)
         .set('page', page.toString())
-        .set('size', size.toString())
-        .set('sort', 'name,asc');
+        .set('size', size.toString());
+
+      if (sort) {
+        params = params.set('sort', sort);
+      } else {
+        params = params.set('sort', 'name,asc');
+      }
 
       const endpoint = role === 'CHEF' ? `${this.url}/teachers/search` : `${this.url}/search`;
       return this.http.get<Page<User>>(endpoint, { params });
