@@ -299,12 +299,12 @@
   position: relative;
   display: flex;
   align-items: center;
-  width: 140px; /* Enough for lot label */
+  width: 175px; /* Widened for lot label with calculation */
 }
 
 .custom-qty-input {
   height: 32px !important;
-  padding: 0 45px 0 10px !important;
+  padding: 0 95px 0 10px !important; /* Increased padding-right for longer label */
   font-size: 0.95rem !important;
   font-weight: 700 !important;
   text-align: left !important;
