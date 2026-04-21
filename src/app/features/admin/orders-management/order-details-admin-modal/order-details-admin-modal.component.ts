@@ -1,8 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Order, OrderStatus, OrderReviewLockStatus } from '../../../../shared/models/order.model';
+import { Order, OrderStatus } from '../../../../shared/models/order.model';
 import { OrderService } from '../../../../core/services/order.service';
-import { OrderReviewLockStateService } from '../../../../core/services/order-review-lock-state.service';
 import { MessageService } from '../../../../core/services/message.service';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 import { Subscription } from 'rxjs';
@@ -23,38 +22,27 @@ export class OrderDetailsAdminModalComponent implements OnInit, OnDestroy {
   @Output() revert = new EventEmitter<Order>();
 
   private orderService = inject(OrderService);
-  private orderReviewLockStateService = inject(OrderReviewLockStateService);
   private cdr = inject(ChangeDetectorRef);
   messageService = inject(MessageService);
 
   visibleLines = 20;
   readonly linesStep = 20;
   
-  reviewLockStatus: OrderReviewLockStatus | null = null;
-  lockInfoMessage = '';
-  lockBlockedForCurrentUser = false;
 
-  private lockStatusSubscription?: Subscription;
-  private heartbeatTimerId: any = null;
 
   ngOnInit(): void {
     if (this.order) {
-      this.initializeReviewLock(this.order);
       this.loadFullOrder(this.order.id);
     }
   }
 
   ngOnDestroy(): void {
-    this.stopLockHeartbeat();
-    this.lockStatusSubscription?.unsubscribe();
-    this.releaseLockIfOwned();
   }
 
   loadFullOrder(orderId: number): void {
     this.orderService.getById(orderId).subscribe({
       next: (fullOrder) => {
         this.order = this.normalizeOrderPayload(fullOrder as any);
-        this.initializeReviewLock(this.order);
         this.cdr.markForCheck();
       }
     });
@@ -127,92 +115,9 @@ export class OrderDetailsAdminModalComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ── Review Lock Logic ──
-  private initializeReviewLock(order: Order): void {
-    this.lockStatusSubscription?.unsubscribe();
-    this.lockStatusSubscription = this.orderReviewLockStateService.watchOrder(order.id).subscribe(status => {
-      this.reviewLockStatus = status;
-      this.applyLockUiStatus(status);
-    });
 
-    this.orderReviewLockStateService.refresh(order.id).subscribe({
-      next: status => {
-        if (!status.locked || status.currentUserOwner) {
-          this.tryAcquireReviewLock(order.id);
-        } else {
-          this.applyLockUiStatus(status);
-        }
-      },
-      error: () => this.tryAcquireReviewLock(order.id)
-    });
-  }
 
-  private tryAcquireReviewLock(orderId: number): void {
-    this.orderReviewLockStateService.acquire(orderId).subscribe({
-      next: status => {
-        this.reviewLockStatus = status;
-        this.applyLockUiStatus(status);
-      },
-      error: error => {
-        if (error?.status === 409) {
-          const lockedBy = error?.error?.lockedBy;
-          this.lockInfoMessage = lockedBy
-            ? `${lockedBy} está revisando este pedido en este momento.`
-            : 'Este pedido está siendo revisado por otro usuario.';
-          this.lockBlockedForCurrentUser = false;
-          this.orderReviewLockStateService.refresh(orderId).subscribe({ error: () => {} });
-        }
-      }
-    });
-  }
 
-  private applyLockUiStatus(status: OrderReviewLockStatus | null): void {
-    if (!status || !status.locked) {
-      this.stopLockHeartbeat();
-      this.lockBlockedForCurrentUser = false;
-      this.lockInfoMessage = '';
-      this.cdr.markForCheck();
-      return;
-    }
-
-    if (status.currentUserOwner) {
-      this.lockBlockedForCurrentUser = false;
-      this.lockInfoMessage = 'Estás revisando este pedido.';
-      this.startLockHeartbeat(status.orderId);
-      this.cdr.markForCheck();
-      return;
-    }
-
-    const lockOwner = status.lockedByDisplayName || status.lockedByUsername || 'Otro usuario';
-    this.lockBlockedForCurrentUser = false;
-    this.lockInfoMessage = `${lockOwner} está revisando este pedido en este momento.`;
-    this.stopLockHeartbeat();
-    this.cdr.markForCheck();
-  }
-
-  private startLockHeartbeat(orderId: number): void {
-    if (this.heartbeatTimerId !== null) return;
-    this.heartbeatTimerId = setInterval(() => {
-      this.orderReviewLockStateService.heartbeat(orderId).subscribe({
-        next: status => {
-          this.reviewLockStatus = status;
-          this.applyLockUiStatus(status);
-        },
-        error: () => this.orderReviewLockStateService.refresh(orderId).subscribe({ error: () => {} })
-      });
-    }, 30000);
-  }
-
-  private stopLockHeartbeat(): void {
-    if (this.heartbeatTimerId === null) return;
-    clearInterval(this.heartbeatTimerId);
-    this.heartbeatTimerId = null;
-  }
-
-  private releaseLockIfOwned(): void {
-    if (!this.order || !this.reviewLockStatus?.currentUserOwner) return;
-    this.orderReviewLockStateService.release(this.order.id).subscribe({ error: () => {} });
-  }
 
   // ── Format Helpers ──
   formatStatus(status: string): string {

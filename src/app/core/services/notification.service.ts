@@ -8,7 +8,13 @@ import { NotificationApiService, NotificationResponseDTO } from './notification-
 
 export type AppRole = 'ADMIN' | 'CHEF' | 'ELEVATED' | 'USER';
 export type RoleEscalationReason = 'MANUAL_GRANTED' | 'MANUAL_REVOKED' | 'AUTO_EXPIRED';
-export type NotificationCode = 'FOOD_CRISIS_ACTIVATED' | 'FOOD_CRISIS_LIFTED' | 'ROLE_ESCALATION_CHANGED' | null;
+export type NotificationCode =
+  | 'FOOD_CRISIS_ACTIVATED'
+  | 'FOOD_CRISIS_LIFTED'
+  | 'ROLE_ESCALATION_CHANGED'
+  | 'WEEKLY_PLAN_CANCELLED'
+  | 'WEEKLY_PLAN_AUTO_CLOSED'
+  | null;
 
 export interface RoleNotificationMessage {
   title: string;
@@ -272,7 +278,13 @@ export class NotificationService {
   }
 
   private mapNotificationTypeToCode(type: string): NotificationCode {
-    if (type === 'FOOD_CRISIS_ACTIVATED' || type === 'FOOD_CRISIS_LIFTED' || type === 'ROLE_ESCALATION_CHANGED') {
+    if (
+      type === 'FOOD_CRISIS_ACTIVATED' ||
+      type === 'FOOD_CRISIS_LIFTED' ||
+      type === 'ROLE_ESCALATION_CHANGED' ||
+      type === 'WEEKLY_PLAN_CANCELLED' ||
+      type === 'WEEKLY_PLAN_AUTO_CLOSED'
+    ) {
       return type;
     }
 
@@ -300,6 +312,14 @@ export class NotificationService {
     }
 
     if (notification.code === 'ROLE_ESCALATION_CHANGED') {
+      this.messageService.showInfo(notification.message, 9000, {
+        title,
+        persistent: true
+      });
+      return;
+    }
+
+    if (notification.code === 'WEEKLY_PLAN_CANCELLED' || notification.code === 'WEEKLY_PLAN_AUTO_CLOSED') {
       this.messageService.showInfo(notification.message, 9000, {
         title,
         persistent: true
@@ -353,7 +373,9 @@ export class NotificationService {
 
     const code = payload.code === 'FOOD_CRISIS_ACTIVATED' ||
       payload.code === 'FOOD_CRISIS_LIFTED' ||
-      payload.code === 'ROLE_ESCALATION_CHANGED'
+      payload.code === 'ROLE_ESCALATION_CHANGED' ||
+      payload.code === 'WEEKLY_PLAN_CANCELLED' ||
+      payload.code === 'WEEKLY_PLAN_AUTO_CLOSED'
       ? payload.code
       : null;
     const newRole = this.normalizeRole(payload.newRole ?? null) ?? undefined;

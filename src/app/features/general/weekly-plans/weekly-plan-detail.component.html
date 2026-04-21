@@ -309,7 +309,7 @@
     } @else if (filteredStockRequirements.length > 0) {
     <div class="stock-list">
       @for (req of filteredStockRequirements; track req.productId) {
-      <div class="stock-item" [class.insufficient]="!req.sufficient">
+      <div class="stock-item" [class.insufficient]="!req.sufficient || req.expirationRisk">
         <div class="item-info">
           <div class="item-name">
             {{ req.productName }}
@@ -318,6 +318,13 @@
               Merma: {{ 100 - (req.availabilityPercentage || 100) | number:'1.0-0' }}%
               </span>
               }
+
+            @if (req.expirationRisk) {
+            <span class="merma-tag"
+              [title]="'Parte del stock de este producto caduca antes del inicio del plan.'">
+              Riesgo de caducidad
+            </span>
+            }
           </div>
           <div class="item-qty highlight">Requerido Bruto: <strong>{{ req.grossRequiredQuantity | number:'1.2-2'
               }}</strong></div>
@@ -349,12 +356,31 @@
             </span>
           </div>
           }
-          <div class="item-status" [class.insufficient]="!req.sufficient">
+
+          @if ((req.expiringBeforePlanStock || 0) > 0) {
+          <div class="item-qty">
+            <span class="stock-warning stock-expired-warning"
+              [title]="'Cantidad que caduca antes del plan y reduce el stock efectivo.'">
+              Stock que caduca antes del plan: <strong>{{ req.expiringBeforePlanStock | number:'1.2-2' }}</strong>
+            </span>
+          </div>
+          }
+
+          @if (req.nearestExpirationDate) {
+          <div class="item-qty secondary">
+            Próxima caducidad: {{ req.nearestExpirationDate }}
+          </div>
+          }
+          <div class="item-status" [class.insufficient]="!req.sufficient" [class.covered]="!req.sufficient && getUncoveredStockShortage(req) === 0">
             @if (req.sufficient) {
             <span class="sufficient-label">Hay stock ({{ getRealAvailableStock(req) | number:'1.2-2' }} Neto)</span>
             } @else {
-            <span class="insufficient-label">Stock insuficiente (Faltan: {{ getUncoveredStockShortage(req) |
-              number:'1.2-2' }} Bruto)</span>
+              @if (getUncoveredStockShortage(req) === 0) {
+                <span class="covered-label">Cubierto por pedidos en camino</span>
+              } @else {
+                <span class="insufficient-label">Stock insuficiente (Faltan: {{ getUncoveredStockShortage(req) |
+                  number:'1.2-2' }} Bruto)</span>
+              }
             }
           </div>
 

@@ -10,8 +10,6 @@ import {
   OrderDetail,
   OrdersByProductsRequest,
   OrdersByProductsResponse,
-  OrderReviewLockStatus,
-  OrderReviewCollaborationState,
 } from '../../shared/models/order.model';
 import { HttpQueryCacheService } from './http-query-cache.service';
 
@@ -57,8 +55,10 @@ export class OrderService {
     return this.cache.getOrFetch('order', `byUser:${userId}`, () => this.http.get<Order[]>(`${this.url}/user/${userId}`));
   }
 
-  getByStatus(status: string): Observable<Order[]> {
-    return this.cache.getOrFetch('order', `byStatus:${status}`, () => this.http.get<Order[]>(`${this.url}/status/${status}`));
+  getByStatus(status: string, page: number = 0, size: number = 20): Observable<any> {
+    const params = { page: page.toString(), size: size.toString(), sort: 'orderDate,desc' };
+    return this.cache.getOrFetch('order', `byStatus:${status}:${page}:${size}`, () => 
+      this.http.get<any>(`${this.url}/status/${status}`, { params }));
   }
 
   getPendingReception(): Observable<Order[]> {
@@ -129,56 +129,5 @@ export class OrderService {
     );
   }
 
-  getReviewLockStatus(orderId: number): Observable<OrderReviewLockStatus> {
-    return this.cache.getOrFetch('order', `reviewLock:${orderId}`, () =>
-      this.http.get<OrderReviewLockStatus>(`${this.url}/${orderId}/review-lock`)
-    );
-  }
 
-  acquireReviewLock(orderId: number): Observable<OrderReviewLockStatus> {
-    return this.http.post<OrderReviewLockStatus>(`${this.url}/${orderId}/review-lock`, {}).pipe(
-      tap(() => this.cache.invalidateDomains(['order']))
-    );
-  }
-
-  heartbeatReviewLock(orderId: number): Observable<OrderReviewLockStatus> {
-    return this.http.post<OrderReviewLockStatus>(`${this.url}/${orderId}/review-lock/heartbeat`, {}).pipe(
-      tap(() => this.cache.invalidateEntry('order', `reviewLock:${orderId}`))
-    );
-  }
-
-  releaseReviewLock(orderId: number): Observable<OrderReviewLockStatus> {
-    return this.http.delete<OrderReviewLockStatus>(`${this.url}/${orderId}/review-lock`).pipe(
-      tap(() => this.cache.invalidateDomains(['order']))
-    );
-  }
-
-  getReviewCollaborationState(orderId: number): Observable<OrderReviewCollaborationState> {
-    return this.http.get<OrderReviewCollaborationState>(`${this.url}/${orderId}/review-collaboration`);
-  }
-
-  requestSharedReview(orderId: number): Observable<OrderReviewCollaborationState> {
-    return this.http.post<OrderReviewCollaborationState>(`${this.url}/${orderId}/review-collaboration/request`, {}).pipe(
-      tap(() => this.cache.invalidateEntry('order', `reviewLock:${orderId}`))
-    );
-  }
-
-  admitSharedReview(orderId: number, userId: number): Observable<OrderReviewCollaborationState> {
-    return this.http.post<OrderReviewCollaborationState>(`${this.url}/${orderId}/review-collaboration/admit/${userId}`, {}).pipe(
-      tap(() => this.cache.invalidateEntry('order', `reviewLock:${orderId}`))
-    );
-  }
-
-  lockReviewCollaborationField(orderId: number, fieldPath: string): Observable<OrderReviewCollaborationState> {
-    return this.http.post<OrderReviewCollaborationState>(`${this.url}/${orderId}/review-collaboration/fields/lock`, { fieldPath });
-  }
-
-  unlockReviewCollaborationField(orderId: number, fieldPath: string): Observable<OrderReviewCollaborationState> {
-    const params = new HttpParams().set('fieldPath', fieldPath);
-    return this.http.delete<OrderReviewCollaborationState>(`${this.url}/${orderId}/review-collaboration/fields/lock`, { params });
-  }
-
-  patchReviewCollaborationField(orderId: number, fieldPath: string, value: unknown): Observable<OrderReviewCollaborationState> {
-    return this.http.post<OrderReviewCollaborationState>(`${this.url}/${orderId}/review-collaboration/fields/patch`, { fieldPath, value });
-  }
 }

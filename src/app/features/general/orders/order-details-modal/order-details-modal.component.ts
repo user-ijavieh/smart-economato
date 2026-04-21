@@ -1,12 +1,10 @@
 import { Component, Input, Output, EventEmitter, inject, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { Order, OrderReviewLockStatus } from '../../../../shared/models/order.model';
-import { OrderDetail } from '../../../../shared/models/order.model';
+import { Order, OrderDetail } from '../../../../shared/models/order.model';
 import { OrderService } from '../../../../core/services/order.service';
 import { MessageService } from '../../../../core/services/message.service';
 import { AuthService } from '../../../../core/services/auth.service';
-import { OrderReviewLockStateService } from '../../../../core/services/order-review-lock-state.service';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 
 @Component({
@@ -25,27 +23,20 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
   private orderService = inject(OrderService);
   private messageService = inject(MessageService);
   private authService = inject(AuthService);
-  private orderReviewLockStateService = inject(OrderReviewLockStateService);
   isDownloading = false;
   visibleDetailsCount = 20;
   readonly detailsPageSize = 20;
-  reviewLockStatus: OrderReviewLockStatus | null = null;
-  lockInfoTitle = '';
-  lockInfoDetail = '';
-  lockBlockedForCurrentUser = false;
   roundingMode: 'units' | 'lots' = 'lots';
 
-  private lockStatusSubscription?: Subscription;
+
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['order']) {
       this.visibleDetailsCount = this.detailsPageSize;
-      this.initializeReviewLock();
     }
   }
 
   ngOnDestroy(): void {
-    this.lockStatusSubscription?.unsubscribe();
   }
 
   get displayedDetails() {
@@ -152,10 +143,6 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
 
   async onEdit(): Promise<void> {
     if (!this.order) return;
-    if (this.lockBlockedForCurrentUser) {
-      this.messageService.showError(this.lockInfoDetail || 'El pedido está siendo revisado por otro usuario.');
-      return;
-    }
     const confirmed = await this.messageService.confirm(
       'Editar pedido',
       `¿Deseas editar el pedido #${this.order.id}?`
@@ -167,10 +154,6 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
 
   async onDelete(): Promise<void> {
     if (!this.order) return;
-    if (this.lockBlockedForCurrentUser) {
-      this.messageService.showError(this.lockInfoDetail || 'El pedido está siendo revisado por otro usuario.');
-      return;
-    }
     const confirmed = await this.messageService.confirm(
       'Eliminar pedido',
       `¿Estás seguro de que deseas eliminar el pedido #${this.order.id}? Esta acción no se puede deshacer.`
@@ -217,51 +200,9 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
     });
   }
 
-  private initializeReviewLock(): void {
-    if (!this.order) {
-      this.lockStatusSubscription?.unsubscribe();
-      this.lockStatusSubscription = undefined;
-      this.lockInfoTitle = '';
-      this.lockInfoDetail = '';
-      this.lockBlockedForCurrentUser = false;
-      return;
-    }
 
-    this.lockStatusSubscription?.unsubscribe();
-    this.lockStatusSubscription = this.orderReviewLockStateService.watchOrder(this.order.id).subscribe(status => {
-      this.reviewLockStatus = status;
-      this.applyLockUiStatus(status);
-    });
 
-    const orderId = this.order.id;
-    this.orderReviewLockStateService.refresh(orderId).subscribe({
-      next: status => this.applyLockUiStatus(status),
-      error: () => {}
-    });
-  }
 
-  private applyLockUiStatus(status: OrderReviewLockStatus | null): void {
-    if (!status || !status.locked) {
-      this.lockBlockedForCurrentUser = false;
-      this.lockInfoTitle = '';
-      this.lockInfoDetail = '';
-      return;
-    }
-
-    if (status.currentUserOwner) {
-      this.lockBlockedForCurrentUser = false;
-      this.lockInfoTitle = 'Bloqueo activo';
-      this.lockInfoDetail = 'La orden está en revisión por tu sesión activa.';
-      return;
-    }
-
-    const lockOwner = status.lockedByDisplayName || status.lockedByUsername || 'Otro usuario';
-    this.lockBlockedForCurrentUser = this.authService.getRole() !== 'ADMIN';
-    this.lockInfoTitle = 'Revisión en curso';
-    this.lockInfoTitle = this.authService.getRole() === 'ADMIN'
-      ? `${lockOwner} lo está revisando. Puedes continuar como ADMIN.`
-      : `${lockOwner} abrió este pedido. Solo lectura mientras termina.`;
-  }
 
   onRoundingModeChange(mode: 'units' | 'lots'): void {
     this.roundingMode = mode;

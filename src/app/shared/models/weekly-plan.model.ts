@@ -75,6 +75,9 @@ export interface WeeklyPlanStockRequirement {
   grossReservedByOtherPlans: number;
   expiredStock?: number;
   grossExpiredStock?: number;
+  expiringBeforePlanStock?: number;
+  nearestExpirationDate?: string | null;
+  expirationRisk?: boolean;
 
   sufficient: boolean;
   pendingOrderQuantity?: number;
