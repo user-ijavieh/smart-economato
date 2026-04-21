@@ -183,3 +183,16 @@
 .merma-stocks strong {
   color: var(--theme-text-primary);
 }
+
+.price-value-alt {
+  color: var(--brand-primary);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.price-value-alt small {
+  font-weight: 400;
+  color: var(--theme-text-secondary);
+  font-size: 0.8rem;
+  margin-left: 4px;
+}

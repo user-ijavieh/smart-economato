@@ -210,3 +210,100 @@
   .details-table th, .details-table td { white-space: normal; }
 }
 
+
+/** ===== SECTION HEADER & TOGGLE ===== */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.view-mode-toggle {
+  display: flex;
+  background: color-mix(in srgb, var(--theme-text-primary) 5%, transparent);
+  padding: 4px;
+  border-radius: 12px;
+  gap: 4px;
+}
+
+.view-mode-toggle button {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--theme-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-mode-toggle button.active {
+  background: var(--theme-surface-glass);
+  color: var(--brand-primary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/** ===== QUANTITY CELL ===== */
+.quantity-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.quantity-value-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  background: var(--theme-overlay-light);
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--theme-border-glass);
+}
+
+.quantity-primary {
+  color: var(--theme-text-primary);
+}
+
+.quantity-slash {
+  color: var(--theme-text-secondary);
+  opacity: 0.5;
+}
+
+.quantity-secondary {
+  color: var(--brand-primary);
+}
+
+.quantity-unit, .quantity-unit-detail {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--theme-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.quantity-unit-detail {
+  font-style: italic;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.comparison-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 0.9rem;
+  border: 1.5px solid;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}

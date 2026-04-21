@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subscription, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { catchError, of } from 'rxjs';
 import {
   Order,
@@ -27,7 +27,7 @@ import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.c
 @Component({
   selector: 'app-order-reception-modal',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent, DatePipe, BarcodeScannerComponent],
+  imports: [FormsModule, BaseModalComponent, DatePipe, DecimalPipe, BarcodeScannerComponent],
   templateUrl: './order-reception-modal.component.html',
   styleUrl: './order-reception-modal.component.css'
 })
@@ -58,6 +58,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
   filteredDetails: OrderDetail[] = [];
   reviewLockStatus: OrderReviewLockStatus | null = null;
   collaborationState: OrderReviewCollaborationState | null = null;
+  roundingMode: 'units' | 'lots' = 'lots';
   lockInfoTitle = '';
   lockInfoDetail = '';
   lockBlockedForCurrentUser = false;
@@ -73,6 +74,8 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
   private collaborationStatusSubscription?: Subscription;
   private websocketConnectionSubscription?: Subscription;
   private syncEventSubscription?: Subscription;
+  private patchSubject = new Subject<{ fieldPath: string, value: any }>();
+  private patchSubscription?: Subscription;
   private heartbeatTimerId: ReturnType<typeof setTimeout> | null = null;
   private activeScaleTarget: { productId: number; lotIndex: number } | null = null;
   private acquiringLock = false;
@@ -122,6 +125,18 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     }
 
     this.applySearch();
+    
+    // Configurar debouncing para actualizaciones colaborativas
+    this.patchSubscription = this.patchSubject.pipe(
+      debounceTime(500)
+    ).subscribe(({ fieldPath, value }) => {
+      if (this.canEditCollaboratively) {
+        this.orderReviewCollaborationStateService.patchField(this.order.id, fieldPath, value).subscribe({
+          error: () => {}
+        });
+      }
+    });
+
     // DESHABILITADO: Sistema de locks y colaboración compartida
     // this.initializeReviewLock();
     // this.initializeCollaboration();
@@ -135,6 +150,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     this.collaborationStatusSubscription?.unsubscribe();
     this.websocketConnectionSubscription?.unsubscribe();
     this.syncEventSubscription?.unsubscribe();
+    this.patchSubscription?.unsubscribe();
     // DESHABILITADO: Sistema de locks y colaboración compartida
     // this.stopLockHeartbeat();
     // this.releaseAllFieldLocks();
@@ -214,6 +230,32 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
       .replace(/[\u0300-\u036f]/g, '');
   }
 
+  onRoundingModeChange(mode: 'units' | 'lots'): void {
+    this.roundingMode = mode;
+  }
+
+  getLotCount(quantity: number, lotQuantity: number | undefined): number {
+    if (!lotQuantity || lotQuantity <= 0) return 0;
+    return quantity / lotQuantity;
+  }
+
+  updateLotQuantity(detail: OrderDetail, lotIndex: number, lotCount: number): void {
+    if (detail.lotQuantity && detail.lotQuantity > 0) {
+      const parsedLotCount = Number(lotCount);
+      const safeLotCount = Number.isFinite(parsedLotCount) && parsedLotCount >= 0 ? parsedLotCount : 0;
+      const newQuantity = safeLotCount * detail.lotQuantity;
+      detail.lots![lotIndex].quantity = Math.round(newQuantity * 10000) / 10000;
+      
+      // Trigger collaboration sync if active
+      this.onLotFieldChange(detail, lotIndex, 'quantity', detail.lots![lotIndex].quantity);
+    }
+  }
+
+  formatUnit(unit: string | undefined): string {
+    if (!unit) return '';
+    return unit.length > 5 ? unit.substring(0, 4) + '.' : unit;
+  }
+
   removeLot(detail: any, index: number): void {
     if (detail.lots && detail.lots.length > 1) {
       detail.lots.splice(index, 1);
@@ -278,6 +320,13 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
   }
 
   get canEditCollaboratively(): boolean {
+    // Si no ha cargado el estado de colaboración, NO intentamos editar colaborativamente
+    // Esto evita inundaciones de red si el sistema está "desconectado"
+    // Si el sistema colaborativo está deshabilitado o no cargado, mantenemos edición local.
+    if (!this.isCollaborationAvailable()) {
+      return true;
+    }
+
     if (!this.reviewLockStatus?.locked) {
       return true;
     }
@@ -316,11 +365,15 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
   }
 
   isInputDisabled(fieldPath?: string): boolean {
-    if (this.isProcessing || !this.canEditCollaboratively) {
+    if (this.isProcessing) {
       return true;
     }
 
-    if (!fieldPath) {
+    if (!this.canEditCollaboratively) {
+      return true;
+    }
+
+    if (!fieldPath || !this.isCollaborationAvailable()) {
       return false;
     }
 
@@ -333,7 +386,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
   }
 
   onFieldFocus(detail: OrderDetail, lotIndex: number, fieldName: 'quantity' | 'expirationDate' | 'batchCode'): void {
-    if (!this.canEditCollaboratively) {
+    if (!this.canEditCollaboratively || !this.isCollaborationAvailable()) {
       return;
     }
 
@@ -347,6 +400,10 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
   }
 
   onFieldBlur(detail: OrderDetail, lotIndex: number, fieldName: 'quantity' | 'expirationDate' | 'batchCode'): void {
+    if (!this.isCollaborationAvailable()) {
+      return;
+    }
+
     const fieldPath = this.buildFieldPath(detail.productId, lotIndex, fieldName);
     if (!this.activeFieldLocks.has(fieldPath)) {
       return;
@@ -361,7 +418,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
   }
 
   onLotFieldChange(detail: OrderDetail, lotIndex: number, fieldName: 'quantity' | 'expirationDate' | 'batchCode', rawValue: unknown): void {
-    if (!this.canEditCollaboratively) {
+    if (!this.canEditCollaboratively || !this.isCollaborationAvailable()) {
       return;
     }
 
@@ -372,9 +429,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
       value = Number.isFinite(numeric) ? numeric : 0;
     }
 
-    this.orderReviewCollaborationStateService.patchField(this.order.id, fieldPath, value).subscribe({
-      error: () => {}
-    });
+    this.patchSubject.next({ fieldPath, value });
   }
 
   requestSharedReview(): void {
@@ -433,6 +488,10 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
       this.activeScaleTarget = null;
       this.messageService.showError('No se pudo iniciar la lectura de la báscula. Revisa permisos o conexión del puerto.');
     }
+  }
+
+  private isCollaborationAvailable(): boolean {
+    return !!this.reviewLockStatus && !!this.collaborationState;
   }
 
   isScaleActiveForLot(detail: any, lotIndex: number): boolean {

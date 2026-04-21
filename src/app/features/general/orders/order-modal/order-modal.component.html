@@ -39,8 +39,14 @@
       </div>
 
       <!-- Product Search Form -->
-      <div class="product-search-section">
-        <h3>Agregar Productos</h3>
+      <div class="modal-section-main">
+      <div class="section-header">
+        <h3>Añadir Productos</h3>
+        <div class="view-mode-toggle">
+          <button type="button" [class.active]="roundingMode === 'units'" (click)="onRoundingModeChange('units')">Unidades</button>
+          <button type="button" [class.active]="roundingMode === 'lots'" (click)="onRoundingModeChange('lots')">Lotes</button>
+        </div>
+      </div>
         <div class="form-row">
           <div class="form-group flex-2">
             <label for="productSearch">Producto *</label>
@@ -65,8 +71,24 @@
           </div>
 
           <div class="form-group">
-            <label for="quantity">Cantidad *</label>
-            <input type="number" id="quantity" [(ngModel)]="itemForm.quantity" min="1" step="1" class="form-control">
+            <label for="quantity">
+              @if (roundingMode === 'lots' && itemForm.lotQuantity > 0) {
+                Lotes (de {{ itemForm.lotQuantity }} {{ formatUnit(itemForm.unit) }}) *
+              } @else {
+                Cantidad *
+              }
+            </label>
+            @if (roundingMode === 'lots' && itemForm.lotQuantity > 0) {
+              <div class="input-with-unit">
+                <input type="number" id="lotQuantity" [ngModel]="getLotCount(itemForm)" (ngModelChange)="updateQuantityFromLots(itemForm, $event)" name="lotQuantity" min="0.1" step="0.1" class="form-control">
+                <span class="inline-unit lot-unit">LOTES</span>
+              </div>
+            } @else {
+              <div class="input-with-unit">
+                <input type="number" id="quantity" [(ngModel)]="itemForm.quantity" min="1" step="1" name="quantity" class="form-control">
+                <span class="inline-unit">{{ formatUnit(itemForm.unit) }}</span>
+              </div>
+            }
           </div>
 
           @if (itemForm.productId > 0) {
@@ -96,7 +118,13 @@
             <div class="item-info">
               <div class="item-name">{{ item.productName }}</div>
               <div class="item-details">
-                {{ item.quantity }} {{ item.unit }} x {{ item.unitPrice | number:'1.2-2' }} €
+                @if (roundingMode === 'lots' && item.lotQuantity) {
+                  <strong>{{ getLotCount(item) | number:'1.1-2' }} lotes de {{ item.lotQuantity }} {{ formatUnit(item.unit) }}</strong> 
+                  <span class="unit-breakdown">({{ item.quantity }} {{ formatUnit(item.unit) }})</span>
+                } @else {
+                  <strong>{{ item.quantity }} {{ formatUnit(item.unit) }}</strong>
+                }
+                <span class="price-multiplier">x {{ item.unitPrice | number:'1.2-2' }} €</span>
               </div>
             </div>
             <div class="item-actions">

@@ -35,6 +35,11 @@
       </select>
     </div>
 
+    <button *ngIf="canEdit()" class="btn-secondary" (click)="openOrderWizard()" title="Crear pedido a partir de recetas">
+       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+       Orden Personalizada
+    </button>
+
     <button id="btnCrearReceta" class="btn-primary" (click)="openCreateModal()" [title]="canEdit() ? 'Crear nueva receta' : 'Crear nuevo borrador'">
       <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
         <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
@@ -388,4 +393,8 @@
       </div>
     </div>
   </app-base-modal>
+}
+
+@if (showOrderWizard) {
+  <app-recipe-order-wizard-modal (closed)="closeOrderWizard()" />
 }

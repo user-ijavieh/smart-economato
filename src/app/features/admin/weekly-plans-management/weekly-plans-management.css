@@ -37,6 +37,8 @@
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+  position: relative;
+  z-index: 10;
   animation: adminWeeklyItemIn 0.3s ease both;
   animation-delay: 0.05s;
 }

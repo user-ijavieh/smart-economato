@@ -83,6 +83,7 @@
                     <th class="sortable" (click)="onSortProductsChange('name')" [attr.data-sort-dir]="getSortProductsDir('name')">Nombre</th>
                     <th class="sortable" (click)="onSortProductsChange('currentStock')" [attr.data-sort-dir]="getSortProductsDir('currentStock')">Stock</th>
                     <th class="hide-on-mobile sortable" (click)="onSortProductsChange('unitPrice')" [attr.data-sort-dir]="getSortProductsDir('unitPrice')">Precio (€)</th>
+                    <th class="hide-on-mobile">Lote</th>
                     <th class="hide-on-mobile sortable" (click)="onSortProductsChange('availabilityPercentage')" [attr.data-sort-dir]="getSortProductsDir('availabilityPercentage')">Disponibilidad</th>
                     <th class="hide-on-mobile">Acciones</th>
                     <th class="show-on-mobile-only mobile-icon-col"></th>
@@ -96,6 +97,7 @@
                     <td><span class="skeleton skeleton-text" style="width: 160px"></span></td>
                     <td><span class="skeleton skeleton-text" style="width: 80px"></span></td>
                     <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 60px"></span></td>
+                    <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 50px"></span></td>
                     <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 80px"></span></td>
                     <td class="hide-on-mobile"><span class="skeleton skeleton-text" style="width: 120px"></span></td>
                     <td class="show-on-mobile-only mobile-icon-col"></td>
@@ -119,6 +121,13 @@
                     </td>
                     <td class="hide-on-mobile" (click)="openDetailModal(product)">
                         <span class="price-value">{{ product.unitPrice | number:'1.2-2' }} €</span>
+                    </td>
+                    <td class="hide-on-mobile">
+                        @if (product.lotQuantity) {
+                        <span class="lot-badge">{{ product.lotQuantity }} {{ product.unit }}</span>
+                        } @else {
+                        <span class="lot-badge lot-none">—</span>
+                        }
                     </td>
                     <td class="hide-on-mobile" (click)="openDetailModal(product)">
                         @if (product.availabilityPercentage !== undefined && product.availabilityPercentage !== null) {

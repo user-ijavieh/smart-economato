@@ -11,6 +11,7 @@ export interface ProductFormState {
   price: number;
   stock: number;
   unit: string;
+  lotQuantity: number | undefined;
   supplierId: number | undefined;
   expirationDate: string;
 }
@@ -36,6 +37,7 @@ export class ProductFormComponent implements OnChanges {
     price: 0,
     stock: 0,
     unit: 'UND', // Default to valid unit
+    lotQuantity: undefined,
     supplierId: undefined,
     expirationDate: ''
   };
@@ -82,6 +84,7 @@ export class ProductFormComponent implements OnChanges {
         price: this.product.unitPrice || 0,
         stock: this.product.currentStock || 0,
         unit: this.product.unit || 'UND',
+        lotQuantity: this.product.lotQuantity,
         supplierId: this.product.supplier?.id,
         expirationDate: this.product.expirationDate || ''
       };
@@ -98,6 +101,7 @@ export class ProductFormComponent implements OnChanges {
       price: 0,
       stock: 0,
       unit: 'UND',
+      lotQuantity: undefined,
       supplierId: undefined,
       expirationDate: ''
     };
@@ -119,6 +123,7 @@ export class ProductFormComponent implements OnChanges {
       stock: stockValue,
       currentStock: stockValue,
       unit: this.formProduct.unit,
+      lotQuantity: this.formProduct.lotQuantity,
       supplierId: this.formProduct.supplierId,
       expirationDate: this.formProduct.expirationDate || undefined
     };

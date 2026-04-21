@@ -181,3 +181,24 @@
   font-size: 0.9rem;
   pointer-events: none;
 }
+
+/** ===== INPUT WITH UNIT ===== */
+.input-with-unit {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-unit input {
+  padding-right: 60px;
+}
+
+.inline-unit {
+  position: absolute;
+  right: 12px;
+  color: var(--theme-text-secondary);
+  font-size: 0.9rem;
+  pointer-events: none;
+  font-weight: 600;
+  text-transform: uppercase;
+}
