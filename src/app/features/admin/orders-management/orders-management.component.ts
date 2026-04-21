@@ -10,8 +10,7 @@ import { UserService } from '../../../core/services/user.service';
 import { MessageService } from '../../../core/services/message.service';
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { OrderReviewLockStateService } from '../../../core/services/order-review-lock-state.service';
-import { Order, OrderStatus, OrderReviewLockStatus } from '../../../shared/models/order.model';
+import { Order, OrderStatus } from '../../../shared/models/order.model';
 import { OrderAudit } from '../../../shared/models/order-audit.model';
 import { Supplier } from '../../../shared/models/supplier.model';
 import { User } from '../../../shared/models/user.model';
@@ -52,7 +51,6 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   private userService = inject(UserService);
   private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
   private authService = inject(AuthService);
-  private orderReviewLockStateService = inject(OrderReviewLockStateService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);

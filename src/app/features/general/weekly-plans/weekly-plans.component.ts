@@ -161,6 +161,13 @@ export class WeeklyPlansComponent implements OnInit, OnDestroy {
   private addDaysToDate(dateStr: string, days: number): string {
     const date = new Date(`${dateStr}T00:00:00`);
     date.setDate(date.getDate() + days);
-    return date.toISOString().split('T')[0];
+    
+    // Format as YYYY-MM-DD manually to avoid timezone issues
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
   }
+
 }

@@ -792,6 +792,20 @@
   background: color-mix(in srgb, var(--color-danger-bg) 50%, transparent);
 }
 
+.covered-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--brand-primary);
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 35%, transparent);
+  background: color-mix(in srgb, var(--brand-primary) 12%, transparent);
+}
+
 .stock-ok {
   color: var(--color-success);
   font-weight: 700;
