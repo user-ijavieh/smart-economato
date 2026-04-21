@@ -11,6 +11,7 @@ import { BaseModalComponent } from '../../../shared/components/base-modal/base-m
 import { RecipeDetailModalComponent } from './recipe-detail-modal/recipe-detail-modal.component';
 import { RecipeEditModalComponent } from './recipe-edit-modal/recipe-edit-modal.component';
 import { RecipeCreateModalComponent } from './recipe-create-modal/recipe-create-modal.component';
+import { RecipeOrderWizardModalComponent } from './recipe-order-wizard-modal/recipe-order-wizard-modal.component';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { finalize, Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
@@ -19,7 +20,7 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 @Component({
   selector: 'app-recipes',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseModalComponent, RecipeDetailModalComponent, RecipeEditModalComponent, RecipeCreateModalComponent],
+  imports: [CommonModule, FormsModule, BaseModalComponent, RecipeDetailModalComponent, RecipeEditModalComponent, RecipeCreateModalComponent, RecipeOrderWizardModalComponent],
   templateUrl: './recipes.component.html',
   styleUrl: './recipes.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -46,6 +47,7 @@ export class RecipesComponent implements OnInit, OnDestroy {
   showFilters = false;
   showEditModal = false;
   showCreateModal = false;
+  showOrderWizard = false;
   showDraftDetailModal = false;
   activeTab: 'recipes' | 'drafts' = 'recipes';
   createModalTitle = 'Crear Nueva Receta';
@@ -241,7 +243,7 @@ export class RecipesComponent implements OnInit, OnDestroy {
 
   canEdit(): boolean {
     const role = this.authService.getRole();
-    return role === 'ADMIN' || role === 'CHEF';
+    return role === 'ADMIN' || role === 'CHEF' || role === 'ELEVATED';
   }
 
   // Paginación
@@ -623,5 +625,15 @@ export class RecipesComponent implements OnInit, OnDestroy {
       return;
     }
     this.loadRecipes();
+  }
+
+  openOrderWizard(): void {
+    this.showOrderWizard = true;
+    this.cdr.detectChanges();
+  }
+
+  closeOrderWizard(): void {
+    this.showOrderWizard = false;
+    this.cdr.detectChanges();
   }
 }

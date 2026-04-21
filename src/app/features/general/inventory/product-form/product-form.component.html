@@ -64,6 +64,24 @@
           }
         </select>
       </div>
+      <div class="form-group">
+        <label for="loteProducto">Lote de Compra (Opcional)</label>
+        <div class="input-with-unit">
+          <input
+            type="number"
+            id="loteProducto"
+            [(ngModel)]="formProduct.lotQuantity"
+            name="lotQuantity"
+            step="0.001"
+            min="0.001"
+            placeholder="Ej: 12"
+          />
+          @if (formProduct.unit) {
+            <span class="inline-unit">{{ formProduct.unit }}</span>
+          }
+        </div>
+        <small class="form-text">Cantidad mínima o múltiplo de compra.</small>
+      </div>
     </div>
 
     <div class="form-row">

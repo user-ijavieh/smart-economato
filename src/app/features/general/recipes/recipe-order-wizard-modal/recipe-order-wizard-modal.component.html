@@ -1,0 +1,82 @@
+<app-base-modal [title]="step === 1 ? 'Seleccionar Recetas' : 'Configurar Pedido'" [size]="step === 1 ? 'md' : 'lg'" (closed)="handleCancelled()">
+  <div class="wizard-container">
+    @if (step === 1) {
+      <div class="step-content recipe-selector">
+        <p class="step-help">Selecciona las recetas para las que deseas generar un pedido de ingredientes.</p>
+        
+        <div class="search-bar glass-input">
+          <input type="text" [(ngModel)]="recipeSearchTerm" placeholder="Buscar receta..." />
+          @if (recipeSearchTerm) {
+            <button class="clear-btn" (click)="recipeSearchTerm = ''">&times;</button>
+          }
+        </div>
+
+        <div class="recipe-grid">
+          @for (recipe of filteredRecipes; track recipe.id) {
+            <div class="recipe-card" [class.selected]="isRecipeSelected(recipe.id)" (click)="toggleRecipe(recipe)">
+              <div class="recipe-info">
+                <span class="recipe-name">{{ recipe.name }}</span>
+                <span class="recipe-portions">{{ recipe.portions }} raciones base</span>
+              </div>
+              <div class="recipe-action">
+                <div class="checkbox-ui">
+                  @if (isRecipeSelected(recipe.id)) {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  }
+                </div>
+              </div>
+            </div>
+          } @empty {
+            @if (!loadingRecipes) {
+                <p class="empty-state">No se encontraron recetas.</p>
+            } @else {
+                <div class="loading-recipes-state">
+                    <div class="spinner"></div>
+                </div>
+            }
+          }
+        </div>
+
+        @if (selectedRecipes.length > 0) {
+          <div class="selected-list">
+            <h3>Cantidades deseadas</h3>
+            <div class="selected-items">
+              @for (sr of selectedRecipes; track sr.recipe.id) {
+                <div class="selected-row">
+                  <span class="recipe-name">{{ sr.recipe.name }}</span>
+                  <div class="quantity-input-group">
+                    <input type="number" [(ngModel)]="sr.quantity" min="1" step="1" />
+                    <span class="unit">raciones</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="wizard-footer">
+          <button type="button" class="modal-btn modal-btn-secondary" (click)="handleCancelled()">Cancelar</button>
+          <button type="button" class="modal-btn modal-btn-primary" (click)="nextStep()" [disabled]="selectedRecipes.length === 0 || loadingRequirements">
+            {{ loadingRequirements ? 'Calculando...' : 'Siguiente' }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <div class="step-content builder-step">
+        <div class="back-link" (click)="prevStep()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Volver a selección de recetas
+        </div>
+        
+        <app-order-builder
+          [stockOrderItems]="stockOrderItems"
+          [suppliers]="suppliers"
+          [userId]="getUserId()"
+          [hideStockInfo]="true"
+          (completed)="handleCompleted()"
+          (cancelled)="handleCancelled()">
+        </app-order-builder>
+      </div>
+    }
+  </div>
+</app-base-modal>

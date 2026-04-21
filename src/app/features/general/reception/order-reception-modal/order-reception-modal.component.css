@@ -442,6 +442,9 @@
 .scanner-modal-body {
   overflow: auto;
   padding: 0.75rem 1rem 1rem;
+  min-height: 450px;
+  display: flex;
+  flex-direction: column;
 }
 
 .mobile-reception-list {
@@ -451,7 +454,7 @@
 .text-right { text-align: right; }
 .text-center { text-align: center; }
 
-.received-col { width: 140px; }
+.received-col { width: 220px; min-width: 180px; }
 .expiry-col { width: 160px; }
 
 .quantity-cell-actions {
@@ -750,3 +753,86 @@
   }
 }
 
+/** ===== LOT VIEW MODE ADDITIONS ===== */
+.section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.view-mode-toggle {
+  display: flex;
+  background: color-mix(in srgb, var(--theme-text-primary) 5%, transparent);
+  padding: 4px;
+  border-radius: 12px;
+  gap: 4px;
+}
+
+.view-mode-toggle button {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--theme-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.view-mode-toggle button:hover {
+  color: var(--theme-text-primary);
+}
+
+.view-mode-toggle button.active {
+  background: var(--theme-surface-glass);
+  color: var(--brand-primary);
+  box-shadow: var(--theme-shadow-sm);
+}
+
+.input-with-unit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.input-with-unit .form-control {
+  flex: 1;
+  min-width: 60px;
+  padding-right: 10px; /* No longer needs space for absolute label */
+}
+
+.inline-unit {
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--theme-text-tertiary);
+  pointer-events: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lot-unit {
+  color: var(--color-success);
+}
+
+.quantity-value {
+  line-height: 1.4;
+  height: auto;
+  display: inline-block;
+}
+
+small {
+  color: var(--theme-text-tertiary);
+  font-weight: normal;
+  margin-left: 5px;
+}

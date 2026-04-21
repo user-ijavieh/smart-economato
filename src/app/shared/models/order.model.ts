@@ -69,6 +69,7 @@ export interface OrderDetail {
   expirationDate?: string | null;
   unitPrice: number;
   subtotal?: number;
+  lotQuantity?: number;
   lots?: LotReceptionRequest[];
 }
 

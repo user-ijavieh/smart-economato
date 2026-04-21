@@ -17,6 +17,10 @@
             <td class="detail-label">Proveedor</td>
             <td>{{ product.supplier?.name || '—' }}</td>
           </tr>
+          <tr>
+            <td class="detail-label">Cantidad por Lote</td>
+            <td>{{ product.lotQuantity || '1' }} {{ product.unit }}</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -30,6 +34,12 @@
             <td class="detail-label">Precio Unitario</td>
             <td class="price-value">{{ product.unitPrice | number: '1.2-2' }} €</td>
           </tr>
+          @if (product.lotQuantity && product.lotQuantity > 0) {
+          <tr>
+            <td class="detail-label">Precio por Lote</td>
+            <td class="price-value-alt">{{ (product.unitPrice * product.lotQuantity) | number: '1.2-2' }} € <small>({{ product.lotQuantity }} {{ product.unit }})</small></td>
+          </tr>
+          }
           <tr [class.low-stock-row]="isLowStock()">
             <td class="detail-label">Stock Actual</td>
             <td>{{ product.currentStock }} {{ product.unit }}</td>
@@ -40,17 +50,18 @@
             <td>
               <div class="merma-display">
                 <div class="merma-header">
-                  <span class="merma-badge" [class.merma-low]="getMermaPercentage()! <= 10" [class.merma-medium]="getMermaPercentage()! > 10 && getMermaPercentage()! <= 30" [class.merma-high]="getMermaPercentage()! > 30">
-                    {{ getMermaPercentage()! | number:'1.0-1' }}% de merma
+                  <span class="usable-pct"><strong>{{ getUsablePercentage()! | number:'1.0-1' }}%</strong> aprovechable</span>
+                  <span class="merma-badge-small" [class.merma-low]="getMermaPercentage()! <= 10" [class.merma-medium]="getMermaPercentage()! > 10 && getMermaPercentage()! <= 30" [class.merma-high]="getMermaPercentage()! > 30">
+                    ({{ getMermaPercentage()! | number:'1.0-1' }}% merma)
                   </span>
-                  <span class="usable-pct">{{ getUsablePercentage()! | number:'1.0-1' }}% aprovechable</span>
                 </div>
                 <div class="merma-bar-track">
                   <div class="merma-bar-fill" [style.width.%]="getUsablePercentage()" [class.merma-bar-low]="getMermaPercentage()! <= 10" [class.merma-bar-medium]="getMermaPercentage()! > 10 && getMermaPercentage()! <= 30" [class.merma-bar-high]="getMermaPercentage()! > 30"></div>
                 </div>
                 <div class="merma-stocks">
                   <span>Bruto: <strong>{{ product.currentStock }} {{ product.unit }}</strong></span>
-                  <span>Neto utilizable: <strong>{{ getUsableStock()! | number:'1.2-2' }} {{ product.unit }}</strong></span>
+                  <span class="stock-divider">|</span>
+                  <span>Neto: <strong>{{ getUsableStock()! | number:'1.2-2' }} {{ product.unit }}</strong></span>
                 </div>
               </div>
             </td>

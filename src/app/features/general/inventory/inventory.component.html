@@ -150,6 +150,7 @@
             Stock
           </th>
           <th class="hide-on-mobile">Unidad</th>
+          <th class="hide-on-mobile">Lote</th>
           <th
             class="sortable hide-on-mobile"
             (click)="onSortChange('supplier')"
@@ -180,6 +181,10 @@
               </td>
               <!-- Unit -->
               <td class="hide-on-mobile">
+                <span class="skeleton skeleton-text" style="width: 40px"></span>
+              </td>
+              <!-- Lot -->
+              <td class="hide-on-mobile">
                 <span class="skeleton skeleton-text" style="width: 100px"></span>
               </td>
               <!-- Supplier -->
@@ -206,6 +211,13 @@
                 <span class="mobile-unit">{{ product.unit }}</span>
               </td>
               <td class="hide-on-mobile">{{ product.unit }}</td>
+              <td class="hide-on-mobile">
+                @if (product.lotQuantity) {
+                  <span class="lot-badge">{{ product.lotQuantity }} {{ product.unit }}</span>
+                } @else {
+                  <span class="lot-badge none">—</span>
+                }
+              </td>
               <td class="hide-on-mobile">{{ product.supplier?.name || '—' }}</td>
               @if (isAdmin) {
                 <td class="hide-on-mobile" (click)="$event.stopPropagation()">

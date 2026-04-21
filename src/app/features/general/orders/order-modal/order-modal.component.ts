@@ -22,6 +22,7 @@ interface OrderItem {
   unit: string;
   quantity: number;
   unitPrice: number;
+  lotQuantity?: number;
 }
 
 @Component({
@@ -54,6 +55,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   orderItems: OrderItem[] = [];
   isSubmitting = false;
   showScannerModal = false;
+  roundingMode: 'units' | 'lots' = 'lots';
 
   currentPage = 0;
   pageSize = 20;
@@ -82,7 +84,8 @@ export class OrderModalComponent implements OnInit, OnDestroy {
     productName: '',
     unit: '',
     quantity: 1,
-    unitPrice: 0
+    unitPrice: 0,
+    lotQuantity: 0
   };
 
   ngOnInit(): void {
@@ -101,7 +104,8 @@ export class OrderModalComponent implements OnInit, OnDestroy {
         productName: d.productName,
         unit: d.unit || 'uds',
         quantity: d.quantity,
-        unitPrice: d.unitPrice
+        unitPrice: d.unitPrice,
+        lotQuantity: d.lotQuantity
       }));
     } else if (this.initialItems.length > 0) {
       this.selectedUserId = this.initialUserId;
@@ -339,6 +343,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
     this.itemForm.productName = product.name;
     this.itemForm.unitPrice = product.unitPrice;
     this.itemForm.unit = product.unit || 'unidad';
+    this.itemForm.lotQuantity = product.lotQuantity || 0;
     this.productSearchResults = null;
   }
 
@@ -346,6 +351,12 @@ export class OrderModalComponent implements OnInit, OnDestroy {
     const product = this.filteredProducts.find(p => p.id === item.id);
     if (product) {
       this.selectProduct(product);
+      // In lot mode, default to 1 lot (not fractional)
+      if (this.roundingMode === 'lots' && product.lotQuantity && product.lotQuantity > 0) {
+        this.itemForm.quantity = product.lotQuantity; // 1 lote
+      } else {
+        this.itemForm.quantity = 1;
+      }
     }
   }
 
@@ -372,8 +383,12 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   }
 
   addItemToOrder(): void {
-    if (!this.itemForm.productId || this.itemForm.quantity < 1) {
-      this.messageService.showError('Selecciona un producto y una cantidad válida');
+    if (!this.itemForm.productId) {
+      this.messageService.showError('Selecciona un producto');
+      return;
+    }
+    if (this.itemForm.quantity <= 0) {
+      this.messageService.showError('Indica una cantidad válida');
       return;
     }
 
@@ -399,8 +414,32 @@ export class OrderModalComponent implements OnInit, OnDestroy {
       productName: '',
       unit: '',
       quantity: 1,
-      unitPrice: 0
+      unitPrice: 0,
+      lotQuantity: 0
     };
+  }
+
+  onRoundingModeChange(mode: 'units' | 'lots'): void {
+    this.roundingMode = mode;
+  }
+
+  getLotCount(item: OrderItem | any): number {
+    if (!item.lotQuantity || item.lotQuantity <= 0) return 1;
+    const count = item.quantity / item.lotQuantity;
+    // Return at least 1 lot so the field doesn't show 0
+    return count > 0 ? count : 1;
+  }
+
+  updateQuantityFromLots(item: OrderItem | any, lotCount: number): void {
+    if (item.lotQuantity && item.lotQuantity > 0) {
+      item.quantity = lotCount * item.lotQuantity;
+      this.cdr.markForCheck();
+    }
+  }
+
+  formatUnit(unit: string): string {
+    if (!unit) return '';
+    return unit.length > 4 ? unit.substring(0, 3) + '.' : unit;
   }
 
   getOrderTotal(): number {
