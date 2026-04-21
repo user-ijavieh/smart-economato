@@ -93,10 +93,12 @@
                         <div class="quantity-cell">
                           @if (roundingMode === 'lots' && detail.lotQuantity) {
                             <div class="quantity-value-group">
-                              <span class="quantity-primary">{{ getLotCount(detail) | number:'1.1-2' }} lotes de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }}</span>
+                              <span class="quantity-primary">{{ getLotCount(detail) | number:'1.1-2' }} lotes</span>
+                              <span class="quantity-label">de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }}</span>
                               @if (getReceivedLotCount(detail) !== null) {
                                 <span class="quantity-slash">/</span>
-                                <span class="quantity-secondary">{{ getReceivedLotCount(detail) | number:'1.1-2' }} lotes de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }}</span>
+                                <span class="quantity-secondary">{{ getReceivedLotCount(detail) | number:'1.1-2' }} lotes</span>
+                                <span class="quantity-label">de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }}</span>
                               }
                             </div>
                             <span class="quantity-unit-detail">({{ detail.quantity }}{{ getReceivedQuantity(detail) !== null ? ' / ' + getReceivedQuantity(detail) : '' }} {{ formatUnit(detail.unit) }})</span>

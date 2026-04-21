@@ -465,6 +465,47 @@
     width: auto !important;
     padding: 0.5rem 1rem !important;
   }
+
+  .order-item-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 15px;
+  }
+
+  .order-item-meta {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 15px;
+    padding-top: 10px;
+    border-top: 1px solid var(--theme-border-glass);
+  }
+
+  .meta-row {
+    flex: 1;
+    min-width: 80px;
+  }
+
+  .custom-qty-wrapper {
+    width: 100%;
+  }
+
+  .input-with-unit {
+    width: 100%;
+  }
+
+  .btn-send-back {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+
+  .item-selector {
+    position: absolute;
+    top: 15px;
+    right: 45px;
+  }
 }
 
 .rounding-toggle-group {

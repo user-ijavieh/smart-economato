@@ -175,9 +175,21 @@
 
 .merma-stocks {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   font-size: 0.85rem;
   color: var(--theme-text-secondary);
+}
+
+.stock-divider {
+  opacity: 0.3;
+}
+
+.merma-badge-small {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  font-weight: 500;
 }
 
 .merma-stocks strong {
