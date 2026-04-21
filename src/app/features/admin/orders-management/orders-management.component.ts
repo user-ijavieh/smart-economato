@@ -11,14 +11,15 @@ import { MessageService } from '../../../core/services/message.service';
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { OrderReviewLockStateService } from '../../../core/services/order-review-lock-state.service';
-import { Order, OrderStatus } from '../../../shared/models/order.model';
+import { Order, OrderStatus, OrderReviewLockStatus } from '../../../shared/models/order.model';
 import { OrderAudit } from '../../../shared/models/order-audit.model';
 import { Supplier } from '../../../shared/models/supplier.model';
 import { User } from '../../../shared/models/user.model';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { Subject, Subscription, debounceTime, distinctUntilChanged, finalize, takeUntil } from 'rxjs';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
-import { OrderReviewLockStatus } from '../../../shared/models/order.model';
+import { OrderDetailsAdminModalComponent } from './order-details-admin-modal/order-details-admin-modal.component';
+import { OrderStatusChangeAdminModalComponent } from './order-status-change-admin-modal/order-status-change-admin-modal.component';
 
 const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
   { value: 'CREATED', label: 'Creada' },
@@ -32,7 +33,13 @@ const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
 @Component({
   selector: 'app-orders-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseModalComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    BaseModalComponent,
+    OrderDetailsAdminModalComponent,
+    OrderStatusChangeAdminModalComponent
+  ],
   templateUrl: './orders-management.component.html',
   styleUrl: './orders-management.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -98,20 +105,12 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   loadingAuditHistory = false;
   auditTab: 'changes' | 'history' = 'changes';
 
-  // ── Order Detail Modal ──
+  // ── Modals State ──
   selectedOrder: Order | null = null;
   showOrderDetailModal = false;
-  selectedOrderVisibleLines = 20;
-  readonly selectedOrderLinesStep = 20;
-  reviewLockStatus: OrderReviewLockStatus | null = null;
-  lockInfoMessage = '';
-  lockBlockedForCurrentUser = false;
 
-  // ── Change-Status Modal ──
   showChangeStatusModal = false;
   orderForStatusChange: Order | null = null;
-  newStatusValue = '';
-  savingStatus = false;
 
   private auditCache: Map<string, any> = new Map();
   private pendingOrderIdFromQuery: number | null = null;
@@ -164,8 +163,6 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
     this.orderSearchSubject.complete();
     this.auditSearchSubject.complete();
-    this.stopLockHeartbeat();
-    this.lockStatusSubscription?.unsubscribe();
   }
 
   private consumeOrderIdFromQuery(): void {
@@ -335,7 +332,6 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   // ── Change Status Modal ──
   openChangeStatusModal(order: Order): void {
     this.orderForStatusChange = order;
-    this.newStatusValue = order.status;
     this.showChangeStatusModal = true;
     this.cdr.markForCheck();
   }
@@ -343,8 +339,6 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   closeChangeStatusModal(): void {
     this.showChangeStatusModal = false;
     this.orderForStatusChange = null;
-    this.newStatusValue = '';
-    this.savingStatus = false;
     this.cdr.markForCheck();
   }
 
@@ -354,43 +348,24 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     }
   }
 
-  confirmStatusChange(): void {
-    if (!this.orderForStatusChange || !this.newStatusValue || this.savingStatus) return;
-    if (this.newStatusValue === this.orderForStatusChange.status) {
-      this.closeChangeStatusModal();
-      return;
+  confirmStatusChange(updatedOrder: Order): void {
+    const idx = this.orders.findIndex(o => o.id === updatedOrder.id);
+    if (idx !== -1) {
+      this.orders[idx] = updatedOrder;
+    }
+    
+    // If detail modal is open for this order, update it too
+    if (this.selectedOrder && this.selectedOrder.id === updatedOrder.id) {
+      this.selectedOrder = updatedOrder;
     }
 
-    const orderId = this.orderForStatusChange.id;
-    const status = this.newStatusValue;
+    this.applyOrderFilters();
+    this.filteredAuditOrders = this.orders.filter(o => o.status === 'CONFIRMED');
 
-    this.savingStatus = true;
+    this.auditCache.clear();
+    this.auditsLoaded = false;
+    this.closeChangeStatusModal();
     this.cdr.markForCheck();
-
-    this.orderService.updateStatus(orderId, status).subscribe({
-      next: (updated) => {
-        const idx = this.orders.findIndex(o => o.id === orderId);
-        if (idx !== -1) {
-          this.orders[idx] = { ...this.orders[idx], status: (updated?.status || status) as OrderStatus };
-        }
-        this.applyOrderFilters();
-        this.filteredAuditOrders = this.orders.filter(o => o.status === 'CONFIRMED');
-
-        this.auditCache.clear();
-        this.auditsLoaded = false;
-
-        this.messageService.showSuccess(`Estado de la orden #${orderId} actualizado a ${this.formatStatus(status as OrderStatus)}`);
-        this.closeChangeStatusModal();
-        this.savingStatus = false;
-        this.cdr.markForCheck();
-      },
-      error: (err) => {
-        this.savingStatus = false;
-        const msg = err.error?.message || 'Error al actualizar el estado de la orden';
-        this.messageService.showError(msg);
-        this.cdr.markForCheck();
-      }
-    });
   }
 
   // ── Audits ──
@@ -573,32 +548,6 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   }
 
   // ── Order Detail Modal ──
-  openOrderDetail(order: Order): void {
-    this.selectedOrder = this.normalizeOrderPayload(order as any);
-    this.showOrderDetailModal = true;
-    this.selectedOrderVisibleLines = this.selectedOrderLinesStep;
-    this.cdr.markForCheck();
-
-    this.initializeReviewLock(this.selectedOrder);
-
-    this.orderService.getById(order.id).subscribe({
-      next: (fullOrder) => {
-        this.selectedOrder = this.normalizeOrderPayload(fullOrder as any);
-        this.initializeReviewLock(this.selectedOrder);
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        // Keep list data as fallback if detail endpoint fails.
-      }
-    });
-  }
-
-  shouldShowReceivedColumn(order: Order | null): boolean {
-    if (!order) return false;
-    if (order.status === 'CONFIRMED' || order.status === 'INCOMPLETE') return true;
-    return (order.details || []).some(d => d.quantityReceived !== undefined && d.quantityReceived !== null);
-  }
-
   getReceivedQuantity(detail: any): number | null {
     const raw = detail?.quantityReceived ?? detail?.quantityRecieved ?? detail?.quantity_received;
     if (raw === undefined || raw === null || raw === '') return null;
@@ -657,22 +606,20 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     });
   }
 
-  get visibleSelectedOrderDetails() {
-    return (this.selectedOrder?.details || []).slice(0, this.selectedOrderVisibleLines);
+  closeOrderDetail(): void {
+    this.showOrderDetailModal = false;
+    this.selectedOrder = null;
+    this.cdr.markForCheck();
   }
 
-  get hasMoreSelectedOrderDetails(): boolean {
-    return (this.selectedOrder?.details?.length || 0) > this.selectedOrderVisibleLines;
+  openOrderDetail(order: Order): void {
+    this.selectedOrder = order;
+    this.showOrderDetailModal = true;
+    this.cdr.markForCheck();
   }
 
-  loadMoreSelectedOrderLines(): void {
-    this.selectedOrderVisibleLines += this.selectedOrderLinesStep;
-  }
-
-  openStatusEditorFromDetail(): void {
-    if (!this.selectedOrder) return;
-    const selected = this.selectedOrder;
-    this.openChangeStatusModal(selected);
+  openStatusEditorFromDetail(order: Order): void {
+    this.openChangeStatusModal(order);
   }
 
   async revertOrder(order: Order): Promise<void> {
@@ -683,19 +630,16 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
 
     if (!confirmed || !order.id || !order.details) return;
 
-    // Fetch audits to find previous status
     this.orderAuditService.getByOrderId(order.id).subscribe({
-      next: (audits: any[]) => {
+      next: (audits: OrderAudit[]) => {
         const sortedAudits = [...audits].sort((a, b) => new Date(b.auditDate).getTime() - new Date(a.auditDate).getTime());
 
-        // Look for the audit that CHANGED the state to CONFIRMED
         const confirmationAudit = sortedAudits.find(a => {
           try {
             const newState = typeof a.newState === 'string' ? JSON.parse(a.newState) : a.newState;
             const prevState = typeof a.previousState === 'string' ? JSON.parse(a.previousState) : a.previousState;
             const newStatus = (newState?.status || newState?.estado || '').toUpperCase();
             const prevStatus = (prevState?.status || prevState?.estado || '').toUpperCase();
-
             return newStatus === 'CONFIRMED' && prevStatus !== 'CONFIRMED';
           } catch { return false; }
         });
@@ -705,7 +649,6 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
           try {
             const prevState = typeof confirmationAudit.previousState === 'string' ? JSON.parse(confirmationAudit.previousState) : confirmationAudit.previousState;
             const rawStatus = (prevState?.status || prevState?.estado || 'CREATED').toUpperCase();
-
             const statusMap: Record<string, OrderStatus> = {
               'CREADA': 'CREATED', 'CREADO': 'CREATED',
               'PENDIENTE': 'PENDING',
@@ -721,7 +664,6 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
         this.proceedWithRevert(order, previousStatus);
       },
       error: () => {
-        // Fallback: if audits fail or 404, default to CREATED but allow revert
         this.messageService.showWarning('No se encontró el historial del pedido. Revirtiendo al estado inicial (Creado).');
         this.proceedWithRevert(order, 'CREATED');
       }
@@ -730,7 +672,6 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
 
   private proceedWithRevert(order: Order, previousStatus: OrderStatus): void {
     if (!order.details) return;
-
     const request = {
       reason: `Reversión de orden #${order.id}`,
       orderId: order.id,
@@ -752,146 +693,6 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
         }
       },
       error: () => this.messageService.showError('Error de comunicación al revertir orden')
-    });
-  }
-
-  async onDownloadPdf(order: Order): Promise<void> {
-    if (!order || !order.id) return;
-
-    const confirmed = await this.messageService.confirm(
-      'Confirmar descarga',
-      '¿Deseas descargar este archivo PDF?'
-    );
-    if (!confirmed) return;
-
-    this.orderService.downloadPdf(order.id).subscribe({
-      next: (blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `orden-${order.id}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-        this.messageService.showSuccess('PDF descargado correctamente');
-      },
-      error: () => {
-        this.messageService.showError('Error al generar el PDF');
-      }
-    });
-  }
-
-  closeOrderDetail(): void {
-    this.stopLockHeartbeat();
-    this.releaseLockIfOwned();
-    this.showOrderDetailModal = false;
-    this.selectedOrder = null;
-    this.selectedOrderVisibleLines = this.selectedOrderLinesStep;
-    this.lockInfoMessage = '';
-    this.lockBlockedForCurrentUser = false;
-    this.cdr.markForCheck();
-  }
-
-  private initializeReviewLock(order: Order | null): void {
-    if (!order) {
-      return;
-    }
-
-    this.lockStatusSubscription?.unsubscribe();
-    this.lockStatusSubscription = this.orderReviewLockStateService.watchOrder(order.id).subscribe(status => {
-      this.reviewLockStatus = status;
-      this.applyLockUiStatus(status);
-    });
-
-    this.orderReviewLockStateService.refresh(order.id).subscribe({
-      next: status => {
-        if (!status.locked || status.currentUserOwner) {
-          this.tryAcquireReviewLock(order.id);
-        } else {
-          this.applyLockUiStatus(status);
-        }
-      },
-      error: () => {
-        this.tryAcquireReviewLock(order.id);
-      }
-    });
-  }
-
-  private tryAcquireReviewLock(orderId: number): void {
-    this.orderReviewLockStateService.acquire(orderId).subscribe({
-      next: status => {
-        this.reviewLockStatus = status;
-        this.applyLockUiStatus(status);
-      },
-      error: error => {
-        if (error?.status === 409) {
-          const lockedBy = error?.error?.lockedBy;
-          this.lockInfoMessage = lockedBy
-            ? `${lockedBy} está revisando este pedido en este momento.`
-            : 'Este pedido está siendo revisado por otro usuario.';
-          this.lockBlockedForCurrentUser = false;
-          this.orderReviewLockStateService.refresh(orderId).subscribe({ error: () => {} });
-        }
-      }
-    });
-  }
-
-  private applyLockUiStatus(status: OrderReviewLockStatus | null): void {
-    if (!status || !status.locked) {
-      this.stopLockHeartbeat();
-      this.lockBlockedForCurrentUser = false;
-      this.lockInfoMessage = '';
-      return;
-    }
-
-    if (status.currentUserOwner) {
-      this.lockBlockedForCurrentUser = false;
-      this.lockInfoMessage = 'Estás revisando este pedido.';
-      this.startLockHeartbeat(status.orderId);
-      return;
-    }
-
-    const lockOwner = status.lockedByDisplayName || status.lockedByUsername || 'Otro usuario';
-    this.lockBlockedForCurrentUser = false;
-    this.lockInfoMessage = `${lockOwner} está revisando este pedido en este momento.`;
-    this.stopLockHeartbeat();
-  }
-
-  private startLockHeartbeat(orderId: number): void {
-    if (this.heartbeatTimerId !== null) {
-      return;
-    }
-
-    this.heartbeatTimerId = setInterval(() => {
-      this.orderReviewLockStateService.heartbeat(orderId).subscribe({
-        next: status => {
-          this.reviewLockStatus = status;
-          this.applyLockUiStatus(status);
-        },
-        error: () => {
-          this.orderReviewLockStateService.refresh(orderId).subscribe({ error: () => {} });
-        }
-      });
-    }, 30000);
-  }
-
-  private stopLockHeartbeat(): void {
-    if (this.heartbeatTimerId === null) {
-      return;
-    }
-
-    clearInterval(this.heartbeatTimerId);
-    this.heartbeatTimerId = null;
-  }
-
-  private releaseLockIfOwned(): void {
-    if (!this.selectedOrder || !this.reviewLockStatus?.currentUserOwner) {
-      return;
-    }
-
-    this.orderReviewLockStateService.release(this.selectedOrder.id).subscribe({
-      error: () => {}
     });
   }
 
