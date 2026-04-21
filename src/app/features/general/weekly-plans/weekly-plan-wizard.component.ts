@@ -1391,12 +1391,21 @@ export class WeeklyPlanWizardComponent implements OnInit {
 
     const rows = this.myStudents.map(student => {
       const assignments = assignmentCounts.get(student.id) || 0;
-      const historicalRate = this.studentMetrics[student.id]?.participationRate ?? 0;
+      const metrics = this.studentMetrics[student.id];
+      const historicalRate = metrics?.participationRate ?? 0;
+      
+      // Net Attendance Rate: (Total - Cancelled) / Total
+      let attendanceRate = 0;
+      if (metrics && metrics.totalAssignments > 0) {
+        attendanceRate = Math.round(((metrics.totalAssignments - metrics.totalCancelled) / metrics.totalAssignments) * 100);
+      }
+
       return {
         id: student.id,
         name: student.name,
         assignments,
         historicalRate,
+        attendanceRate,
         selected: assignments > 0
       };
     });
@@ -1408,7 +1417,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
       : 0;
 
     return {
-      rows: rows.sort((a, b) => a.historicalRate - b.historicalRate || a.name.localeCompare(b.name)),
+      rows: rows.sort((a, b) => b.attendanceRate - a.attendanceRate || a.historicalRate - b.historicalRate || a.name.localeCompare(b.name)),
       totalAssignments,
       activeStudents,
       averageHistoricalRate

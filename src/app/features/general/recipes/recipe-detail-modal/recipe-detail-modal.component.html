@@ -36,8 +36,8 @@
             <tbody>
               @for (comp of recipe.components; track comp.id) {
               <tr>
-                <td>
-                  {{ comp.productName }}
+                <td class="product-cell">
+                  <span class="product-name">{{ comp.productName }}</span>
                   @if (comp.availabilityPercentage && comp.availabilityPercentage < 100) {
                   <span class="merma-hint" [title]="'Este producto tiene un ' + ((100 - comp.availabilityPercentage) | number:'1.1-2') + '% de merma'">
                     ({{ (100 - comp.availabilityPercentage) | number:'1.1-2' }}% merma)
@@ -48,7 +48,7 @@
                 <td class="qty-cell gross-cell">
                   {{ getGrossQuantity(comp.quantity, comp.availabilityPercentage) | number:'1.2-3' }}
                 </td>
-                <td class="subtotal-cell">{{ comp.subtotal | number:'1.2-2' }} €</td>
+                <td class="subtotal-cell">{{ comp.subtotal | number:'1.2-2' }}&nbsp;€</td>
               </tr>
               }
             </tbody>
@@ -56,12 +56,12 @@
             <tfoot>
               <tr>
                 <td colspan="3" class="total-label">Coste total</td>
-                <td class="total-value">{{ recipe.totalCost | number:'1.2-2' }} €</td>
+                <td class="total-value">{{ recipe.totalCost | number:'1.2-2' }}&nbsp;€</td>
               </tr>
               @if (recipe.sellingPrice) {
               <tr class="selling-price-row">
                 <td colspan="3" class="selling-label">Precio de venta</td>
-                <td class="selling-value">{{ recipe.sellingPrice | number:'1.2-2' }} €</td>
+                <td class="selling-value">{{ recipe.sellingPrice | number:'1.2-2' }}&nbsp;€</td>
               </tr>
               }
             </tfoot>

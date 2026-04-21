@@ -266,7 +266,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  min-width: 120px;
+  min-width: 148px;
   font-size: 0.82rem;
   color: var(--theme-text-secondary);
 }
@@ -299,15 +299,15 @@
   position: relative;
   display: flex;
   align-items: center;
-  width: 175px; /* Widened for lot label with calculation */
+  width: 240px;
 }
 
 .custom-qty-input {
   height: 32px !important;
-  padding: 0 95px 0 10px !important; /* Increased padding-right for longer label */
+  padding: 0 56px 0 10px !important;
   font-size: 0.95rem !important;
   font-weight: 700 !important;
-  text-align: left !important;
+  text-align: center !important;
   border-radius: 12px !important;
   appearance: none !important;
   -moz-appearance: textfield !important;
@@ -322,7 +322,7 @@
 .inline-unit {
   position: absolute;
   right: 12px;
-  font-size: 0.72rem;
+  font-size: 0.66rem;
   font-weight: 800;
   color: var(--brand-primary);
   pointer-events: none;
