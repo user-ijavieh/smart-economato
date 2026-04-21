@@ -24,7 +24,7 @@
 
         <div class="form-group">
           <label for="weekStartDate">Semana de inicio (obligatorio)</label>
-          <input id="weekStartDate" type="date" class="form-input" [(ngModel)]="weekStartDate" />
+          <input id="weekStartDate" type="date" class="form-input" [ngModel]="weekStartDate" (ngModelChange)="onWeekStartDateChange($event)" />
           <p class="field-hint">Selecciona una fecha dentro de la semana que quieres planificar.</p>
         </div>
 

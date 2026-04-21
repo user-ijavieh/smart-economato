@@ -45,10 +45,6 @@ export class UserFormModalComponent implements OnInit {
     }
 
     get showTeacherField(): boolean {
-        if (this.isEditMode) {
-            return true;
-        }
-
         const role = String(this.userForm?.get('role')?.value ?? '').toUpperCase();
         return role === 'USER' || role === 'ELEVATED';
     }
@@ -102,7 +98,7 @@ export class UserFormModalComponent implements OnInit {
                 const teacherCtrl = this.userForm.get('teacherId');
                 const normalizedRole = String(role ?? '').toUpperCase();
 
-                if (teacherCtrl && !this.isEditMode && normalizedRole !== 'USER' && normalizedRole !== 'ELEVATED') {
+                if (teacherCtrl && normalizedRole !== 'USER' && normalizedRole !== 'ELEVATED') {
                     teacherCtrl.setValue(null);
                 }
             });

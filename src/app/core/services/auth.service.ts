@@ -9,8 +9,6 @@ import { NotificationService } from './notification.service';
 import { PresenceTrackingService } from './presence-tracking.service';
 import { SyncCacheInvalidationService } from './sync-cache-invalidation.service';
 import { HttpQueryCacheService } from './http-query-cache.service';
-import { OrderReviewLockStateService } from './order-review-lock-state.service';
-import { OrderReviewCollaborationStateService } from './order-review-collaboration-state.service';
 
 interface LoginRequest {
   name: string;
@@ -50,8 +48,6 @@ export class AuthService {
   private presenceTrackingService = inject(PresenceTrackingService);
   private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
   private httpQueryCacheService = inject(HttpQueryCacheService);
-  private orderReviewLockStateService = inject(OrderReviewLockStateService);
-  private orderReviewCollaborationStateService = inject(OrderReviewCollaborationStateService);
   private apiUrl = environment.apiUrl;
   private TOKEN_KEY = 'auth_token';
   private ROLE_KEY = 'user_role';
@@ -65,8 +61,6 @@ export class AuthService {
 
   constructor() {
     this.syncCacheInvalidationService.initialize();
-    this.orderReviewLockStateService.initialize();
-    this.orderReviewCollaborationStateService.initialize();
     this.bindRoleEscalationEvents();
 
     const token = this.getToken();
@@ -111,8 +105,6 @@ export class AuthService {
           throw new Error('user_hidden');
         }
         this.syncCacheInvalidationService.initialize();
-        this.orderReviewLockStateService.initialize();
-        this.orderReviewCollaborationStateService.initialize();
         localStorage.setItem(this.NAME_KEY, profile.name);
         localStorage.setItem(this.USERNAME_KEY, profile.user);
         this.setRole(profile.role);
@@ -151,8 +143,6 @@ export class AuthService {
     this.webSocketService.disconnect();
     this.notificationService.disconnect();
     this.syncCacheInvalidationService.destroy();
-    this.orderReviewLockStateService.destroy();
-    this.orderReviewCollaborationStateService.destroy();
     this.httpQueryCacheService.clearAll();
     localStorage.removeItem(this.TOKEN_KEY);
     this.setRole(null);

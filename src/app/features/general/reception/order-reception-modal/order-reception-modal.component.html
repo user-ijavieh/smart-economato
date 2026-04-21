@@ -2,90 +2,10 @@
   headerClass="reception-header" [beforeClose]="beforeCloseHandler" (closed)="close()">
 
   <div class="order-reception-content">
-    <!-- DESHABILITADO: displayMode feature - Modo lectura en viewing_locked
-      @if (displayMode === 'viewing_locked') {
-        <div class="viewing-locked-banner">
-          <p><strong>Modo lectura:</strong> Esta orden está siendo revisada. Puedes solicitar colaboración para poder contribuir con los cambios.</p>
-        </div>
-      }
-      -->
-
     <div class="detail-group">
       <p><strong>Usuario:</strong> {{ order.userName }}</p>
       <p><strong>Fecha Solicitud:</strong> {{ order.orderDate | date:'dd/MM/yyyy' }}</p>
     </div>
-
-    <!-- DESHABILITADO: Sistema de locks y colaboración compartida
-      @if (lockInfoTitle) {
-        <div class="review-lock-banner" [class.review-lock-banner-blocking]="lockBlockedForCurrentUser">
-          <div class="review-lock-banner-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false">
-              <path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm-6 8.5V15a1 1 0 1 1 2 0v2.5h-2ZM10 9V7a2 2 0 0 1 4 0v2h-4Z" />
-            </svg>
-          </div>
-          <div class="review-lock-banner-copy">
-            <span class="review-lock-banner-title">{{ lockInfoTitle }}</span>
-            <span class="review-lock-banner-detail">{{ lockInfoDetail }}</span>
-          </div>
-        </div>
-      }
-      -->
-
-    <!-- DESHABILITADO: Sistema de locks y colaboración compartida
-      <div class="collaboration-panel">
-        <div class="collaboration-panel-header">
-          <span class="collaboration-title">Revisión compartida</span>
-          <div class="collaboration-actions">
-            <button
-              type="button"
-              class="btn-collab"
-              (click)="requestSharedReview()"
-              [disabled]="!canRequestSharedReview">
-              Solicitar revisión compartida
-            </button>
-          </div>
-        </div>
-
-        <div class="collaboration-body">
-          <div class="collaboration-group">
-            <span class="collaboration-group-title">Colaboradores activos ({{ collaborators.length }})</span>
-            @if (collaborators.length === 0) {
-              <span class="collaboration-empty">Sin colaboradores activos</span>
-            } @else {
-              <div class="collaboration-chip-list">
-                @for (participant of collaborators; track participant.userId) {
-                  <span class="collaboration-chip">{{ participant.displayName || participant.username }}</span>
-                }
-              </div>
-            }
-          </div>
-
-          <div class="collaboration-group">
-            <span class="collaboration-group-title">Solicitudes pendientes ({{ pendingRequests.length }})</span>
-            @if (pendingRequests.length === 0) {
-              <span class="collaboration-empty">Sin solicitudes pendientes</span>
-            } @else {
-              <div class="collaboration-request-list">
-                @for (requester of pendingRequests; track requester.userId) {
-                  <div class="collaboration-request-item">
-                    <span>{{ requester.displayName || requester.username }}</span>
-                    @if (canAdmitCollaborators) {
-                      <button
-                        type="button"
-                        class="btn-collab btn-collab-admit"
-                        (click)="admitSharedReview(requester.userId)"
-                        [disabled]="admittingUserIds.has(requester.userId)">
-                        Admitir revisión compartida
-                      </button>
-                    }
-                  </div>
-                }
-              </div>
-            }
-          </div>
-        </div>
-      </div>
-      -->
 
     <div class="reception-summary">
       <div class="section-header-row">
@@ -189,9 +109,6 @@
             </td>
           </tr>
           @for (lot of detail.lots; track $index) {
-          @let quantityPath = 'detail:' + detail.productId + ':lot:' + $index + ':quantity';
-          @let expirationPath = 'detail:' + detail.productId + ':lot:' + $index + ':expirationDate';
-          @let batchPath = 'detail:' + detail.productId + ':lot:' + $index + ':batchCode';
           <tr class="lot-row">
             <td class="lot-indent" colspan="2">
               <span class="lot-label">↳ Lote {{ $index + 1 }}</span>
@@ -203,21 +120,15 @@
                   <input type="number" class="form-control quantity-input"
                     [ngModel]="getLotCount(lot.quantity, detail.lotQuantity)"
                     (ngModelChange)="updateLotQuantity(detail, $index, $event)"
-                    (focus)="onFieldFocus(detail, $index, 'quantity')" (blur)="onFieldBlur(detail, $index, 'quantity')"
-                    min="0" step="0.1" [disabled]="isInputDisabled(quantityPath)"
-                    [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)" />
+                    min="0" step="0.1" [disabled]="isInputDisabled()" />
                   <span class="inline-unit lot-unit">Lote × {{ detail.lotQuantity }}{{ formatUnit(detail.unit) }}</span>
                 </div>
                 } @else {
                 <input type="number" class="form-control quantity-input" [(ngModel)]="lot.quantity"
-                  (ngModelChange)="onLotFieldChange(detail, $index, 'quantity', $event)"
-                  (focus)="onFieldFocus(detail, $index, 'quantity')" (blur)="onFieldBlur(detail, $index, 'quantity')"
-                  min="0" [disabled]="isInputDisabled(quantityPath)"
-                  [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)"
-                  [title]="isFieldLockedByAnotherUser(quantityPath) ? ('Bloqueado por ' + getFieldLockOwner(quantityPath)) : ''" />
+                  min="0" [disabled]="isInputDisabled()" />
                 }
                 <button type="button" class="btn-scale" [class.btn-scale-active]="isScaleActiveForLot(detail, $index)"
-                  [disabled]="isInputDisabled(quantityPath)"
+                  [disabled]="isInputDisabled()"
                   [title]="isScaleActiveForLot(detail, $index) ? 'Detener lectura de báscula' : 'Iniciar lectura de báscula'"
                   (click)="toggleScaleForLot(detail, $index)">
                   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -229,11 +140,7 @@
             </td>
             <td class="text-center expiry-col lot-actions-cell">
               <input type="date" class="form-control quantity-input" [(ngModel)]="lot.expirationDate"
-                (ngModelChange)="onLotFieldChange(detail, $index, 'expirationDate', $event)"
-                (focus)="onFieldFocus(detail, $index, 'expirationDate')"
-                (blur)="onFieldBlur(detail, $index, 'expirationDate')" [disabled]="isInputDisabled(expirationPath)"
-                [class.field-locked]="isFieldLockedByAnotherUser(expirationPath)"
-                [title]="isFieldLockedByAnotherUser(expirationPath) ? ('Bloqueado por ' + getFieldLockOwner(expirationPath)) : ''" />
+                [disabled]="isInputDisabled()" />
               @if (detail.lots!.length > 1) {
               <button type="button" class="btn-remove-lot" (click)="removeLot(detail, $index)"
                 [disabled]="isInputDisabled()" title="Eliminar lote">✕</button>
@@ -241,11 +148,7 @@
             </td>
             <td class="text-center">
               <input type="text" class="form-control quantity-input" [(ngModel)]="lot.batchCode"
-                (ngModelChange)="onLotFieldChange(detail, $index, 'batchCode', $event)"
-                (focus)="onFieldFocus(detail, $index, 'batchCode')" (blur)="onFieldBlur(detail, $index, 'batchCode')"
-                maxlength="100" placeholder="Ej. LOT-2026-001" [disabled]="isInputDisabled(batchPath)"
-                [class.field-locked]="isFieldLockedByAnotherUser(batchPath)"
-                [title]="isFieldLockedByAnotherUser(batchPath) ? ('Bloqueado por ' + getFieldLockOwner(batchPath)) : ''" />
+                maxlength="100" placeholder="Ej. LOT-2026-001" [disabled]="isInputDisabled()" />
             </td>
           </tr>
           }
@@ -290,19 +193,12 @@
 
         <div class="mobile-lots-list">
           @for (lot of detail.lots; track $index) {
-          @let quantityPath = 'detail:' + detail.productId + ':lot:' + $index + ':quantity';
-          @let expirationPath = 'detail:' + detail.productId + ':lot:' + $index + ':expirationDate';
-          @let batchPath = 'detail:' + detail.productId + ':lot:' + $index + ':batchCode';
           <article class="mobile-lot-card">
             <div class="mobile-lot-title">Lote {{ $index + 1 }}</div>
 
             <label class="mobile-field-label">CODIGO</label>
             <input type="text" class="form-control quantity-input" [(ngModel)]="lot.batchCode"
-              (ngModelChange)="onLotFieldChange(detail, $index, 'batchCode', $event)"
-              (focus)="onFieldFocus(detail, $index, 'batchCode')" (blur)="onFieldBlur(detail, $index, 'batchCode')"
-              maxlength="100" placeholder="Ej. LOT-2026-001" [disabled]="isInputDisabled(batchPath)"
-              [class.field-locked]="isFieldLockedByAnotherUser(batchPath)"
-              [title]="isFieldLockedByAnotherUser(batchPath) ? ('Bloqueado por ' + getFieldLockOwner(batchPath)) : ''" />
+              maxlength="100" placeholder="Ej. LOT-2026-001" [disabled]="isInputDisabled()" />
 
             <label class="mobile-field-label">RECIBIDO</label>
             <div class="quantity-cell-actions mobile-quantity-actions">
@@ -311,22 +207,16 @@
                 <input type="number" class="form-control quantity-input"
                   [ngModel]="getLotCount(lot.quantity, detail.lotQuantity)"
                   (ngModelChange)="updateLotQuantity(detail, $index, $event)"
-                  (focus)="onFieldFocus(detail, $index, 'quantity')" (blur)="onFieldBlur(detail, $index, 'quantity')"
-                  min="0" step="0.1" [disabled]="isInputDisabled(quantityPath)"
-                  [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)" />
+                  min="0" step="0.1" [disabled]="isInputDisabled()" />
                 <span class="inline-unit lot-unit">Lote de {{ detail.lotQuantity }} {{ formatUnit(detail.unit, false)
                   }}</span>
               </div>
               } @else {
               <input type="number" class="form-control quantity-input" [(ngModel)]="lot.quantity"
-                (ngModelChange)="onLotFieldChange(detail, $index, 'quantity', $event)"
-                (focus)="onFieldFocus(detail, $index, 'quantity')" (blur)="onFieldBlur(detail, $index, 'quantity')"
-                min="0" [disabled]="isInputDisabled(quantityPath)"
-                [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)"
-                [title]="isFieldLockedByAnotherUser(quantityPath) ? ('Bloqueado por ' + getFieldLockOwner(quantityPath)) : ''" />
+                min="0" [disabled]="isInputDisabled()" />
               }
               <button type="button" class="btn-scale" [class.btn-scale-active]="isScaleActiveForLot(detail, $index)"
-                [disabled]="isInputDisabled(quantityPath)"
+                [disabled]="isInputDisabled()"
                 [title]="isScaleActiveForLot(detail, $index) ? 'Detener lectura de báscula' : 'Iniciar lectura de báscula'"
                 (click)="toggleScaleForLot(detail, $index)">
                 <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -339,11 +229,7 @@
             <label class="mobile-field-label">FECHA DE CADUCIDAD <span class="required-asterisk">*</span></label>
             <div class="mobile-expiration-row">
               <input type="date" class="form-control quantity-input" [(ngModel)]="lot.expirationDate"
-                (ngModelChange)="onLotFieldChange(detail, $index, 'expirationDate', $event)"
-                (focus)="onFieldFocus(detail, $index, 'expirationDate')"
-                (blur)="onFieldBlur(detail, $index, 'expirationDate')" [disabled]="isInputDisabled(expirationPath)"
-                [class.field-locked]="isFieldLockedByAnotherUser(expirationPath)"
-                [title]="isFieldLockedByAnotherUser(expirationPath) ? ('Bloqueado por ' + getFieldLockOwner(expirationPath)) : ''" />
+                [disabled]="isInputDisabled()" />
               @if (detail.lots!.length > 1) {
               <button type="button" class="btn-remove-lot" (click)="removeLot(detail, $index)"
                 [disabled]="isInputDisabled()" title="Eliminar lote">✕</button>
@@ -366,21 +252,13 @@
   }
 
   <div modal-footer>
-    <!-- DESHABILITADO: displayMode feature - Botón condicionalmente visible solo si editing
-    @if (displayMode === 'editing') {
-    -->
     <button class="modal-btn modal-btn-success" (click)="processReception()"
-      [disabled]="isProcessing || !canConfirmReception()">
+      [disabled]="isProcessing">
       @if (isProcessing) {
       <span>Procesando...</span>
-      } @else if (!canConfirmReception()) {
-      <span>En revisión</span>
       } @else {
       <span>Procesar Recepción</span>
       }
     </button>
-    <!-- DESHABILITADO: displayMode feature
-    }
-    -->
   </div>
 </app-base-modal>

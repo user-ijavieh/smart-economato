@@ -305,7 +305,7 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
 
     this.orderService.searchByProducts({
       productIds,
-      statuses: ['CREATED', 'PENDING', 'REVIEW']
+      statuses: ['PENDING', 'REVIEW']
     }).subscribe({
       next: (batch) => {
         const quantityMap = batch?.totalQuantityPerProduct || {};
@@ -339,6 +339,12 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
   private sortStockRequirements(requirements: WeeklyPlanStockRequirement[]): WeeklyPlanStockRequirement[] {
     return [...requirements].sort((a, b) => {
       if (this.stockSortMode === 'shortage') {
+        const aAtRisk = !!a.expirationRisk;
+        const bAtRisk = !!b.expirationRisk;
+        if (aAtRisk !== bAtRisk) {
+          return aAtRisk ? -1 : 1;
+        }
+
         const aCovered = (a.sufficient !== false) && (this.getUncoveredStockShortage(a) === 0);
         const bCovered = (b.sufficient !== false) && (this.getUncoveredStockShortage(b) === 0);
 
@@ -397,7 +403,11 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
   }
 
   private getRequirementsNeedingReplenishment(): WeeklyPlanStockRequirement[] {
-    return this.stockRequirements.filter(requirement => this.getUncoveredStockShortage(requirement) > 0);
+    return this.stockRequirements.filter(requirement =>
+      this.getUncoveredStockShortage(requirement) > 0 ||
+      !requirement.sufficient ||
+      requirement.expirationRisk
+    );
   }
 
   calculateProgress(): number {
@@ -479,7 +489,12 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
         this.loadPlan();
       },
       error: (err) => {
-        this.messageService.showError(err.error?.message || 'No se pudo activar el plan.');
+        const backendMessage = typeof err?.error?.message === 'string' ? err.error.message : '';
+        if (backendMessage.toLowerCase().includes('caduc')) {
+          this.messageService.showError(`${backendMessage} Revisa la pestaña de inventario requerido para identificar productos en riesgo.`);
+        } else {
+          this.messageService.showError(backendMessage || 'No se pudo activar el plan.');
+        }
       },
       complete: () => {
         this.activatingPlan = false;
@@ -641,7 +656,10 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
         this.messageService.showSuccess('Sesión confirmada correctamente.');
         this.loadPlan();
       },
-      error: (err) => this.messageService.showError(err.error?.message || 'Error al confirmar la sesión.')
+      error: (err) => {
+        const backendMessage = typeof err?.error?.message === 'string' ? err.error.message : '';
+        this.messageService.showError(backendMessage || 'Error al confirmar la sesión. Verifica stock disponible y estado del plan.');
+      }
     });
   }
 
@@ -725,7 +743,10 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
         this.messageService.showSuccess(`Día ${dayName} confirmado correctamente.`);
         this.loadPlan();
       },
-      error: (err) => this.messageService.showError(err.error?.message || 'Error al confirmar el día.')
+      error: (err) => {
+        const backendMessage = typeof err?.error?.message === 'string' ? err.error.message : '';
+        this.messageService.showError(backendMessage || 'Error al confirmar el día. Verifica stock disponible y estado del plan.');
+      }
     });
   }
 

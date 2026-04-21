@@ -196,6 +196,28 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
 
         const sortParam = `${this.sortColumn},${this.sortDir}`;
+        
+        // Use server-side search if there is a search term and we are NOT in hidden view
+        if (this.searchTerm.trim() && !this.showingHidden) {
+            this.userService.search(this.searchTerm, this.currentPage, this.pageSize, sortParam).subscribe({
+                next: (pageData) => {
+                    this.users = pageData.content;
+                    this.mergeUsersInPresenceIndex(this.users);
+                    this.serverTotalElements = pageData.totalElements;
+                    this.serverTotalPages = pageData.totalPages;
+                    this.applySearchFilter(true); // Result is already filtered and paginated by server
+                    this.loading = false;
+                    this.cdr.detectChanges();
+                },
+                error: (err) => {
+                    console.error('Error searching users:', err);
+                    this.messageService.showError('Error al buscar usuarios');
+                    this.loading = false;
+                    this.cdr.detectChanges();
+                }
+            });
+            return;
+        }
 
         if (this.showingHidden) {
             // Load hidden users
@@ -295,7 +317,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
             });
         }
 
-        // Apply frontend pagination only if we have all records (roleFilter active)
+        // Apply frontend pagination only if we have all records (roleFilter active and NOT searching)
         if (!isPrePaginated && this.roleFilter) {
             this.totalElements = result.length;
             this.totalPages = Math.ceil(this.totalElements / this.pageSize);
@@ -305,16 +327,9 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
             this.filteredUsers = result.slice(start, end);
         } else {
             this.filteredUsers = result;
-            // If we are searching pre-paginated list, elements might be less
-            if (this.searchTerm.trim()) {
-                this.totalElements = result.length;
-                this.totalPages = 1;
-                this.currentPage = 0;
-            } else {
-                this.totalPages = this.serverTotalPages;
-                this.currentPage = this.serverCurrentPage;
-                this.totalElements = this.serverTotalElements;
-            }
+            this.totalPages = this.serverTotalPages;
+            this.currentPage = this.serverCurrentPage;
+            this.totalElements = this.serverTotalElements;
         }
 
         this.updateOnlineUsers();
@@ -743,7 +758,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                     if (students.length === 0) this.pendingAssignments.delete(tid);
 
                     if (!this.unassignedStudents.find(s => s.id === student.id)) {
-                        this.unassignedStudents.push(student);
+                        this.unassignedStudents.unshift(student);
                     }
                     break;
                 }
@@ -896,7 +911,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
             students.splice(idx, 1);
             if (students.length === 0) this.pendingAssignments.delete(teacherId);
             if (!this.unassignedStudents.find(s => s.id === student.id)) {
-                this.unassignedStudents.push(student);
+                this.unassignedStudents.unshift(student);
             }
             this.refreshUnassignedStudentsView();
             this.cdr.detectChanges();
@@ -928,7 +943,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
         for (const students of this.pendingAssignments.values()) {
             for (const student of students) {
                 if (!this.unassignedStudents.find(s => s.id === student.id)) {
-                    this.unassignedStudents.push(student);
+                    this.unassignedStudents.unshift(student);
                 }
             }
         }
