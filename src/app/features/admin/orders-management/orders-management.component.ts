@@ -114,23 +114,12 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   newStatusValue: OrderStatus | '' = '';
   savingStatus = false;
 
-  // Detail Modal lines
-  selectedOrderVisibleLines = 20;
-  readonly selectedOrderLinesStep = 20;
-
-  // Review locks
-  lockInfoMessage = '';
-  lockBlockedForCurrentUser = false;
-
   private auditCache: Map<string, any> = new Map();
   private pendingOrderIdFromQuery: number | null = null;
   private hasProcessedOrderQueryParam = false;
   private orderSearchSubject = new Subject<string>();
   private auditSearchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
-  private lockStatusSubscription?: Subscription;
-  private heartbeatTimerId: ReturnType<typeof setInterval> | null = null;
-  reviewLockStatus: OrderReviewLockStatus | null = null;
 
   ngOnInit(): void {
     this.orderSearchSubject.pipe(
@@ -363,48 +352,24 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     }
   }
 
-  confirmStatusChange(updatedOrder?: Order): void {
-    if (updatedOrder) {
-      const idx = this.orders.findIndex(o => o.id === updatedOrder.id);
-      if (idx !== -1) {
-        this.orders[idx] = updatedOrder;
-      }
-      
-      if (this.selectedOrder && this.selectedOrder.id === updatedOrder.id) {
-        this.selectedOrder = updatedOrder;
-      }
-
-      this.applyOrderFilters();
-      this.filteredAuditOrders = this.orders.filter(o => o.status === 'CONFIRMED');
-      this.auditCache.clear();
-      this.auditsLoaded = false;
-      this.closeChangeStatusModal();
-      this.cdr.markForCheck();
-      return;
+  confirmStatusChange(updatedOrder: Order): void {
+    if (!updatedOrder) return;
+    
+    const idx = this.orders.findIndex(o => o.id === updatedOrder.id);
+    if (idx !== -1) {
+      this.orders[idx] = updatedOrder;
+    }
+    
+    if (this.selectedOrder && this.selectedOrder.id === updatedOrder.id) {
+      this.selectedOrder = updatedOrder;
     }
 
-    // Fallback for old inline logic (if any)
-    if (!this.orderForStatusChange || !this.newStatusValue || this.savingStatus) return;
-    
-    this.savingStatus = true;
-    this.orderService.updateStatus(this.orderForStatusChange.id, this.newStatusValue as OrderStatus).subscribe({
-      next: (res) => {
-        const idx = this.orders.findIndex(o => o.id === res.id);
-        if (idx !== -1) this.orders[idx] = res;
-        if (this.selectedOrder && this.selectedOrder.id === res.id) this.selectedOrder = res;
-        this.applyOrderFilters();
-        this.filteredAuditOrders = this.orders.filter(o => o.status === 'CONFIRMED');
-        this.auditCache.clear();
-        this.auditsLoaded = false;
-        this.closeChangeStatusModal();
-        this.messageService.showSuccess('Estado actualizado correctamente');
-      },
-      error: () => this.messageService.showError('Error al actualizar el estado'),
-      complete: () => {
-        this.savingStatus = false;
-        this.cdr.markForCheck();
-      }
-    });
+    this.applyOrderFilters();
+    this.filteredAuditOrders = this.orders.filter(o => o.status === 'CONFIRMED');
+    this.auditCache.clear();
+    this.auditsLoaded = false;
+    this.closeChangeStatusModal();
+    this.cdr.markForCheck();
   }
 
   // ── Audits ──
@@ -645,53 +610,16 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     });
   }
 
-  async onDownloadPdf(order: Order): Promise<void> {
-    if (!order || !order.id) return;
-
-    const confirmed = await this.messageService.confirm(
-      'Confirmar descarga',
-      '¿Deseas descargar este archivo PDF?'
-    );
-    if (!confirmed) return;
-
-    this.orderService.downloadPdf(order.id).subscribe({
-      next: (blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `orden-${order.id}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-        this.messageService.showSuccess('PDF descargado correctamente');
-      },
-      error: () => {
-        this.messageService.showError('Error al generar el PDF');
-      }
-    });
-  }
-
   closeOrderDetail(): void {
-    this.stopLockHeartbeat();
-    this.releaseLockIfOwned();
     this.showOrderDetailModal = false;
     this.selectedOrder = null;
-    this.selectedOrderVisibleLines = this.selectedOrderLinesStep;
-    this.lockInfoMessage = '';
-    this.lockBlockedForCurrentUser = false;
     this.cdr.markForCheck();
   }
 
   openOrderDetail(order: Order): void {
     this.selectedOrder = order;
     this.showOrderDetailModal = true;
-    this.initializeReviewLock(order);
     this.cdr.markForCheck();
-  }
-
-  loadMoreSelectedOrderLines(): void {
-    this.selectedOrderVisibleLines += this.selectedOrderLinesStep;
   }
 
   openStatusEditorFromDetail(): void {
@@ -783,101 +711,30 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     });
   }
 
-  private initializeReviewLock(order: Order | null): void {
-    if (!order) return;
+  async onDownloadPdf(order: Order): Promise<void> {
+    if (!order || !order.id) return;
 
-    this.lockStatusSubscription?.unsubscribe();
-    this.lockStatusSubscription = this.orderReviewLockStateService.watchOrder(order.id).subscribe(status => {
-      this.reviewLockStatus = status;
-      this.applyLockUiStatus(status);
-    });
+    const confirmed = await this.messageService.confirm(
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo PDF?'
+    );
+    if (!confirmed) return;
 
-    this.orderReviewLockStateService.refresh(order.id).subscribe({
-      next: status => {
-        if (!status.locked || status.currentUserOwner) {
-          this.tryAcquireReviewLock(order.id);
-        } else {
-          this.applyLockUiStatus(status);
-        }
+    this.orderService.downloadPdf(order.id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `orden-${order.id}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.messageService.showSuccess('PDF descargado correctamente');
       },
-      error: () => this.tryAcquireReviewLock(order.id)
-    });
-  }
-
-  private tryAcquireReviewLock(orderId: number): void {
-    this.orderReviewLockStateService.acquire(orderId).subscribe({
-      next: status => {
-        this.reviewLockStatus = status;
-        this.applyLockUiStatus(status);
-      },
-      error: error => {
-        if (error?.status === 409) {
-          const lockedBy = error?.error?.lockedBy;
-          this.lockInfoMessage = lockedBy
-            ? `${lockedBy} está revisando este pedido en este momento.`
-            : 'Este pedido está siendo revisado por otro usuario.';
-          this.lockBlockedForCurrentUser = true;
-          this.orderReviewLockStateService.refresh(orderId).subscribe({ error: () => {} });
-        }
+      error: () => {
+        this.messageService.showError('Error al generar el PDF');
       }
-    });
-  }
-
-  private applyLockUiStatus(status: OrderReviewLockStatus | null): void {
-    if (!status || !status.locked) {
-      this.stopLockHeartbeat();
-      this.lockBlockedForCurrentUser = false;
-      this.lockInfoMessage = '';
-      return;
-    }
-
-    if (status.currentUserOwner) {
-      this.lockBlockedForCurrentUser = false;
-      this.lockInfoMessage = '';
-      this.startLockHeartbeat(status.orderId);
-      return;
-    }
-
-    const lockOwner = status.lockedByDisplayName || status.lockedByUsername || 'Otro usuario';
-    this.lockBlockedForCurrentUser = false;
-    this.lockInfoMessage = `${lockOwner} está revisando este pedido en este momento.`;
-    this.stopLockHeartbeat();
-  }
-
-  private startLockHeartbeat(orderId: number): void {
-    if (this.heartbeatTimerId !== null) {
-      return;
-    }
-
-    this.heartbeatTimerId = setInterval(() => {
-      this.orderReviewLockStateService.heartbeat(orderId).subscribe({
-        next: status => {
-          this.reviewLockStatus = status;
-          this.applyLockUiStatus(status);
-        },
-        error: () => {
-          this.orderReviewLockStateService.refresh(orderId).subscribe({ error: () => {} });
-        }
-      });
-    }, 30000);
-  }
-
-  private stopLockHeartbeat(): void {
-    if (this.heartbeatTimerId === null) {
-      return;
-    }
-
-    clearInterval(this.heartbeatTimerId);
-    this.heartbeatTimerId = null;
-  }
-
-  private releaseLockIfOwned(): void {
-    if (!this.selectedOrder || !this.reviewLockStatus?.currentUserOwner) {
-      return;
-    }
-
-    this.orderReviewLockStateService.release(this.selectedOrder.id).subscribe({
-      error: () => {}
     });
   }
 
@@ -1109,11 +966,11 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   }
 
   get visibleSelectedOrderDetails() {
-    return (this.selectedOrder?.details || []).slice(0, this.selectedOrderVisibleLines);
+    return (this.selectedOrder?.details || []).slice(0, 20);
   }
 
   get hasMoreSelectedOrderDetails(): boolean {
-    return (this.selectedOrder?.details?.length || 0) > this.selectedOrderVisibleLines;
+    return (this.selectedOrder?.details?.length || 0) > 20;
   }
 
   shouldShowReceivedColumn(order: Order | null): boolean {
