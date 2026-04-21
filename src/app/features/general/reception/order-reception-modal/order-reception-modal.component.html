@@ -105,9 +105,9 @@
             <span class="quantity-value" [class.total-match]="getTotalReceived(detail) === detail.quantity"
               [class.total-excess]="getTotalReceived(detail) > detail.quantity">
               @if (roundingMode === 'lots' && detail.lotQuantity) {
-              {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} L. ({{ detail.quantity |
+              {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} Lotes ({{ detail.quantity |
               number:'1.0-2' }}{{ formatUnit(detail.unit, false) }}) /
-              {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} L. ({{
+              {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} Lotes ({{
               getTotalReceived(detail) | number:'1.0-2' }}{{ formatUnit(detail.unit, false) }})
               } @else {
               {{ getFormattedQuantity(detail) }}
@@ -166,7 +166,7 @@
                 }} {{ formatUnit(detail.unit) }})</small> }</td>
             <td class="text-center">
               @if (roundingMode === 'lots' && detail.lotQuantity) {
-              {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} L. ({{ detail.quantity |
+              {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} Lotes ({{ detail.quantity |
               number:'1.0-2' }}{{ formatUnit(detail.unit, false) }})
               } @else {
               {{ detail.quantity }} {{ formatUnit(detail.unit) }}
@@ -176,7 +176,7 @@
               <span class="total-badge" [class.total-match]="getTotalReceived(detail) === detail.quantity"
                 [class.total-excess]="getTotalReceived(detail) > detail.quantity">
                 @if (roundingMode === 'lots' && detail.lotQuantity) {
-                {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} L. ({{
+                {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} Lotes ({{
                 getTotalReceived(detail) | number:'1.0-2' }}{{ formatUnit(detail.unit, false) }})
                 } @else {
                 {{ getTotalReceived(detail) }}
@@ -275,7 +275,7 @@
               <span class="total-badge" [class.total-match]="getTotalReceived(detail) === detail.quantity"
                 [class.total-excess]="getTotalReceived(detail) > detail.quantity">
                 @if (roundingMode === 'lots' && detail.lotQuantity) {
-                {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} L. de {{
+                {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} Lotes de {{
                 detail.lotQuantity }} {{ formatUnit(detail.unit, false) }} ({{ getTotalReceived(detail) | number:'1.0-2'
                 }} {{ formatUnit(detail.unit, false) }})
                 } @else {
