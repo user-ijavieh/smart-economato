@@ -57,6 +57,8 @@
     "TOTAL": "Total",
     "REFRESH": "Refrescar",
     "NO_DATA": "Sin datos",
+    "NO_DATE": "Sin fecha",
+    "RECEIVED": "Recibido",
     "NOW": "Ahora",
     "AGO_MINS": "Hace {{count}} min",
     "SHOW_UTILITIES": "Mostrar utilidades",
@@ -1557,7 +1559,8 @@
       "STATUS_DEPLETED": "Solo agotados",
       "STATUS_EXPIRED": "Solo caducados",
       "EXPIRING_IN": "Caducando en",
-      "DAYS": "días"
+      "DAYS": "días",
+      "TOTAL_BATCHES": "Total Lotes"
     },
     "TABLE": {
       "ID": "ID",
@@ -1566,7 +1569,8 @@
       "EXPIRATION": "Caducidad",
       "DAYS_LEFT": "Días restantes",
       "STATUS": "Estado",
-      "ACTIONS": "Acciones"
+      "ACTIONS": "Acciones",
+      "INITIAL_QTY": "Cant. Original"
     },
     "MESSAGES": {
       "ERROR_LOAD": "Error al cargar lotes",
@@ -1579,7 +1583,8 @@
       "WITHDRAW_CONFIRM_EXPIRED_MSG": "¿Estás seguro de que deseas retirar el lote #{{id}} de {{name}} por caducidad? Se registrará como pérdida (merma).",
       "WITHDRAW_SUCCESS": "Lote desechado correctamente",
       "WITHDRAW_ERROR": "Error al desechar el lote",
-      "LOAD_TRACEABILITY_ERROR": "Error al cargar trazabilidad"
+      "LOAD_TRACEABILITY_ERROR": "Error al cargar trazabilidad",
+      "NO_BATCHES": "No se encontraron lotes activos"
     },
     "STATUS": {
       "DEPLETED": "Agotado",
@@ -1587,13 +1592,19 @@
       "UPCOMING": "Próximo",
       "ACTIVE": "Activo"
     },
+    "ACTIONS": {
+      "EDIT": "Editar Caducidad",
+      "DELETE": "Desechar Lote"
+    },
     "MODALS": {
       "VIEW_TITLE": "Detalle de Lote",
       "TRACEABILITY_TAB": "Trazabilidad (Cocinados)",
       "NO_COOKINGS": "Este lote no ha sido utilizado en ningún cocinado registrado.",
       "RECIPE": "Receta",
       "DATE": "Fecha",
-      "QUANTITY": "Cantidad usada"
+      "QUANTITY": "Cantidad usada",
+      "BATCH_CODE": "Código de lote",
+      "NO_ATTENTION": "No hay lotes que requieran atención inmediata."
     }
   },
   "TRACEABILITY": {
@@ -1623,6 +1634,10 @@
     }
   },
   "SETTINGS": {
+    "TITLE": "Configuraciones del Sistema",
+    "RELOAD": "Recargar configuración",
+    "SAVE": "Guardar Cambios",
+    "SAVING": "Guardando...",
     "TABS": {
       "PRESENCE": "Presencia",
       "ALERTS": "Alertas",
@@ -1632,7 +1647,149 @@
       "INCIDENTS": "Incidencias",
       "NOTIFICATIONS": "Notificaciones",
       "ADVANCED": "Avanzado",
+      "IA": "IA",
       "AUDIT": "Auditoría"
+    },
+    "PRESENCE": {
+      "TITLE": "Presencia",
+      "RECORDS": "Registros de presencia",
+      "ENABLE_AUDIT": "Habilitar auditoría de presencia",
+      "ENABLE_CLEANUP": "Habilitar limpieza automática",
+      "RETENTION_DAYS": "Días de retención",
+      "PURGE_BTN": "Purgar logs de actividad"
+    },
+    "ALERTS": {
+      "TITLE": "Alertas",
+      "NORMAL_DAYS": "Días para nivel normal",
+      "LOW_DAYS": "Días para nivel bajo",
+      "MEDIUM_DAYS": "Días para nivel medio",
+      "HIGH_DAYS": "Días para nivel alto",
+      "EXPIRATION_CRITICAL": "Expiración crítica",
+      "EXPIRATION_HIGH": "Expiración alta",
+      "EXPIRATION_MEDIUM": "Expiración media",
+      "FORECAST_HORIZON": "Días a proyectar (demanda)",
+      "FORECAST_HISTORY": "Historial para proyección (semanas)"
+    },
+    "PREDICTIONS": {
+      "TITLE": "Predicciones",
+      "ENABLE_REFRESH": "Refresco automático habilitado",
+      "REFRESH_INTERVAL": "Frecuencia de actualización (horas)",
+      "HISTORY_DAYS": "Días de historial",
+      "BATCH_SIZE": "Productos por lote de cálculo"
+    },
+    "SESSIONS": {
+      "TITLE": "Sesiones",
+      "TIMEOUT": "Timeout de sesión inactiva (segundos)"
+    },
+    "SECURITY": {
+      "TITLE": "Seguridad",
+      "JWT_EXPIRATION": "Duración de sesión (horas)",
+      "MIN_PASSWORD": "Longitud mínima de password",
+      "MAX_ESCALATION": "Escalación máxima (minutos)"
+    },
+    "INCIDENTS": {
+      "TITLE": "Incidencias",
+      "MAX_CHAT_LENGTH": "Longitud máxima de mensaje chat",
+      "MAX_ATTACHABLE": "Máx. auditorías anexables",
+      "MAX_UPLOAD_SIZE": "Tamaño máximo de archivo (MB)",
+      "ALLOWED_TYPES": "Tipos de archivo permitidos",
+      "ALLOWED_TYPES_HELP": "Selecciona los tipos permitidos.",
+      "ADD_CUSTOM_TYPES": "Añadir tipos personalizados",
+      "CUSTOM_TYPES_LABEL": "Tipos personalizados (opcional, separados por coma)",
+      "CUSTOM_TYPES_PLACEHOLDER": "ejemplo: video/x-msvideo, application/x-rar-compressed"
+    },
+    "NOTIFICATIONS": {
+      "TITLE": "Notificaciones",
+      "TOTAL": "Notificaciones totales",
+      "CLEANUP": "Limpieza automática",
+      "RETENTION_DAYS": "Días de retención",
+      "PURGE_BTN": "Purgar notificaciones leídas",
+      "EVENTS": {
+        "PLAN_CREATED": "Plan semanal creado",
+        "PLAN_ACTIVATED": "Plan semanal activado",
+        "SLOT_CONFIRMED": "Slot confirmado",
+        "DAY_CONFIRMED": "Día confirmado",
+        "PLAN_COMPLETED": "Plan completado",
+        "PLAN_CANCELLED": "Plan cancelado",
+        "CRISIS_ACTIVATED": "Crisis activada",
+        "CRISIS_LIFTED": "Crisis levantada",
+        "STOCK_PREDICTION": "Predicción de stock",
+        "INCIDENT_CREATED": "Incidencia creada",
+        "INCIDENT_OPENED": "Incidencia abierta",
+        "INCIDENT_CLOSED": "Incidencia cerrada",
+        "INCIDENT_CHAT": "Mensaje en chat de incidencia"
+      }
+    },
+    "ADVANCED": {
+      "TITLE": "Avanzado",
+      "OUTBOX_INTERVAL": "Intervalo de procesamiento de cola (ms)",
+      "OUTBOX_BATCH": "Tamaño de lote de cola",
+      "OUTBOX_MAX_FAILURES": "Máximo de fallos consecutivos",
+      "KAFKA_TIMEOUT": "Tiempo de espera de Kafka (segundos)"
+    },
+    "AUDIT": {
+      "TITLE": "Auditoría Global",
+      "LAST_EDITION": "Última edición",
+      "LOADING": "Cargando auditoría...",
+      "EMPTY": "Sin registros de auditoría",
+      "TABLE": {
+        "DATE": "Fecha",
+        "USER": "Usuario",
+        "CATEGORY": "Categoría",
+        "FIELD": "Campo",
+        "OLD_VALUE": "Anterior",
+        "NEW_VALUE": "Nuevo"
+      },
+      "PAGINATION": {
+        "PREVIOUS": "Anterior",
+        "NEXT": "Siguiente",
+        "PAGE_INFO": "Página {{page}} de {{total}}"
+      }
+    },
+    "IA": {
+      "TITLE": "Configuración de IA",
+      "LOADING": "Cargando configuración de IA...",
+      "API_KEYS": "Claves API",
+      "LAST_UPDATE": "Última actualización: {{date}}",
+      "NO_KEYS": "No hay claves API configuradas.",
+      "FORM_TITLE": "Agregar/Actualizar Clave API",
+      "PROVIDER": "Proveedor",
+      "SELECT_PROVIDER": "--Seleccionar--",
+      "API_KEY_LABEL": "Clave API",
+      "API_KEY_PLACEHOLDER": "Ingresa la clave API...",
+      "ADD_KEY": "+ Agregar Clave",
+      "TECHNICAL_CONFIG": "Configuración Técnica de Chat",
+      "DEFAULT_PROVIDER": "Proveedor por defecto",
+      "DEFAULT_LANGUAGE": "Idioma por defecto",
+      "SUPPORTED_LANGUAGES": "Idiomas soportados (separados por comas)",
+      "MAX_TITLE_LENGTH": "Longitud máxima del título",
+      "CONCURRENT_STREAMS": "Streams concurrentes por usuario",
+      "MAX_HISTORY_DAYS": "Días de historial máximo",
+      "AUTO_ARCHIVE": "Archivar automáticamente al alcanzar límite",
+      "STREAMING_CONFIG": "Configuración de Streaming",
+      "ENABLE_THINKING": "Habilitar streaming de pensamiento",
+      "ENABLE_TOOL": "Habilitar streaming de herramientas",
+      "CHUNK_SIZE": "Tamaño del chunk (bytes)",
+      "FLUSH_INTERVAL": "Intervalo de vaciado (ms)",
+      "MAX_STREAM_DURATION": "Duración máxima del stream (ms)",
+      "ACTIONS": {
+        "UPDATE": "Actualizar",
+        "DELETE": "Eliminar",
+        "SAVE": "Guardar",
+        "CANCEL": "Cancelar"
+      },
+      "ERRORS": {
+        "SELECT_PROVIDER_KEY": "Selecciona proveedor e ingresa la clave API.",
+        "LOAD_ERROR": "No se pudo cargar la configuración de IA: {{error}}",
+        "SAVE_ERROR": "Error al guardar clave: {{error}}",
+        "DELETE_ERROR": "Error al eliminar clave: {{error}}"
+      },
+      "MESSAGES": {
+        "SAVE_SUCCESS": "Clave API para {{provider}} guardada.",
+        "DELETE_SUCCESS": "Clave API para {{provider}} eliminada.",
+        "DELETE_CONFIRM_TITLE": "Eliminar clave API",
+        "DELETE_CONFIRM_MSG": "¿Eliminar clave API para {{provider}}? Esta acción no se puede deshacer."
+      }
     },
     "FILE_TYPES": {
       "IMAGES": "Imágenes",
@@ -1965,6 +2122,498 @@
       "UNSAVED_MSG": "Tienes cambios sin guardar. Si sales ahora se perderán.",
       "UNSAVED_EXIT": "Salir sin guardar",
       "UNSAVED_STAY": "Seguir editando"
+    }
+  },
+  "ADMIN_PANEL": {
+    "WELCOME": "¡Bienvenido, {{name}}!",
+    "SUBTITLE": "Panel de administración de Smart Economato",
+    "FALLBACK_NAME": "Administrador"
+  },
+  "DASHBOARD": {
+    "WELCOME": "Bienvenid@, {{name}}",
+    "SUBTITLE": "Monitorea y gestiona el estado operativo de Smart Economato",
+    "STATS": {
+      "ACTIVE_TEACHERS": "Profesores Activos",
+      "OPEN_INCIDENTS": "Incidencias Abiertas",
+      "EXPIRING_PRODUCTS": "Productos por Caducar"
+    },
+    "TOP_RECIPES": "Top Recetas",
+    "RECENT_ORDERS": "5 Últimos Pedidos",
+    "INVENTORY_CONTROL": "Control de Inventario (Próximos 15 días)",
+    "EXPENSES_BY_SUPPLIER": "Gasto Total por Proveedor",
+    "RECIPE_METADATA": "{{elaborations}} pedidos • {{portions}} raciones",
+    "EMPTY": {
+      "RECIPES": "Sin datos de ventas.",
+      "ORDERS": "No hay pedidos recientes.",
+      "PRODUCTS": "No hay productos con caducidad próxima en los lotes activos.",
+      "CHART": "No hay órdenes de compra registradas para mostrar estadísticas de gastos."
+    },
+    "CHART": {
+      "SUPPLIERS": "Proveedores",
+      "TOTAL_EXPENSES": "Total gastos en euros"
+    },
+    "TABLE": {
+      "PRODUCT": "Producto",
+      "BATCH": "Lote",
+      "EXPIRATION": "Caducidad",
+      "DAYS": "Días",
+      "DAYS_UNIT": "días",
+      "STOCK": "Stock",
+      "STATUS": "Estado"
+    },
+    "BADGES": {
+      "CRITICAL": "CRÍTICO",
+      "UPCOMING": "PRÓXIMO"
+    }
+  },
+  "KITCHEN": {
+    "TITLE": "Gestión de Cocina",
+    "TABS": {
+      "HISTORY": "Historial",
+      "REPORTS": "Informes"
+    },
+    "FILTERS": {
+      "SEARCH_PLACEHOLDER": "Buscar en historial...",
+      "RECIPE_ID": "ID Receta",
+      "USER_ID": "ID Usuario",
+      "FROM": "Desde",
+      "TO": "Hasta"
+    },
+    "TABLE": {
+      "DATE": "Fecha",
+      "RECIPE": "Receta",
+      "USER": "Usuario",
+      "QUANTITY": "Cantidad",
+      "ACTIONS": "Acciones"
+    },
+    "RANGES": {
+      "DAILY": "Diario",
+      "WEEKLY": "Semanal",
+      "MONTHLY": "Mensual",
+      "YEARLY": "Anual",
+      "ALL_TIME": "Histórico",
+      "CUSTOM": "Personalizado"
+    },
+    "MESSAGES": {
+      "EMPTY_HISTORY": "No hay registros de cocina para los filtros aplicados",
+      "LOADING_REPORT": "Generando informe...",
+      "REPORT_TITLE": "Reporte de Cocina",
+      "REPORT_PERIOD": "Periodo: {{period}}",
+      "GENERATE_PROMPT": "Genera un informe para visualizar los datos."
+    },
+    "REPORTS": {
+      "GENERAL_INFO": "Información General",
+      "TOTAL_COOKINGS": "ELABORACIONES REGISTRADAS",
+      "TOTAL_PORTIONS": "PORCIONES PREPARADAS",
+      "RECIPE_DIVERSITY": "DIVERSIDAD DE RECETAS",
+      "PRODUCT_DIVERSITY": "DIVERSIDAD DE PRODUCTOS",
+      "PARTICIPATING_USERS": "USUARIOS PARTICIPANTES",
+      "TOTAL_ESTIMATED_COST": "COSTE ESTIMADO TOTAL",
+      "AVG_PORTION_PRICE": "PRECIO MEDIO POR PORCIÓN",
+      "EMISSION_DATE": "FECHA DE EMISIÓN",
+      "ECONOMIC_ANALYSIS": "Análisis Económico",
+      "EXPLANATION_MSG": "Los periodos de reporte (diario, semanal, mensual y anual) se calculan por días y meses naturales.",
+      "ESTIMATED_SALES": "VENTAS ESTIMADAS",
+      "WASTE_COST": "GASTO POR MERMA",
+      "EXPIRATION_COST": "GASTO POR CADUCIDAD",
+      "GROSS_PROFIT": "GANANCIA BRUTA (Teórica)",
+      "NET_PROFIT": "GANANCIA NETA (Real)",
+      "TOP_RECIPES": "Recetas Más Elaboradas",
+      "TOP_USERS": "Usuarios con Mayor Actividad",
+      "INVENTORY_CONSUMPTION": "Análisis de Consumo de Inventario"
+    },
+    "TRACEABILITY": {
+      "MODAL_TITLE": "Trazabilidad de Ingredientes",
+      "LOADING": "Rastreando origen de ingredientes...",
+      "COOKING_SUMMARY": "Resumen del Cocinado",
+      "INGREDIENT_ORIGIN": "Origen por Ingrediente",
+      "BATCH_ORIGIN": "Lote origen",
+      "ORDER_ID": "ID Orden/Entrada",
+      "INITIAL_STOCK": "Stock Inicial / Manual",
+      "ORDER_LINK_TITLE": "Ver detalle del pedido",
+      "EMPTY_TRACE": "No se encontró información de trazabilidad para los ingredientes."
+    },
+    "ACTIONS": {
+      "APPLY_FILTERS": "Aplicar Filtros",
+      "CLEAR_FILTERS": "Limpiar Filtros",
+      "DOWNLOAD_PDF": "Descargar PDF",
+      "REVERT_COOKING": "Revertir Cocinado",
+      "VIEW_DETAIL": "Ver detalle"
+    }
+  },
+  "INCIDENTS": {
+    "TITLE": "Incidencias",
+    "CONTROL_CENTER": "Centro de control",
+    "MANAGEMENT": "Gestión de incidencias",
+    "TABS": {
+      "INCIDENTS": "Incidencias",
+      "TYPES": "Tipos"
+    },
+    "ACTIONS": {
+      "SHOW_FILTERS": "Mostrar filtros",
+      "HIDE_FILTERS": "Ocultar filtros",
+      "NEW": "Nueva incidencia",
+      "EXPORT": "Exportar",
+      "VIEW": "Ver",
+      "OPEN": "Abrir",
+      "CLOSE": "Cerrar",
+      "CLEAR": "Limpiar",
+      "FILTER": "Filtrar",
+      "EDIT": "Editar",
+      "ACTIVATE": "Activar",
+      "DEACTIVATE": "Desactivar",
+      "CANCEL": "Cancelar",
+      "SAVE": "Guardar",
+      "ATTACH_AUDITS": "Adjuntar auditorías",
+      "REVERT": "Revertir"
+    },
+    "STATS": {
+      "TOTAL": "Incidencias totales",
+      "PENDING": "Pendientes y abiertas",
+      "CLOSED": "Cerradas"
+    },
+    "FILTERS": {
+      "SEARCH_PLACEHOLDER": "Buscar por título o ID...",
+      "ALL_TYPES": "Todos los tipos",
+      "ALL_USERS": "Todos los usuarios",
+      "ALL_STATUS": "Todos los estados",
+      "ALL_SEVERITIES": "Todas las severidades",
+      "FROM": "Desde",
+      "TO": "Hasta"
+    },
+    "TABLE": {
+      "ID": "ID",
+      "TITLE": "Título",
+      "TYPE": "Tipo",
+      "STATUS": "Estado",
+      "SEVERITY": "Severidad",
+      "CREATED_BY": "Creado por",
+      "DATE": "Fecha",
+      "CHAT": "Chat",
+      "ACTIONS": "Acciones",
+      "RESPONSIBLE": "Responsable"
+    },
+    "STATUS": {
+      "CREADO": "Creada",
+      "ABIERTO": "Abierta",
+      "CERRADO": "Cerrada",
+      "CERRADO_CON_RESOLUCION": "Cerrada con resolución",
+      "CERRADO_SIN_RESOLUCION": "Cerrada sin resolución",
+      "ACTIVE": "Activo",
+      "INACTIVE": "Inactivo"
+    },
+    "SEVERITY": {
+      "BAJA": "Baja",
+      "MEDIA": "Media",
+      "ALTA": "Alta"
+    },
+    "MESSAGES": {
+      "EMPTY": "No hay incidencias",
+      "EMPTY_HINT": "Crea una nueva incidencia o ajusta los filtros para encontrar resultados.",
+      "LOADING_CHAT": "Cargando conversación...",
+      "EMPTY_CHAT": "Todavía no hay mensajes.",
+      "LOCKED": "La incidencia está cerrada. No se pueden enviar nuevos mensajes.",
+      "ATTACH_EMPTY": "No hay auditorías adjuntas.",
+      "ATTACH_SIDE_EMPTY": "No hay auditorías.",
+      "LOADING_ATTACHABLE": "Cargando auditorías adjuntables...",
+      "NO_ATTACHABLE": "No hay auditorías disponibles para adjuntar.",
+      "SAVING": "Guardando...",
+      "OPENING": "Abriendo...",
+      "CLOSING": "Cerrando...",
+      "ATTACHING": "Adjuntando...",
+      "REVERTING": "Revirtiendo..."
+    },
+    "CHAT": {
+      "MESSAGES": "mensajes",
+      "LOAD_IMAGE": "Cargando imagen...",
+      "DOWNLOAD_ORIGINAL": "Descargar original",
+      "DOWNLOAD_FILE": "Descargar {{name}}",
+      "READ": "Leído",
+      "SENT": "Enviado",
+      "OPTIMIZING": "Optimizando imagen...",
+      "PLACEHOLDER": "Mensaje",
+      "ATTACH_FILE": "Adjuntar archivo",
+      "TAKE_PHOTO": "Tomar foto",
+      "SEND": "Enviar",
+      "NO_CONTENT": "Sin texto"
+    },
+    "MODALS": {
+      "CREATE_TITLE": "Nueva incidencia",
+      "EDIT_TYPE_TITLE": "Editar tipo",
+      "NEW_TYPE_TITLE": "Nuevo tipo",
+      "TYPE_NAME": "Nombre",
+      "TYPE_DESC": "Descripción",
+      "OPEN_TITLE": "Abrir incidencia",
+      "CLOSE_TITLE": "Cerrar incidencia",
+      "CLOSE_WITH_RESOLUTION": "Cerrar con resolución",
+      "RESOLUTION": "Resolución",
+      "ATTACH_TITLE": "Adjuntar auditorías",
+      "REVERT_TITLE": "Revertir auditoría",
+      "REVERT_HINT": "La reversión quedará registrada en la incidencia.",
+      "REVERT_REASON": "Motivo",
+      "CONFIRM_DOWNLOAD_TITLE": "Confirmar descarga",
+      "CONFIRM_DOWNLOAD_TEXT": "¿Deseas descargar este archivo PDF?",
+      "RESET_SECURITY_TITLE": "Confirmación de Seguridad",
+      "RESET_SECURITY_TEXT": "¿Estás SEGURO de que deseas resetear el historial? Esta acción borrará toda la cadena del ledger.",
+      "RESET_IRREVERSIBLE_TITLE": "¡ACCIÓN IRREVERSIBLE!",
+      "RESET_IRREVERSIBLE_TEXT": "Se perderán todos los datos de auditoría y el snapshot actual. ¿Deseas proceder definitivamente?"
+    }
+  },
+  "NOTIFICATIONS_MGMT": {
+    "TITLE": "Gestión de Notificaciones",
+    "TABS": {
+      "ROLE": "Enviar a grupo",
+      "USER": "Enviar a usuario"
+    },
+    "HELP": {
+      "ROLE": "Envía una notificación manual a todos los usuarios de un grupo.",
+      "USER": "Envía una notificación manual a un usuario específico."
+    },
+    "LABELS": {
+      "ROLE": "Grupo",
+      "USER": "Usuario",
+      "TITLE": "Título",
+      "MESSAGE": "Mensaje"
+    },
+    "PLACEHOLDERS": {
+      "TITLE_ROLE": "Ej. Cambio de horario",
+      "TITLE_USER": "Ej. Recordatorio",
+      "MESSAGE_ROLE": "Escribe el mensaje que verán los usuarios...",
+      "MESSAGE_USER": "Escribe el mensaje...",
+      "SEARCH_USER": "Busca por nombre o usuario"
+    },
+    "ERRORS": {
+      "TITLE_REQUIRED": "El título es obligatorio y debe tener máximo 100 caracteres.",
+      "MESSAGE_REQUIRED": "El mensaje es obligatorio y debe tener máximo 500 caracteres.",
+      "USER_REQUIRED": "Indica un usuario válido."
+    },
+    "ACTIONS": {
+      "SEND": "Enviar",
+      "SENDING": "Enviando..."
+    }
+  },
+  "BARCODE_SCANNER": {
+    "ERRORS": {
+      "NO_CAMERAS": "No se encontraron cámaras disponibles para el scanner.",
+      "PERMISSION_DENIED": "Se necesitan permisos de cámara para escanear códigos de barras.",
+      "PRODUCT_NOT_FOUND": "No se encontró ningún producto con el código: {{code}}",
+      "QUERY_ERROR": "Error al consultar el producto. Inténtalo de nuevo."
+    },
+    "ACTIONS": {
+      "SCAN_AGAIN": "Escanear de nuevo"
+    }
+  },
+  "UNITS": {
+    "KG": "Kg",
+    "L": "L",
+    "UD": "Ud",
+    "GR": "Gr",
+    "ML": "Ml"
+  },
+  "PRODUCT_MGMT": {
+    "SCAN": "Escanear Producto"
+  },
+  "STOCK_MGMT": {
+    "TITLE": "Gestión de Stock",
+    "TABS": {
+      "ALERTS": "Alertas",
+      "PREDICTIONS": "Predicciones",
+      "LEDGER": "Historial"
+    },
+    "ALERTS": {
+      "NEW_ORDER": "Nueva Orden de Reposición",
+      "DAY": "día",
+      "DAYS": "Días",
+      "STATS": {
+        "CRITICAL": "Crítico",
+        "HIGH": "Alto",
+        "MEDIUM": "Medio",
+        "LOW": "Bajo",
+        "TOTAL": "Total"
+      },
+      "INFO": {
+        "CURRENT": "Stock Actual",
+        "CONSUMED": "Consumo Proyectado",
+        "GAP": "Déficit"
+      },
+      "DETAIL": {
+        "TYPE": "Tipo",
+        "RESOLUTION": "Resolución",
+        "ESTIMATED_DAILY": "Consumo Diario Est."
+      },
+      "TABLE": {
+        "PRODUCT": "Producto",
+        "STOCK_STATUS": "Estado del Stock",
+        "DAYS_REMAINING": "Días Rest.",
+        "STATUS": "Estado"
+      },
+      "RESOLUTION": {
+        "COVERED_BY_ORDER": "Cubierto",
+        "PARTIALLY_COVERED": "Parcial",
+        "UNCOVERED": "No cubierto",
+        "EXPIRING": "Caduca pronto",
+        "OK": "Cubierto"
+      },
+      "TYPE": {
+        "PREDICTION": "Predicción",
+        "EXPIRATION": "Caducidad",
+        "COMBINED": "Combinada"
+      },
+      "INFO": {
+        "CURRENT": "Stock Actual",
+        "CONSUMED": "Consumo Proyectado",
+        "GAP": "Déficit"
+      },
+      "DETAIL": {
+        "TYPE": "Tipo",
+        "RESOLUTION": "Resolución",
+        "ESTIMATED_DAILY": "Consumo diario est.",
+        "PROJECTED_14": "Consumo estimado (14 días)",
+        "COVERAGE": "Cobertura Estimada",
+        "LAST_UPDATE": "Última Actualización"
+      },
+      "CHART": {
+        "TITLE": "Análisis de Consumo y Evolución de Stock",
+        "TITLE_EXPIRATION": "Análisis de Caducidad de Lotes",
+        "TITLE_COMBINED": "Análisis Combinado de Consumo y Caducidad",
+        "TITLE_CONSUMPTION": "Análisis de Consumo y Proyección de Stock",
+        "Y_AXIS": "Stock / Consumo",
+        "X_AXIS": "Fecha",
+        "ESTIMATED_STOCK": "Stock Estimado",
+        "ESTIMATED_STOCK_EXP": "Stock Estimado con Caducidades",
+        "HISTORY": "Consumo Histórico",
+        "PROJECTED": "Consumo Proyectado",
+        "QTY_EXPIRATION": "Cantidad por caducidad",
+        "CURRENT_STOCK": "Stock actual",
+        "NO_BATCHES": "Sin lotes próximos",
+        "TODAY": "Hoy"
+      },
+      "MESSAGES": {
+        "EMPTY": "No hay alertas activas"
+      }
+    },
+    "PREDICTIONS": {
+      "INFO": "Consumo proyectado calculado sobre los últimos <strong>14 días</strong>.",
+      "TABLE": {
+        "PRODUCT": "Producto",
+        "PROJECTED_CONSUMPTION": "Consumo Proyectado",
+        "LAST_UPDATE": "Última Actualización"
+      },
+      "MESSAGES": {
+        "EMPTY": "No hay predicciones disponibles"
+      }
+    },
+    "LEDGER": {
+      "SELECT_PRODUCT": "Seleccionar Producto:",
+      "SEARCH_PLACEHOLDER": "Buscar producto...",
+      "SCAN_TOOLTIP": "Escanear código de barras",
+      "NONE": "Ninguno",
+      "NO_RESULTS": "No se encontraron productos",
+      "NO_NAME": "Sin nombre",
+      "NO_UNIT": "Ud",
+      "SELECT_PRODUCT_PLACEHOLDER": "Seleccione un producto...",
+      "SELECTED_PRODUCT": "Producto seleccionado",
+      "BLOCKCHAIN_TECHNICAL": "Blockchain Técnico",
+      "ACTIONS": {
+        "VERIFY_ALL": "Verificar Todo",
+        "VERIFY_INTEGRITY": "Verificar Integridad",
+        "VERIFYING": "Verificando...",
+        "CLEAN_HISTORY": "Limpiar Historial",
+        "MANUAL_ADJUSTMENT": "Ajuste Manual",
+        "REFRESH": "Actualizar"
+      },
+      "STATS": {
+        "BLOCKS": "Bloques",
+        "MEMPOOL": "Mempool",
+        "DIFFICULTY": "Dificultad",
+        "GLOBAL_VERIFICATION": "Verificación global"
+      },
+      "TABLE": {
+        "BLOCK": "Bloque",
+        "DATE": "Fecha",
+        "TX": "Tx",
+        "HASH": "Hash",
+        "ID": "ID",
+        "PRODUCT": "Producto",
+        "TYPE": "Tipo",
+        "DELTA": "Delta",
+        "SEQUENCE": "Sec.",
+        "RESULTING": "Resultante",
+        "DESC_USER": "Descripción / Usuario",
+        "VERIF": "Verif.",
+        "USER": "Usuario",
+        "ORDER": "Orden",
+        "DESC": "Descripción",
+        "HASH_CURRENT": "Hash actual",
+        "HASH_PREVIOUS": "Hash anterior"
+      },
+      "STATUS": {
+        "VALID": "VÁLIDA",
+        "CORRUPTED": "CORRUPTA",
+        "PENDING": "PENDIENTE",
+        "VERIFIED": "Transacción verificada",
+        "NOT_VERIFIED": "Hash no verificado"
+      },
+      "BLOCK_DETAIL": {
+        "TITLE": "Detalle Bloque #{{id}}",
+        "HASH": "Hash",
+        "PREVIOUS": "Previo",
+        "MERKLE": "Merkle",
+        "NONCE": "Nonce",
+        "HMAC": "HMAC v{{version}}",
+        "TITLE_TX": "Detalle de Transacción"
+      },
+      "MESSAGES": {
+        "LOADING_BLOCKS": "Cargando bloques...",
+        "NO_BLOCKS": "No hay bloques confirmados",
+        "LOADING_MEMPOOL": "Cargando mempool...",
+        "NO_PENDING_TX": "No hay transacciones pendientes",
+        "STOCK_ACTUAL": "Stock Actual",
+        "LAST_SEQUENCE": "Última Secuencia",
+        "CHAIN_STATUS": "Estado de Cadena",
+        "LAST_HASH": "Último Hash",
+        "IRREGULARITIES": "Se han detectado irregularidades en la cadena de este producto:",
+        "NO_MOVEMENTS": "No hay movimientos registrados para este producto",
+        "EMPTY": "Selecciona un producto para ver su historial de transacciones seguro (Blockchain-verified)",
+        "GLOBAL_RESULTS_TITLE": "Resultado de Verificación Global",
+        "INTEGRO": "Íntegro",
+        "CORRUPTO": "CORRUPTO",
+        "MORE_ERRORS": "y {{count}} errores más...",
+        "DOWNLOAD_HISTORY": "Descargar Historial",
+        "PROCESSING_CHART": "Procesando datos históricos y predicciones...",
+        "STOCK_PROJETED_UNTIL": "Stock proyectado hasta:",
+        "NEXT_EXPIRATION": "Caducidad más próxima:",
+        "ESTIMATED_OUT": "Agotamiento estimado:",
+        "SCAN_TITLE": "Escanear Código de Barras",
+        "ADMIN_ONLY_BLOCKCHAIN": "Solo ADMIN puede activar la vista técnica blockchain",
+        "BLOCKCHAIN_MODE_ACTIVE": "Modo técnico blockchain activado",
+        "ERROR_LOAD_ALERTS": "Error al cargar las alertas",
+        "ERROR_LOAD_PREDICTIONS": "Error al cargar predicciones",
+        "ERROR_LOAD_PRODUCT_DATA": "Error al cargar datos de productos",
+        "ERROR_LOAD_SUPPLIERS": "Error al cargar proveedores",
+        "ERROR_LOAD_CHART_DATA": "Error al cargar datos de la gráfica",
+        "ERROR_LOAD_LEDGER_PRODUCTS": "Error al cargar productos con ledger",
+        "ERROR_LOAD_HISTORY": "Error al cargar el historial del ledger",
+        "ERROR_LOAD_BLOCKCHAIN_STATS": "Error al cargar estadísticas de blockchain",
+        "ERROR_VERIFY_BLOCKCHAIN": "Error al verificar blockchain",
+        "ERROR_LOAD_BLOCKS": "Error al cargar bloques confirmados",
+        "ERROR_LOAD_MEMPOOL": "Error al cargar mempool",
+        "ERROR_LOAD_BLOCK_DETAIL": "No se pudo cargar el detalle del bloque",
+        "INTEGRITY_VALID": "Integridad verificada: {{message}}",
+        "INTEGRITY_CORRUPTED": "¡CORRUPCIÓN DETECTADA!: {{message}}",
+        "ERROR_VERIFY_INTEGRITY": "Error al verificar integridad",
+        "ALL_CHAINS_VALID": "Todas las cadenas ({{count}}) son íntegras.",
+        "GLOBAL_CORRUPTION_DETECTED": "CORRUPCIÓN: Se detectaron {{count}} productos con errores. Revisa la lista al final de la página.",
+        "ERROR_GLOBAL_VERIFICATION": "Error al realizar la verificación global de integridad",
+        "PDF_GENERATED_OK": "PDF generado. Estado: {{message}}",
+        "PDF_GENERATED_WARNING": "PDF generado con alertas: {{message}}",
+        "ERROR_GENERATE_PDF": "Error al generar el PDF del ledger",
+        "ERROR_RESET_HISTORY": "Error al resetear historial",
+        "ERROR_LOAD_BATCHES": "Error al cargar lotes activos",
+        "EXPIRATION_DATE_REQUIRED": "La fecha de caducidad es obligatoria para un nuevo lote.",
+        "ADJUSTMENT_SUCCESS": "Ajuste de stock registrado con éxito",
+        "ERROR_REGISTER_ADJUSTMENT": "Error al registrar el ajuste"
+      }
     }
   }
 }
