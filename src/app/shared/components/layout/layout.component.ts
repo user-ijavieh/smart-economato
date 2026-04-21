@@ -33,9 +33,9 @@ export class LayoutComponent {
 
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
 
-  sidebarOpen = window.innerWidth > 800;
-  mobileMenuOpen = false;
-  isMobile = window.innerWidth <= 800;
+  public sidebarOpen: boolean = window.innerWidth > 800;
+  public mobileMenuOpen: boolean = false;
+  public isMobile = window.innerWidth <= 800;
   showLogoutModal = false;
   showClearCacheModal = false;
 
