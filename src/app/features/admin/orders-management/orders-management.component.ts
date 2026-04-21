@@ -334,6 +334,10 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
 
   // ── Change Status Modal ──
   openChangeStatusModal(order: Order): void {
+    if (!this.isStatusEditable(order)) {
+      this.messageService.showWarning('No se puede editar el estado de una orden confirmada o incompleta.');
+      return;
+    }
     this.orderForStatusChange = order;
     this.newStatusValue = order.status;
     this.showChangeStatusModal = true;
@@ -356,6 +360,11 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
 
   confirmStatusChange(): void {
     if (!this.orderForStatusChange || !this.newStatusValue || this.savingStatus) return;
+    if (!this.isStatusEditable(this.orderForStatusChange)) {
+      this.messageService.showWarning('No se puede editar el estado de una orden confirmada o incompleta.');
+      this.closeChangeStatusModal();
+      return;
+    }
     if (this.newStatusValue === this.orderForStatusChange.status) {
       this.closeChangeStatusModal();
       return;
@@ -671,8 +680,17 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
 
   openStatusEditorFromDetail(): void {
     if (!this.selectedOrder) return;
+    if (!this.isStatusEditable(this.selectedOrder)) {
+      this.messageService.showWarning('No se puede editar el estado de una orden confirmada o incompleta.');
+      return;
+    }
     const selected = this.selectedOrder;
     this.openChangeStatusModal(selected);
+  }
+
+  isStatusEditable(order: Order | null): boolean {
+    if (!order) return false;
+    return order.status !== 'CONFIRMED' && order.status !== 'INCOMPLETE';
   }
 
   async revertOrder(order: Order): Promise<void> {
@@ -847,7 +865,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
 
     if (status.currentUserOwner) {
       this.lockBlockedForCurrentUser = false;
-      this.lockInfoMessage = 'Estás revisando este pedido.';
+      this.lockInfoMessage = '';
       this.startLockHeartbeat(status.orderId);
       return;
     }

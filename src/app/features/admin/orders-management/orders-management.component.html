@@ -147,6 +147,7 @@
                                             d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
                                     </svg>
                                 </button>
+                                @if (isStatusEditable(order)) {
                                 <button class="btn-edit-status" (click)="openChangeStatusModal(order)" title="Cambiar Estado">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                         viewBox="0 0 16 16">
@@ -156,6 +157,7 @@
                                             d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
                                     </svg>
                                 </button>
+                                }
                                 <button class="btn-pdf" (click)="onDownloadPdf(order)" title="Descargar PDF">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                         viewBox="0 0 16 16">
@@ -455,11 +457,11 @@
     </div>
     <div class="modal-container order-detail-layout">
         <div class="modal-content">
-            @if (lockInfoMessage) {
+            <!-- @if (lockInfoMessage) {
                 <div class="review-lock-banner" [class.review-lock-banner-blocking]="lockBlockedForCurrentUser">
                     {{ lockInfoMessage }}
                 </div>
-            }
+            } -->
 
                 <!-- Información General -->
                 <div class="modal-section">
@@ -523,7 +525,7 @@
     </div>
     <div modal-footer>
         <div class="modal-actions">
-            <button class="btn-editar" (click)="openStatusEditorFromDetail()" [disabled]="lockBlockedForCurrentUser">
+            <button class="btn-editar" (click)="openStatusEditorFromDetail()" [disabled]="lockBlockedForCurrentUser || !isStatusEditable(selectedOrder)">
                 Editar
             </button>
             <button class="btn-imprimir" (click)="onDownloadPdf(selectedOrder)">

@@ -709,6 +709,13 @@
   text-align: right;
 }
 
+.order-detail-layout .ingredients-table th:last-child,
+.order-detail-layout .ingredients-table td:last-child,
+.order-detail-layout .ingredients-table tfoot td:last-child {
+  min-width: 110px;
+  white-space: nowrap;
+}
+
 .audit-modal-close {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);

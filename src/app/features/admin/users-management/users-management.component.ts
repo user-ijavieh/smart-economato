@@ -71,6 +71,8 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
     // Mobile detail modal state
     showMobileModal = false;
     selectedUserForMobile: User | null = null;
+    teacherStudentsForDetail: User[] = [];
+    loadingTeacherStudentsForDetail = false;
 
     // View state
     showingHidden = false;
@@ -86,6 +88,8 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
     // ── Presence + Activity state ──
     connectedSnapshots: UserPresenceSnapshot[] = [];
     onlineUsers: User[] = [];
+    private presenceUsersById: Map<number, User> = new Map();
+    private presenceCatalogLoaded = false;
     activityLogs: UserActivityLogResponse[] = [];
     activityPage = 0;
     activitySize = 20;
@@ -134,6 +138,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
 
         this.loadUsers();
         this.loadTeachers();
+        this.loadPresenceUsersCatalog();
 
         this.presenceSubscription = this.webSocketService.adminPresence$.subscribe((snapshots) => {
             this.connectedSnapshots = snapshots ?? [];
@@ -147,6 +152,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
             .subscribe(({ domains }) => {
                 if (domains.includes('user')) {
                     this.loadUsers(this.currentPage);
+                    this.loadPresenceUsersCatalog(true);
                 }
             });
     }
@@ -196,6 +202,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
             this.userService.getHidden(this.currentPage, this.pageSize, sortParam).subscribe({
                 next: (pageData) => {
                     this.users = pageData.content;
+                    this.mergeUsersInPresenceIndex(this.users);
                     this.serverTotalElements = pageData.totalElements;
                     this.serverTotalPages = pageData.totalPages;
                     this.applySearchFilter(true);
@@ -213,6 +220,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
             this.userService.getByRole(this.roleFilter, sortParam).subscribe({
                 next: (users) => {
                     this.users = users;
+                    this.mergeUsersInPresenceIndex(this.users);
                     this.applySearchFilter();
                     this.loading = false;
                     this.cdr.detectChanges();
@@ -228,6 +236,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
             this.userService.getAll(this.currentPage, this.pageSize, sortParam).subscribe({
                 next: (pageData) => {
                     this.users = pageData.content;
+                    this.mergeUsersInPresenceIndex(this.users);
                     this.serverTotalElements = pageData.totalElements;
                     this.serverTotalPages = pageData.totalPages;
                     this.applySearchFilter(true); // Is pre-paginated
@@ -312,8 +321,67 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
     }
 
     private updateOnlineUsers(): void {
-        const connectedIds = new Set(this.connectedSnapshots.map(snapshot => snapshot.userId));
-        this.onlineUsers = this.filteredUsers.filter(user => !!user.id && connectedIds.has(user.id));
+        const connectedIds = Array.from(new Set(
+            this.connectedSnapshots
+                .map(snapshot => snapshot.userId)
+                .filter((id): id is number => typeof id === 'number')
+        ));
+
+        const missingIds = connectedIds.filter(id => !this.presenceUsersById.has(id));
+        if (missingIds.length > 0) {
+            this.loadMissingPresenceUsers(missingIds);
+        }
+
+        this.onlineUsers = connectedIds
+            .map(id => this.presenceUsersById.get(id))
+            .filter((user): user is User => !!user)
+            .sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    private mergeUsersInPresenceIndex(users: User[]): void {
+        for (const user of users) {
+            if (!user?.id) continue;
+            this.presenceUsersById.set(user.id, user);
+        }
+    }
+
+    private loadPresenceUsersCatalog(force = false): void {
+        if (this.presenceCatalogLoaded && !force) {
+            return;
+        }
+
+        this.userService.getAll(0, 500, 'name,asc').subscribe({
+            next: (pageData) => {
+                this.mergeUsersInPresenceIndex(pageData.content || []);
+                this.presenceCatalogLoaded = true;
+                this.updateOnlineUsers();
+                this.cdr.detectChanges();
+            },
+            error: () => {
+                // Keep presence running with incremental user resolution.
+            }
+        });
+    }
+
+    private loadMissingPresenceUsers(userIds: number[]): void {
+        if (!userIds.length) {
+            return;
+        }
+
+        forkJoin(userIds.map(id => this.userService.getById(id))).subscribe({
+            next: (users) => {
+                this.mergeUsersInPresenceIndex(users);
+                this.onlineUsers = Array.from(new Set(this.connectedSnapshots.map(s => s.userId)))
+                    .filter((id): id is number => typeof id === 'number')
+                    .map(id => this.presenceUsersById.get(id))
+                    .filter((user): user is User => !!user)
+                    .sort((a, b) => a.name.localeCompare(b.name));
+                this.cdr.detectChanges();
+            },
+            error: () => {
+                // Ignore missing users here and keep available rows.
+            }
+        });
     }
 
     onSearch(): void {
@@ -951,13 +1019,60 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
     }
 
     openMobileModal(user: User): void {
-        this.selectedUserForMobile = user;
-        this.showMobileModal = true;
+        const hasTeacherProperty = Object.prototype.hasOwnProperty.call(user, 'teacher');
+        if (hasTeacherProperty) {
+            this.selectedUserForMobile = { ...user };
+            this.showMobileModal = true;
+            this.loadTeacherStudentsForDetail();
+            return;
+        }
+
+        this.userService.getById(user.id).subscribe({
+            next: (fullUser) => {
+                this.selectedUserForMobile = { ...fullUser };
+                this.showMobileModal = true;
+                this.loadTeacherStudentsForDetail();
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error loading user details:', err);
+                this.messageService.showError('No se pudieron cargar los datos completos del usuario');
+            }
+        });
     }
 
     closeMobileModal(): void {
         this.showMobileModal = false;
         this.selectedUserForMobile = null;
+        this.teacherStudentsForDetail = [];
+        this.loadingTeacherStudentsForDetail = false;
+    }
+
+    private loadTeacherStudentsForDetail(): void {
+        const user = this.selectedUserForMobile;
+        if (!user || user.role !== 'CHEF' || !user.id) {
+            this.teacherStudentsForDetail = [];
+            this.loadingTeacherStudentsForDetail = false;
+            return;
+        }
+
+        this.loadingTeacherStudentsForDetail = true;
+        this.teacherStudentsForDetail = [];
+
+        this.userService.getStudentsByTeacherId(user.id).subscribe({
+            next: (students) => {
+                this.teacherStudentsForDetail = students;
+                this.loadingTeacherStudentsForDetail = false;
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error loading teacher students:', err);
+                this.loadingTeacherStudentsForDetail = false;
+                this.teacherStudentsForDetail = [];
+                this.messageService.showError('No se pudo cargar la lista de alumnos del profesor');
+                this.cdr.detectChanges();
+            }
+        });
     }
 
     openEditFromMobile(): void {
