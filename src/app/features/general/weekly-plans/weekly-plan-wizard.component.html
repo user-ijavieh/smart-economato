@@ -153,10 +153,33 @@
                   <div class="participation-row">
                     <div class="participation-row-head">
                       <span class="participation-name">{{ student.name }}</span>
-                      <span class="participation-detail">{{ student.assignments }} asignaciones · {{ student.historicalRate | number:'1.0-0' }}% histórico</span>
+                      <div class="participation-metrics">
+                        <span class="participation-detail">{{ student.assignments }} asignaciones</span>
+                        <span class="participation-separator">·</span>
+                        <span class="participation-detail historical-metric" 
+                              title="La participación histórica indica el % de sesiones semanales que el alumno ha ocupado habitualmente, no su cantidad total de asistencias.">
+                          {{ student.historicalRate | number:'1.0-0' }}% histórico
+                          <svg class="info-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                          </svg>
+                        </span>
+                        <span class="participation-separator">·</span>
+                        <span class="participation-detail attendance-metric"
+                              [title]="'Asistencia real: ' + student.attendanceRate + '% (Calculado sobre sesiones totales menos cancelaciones)'">
+                          {{ student.attendanceRate | number:'1.0-0' }}% asistencia
+                        </span>
+                      </div>
                     </div>
                     <div class="participation-track">
-                      <div class="participation-fill" [class.is-selected]="student.selected" [style.width.%]="participation.totalAssignments > 0 ? (student.assignments / participation.totalAssignments) * 100 : 0"></div>
+                      <!-- Layer 1: Historical Rate (Lighter) -->
+                      <div class="participation-fill historical-fill" 
+                           [style.width.%]="student.historicalRate"></div>
+                      <!-- Layer 2: Current Assignments (Primary) -->
+                      <div class="participation-fill current-fill" 
+                           [class.is-selected]="student.selected" 
+                           [style.width.%]="participation.totalAssignments > 0 ? (student.assignments / participation.totalAssignments) * 100 : 0"></div>
                     </div>
                   </div>
                 }

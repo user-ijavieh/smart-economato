@@ -279,6 +279,19 @@
   justify-content: space-between;
   gap: 12px;
   align-items: center;
+  flex-wrap: wrap;
+}
+
+.participation-metrics {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.participation-separator {
+  color: var(--theme-text-secondary);
+  opacity: 0.5;
+  font-size: 0.78rem;
 }
 
 .participation-name {
@@ -291,6 +304,26 @@
   font-size: 0.78rem;
   color: var(--theme-text-secondary);
   text-align: right;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.historical-metric {
+  cursor: help;
+  color: color-mix(in srgb, var(--brand-primary) 70%, var(--theme-text-secondary));
+  font-weight: 600;
+}
+
+.attendance-metric {
+  color: var(--color-success-muted);
+  font-weight: 600;
+}
+
+.info-icon-svg {
+  width: 12px;
+  height: 12px;
+  opacity: 0.7;
 }
 
 .participation-track {
@@ -299,17 +332,31 @@
   border-radius: 999px;
   overflow: hidden;
   border: 1px solid var(--theme-border-subtle);
+  position: relative; /* Essential for layering */
 }
 
 .participation-fill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--brand-primary) 75%, white 25%), var(--brand-primary));
-  transition: width 0.25s ease;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
-.participation-fill.is-selected {
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--brand-primary) 60%, transparent);
+.historical-fill {
+  background: color-mix(in srgb, var(--brand-primary) 20%, transparent);
+  z-index: 1;
+}
+
+.current-fill {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--brand-primary) 75%, white 25%), var(--brand-primary));
+  z-index: 2;
+  box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+}
+
+.current-fill.is-selected {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--brand-primary) 60%, transparent), 2px 0 4px rgba(0,0,0,0.1);
 }
 
 .day-group {
