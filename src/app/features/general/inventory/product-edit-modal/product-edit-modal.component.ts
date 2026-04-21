@@ -72,8 +72,11 @@ export class ProductEditModalComponent implements OnChanges {
     this.formData.supplierId = item.id;
   }
 
+  initialLotQuantity: number | undefined = undefined;
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['product'] && this.product) {
+      this.initialLotQuantity = this.product.lotQuantity;
       this.formData = {
         name: this.product.name,
         productCode: this.product.productCode || '',
@@ -88,7 +91,7 @@ export class ProductEditModalComponent implements OnChanges {
     }
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     // Verificar si el formulario es válido
     if (this.editForm && !this.editForm.valid) {
       return;
@@ -102,6 +105,10 @@ export class ProductEditModalComponent implements OnChanges {
     const currentStock = Number(this.formData.currentStock);
     const supplierId = this.formData.supplierId !== undefined && this.formData.supplierId !== null
       ? Number(this.formData.supplierId)
+      : undefined;
+    
+    const lotQuantity = (this.formData.lotQuantity !== undefined && this.formData.lotQuantity !== null && String(this.formData.lotQuantity) !== '')
+      ? Number(this.formData.lotQuantity)
       : undefined;
 
     // Validar que los números sean válidos
@@ -117,6 +124,15 @@ export class ProductEditModalComponent implements OnChanges {
       return;
     }
 
+    // Confirmación si cambia la cantidad por lote
+    if (lotQuantity !== this.initialLotQuantity) {
+      const confirmed = await this.messageService.confirm(
+        'Confirmar cambio de lote',
+        'Has modificado la cantidad por lote. Esto podría alterar la visualización y el cálculo de unidades en pedidos existentes. ¿Deseas continuar?'
+      );
+      if (!confirmed) return;
+    }
+
     // Enviar JSON en el formato exacto del backend
     const productData: ProductRequest = {
       availabilityPercentage: availabilityPercentage,
@@ -127,7 +143,7 @@ export class ProductEditModalComponent implements OnChanges {
       barcode: this.formData.barcode.trim() || undefined,
       currentStock: currentStock,
       supplierId: supplierId,
-      lotQuantity: this.formData.lotQuantity || 1
+      lotQuantity: lotQuantity
     };
 
     this.save.emit(productData);
@@ -169,6 +185,19 @@ export class ProductEditModalComponent implements OnChanges {
       this.messageService.showSuccess(`Código detectado: ${this.formData.barcode}`);
     } else {
       this.messageService.showWarning('No se pudo leer un código de barras válido.');
+    }
+  }
+
+  get pricePerLot(): number {
+    const price = Number(this.formData.unitPrice) || 0;
+    const lot = Number(this.formData.lotQuantity) || 1;
+    return Number((price * lot).toFixed(4));
+  }
+
+  set pricePerLot(value: number) {
+    const lot = Number(this.formData.lotQuantity) || 1;
+    if (lot > 0) {
+      this.formData.unitPrice = Number((value / lot).toFixed(4));
     }
   }
 }
