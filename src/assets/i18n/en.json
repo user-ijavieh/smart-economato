@@ -1,0 +1,433 @@
+{
+  "DASHBOARD": {
+    "WELCOME": "Welcome, {{name}}",
+    "SUBTITLE": "Monitor and manage the operational status of Smart Economato",
+    "STATS": {
+      "ACTIVE_TEACHERS": "Active Teachers",
+      "OPEN_INCIDENTS": "Open Incidents",
+      "EXPIRING_PRODUCTS": "Expiring Products"
+    },
+    "TOP_RECIPES": "Top Recipes",
+    "RECENT_ORDERS": "Last 5 Orders",
+    "INVENTORY_CONTROL": "Inventory Control (Next 15 days)",
+    "EXPENSES_BY_SUPPLIER": "Total Expense by Supplier",
+    "RECIPE_METADATA": "{{elaborations}} orders • {{portions}} portions",
+    "EMPTY": {
+      "RECIPES": "No sales data.",
+      "ORDERS": "No recent orders.",
+      "PRODUCTS": "No products with upcoming expiration in active batches.",
+      "CHART": "No purchase orders recorded to show expense statistics."
+    },
+    "CHART": {
+      "SUPPLIERS": "Suppliers",
+      "TOTAL_EXPENSES": "Total expenses in euros"
+    },
+    "TABLE": {
+      "PRODUCT": "Product",
+      "BATCH": "Batch",
+      "EXPIRATION": "Expiration",
+      "DAYS": "Days",
+      "DAYS_UNIT": "days",
+      "STOCK": "Stock",
+      "STATUS": "Status"
+    },
+    "BADGES": {
+      "CRITICAL": "CRITICAL",
+      "UPCOMING": "UPCOMING"
+    }
+  },
+  "COMMON": {
+    "PREVIOUS": "Previous",
+    "NEXT": "Next",
+    "PAGE_INFO": "Page {{page}} of {{total}}",
+    "CANCEL": "Cancel",
+    "SAVE": "Save",
+    "EDIT": "Edit",
+    "DELETE": "Delete",
+    "CONFIRM": "Confirm",
+    "LOADING": "Loading...",
+    "SAVING": "Saving...",
+    "EXPORT": "Export",
+    "ALL": "All",
+    "SEARCH": "Search",
+    "YES": "Yes",
+    "NO": "No",
+    "STATUS": "Status",
+    "USER": "User",
+    "REFRESH": "Refresh",
+    "LOAD_MORE": "Load More",
+    "VIEW_DETAILS": "View Details",
+    "CLEAR_FILTERS": "Clear Filters"
+  },
+  "KITCHEN": {
+    "TITLE": "Kitchen Management",
+    "TABS": {
+      "AUDIT": "Cooking Audits",
+      "HISTORY": "History"
+    }
+  },
+  "INCIDENTS": {
+    "TITLE": {
+      "MAIN": "Incident Management",
+      "ID": "Incident #{{id}}"
+    },
+    "TABS": {
+      "INCIDENTS": "Incidents",
+      "TYPES": "Types",
+      "SUMMARY": "Summary",
+      "CHAT": "Chat",
+      "AUDITS": "Audits"
+    },
+    "ACTIONS": {
+      "NEW": "New Incident",
+      "NEW_TYPE": "New Type",
+      "EDIT": "Edit",
+      "ACTIVATE": "Activate",
+      "DEACTIVATE": "Deactivate",
+      "CANCEL": "Cancel",
+      "CREATE": "Create Incident",
+      "SAVE": "Save",
+      "EXPORT": "Export",
+      "OPEN": "Open",
+      "CLOSE": "Close",
+      "ATTACH": "Attach",
+      "ATTACH_AUDITS": "Attach Audits",
+      "REVERT": "Revert",
+      "REMOVE_FILE": "Remove file"
+    },
+    "STATS": {
+      "PENDING": "Pending",
+      "OPEN": "Open",
+      "CLOSED": "Closed",
+      "TOTAL": "Total"
+    },
+    "FILTERS": {
+      "SEARCH_PLACEHOLDER": "Search by title or ID...",
+      "ALL_TYPES": "All types",
+      "ALL_USERS": "All users",
+      "ALL_STATUS": "All status",
+      "ALL_SEVERITIES": "All severities",
+      "FROM": "From",
+      "TO": "To"
+    },
+    "TABLE": {
+      "TITLE": "Title",
+      "TYPE": "Type",
+      "STATUS": "Status",
+      "SEVERITY": "Severity",
+      "CREATED_BY": "Created by",
+      "DATE": "Date"
+    },
+    "STATUS": {
+      "CREADO": "Created",
+      "ABIERTO": "Open",
+      "CERRADO": "Closed",
+      "CERRADO_CON_RESOLUCION": "Closed with resolution",
+      "CERRADO_SIN_RESOLUCION": "Closed without resolution",
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive"
+    },
+    "SEVERITY": {
+      "BAJA": "Low",
+      "MEDIA": "Medium",
+      "ALTA": "High"
+    },
+    "MESSAGES": {
+      "EMPTY": "No incidents found",
+      "EMPTY_HINT": "Create a new incident or adjust filters to find results.",
+      "LOADING_CHAT": "Loading conversation...",
+      "EMPTY_CHAT": "No messages yet.",
+      "LOCKED": "Incident is closed. New messages cannot be sent.",
+      "ATTACH_EMPTY": "No audits attached.",
+      "ATTACH_SIDE_EMPTY": "No audits.",
+      "LOADING_ATTACHABLE": "Loading attachable audits...",
+      "NO_ATTACHABLE": "No audits available to attach.",
+      "SAVING": "Saving...",
+      "OPENING": "Opening...",
+      "CLOSING": "Closing...",
+      "ATTACHING": "Attaching...",
+      "REVERTING": "Reverting...",
+      "NO_DESCRIPTION": "No description",
+      "PENDING": "Pending",
+      "NO_RESOLUTION": "No resolution",
+      "AUDIT_REVERTED": "Reverted",
+      "AUDIT_ACTIVE": "Active",
+      "NO_TRACE": "Audit"
+    },
+    "CHAT": {
+      "MESSAGES": "messages",
+      "LOAD_IMAGE": "Loading image...",
+      "DOWNLOAD_ORIGINAL": "Download original",
+      "DOWNLOAD_FILE": "Download {{name}}",
+      "READ": "Read",
+      "SENT": "Sent",
+      "OPTIMIZING": "Optimizing image...",
+      "PLACEHOLDER": "Message",
+      "ATTACH_FILE": "Attach file",
+      "TAKE_PHOTO": "Take photo",
+      "SEND": "Send",
+      "NO_CONTENT": "No content"
+    },
+    "MODALS": {
+      "CREATE_TITLE": "New Incident",
+      "EDIT_TYPE_TITLE": "Edit Type",
+      "NEW_TYPE_TITLE": "New Type",
+      "TYPE_NAME": "Name",
+      "TYPE_DESC": "Description",
+      "OPEN_TITLE": "Open Incident",
+      "CLOSE_TITLE": "Close Incident",
+      "CLOSE_WITH_RESOLUTION": "Close with resolution",
+      "RESOLUTION": "Resolution",
+      "ATTACH_TITLE": "Attach Audits",
+      "REVERT_TITLE": "Revert Audit",
+      "REVERT_HINT": "Reversion will be logged in the incident.",
+      "REVERT_REASON": "Reason",
+      "CONFIRM_DOWNLOAD_TITLE": "Confirm Download",
+      "CONFIRM_DOWNLOAD_TEXT": "Do you want to download this PDF file?",
+      "RESET_SECURITY_TITLE": "Security Confirmation",
+      "RESET_SECURITY_TEXT": "Are you SURE you want to reset the history? This will delete the entire ledger chain.",
+      "RESET_IRREVERSIBLE_TITLE": "IRREVERSIBLE ACTION!",
+      "RESET_IRREVERSIBLE_TEXT": "All audit data and the current snapshot will be lost. Do you want to proceed definitely?"
+    },
+    "DETAIL": {
+      "CREATED_BY": "Created by",
+      "RESPONSIBLE": "Responsible",
+      "OPENING": "Opening",
+      "CLOSING": "Closing",
+      "PENDING": "Pending",
+      "RESOLUTION": "Resolution",
+      "ATTACHED_AUDITS": "Attached Audits"
+    },
+    "FORM": {
+      "TYPE": "Type",
+      "TITLE": "Title",
+      "TITLE_PLACEHOLDER": "Ex: Product in bad condition in room 2",
+      "DESCRIPTION": "Description",
+      "DESCRIPTION_PLACEHOLDER": "Detail what happened, when it was detected and observed impact.",
+      "NAME_PLACEHOLDER": "Ex: Cross contamination",
+      "TYPE_DESCRIPTION_PLACEHOLDER": "Describe when this type of incident applies.",
+    }
+  },
+  "STOCK_MGMT": {
+    "TITLE": "Stock Management",
+    "TABS": {
+      "ALERTS": "Alerts",
+      "PREDICTIONS": "Predictions",
+      "LEDGER": "History"
+    },
+    "ALERTS": {
+      "NEW_ORDER": "New Replenishment Order",
+      "DAY": "day",
+      "DAYS": "Days",
+      "STATS": {
+        "CRITICAL": "Critical",
+        "HIGH": "High",
+        "MEDIUM": "Medium",
+        "LOW": "Low",
+        "TOTAL": "Total"
+      },
+      "INFO": {
+        "CURRENT": "Current Stock",
+        "CONSUMED": "Projected Consumption",
+        "GAP": "Deficit"
+      },
+      "DETAIL": {
+        "TYPE": "Type",
+        "RESOLUTION": "Resolution",
+        "ESTIMATED_DAILY": "Est. Daily Consumption"
+      },
+      "TABLE": {
+        "PRODUCT": "Product",
+        "STOCK_STATUS": "Stock Status",
+        "DAYS_REMAINING": "Days Rem.",
+        "STATUS": "Status"
+      },
+      "RESOLUTION": {
+        "COVERED_BY_ORDER": "Covered",
+        "PARTIALLY_COVERED": "Partial",
+        "UNCOVERED": "Not covered",
+        "EXPIRING": "Expiring soon",
+        "OK": "Covered"
+      },
+      "TYPE": {
+        "PREDICTION": "Prediction",
+        "EXPIRATION": "Expiration",
+        "COMBINED": "Combined"
+      },
+      "INFO": {
+        "CURRENT": "Current Stock",
+        "CONSUMED": "Projected Consumption",
+        "GAP": "Deficit"
+      },
+      "DETAIL": {
+        "TYPE": "Type",
+        "RESOLUTION": "Resolution",
+        "ESTIMATED_DAILY": "Est. daily consumption",
+        "PROJECTED_14": "Estimated consumption (14 days)",
+        "COVERAGE": "Estimated Coverage",
+        "LAST_UPDATE": "Last Update"
+      },
+      "CHART": {
+        "TITLE": "Consumption Analysis and Stock Evolution",
+        "TITLE_EXPIRATION": "Batch Expiration Analysis",
+        "TITLE_COMBINED": "Combined Consumption and Expiration Analysis",
+        "TITLE_CONSUMPTION": "Consumption Analysis and Stock Projection",
+        "Y_AXIS": "Stock / Consumption",
+        "X_AXIS": "Date",
+        "ESTIMATED_STOCK": "Estimated Stock",
+        "ESTIMATED_STOCK_EXP": "Estimated Stock with Expirations",
+        "HISTORY": "Historical Consumption",
+        "PROJECTED": "Projected Consumption",
+        "QTY_EXPIRATION": "Quantity by expiration",
+        "CURRENT_STOCK": "Current stock",
+        "NO_BATCHES": "No upcoming batches",
+        "TODAY": "Today"
+      },
+      "MESSAGES": {
+        "EMPTY": "No active alerts"
+      }
+    },
+    "PREDICTIONS": {
+      "INFO": "Projected consumption calculated over the last <strong>14 days</strong>.",
+      "TABLE": {
+        "PRODUCT": "Product",
+        "PROJECTED_CONSUMPTION": "Projected Consumption",
+        "LAST_UPDATE": "Last Update"
+      },
+      "MESSAGES": {
+        "EMPTY": "No predictions available"
+      }
+    },
+    "LEDGER": {
+      "SELECT_PRODUCT": "Select Product:",
+      "SEARCH_PLACEHOLDER": "Search product...",
+      "SCAN_TOOLTIP": "Scan barcode",
+      "NONE": "None",
+      "NO_RESULTS": "No products found",
+      "NO_NAME": "No name",
+      "NO_UNIT": "Ud",
+      "SELECT_PRODUCT_PLACEHOLDER": "Select a product...",
+      "SELECTED_PRODUCT": "Selected product",
+      "BLOCKCHAIN_TECHNICAL": "Technical Blockchain",
+      "ACTIONS": {
+        "VERIFY_ALL": "Verify All",
+        "VERIFY_INTEGRITY": "Verify Integrity",
+        "VERIFYING": "Verifying...",
+        "CLEAN_HISTORY": "Clean History",
+        "MANUAL_ADJUSTMENT": "Manual Adjustment",
+        "REFRESH": "Refresh"
+      },
+      "STATS": {
+        "BLOCKS": "Blocks",
+        "MEMPOOL": "Mempool",
+        "DIFFICULTY": "Difficulty",
+        "GLOBAL_VERIFICATION": "Global Verification"
+      },
+      "TABLE": {
+        "BLOCK": "Block",
+        "DATE": "Date",
+        "TX": "Tx",
+        "HASH": "Hash",
+        "ID": "ID",
+        "PRODUCT": "Product",
+        "TYPE": "Type",
+        "DELTA": "Delta",
+        "SEQUENCE": "Seq.",
+        "RESULTING": "Resulting",
+        "DESC_USER": "Description / User",
+        "VERIF": "Verif.",
+        "USER": "User",
+        "ORDER": "Order",
+        "DESC": "Description",
+        "HASH_CURRENT": "Current hash",
+        "HASH_PREVIOUS": "Previous hash"
+      },
+      "STATUS": {
+        "VALID": "VALID",
+        "CORRUPTED": "CORRUPTED",
+        "PENDING": "PENDING",
+        "VERIFIED": "Verified Transaction",
+        "NOT_VERIFIED": "Unverified Hash"
+      },
+      "BLOCK_DETAIL": {
+        "TITLE": "Block #{{id}} Detail",
+        "HASH": "Hash",
+        "PREVIOUS": "Previous",
+        "MERKLE": "Merkle",
+        "NONCE": "Nonce",
+        "HMAC": "HMAC v{{version}}",
+        "TITLE_TX": "Transaction Detail"
+      },
+      "MESSAGES": {
+        "LOADING_BLOCKS": "Loading blocks...",
+        "NO_BLOCKS": "No confirmed blocks",
+        "LOADING_MEMPOOL": "Loading mempool...",
+        "NO_PENDING_TX": "No pending transactions",
+        "STOCK_ACTUAL": "Current Stock",
+        "LAST_SEQUENCE": "Last Sequence",
+        "CHAIN_STATUS": "Chain Status",
+        "LAST_HASH": "Last Hash",
+        "IRREGULARITIES": "Chain irregularities detected for this product:",
+        "NO_MOVEMENTS": "No movements recorded for this product",
+        "EMPTY": "Select a product to view its secure transaction history (Blockchain-verified)",
+        "GLOBAL_RESULTS_TITLE": "Global Verification Result",
+        "INTEGRO": "Integral",
+        "CORRUPTO": "CORRUPTED",
+        "MORE_ERRORS": "and {{count}} more errors...",
+        "DOWNLOAD_HISTORY": "Download History",
+        "PROCESSING_CHART": "Processing historical data and predictions...",
+        "STOCK_PROJETED_UNTIL": "Stock projected until:",
+        "NEXT_EXPIRATION": "Next expiration:",
+        "ESTIMATED_OUT": "Estimated depletion:",
+        "SCAN_TITLE": "Scan Barcode",
+        "ADMIN_ONLY_BLOCKCHAIN": "Only ADMIN can activate blockchain technical view",
+        "BLOCKCHAIN_MODE_ACTIVE": "Blockchain technical mode activated",
+        "ERROR_LOAD_ALERTS": "Error loading alerts",
+        "ERROR_LOAD_PREDICTIONS": "Error loading predictions",
+        "ERROR_LOAD_PRODUCT_DATA": "Error loading product data",
+        "ERROR_LOAD_SUPPLIERS": "Error loading suppliers",
+        "ERROR_LOAD_CHART_DATA": "Error loading chart data",
+        "ERROR_LOAD_LEDGER_PRODUCTS": "Error loading products with ledger",
+        "ERROR_LOAD_HISTORY": "Error loading ledger history",
+        "ERROR_LOAD_BLOCKCHAIN_STATS": "Error loading blockchain statistics",
+        "ERROR_VERIFY_BLOCKCHAIN": "Error verifying blockchain",
+        "ERROR_LOAD_BLOCKS": "Error loading confirmed blocks",
+        "ERROR_LOAD_MEMPOOL": "Error loading mempool",
+        "ERROR_LOAD_BLOCK_DETAIL": "Could not load block detail",
+        "INTEGRITY_VALID": "Integrity verified: {{message}}",
+        "INTEGRITY_CORRUPTED": "CORRUPTION DETECTED!: {{message}}",
+        "ERROR_VERIFY_INTEGRITY": "Error verifying integrity",
+        "ALL_CHAINS_VALID": "All chains ({{count}}) are integral.",
+        "GLOBAL_CORRUPTION_DETECTED": "CORRUPTION: {{count}} products with errors detected. Check the list at the bottom.",
+        "ERROR_GLOBAL_VERIFICATION": "Error performing global integrity verification",
+        "PDF_GENERATED_OK": "PDF generated. Status: {{message}}",
+        "PDF_GENERATED_WARNING": "PDF generated with alerts: {{message}}",
+        "ERROR_GENERATE_PDF": "Error generating ledger PDF",
+        "ERROR_RESET_HISTORY": "Error resetting history",
+        "ERROR_LOAD_BATCHES": "Error loading active batches",
+        "EXPIRATION_DATE_REQUIRED": "Expiration date is required for a new batch.",
+        "ADJUSTMENT_SUCCESS": "Stock adjustment recorded successfully",
+        "ERROR_REGISTER_ADJUSTMENT": "Error recording adjustment"
+    },
+    "ADJUSTMENT": {
+      "TITLE": "Manual Stock Adjustment",
+      "ENTRY": "Entry",
+      "EXIT": "Exit",
+      "QUANTITY": "Quantity",
+      "MOVEMENT_TYPE": "Movement Type",
+      "SEARCH_BATCH": "Search batch by ID or code (Optional)",
+      "BATCH_PLACEHOLDER": "Ex. 42 or LOT-2026-001",
+      "STOCK": "Stock",
+      "FIFO_HINT": "If not selected, FIFO is used (exits) or a new batch is created (entries).",
+      "EXPIRATION_DATE": "Expiration Date (New Batch) *",
+      "NEW_BATCH_HINT": "Mandatory when creating a new batch for inventory.",
+      "REASON": "Adjustment Reason *",
+      "REASON_PLACEHOLDER": "Ex. Inventory correction, unregistered wastage, breakage...",
+      "SUBMITTING": "Registering...",
+      "SUBMIT": "Register Adjustment",
+      "ORDER_MODAL_TITLE": "Generate a Replenishment Order",
+      "DAYS_COVER_PROMPT": "How many days of estimated stock do you want to cover?",
+      "DAYS": "days"
+    }
+  }
+}
