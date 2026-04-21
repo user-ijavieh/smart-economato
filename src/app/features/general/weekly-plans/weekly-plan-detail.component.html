@@ -216,15 +216,29 @@
         </div>
 
         <div class="stock-search-row">
-          <input
-            type="text"
-            class="form-control stock-search-input"
-            [(ngModel)]="stockSearchTerm"
-            placeholder="Buscar producto por nombre..."
-          />
-          @if (stockSearchTerm) {
-            <button type="button" class="btn-clear-search" (click)="stockSearchTerm = ''">Limpiar</button>
-          }
+          <div class="search-input-group">
+            <input
+              type="text"
+              class="form-control stock-search-input"
+              [(ngModel)]="stockSearchTerm"
+              placeholder="Buscar producto por nombre..."
+            />
+            @if (stockSearchTerm) {
+              <button type="button" class="btn-clear-search" (click)="stockSearchTerm = ''">Limpiar</button>
+            }
+          </div>
+          
+          <div class="stock-sort-controls">
+            <button class="sort-btn" [class.active]="stockSortMode === 'name'" (click)="setStockSortMode('name')" title="Ordenar alfabéticamente">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="14" y2="12"></line><line x1="4" y1="18" x2="8" y2="18"></line></svg>
+              Nombre
+            </button>
+            <button class="sort-btn" [class.active]="stockSortMode === 'shortage'" (click)="setStockSortMode('shortage')" title="Priorizar productos con faltantes">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"></path><path d="m17 7-5-5-5 5"></path><path d="m7 17 5 5 5-5"></path></svg>
+              Faltantes
+            </button>
+          </div>
+
           <span class="pool-search-count">{{ filteredStockRequirements.length }}</span>
         </div>
 
@@ -467,183 +481,22 @@
 }
 
 @if (showStockOrderModal) {
-  <app-base-modal title="Generar una orden de reposición" size="lg" [beforeClose]="beforeCloseStockOrderModal.bind(this)" (closed)="closeStockOrderModal()">
-    <div class="modal-container order-builder-modal">
-      <div class="order-builder-summary">
-        <span class="summary-chip">Pendientes: {{ getPendingStockOrderCount() }}</span>
-        <span class="summary-chip">Asignados: {{ getAssignedStockOrderCount() }}</span>
-        <span class="summary-chip">Órdenes: {{ stockOrderGroups.length }}</span>
-        <span class="summary-chip">Seleccionados: {{ getSelectedStockOrderCount() }}</span>
-        <label class="summary-toggle">
-          <input type="checkbox" [(ngModel)]="roundUpStockOrderQuantities" (ngModelChange)="onRoundUpStockOrderQuantitiesChange($event)" />
-          <span>Redondear hacia arriba</span>
-        </label>
-        <label class="summary-toggle">
-          <input type="checkbox" [(ngModel)]="showCustomQuantities" (ngModelChange)="onShowCustomStockQuantitiesChange($event)" />
-          <span>Añadir cantidad personalizada</span>
-        </label>
-      </div>
-
-      <div class="order-builder-grid">
-        <section class="order-destinations-panel">
-          <div class="panel-header panel-header-actions">
-            <h3>Órdenes</h3>
-            <div class="panel-actions-inline">
-              <button type="button" class="modal-btn modal-btn-secondary modal-btn-small btn-crear-completa" (click)="createCompleteStockOrderBySupplier()">Crear orden completa</button>
-              <button type="button" class="modal-btn modal-btn-success modal-btn-small" (click)="addStockOrderGroup()">+ Añadir orden</button>
-            </div>
-          </div>
-
-          <div class="order-groups">
-            @for (group of stockOrderGroups; track group.id) {
-              <article class="order-group-card" (dragover)="allowStockOrderDrop($event)" (drop)="dropStockOrderOnGroup($event, group.id)">
-                <div class="order-group-header">
-                  <div class="order-group-title-block">
-                    <strong>{{ group.title }}</strong>
-                    <span class="group-subtitle">{{ group.items.length }} producto{{ group.items.length === 1 ? '' : 's' }}</span>
-                  </div>
-                  <button type="button" class="modal-btn modal-btn-danger modal-btn-small" (click)="removeStockOrderGroup(group.id)" [disabled]="stockOrderGroups.length === 1">
-                    Quitar
-                  </button>
-                </div>
-
-                <div class="form-group order-supplier-field">
-                  <label>Proveedor</label>
-                  <select [(ngModel)]="group.supplierId" (ngModelChange)="onStockOrderGroupSupplierChange()" class="form-control" (click)="$event.stopPropagation()">
-                    <option [ngValue]="null">Sin proveedor</option>
-                    @for (supplier of suppliers; track supplier.id) {
-                      <option [ngValue]="supplier.id">{{ supplier.name }}</option>
-                    }
-                  </select>
-                </div>
-
-                <div class="order-card-list bucket-list">
-                  @if (group.items.length) {
-                    @for (item of group.items; track item.productId) {
-                      <article class="order-item-card bucket-card" [class.selected]="isStockOrderItemSelected(item.productId)" draggable="true" (click)="toggleStockOrderItemSelection(item, $event)" (dragstart)="onStockOrderDragStart($event, item, group.id)" (dragend)="onStockOrderDragEnd()">
-                        <label class="item-selector" (click)="$event.stopPropagation()">
-                          <input type="checkbox" [checked]="isStockOrderItemSelected(item.productId)" (change)="onStockOrderItemCheckboxChange(item, $event)" />
-                        </label>
-                        <div class="order-item-main">
-                          <strong>{{ item.productName }}</strong>
-                          <div class="order-badges">
-                            @if (item.supplierName) { <span class="chip">{{ item.supplierName }}</span> }
-                          </div>
-                        </div>
-                        <div class="order-item-meta">
-                          @if (!showCustomQuantities) {
-                            <div><span>A pedir</span><strong>{{ getStockOrderQuantity(item) | number:'1.0-2' }} {{ item.unit }}</strong></div>
-                          } @else {
-                            <div class="custom-qty-wrapper">
-                              <span>Cantidad</span>
-                              <input type="number" [(ngModel)]="item.customQuantity" (ngModelChange)="onStockOrderQuantityInputChange()" (click)="$event.stopPropagation()" class="form-control custom-qty-input" [class.qty-below]="(item.customQuantity || 0) < item.orderQuantity" />
-                            </div>
-                          }
-                          <div><span>Subtotal</span><strong>{{ (getStockOrderQuantity(item) * (item.unitPrice || 0)) | currency:'EUR' }}</strong></div>
-                        </div>
-                        <button type="button" class="modal-btn modal-btn-secondary modal-btn-small btn-send-back" (click)="$event.stopPropagation(); moveStockItemToPool(item, group.id)" title="Devolver a pendientes">
-                          <span class="btn-text">Volver</span>
-                          <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><polyline points="3 3 3 8 8 8"></polyline></svg>
-                        </button>
-                      </article>
-                    }
-                  } @else {
-                    <div class="empty-drop-zone compact">
-                      <p>Suelta aquí los productos de esta orden.</p>
-                    </div>
-                  }
-                </div>
-
-                <div class="bucket-footer">
-                  <span>Total: <strong>{{ getStockOrderGroupTotal(group) | currency:'EUR' }}</strong></span>
-                  <span>{{ group.items.length }} productos</span>
-                </div>
-              </article>
-            }
-          </div>
-        </section>
-
-        <section class="order-source-panel" (dragover)="allowStockOrderDrop($event)" (drop)="dropStockOrderOnPool($event)">
-          <div class="panel-header">
-            <h3>Productos pendientes</h3>
-            <span class="panel-counter">{{ stockOrderItems.length }}</span>
-          </div>
-          <p class="panel-help">Arrastra cada producto a una orden para repartir la reposición.</p>
-
-          <div class="pool-search-row">
-            <input
-              type="text"
-              class="form-control pool-search-input"
-              [(ngModel)]="stockOrderSearchTerm"
-              placeholder="Buscar producto o proveedor..."
-            />
-            @if (stockOrderSearchTerm) {
-              <button type="button" class="btn-clear-search" (click)="stockOrderSearchTerm = ''">Limpiar</button>
-            }
-            <span class="pool-search-count">{{ getVisibleStockPoolItemsCount() }}</span>
-          </div>
-
-          <div class="order-card-list">
-            @if (getVisibleStockPoolItemsCount()) {
-              @for (section of getStockPoolSupplierSections(); track section.key) {
-                <article class="supplier-section">
-                  <button type="button" class="supplier-section-trigger" (click)="toggleStockPoolSupplierCollapse(section.key)">
-                    <span>{{ section.label }}</span>
-                    <span class="supplier-section-meta">{{ section.items.length }} producto{{ section.items.length === 1 ? '' : 's' }}</span>
-                  </button>
-
-                  @if (!isStockPoolSupplierCollapsed(section.key)) {
-                    <div class="supplier-section-items">
-                      @for (item of section.items; track item.productId) {
-                        <article class="order-item-card pool-card" [class.selected]="isStockOrderItemSelected(item.productId)" draggable="true" (click)="toggleStockOrderItemSelection(item, $event)" (dragstart)="onStockOrderDragStart($event, item, 'pool')" (dragend)="onStockOrderDragEnd()">
-                          <label class="item-selector" (click)="$event.stopPropagation()">
-                            <input type="checkbox" [checked]="isStockOrderItemSelected(item.productId)" (change)="onStockOrderItemCheckboxChange(item, $event)" />
-                          </label>
-                          <div class="order-item-main">
-                            <strong>{{ item.productName }}</strong>
-                            <div class="order-badges">
-                              @if (item.supplierName) { <span class="chip">{{ item.supplierName }}</span> }
-                              <span class="chip">Faltan {{ item.orderQuantity | number:'1.0-2' }}</span>
-                            </div>
-                          </div>
-                          <div class="order-item-meta">
-                            <div><span>Disponible</span><strong>{{ item.availableStock | number:'1.0-2' }} {{ item.unit }}</strong></div>
-                            @if (!showCustomQuantities) {
-                              <div><span>A pedir</span><strong>{{ getStockOrderQuantity(item) | number:'1.0-2' }} {{ item.unit }}</strong></div>
-                            } @else {
-                              <div class="custom-qty-wrapper">
-                                <span>Cantidad</span>
-                                <input type="number" [(ngModel)]="item.customQuantity" (ngModelChange)="onStockOrderQuantityInputChange()" (click)="$event.stopPropagation()" class="form-control custom-qty-input" [class.qty-below]="(item.customQuantity || 0) < item.orderQuantity" />
-                              </div>
-                            }
-                          </div>
-                        </article>
-                      }
-                    </div>
-                  }
-                </article>
-              }
-            } @else {
-              <div class="empty-drop-zone">
-                <p>No quedan productos pendientes por asignar.</p>
-              </div>
-            }
-          </div>
-        </section>
-      </div>
-    </div>
-
-    <div modal-footer>
-      <div class="order-modal-footer">
-        <div class="order-total">
-          Total estimado: <strong>{{ getStockOrderGrandTotal() | currency:'EUR' }}</strong>
+  <app-base-modal title="Generar una orden de reposición" size="lg" (closed)="closeStockOrderModal()">
+    <div class="modal-container">
+      @if (loadingStockOrderData) {
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Calculando requisitos de stock...</p>
         </div>
-        <div class="order-actions">
-          <button type="button" class="modal-btn modal-btn-primary" (click)="confirmCreateStockOrders()" [disabled]="creatingStockOrders || stockOrderItems.length > 0 || getStockOrderGrandTotal() === 0">
-            {{ creatingStockOrders ? 'Creando...' : 'Confirmar Órdenes' }}
-          </button>
-        </div>
-      </div>
+      } @else {
+        <app-order-builder
+          [stockOrderItems]="stockOrderItems"
+          [suppliers]="suppliers"
+          [userId]="plan?.chefId || 1"
+          (completed)="onStockOrderBuilderCompleted()"
+          (cancelled)="closeStockOrderModal()">
+        </app-order-builder>
+      }
     </div>
   </app-base-modal>
 }

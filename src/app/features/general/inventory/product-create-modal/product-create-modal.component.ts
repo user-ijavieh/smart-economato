@@ -35,7 +35,8 @@ export class ProductCreateModalComponent {
     availabilityPercentage: undefined as number | undefined,
     unit: 'KG',
     supplierId: undefined as number | undefined,
-    expirationDate: ''
+    expirationDate: '',
+    lotQuantity: 1
   };
 
   allowedUnits = [
@@ -121,7 +122,8 @@ export class ProductCreateModalComponent {
       barcode: this.formData.barcode.trim() || undefined,
       currentStock: currentStock,
       supplierId: supplierId,
-      expirationDate: this.formData.expirationDate || undefined
+      expirationDate: this.formData.expirationDate || undefined,
+      lotQuantity: this.formData.lotQuantity || 1
     };
 
     this.save.emit(productData);
@@ -155,7 +157,8 @@ export class ProductCreateModalComponent {
       currentStock: 0,
       unit: 'KG',
       supplierId: undefined,
-      expirationDate: ''
+      expirationDate: '',
+      lotQuantity: 1
     };
   }
 }

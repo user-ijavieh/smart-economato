@@ -50,6 +50,17 @@
           step="0.01" placeholder="0.00" />
       </div>
 
+      <div class="form-group">
+        <label for="lotQuantity">Cantidad por Lote (Opcional)</label>
+        <div class="input-with-unit">
+          <input type="number" id="lotQuantity" [(ngModel)]="formData.lotQuantity" name="lotQuantity" step="0.001" min="0.001" placeholder="Ej: 12" />
+          @if (formData.unit) {
+            <span class="inline-unit">{{ formData.unit }}</span>
+          }
+        </div>
+        <small class="field-hint">Múltiplo mínimo de compra.</small>
+      </div>
+
       <div class="form-group merma-group">
         <label for="availabilityPercentage">
           Merma (%)

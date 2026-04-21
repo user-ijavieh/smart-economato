@@ -87,7 +87,13 @@
       -->
 
       <div class="reception-summary">
-        <h3 class="summary-title">Resumen de Productos</h3>
+        <div class="section-header-row">
+          <h3 class="summary-title">Resumen de Productos</h3>
+          <div class="view-mode-toggle">
+            <button type="button" [class.active]="roundingMode === 'units'" (click)="onRoundingModeChange('units')">Unidades</button>
+            <button type="button" [class.active]="roundingMode === 'lots'" (click)="onRoundingModeChange('lots')">Lotes</button>
+          </div>
+        </div>
         <div class="summary-items">
           @for (detail of order.details; track detail.productId) {
             <div class="summary-item">
@@ -96,7 +102,11 @@
                 <span class="quantity-value"
                       [class.total-match]="getTotalReceived(detail) === detail.quantity"
                       [class.total-excess]="getTotalReceived(detail) > detail.quantity">
-                  {{ getFormattedQuantity(detail) }}
+                  @if (roundingMode === 'lots' && detail.lotQuantity) {
+                    {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} / {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} lotes de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }} ({{ detail.quantity | number:'1.0-2' }} / {{ getTotalReceived(detail) | number:'1.0-2' }} {{ formatUnit(detail.unit) }})
+                  } @else {
+                    {{ getFormattedQuantity(detail) }}
+                  }
                 </span>
                 <span class="comparison-symbol" [class.symbol-match]="getComparisonSymbol(detail) === '✓'" [class.symbol-missing]="getComparisonSymbol(detail) === '✕'" [class.symbol-excess]="getComparisonSymbol(detail) === '▲'">
                   {{ getComparisonSymbol(detail) }}
@@ -146,13 +156,23 @@
           <tbody>
             @for (detail of visibleDetails; track detail.productId) {
             <tr class="product-base-row">
-              <td><strong>{{ detail.productName }}</strong></td>
-              <td class="text-center">{{ detail.quantity }} {{ detail.unit || 'uds' }}</td>
+              <td><strong>{{ detail.productName }}</strong> @if (detail.lotQuantity) { <small>(Lote: {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }})</small> }</td>
+              <td class="text-center">
+                @if (roundingMode === 'lots' && detail.lotQuantity) {
+                   {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} L. de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }} ({{ detail.quantity | number:'1.0-2' }} {{ formatUnit(detail.unit) }})
+                } @else {
+                   {{ detail.quantity }} {{ formatUnit(detail.unit) }}
+                }
+              </td>
               <td class="text-center">
                  <span class="total-badge" 
                        [class.total-match]="getTotalReceived(detail) === detail.quantity"
                        [class.total-excess]="getTotalReceived(detail) > detail.quantity">
-                    {{ getTotalReceived(detail) }}
+                    @if (roundingMode === 'lots' && detail.lotQuantity) {
+                      {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} L. de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }} ({{ getTotalReceived(detail) | number:'1.0-2' }} {{ formatUnit(detail.unit) }})
+                    } @else {
+                      {{ getTotalReceived(detail) }}
+                    }
                  </span>
               </td>
               <td class="text-right" colspan="2">
@@ -169,17 +189,34 @@
               </td>
               <td class="text-center received-col">
                 <div class="quantity-cell-actions">
-                  <input 
-                    type="number" 
-                    class="form-control quantity-input" 
-                    [(ngModel)]="lot.quantity" 
-                    (ngModelChange)="onLotFieldChange(detail, $index, 'quantity', $event)"
-                    (focus)="onFieldFocus(detail, $index, 'quantity')"
-                    (blur)="onFieldBlur(detail, $index, 'quantity')"
-                    min="0"
-                    [disabled]="isInputDisabled(quantityPath)"
-                    [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)"
-                    [title]="isFieldLockedByAnotherUser(quantityPath) ? ('Bloqueado por ' + getFieldLockOwner(quantityPath)) : ''" />
+                  @if (roundingMode === 'lots' && detail.lotQuantity) {
+                    <div class="input-with-unit">
+                      <input 
+                        type="number" 
+                        class="form-control quantity-input" 
+                        [ngModel]="getLotCount(lot.quantity, detail.lotQuantity)" 
+                        (ngModelChange)="updateLotQuantity(detail, $index, $event)"
+                        (focus)="onFieldFocus(detail, $index, 'quantity')"
+                        (blur)="onFieldBlur(detail, $index, 'quantity')"
+                        min="0"
+                        step="0.1"
+                        [disabled]="isInputDisabled(quantityPath)"
+                        [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)" />
+                      <span class="inline-unit lot-unit">L. de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }}</span>
+                    </div>
+                  } @else {
+                    <input 
+                      type="number" 
+                      class="form-control quantity-input" 
+                      [(ngModel)]="lot.quantity" 
+                      (ngModelChange)="onLotFieldChange(detail, $index, 'quantity', $event)"
+                      (focus)="onFieldFocus(detail, $index, 'quantity')"
+                      (blur)="onFieldBlur(detail, $index, 'quantity')"
+                      min="0"
+                      [disabled]="isInputDisabled(quantityPath)"
+                      [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)"
+                      [title]="isFieldLockedByAnotherUser(quantityPath) ? ('Bloqueado por ' + getFieldLockOwner(quantityPath)) : ''" />
+                  }
                   <button
                     type="button"
                     class="btn-scale"
@@ -236,14 +273,23 @@
               <div>
                 <div class="mobile-product-name">{{ detail.productName }}</div>
                 <div class="mobile-product-meta">
-                  Solicitado: {{ detail.quantity }} {{ detail.unit || 'uds' }}
+                  Solicitado: 
+                  @if (roundingMode === 'lots' && detail.lotQuantity) {
+                    {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} lotes de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }} ({{ detail.quantity | number:'1.0-2' }} {{ formatUnit(detail.unit) }})
+                  } @else {
+                    {{ detail.quantity }} {{ formatUnit(detail.unit) }}
+                  }
                 </div>
                 <div class="mobile-product-meta">
                   Recibido total:
                   <span class="total-badge" 
                         [class.total-match]="getTotalReceived(detail) === detail.quantity"
                         [class.total-excess]="getTotalReceived(detail) > detail.quantity">
-                    {{ getTotalReceived(detail) }}
+                    @if (roundingMode === 'lots' && detail.lotQuantity) {
+                      {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} L. de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }} ({{ getTotalReceived(detail) | number:'1.0-2' }} {{ formatUnit(detail.unit) }})
+                    } @else {
+                      {{ getTotalReceived(detail) }}
+                    }
                   </span>
                 </div>
               </div>
@@ -274,17 +320,34 @@
 
                   <label class="mobile-field-label">RECIBIDO</label>
                   <div class="quantity-cell-actions mobile-quantity-actions">
-                    <input
-                      type="number"
-                      class="form-control quantity-input"
-                      [(ngModel)]="lot.quantity"
-                      (ngModelChange)="onLotFieldChange(detail, $index, 'quantity', $event)"
-                      (focus)="onFieldFocus(detail, $index, 'quantity')"
-                      (blur)="onFieldBlur(detail, $index, 'quantity')"
-                      min="0"
-                      [disabled]="isInputDisabled(quantityPath)"
-                      [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)"
-                      [title]="isFieldLockedByAnotherUser(quantityPath) ? ('Bloqueado por ' + getFieldLockOwner(quantityPath)) : ''" />
+                    @if (roundingMode === 'lots' && detail.lotQuantity) {
+                      <div class="input-with-unit">
+                        <input 
+                          type="number" 
+                          class="form-control quantity-input" 
+                          [ngModel]="getLotCount(lot.quantity, detail.lotQuantity)" 
+                          (ngModelChange)="updateLotQuantity(detail, $index, $event)"
+                          (focus)="onFieldFocus(detail, $index, 'quantity')"
+                          (blur)="onFieldBlur(detail, $index, 'quantity')"
+                          min="0"
+                          step="0.1"
+                          [disabled]="isInputDisabled(quantityPath)"
+                          [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)" />
+                        <span class="inline-unit lot-unit">L. de {{ detail.lotQuantity }} {{ formatUnit(detail.unit) }}</span>
+                      </div>
+                    } @else {
+                      <input
+                        type="number"
+                        class="form-control quantity-input"
+                        [(ngModel)]="lot.quantity"
+                        (ngModelChange)="onLotFieldChange(detail, $index, 'quantity', $event)"
+                        (focus)="onFieldFocus(detail, $index, 'quantity')"
+                        (blur)="onFieldBlur(detail, $index, 'quantity')"
+                        min="0"
+                        [disabled]="isInputDisabled(quantityPath)"
+                        [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)"
+                        [title]="isFieldLockedByAnotherUser(quantityPath) ? ('Bloqueado por ' + getFieldLockOwner(quantityPath)) : ''" />
+                    }
                     <button
                       type="button"
                       class="btn-scale"

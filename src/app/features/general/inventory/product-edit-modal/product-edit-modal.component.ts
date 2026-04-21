@@ -37,7 +37,8 @@ export class ProductEditModalComponent implements OnChanges {
     currentStock: 0,
     availabilityPercentage: undefined as number | undefined,
     unit: 'KG',
-    supplierId: undefined as number | undefined
+    supplierId: undefined as number | undefined,
+    lotQuantity: 1
   };
 
   allowedUnits = [
@@ -81,7 +82,8 @@ export class ProductEditModalComponent implements OnChanges {
         currentStock: Number(this.product.currentStock) || 0,
         availabilityPercentage: this.product.availabilityPercentage || undefined,
         unit: this.product.unit || 'KG',
-        supplierId: this.product.supplier?.id
+        supplierId: this.product.supplier?.id,
+        lotQuantity: this.product.lotQuantity || 1
       };
     }
   }
@@ -124,7 +126,8 @@ export class ProductEditModalComponent implements OnChanges {
       productCode: this.formData.productCode.trim(),
       barcode: this.formData.barcode.trim() || undefined,
       currentStock: currentStock,
-      supplierId: supplierId
+      supplierId: supplierId,
+      lotQuantity: this.formData.lotQuantity || 1
     };
 
     this.save.emit(productData);

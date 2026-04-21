@@ -17,6 +17,10 @@
             <td class="detail-label">Proveedor</td>
             <td>{{ product.supplier?.name || '—' }}</td>
           </tr>
+          <tr>
+            <td class="detail-label">Cantidad por Lote</td>
+            <td>{{ product.lotQuantity || '1' }} {{ product.unit }}</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -30,6 +34,12 @@
             <td class="detail-label">Precio Unitario</td>
             <td class="price-value">{{ product.unitPrice | number: '1.2-2' }} €</td>
           </tr>
+          @if (product.lotQuantity && product.lotQuantity > 0) {
+          <tr>
+            <td class="detail-label">Precio por Lote</td>
+            <td class="price-value-alt">{{ (product.unitPrice * product.lotQuantity) | number: '1.2-2' }} € <small>({{ product.lotQuantity }} {{ product.unit }})</small></td>
+          </tr>
+          }
           <tr [class.low-stock-row]="isLowStock()">
             <td class="detail-label">Stock Actual</td>
             <td>{{ product.currentStock }} {{ product.unit }}</td>

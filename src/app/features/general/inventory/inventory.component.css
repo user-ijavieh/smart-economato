@@ -471,3 +471,22 @@ tfoot td {
   color: var(--admin-primary);
 }
 
+
+.lot-badge {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--brand-primary) 8%, transparent);
+  color: var(--brand-primary);
+  font-size: 0.75rem;
+  font-weight: 800;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 30%, transparent);
+}
+
+.lot-badge.none {
+  background: transparent;
+  color: var(--theme-text-secondary);
+  border-color: var(--theme-border-glass);
+  font-weight: normal;
+  opacity: 0.6;
+}

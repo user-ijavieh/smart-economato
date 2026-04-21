@@ -33,6 +33,7 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
   lockInfoTitle = '';
   lockInfoDetail = '';
   lockBlockedForCurrentUser = false;
+  roundingMode: 'units' | 'lots' = 'lots';
 
   private lockStatusSubscription?: Subscription;
 
@@ -257,8 +258,27 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
     const lockOwner = status.lockedByDisplayName || status.lockedByUsername || 'Otro usuario';
     this.lockBlockedForCurrentUser = this.authService.getRole() !== 'ADMIN';
     this.lockInfoTitle = 'Revisión en curso';
-    this.lockInfoDetail = this.authService.getRole() === 'ADMIN'
+    this.lockInfoTitle = this.authService.getRole() === 'ADMIN'
       ? `${lockOwner} lo está revisando. Puedes continuar como ADMIN.`
       : `${lockOwner} abrió este pedido. Solo lectura mientras termina.`;
+  }
+
+  onRoundingModeChange(mode: 'units' | 'lots'): void {
+    this.roundingMode = mode;
+  }
+
+  getLotCount(detail: OrderDetail): number {
+    if (!detail.lotQuantity || detail.lotQuantity <= 0) return 0;
+    return detail.quantity / detail.lotQuantity;
+  }
+
+  getReceivedLotCount(detail: OrderDetail): number | null {
+    if (!detail.lotQuantity || detail.lotQuantity <= 0 || detail.quantityReceived === undefined || detail.quantityReceived === null) return null;
+    return detail.quantityReceived / detail.lotQuantity;
+  }
+
+  formatUnit(unit: string | undefined): string {
+    if (!unit) return '';
+    return unit.length > 5 ? unit.substring(0, 4) + '.' : unit;
   }
 }

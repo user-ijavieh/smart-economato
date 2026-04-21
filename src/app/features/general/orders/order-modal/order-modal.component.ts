@@ -22,6 +22,7 @@ interface OrderItem {
   unit: string;
   quantity: number;
   unitPrice: number;
+  lotQuantity?: number;
 }
 
 @Component({
@@ -54,6 +55,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   orderItems: OrderItem[] = [];
   isSubmitting = false;
   showScannerModal = false;
+  roundingMode: 'units' | 'lots' = 'lots';
 
   currentPage = 0;
   pageSize = 20;
@@ -82,7 +84,8 @@ export class OrderModalComponent implements OnInit, OnDestroy {
     productName: '',
     unit: '',
     quantity: 1,
-    unitPrice: 0
+    unitPrice: 0,
+    lotQuantity: 0
   };
 
   ngOnInit(): void {
@@ -101,7 +104,8 @@ export class OrderModalComponent implements OnInit, OnDestroy {
         productName: d.productName,
         unit: d.unit || 'uds',
         quantity: d.quantity,
-        unitPrice: d.unitPrice
+        unitPrice: d.unitPrice,
+        lotQuantity: d.lotQuantity
       }));
     } else if (this.initialItems.length > 0) {
       this.selectedUserId = this.initialUserId;
@@ -339,6 +343,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
     this.itemForm.productName = product.name;
     this.itemForm.unitPrice = product.unitPrice;
     this.itemForm.unit = product.unit || 'unidad';
+    this.itemForm.lotQuantity = product.lotQuantity || 0;
     this.productSearchResults = null;
   }
 
@@ -399,8 +404,30 @@ export class OrderModalComponent implements OnInit, OnDestroy {
       productName: '',
       unit: '',
       quantity: 1,
-      unitPrice: 0
+      unitPrice: 0,
+      lotQuantity: 0
     };
+  }
+
+  onRoundingModeChange(mode: 'units' | 'lots'): void {
+    this.roundingMode = mode;
+  }
+
+  getLotCount(item: OrderItem | any): number {
+    if (!item.lotQuantity || item.lotQuantity <= 0) return 0;
+    return item.quantity / item.lotQuantity;
+  }
+
+  updateQuantityFromLots(item: OrderItem | any, lotCount: number): void {
+    if (item.lotQuantity && item.lotQuantity > 0) {
+      item.quantity = lotCount * item.lotQuantity;
+      this.cdr.markForCheck();
+    }
+  }
+
+  formatUnit(unit: string): string {
+    if (!unit) return '';
+    return unit.length > 5 ? unit.substring(0, 4) + '.' : unit;
   }
 
   getOrderTotal(): number {

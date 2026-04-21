@@ -4,6 +4,7 @@ import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Page } from '../../shared/models/page.model';
 import { Recipe, RecipeRequest, CookRequest, CookableRecipe } from '../../shared/models/recipe.model';
+import { WeeklyPlanStockRequirement } from '../../shared/models/weekly-plan.model';
 import { map } from 'rxjs';
 import { HttpQueryCacheService } from './http-query-cache.service';
 
@@ -188,5 +189,9 @@ export class RecipeService {
     return this.http.get(`${this.url}/${id}/pdf`, {
       responseType: 'blob'
     });
+  }
+
+  calculateRequirements(recipes: { recipeId: number; quantity: number }[]): Observable<WeeklyPlanStockRequirement[]> {
+    return this.http.post<WeeklyPlanStockRequirement[]>(`${this.url}/requirements`, { recipes });
   }
 }
