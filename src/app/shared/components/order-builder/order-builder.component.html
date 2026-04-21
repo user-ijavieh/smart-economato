@@ -102,7 +102,7 @@
                     <input type="number" [ngModel]="getCustomLotCount(item)"
                       (ngModelChange)="updateCustomQuantityFromLots(item, $event)" (click)="$event.stopPropagation()"
                       class="form-control custom-qty-input" min="0" step="0.5" />
-                    <span class="inline-unit lot-unit">Lote × {{ item.lotQuantity }} {{ formatUnit(item.unit) }}</span>
+                    <span class="inline-unit lot-unit">Lote × {{ item.lotQuantity }}{{ formatUnit(item.unit) }} ({{ getStockOrderQuantity(item) | number:'1.0-1' }})</span>
                     } @else {
                     <input type="number" [(ngModel)]="item.customQuantity"
                       (ngModelChange)="onStockOrderQuantityInputChange()" (click)="$event.stopPropagation()"
@@ -134,7 +134,7 @@
 
           <div class="bucket-footer">
             <span>Total: <strong>{{ getStockOrderGroupTotal(group) | currency:'EUR' }}</strong></span>
-            <span>{{ group.items.length }} prod.</span>
+            <span>{{ group.items.length }} productos.</span>
           </div>
         </article>
         }
@@ -162,7 +162,7 @@
           <button type="button" class="supplier-section-trigger" (click)="toggleStockPoolSupplierCollapse(section.key)">
             <span class="supplier-name">{{ section.label }}</span>
             <span class="supplier-section-meta">
-              {{ section.items.length }} prod.
+              {{ section.items.length }} productos.
               <svg [class.collapsed]="isStockPoolSupplierCollapsed(section.key)" xmlns="http://www.w3.org/2000/svg"
                 width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
                 stroke-linecap="round" stroke-linejoin="round">
