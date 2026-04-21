@@ -1538,7 +1538,33 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
       }
 
       target.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      const scrollContainer = this.findNearestScrollableParent(target);
+      if (scrollContainer) {
+        scrollContainer.scrollTo({
+          top: scrollContainer.scrollHeight,
+          behavior: 'smooth'
+        });
+      }
       this.pendingScrollToMessageId = null;
     });
+  }
+
+  private findNearestScrollableParent(element: HTMLElement): HTMLElement | null {
+    let current: HTMLElement | null = element.parentElement;
+
+    while (current) {
+      const style = window.getComputedStyle(current);
+      const overflowY = style.overflowY;
+      const isScrollable = (overflowY === 'auto' || overflowY === 'scroll')
+        && current.scrollHeight > current.clientHeight;
+
+      if (isScrollable) {
+        return current;
+      }
+
+      current = current.parentElement;
+    }
+
+    return null;
   }
 }
