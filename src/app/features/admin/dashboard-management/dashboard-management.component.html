@@ -16,6 +16,11 @@
             <span class="skeleton-text" *ngIf="loading" style="width: 40px; height: 32px; display: block; margin-bottom: 8px"></span>
             <span class="stat-label">Profesores Activos</span>
         </div>
+        <div class="stat-card" [class.stat-incident]="(dashboardData?.kpis?.openIncidentsCount || 0) > 0">
+            <span class="stat-number" *ngIf="!loading">{{ dashboardData?.kpis?.openIncidentsCount || 0 }}</span>
+            <span class="skeleton-text" *ngIf="loading" style="width: 40px; height: 32px; display: block; margin-bottom: 8px"></span>
+            <span class="stat-label">Incidencias Abiertas</span>
+        </div>
         <div class="stat-card" [class.stat-incident]="(dashboardData?.kpis?.expiringProductsCount || 0) > 0">
             <span class="stat-number" *ngIf="!loading">{{ dashboardData?.kpis?.expiringProductsCount || 0 }}</span>
             <span class="skeleton-text" *ngIf="loading" style="width: 40px; height: 32px; display: block; margin-bottom: 8px"></span>
@@ -39,44 +44,34 @@
                     <div class="rank-pos">#{{ i + 1 }}</div>
                     <div class="item-details">
                         <span class="item-primary">{{ recipe.name }}</span>
-                        <span class="item-secondary">{{ recipe.elaborations }} pedidos</span>
+                        <span class="item-secondary">{{ recipe.elaborations }} pedidos • {{ recipe.portions }} raciones</span>
                     </div>
                 </div>
-                <div *ngIf="loading || dashboardData?.topRecipes?.length === 0" class="skeleton-list">
-                    <div class="empty-msg" *ngIf="!loading && dashboardData?.topRecipes?.length === 0">Sin datos de ventas.</div>
-                    <ng-container *ngIf="loading">
-                        <div class="skeleton-item" *ngFor="let i of [1,2,3]">
-                            <div class="skeleton skeleton-circle"></div>
-                            <div class="skeleton skeleton-text" style="width: 100px"></div>
-                        </div>
-                    </ng-container>
-                </div>
+                <div *ngIf="!loading && dashboardData?.topRecipes?.length === 0" class="empty-msg">Sin datos de ventas.</div>
             </div>
         </div>
 
-        <!-- Top Alumnos -->
+        <!-- Last Orders -->
         <div class="tabla-contenedor ranking-card">
             <div class="card-header-flex">
-                <h3>Top Usuarios</h3>
+                <h3>5 Últimos Pedidos</h3>
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
-                    <path d="M2 13c0 1 1 1 1 1h10s1 0 1-1-1-4-6-4-6 3-6 4z"/>
+                    <path d="M8 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                    <path d="M4 4.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/>
                 </svg>
             </div>
             <div class="ranking-list" [class.loading]="loading">
-                <div class="ranking-item" *ngFor="let student of dashboardData?.topStudents">
-                    <div class="student-avatar-box">
-                        <img [src]="student.avatar" [alt]="student.name">
-                        <div class="status-dot"></div>
-                    </div>
+                <div class="ranking-item" *ngFor="let order of dashboardData?.recentOrders">
+                    <div class="rank-pos">#{{ order.id }}</div>
                     <div class="item-details">
-                        <span class="item-primary">{{ student.name }}</span>
-                        <span class="item-secondary">{{ student.elaborations || 0 }} recetas</span>
+                        <span class="item-primary">{{ order.userName }}</span>
+                        <span class="item-secondary">{{ order.orderDate | date:'dd/MM/yyyy HH:mm' }}</span>
                     </div>
                 </div>
-                <div class="empty-msg" *ngIf="!loading && dashboardData?.topStudents?.length === 0">No hay usuarios registrados.</div>
+                <div *ngIf="!loading && dashboardData?.recentOrders?.length === 0" class="empty-msg">No hay pedidos recientes.</div>
             </div>
         </div>
+
 
         <!-- Inventory Control Table -->
         <div class="tabla-contenedor inventory-card full-width">
@@ -89,20 +84,20 @@
                         <tr>
                             <th>Producto</th>
                             <th class="hide-on-mobile">Lote</th>
-                            <th class="hide-on-mobile">Caducidad</th>
-                            <th>Días</th>
-                            <th>Stock</th>
-                            <th>Estado</th>
+                            <th>Caducidad</th>
+                            <th class="hide-on-mobile">Días</th>
+                            <th class="hide-on-mobile">Stock</th>
+                            <th class="hide-on-mobile">Estado</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let p of dashboardData?.expiringProducts">
                             <td><strong>{{ p.name }}</strong></td>
                             <td class="hide-on-mobile">{{ p.batchCode || '-' }}</td>
-                            <td class="hide-on-mobile">{{ p.expirationDate | date:'dd/MM/yyyy' }}</td>
-                            <td>{{ p.daysRemaining }} días</td>
-                            <td>{{ p.stock }} {{ p.unit }}</td>
-                            <td>
+                            <td>{{ p.expirationDate | date:'dd/MM/yyyy' }}</td>
+                            <td class="hide-on-mobile">{{ p.daysRemaining }} días</td>
+                            <td class="hide-on-mobile">{{ p.stock }} {{ p.unit }}</td>
+                            <td class="hide-on-mobile">
                                 <span class="role-badge" [class.badge-admin]="p.daysRemaining <= 5" [class.badge-chef]="p.daysRemaining > 5">
                                     {{ p.daysRemaining <= 5 ? 'CRÍTICO' : 'PRÓXIMO' }}
                                 </span>

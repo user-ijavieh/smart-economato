@@ -27,11 +27,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private routerSub!: Subscription;
   private roleSub!: Subscription;
 
-  isOpen = window.innerWidth > 800;
-  isMobile = window.innerWidth <= 800;
-  isAdminRoute = false;
+  public isOpen: boolean = window.innerWidth > 800;
+  public isMobile: boolean = window.innerWidth <= 800;
+  public isAdminRoute: boolean = false;
 
-  @Input() mobileOpen = false;
+  @Input() public mobileOpen: boolean = false;
   @Output() sidebarToggled = new EventEmitter<boolean>();
   @Output() logoutClicked = new EventEmitter<void>();
   @Output() mobileMenuClosed = new EventEmitter<void>();
