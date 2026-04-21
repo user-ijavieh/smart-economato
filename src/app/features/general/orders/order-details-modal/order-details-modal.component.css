@@ -182,14 +182,27 @@
 
 .details-table th {
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.details-table th:nth-child(1) {
+  min-width: 120px;
 }
 
 .details-table th:nth-child(2) {
-  min-width: 140px;
+  min-width: 110px;
+  width: 130px;
+}
+
+.details-table th:nth-child(3) {
+  min-width: 80px;
+  white-space: nowrap;
 }
 
 .details-table th:nth-child(4) {
-  min-width: 100px;
+  min-width: 80px;
+  white-space: nowrap;
 }
 
 [modal-footer] {
@@ -300,6 +313,14 @@
   color: var(--theme-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.quantity-label {
+  font-size: 0.78rem;
+  color: var(--theme-text-secondary);
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 .quantity-unit-detail {

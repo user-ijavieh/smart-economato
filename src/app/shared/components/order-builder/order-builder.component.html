@@ -89,7 +89,7 @@
                                   (click)="$event.stopPropagation()" 
                                   class="form-control custom-qty-input" 
                                   min="0" step="0.5" />
-                              <span class="inline-unit lot-unit">lotes de {{ item.lotQuantity }} {{ formatUnit(item.unit) }}</span>
+                              <span class="inline-unit lot-unit">Lót. ×{{ item.lotQuantity }}{{ formatUnit(item.unit) }}</span>
                             } @else {
                               <input type="number" [(ngModel)]="item.customQuantity" (ngModelChange)="onStockOrderQuantityInputChange()" (click)="$event.stopPropagation()" class="form-control custom-qty-input" />
                               <span class="inline-unit">{{ formatUnit(item.unit) }}</span>
@@ -163,7 +163,7 @@
                           <span class="chip" [class.shortage-chip]="!hideStockInfo">
                             {{ getStockOrderQuantity(item) | number:'1.0-2' }} {{ formatUnit(item.unit) }}
                             @if (roundingMode === 'lots' && item.lotQuantity) {
-                              <span class="lot-count-badge">({{ getStockOrderQuantity(item) / item.lotQuantity | number:'1.0-1' }} L. de {{ item.lotQuantity }} {{ formatUnit(item.unit) }})</span>
+                              <span class="lot-count-badge">({{ getStockOrderQuantity(item) / item.lotQuantity | number:'1.0-1' }} Lót. de {{ item.lotQuantity }}{{ formatUnit(item.unit) }})</span>
                             }
                           </span>
                         @if (isLotRounded(item)) {

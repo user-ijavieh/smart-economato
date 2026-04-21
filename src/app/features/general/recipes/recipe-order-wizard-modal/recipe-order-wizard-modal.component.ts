@@ -116,14 +116,15 @@ export class RecipeOrderWizardModalComponent implements OnInit {
               unitPrice: product.unitPrice || 0,
               supplierId: product.supplier?.id ?? null,
               supplierName: product.supplier?.name ?? null,
+              lotQuantity: product.lotQuantity || 0,
               orderQuantity: req.grossRequiredQuantity || req.requiredQuantity
             } as WeeklyPlanRepositionOrderItem;
           });
 
           this.stockOrderItems = await Promise.all(enrichRequests).then(items => items.map(item => ({
             ...item,
-            availableStock: 0, // Force 0 stock to avoid confusion in "from zero" mode
-            sufficient: false  // Force insufficient to ensure it appears in pool
+            availableStock: 0,
+            sufficient: false
           })));
           
           this.step = 2;

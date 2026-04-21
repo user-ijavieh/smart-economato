@@ -351,6 +351,12 @@ export class OrderModalComponent implements OnInit, OnDestroy {
     const product = this.filteredProducts.find(p => p.id === item.id);
     if (product) {
       this.selectProduct(product);
+      // In lot mode, default to 1 lot (not fractional)
+      if (this.roundingMode === 'lots' && product.lotQuantity && product.lotQuantity > 0) {
+        this.itemForm.quantity = product.lotQuantity; // 1 lote
+      } else {
+        this.itemForm.quantity = 1;
+      }
     }
   }
 
@@ -377,8 +383,12 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   }
 
   addItemToOrder(): void {
-    if (!this.itemForm.productId || this.itemForm.quantity < 1) {
-      this.messageService.showError('Selecciona un producto y una cantidad válida');
+    if (!this.itemForm.productId) {
+      this.messageService.showError('Selecciona un producto');
+      return;
+    }
+    if (this.itemForm.quantity <= 0) {
+      this.messageService.showError('Indica una cantidad válida');
       return;
     }
 
@@ -414,8 +424,10 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   }
 
   getLotCount(item: OrderItem | any): number {
-    if (!item.lotQuantity || item.lotQuantity <= 0) return 0;
-    return item.quantity / item.lotQuantity;
+    if (!item.lotQuantity || item.lotQuantity <= 0) return 1;
+    const count = item.quantity / item.lotQuantity;
+    // Return at least 1 lot so the field doesn't show 0
+    return count > 0 ? count : 1;
   }
 
   updateQuantityFromLots(item: OrderItem | any, lotCount: number): void {
@@ -427,7 +439,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
 
   formatUnit(unit: string): string {
     if (!unit) return '';
-    return unit.length > 5 ? unit.substring(0, 4) + '.' : unit;
+    return unit.length > 4 ? unit.substring(0, 3) + '.' : unit;
   }
 
   getOrderTotal(): number {

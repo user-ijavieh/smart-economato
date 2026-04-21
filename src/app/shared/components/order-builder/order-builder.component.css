@@ -299,7 +299,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  width: 125px; /* Increased to avoid clipping */
+  width: 140px; /* Enough for lot label */
 }
 
 .custom-qty-input {

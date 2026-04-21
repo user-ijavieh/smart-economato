@@ -130,6 +130,13 @@
                 <span class="alert-type-badge" [ngClass]="getAlertTypeClass(alert.alertType)">{{ getAlertTypeLabel(alert.alertType) }}</span>
               </div>
             </td>
+            <td class="hide-on-mobile action-col">
+              <button class="toolbar-btn btn-crear-orden-sm" (click)="$event.stopPropagation(); openOrderModalForSingleProduct(alert)" title="Crear Orden de Compra">
+                <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor">
+                  <path d="M160-160v-516L82-846l72-34 94 202h464l94-202 72 34-78 170v516H160Zm240-280h160q17 0 28.5-11.5T600-480q0-17-11.5-28.5T560-520H400q-17 0-28.5 11.5T360-480q0 17 11.5 28.5T400-440ZM240-240h480v-358H240v358Z"/>
+                </svg>
+              </button>
+            </td>
             <td class="show-on-mobile-only mobile-icon-col">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />

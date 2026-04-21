@@ -202,7 +202,7 @@
                         step="0.1"
                         [disabled]="isInputDisabled(quantityPath)"
                         [class.field-locked]="isFieldLockedByAnotherUser(quantityPath)" />
-                      <span class="inline-unit lot-unit">L. de {{ detail.lotQuantity }} {{ formatUnit(detail.unit, false) }}</span>
+                      <span class="inline-unit lot-unit">Lót.×{{ detail.lotQuantity }}{{ formatUnit(detail.unit) }}</span>
                     </div>
                   } @else {
                     <input 

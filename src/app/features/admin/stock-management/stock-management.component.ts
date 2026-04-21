@@ -537,6 +537,41 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         });
     }
 
+    openOrderModalForSingleProduct(alert: StockAlertDTO): void {
+        this.loadingOrderData = true;
+        this.productService.getById(alert.productId).pipe(
+            map((product: Product) => {
+                const item: WeeklyPlanRepositionOrderItem = {
+                    ...alert,
+                    unitPrice: product.unitPrice || 0,
+                    supplierId: product.supplier?.id ?? null,
+                    supplierName: product.supplier?.name ?? null,
+                    orderQuantity: 0,
+                    requiredQuantity: alert.effectiveGap || 0,
+                    grossRequiredQuantity: alert.effectiveGap || 0,
+                    availabilityPercentage: 100,
+                    availableStock: alert.currentStock || 0,
+                    grossAvailableStock: alert.currentStock || 0,
+                    reservedByOtherPlans: 0,
+                    grossReservedByOtherPlans: 0,
+                    sufficient: false
+                };
+                return item;
+            }),
+            finalize(() => {
+                this.loadingOrderData = false;
+                this.cdr.detectChanges();
+            })
+        ).subscribe({
+            next: (item: WeeklyPlanRepositionOrderItem) => {
+                this.orderItems = [item];
+                this.showOrderModal = true;
+                this.closeMobileModal();
+            },
+            error: () => this.messageService.showError('Error al cargar datos del producto')
+        });
+    }
+
     closeOrderModal(): void {
         this.showOrderModal = false;
         this.orderItems = [];
