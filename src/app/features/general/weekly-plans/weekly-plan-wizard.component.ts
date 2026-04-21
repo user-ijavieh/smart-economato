@@ -197,6 +197,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
           this.chefId = Number(queryChefId);
           this.resolveChefSelection(this.chefId);
           this.loadStudentMetricsForChef();
+          this.loadStudentsForChef();
         }
         if (duplicateFrom) {
           const keepStudents = this.route.snapshot.queryParamMap.get('keepStudents') !== '0';
@@ -216,16 +217,38 @@ export class WeeklyPlanWizardComponent implements OnInit {
     this.searchRecipes(''); // Initial load of recipes
     this.loadCookableRecipeCatalog();
 
-    this.userService.getMyStudents().subscribe({
-      next: (students) => {
-        this.myStudents = students;
-        this.cdr.detectChanges();
-      }
-    });
+    if (this.role === 'CHEF' || this.role === 'ELEVATED') {
+      this.loadStudentsForChef();
+    }
 
     if (this.chefId) {
       this.loadStudentMetricsForChef();
+      if (this.role === 'ADMIN') {
+        this.loadStudentsForChef();
+      }
     }
+  }
+
+  private loadStudentsForChef() {
+    if (!this.chefId && this.role === 'ADMIN') {
+      this.myStudents = [];
+      return;
+    }
+
+    const obs = (this.role === 'ADMIN' && this.chefId)
+      ? this.userService.getStudentsByTeacher(this.chefId)
+      : this.userService.getMyStudents();
+
+    obs.subscribe({
+      next: (students) => {
+        this.myStudents = students;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.myStudents = [];
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   private loadStudentMetricsForChef() {
@@ -265,6 +288,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
     this.chefId = item.id;
     this.selectedChefName = item.name;
     this.loadStudentMetricsForChef();
+    this.loadStudentsForChef();
   }
 
   // RECIPE SEARCH
@@ -325,6 +349,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
         this.chefId = plan.chefId;
         this.resolveChefSelection(this.chefId);
         this.loadStudentMetricsForChef();
+        this.loadStudentsForChef();
         
         this.slots = plan.slots.map(s => ({
           uiKey: `slot-${this.nextSlotUiId++}`,
@@ -362,6 +387,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
         this.chefId = plan.chefId;
         this.resolveChefSelection(this.chefId);
         this.loadStudentMetricsForChef();
+        this.loadStudentsForChef();
         this.slots = plan.slots.map(s => ({
           uiKey: `slot-${this.nextSlotUiId++}`,
           dayOfWeek: s.dayOfWeek,
