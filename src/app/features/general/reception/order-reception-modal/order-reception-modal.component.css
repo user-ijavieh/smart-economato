@@ -454,7 +454,7 @@
 .text-right { text-align: right; }
 .text-center { text-align: center; }
 
-.received-col { width: 185px; }
+.received-col { width: 220px; min-width: 180px; }
 .expiry-col { width: 160px; }
 
 .quantity-cell-actions {
@@ -796,24 +796,29 @@
 }
 
 .input-with-unit {
-  position: relative;
   display: flex;
   align-items: center;
+  gap: 6px;
   flex: 1;
 }
 
 .input-with-unit .form-control {
-  padding-right: 110px;
+  flex: 1;
+  min-width: 60px;
+  padding-right: 10px; /* No longer needs space for absolute label */
 }
 
 .inline-unit {
-  position: absolute;
-  right: 10px;
+  flex-shrink: 0;
   font-size: 0.65rem;
   font-weight: 800;
   color: var(--theme-text-tertiary);
   pointer-events: none;
   text-transform: uppercase;
+  white-space: nowrap;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .lot-unit {

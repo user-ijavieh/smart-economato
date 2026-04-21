@@ -372,13 +372,19 @@ export class OrderBuilderComponent implements OnInit {
 
   formatUnit(unit: string): string {
     if (!unit) return '';
-    return unit.length > 5 ? unit.substring(0, 4) + '.' : unit;
+    return unit.length > 4 ? unit.substring(0, 3) + '.' : unit;
+  }
+
+  formatUnitFull(unit: string): string {
+    return unit || '';
   }
 
   getCustomLotCount(item: WeeklyPlanRepositionOrderItem): number {
     if (!item.lotQuantity || item.lotQuantity <= 0) return 0;
     const currentQty = this.getStockOrderQuantity(item);
-    return Math.round(currentQty / item.lotQuantity);
+    const rawLots = currentQty / item.lotQuantity;
+    // Default to 1 lot minimum — avoid showing 0 or tiny fractions
+    return Math.max(1, Math.round(rawLots));
   }
 
   updateCustomQuantityFromLots(item: WeeklyPlanRepositionOrderItem, lotCount: number): void {

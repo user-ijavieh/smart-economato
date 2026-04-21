@@ -532,6 +532,7 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
         availableStock: this.getRealAvailableStock(requirement),
         unit: product.unit || requirement.productName,
         unitPrice: product.unitPrice || 0,
+        lotQuantity: product.lotQuantity || 0,
         supplierId: product.supplier?.id ?? null,
         supplierName: product.supplier?.name ?? null,
         orderQuantity: this.getUncoveredStockShortage(requirement)
