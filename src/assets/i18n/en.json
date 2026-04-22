@@ -29,6 +29,9 @@
     "DATE": "Date:",
     "PRODUCTS": "Products:",
     "PRODUCT": "Product",
+    "UNIT_LOWER": "unit",
+    "UNITS": "units",
+    "UNITS_LOWER": "units",
     "UNITS_SHORT": "units",
     "MORE": "more",
     "VIEW_DETAILS": "View Details",
@@ -56,6 +59,8 @@
     "LOADING_MORE": "Loading more...",
     "TOTAL": "Total",
     "REFRESH": "Refresh",
+    "SEARCH": "Search...",
+    "NO_RESULTS": "No results found",
     "NO_DATA": "No data",
     "NO_DATE": "No date",
     "N_A": "N/A",
@@ -94,19 +99,62 @@
     "STATUS_CONFIRMED": "Confirmed",
     "STATUS_INCOMPLETE": "Incomplete",
     "STATUS_CANCELLED": "Cancelled",
+    "STATUS_HIDDEN": "Hidden",
+    "STATUS_PENDING_PLURAL": "Pending",
+    "STATUS_APPROVED_PLURAL": "Approved",
+    "STATUS_REJECTED_PLURAL": "Rejected",
+    "ALL_STATUSES": "All statuses",
+    "ALL_ACTIONS": "All actions",
+    "FROM": "From",
+    "TO": "To",
+    "FILTER": "Filter",
+    "LAST_UPDATE": "Last update",
+    "CREATOR": "Creator",
+    "REVIEWER": "Reviewer",
+    "APPROVED": "Approved",
+    "INGREDIENT": "Ingredient",
     "AUDIT_ACTIONS": {
       "CREATE": "Creation",
       "UPDATE": "Update",
       "DELETE": "Deletion",
       "STATUS_CHANGE": "Status Change",
       "RECEIVE": "Reception",
-      "COOK": "Cooking"
+      "COOK": "Cooking",
+      "RECEPTION": "Order Received",
+      "REVERSION": "Stock Reversion"
     },
     "PAGE_INFO": "Page {{current}} of {{total}}",
     "TOTAL_COUNT": "({{count}} {{items}})",
     "THEME_LIGHT": "Switch to light mode",
     "THEME_DARK": "Switch to dark mode",
-    "CLEAR_CACHE": "Clear local cache"
+    "CLEAR_CACHE": "Clear local cache",
+    "ROLES": {
+      "ADMIN": "Administrator",
+      "CHEF": "Chef / Teacher",
+      "STUDENT": "Student"
+    },
+    "SUCCESS": "Success",
+    "ERROR": "Error",
+    "WARNING": "Warning",
+    "INFO": "Information",
+    "SELECTED_COUNT_ONE": "1 selected",
+    "SELECTED_COUNT_OTHER": "{{count}} selected",
+    "SELECT_PLACEHOLDER": "Select..."
+  },
+  "NAV": {
+    "DASHBOARD": "Home",
+    "USERS": "User Management",
+    "PRODUCTS": "Product Management",
+    "ORDERS": "Order Management",
+    "STOCK": "Stock Management",
+    "RECIPES": "Recipe Management",
+    "NOTIFICATIONS": "Notification Management",
+    "INCIDENTS": "Incidents",
+    "ORDERS_SIMPLE": "Orders",
+    "ORDER_RECEPTION": "Order Reception",
+    "RECIPES_SIMPLE": "Recipes",
+    "INVENTORY": "Inventory",
+    "PROFILE": "Profile"
   },
   "LOGIN": {
     "TITLE": "Smart Economato",
@@ -164,6 +212,63 @@
     "INVENTORY": "Inventory",
     "ORDERS": "Orders",
     "RECEPTION": "Reception",
+    "RECIPE_MGMT": {
+      "TITLE": "Recipe Management",
+      "SEARCH_PLACEHOLDER": "Search by name...",
+      "ADD_RECIPE": "Add Recipe",
+      "NO_RECIPES_FOUND": "No recipes found",
+      "TABS": {
+        "RECIPES": "Recipes",
+        "AUDITS": "Audits",
+        "DRAFTS": "Drafts"
+      },
+      "STATS": {
+        "WITH_ALLERGENS": "With Allergens",
+        "WITHOUT_ALLERGENS": "No Allergens",
+        "AVG_COST": "Average Cost"
+      },
+      "TABLE": {
+        "COMPONENTS": "Components",
+        "TOTAL_COST": "Total Cost",
+        "ALLERGENS": "Allergens"
+      },
+      "DRAFTS": {
+        "NONE_FOUND": "No drafts found",
+        "RESENDABLE": "Resendable",
+        "DETAIL_TITLE": "Draft Detail",
+        "ELABORATION": "Preparation",
+        "PRESENTATION": "Presentation",
+        "REJECTION_REASON": "Rejection reason",
+        "VIEW_APPROVED": "View approved recipe",
+        "APPROVE_CONFIRM_TITLE": "Approve draft",
+        "APPROVE_CONFIRM_MSG": "Do you want to approve the draft \"{{name}}\"?",
+        "REJECT_CONFIRM_TITLE": "Reject draft",
+        "REJECT_CONFIRM_MSG": "Indicate the reason to reject the draft <strong>{{name}}</strong>.",
+        "REJECT_REASON_EMPTY": "You must indicate a rejection reason",
+        "APPROVE_SUCCESS": "Draft \"{{name}}\" approved",
+        "REJECT_SUCCESS": "Draft \"{{name}}\" rejected",
+        "LOAD_ERROR": "Error loading recipe drafts",
+        "APPROVE_ERROR": "Error approving the draft",
+        "REJECT_ERROR": "Error rejecting the draft",
+        "APPROVED_LOAD_ERROR": "Could not load the approved recipe"
+      },
+      "AUDITS": {
+        "SEARCH_PLACEHOLDER": "Search in audits...",
+        "NONE_FOUND": "No audits found",
+        "RECIPE_ID": "Recipe ID",
+        "DETAIL_TITLE": "Audit Detail",
+        "PREV_STATE": "Previous State",
+        "NEXT_STATE": "New State",
+        "PREV_QTY": "Previous Quantity",
+        "NEXT_QTY": "New Quantity",
+        "LOAD_ERROR": "Error loading audits"
+      },
+      "MESSAGES": {
+        "LOAD_ERROR": "Error loading recipes",
+        "TOGGLE_HIDDEN_SUCCESS": "Recipe \"{{name}}\" has been {{action}}",
+        "TOGGLE_HIDDEN_ERROR": "Error {{action}} recipe"
+      }
+    },
     "RECIPES": "Recipes",
     "KITCHEN": "Kitchen",
     "USERS": "Students",
@@ -258,7 +363,11 @@
     "EXPIRED_BADGE": "EXPIRED",
     "NO_BATCHES": "No active batches registered.",
     "DESCRIPTION": "Description",
-    "LOW_STOCK_ALERT": "Low stock: Below recommended minimum"
+    "LOW_STOCK_ALERT": "Low stock: Below recommended minimum",
+    "CODE": "Code",
+    "SUPPLIER": "Supplier",
+    "LOT_QUANTITY": "Lot Quantity",
+    "LOT_PRICE": "Lot Price"
   },
   "PROFILE": {
     "TITLE": "Profile",
@@ -294,6 +403,7 @@
       "SCREEN_CHANGED": "Screen changed"
     },
     "SCREENS": {
+      "NONE": "No data",
       "DASHBOARD": "Home",
       "USER_MANAGEMENT": "User management",
       "PRODUCT_MANAGEMENT": "Product management",
@@ -359,7 +469,12 @@
       "REVERT": "Revert",
       "OPENING": "Opening...",
       "CLOSING": "Closing...",
-      "REVERTING": "Reverting..."
+      "REVERTING": "Reverting...",
+      "NEW": "New Incident",
+      "EDIT": "Edit Incident",
+      "ACTIVATE": "Activate",
+      "DEACTIVATE": "Deactivate",
+      "ATTACH_AUDITS": "Attach Audits"
     },
     "STATS": {
       "TOTAL": "Total incidents",
@@ -373,7 +488,11 @@
       "ALL_STATUS": "All status",
       "ALL_SEVERITIES": "All severities",
       "FROM": "From",
-      "TO": "To"
+      "TO": "To",
+      "STATUS_ALL": "All Statuses",
+      "SEVERITY_ALL": "All Severities",
+      "TYPE_ALL": "All Types",
+      "USER_ALL": "All Users"
     },
     "TABLE": {
       "ID": "ID",
@@ -407,7 +526,7 @@
       "OPEN_TITLE": "Open incident",
       "CLOSE_TITLE": "Close incident",
       "ATTACH_TITLE": "Attach audits",
-      "REVERT_TITLE": "Revert audit",
+      "REVERT_TITLE": "Revert Audit",
       "TYPE_PLACEHOLDER": "Ex: Cross contamination",
       "TITLE_PLACEHOLDER": "Ex: Product in bad condition in room 2",
       "DESC_PLACEHOLDER": "Detail what happened, when it was detected and observed impact.",
@@ -415,7 +534,25 @@
       "RESOLUTION": "Resolution",
       "CLOSE_WITH_RESOLUTION": "Close with resolution",
       "REVERT_HINT": "Reversion will be logged in the incident.",
-      "REVERT_REASON": "Reason"
+      "REVERT_REASON": "Reason",
+      "CREATE_TITLE": "Create Incident",
+      "EDIT_TYPE_TITLE": "Edit Incident Type",
+      "NEW_TYPE_TITLE": "New Incident Type",
+      "TYPE_NAME": "Type Name",
+      "TYPE_DESC": "Description",
+      "CONFIRM_DOWNLOAD_TITLE": "Confirm Download",
+      "CONFIRM_DOWNLOAD_TEXT": "Do you want to download the incidents report?",
+      "RESET_SECURITY_TITLE": "Security Reset",
+      "RESET_SECURITY_TEXT": "This will reset security settings. Continue?",
+      "RESET_IRREVERSIBLE_TITLE": "Irreversible Reset",
+      "RESET_IRREVERSIBLE_TEXT": "This action cannot be undone. Are you sure?",
+      "ATTACH_AUDITS_TITLE": "Attach Cooking Audits",
+      "ATTACH_AUDITS_MSG": "Select the cooking records you want to attach to this incident.",
+      "ATTACH_SUCCESS": "Audits attached successfully",
+      "ATTACH_ERROR": "Error attaching audits",
+      "REVERT_MSG": "Are you sure you want to revert this audit? This will return the stock and remove the record.",
+      "REVERT_SUCCESS": "Audit reverted successfully",
+      "REVERT_ERROR": "Error reverting audit"
     },
     "DETAIL": {
       "SUMMARY": "Summary",
@@ -428,10 +565,11 @@
       "RESOLUTION": "Resolution",
       "NO_RESOLUTION": "No resolution",
       "PENDING": "Pending",
-      "ATTACHED_AUDITS": "Attached audits",
+      "ATTACHED_AUDITS": "Attached Cooking Audits",
       "NO_AUDITS": "No audits.",
       "REVERTED": "Reverted",
-      "ACTIVE": "Active"
+      "ACTIVE": "Active",
+      "RESPONSIBLE_HINT": "Teacher / follow-up"
     },
     "CHAT": {
       "LOADING": "Loading conversation...",
@@ -447,7 +585,11 @@
       "ATTACH_FILE": "Attach file",
       "TAKE_PHOTO": "Take photo",
       "SEND": "Send",
-      "LOCKED": "Incident is closed. New messages cannot be sent."
+      "LOCKED": "Incident is closed. New messages cannot be sent.",
+      "TYPING": "{{name}} is typing...",
+      "ATTACHMENT": "Attachment",
+      "READ_BY": "Read by",
+      "SYSTEM": "System Message"
     },
     "STATUS": {
       "CREADO": "Created",
@@ -461,16 +603,36 @@
       "MEDIA": "Medium",
       "ALTA": "High",
       "NONE": "No level"
+    },
+    "MESSAGES": {
+      "CLOSE_RESOLVED_SUCCESS": "Incident closed with resolution.",
+      "CLOSE_UNRESOLVED_SUCCESS": "Incident closed without resolution.",
+      "CREATE_SUCCESS": "Incident created successfully.",
+      "DELETE_TYPE_CONFIRM": "Are you sure you want to delete this incident type?",
+      "DELETE_TYPE_SUCCESS": "Incident type deleted successfully.",
+      "OPEN_SUCCESS": "Incident opened successfully.",
+      "UPDATE_TYPE_SUCCESS": "Incident type updated successfully.",
+      "REPORT_DOWNLOADED": "Report downloaded successfully."
+    },
+    "CHART": {
+      "BY_STATUS": "Incidents by Status",
+      "BY_SEVERITY": "Incidents by Severity",
+      "EVOLUTION": "Incidents Evolution"
+    },
+    "LIST": {
+      "CHATS": "Chats",
+      "ATTACHMENTS": "Attachments",
+      "NO_INCIDENTS": "No incidents found"
     }
   },
   "RECEPTION": {
-    "TITLE": "ORDER RECEPTION",
+    "TITLE": "Order Reception",
     "LOADING": "Loading orders...",
-    "NO_PENDING": "No pending orders to review.",
-    "NO_REVIEW": "No orders being reviewed.",
-    "NO_CONFIRMED": "No confirmed orders.",
-    "NO_INCOMPLETE": "No incomplete orders.",
-    "NO_CANCELLED": "No cancelled orders.",
+    "NO_PENDING": "No pending orders",
+    "NO_REVIEW": "No orders in review",
+    "NO_CONFIRMED": "No confirmed orders",
+    "NO_INCOMPLETE": "No incomplete orders",
+    "NO_CANCELLED": "No cancelled orders",
     "REVIEW_ORDER": "Review Order",
     "CONFIRM_COMPLETE": "Confirm Complete",
     "MARK_INCOMPLETE": "Mark Incomplete",
@@ -496,57 +658,57 @@
       "START_SCALE": "Start scale reading",
       "STOP_SCALE": "Stop scale reading",
       "PROCESSING": "Processing...",
-      "EXIT_WITHOUT_SAVING_TITLE": "Exit reception",
-      "EXIT_WITHOUT_SAVING": "Exit without saving? Entered data will not be kept.",
-      "EXIT_WITHOUT_SAVING_BTN": "Exit without saving",
       "SCALE_NOT_SUPPORTED": "This browser does not support serial scale connection. Use recent Chrome or Edge.",
       "SCALE_CONNECTED": "Scale connected. Weight will update until cancelled.",
       "SCALE_ERROR": "Could not start scale reading. Check permissions or port connection.",
       "EXPIRATION_REQUIRED": "Expiration date is required for lots with received quantity.",
-      "NAME_PLACEHOLDER": "Product name"
+      "NAME_PLACEHOLDER": "Product name",
+      "LOTS": "Lots",
+      "OTHER_USER": "Other user",
+      "LOCK_ACTIVE": "Active lock",
+      "SHARED_REVIEW": "Shared review",
+      "REVIEW_IN_PROGRESS": "Review in progress",
+      "LOCK_RELEASE_INFO": "Will be released when exiting this window.",
+      "SHARED_REVIEW_ADMIN_INFO": "{{owner}} is reviewing it. You can continue and confirm in parallel as ADMIN.",
+      "REVIEW_IN_PROGRESS_INFO": "{{owner}} is reviewing this order right now.",
+      "REVIEW_IN_PROGRESS_READONLY": "{{owner}} opened this order. Read-only until they finish.",
+      "OTHER_USER_READONLY": "Another user opened this order. Read-only until they finish.",
+      "LOCKED_BY": "Locked by {{owner}}",
+      "EXAMPLE_PREFIX": "Ex.",
+      "COLLAB_TOOLTIP": "Request collaboration with the user who is reviewing",
+      "LOT_LOWER": "lot",
+      "LOTS_LOWER": "lots"
     },
     "MESSAGES": {
-      "LOAD_ERROR": "Error loading orders.",
+      "EXIT_WITHOUT_SAVING_TITLE": "Exit reception",
+      "EXIT_WITHOUT_SAVING": "Exit without saving? Entered data will not be kept.",
+      "EXIT_WITHOUT_SAVING_BTN": "Exit without saving",
+      "LOAD_ERROR": "Error loading orders",
       "REVIEW_CONFIRM_TITLE": "Move to review",
       "REVIEW_CONFIRM_MSG": "Move order #{{id}} to review?",
       "REVIEWING_INFO": "Reviewing order #{{id}}",
-      "REVIEW_SUCCESS": "Order moved to review successfully.",
-      "UPDATE_STATUS_ERROR": "Error updating order status.",
+      "REVIEW_SUCCESS": "Order moved to review",
+      "UPDATE_STATUS_ERROR": "Error updating status",
       "CLAIM_NO_MISSING": "No missing items for this order.",
-      "CLAIM_MISSING_MSG": "The following items are missing from this order:\n\n{{items}}\n\nDo you want to create a new order with these missing items?",
-      "CLAIM_SUCCESS": "New order created with missing items.",
-      "CLAIM_ERROR": "Error creating reclamation order.",
-      "MISSING_ITEMS_ERROR": "Error retrieving missing items list.",
+      "CLAIM_MISSING_MSG": "The following products are missing from this order:\n\n{{items}}\n\nDo you want to create a new order with these missing products?",
+      "CLAIM_SUCCESS": "New order created with missing products.",
+      "CLAIM_ERROR": "Error creating new order.",
+      "MISSING_ITEMS_ERROR": "Error getting missing items.",
       "CONFIRM_RECEPTION": "Confirm reception for order #{{id}}?",
-      "COLLABORATION_REQUEST_SENT": "Shared review request sent."
-    }
-  },
-  "RECEPTION_MODAL": {
-    "TITLE": "Reception of Order #{{id}}",
-    "EXIT_CONFIRM_TITLE": "Exit reception",
-    "EXIT_CONFIRM_MSG": "Exit without saving? Entered data will not be preserved.",
-    "EXIT_CONFIRM_BTN": "Exit without saving",
-    "EXIT_CANCEL_BTN": "Go back",
-    "SEARCH_PLACEHOLDER": "Search product or scan...",
-    "ADD_LOT": "Add Batch",
-    "EXPECTED": "Expected",
-    "RECEIVED": "Received",
-    "BATCH_CODE": "Batch Code",
-    "EXPIRATION": "Expiration",
-    "TOTAL_RECEIVED": "Total Received: {{count}} {{unit}}",
-    "SCALE_TOOLTIP": "Capture scale weight",
-    "MESSAGES": {
-      "NO_PRODUCTS": "Order has no products.",
-      "INVALID_QUANTITIES": "Please check that all batch quantities are valid numbers or 0.",
-      "MISSING_EXPIRATION": "Expiration date is mandatory for batches with received quantity.",
-      "INVALID_EXP_FORMAT": "Check expiration date format.",
-      "CONFIRM_TITLE": "Process Reception",
-      "CONFIRM_MSG": "Confirm reception of order #{{id}}?",
+      "COLLABORATION_REQUEST_SENT": "Shared review request sent.",
+      "NO_PRODUCTS": "The order has no products.",
+      "INVALID_QUANTITIES": "Please check that all lot quantities are valid numbers or 0.",
+      "INVALID_EXP_FORMAT": "Check the expiration date format.",
       "PROCESS_SUCCESS": "Reception processed successfully",
       "PROCESS_ERROR": "Error processing reception",
-      "SCALE_NOT_SUPPORTED": "This browser does not support serial connection with scale. Use recent Chrome or Edge.",
-      "SCALE_CONNECTED": "Scale connected. Weight will update until cancelled.",
-      "SCALE_CONNECT_ERROR": "Could not start scale reading. Check permissions or port connection."
+      "REVIEW_RELEASED": "Order #{{id}} is no longer in review. View will be updated.",
+      "SYNCING_WAIT": "Please wait a moment before retrying. Review status is being synchronized.",
+      "REVIEWED_BY_OTHER": "The order is being reviewed by another user.",
+      "ORDER_ALREADY_STATUS": "Order #{{id}} is already {{status}}.",
+      "REVISION_CONFLICT": "{{owner}} is reviewing this order right now.",
+      "ORDER_CHANGED": "The order changed while you were reviewing it.",
+      "COLLAB_SUCCESS": "Collaboration request sent.",
+      "COLLAB_ERROR": "Error sending collaboration request."
     }
   },
   "RECIPES": {
@@ -678,15 +840,30 @@
     }
   },
   "ORDERS": {
-    "TITLE": "ORDERS",
-    "CREATE_ORDER": "+ CREATE ORDER",
+    "TITLE": "Orders",
+    "CREATE_ORDER": "Create Order",
     "LOADING": "Loading orders...",
     "NO_PENDING": "No pending orders",
     "CREATE_HINT": "Create a new order to start",
     "ORDER_NUMBER": "Order #{{id}}",
+    "DATE": "Date",
+    "PRODUCTS": "Products",
+    "TOTAL": "Total",
     "UNKNOWN_USER": "Unknown user",
     "STATUS_CREATED": "CREATED",
     "CONFIRM_ORDER": "Confirm Order",
+    "STATUS": {
+      "PENDING": "Pending",
+      "REVIEW": "In Review",
+      "CONFIRMED": "Confirmed",
+      "INCOMPLETE": "Incomplete",
+      "CANCELLED": "Cancelled"
+    },
+    "ACTIONS": {
+      "VIEW_DETAILS": "View Details",
+      "CANCEL": "Cancel",
+      "DELETE": "Delete"
+    },
     "MESSAGES": {
       "LOAD_ERROR": "Error loading orders",
       "SEND_CONFIRM_TITLE": "Confirm order",
@@ -702,7 +879,11 @@
       "DELETE_SUCCESS": "Order deleted successfully",
       "DELETE_ERROR": "Error deleting order",
       "EDIT_CONFIRM_TITLE": "Edit order",
-      "EDIT_CONFIRM_MSG": "Do you want to edit order #{{id}}?"
+      "EDIT_CONFIRM_MSG": "Do you want to edit order #{{id}}?",
+      "CANCEL_CONFIRM": "Cancel order #{{id}}? This action cannot be undone.",
+      "CANCEL_SUCCESS": "Order cancelled",
+      "CANCEL_ERROR": "Error cancelling order",
+      "DELETE_CONFIRM_MSG_ALT": "Permanently delete order #{{id}}? This action cannot be undone."
     },
     "STATUS_LABELS": {
       "CREATED": "Created",
@@ -851,7 +1032,13 @@
       "TABLE_LAST_ACTIVITY": "Last activity",
       "FEED_TITLE": "Activity history",
       "LOADING_FEED": "Loading activity...",
-      "EMPTY_FEED": "No activity events"
+      "EMPTY_FEED": "No activity events",
+      "NO_DATA": "No data",
+      "ACTIONS": {
+        "CONNECTED": "Connected",
+        "DISCONNECTED": "Disconnected",
+        "SCREEN_CHANGED": "Screen changed"
+      }
     },
     "ASSIGNMENTS": {
       "UNASSIGNED_TITLE": "Students without teacher",
@@ -1074,6 +1261,17 @@
       "ORDER": "Order",
       "DETAILS": "Details",
       "PAGE_INFO": "Page {{current}} of {{total}}",
+      "TOTAL_COUNT": "({{count}} audits)",
+      "FIELDS": {
+        "STATUS": "Status",
+        "DETAILS_COUNT": "No. Details",
+        "ORDER_ID": "Order ID",
+        "USER_ID": "User ID",
+        "ORDER_DATE": "Order Date",
+        "SUPPLIER": "Supplier",
+        "TOTAL_PRICE": "Total Price",
+        "RECEPTION_DATE": "Reception Date"
+      },
       "TOTAL_INFO": "({{count}} audits)"
     },
     "STATUS_WARNING": "Cannot edit status of confirmed or incomplete orders.",
@@ -1084,7 +1282,9 @@
     "PDF_CONFIRM_MSG": "Do you want to download this PDF file?",
     "PDF_SUCCESS": "PDF downloaded successfully",
     "PDF_ERROR": "Error generating PDF",
-    "ORDER_LOAD_ERROR": "Could not load order #{{id}}"
+    "ORDER_LOAD_ERROR": "Could not load order #{{id}}",
+    "REVERSION_REASON": "Reversion of order #{{id}}",
+    "REVERSION_AUTO_DESC": "Automatic reversion order #{{id}}"
   },
   "PRODUCTS_MGMT": {
     "TITLE": "Products Management",
@@ -1493,7 +1693,16 @@
       "SELECT_SUPPLIER": "You must select a supplier.",
       "SELECT_PRODUCTS": "You must select at least one product.",
       "REASON_REQUIRED": "You must indicate a crisis reason.",
-      "DATES_REQUIRED": "You must complete the date range."
+      "DATES_REQUIRED": "You must complete the date range.",
+      "LOAD_CRISES_ERROR": "Could not load traceability alerts.",
+      "LOAD_SUPPLIERS_ERROR": "Could not load suppliers.",
+      "LOAD_PRODUCTS_ERROR": "Could not load products.",
+      "SUPPLIER_REQUIRED": "You must select a supplier.",
+      "PRODUCTS_REQUIRED": "You must select at least one product.",
+      "PDF_CONFIRM_TITLE": "Confirm Download",
+      "PDF_CONFIRM_MSG": "Do you want to download this PDF file?",
+      "PDF_ERROR": "Could not download PDF report.",
+      "LOAD_HISTORY_ERROR": "Could not load history."
     },
     "MODAL": {
       "DECLARE_TITLE": "Declare Traceability Alert",
@@ -1512,6 +1721,10 @@
       "IMPLICATED_ORDERS": "Implicated Orders",
       "IMPLICATED_COOKINGS": "Implicated Cookings",
       "AVAILABILITY_PLACEHOLDER": "Disp. %"
+    },
+    "LABELS": {
+      "NO_BATCH": "No batch",
+      "BATCH": "Batch"
     }
   },
   "WEEKLY_PLANS": {
@@ -1806,14 +2019,19 @@
     "TITLE": "Kitchen Management",
     "TABS": {
       "HISTORY": "History",
-      "REPORTS": "Reports"
+      "REPORTS": "Reports",
+      "AUDITS": "Audits",
+      "STATS": "Statistics"
     },
     "FILTERS": {
       "SEARCH_PLACEHOLDER": "Search history...",
       "RECIPE_ID": "Recipe ID",
       "USER_ID": "User ID",
       "FROM": "From",
-      "TO": "To"
+      "TO": "To",
+      "DATE_RANGE": "Date Range",
+      "ALL_RECIPES": "All Recipes",
+      "ALL_USERS": "All Users"
     },
     "TABLE": {
       "DATE": "Date",
@@ -1835,7 +2053,18 @@
       "LOADING_REPORT": "Generating report...",
       "REPORT_TITLE": "Kitchen Report",
       "REPORT_PERIOD": "Period: {{period}}",
-      "GENERATE_PROMPT": "Generate a report to visualize data."
+      "GENERATE_PROMPT": "Generate a report to visualize data.",
+      "REVERT_CONFIRM_TITLE": "Revert Cooking",
+      "REVERT_CONFIRM_MSG": "Are you sure you want to revert the cooking of \"{{name}}\"? This action will return ingredients to stock and delete this record.",
+      "REVERT_SUCCESS": "Cooking reverted successfully.",
+      "REVERT_ERROR": "Could not revert cooking.",
+      "CUSTOM_DATE_REQUIRED": "You must specify both dates for the custom range.",
+      "DOWNLOAD_CONFIRM_TITLE": "Confirm Download",
+      "DOWNLOAD_CONFIRM_MSG": "Do you want to download the kitchen report in PDF?",
+      "PDF_SUCCESS": "Report downloaded successfully.",
+      "PDF_ERROR": "Error downloading PDF report.",
+      "REPORT_ERROR": "Could not generate kitchen report",
+      "LOAD_ORDER_ERROR": "Could not load order #{{id}}"
     },
     "REPORTS": {
       "GENERAL_INFO": "General Information",
@@ -1875,6 +2104,27 @@
       "DOWNLOAD_PDF": "Download PDF",
       "REVERT_COOKING": "Revert Cooking",
       "VIEW_DETAIL": "View detail"
+    },
+    "SUBTITLE": "Cook monitoring and history",
+    "STATS": {
+      "TOTAL_COOKED": "Total Cooked",
+      "UNIQUE_RECIPES": "Unique Recipes",
+      "ACTIVE_CHEF": "Most Active Chef",
+      "TOTAL_WEIGHT": "Total Weight",
+      "COOKS_BY_DAY": "Cooks by Day",
+      "TOP_RECIPES": "Top Recipes"
+    },
+    "LABELS": {
+      "RECIPE": "Recipe",
+      "USER": "User",
+      "QUANTITY": "Quantity",
+      "DATE": "Date",
+      "WEIGHT": "Weight",
+      "ACTIONS": "Actions",
+      "DETAILS": "Details",
+      "REVERT": "Revert",
+      "DOWNLOAD": "Download Report",
+      "EMPTY_HISTORY": "No cooking records found for the selected period."
     }
   },
   "BARCODE_SCANNER": {
@@ -2154,7 +2404,8 @@
       "REMOVE": "Remove",
       "RETURN": "Return",
       "CONFIRM": "Confirm orders",
-      "CREATING": "Creating..."
+      "CREATING": "Creating...",
+      "ADD_ORDER": "Add order"
     },
     "SECTIONS": {
       "PRODUCTS_COUNT": "{{count}} product{{count === 1 ? '' : 's'}}."
@@ -2523,6 +2774,162 @@
     "MESSAGES": {
       "RETRYING": "Stream lost. Retrying once...",
       "STREAM_ERROR": "Could not complete AI response: {{message}}"
+    }
+  },
+  "STOCK": {
+    "TITLE": "Stock Management",
+    "TAB_ALERTS": "Alerts",
+    "TAB_PREDICTIONS": "Predictions",
+    "TAB_LEDGER": "History",
+    "NEW_ORDER": "New Replenishment Order",
+    "CRITICAL": "Critical",
+    "HIGH": "High",
+    "MEDIUM": "Medium",
+    "LOW": "Low",
+    "STOCK_STATUS": "Stock Status",
+    "DAYS_REMAINING": "Days Rem.",
+    "CURRENT": "Current:",
+    "CONSUMED": "Consumed:",
+    "DEFICIT": "Deficit:",
+    "DAYS": "Days",
+    "NO_ALERTS": "No active alerts",
+    "PROJECTION_INFO": "Projected consumption calculated over the last 14 days.",
+    "PROJECTED_CONSUMPTION": "Projected Consumption",
+    "LAST_UPDATE": "Last Update",
+    "NO_PREDICTIONS": "No predictions available",
+    "SELECT_PRODUCT": "Select Product:",
+    "VERIFY_ALL": "Verify All",
+    "VERIFY_INTEGRITY": "Verify Integrity",
+    "VERIFYING": "Verifying...",
+    "CLEAR_HISTORY": "Clear History",
+    "CURRENT_STOCK": "Current Stock",
+    "LAST_SEQUENCE": "Last Sequence",
+    "CHAIN_STATUS": "Chain Status",
+    "LAST_HASH": "Last Hash",
+    "VALID": "VALID",
+    "CORRUPTED": "CORRUPTED",
+    "PENDING_STATUS": "PENDING",
+    "NO_MOVEMENTS": "No movements recorded for this product",
+    "SELECT_PRODUCT_HINT": "Select a product to view its secure transaction history (Blockchain-verified)",
+    "GLOBAL_VERIFICATION": "Global Verification Result",
+    "INTACT": "Intact",
+    "CORRUPT": "CORRUPTED",
+    "DOWNLOAD_HISTORY": "Download History",
+    "GENERATE_ORDER": "Generate Replenishment Order",
+    "DAYS_AHEAD_QUESTION": "How many days do you want to cover the estimated stock?",
+    "DAYS_LABEL": "days",
+    "PENDING_ORDER": "Pend. Order",
+    "CONSUMPTION_DAY": "Consumption/Day",
+    "PRICE_UNIT": "Price/U.",
+    "TO_ORDER": "To Order",
+    "ESTIMATED_TOTAL": "Estimated total:",
+    "CREATING": "Creating...",
+    "CONFIRM_ORDER": "Confirm Order",
+    "TX_DETAIL": "Transaction Detail",
+    "TX_VERIFIED": "Transaction verified",
+    "TX_UNVERIFIED": "Hash not verified",
+    "DELTA": "Delta",
+    "RESULTING_STOCK": "Resulting stock",
+    "SEQUENCE": "Sequence",
+    "CURRENT_HASH": "Current hash",
+    "PREV_HASH": "Previous hash",
+    "ANALYSIS_TITLE": "Consumption Analysis and Stock Evolution",
+    "ESTIMATED_DEPLETION": "Estimated depletion:",
+    "PROCESSING_DATA": "Processing historical data and predictions...",
+    "PROJECTED_UNTIL": "Stock projected until:",
+    "DAILY_CONSUMPTION_EST": "Est. Daily Consumption",
+    "ESTIMATED_COVERAGE": "Estimated Coverage",
+    "CONSUMPTION_14_DAYS": "Estimated consumption (14 days)",
+    "PROJECTION_ANALYSIS": "Consumption Analysis and Stock Projection",
+    "LEDGER_PRODUCT_SEARCH": "Search product...",
+    "IRREGULARITIES_DETECTED": "Irregularities detected in the chain for this product:",
+    "MORE_ERRORS": "and {{count}} more errors...",
+    "NONE_SELECTED": "None",
+    "FILTER": "Filter",
+    "DESCRIPTION_USER": "Description / User",
+    "VERIFICATION": "Verif.",
+    "SEC": "Seq.",
+    "TYPE": "Type",
+    "ORDER": "Order"
+  },
+  "PAGINATION": {
+    "PAGE_INFO": "Page {{current}} of {{totalPages}}",
+    "TOTAL_ITEMS": "({{total}} {{itemType}})"
+  },
+  "NOTIFICATIONS_MGMT": {
+    "TITLE": "Notification Management",
+    "TABS": {
+      "ROLE": "Send to group",
+      "USER": "Send to user"
+    },
+    "HELP": {
+      "ROLE": "Sends a manual notification to all users in a group.",
+      "USER": "Sends a manual notification to a specific user."
+    },
+    "LABELS": {
+      "ROLE": "Group",
+      "USER": "User",
+      "TITLE": "Title",
+      "MESSAGE": "Message"
+    },
+    "PLACEHOLDERS": {
+      "TITLE_ROLE": "e.g. Schedule change",
+      "TITLE_USER": "e.g. Reminder",
+      "MESSAGE_ROLE": "Write the message users will see...",
+      "MESSAGE_USER": "Write the message...",
+      "SEARCH_USER": "Search by name or username"
+    },
+    "ERRORS": {
+      "TITLE_REQUIRED": "Title is required and must have at most 100 characters.",
+      "MESSAGE_REQUIRED": "Message is required and must have at most 500 characters.",
+      "USER_REQUIRED": "Please indicate a valid user."
+    },
+    "ACTIONS": {
+      "SEND": "Send",
+      "SENDING": "Sending..."
+    }
+  },
+  "ALERTS": {
+    "DB_FAILURE": "The main database is unavailable.",
+    "REDIS_FAILURE": "The cache service is unavailable.",
+    "KAFKA_FAILURE": "The messaging service is unavailable.",
+    "REPLICA_FAILURE": "The data replica is unavailable.",
+    "DB_RECOVERED": "The database has been restored.",
+    "REDIS_RECOVERED": "The cache service has been restored.",
+    "KAFKA_RECOVERED": "The messaging service has been restored.",
+    "REPLICA_RECOVERED": "The data replica has been restored.",
+    "REDIS": "Cache service",
+    "KAFKA": "Messaging service",
+    "REPLICA": "Data replica",
+    "SYSTEM_PARTIALLY_DOWN": "System partially down",
+    "SERVICE_STATUS_UPDATED": "Service status updated.",
+    "HIDE": "Hide alerts",
+    "SHOW": "Show alerts"
+  },
+  "PWA": {
+    "TITLE": "Install SmartEconomato",
+    "INSTALL": "Install",
+    "SHARE": "Share",
+    "CLOSE": "Close",
+    "MESSAGES": {
+      "INSTALL_STARTED": "✓ Installation started",
+      "INSTALL_STARTED_SUB": "SmartEconomato will be added to your home screen",
+      "SHARED": "✓ Shared",
+      "SHARED_SUB": "SmartEconomato link shared"
+    },
+    "INSTRUCTIONS": {
+      "ALREADY_INSTALLED": "The application is already installed on your device.",
+      "INSTALL_BTN": "Press the \"Install\" button to add SmartEconomato to your home screen.",
+      "IOS": "On iOS: Open the menu (⋯) and select \"Add to Home Screen\"",
+      "ANDROID": "On Android: Open the menu (⋯) and select \"Install application\"",
+      "NOT_SUPPORTED": "Your browser does not support PWA installation. Update to a newer version."
+    },
+    "SHARE_TEXT": "Install SmartEconomato - Professional kitchen management system",
+    "NOTIFICATIONS": {
+      "SUCCESS_BODY": "Operation completed successfully",
+      "ERROR_TITLE": "Error",
+      "ERROR_BODY": "Something went wrong",
+      "WARNING_BODY": "Important notice"
     }
   }
 }

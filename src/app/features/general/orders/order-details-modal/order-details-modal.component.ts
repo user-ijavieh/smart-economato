@@ -110,8 +110,9 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
 
   getFormattedQuantity(detail: OrderDetail): string {
     const received = this.getReceivedQuantity(detail);
-    if (received === null) return `${detail.quantity} ${detail.unit || 'uds'}`;
-    return `${detail.quantity} / ${received} ${detail.unit || 'uds'}`;
+    const unitLabel = detail.unit || this.translate.instant('COMMON.UNITS_SHORT') || 'uds';
+    if (received === null) return `${detail.quantity} ${unitLabel}`;
+    return `${detail.quantity} / ${received} ${unitLabel}`;
   }
 
   close(): void {

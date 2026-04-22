@@ -33,7 +33,7 @@
             </svg>
           </button>
           <button type="button" class="modal-btn modal-btn-success modal-btn-small" (click)="addStockOrderGroup()"
-            aria-label="Añadir orden">+</button>
+            [attr.aria-label]="'ORDER_BUILDER.ACTIONS.ADD_ORDER' | translate">+</button>
         </div>
       </div>
 
@@ -197,10 +197,10 @@
               </div>
               <div class="order-item-meta">
                 @if (!hideStockInfo) {
-                <div class="meta-row"><span>Stock</span><strong>{{ item.availableStock | number:'1.0-2' }}</strong>
+                <div class="meta-row"><span>{{ 'COMMON.STOCK' | translate }}</span><strong>{{ item.availableStock | number:'1.0-2' }}</strong>
                 </div>
                 }
-                @if (item.unitPrice) { <div class="meta-row"><span>Precio</span><strong>{{ item.unitPrice |
+                @if (item.unitPrice) { <div class="meta-row"><span>{{ 'COMMON.PRICE' | translate }}</span><strong>{{ item.unitPrice |
                     currency:'EUR' }}</strong></div> }
               </div>
             </article>

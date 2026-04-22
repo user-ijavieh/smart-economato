@@ -1093,7 +1093,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!value) return '-';
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return '-';
-    return date.toLocaleString([], {
+    return date.toLocaleString(this.translate.currentLang || [], {
       day: '2-digit',
       month: '2-digit',
       hour: '2-digit',
@@ -1105,7 +1105,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!value) return '-';
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return '-';
-    return date.toLocaleString([], {
+    return date.toLocaleString(this.translate.currentLang || [], {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -1116,10 +1116,10 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   formatStatus(status: IncidentStatus | string | null | undefined): string {
     switch (status) {
-      case 'CREADO': return this.translate.instant('INCIDENTS.STATUS.CREATED') || 'Creada';
-      case 'ABIERTO': return this.translate.instant('INCIDENTS.STATUS.OPEN') || 'Abierta';
+      case 'CREADO': return this.translate.instant('INCIDENTS.STATUS.CREADO') || 'Creada';
+      case 'ABIERTO': return this.translate.instant('INCIDENTS.STATUS.ABIERTO') || 'Abierta';
       case 'CERRADO_CON_RESOLUCION':
-      case 'CERRADO_SIN_RESOLUCION': return this.translate.instant('INCIDENTS.STATUS.CLOSED') || 'Cerrada';
+      case 'CERRADO_SIN_RESOLUCION': return this.translate.instant('INCIDENTS.STATUS.CERRADO') || 'Cerrada';
       default: return '-';
     }
   }
