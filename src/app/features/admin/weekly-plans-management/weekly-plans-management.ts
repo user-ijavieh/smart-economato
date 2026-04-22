@@ -8,12 +8,12 @@ import { WeeklyPlanResponse } from '../../../shared/models/weekly-plan.model';
 import { SearchableDropdownComponent, SearchableItem } from '../../../shared/components/searchable-dropdown/searchable-dropdown.component';
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { Subject, takeUntil } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-weekly-plans-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, SearchableDropdownComponent],
+  imports: [CommonModule, FormsModule, SearchableDropdownComponent, TranslateModule],
   templateUrl: './weekly-plans-management.html',
   styleUrl: './weekly-plans-management.css',
 })

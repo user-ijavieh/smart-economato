@@ -8,7 +8,7 @@ import { UserService } from '../../../core/services/user.service';
 import { StatsService } from '../../../core/services/stats.service';
 import { MessageService } from '../../../core/services/message.service';
 import { Product, ProductRequest } from '../../../shared/models/product.model';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Supplier } from '../../../shared/models/supplier.model';
 import { ProductCreateModalComponent } from '../../general/inventory/product-create-modal/product-create-modal.component';
 import { ProductEditModalComponent } from '../../general/inventory/product-edit-modal/product-edit-modal.component';
@@ -33,7 +33,8 @@ import { ProductAudit } from '../../../shared/models/product-audit.model';
     ProductEditModalComponent,
     ProductDetailModalComponent,
     BarcodeScannerComponent,
-    BaseModalComponent
+    BaseModalComponent,
+    TranslateModule
   ],
   templateUrl: './products-management.component.html',
   styleUrl: './products-management.component.css',

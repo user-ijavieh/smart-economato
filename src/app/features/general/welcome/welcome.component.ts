@@ -37,7 +37,7 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   navCards = [
     { label: 'Inventario', route: '/inventario', icon: '/assets/img/icons/inventory.svg', key: 'SIDEBAR.INVENTORY' },
     { label: 'Pedidos', route: '/orders', icon: '/assets/img/icons/order.svg', key: 'SIDEBAR.ORDERS' },
-    { label: 'Recepción', route: '/reception', icon: '/assets/img/icons/RECEPTION', key: 'SIDEBAR.RECEPTION' },
+    { label: 'Recepción', route: '/reception', icon: '/assets/img/icons/reception-v2.svg', key: 'SIDEBAR.RECEPTION' },
     { label: 'Recetas', route: '/recipes', icon: '/assets/img/icons/recipes.svg', key: 'SIDEBAR.RECIPES' },
   ];
 
@@ -45,7 +45,7 @@ export class WelcomeComponent implements OnInit, OnDestroy {
     const userRole = this.authService.getRole();
     if (userRole === 'USER') {
       return this.navCards.filter(card =>
-        card.label !== 'Pedidos' && card.label !== 'Recepción'
+        card.key !== 'SIDEBAR.ORDERS' && card.key !== 'SIDEBAR.RECEPTION'
       );
     }
     return this.navCards;
