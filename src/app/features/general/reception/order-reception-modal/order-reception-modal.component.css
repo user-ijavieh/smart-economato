@@ -825,7 +825,7 @@
 
 .input-with-unit .form-control {
   flex: 1;
-  min-width: 60px;
+  min-width: 100px;
   padding-right: 10px; /* No longer needs space for absolute label */
 }
 
