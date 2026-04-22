@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { OrderService } from '../../../core/services/order.service';
 import { MessageService } from '../../../core/services/message.service';
 import { Order, OrderReviewLockStatus, OrderStatus } from '../../../shared/models/order.model';
@@ -22,7 +23,7 @@ interface OrdersByStatus {
 @Component({
   selector: 'app-reception',
   standalone: true,
-  imports: [CommonModule, FormsModule, OrderDetailsModalComponent, OrderReceptionModalComponent],
+  imports: [CommonModule, FormsModule, OrderDetailsModalComponent, OrderReceptionModalComponent, TranslateModule],
   templateUrl: './reception.component.html',
   styleUrl: './reception.component.css'
 })
@@ -34,6 +35,7 @@ export class ReceptionComponent implements OnInit, OnDestroy {
   // DESHABILITADO: private orderReviewCollaborationStateService = inject(OrderReviewCollaborationStateService);
   private webSocketService = inject(WebSocketService);
   private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   ordersByStatus: OrdersByStatus = {
@@ -125,7 +127,7 @@ export class ReceptionComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError('Error al cargar órdenes');
+        this.messageService.showError(this.translate.instant('RECEPTION.MESSAGES.LOAD_ERROR') || 'Error al cargar órdenes');
         this.loading = false;
         this.cdr.markForCheck();
       }
@@ -133,15 +135,7 @@ export class ReceptionComponent implements OnInit, OnDestroy {
   }
 
   getStatusLabel(status: OrderStatus): string {
-    const labels: Record<OrderStatus, string> = {
-      CREATED: 'Creado',
-      PENDING: 'Pendiente',
-      REVIEW: 'Revisión',
-      CONFIRMED: 'Confirmado',
-      CANCELLED: 'Cancelado',
-      INCOMPLETE: 'Incompleto'
-    };
-    return labels[status];
+    return this.translate.instant(`ORDERS.STATUS.${status}`);
   }
 
   getStatusColor(status: OrderStatus): string {
@@ -274,23 +268,23 @@ export class ReceptionComponent implements OnInit, OnDestroy {
   // Action handlers
   async reviewOrder(order: Order): Promise<void> {
     const confirmed = await this.messageService.confirm(
-      'Mover a revisión',
-      `¿Mover la orden #${order.id} a revisión?`
+      this.translate.instant('RECEPTION.MESSAGES.REVIEW_CONFIRM_TITLE') || 'Mover a revisión',
+      (this.translate.instant('RECEPTION.MESSAGES.REVIEW_CONFIRM_MSG', { id: order.id })) || `¿Mover la orden #${order.id} a revisión?`
     );
 
     if (!confirmed) {
       return;
     }
 
-    this.messageService.showInfo(`Revisando orden #${order.id}`);
+    this.messageService.showInfo(this.translate.instant('RECEPTION.MESSAGES.REVIEWING_INFO', { id: order.id }) || `Revisando orden #${order.id}`);
     // Change status from PENDING to REVIEW
     this.orderService.updateStatus(order.id, 'REVIEW').subscribe({
       next: () => {
-        this.messageService.showSuccess('Orden movida a revisión');
+        this.messageService.showSuccess(this.translate.instant('RECEPTION.MESSAGES.REVIEW_SUCCESS') || 'Orden movida a revisión');
         this.loadOrders();
       },
       error: () => {
-        this.messageService.showError('Error al actualizar estado');
+        this.messageService.showError(this.translate.instant('RECEPTION.MESSAGES.UPDATE_STATUS_ERROR') || 'Error al actualizar estado');
       }
     });
   }
@@ -322,15 +316,15 @@ export class ReceptionComponent implements OnInit, OnDestroy {
     this.orderService.getMissingItems(order.id).subscribe({
       next: async (missingItems) => {
         if (!missingItems || missingItems.length === 0) {
-          this.messageService.showInfo('No hay items faltantes para esta orden.');
+          this.messageService.showInfo(this.translate.instant('RECEPTION.MESSAGES.CLAIM_NO_MISSING') || 'No hay items faltantes para esta orden.');
           return;
         }
 
-        const itemsList = missingItems.map(item => `- ${item.productName}: ${item.quantity} uds`).join('\n');
+        const itemsList = missingItems.map(item => `- ${item.productName}: ${item.quantity} ${this.translate.instant('COMMON.UNITS')}`).join('\n');
 
         const confirmed = await this.messageService.confirm(
-          'Reclamar Faltantes',
-          `Los siguientes productos faltan de esta orden:\n\n${itemsList}\n\n¿Deseas crear una nueva orden con estos productos faltantes?`
+          this.translate.instant('RECEPTION.CLAIM_MISSING') || 'Reclamar Faltantes',
+          (this.translate.instant('RECEPTION.MESSAGES.CLAIM_MISSING_MSG', { items: itemsList })) || `Los siguientes productos faltan de esta orden:\n\n${itemsList}\n\n¿Deseas crear una nueva orden con estos productos faltantes?`
         );
 
         if (confirmed) {
@@ -346,25 +340,25 @@ export class ReceptionComponent implements OnInit, OnDestroy {
 
           this.orderService.create(newOrderRequest).subscribe({
             next: () => {
-              this.messageService.showSuccess('Nueva orden creada con los productos faltantes.');
+              this.messageService.showSuccess(this.translate.instant('RECEPTION.MESSAGES.CLAIM_SUCCESS') || 'Nueva orden creada con los productos faltantes.');
               this.loadOrders();
             },
             error: () => {
-              this.messageService.showError('Error al crear la nueva orden.');
+              this.messageService.showError(this.translate.instant('RECEPTION.MESSAGES.CLAIM_ERROR') || 'Error al crear la nueva orden.');
             }
           });
         }
       },
       error: () => {
-        this.messageService.showError('Error al obtener items faltantes.');
+        this.messageService.showError(this.translate.instant('RECEPTION.MESSAGES.MISSING_ITEMS_ERROR') || 'Error al obtener items faltantes.');
       }
     });
   }
 
   async cancelOrder(order: Order): Promise<void> {
     const confirmed = await this.messageService.confirm(
-      'Cancelar orden',
-      `¿Cancelar la orden #${order.id}? Esta acción no se puede deshacer.`
+      this.translate.instant('ORDERS.ACTIONS.CANCEL') || 'Cancelar orden',
+      (this.translate.instant('ORDERS.MESSAGES.CANCEL_CONFIRM', { id: order.id })) || `¿Cancelar la orden #${order.id}? Esta acción no se puede deshacer.`
     );
 
     if (!confirmed) {
@@ -373,19 +367,19 @@ export class ReceptionComponent implements OnInit, OnDestroy {
 
     this.orderService.updateStatus(order.id, 'CANCELLED').subscribe({
       next: () => {
-        this.messageService.showWarning('Orden cancelada');
+        this.messageService.showWarning(this.translate.instant('ORDERS.MESSAGES.CANCEL_SUCCESS') || 'Orden cancelada');
         this.loadOrders();
       },
       error: () => {
-        this.messageService.showError('Error al cancelar orden');
+        this.messageService.showError(this.translate.instant('ORDERS.MESSAGES.CANCEL_ERROR') || 'Error al cancelar orden');
       }
     });
   }
 
   async deleteOrder(order: Order): Promise<void> {
     const confirmed = await this.messageService.confirm(
-      'Eliminar orden',
-      `¿Eliminar permanentemente la orden #${order.id}? Esta acción no se puede deshacer.`
+      this.translate.instant('ORDERS.ACTIONS.DELETE') || 'Eliminar orden',
+      (this.translate.instant('ORDERS.MESSAGES.DELETE_CONFIRM_MSG', { id: order.id })) || `¿Eliminar permanentemente la orden #${order.id}? Esta acción no se puede deshacer.`
     );
 
     if (!confirmed) {
@@ -394,11 +388,11 @@ export class ReceptionComponent implements OnInit, OnDestroy {
 
     this.orderService.delete(order.id).subscribe({
       next: () => {
-        this.messageService.showSuccess('Orden eliminada correctamente');
+        this.messageService.showSuccess(this.translate.instant('ORDERS.MESSAGES.DELETE_SUCCESS') || 'Orden eliminada correctamente');
         this.loadOrders();
       },
       error: () => {
-        this.messageService.showError('Error al eliminar orden');
+        this.messageService.showError(this.translate.instant('ORDERS.MESSAGES.DELETE_ERROR') || 'Error al eliminar orden');
       }
     });
   }

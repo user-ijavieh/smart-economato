@@ -20,14 +20,15 @@ import { Subject, Subscription, debounceTime, distinctUntilChanged, finalize, ta
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 import { OrderDetailsAdminModalComponent } from './order-details-admin-modal/order-details-admin-modal.component';
 import { OrderStatusChangeAdminModalComponent } from './order-status-change-admin-modal/order-status-change-admin-modal.component';
+import { TranslateService } from '@ngx-translate/core';
 
 const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
-  { value: 'CREATED', label: 'Creada' },
-  { value: 'PENDING', label: 'Pendiente' },
-  { value: 'REVIEW', label: 'Revisión' },
-  { value: 'CONFIRMED', label: 'Confirmada' },
-  { value: 'INCOMPLETE', label: 'Incompleta' },
-  { value: 'CANCELLED', label: 'Cancelada' },
+  { value: 'CREATED', label: 'COMMON.STATUS_CREATED' },
+  { value: 'PENDING', label: 'COMMON.STATUS_PENDING' },
+  { value: 'REVIEW', label: 'COMMON.STATUS_REVIEW' },
+  { value: 'CONFIRMED', label: 'COMMON.STATUS_CONFIRMED' },
+  { value: 'INCOMPLETE', label: 'COMMON.STATUS_INCOMPLETE' },
+  { value: 'CANCELLED', label: 'COMMON.STATUS_CANCELLED' },
 ];
 
 @Component({
@@ -56,6 +57,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
   messageService = inject(MessageService);
 
   // ── Tab state ──
@@ -236,7 +238,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError('Error al cargar las órdenes');
+        this.messageService.showError(this.translate.instant('ORDERS_MGMT.LOAD_ERROR'));
       }
     });
   }
@@ -332,7 +334,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   // ── Change Status Modal ──
   openChangeStatusModal(order: Order): void {
     if (!this.isStatusEditable(order)) {
-      this.messageService.showWarning('No se puede editar el estado de una orden confirmada o incompleta.');
+      this.messageService.showWarning(this.translate.instant('ORDERS_MGMT.STATUS_WARNING'));
       return;
     }
     this.orderForStatusChange = order;
@@ -442,7 +444,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
         this.applyAuditOrderFilters();
         this.cdr.detectChanges();
       },
-      error: () => { this.messageService.showError('Error al cargar las auditorías'); }
+      error: () => { this.messageService.showError(this.translate.instant('ORDERS_MGMT.AUDIT_LOAD_ERROR')); }
     });
   }
 
@@ -595,7 +597,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
         this.clearOrderIdQueryParam();
       },
       error: () => {
-        this.messageService.showError(`No se pudo cargar la orden #${targetOrderId}`);
+        this.messageService.showError(this.translate.instant('ORDERS_MGMT.ORDER_LOAD_ERROR', { id: targetOrderId }));
         this.clearOrderIdQueryParam();
       }
     });
@@ -625,7 +627,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   openStatusEditorFromDetail(): void {
     if (!this.selectedOrder) return;
     if (!this.isStatusEditable(this.selectedOrder)) {
-      this.messageService.showWarning('No se puede editar el estado de una orden confirmada o incompleta.');
+      this.messageService.showWarning(this.translate.instant('ORDERS_MGMT.STATUS_WARNING'));
       return;
     }
     const selected = this.selectedOrder;
@@ -639,8 +641,8 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
 
   async revertOrder(order: Order): Promise<void> {
     const confirmed = await this.messageService.confirm(
-      'Revertir orden confirmada',
-      `Se revertirá la recepción de la orden #${order.id}. Esto devolverá el stock de los productos al inventario y restaurará el estado anterior del pedido.`
+      this.translate.instant('ORDERS_MGMT.TABLE.REVERT_CONFIRM_TITLE'),
+      this.translate.instant('ORDERS_MGMT.TABLE.REVERT_CONFIRM_MSG', { id: order.id })
     );
 
     if (!confirmed || !order.id || !order.details) return;
@@ -679,7 +681,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
         this.proceedWithRevert(order, previousStatus);
       },
       error: () => {
-        this.messageService.showWarning('No se encontró el historial del pedido. Revirtiendo al estado inicial (Creado).');
+        this.messageService.showWarning(this.translate.instant('ORDERS_MGMT.AUDIT_HISTORY_ERROR'));
         this.proceedWithRevert(order, 'CREATED');
       }
     });
@@ -701,13 +703,13 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     this.kitchenService.revertCookingBatch(request).subscribe({
       next: (res: any) => {
         if (res.success || res.id) {
-          this.messageService.showSuccess(`Orden revertida correctamente`);
+          this.messageService.showSuccess(this.translate.instant('ORDERS_MGMT.TABLE.REVERT_SUCCESS'));
           this.loadAllOrders();
         } else {
-          this.messageService.showError(res.message || 'Error al revertir el stock');
+          this.messageService.showError(res.message || this.translate.instant('ORDERS_MGMT.TABLE.REVERT_ERROR'));
         }
       },
-      error: () => this.messageService.showError('Error de comunicación al revertir orden')
+      error: () => this.messageService.showError(this.translate.instant('ORDERS_MGMT.TABLE.REVERT_COMM_ERROR'))
     });
   }
 
@@ -715,8 +717,8 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     if (!order || !order.id) return;
 
     const confirmed = await this.messageService.confirm(
-      'Confirmar descarga',
-      '¿Deseas descargar este archivo PDF?'
+      this.translate.instant('ORDERS_MGMT.PDF_CONFIRM_TITLE'),
+      this.translate.instant('ORDERS_MGMT.PDF_CONFIRM_MSG')
     );
     if (!confirmed) return;
 
@@ -730,10 +732,10 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
         a.click();
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
-        this.messageService.showSuccess('PDF descargado correctamente');
+        this.messageService.showSuccess(this.translate.instant('ORDERS_MGMT.PDF_SUCCESS'));
       },
       error: () => {
-        this.messageService.showError('Error al generar el PDF');
+        this.messageService.showError(this.translate.instant('ORDERS_MGMT.PDF_ERROR'));
       }
     });
   }

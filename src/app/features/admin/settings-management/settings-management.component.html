@@ -169,6 +169,24 @@
     <button type="button" class="toolbar-btn btn-danger" (click)="purgeNotificationLogs()">{{ 'SETTINGS.NOTIFICATIONS.PURGE_BTN' | translate }}</button>
   </section>
 
+  <section *ngIf="activeTab === 'performance'" class="config-card" [@tabContent]>
+    <h2>{{ 'SETTINGS.PERFORMANCE.TITLE' | translate }}</h2>
+    <div class="ia-subsection">
+      <h3>{{ 'SETTINGS.PERFORMANCE.SUPPLIERS.TITLE' | translate }}</h3>
+      <p class="ia-subsection-help">{{ 'SETTINGS.PERFORMANCE.SUPPLIERS.HELP' | translate }}</p>
+      
+      <div class="cache-info-card">
+        <div class="cache-status">
+          <span class="status-dot" [class.active]="lastSuppliersUpdate"></span>
+          <span>{{ (lastSuppliersUpdate ? ('SUPPLIERS_MGMT.CACHE_INFO' | translate:{date: (lastSuppliersUpdate | date:'short')}) : ('COMMON.N_A' | translate)) }}</span>
+        </div>
+        <button type="button" class="toolbar-btn toolbar-btn--primary" (click)="refreshSuppliersCache()" [disabled]="refreshingSuppliers">
+          {{ refreshingSuppliers ? ('SUPPLIERS_MGMT.UPDATING' | translate) : ('SUPPLIERS_MGMT.UPDATE_CACHE' | translate) }}
+        </button>
+      </div>
+    </div>
+  </section>
+
   <section *ngIf="activeTab === 'advanced'" class="config-card" [@tabContent]>
     <h2>{{ 'SETTINGS.ADVANCED.TITLE' | translate }}</h2>
     <div class="form-grid">
