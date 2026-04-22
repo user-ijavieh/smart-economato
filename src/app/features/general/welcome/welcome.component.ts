@@ -205,10 +205,10 @@ export class WelcomeComponent implements OnInit, OnDestroy {
     }
 
     if (diffMinutes < 24 * 60) {
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      return date.toLocaleTimeString(this.translate.currentLang || [], { hour: '2-digit', minute: '2-digit' });
     }
 
-    return date.toLocaleDateString([], { day: '2-digit', month: '2-digit' });
+    return date.toLocaleDateString(this.translate.currentLang || [], { day: '2-digit', month: '2-digit' });
   }
 
   openClearCacheModal(): void {

@@ -20,6 +20,10 @@
     "PRICE": "Precio (€)",
     "STOCK": "Stock",
     "UNIT": "Unidad",
+    "UNIT_LOWER": "unidad",
+    "UNITS": "unidades",
+    "UNITS_LOWER": "unidades",
+    "UNITS_SHORT": "uds",
     "SUPPLIER": "Proveedor",
     "ACTIONS": "Acciones",
     "STATUS": "Estado",
@@ -29,7 +33,6 @@
     "DATE": "Fecha:",
     "PRODUCTS": "Productos:",
     "PRODUCT": "Producto",
-    "UNITS_SHORT": "uds",
     "MORE": "más",
     "VIEW_DETAILS": "Ver Detalles",
     "SEARCH_PRODUCT": "Buscar producto...",
@@ -56,6 +59,8 @@
     "LOADING_MORE": "Cargando más...",
     "TOTAL": "Total",
     "REFRESH": "Refrescar",
+    "SEARCH": "Buscar...",
+    "NO_RESULTS": "No hay resultados",
     "NO_DATA": "Sin datos",
     "NO_DATE": "Sin fecha",
     "N_A": "N/D",
@@ -94,19 +99,62 @@
     "STATUS_CONFIRMED": "Confirmada",
     "STATUS_INCOMPLETE": "Incompleta",
     "STATUS_CANCELLED": "Cancelada",
+    "STATUS_HIDDEN": "Desactivado",
+    "STATUS_PENDING_PLURAL": "Pendientes",
+    "STATUS_APPROVED_PLURAL": "Aprobados",
+    "STATUS_REJECTED_PLURAL": "Rechazados",
+    "ALL_STATUSES": "Todos los estados",
+    "ALL_ACTIONS": "Todas las acciones",
+    "FROM": "Desde",
+    "TO": "Hasta",
+    "FILTER": "Filtrar",
+    "LAST_UPDATE": "Última actualización",
+    "CREATOR": "Creador",
+    "REVIEWER": "Revisor",
+    "APPROVED": "Aprobada",
+    "INGREDIENT": "Ingrediente",
     "AUDIT_ACTIONS": {
       "CREATE": "Creación",
       "UPDATE": "Actualización",
       "DELETE": "Eliminación",
       "STATUS_CHANGE": "Cambio Estado",
       "RECEIVE": "Recepción",
-      "COOK": "Cocinado"
+      "COOK": "Cocinado",
+      "RECEPTION": "Pedido Recibido",
+      "REVERSION": "Reversión de Stock"
     },
     "PAGE_INFO": "Página {{current}} de {{total}}",
     "TOTAL_COUNT": "({{count}} {{items}})",
     "THEME_LIGHT": "Cambiar a modo claro",
     "THEME_DARK": "Cambiar a modo oscuro",
-    "CLEAR_CACHE": "Limpiar caché local"
+    "CLEAR_CACHE": "Limpiar caché local",
+    "ROLES": {
+      "ADMIN": "Administrador",
+      "CHEF": "Chef / Profesor",
+      "STUDENT": "Alumno"
+    },
+    "SUCCESS": "Éxito",
+    "ERROR": "Error",
+    "WARNING": "Advertencia",
+    "INFO": "Información",
+    "SELECTED_COUNT_ONE": "1 seleccionado",
+    "SELECTED_COUNT_OTHER": "{{count}} seleccionados",
+    "SELECT_PLACEHOLDER": "Selecciona..."
+  },
+  "NAV": {
+    "DASHBOARD": "Inicio",
+    "USERS": "Gestión de Usuarios",
+    "PRODUCTS": "Gestión de Productos",
+    "ORDERS": "Gestión de Pedidos",
+    "STOCK": "Gestión de Stock",
+    "RECIPES": "Gestión de Recetas",
+    "NOTIFICATIONS": "Gestión de Notificaciones",
+    "INCIDENTS": "Incidencias",
+    "ORDERS_SIMPLE": "Pedidos",
+    "ORDER_RECEPTION": "Recepción de Pedidos",
+    "RECIPES_SIMPLE": "Recetas",
+    "INVENTORY": "Inventario",
+    "PROFILE": "Perfil"
   },
   "LOGIN": {
     "TITLE": "Smart Economato",
@@ -164,6 +212,63 @@
     "INVENTORY": "Inventario",
     "ORDERS": "Pedidos",
     "RECEPTION": "Recepción",
+    "RECIPE_MGMT": {
+      "TITLE": "Gestión de Recetas",
+      "SEARCH_PLACEHOLDER": "Buscar por nombre...",
+      "ADD_RECIPE": "Agregar Receta",
+      "NO_RECIPES_FOUND": "No se encontraron recetas",
+      "TABS": {
+        "RECIPES": "Recetas",
+        "AUDITS": "Auditoría",
+        "DRAFTS": "Borradores"
+      },
+      "STATS": {
+        "WITH_ALLERGENS": "Con Alérgenos",
+        "WITHOUT_ALLERGENS": "Sin Alérgenos",
+        "AVG_COST": "Costo Promedio"
+      },
+      "TABLE": {
+        "COMPONENTS": "Componentes",
+        "TOTAL_COST": "Costo Total",
+        "ALLERGENS": "Alérgenos"
+      },
+      "DRAFTS": {
+        "NONE_FOUND": "No se encontraron borradores",
+        "RESENDABLE": "Reenviable",
+        "DETAIL_TITLE": "Detalle del Borrador",
+        "ELABORATION": "Elaboración",
+        "PRESENTATION": "Presentación",
+        "REJECTION_REASON": "Motivo de rechazo",
+        "VIEW_APPROVED": "Ver receta aprobada",
+        "APPROVE_CONFIRM_TITLE": "Aprobar borrador",
+        "APPROVE_CONFIRM_MSG": "¿Deseas aprobar el borrador \"{{name}}\"?",
+        "REJECT_CONFIRM_TITLE": "Rechazar borrador",
+        "REJECT_CONFIRM_MSG": "Indica el motivo para rechazar el borrador <strong>{{name}}</strong>.",
+        "REJECT_REASON_EMPTY": "Debes indicar un motivo de rechazo",
+        "APPROVE_SUCCESS": "Borrador \"{{name}}\" aprobado",
+        "REJECT_SUCCESS": "Borrador \"{{name}}\" rechazado",
+        "LOAD_ERROR": "Error al cargar los borradores de recetas",
+        "APPROVE_ERROR": "Error al aprobar el borrador",
+        "REJECT_ERROR": "Error al rechazar el borrador",
+        "APPROVED_LOAD_ERROR": "No se pudo cargar la receta aprobada"
+      },
+      "AUDITS": {
+        "SEARCH_PLACEHOLDER": "Buscar en auditorías...",
+        "NONE_FOUND": "No se encontraron auditorías",
+        "RECIPE_ID": "ID Receta",
+        "DETAIL_TITLE": "Detalle de Auditoría",
+        "PREV_STATE": "Estado Anterior",
+        "NEXT_STATE": "Estado Nuevo",
+        "PREV_QTY": "Cantidad Anterior",
+        "NEXT_QTY": "Cantidad Nueva",
+        "LOAD_ERROR": "Error al cargar las auditorías"
+      },
+      "MESSAGES": {
+        "LOAD_ERROR": "Error al cargar las recetas",
+        "TOGGLE_HIDDEN_SUCCESS": "Receta \"{{name}}\" ha sido {{action}}",
+        "TOGGLE_HIDDEN_ERROR": "Error al {{action}} receta"
+      }
+    },
     "RECIPES": "Recetas",
     "KITCHEN": "Cocina",
     "USERS": "Alumnos",
@@ -298,6 +403,7 @@
       "SCREEN_CHANGED": "Cambio de pantalla"
     },
     "SCREENS": {
+      "NONE": "Sin datos",
       "DASHBOARD": "Inicio",
       "USER_MANAGEMENT": "Gestión de usuarios",
       "PRODUCT_MANAGEMENT": "Gestión de productos",
@@ -451,7 +557,8 @@
       "ATTACHED_AUDITS": "Auditorías adjuntas",
       "NO_AUDITS": "No hay auditorías.",
       "REVERTED": "Revertida",
-      "ACTIVE": "Activa"
+      "ACTIVE": "Activa",
+      "RESPONSIBLE_HINT": "Profesor / seguimiento"
     },
     "CHAT": {
       "LOADING": "Cargando conversación...",
@@ -539,16 +646,31 @@
       "START_SCALE": "Iniciar lectura de báscula",
       "STOP_SCALE": "Detener lectura de báscula",
       "PROCESSING": "Procesando...",
-      "EXIT_WITHOUT_SAVING_TITLE": "Salir de recepción",
-      "EXIT_WITHOUT_SAVING": "¿Salir sin guardar? Los datos introducidos no se conservarán.",
-      "EXIT_WITHOUT_SAVING_BTN": "Salir sin guardar",
       "SCALE_NOT_SUPPORTED": "Este navegador no soporta conexión serial con báscula. Usa Chrome o Edge recientes.",
       "SCALE_CONNECTED": "Báscula conectada. Se actualizará el peso hasta cancelar.",
       "SCALE_ERROR": "No se pudo iniciar la lectura de la báscula. Revisa permisos o conexión del puerto.",
       "EXPIRATION_REQUIRED": "La fecha de caducidad es obligatoria para los lotes con cantidad recibida.",
-      "NAME_PLACEHOLDER": "Nombre del producto"
+      "NAME_PLACEHOLDER": "Nombre del producto",
+      "LOTS": "Lotes",
+      "OTHER_USER": "Otro usuario",
+      "LOCK_ACTIVE": "Bloqueo activo",
+      "SHARED_REVIEW": "Revisión compartida",
+      "REVIEW_IN_PROGRESS": "Revisión en curso",
+      "LOCK_RELEASE_INFO": "Se liberará al salir de esta ventana.",
+      "SHARED_REVIEW_ADMIN_INFO": "{{owner}} la está revisando. Puedes continuar y confirmar en paralelo como ADMIN.",
+      "REVIEW_IN_PROGRESS_INFO": "{{owner}} está revisando esta orden en este momento.",
+      "REVIEW_IN_PROGRESS_READONLY": "{{owner}} abrió esta orden. Solo lectura mientras termina.",
+      "OTHER_USER_READONLY": "Otro usuario abrió esta orden. Solo lectura mientras termina.",
+      "LOCKED_BY": "Bloqueado por {{owner}}",
+      "EXAMPLE_PREFIX": "Ej.",
+      "COLLAB_TOOLTIP": "Solicitar colaboración con el usuario que está revisando",
+      "LOT_LOWER": "lote",
+      "LOTS_LOWER": "lotes"
     },
     "MESSAGES": {
+      "EXIT_WITHOUT_SAVING_TITLE": "Salir de recepción",
+      "EXIT_WITHOUT_SAVING": "¿Salir sin guardar? Los datos introducidos no se conservarán.",
+      "EXIT_WITHOUT_SAVING_BTN": "Salir sin guardar",
       "LOAD_ERROR": "Error al cargar los pedidos.",
       "REVIEW_CONFIRM_TITLE": "Mover a revisión",
       "REVIEW_CONFIRM_MSG": "¿Mover la orden #{{id}} a revisión?",
@@ -561,35 +683,20 @@
       "CLAIM_ERROR": "Error al crear la orden de reclamación.",
       "MISSING_ITEMS_ERROR": "Error al obtener la lista de productos faltantes.",
       "CONFIRM_RECEPTION": "¿Confirmar recepción de la orden #{{id}}?",
-      "COLLABORATION_REQUEST_SENT": "Solicitud de revisión compartida enviada."
-    }
-  },
-  "RECEPTION_MODAL": {
-    "TITLE": "Recepción de Orden #{{id}}",
-    "EXIT_CONFIRM_TITLE": "Salir de recepción",
-    "EXIT_CONFIRM_MSG": "¿Salir sin guardar? Los datos introducidos no se conservarán.",
-    "EXIT_CONFIRM_BTN": "Salir sin guardar",
-    "EXIT_CANCEL_BTN": "Volver",
-    "SEARCH_PLACEHOLDER": "Buscar producto o escanear...",
-    "ADD_LOT": "Agregar Lote",
-    "EXPECTED": "Esperado",
-    "RECEIVED": "Recibido",
-    "BATCH_CODE": "Código Lote",
-    "EXPIRATION": "Caducidad",
-    "TOTAL_RECEIVED": "Total Recibido: {{count}} {{unit}}",
-    "SCALE_TOOLTIP": "Capturar peso de báscula",
-    "MESSAGES": {
+      "COLLABORATION_REQUEST_SENT": "Solicitud de revisión compartida enviada.",
       "NO_PRODUCTS": "La orden no tiene productos.",
       "INVALID_QUANTITIES": "Por favor revisa que todas las cantidades de los lotes sean números válidos o 0.",
-      "MISSING_EXPIRATION": "La fecha de caducidad es obligatoria para los lotes con cantidad recibida.",
       "INVALID_EXP_FORMAT": "Revisa el formato de fecha de caducidad.",
-      "CONFIRM_TITLE": "Procesar Recepción",
-      "CONFIRM_MSG": "¿Confirmar recepción de la orden #{{id}}?",
       "PROCESS_SUCCESS": "Recepción procesada correctamente",
       "PROCESS_ERROR": "Error al procesar la recepción",
-      "SCALE_NOT_SUPPORTED": "Este navegador no soporta conexión serial con báscula. Usa Chrome o Edge recientes.",
-      "SCALE_CONNECTED": "Báscula conectada. Se actualizará el peso hasta cancelar.",
-      "SCALE_CONNECT_ERROR": "No se pudo iniciar la lectura de la báscula. Revisa permisos o conexión del puerto."
+      "REVIEW_RELEASED": "La orden #{{id}} ya no está en revisión. Se actualizará la vista.",
+      "SYNCING_WAIT": "Espera un momento antes de reintentar. Se está sincronizando el estado de revisión.",
+      "REVIEWED_BY_OTHER": "La orden está siendo revisada por otro usuario.",
+      "ORDER_ALREADY_STATUS": "La orden #{{id}} ya está {{status}}.",
+      "REVISION_CONFLICT": "{{owner}} está revisando esta orden en este momento.",
+      "ORDER_CHANGED": "La orden cambió mientras la estabas revisando.",
+      "COLLAB_SUCCESS": "Solicitud de colaboración enviada.",
+      "COLLAB_ERROR": "Error al enviar solicitud de colaboración."
     }
   },
   "RECIPES": {
@@ -764,7 +871,11 @@
       "LOCK_ANOTHER_USER": "Otro usuario",
       "LOCK_IN_PROGRESS": "Revisión en curso",
       "LOCK_ADMIN_HINT": "{{name}} lo está revisando. Puedes continuar como ADMIN.",
-      "LOCK_USER_HINT": "{{name}} abrió este pedido. Solo lectura mientras termina."
+      "LOCK_USER_HINT": "{{name}} abrió este pedido. Solo lectura mientras termina.",
+      "CANCEL_CONFIRM": "¿Cancelar el pedido #{{id}}? Esta acción no se puede deshacer.",
+      "CANCEL_SUCCESS": "Pedido cancelado",
+      "CANCEL_ERROR": "Error al cancelar el pedido",
+      "DELETE_CONFIRM_MSG_ALT": "¿Eliminar permanentemente el pedido #{{id}}? Esta acción no se puede deshacer."
     },
     "STATUS_LABELS": {
       "CREATED": "Creado",
@@ -790,7 +901,9 @@
     "ACTIONS": {
       "VIEW_DETAILS": "Ver Detalles",
       "CONFIRM_ORDER": "Confirmar Pedido",
-      "LOAD_MORE": "Cargar más antiguas ({{count}} restantes)"
+      "LOAD_MORE": "Cargar más antiguas ({{count}} restantes)",
+      "CANCEL": "Cancelar",
+      "DELETE": "Eliminar"
     },
     "MODAL": {
       "TITLE_CREATE": "Crear Nuevo Pedido",
@@ -961,7 +1074,13 @@
       "TABLE_LAST_ACTIVITY": "Última actividad",
       "FEED_TITLE": "Historial de actividad",
       "LOADING_FEED": "Cargando actividad...",
-      "EMPTY_FEED": "Sin eventos de actividad"
+      "EMPTY_FEED": "Sin eventos de actividad",
+      "NO_DATA": "Sin datos",
+      "ACTIONS": {
+        "CONNECTED": "Conectado",
+        "DISCONNECTED": "Desconectado",
+        "SCREEN_CHANGED": "Cambio de pantalla"
+      }
     },
     "ASSIGNMENTS": {
       "UNASSIGNED_TITLE": "Alumnos sin profesor",
@@ -1328,7 +1447,7 @@
       "TOTAL_INFO": "({{count}} órdenes)"
     },
     "AUDITS": {
-      "SEARCH_PLACEHOLDER": "Buscar por ID de orden o usuario...",
+      "SEARCH_PLACEHOLDER": "Buscar por ID de pedido o usuario...",
       "DATE_TIME": "Fecha / Hora",
       "ACTION": "Acción",
       "ORDER_STATUS": "Estado pedido",
@@ -1339,16 +1458,27 @@
       "FIELD": "Campo",
       "PREVIOUS_STATE": "Estado Anterior",
       "NEW_STATE": "Estado Nuevo",
-      "ORDER_LINES": "Líneas de Pedido",
+      "ORDER_LINES": "Líneas del Pedido",
       "PRODUCT": "Producto",
-      "PREVIOUS_QTY": "Cantidad Anterior",
-      "NEW_QTY": "Cantidad Nueva",
+      "PREVIOUS_QTY": "Cant. Anterior",
+      "NEW_QTY": "Cant. Nueva",
       "TAG_NEW": "Nuevo",
       "TAG_REMOVED": "Eliminado",
       "ORDER": "Pedido",
       "DETAILS": "Detalles",
       "PAGE_INFO": "Página {{current}} de {{total}}",
-      "TOTAL_INFO": "({{count}} auditorías)"
+      "TOTAL_INFO": "({{count}} auditorías)",
+      "TOTAL_COUNT": "({{count}} auditorías)",
+      "FIELDS": {
+        "STATUS": "Estado",
+        "DETAILS_COUNT": "Nº Detalles",
+        "ORDER_ID": "ID Pedido",
+        "USER_ID": "ID Usuario",
+        "ORDER_DATE": "Fecha Pedido",
+        "SUPPLIER": "Proveedor",
+        "TOTAL_PRICE": "Precio Total",
+        "RECEPTION_DATE": "Fecha Recepción"
+      }
     },
     "STATUS_WARNING": "No se puede editar el estado de una orden confirmada o incompleta.",
     "LOAD_ERROR": "Error al cargar las órdenes",
@@ -1358,7 +1488,9 @@
     "PDF_CONFIRM_MSG": "¿Deseas descargar este archivo PDF?",
     "PDF_SUCCESS": "PDF descargado correctamente",
     "PDF_ERROR": "Error al generar el PDF",
-    "ORDER_LOAD_ERROR": "No se pudo cargar la orden #{{id}}"
+    "ORDER_LOAD_ERROR": "No se pudo cargar la orden #{{id}}",
+    "REVERSION_REASON": "Reversión de orden #{{id}}",
+    "REVERSION_AUTO_DESC": "Reversión automática orden #{{id}}"
   },
   "PRODUCTS_MGMT": {
     "TITLE": "Gestión de Productos",
@@ -2672,7 +2804,8 @@
       "REMOVE": "Quitar",
       "RETURN": "Devolver",
       "CONFIRM": "Confirmar pedidos",
-      "CREATING": "Creando..."
+      "CREATING": "Creando...",
+      "ADD_ORDER": "Añadir orden"
     },
     "SECTIONS": {
       "PRODUCTS_COUNT": "{{count}} producto{{count === 1 ? '' : 's'}}."
@@ -2848,6 +2981,49 @@
     "MESSAGES": {
       "RETRYING": "Se perdió el stream. Reintentando una vez...",
       "STREAM_ERROR": "No se pudo completar la respuesta IA: {{message}}"
+    }
+  },
+  "ALERTS": {
+    "DB_FAILURE": "La base de datos principal no está disponible.",
+    "REDIS_FAILURE": "El servicio de caché no está disponible.",
+    "KAFKA_FAILURE": "El servicio de mensajería no está disponible.",
+    "REPLICA_FAILURE": "La réplica de datos no está disponible.",
+    "DB_RECOVERED": "La base de datos se ha restablecido.",
+    "REDIS_RECOVERED": "El servicio de caché se ha restablecido.",
+    "KAFKA_RECOVERED": "El servicio de mensajería se ha restablecido.",
+    "REPLICA_RECOVERED": "La réplica de datos se ha restablecido.",
+    "REDIS": "Servicio de caché",
+    "KAFKA": "Servicio de mensajería",
+    "REPLICA": "Réplica de datos",
+    "SYSTEM_PARTIALLY_DOWN": "Sistema parcialmente caído",
+    "SERVICE_STATUS_UPDATED": "Estado de servicio actualizado.",
+    "HIDE": "Ocultar alertas",
+    "SHOW": "Mostrar alertas"
+  },
+  "PWA": {
+    "TITLE": "Instala SmartEconomato",
+    "INSTALL": "Instalar",
+    "SHARE": "Compartir",
+    "CLOSE": "Cerrar",
+    "MESSAGES": {
+      "INSTALL_STARTED": "✓ Instalación iniciada",
+      "INSTALL_STARTED_SUB": "SmartEconomato se agregará a tu pantalla de inicio",
+      "SHARED": "✓ Compartido",
+      "SHARED_SUB": "Link de SmartEconomato compartido"
+    },
+    "INSTRUCTIONS": {
+      "ALREADY_INSTALLED": "La aplicación ya está instalada en tu dispositivo.",
+      "INSTALL_BTN": "Presiona el botón \"Instalar\" para agregar SmartEconomato a tu pantalla de inicio.",
+      "IOS": "En iOS: Abre el menú (⋯) y selecciona \"Agregar a la pantalla de inicio\"",
+      "ANDROID": "En Android: Abre el menú (⋯) y selecciona \"Instalar aplicación\"",
+      "NOT_SUPPORTED": "Tu navegador no soporta la instalación de PWAs. Actualiza a una versión más reciente."
+    },
+    "SHARE_TEXT": "Instala SmartEconomato - Sistema de gestión de cocina profesional",
+    "NOTIFICATIONS": {
+      "SUCCESS_BODY": "Operación completada correctamente",
+      "ERROR_TITLE": "Error",
+      "ERROR_BODY": "Algo salió mal",
+      "WARNING_BODY": "Aviso importante"
     }
   }
 }

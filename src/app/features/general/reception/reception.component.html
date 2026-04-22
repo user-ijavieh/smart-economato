@@ -97,7 +97,7 @@
               @for (detail of (order.details || []).slice(0, 2); track $index) {
               <div class="item-preview">
                 <span>{{ detail.productName }}</span>
-                <span>{{ detail.quantityReceived ?? detail.quantity }} {{ 'COMMON.UNITS' | translate }}</span>
+                <span>{{ detail.quantityReceived ?? detail.quantity }} {{ (detail.quantityReceived ?? detail.quantity) === 1 ? ('COMMON.UNIT_LOWER' | translate) : ('COMMON.UNITS_LOWER' | translate) }}</span>
               </div>
               }
               @if ((order.details?.length || 0) > 2) {
@@ -187,7 +187,7 @@
               @for (detail of (order.details || []).slice(0, 2); track $index) {
               <div class="item-preview">
                 <span>{{ detail.productName }}</span>
-                <span>{{ detail.quantityReceived ?? detail.quantity }} {{ 'COMMON.UNITS' | translate }}</span>
+                <span>{{ detail.quantityReceived ?? detail.quantity }} {{ (detail.quantityReceived ?? detail.quantity) === 1 ? ('COMMON.UNIT_LOWER' | translate) : ('COMMON.UNITS_LOWER' | translate) }}</span>
               </div>
               }
               @if ((order.details?.length || 0) > 2) {
@@ -202,8 +202,8 @@
             </button>
             <!-- DESHABILITADO: Solicitar colaboración feature
             @if (canRequestCollaborationFromList(order)) {
-              <button class="btn-action btn-warning" (click)="requestCollaborationFromList(order)" title="Solicitar colaboración con el usuario que está revisando">
-                Solicitar colaboración
+              <button class="btn-action btn-warning" (click)="requestCollaborationFromList(order)" [title]="'RECEPTION.MODAL.COLLAB_TOOLTIP' | translate">
+                {{ 'RECEPTION.REQUEST_COLLAB' | translate }}
               </button>
             }
             -->
@@ -271,7 +271,7 @@
               @for (detail of (order.details || []).slice(0, 2); track $index) {
               <div class="item-preview">
                 <span>{{ detail.productName }}</span>
-                <span>{{ detail.quantityReceived ?? detail.quantity }} {{ 'COMMON.UNITS' | translate }}</span>
+                <span>{{ detail.quantityReceived ?? detail.quantity }} {{ (detail.quantityReceived ?? detail.quantity) === 1 ? ('COMMON.UNIT_LOWER' | translate) : ('COMMON.UNITS_LOWER' | translate) }}</span>
               </div>
               }
               @if ((order.details?.length || 0) > 2) {
@@ -341,7 +341,7 @@
               @for (detail of (order.details || []).slice(0, 2); track $index) {
               <div class="item-preview">
                 <span>{{ detail.productName }}</span>
-                <span>{{ detail.quantityReceived ?? detail.quantity }} {{ 'COMMON.UNITS' | translate }}</span>
+                <span>{{ detail.quantityReceived ?? detail.quantity }} {{ (detail.quantityReceived ?? detail.quantity) === 1 ? ('COMMON.UNIT_LOWER' | translate) : ('COMMON.UNITS_LOWER' | translate) }}</span>
               </div>
               }
               @if ((order.details?.length || 0) > 2) {
@@ -414,7 +414,7 @@
               @for (detail of (order.details || []).slice(0, 2); track $index) {
               <div class="item-preview">
                 <span>{{ detail.productName }}</span>
-                <span>{{ detail.quantity }} {{ 'COMMON.UNITS' | translate }}</span>
+                <span>{{ detail.quantity }} {{ (detail.quantity === 1) ? ('COMMON.UNIT_LOWER' | translate) : ('COMMON.UNITS_LOWER' | translate) }}</span>
               </div>
               }
               @if ((order.details?.length || 0) > 2) {

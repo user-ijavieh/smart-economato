@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
-import { CommonModule, DatePipe, DecimalPipe, LowerCasePipe, UpperCasePipe } from '@angular/common';
+import { CommonModule, DatePipe, DecimalPipe, UpperCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { catchError, of } from 'rxjs';
@@ -28,7 +28,7 @@ import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.c
 @Component({
   selector: 'app-order-reception-modal',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent, DatePipe, DecimalPipe, LowerCasePipe, UpperCasePipe, BarcodeScannerComponent, TranslateModule],
+  imports: [FormsModule, BaseModalComponent, DatePipe, DecimalPipe, UpperCasePipe, BarcodeScannerComponent, TranslateModule],
   templateUrl: './order-reception-modal.component.html',
   styleUrl: './order-reception-modal.component.css'
 })
@@ -51,7 +51,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
   private orderReviewLockStateService = inject(OrderReviewLockStateService);
   private orderReviewCollaborationStateService = inject(OrderReviewCollaborationStateService);
   private webSocketService = inject(WebSocketService);
-  private translate = inject(TranslateService);
+  public translate = inject(TranslateService);
 
   isProcessing = false;
   isScaleListening = false;
@@ -286,7 +286,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
   getFormattedQuantity(detail: any): string {
     const expected = detail.quantity || 0;
     const received = this.getTotalReceived(detail);
-    const unit = detail.unit || 'uds';
+    const unit = detail.unit || this.translate.instant('COMMON.UNITS_SHORT') || 'uds';
     return `${expected} / ${received} ${unit}`;
   }
 
@@ -385,7 +385,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
 
   getFieldLockOwner(fieldPath: string): string {
     const lock = this.findFieldLock(fieldPath);
-    return lock?.lockedByDisplayName || lock?.lockedByUsername || 'Otro usuario';
+    return lock?.lockedByDisplayName || lock?.lockedByUsername || this.translate.instant('RECEPTION.MODAL.OTHER_USER') || 'Otro usuario';
   }
 
   onFieldFocus(detail: OrderDetail, lotIndex: number, fieldName: 'quantity' | 'expirationDate' | 'batchCode'): void {
@@ -530,23 +530,23 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
 
   async processReception(): Promise<void> {
     if (this.order.status !== 'REVIEW') {
-      this.messageService.showInfo(`La orden #${this.order.id} ya no está en revisión. Se actualizará la vista.`);
+      this.messageService.showInfo(this.translate.instant('RECEPTION.MESSAGES.REVIEW_RELEASED', { id: this.order.id }) || `La orden #${this.order.id} ya no está en revisión. Se actualizará la vista.`);
       this.close();
       return;
     }
 
     if (Date.now() < this.processCooldownUntil) {
-      this.messageService.showInfo('Espera un momento antes de reintentar. Se está sincronizando el estado de revisión.');
+      this.messageService.showInfo(this.translate.instant('RECEPTION.MESSAGES.SYNCING_WAIT') || 'Espera un momento antes de reintentar. Se está sincronizando el estado de revisión.');
       return;
     }
 
     if (!this.canConfirmReception()) {
-      this.messageService.showError(this.lockInfoDetail || 'La orden está siendo revisada por otro usuario.');
+      this.messageService.showError(this.lockInfoDetail || this.translate.instant('RECEPTION.MESSAGES.REVIEWED_BY_OTHER') || 'La orden está siendo revisada por otro usuario.');
       return;
     }
 
     if (!this.order.details || this.order.details.length === 0) {
-      this.messageService.showError('La orden no tiene productos.');
+      this.messageService.showError(this.translate.instant('RECEPTION.MESSAGES.NO_PRODUCTS') || 'La orden no tiene productos.');
       return;
     }
 
@@ -556,7 +556,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
       return total < 0 || d.lots?.some(lot => lot.quantity < 0 || lot.quantity === null || lot.quantity === undefined);
     });
     if (hasInvalidQuantities) {
-      this.messageService.showError('Por favor revisa que todas las cantidades de los lotes sean números válidos o 0.');
+      this.messageService.showError(this.translate.instant('RECEPTION.MESSAGES.INVALID_QUANTITIES') || 'Por favor revisa que todas las cantidades de los lotes sean números válidos o 0.');
       return;
     }
 
@@ -572,7 +572,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
       d.lots && d.lots.some(lot => lot.expirationDate && !/^\d{4}-\d{2}-\d{2}$/.test(lot.expirationDate))
     );
     if (hasInvalidExpirationDate) {
-      this.messageService.showError('Revisa el formato de fecha de caducidad.');
+      this.messageService.showError(this.translate.instant('RECEPTION.MESSAGES.INVALID_EXP_FORMAT') || 'Revisa el formato de fecha de caducidad.');
       return;
     }
 
@@ -602,7 +602,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
 
     this.orderService.processReception(request).subscribe({
       next: () => {
-        this.messageService.showSuccess('Recepción procesada correctamente');
+        this.messageService.showSuccess(this.translate.instant('RECEPTION.MESSAGES.PROCESS_SUCCESS') || 'Recepción procesada correctamente');
         this.isProcessing = false;
         this.receptionProcessed.emit();
         this.close();
@@ -611,9 +611,10 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
         if (error?.status === 409) {
           const currentStatus = error?.error?.currentStatus;
           if (currentStatus === 'CONFIRMED' || currentStatus === 'INCOMPLETE') {
-            const statusText = currentStatus === 'CONFIRMED' ? 'confirmada' : 'incompleta';
+            const statusTextKey = currentStatus === 'CONFIRMED' ? 'ORDERS.STATUS.CONFIRMED' : 'ORDERS.STATUS.INCOMPLETE';
+            const statusText = this.translate.instant(statusTextKey).toLowerCase();
             const serverMessage = typeof error?.error?.message === 'string' ? error.error.message : null;
-            this.messageService.showError(serverMessage || `La orden #${this.order.id} ya esta ${statusText}.`);
+            this.messageService.showError(serverMessage || this.translate.instant('RECEPTION.MESSAGES.ORDER_ALREADY_STATUS', { id: this.order.id, status: statusText }) || `La orden #${this.order.id} ya esta ${statusText}.`);
             this.receptionProcessed.emit();
             this.close();
             this.isProcessing = false;
@@ -623,12 +624,12 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
           this.processCooldownUntil = Date.now() + OrderReceptionModalComponent.CONFLICT_COOLDOWN_MS;
           const lockedBy = error?.error?.lockedBy;
           const lockText = lockedBy
-            ? `${lockedBy} está revisando esta orden en este momento.`
-            : 'La orden cambió mientras la estabas revisando.';
+            ? this.translate.instant('RECEPTION.MESSAGES.REVISION_CONFLICT', { owner: lockedBy }) || `${lockedBy} está revisando esta orden en este momento.`
+            : this.translate.instant('RECEPTION.MESSAGES.ORDER_CHANGED') || 'La orden cambió mientras la estabas revisando.';
           this.messageService.showError(lockText);
           this.orderReviewLockStateService.refresh(this.order.id).subscribe({ error: () => {} });
         } else {
-          this.messageService.showError('Error al procesar la recepción');
+          this.messageService.showError(this.translate.instant('RECEPTION.MESSAGES.PROCESS_ERROR') || 'Error al procesar la recepción');
         }
         this.isProcessing = false;
       }
@@ -776,10 +777,10 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
           this.conflictBlockedByOtherUser = true;
           this.acquireRetryBlockedUntil = Date.now() + OrderReceptionModalComponent.ACQUIRE_RETRY_COOLDOWN_MS;
           const lockedBy = error?.error?.lockedBy;
-          this.lockInfoTitle = 'Revisión en curso';
+          this.lockInfoTitle = this.translate.instant('RECEPTION.MODAL.REVIEW_IN_PROGRESS');
           this.lockInfoDetail = lockedBy
-            ? `${lockedBy} abrió esta orden. Solo lectura mientras termina.`
-            : 'Otro usuario abrió esta orden. Solo lectura mientras termina.';
+            ? this.translate.instant('RECEPTION.MODAL.REVIEW_IN_PROGRESS_READONLY', { owner: lockedBy })
+            : this.translate.instant('RECEPTION.MODAL.OTHER_USER_READONLY');
           this.lockBlockedForCurrentUser = !this.isCurrentUserAdmin();
           this.requestSharedReviewIfNeeded();
           this.orderReviewLockStateService.refresh(this.order.id).subscribe({ error: () => {} });

@@ -163,7 +163,8 @@ export class ReceptionComponent implements OnInit, OnDestroy {
   }
 
   formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('es-ES', {
+    const locale = this.translate.currentLang === 'es' ? 'es-ES' : 'en-US';
+    return new Date(date).toLocaleDateString(locale, {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric'
@@ -220,15 +221,15 @@ export class ReceptionComponent implements OnInit, OnDestroy {
     }
 
     if (lock.currentUserOwner) {
-      return 'Bloqueo activo';
+      return this.translate.instant('RECEPTION.MODAL.LOCK_ACTIVE') || 'Bloqueo activo';
     }
 
-    const owner = lock.lockedByDisplayName || lock.lockedByUsername || 'Otro usuario';
+    const owner = lock.lockedByDisplayName || lock.lockedByUsername || this.translate.instant('RECEPTION.MODAL.OTHER_USER');
     if (lock.currentUserAdmin) {
-      return `Revisión compartida`;
+      return this.translate.instant('RECEPTION.MODAL.SHARED_REVIEW') || `Revisión compartida`;
     }
 
-    return 'Revisión en curso';
+    return this.translate.instant('RECEPTION.MODAL.REVIEW_IN_PROGRESS') || 'Revisión en curso';
   }
 
   getReviewLockDetail(order: Order): string {
@@ -237,17 +238,17 @@ export class ReceptionComponent implements OnInit, OnDestroy {
       return '';
     }
 
-    const owner = lock.lockedByDisplayName || lock.lockedByUsername || 'Otro usuario';
+    const owner = lock.lockedByDisplayName || lock.lockedByUsername || this.translate.instant('RECEPTION.MODAL.OTHER_USER');
 
     if (lock.currentUserOwner) {
-      return 'Se liberará al salir de esta ventana.';
+      return this.translate.instant('RECEPTION.MODAL.LOCK_RELEASE_INFO') || 'Se liberará al salir de esta ventana.';
     }
 
     if (lock.currentUserAdmin) {
-      return `${owner} la está revisando. Puedes continuar y confirmar en paralelo como ADMIN.`;
+      return this.translate.instant('RECEPTION.MODAL.SHARED_REVIEW_ADMIN_INFO', { owner }) || `${owner} la está revisando. Puedes continuar y confirmar en paralelo como ADMIN.`;
     }
 
-    return `${owner} está revisando esta orden en este momento.`;
+    return this.translate.instant('RECEPTION.MODAL.REVIEW_IN_PROGRESS_INFO', { owner }) || `${owner} está revisando esta orden en este momento.`;
   }
 
   /* DESHABILITADO: canRequestCollaborationFromList feature
@@ -298,10 +299,10 @@ export class ReceptionComponent implements OnInit, OnDestroy {
   requestCollaborationFromList(order: Order): void {
     this.orderReviewCollaborationStateService.requestSharedReview(order.id).subscribe({
       next: () => {
-        this.messageService.showSuccess('Solicitud de colaboración enviada.');
+        this.messageService.showSuccess(this.translate.instant('RECEPTION.MESSAGES.COLLAB_SUCCESS'));
       },
       error: () => {
-        this.messageService.showError('Error al enviar solicitud de colaboración.');
+        this.messageService.showError(this.translate.instant('RECEPTION.MESSAGES.COLLAB_ERROR'));
       }
     });
   }
@@ -320,7 +321,10 @@ export class ReceptionComponent implements OnInit, OnDestroy {
           return;
         }
 
-        const itemsList = missingItems.map(item => `- ${item.productName}: ${item.quantity} ${this.translate.instant('COMMON.UNITS')}`).join('\n');
+        const itemsList = missingItems.map(item => {
+          const unitLabel = item.quantity === 1 ? this.translate.instant('COMMON.UNIT_LOWER') : this.translate.instant('COMMON.UNITS_LOWER');
+          return `- ${item.productName}: ${item.quantity} ${unitLabel}`;
+        }).join('\n');
 
         const confirmed = await this.messageService.confirm(
           this.translate.instant('RECEPTION.CLAIM_MISSING') || 'Reclamar Faltantes',

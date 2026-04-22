@@ -539,7 +539,9 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   }
 
   getReceptionStatusLabel(order: Order): string {
-    return order.receptionDate ? 'Recibido' : 'Pendiente';
+    return order.receptionDate 
+      ? this.translate.instant('COMMON.RECEIVED') 
+      : this.translate.instant('COMMON.STATUS_PENDING');
   }
 
   getReceptionStatusClass(order: Order): string {
@@ -691,13 +693,13 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   private proceedWithRevert(order: Order, previousStatus: OrderStatus): void {
     if (!order.details) return;
     const request = {
-      reason: `Reversión de orden #${order.id}`,
+      reason: this.translate.instant('ORDERS_MGMT.REVERSION_REASON', { id: order.id }),
       orderId: order.id,
       movements: order.details.map((detail: any) => ({
         productId: detail.productId,
         quantityDelta: -detail.quantity,
         movementType: 'AJUSTE' as 'AJUSTE',
-        description: `Reversión automática orden #${order.id}`
+        description: this.translate.instant('ORDERS_MGMT.REVERSION_AUTO_DESC', { id: order.id })
       }))
     };
 
@@ -832,29 +834,29 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
       });
     };
 
-    compareAliases('Estado', ['status', 'estado'], (val) => {
+    compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.STATUS'), ['status', 'estado'], (val) => {
       const normalized = this.normalizeStatus(val);
       return normalized === '—' ? '—' : this.formatStatus(normalized);
     });
-    compareAliases('Nº Detalles', ['numeroDetalles', 'detailsCount', 'detailCount', 'numDetails']);
-    compareAliases('ID Pedido', ['orderId', 'idPedido', 'id_order', 'id']);
-    compareAliases('ID Usuario', ['userId', 'usuarioId', 'idUsuario']);
-    compareAliases('Fecha Orden', ['orderDate', 'fechaOrden'], (val) => this.formatAuditDateValue(val));
+    compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.DETAILS_COUNT'), ['numeroDetalles', 'detailsCount', 'detailCount', 'numDetails']);
+    compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.ORDER_ID'), ['orderId', 'idPedido', 'id_order', 'id']);
+    compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.USER_ID'), ['userId', 'usuarioId', 'idUsuario']);
+    compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.ORDER_DATE'), ['orderDate', 'fechaOrden'], (val) => this.formatAuditDateValue(val));
 
     const hasSupplier = this.getAuditStateValue(prev, ['supplierName', 'nombreProveedor']) !== null
       || this.getAuditStateValue(next, ['supplierName', 'nombreProveedor']) !== null;
     if (hasSupplier) {
-      compareAliases('Proveedor', ['supplierName', 'nombreProveedor']);
+      compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.SUPPLIER'), ['supplierName', 'nombreProveedor']);
     }
 
     const hasTotalPrice = this.getAuditStateValue(prev, ['totalPrice', 'precioTotal']) !== null
       || this.getAuditStateValue(next, ['totalPrice', 'precioTotal']) !== null;
     if (hasTotalPrice) {
-      compareAliases('Precio Total', ['totalPrice', 'precioTotal'], (val) => this.formatCurrency(val));
+      compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.TOTAL_PRICE'), ['totalPrice', 'precioTotal'], (val) => this.formatCurrency(val));
     }
 
     if (this.getAuditStateValue(prev, ['receptionDate', 'fechaRecepcion']) || this.getAuditStateValue(next, ['receptionDate', 'fechaRecepcion'])) {
-      compareAliases('Fecha Recepción', ['receptionDate', 'fechaRecepcion'], (val) => this.formatAuditDateValue(val));
+      compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.RECEPTION_DATE'), ['receptionDate', 'fechaRecepcion'], (val) => this.formatAuditDateValue(val));
     }
 
     return fields;
@@ -901,7 +903,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     if (!dateStr) return '—';
     try {
       const date = new Date(dateStr);
-      return date.toLocaleString('es-ES', {
+      return date.toLocaleString(this.translate.currentLang || [], {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
@@ -915,18 +917,16 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   }
 
   formatDate(dateStr: string): string {
-    return new Date(dateStr).toLocaleString('es-ES', {
+    return new Date(dateStr).toLocaleString(this.translate.currentLang || [], {
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit'
     });
   }
 
   formatStatus(status: string): string {
-    const map: Record<string, string> = {
-      CREATED: 'Creada', PENDING: 'Pendiente', REVIEW: 'Revisión',
-      CONFIRMED: 'Confirmada', INCOMPLETE: 'Incompleta', CANCELLED: 'Cancelada'
-    };
-    return map[status] || status;
+    const key = `COMMON.STATUS_${status}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : status;
   }
 
   getStatusClass(status: string): string {
@@ -958,13 +958,13 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
 
   translateAction(action: string): string {
     const u = action.toUpperCase();
-    if (u.includes('CREATE')) return 'Creación';
-    if (u.includes('UPDATE')) return 'Modificación';
-    if (u.includes('DELETE')) return 'Eliminación';
-    if (u.includes('RECEP')) return 'Recepcionado';
-    if (u.includes('CONFIRM')) return 'Confirmado';
-    if (u.includes('REVERSION')) return 'Reversión';
-    if (u.includes('CAMBIO') && u.includes('ESTADO')) return 'Cambio Estado';
+    if (u.includes('CREATE')) return this.translate.instant('COMMON.AUDIT_ACTIONS.CREATE');
+    if (u.includes('UPDATE')) return this.translate.instant('COMMON.AUDIT_ACTIONS.UPDATE');
+    if (u.includes('DELETE')) return this.translate.instant('COMMON.AUDIT_ACTIONS.DELETE');
+    if (u.includes('RECEP')) return this.translate.instant('COMMON.AUDIT_ACTIONS.RECEPTION');
+    if (u.includes('CONFIRM')) return this.translate.instant('COMMON.AUDIT_ACTIONS.CONFIRM');
+    if (u.includes('REVERSION')) return this.translate.instant('COMMON.AUDIT_ACTIONS.REVERSION');
+    if (u.includes('CAMBIO') && u.includes('ESTADO')) return this.translate.instant('COMMON.AUDIT_ACTIONS.STATUS_CHANGE');
     return action;
   }
 
