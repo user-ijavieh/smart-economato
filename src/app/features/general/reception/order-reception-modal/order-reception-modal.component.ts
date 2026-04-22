@@ -265,9 +265,11 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     try {
       await this.scaleService.startListening({ baudRate: 9600 });
       this.messageService.showInfo('Báscula conectada. Se actualizará el peso hasta cancelar.');
-    } catch {
+    } catch (error: any) {
       this.activeScaleTarget = null;
-      this.messageService.showError('No se pudo iniciar la lectura de la báscula. Revisa permisos o conexión del puerto.');
+      const detail = error?.message || 'Error desconocido';
+      this.messageService.showError(`Error de báscula: ${detail}`);
+      console.error('Error abriendo báscula:', error);
     }
   }
 
