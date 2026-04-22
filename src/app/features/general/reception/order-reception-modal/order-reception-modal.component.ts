@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription, catchError, of } from 'rxjs';
@@ -33,6 +33,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
   private productService = inject(ProductService);
   private scaleService = inject(ScaleService);
   private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
 
   isProcessing = false;
   isScaleListening = false;
@@ -63,10 +64,12 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
 
     this.scaleSubscription = this.scaleService.weight$.subscribe(weight => {
       this.applyWeightToActiveLot(weight);
+      this.cdr.detectChanges();
     });
 
     this.listeningSubscription = this.scaleService.listening$.subscribe(isListening => {
       this.isScaleListening = isListening;
+      this.cdr.detectChanges();
 
       if (!isListening) {
         this.activeScaleTarget = null;
