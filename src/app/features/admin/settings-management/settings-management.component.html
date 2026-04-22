@@ -191,7 +191,7 @@
     <h2>{{ 'SETTINGS.AUDIT.TITLE' | translate }}</h2>
     <section class="stats-row">
       <article class="stat-card stat-total-cost">
-        <p class="stat-number">{{ snapshotMeta.updatedBy || 'N/D' }}</p>
+        <p class="stat-number">{{ snapshotMeta.updatedBy || ('COMMON.N_A' | translate) }}</p>
         <p class="stat-label">
           {{ 'SETTINGS.AUDIT.LAST_EDITION' | translate }}
           <span *ngIf="snapshotMeta.updatedAt"> · {{ snapshotMeta.updatedAt | date: 'short' }}</span>
@@ -216,7 +216,7 @@
         <tbody>
           <tr *ngFor="let log of auditLogs">
             <td>{{ log.changedAt | date: 'short' }}</td>
-            <td>{{ log.username || 'N/D' }}</td>
+            <td>{{ log.username || ('COMMON.N_A' | translate) }}</td>
             <td>{{ log.category }}</td>
             <td>{{ log.fieldName }}</td>
             <td>{{ log.oldValue || '-' }}</td>
@@ -277,12 +277,12 @@
               {{ 'SETTINGS.IA.PROVIDER' | translate }}
               <select [(ngModel)]="aiNewKeyProvider" class="form-input provider-select">
                 <option value="">{{ 'SETTINGS.IA.SELECT_PROVIDER' | translate }}</option>
-                <option value="OPENAI">OpenAI</option>
-                <option value="ANTHROPIC">Anthropic</option>
-                <option value="DEEPSEEK">DeepSeek</option>
-                <option value="GOOGLE">Google</option>
-                <option value="GROK">Grok</option>
-                <option value="GROQ">Groq</option>
+                <option value="OPENAI">{{ 'SETTINGS.IA.PROVIDERS.OPENAI' | translate }}</option>
+                <option value="ANTHROPIC">{{ 'SETTINGS.IA.PROVIDERS.ANTHROPIC' | translate }}</option>
+                <option value="DEEPSEEK">{{ 'SETTINGS.IA.PROVIDERS.DEEPSEEK' | translate }}</option>
+                <option value="GOOGLE">{{ 'SETTINGS.IA.PROVIDERS.GOOGLE' | translate }}</option>
+                <option value="GROK">{{ 'SETTINGS.IA.PROVIDERS.GROK' | translate }}</option>
+                <option value="GROQ">{{ 'SETTINGS.IA.PROVIDERS.GROQ' | translate }}</option>
               </select>
             </label>
             <label class="span-2">
@@ -310,12 +310,12 @@
           <label>
             {{ 'SETTINGS.IA.DEFAULT_PROVIDER' | translate }}
             <select [(ngModel)]="aiChatConfig.defaultProvider" class="form-input">
-              <option value="OPENAI">OpenAI</option>
-              <option value="ANTHROPIC">Anthropic</option>
-              <option value="DEEPSEEK">DeepSeek</option>
-              <option value="GOOGLE">Google</option>
-              <option value="GROK">Grok</option>
-              <option value="GROQ">Groq</option>
+              <option value="OPENAI">{{ 'SETTINGS.IA.PROVIDERS.OPENAI' | translate }}</option>
+              <option value="ANTHROPIC">{{ 'SETTINGS.IA.PROVIDERS.ANTHROPIC' | translate }}</option>
+              <option value="DEEPSEEK">{{ 'SETTINGS.IA.PROVIDERS.DEEPSEEK' | translate }}</option>
+              <option value="GOOGLE">{{ 'SETTINGS.IA.PROVIDERS.GOOGLE' | translate }}</option>
+              <option value="GROK">{{ 'SETTINGS.IA.PROVIDERS.GROK' | translate }}</option>
+              <option value="GROQ">{{ 'SETTINGS.IA.PROVIDERS.GROQ' | translate }}</option>
             </select>
           </label>
           <label>

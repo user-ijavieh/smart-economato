@@ -732,10 +732,11 @@
       "PROFILE": "Perfil"
     },
     "MESSAGES": {
-      "LOAD_TEACHERS_ERROR": "Error al cargar los profesores",
-      "LOAD_HIDDEN_ERROR": "Error al cargar los usuarios desactivados",
-      "LOAD_USERS_ERROR": "Error al cargar los usuarios",
-      "LOAD_ACTIVITY_ERROR": "Error al cargar el historial de actividad",
+      "ERROR_LOADING_TEACHERS": "Error al cargar los profesores",
+      "ERROR_LOADING_HIDDEN_USERS": "Error al cargar los usuarios desactivados",
+      "ERROR_LOADING_USERS": "Error al cargar los usuarios",
+      "ERROR_LOADING_ACTIVITY": "Error al cargar el historial de actividad",
+      "ERROR_TEACHER_STUDENTS": "Error al cargar los alumnos del profesor",
       "LOAD_DETAILS_ERROR": "No se pudieron cargar los datos completos del usuario",
       "UPDATE_SUCCESS": "Usuario actualizado correctamente",
       "UPDATE_ERROR": "Error al actualizar el usuario",
@@ -802,7 +803,8 @@
       "DELETE_CONFIRM_TITLE": "Eliminar Proveedor",
       "DELETE_CONFIRM_MSG": "¿Estás seguro de que deseas eliminar al proveedor {{name}}? Esta acción no se puede deshacer."
     },
-    "PAGINATION_INFO": "Página {{current}} de {{totalPages}} ({{total}} proveedores)"
+    "PAGINATION_INFO": "Página {{current}} de {{totalPages}} ({{total}} proveedores)",
+    "LOAD_ERROR": "Error al cargar los proveedores"
   },
   "SUPPLIER_FORM": {
     "NAME": "Nombre *",
@@ -818,7 +820,9 @@
     "EDIT_TITLE": "Editar Proveedor",
     "SAVE_CHANGES": "Guardar Cambios",
     "CREATE_SUCCESS": "Proveedor creado correctamente",
+    "CREATE_ERROR": "Error al crear el proveedor",
     "UPDATE_SUCCESS": "Proveedor actualizado correctamente",
+    "UPDATE_ERROR": "Error al actualizar el proveedor",
     "DELETE_SUCCESS": "Proveedor eliminado correctamente",
     "DELETE_ERROR_ASSOCIATED": "Error al eliminar el proveedor. Puede tener productos asociados."
   },
@@ -1422,8 +1426,7 @@
     "PAGE_INFO": "Página {{current}} de {{totalPages}}",
     "TOTAL_ITEMS": "({{total}} {{itemType}})"
   },
-  "STOCK_MGMT": {
-    "TITLE": "Gestión de Stock",
+  "BATCHES": {
     "TAB_ALERTS": "Alertas",
     "TAB_PREDICTIONS": "Predicciones",
     "TAB_LEDGER": "Historial",
@@ -1790,6 +1793,14 @@
         "DELETE_SUCCESS": "Clave API para {{provider}} eliminada.",
         "DELETE_CONFIRM_TITLE": "Eliminar clave API",
         "DELETE_CONFIRM_MSG": "¿Eliminar clave API para {{provider}}? Esta acción no se puede deshacer."
+      },
+      "PROVIDERS": {
+        "OPENAI": "OpenAI",
+        "ANTHROPIC": "Anthropic",
+        "DEEPSEEK": "DeepSeek",
+        "GOOGLE": "Google",
+        "GROK": "Grok",
+        "GROQ": "Groq"
       }
     },
     "FILE_TYPES": {
@@ -2614,7 +2625,91 @@
         "EXPIRATION_DATE_REQUIRED": "La fecha de caducidad es obligatoria para un nuevo lote.",
         "ADJUSTMENT_SUCCESS": "Ajuste de stock registrado con éxito",
         "ERROR_REGISTER_ADJUSTMENT": "Error al registrar el ajuste"
+      },
+      "ADJUSTMENT": {
+        "TITLE": "Ajuste Manual de Stock",
+        "ENTRY": "Entrada",
+        "EXIT": "Salida",
+        "QUANTITY": "Cantidad",
+        "MOVEMENT_TYPE": "Tipo de Movimiento",
+        "SEARCH_BATCH": "Buscar lote por ID o código (Opcional)",
+        "BATCH_PLACEHOLDER": "Ej. 42 o LOT-2026-001",
+        "STOCK": "Stock",
+        "FIFO_HINT": "Si no se selecciona, se usa FIFO (salidas) o se crea un nuevo lote (entradas).",
+        "EXPIRATION_DATE": "Fecha Caducidad (Nuevo Lote) *",
+        "NEW_BATCH_HINT": "Obligatorio al crear un nuevo lote por inventario.",
+        "REASON": "Motivo del Ajuste *",
+        "REASON_PLACEHOLDER": "Ej. Corrección inventario, merma no registrada, rotura...",
+        "SUBMITTING": "Registrando...",
+        "SUBMIT": "Registrar Ajuste",
+        "ORDER_MODAL_TITLE": "Generar una Orden de Reposición",
+        "DAYS_COVER_PROMPT": "¿Para cuántos días deseas cubrir el stock estimado?",
+        "DAYS": "días",
+        "TYPES": {
+          "AJUSTE": "AJUSTE",
+          "MERMA": "MERMA",
+          "ENTRADA": "ENTRADA (Extra)",
+          "SALIDA": "SALIDA (Extra)",
+          "RECEPCION": "RECEPCIÓN",
+          "PRODUCCION": "PRODUCCIÓN"
+        }
       }
+    }
+  },
+  "ORDER_BUILDER": {
+    "MODES": {
+      "UNITS": "Unidades",
+      "LOTS": "Lotes"
+    },
+    "TOGGLES": {
+      "ROUND_UP": "Redondear enteros",
+      "CUSTOM_QTY": "Cant. personalizada"
+    },
+    "PANELS": {
+      "ORDERS": "Órdenes",
+      "PENDING": "Pendientes"
+    },
+    "ACTIONS": {
+      "AUTO_CREATE": "Crear automáticamente",
+      "REMOVE": "Quitar",
+      "RETURN": "Devolver",
+      "CONFIRM": "Confirmar pedidos",
+      "CREATING": "Creando..."
+    },
+    "SECTIONS": {
+      "PRODUCTS_COUNT": "{{count}} producto{{count === 1 ? '' : 's'}}."
+    },
+    "TABLE": {
+      "NO_SUPPLIER": "Sin proveedor",
+      "ORDER_TITLE": "Pedido {{num}}",
+      "TO_ORDER": "A pedir",
+      "SUBTOTAL": "Subtotal",
+      "TOTAL": "Total",
+      "DRAG_HINT": "Arrastra aquí productos."
+    },
+    "POOL": {
+      "SEARCH_PLACEHOLDER": "Buscar...",
+      "EMPTY": "No hay productos pendientes."
+    },
+    "UNITS": {
+      "LOT": "Lote",
+      "LOTS": "Lotes",
+      "QTY": "Cant."
+    },
+    "BADGES": {
+      "LOT": "LOTE"
+    },
+    "TOOLTIPS": {
+      "ONLY_UNITS": "Solo disponible en modo Unidades",
+      "LOT_ROUNDED": "Redondeado al lote más cercano"
+    },
+    "MESSAGES": {
+      "NO_ITEMS_ERROR": "No hay grupos de pedido con productos para crear.",
+      "CONFIRM_TITLE": "Crear pedidos",
+      "CONFIRM_MSG": "¿Deseas generar {{count}} pedido(s) de reposición?",
+      "CONFIRM_BTN": "Generar pedidos",
+      "CREATE_SUCCESS": "Pedidos creados correctamente.",
+      "CREATE_ERROR": "Ocurrió un error al crear los pedidos."
     }
   }
 }

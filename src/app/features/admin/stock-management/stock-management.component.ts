@@ -42,6 +42,7 @@ import { Supplier } from '../../../shared/models/supplier.model';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { BarcodeScannerComponent } from '../../general/barcode-scanner/barcode-scanner.component';
+import { OrderBuilderComponent } from '../../../shared/components/order-builder/order-builder.component';
 import { WeeklyPlanRepositionOrderItem } from '../../../shared/models/weekly-plan.model';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -1015,9 +1016,9 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     }
 
     get selectedLedgerUnit(): string {
-        if (!this.selectedProductId) return 'Ud';
+        if (!this.selectedProductId) return this.translate.instant('STOCK_MGMT.LEDGER.NO_UNIT');
         const product = this.ledgerProducts.find(p => p.id === this.selectedProductId);
-        return product?.unit || 'Ud';
+        return product?.unit || this.translate.instant('STOCK_MGMT.LEDGER.NO_UNIT');
     }
 
     toggleLedgerDropdown(): void {
@@ -1433,6 +1434,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             ENTRADA: 'movement-entrada',
             SALIDA: 'movement-salida',
             AJUSTE: 'movement-ajuste',
+            MERMA: 'movement-merma',
             RECEPCION: 'movement-recepcion',
             PRODUCCION: 'movement-produccion'
         };

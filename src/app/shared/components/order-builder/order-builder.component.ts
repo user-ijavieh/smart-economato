@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
 import { OrderService } from '../../../core/services/order.service';
 import { MessageService } from '../../../core/services/message.service';
@@ -10,7 +11,7 @@ import { WeeklyPlanRepositionOrderGroup, WeeklyPlanRepositionOrderItem, WeeklyPl
 @Component({
   selector: 'app-order-builder',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './order-builder.component.html',
   styleUrls: ['./order-builder.component.css']
 })
@@ -18,6 +19,7 @@ export class OrderBuilderComponent implements OnInit {
   private orderService = inject(OrderService);
   private messageService = inject(MessageService);
   private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
 
   @Input() stockOrderItems: WeeklyPlanRepositionOrderItem[] = [];
   @Input() suppliers: Supplier[] = [];
@@ -113,7 +115,7 @@ export class OrderBuilderComponent implements OnInit {
     const groupId = this.nextStockOrderGroupId++;
     return {
       id: groupId,
-      title: `Pedido ${groupId}`,
+      title: this.translate.instant('ORDER_BUILDER.TABLE.ORDER_TITLE', { num: groupId }),
       supplierId: null,
       items: []
     };
@@ -143,7 +145,7 @@ export class OrderBuilderComponent implements OnInit {
   private reindexStockOrderGroups(): void {
     this.stockOrderGroups = this.stockOrderGroups.map((group, index) => ({
       ...group,
-      title: `Pedido ${index + 1}`
+      title: this.translate.instant('ORDER_BUILDER.TABLE.ORDER_TITLE', { num: index + 1 })
     }));
   }
 
@@ -317,12 +319,12 @@ export class OrderBuilderComponent implements OnInit {
 
     const sections: Record<string, WeeklyPlanPoolSupplierSection> = {};
     const noSupplierKey = 'no-supplier';
-    sections[noSupplierKey] = { key: noSupplierKey, label: 'Sin proveedor', items: [] };
+    sections[noSupplierKey] = { key: noSupplierKey, label: this.translate.instant('ORDER_BUILDER.TABLE.NO_SUPPLIER'), items: [] };
 
     for (const item of filtered) {
       const key = item.supplierId ? `sup-${item.supplierId}` : noSupplierKey;
       if (!sections[key]) {
-        sections[key] = { key, label: item.supplierName || 'Sin proveedor', items: [] };
+        sections[key] = { key, label: item.supplierName || this.translate.instant('ORDER_BUILDER.TABLE.NO_SUPPLIER'), items: [] };
       }
       sections[key].items.push(item);
     }
@@ -447,15 +449,15 @@ export class OrderBuilderComponent implements OnInit {
   async confirmCreateStockOrders(): Promise<void> {
     const validGroups = this.stockOrderGroups.filter(group => group.items.length > 0);
     if (!validGroups.length) {
-      this.messageService.showWarning('No hay grupos de pedido con productos para crear.');
+      this.messageService.showWarning(this.translate.instant('ORDER_BUILDER.MESSAGES.NO_ITEMS_ERROR'));
       return;
     }
 
     const confirmed = await this.messageService.confirm(
-      'Crear pedidos',
-      `¿Deseas generar ${validGroups.length} pedido(s) de reposición?`,
-      'Generar pedidos',
-      'Cancelar'
+      this.translate.instant('ORDER_BUILDER.MESSAGES.CONFIRM_TITLE'),
+      this.translate.instant('ORDER_BUILDER.MESSAGES.CONFIRM_MSG', { count: validGroups.length }),
+      this.translate.instant('ORDER_BUILDER.MESSAGES.CONFIRM_BTN'),
+      this.translate.instant('COMMON.CANCEL')
     );
     if (!confirmed) return;
 
@@ -473,11 +475,11 @@ export class OrderBuilderComponent implements OnInit {
         };
         await firstValueFrom(this.orderService.create(orderRequest));
       }
-      this.messageService.showSuccess('Pedidos creados correctamente.');
+      this.messageService.showSuccess(this.translate.instant('ORDER_BUILDER.MESSAGES.CREATE_SUCCESS'));
       this.stockOrderBuilderDirty = false;
       this.completed.emit();
     } catch (err) {
-      this.messageService.showError('Ocurrió un error al crear los pedidos.');
+      this.messageService.showError(this.translate.instant('ORDER_BUILDER.MESSAGES.CREATE_ERROR'));
     } finally {
       this.creatingStockOrders = false;
       this.cdr.detectChanges();
