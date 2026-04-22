@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { CommonModule, DatePipe, DecimalPipe, LowerCasePipe, UpperCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { catchError, of } from 'rxjs';
@@ -21,13 +21,14 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { OrderReviewLockStateService } from '../../../../core/services/order-review-lock-state.service';
 import { OrderReviewCollaborationStateService } from '../../../../core/services/order-review-collaboration-state.service';
 import { WebSocketService } from '../../../../core/services/websocket.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.component';
 
 @Component({
   selector: 'app-order-reception-modal',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent, DatePipe, DecimalPipe, BarcodeScannerComponent],
+  imports: [FormsModule, BaseModalComponent, DatePipe, DecimalPipe, LowerCasePipe, UpperCasePipe, BarcodeScannerComponent, TranslateModule],
   templateUrl: './order-reception-modal.component.html',
   styleUrl: './order-reception-modal.component.css'
 })
@@ -50,6 +51,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
   private orderReviewLockStateService = inject(OrderReviewLockStateService);
   private orderReviewCollaborationStateService = inject(OrderReviewCollaborationStateService);
   private webSocketService = inject(WebSocketService);
+  private translate = inject(TranslateService);
 
   isProcessing = false;
   isScaleListening = false;
@@ -94,10 +96,10 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     }
 
     return await this.messageService.confirm(
-      'Salir de recepción',
-      '¿Salir sin guardar? Los datos introducidos no se conservarán.',
-      'Salir sin guardar',
-      'Volver'
+      this.translate.instant('RECEPTION.MESSAGES.EXIT_WITHOUT_SAVING_TITLE') || 'Salir de recepción',
+      this.translate.instant('RECEPTION.MESSAGES.EXIT_WITHOUT_SAVING') || '¿Salir sin guardar? Los datos introducidos no se conservarán.',
+      this.translate.instant('RECEPTION.MESSAGES.EXIT_WITHOUT_SAVING_BTN') || 'Salir sin guardar',
+      this.translate.instant('COMMON.BACK') || 'Volver'
     );
   };
 
@@ -290,10 +292,10 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
 
   async confirmCancel() {
     const confirmed = await this.messageService.confirm(
-      'Salir de recepción',
-      '¿Salir sin guardar? Los datos introducidos no se conservarán.',
-      'Salir sin guardar',
-      'Volver'
+      this.translate.instant('RECEPTION.MESSAGES.EXIT_WITHOUT_SAVING_TITLE') || 'Salir de recepción',
+      this.translate.instant('RECEPTION.MESSAGES.EXIT_WITHOUT_SAVING') || '¿Salir sin guardar? Los datos introducidos no se conservarán.',
+      this.translate.instant('RECEPTION.MESSAGES.EXIT_WITHOUT_SAVING_BTN') || 'Salir sin guardar',
+      this.translate.instant('COMMON.BACK') || 'Volver'
     );
     if (confirmed) {
       this.close();
@@ -437,7 +439,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     this.requestingSharedReview = true;
     this.orderReviewCollaborationStateService.requestSharedReview(this.order.id).subscribe({
       next: () => {
-        this.messageService.showInfo('Solicitud de revisión compartida enviada.');
+        this.messageService.showInfo(this.translate.instant('RECEPTION.MESSAGES.COLLABORATION_REQUEST_SENT') || 'Solicitud de revisión compartida enviada.');
         this.requestingSharedReview = false;
       },
       error: () => {
@@ -478,16 +480,16 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     }
 
     if (!this.scaleService.isSupported) {
-      this.messageService.showError('Este navegador no soporta conexión serial con báscula. Usa Chrome o Edge recientes.');
+      this.messageService.showError(this.translate.instant('RECEPTION.MODAL.SCALE_NOT_SUPPORTED'));
       return;
     }
 
     try {
       await this.scaleService.startListening({ baudRate: 9600 });
-      this.messageService.showInfo('Báscula conectada. Se actualizará el peso hasta cancelar.');
+      this.messageService.showInfo(this.translate.instant('RECEPTION.MODAL.SCALE_CONNECTED'));
     } catch {
       this.activeScaleTarget = null;
-      this.messageService.showError('No se pudo iniciar la lectura de la báscula. Revisa permisos o conexión del puerto.');
+      this.messageService.showError(this.translate.instant('RECEPTION.MODAL.SCALE_ERROR'));
     }
   }
 
@@ -562,7 +564,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
       d.lots && d.lots.some(lot => lot.quantity > 0 && !lot.expirationDate)
     );
     if (missingExpiration) {
-      this.messageService.showError('La fecha de caducidad es obligatoria para los lotes con cantidad recibida.');
+      this.messageService.showError(this.translate.instant('RECEPTION.MODAL.EXPIRATION_REQUIRED'));
       return;
     }
 
@@ -575,8 +577,8 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     }
 
     const confirmed = await this.messageService.confirm(
-      'Procesar Recepción',
-      `¿Confirmar recepción de la orden #${this.order.id}?`
+      this.translate.instant('RECEPTION.PROCESS_RECEPTION') || 'Procesar Recepción',
+      (this.translate.instant('RECEPTION.MESSAGES.CONFIRM_RECEPTION', { id: this.order.id })) || `¿Confirmar recepción de la orden #${this.order.id}?`
     );
 
     if (!confirmed) {

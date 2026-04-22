@@ -1,7 +1,7 @@
 <div class="reception-page">
   <!-- Header -->
   <header class="page-header reception-header">
-    <h1>Recepción</h1>
+    <h1>{{ 'RECEPTION.TITLE' | translate }}</h1>
   </header>
 
   <!-- Contenido Principal -->
@@ -61,7 +61,7 @@
       </h2>
       @if ((ordersByStatus.PENDING.length || 0) === 0) {
       <div class="empty-section">
-        No hay órdenes pendientes
+        {{ 'RECEPTION.NO_PENDING' | translate }}
       </div>
       } @else {
       <div class="orders-container">
@@ -71,7 +71,7 @@
             <div class="order-title">
               <div class="order-user">
                 <div>
-                  <h3>Orden #{{ order.id }}</h3>
+                  <h3>{{ 'ORDERS.ORDER_NUMBER' | translate: { id: order.id } }}</h3>
                   <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
                 </div>
               </div>
@@ -81,15 +81,15 @@
 
           <div class="order-body">
             <div class="order-detail">
-              <span class="detail-label">Fecha:</span>
+              <span class="detail-label">{{ 'ORDERS.DATE' | translate }}:</span>
               <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
             </div>
             <div class="order-detail">
-              <span class="detail-label">Productos:</span>
+              <span class="detail-label">{{ 'ORDERS.PRODUCTS' | translate }}:</span>
               <span class="detail-value">{{ order.details?.length || 0 }}</span>
             </div>
             <div class="order-detail">
-              <span class="detail-label">Total:</span>
+              <span class="detail-label">{{ 'ORDERS.TOTAL' | translate }}:</span>
               <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
             </div>
 
@@ -97,24 +97,24 @@
               @for (detail of (order.details || []).slice(0, 2); track $index) {
               <div class="item-preview">
                 <span>{{ detail.productName }}</span>
-                <span>{{ detail.quantityReceived ?? detail.quantity }} uds</span>
+                <span>{{ detail.quantityReceived ?? detail.quantity }} {{ 'COMMON.UNITS' | translate }}</span>
               </div>
               }
               @if ((order.details?.length || 0) > 2) {
-              <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
+              <div class="items-more">+{{ (order.details?.length || 0) - 2 }} {{ 'COMMON.MORE' | translate }}</div>
               }
             </div>
           </div>
 
           <div class="order-actions">
             <button class="btn-action btn-secondary" (click)="cancelOrder(order)">
-              Cancelar
+              {{ 'COMMON.CANCEL' | translate }}
             </button>
             <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
-              Ver Detalles
+              {{ 'ORDERS.ACTIONS.VIEW_DETAILS' | translate }}
             </button>
             <button class="btn-action btn-primary" (click)="reviewOrder(order)">
-              Mover a Revisión
+              {{ 'RECEPTION.MOVE_TO_REVIEW' | translate }}
             </button>
           </div>
         </div>
@@ -123,7 +123,7 @@
       @if (hasMore('PENDING')) {
       <div class="load-more-container">
         <button class="btn-load-more" (click)="loadMoreOrders('PENDING')">
-          Cargar más antiguas ({{ getRemainingCount('PENDING') }} restantes)
+          {{ 'RECEPTION.LOAD_OLDER' | translate: { count: getRemainingCount('PENDING') } }}
         </button>
       </div>
       }
@@ -137,7 +137,7 @@
       </h2>
       @if ((ordersByStatus.REVIEW.length || 0) === 0) {
       <div class="empty-section">
-        No hay órdenes en revisión
+        {{ 'RECEPTION.NO_REVIEW' | translate }}
       </div>
       } @else {
       <div class="orders-container">
@@ -147,7 +147,7 @@
             <div class="order-title">
               <div class="order-user">
                 <div>
-                  <h3>Orden #{{ order.id }}</h3>
+                  <h3>{{ 'ORDERS.ORDER_NUMBER' | translate: { id: order.id } }}</h3>
                   <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
                 </div>
               </div>
@@ -171,15 +171,15 @@
 
           <div class="order-body">
             <div class="order-detail">
-              <span class="detail-label">Fecha:</span>
+              <span class="detail-label">{{ 'ORDERS.DATE' | translate }}:</span>
               <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
             </div>
             <div class="order-detail">
-              <span class="detail-label">Productos:</span>
+              <span class="detail-label">{{ 'ORDERS.PRODUCTS' | translate }}:</span>
               <span class="detail-value">{{ order.details?.length || 0 }}</span>
             </div>
             <div class="order-detail">
-              <span class="detail-label">Total:</span>
+              <span class="detail-label">{{ 'ORDERS.TOTAL' | translate }}:</span>
               <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
             </div>
 
@@ -187,18 +187,18 @@
               @for (detail of (order.details || []).slice(0, 2); track $index) {
               <div class="item-preview">
                 <span>{{ detail.productName }}</span>
-                <span>{{ detail.quantityReceived ?? detail.quantity }} uds</span>
+                <span>{{ detail.quantityReceived ?? detail.quantity }} {{ 'COMMON.UNITS' | translate }}</span>
               </div>
               }
               @if ((order.details?.length || 0) > 2) {
-              <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
+              <div class="items-more">+{{ (order.details?.length || 0) - 2 }} {{ 'COMMON.MORE' | translate }}</div>
               }
             </div>
           </div>
 
           <div class="order-actions">
             <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
-              Ver Detalles
+              {{ 'ORDERS.ACTIONS.VIEW_DETAILS' | translate }}
             </button>
             <!-- DESHABILITADO: Solicitar colaboración feature
             @if (canRequestCollaborationFromList(order)) {
@@ -209,9 +209,9 @@
             -->
                 <button class="btn-action btn-success" (click)="openReceptionModal(order)" [disabled]="isReviewBlocked(order)">
               @if (isReviewBlocked(order)) {
-                En revisión
+                {{ 'ORDERS.STATUS.REVIEW' | translate }}
               } @else {
-                Procesar Recepción
+                {{ 'RECEPTION.PROCESS_RECEPTION' | translate }}
               }
             </button>
           </div>
@@ -221,7 +221,7 @@
       @if (hasMore('REVIEW')) {
       <div class="load-more-container">
         <button class="btn-load-more" (click)="loadMoreOrders('REVIEW')">
-          Cargar más antiguas ({{ getRemainingCount('REVIEW') }} restantes)
+          {{ 'RECEPTION.LOAD_OLDER' | translate: { count: getRemainingCount('REVIEW') } }}
         </button>
       </div>
       }
@@ -235,7 +235,7 @@
       </h2>
       @if ((ordersByStatus.CONFIRMED.length || 0) === 0) {
       <div class="empty-section">
-        No hay órdenes confirmadas
+        {{ 'RECEPTION.NO_CONFIRMED' | translate }}
       </div>
       } @else {
       <div class="orders-container">
@@ -245,7 +245,7 @@
             <div class="order-title">
               <div class="order-user">
                 <div>
-                  <h3>Orden #{{ order.id }}</h3>
+                  <h3>{{ 'ORDERS.ORDER_NUMBER' | translate: { id: order.id } }}</h3>
                   <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
                 </div>
               </div>
@@ -255,15 +255,15 @@
 
           <div class="order-body">
             <div class="order-detail">
-              <span class="detail-label">Fecha:</span>
+              <span class="detail-label">{{ 'ORDERS.DATE' | translate }}:</span>
               <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
             </div>
             <div class="order-detail">
-              <span class="detail-label">Productos:</span>
+              <span class="detail-label">{{ 'ORDERS.PRODUCTS' | translate }}:</span>
               <span class="detail-value">{{ order.details?.length || 0 }}</span>
             </div>
             <div class="order-detail">
-              <span class="detail-label">Total:</span>
+              <span class="detail-label">{{ 'ORDERS.TOTAL' | translate }}:</span>
               <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
             </div>
 
@@ -271,18 +271,18 @@
               @for (detail of (order.details || []).slice(0, 2); track $index) {
               <div class="item-preview">
                 <span>{{ detail.productName }}</span>
-                <span>{{ detail.quantityReceived ?? detail.quantity }} uds</span>
+                <span>{{ detail.quantityReceived ?? detail.quantity }} {{ 'COMMON.UNITS' | translate }}</span>
               </div>
               }
               @if ((order.details?.length || 0) > 2) {
-              <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
+              <div class="items-more">+{{ (order.details?.length || 0) - 2 }} {{ 'COMMON.MORE' | translate }}</div>
               }
             </div>
           </div>
 
           <div class="order-actions">
             <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
-              Ver Detalles
+              {{ 'ORDERS.ACTIONS.VIEW_DETAILS' | translate }}
             </button>
           </div>
         </div>
@@ -291,7 +291,7 @@
       @if (hasMore('CONFIRMED')) {
       <div class="load-more-container">
         <button class="btn-load-more" (click)="loadMoreOrders('CONFIRMED')">
-          Cargar más antiguas ({{ getRemainingCount('CONFIRMED') }} restantes)
+          {{ 'RECEPTION.LOAD_OLDER' | translate: { count: getRemainingCount('CONFIRMED') } }}
         </button>
       </div>
       }
@@ -305,7 +305,7 @@
       </h2>
       @if ((ordersByStatus.INCOMPLETE.length || 0) === 0) {
       <div class="empty-section">
-        No hay órdenes incompletas
+        {{ 'RECEPTION.NO_INCOMPLETE' | translate }}
       </div>
       } @else {
       <div class="orders-container">
@@ -315,7 +315,7 @@
             <div class="order-title">
               <div class="order-user">
                 <div>
-                  <h3>Orden #{{ order.id }}</h3>
+                  <h3>{{ 'ORDERS.ORDER_NUMBER' | translate: { id: order.id } }}</h3>
                   <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
                 </div>
               </div>
@@ -325,15 +325,15 @@
 
           <div class="order-body">
             <div class="order-detail">
-              <span class="detail-label">Fecha:</span>
+              <span class="detail-label">{{ 'ORDERS.DATE' | translate }}:</span>
               <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
             </div>
             <div class="order-detail">
-              <span class="detail-label">Productos:</span>
+              <span class="detail-label">{{ 'ORDERS.PRODUCTS' | translate }}:</span>
               <span class="detail-value">{{ order.details?.length || 0 }}</span>
             </div>
             <div class="order-detail">
-              <span class="detail-label">Total:</span>
+              <span class="detail-label">{{ 'ORDERS.TOTAL' | translate }}:</span>
               <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
             </div>
 
@@ -341,21 +341,21 @@
               @for (detail of (order.details || []).slice(0, 2); track $index) {
               <div class="item-preview">
                 <span>{{ detail.productName }}</span>
-                <span>{{ detail.quantityReceived ?? detail.quantity }} uds</span>
+                <span>{{ detail.quantityReceived ?? detail.quantity }} {{ 'COMMON.UNITS' | translate }}</span>
               </div>
               }
               @if ((order.details?.length || 0) > 2) {
-              <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
+              <div class="items-more">+{{ (order.details?.length || 0) - 2 }} {{ 'COMMON.MORE' | translate }}</div>
               }
             </div>
           </div>
 
           <div class="order-actions">
             <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
-              Ver Detalles
+              {{ 'ORDERS.ACTIONS.VIEW_DETAILS' | translate }}
             </button>
             <button class="btn-action btn-primary" (click)="reclamarFaltantes(order)">
-              Reclamar Faltantes
+              {{ 'RECEPTION.CLAIM_MISSING' | translate }}
             </button>
           </div>
         </div>
@@ -364,7 +364,7 @@
       @if (hasMore('INCOMPLETE')) {
       <div class="load-more-container">
         <button class="btn-load-more" (click)="loadMoreOrders('INCOMPLETE')">
-          Cargar más antiguas ({{ getRemainingCount('INCOMPLETE') }} restantes)
+          {{ 'RECEPTION.LOAD_OLDER' | translate: { count: getRemainingCount('INCOMPLETE') } }}
         </button>
       </div>
       }
@@ -378,7 +378,7 @@
       </h2>
       @if ((ordersByStatus.CANCELLED.length || 0) === 0) {
       <div class="empty-section">
-        No hay órdenes canceladas
+        {{ 'RECEPTION.NO_CANCELLED' | translate }}
       </div>
       } @else {
       <div class="orders-container">
@@ -388,7 +388,7 @@
             <div class="order-title">
               <div class="order-user">
                 <div>
-                  <h3>Orden #{{ order.id }}</h3>
+                  <h3>{{ 'ORDERS.ORDER_NUMBER' | translate: { id: order.id } }}</h3>
                   <p>{{ order.userName }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
                 </div>
               </div>
@@ -398,15 +398,15 @@
 
           <div class="order-body">
             <div class="order-detail">
-              <span class="detail-label">Fecha:</span>
+              <span class="detail-label">{{ 'ORDERS.DATE' | translate }}:</span>
               <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
             </div>
             <div class="order-detail">
-              <span class="detail-label">Productos:</span>
+              <span class="detail-label">{{ 'ORDERS.PRODUCTS' | translate }}:</span>
               <span class="detail-value">{{ order.details?.length || 0 }}</span>
             </div>
             <div class="order-detail">
-              <span class="detail-label">Total:</span>
+              <span class="detail-label">{{ 'ORDERS.TOTAL' | translate }}:</span>
               <span class="detail-value total">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
             </div>
 
@@ -414,21 +414,21 @@
               @for (detail of (order.details || []).slice(0, 2); track $index) {
               <div class="item-preview">
                 <span>{{ detail.productName }}</span>
-                <span>{{ detail.quantity }} uds</span>
+                <span>{{ detail.quantity }} {{ 'COMMON.UNITS' | translate }}</span>
               </div>
               }
               @if ((order.details?.length || 0) > 2) {
-              <div class="items-more">+{{ (order.details?.length || 0) - 2 }} más</div>
+              <div class="items-more">+{{ (order.details?.length || 0) - 2 }} {{ 'COMMON.MORE' | translate }}</div>
               }
             </div>
           </div>
 
           <div class="order-actions">
             <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
-              Ver Detalles
+              {{ 'ORDERS.ACTIONS.VIEW_DETAILS' | translate }}
             </button>
             <button class="btn-action btn-delete" (click)="deleteOrder(order)">
-              Eliminar
+              {{ 'COMMON.DELETE' | translate }}
             </button>
           </div>
         </div>
@@ -437,7 +437,7 @@
       @if (hasMore('CANCELLED')) {
       <div class="load-more-container">
         <button class="btn-load-more" (click)="loadMoreOrders('CANCELLED')">
-          Cargar más antiguas ({{ getRemainingCount('CANCELLED') }} restantes)
+          {{ 'RECEPTION.LOAD_OLDER' | translate: { count: getRemainingCount('CANCELLED') } }}
         </button>
       </div>
       }

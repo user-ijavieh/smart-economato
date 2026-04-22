@@ -83,7 +83,25 @@
       "SATURDAY": "Sábado",
       "SUNDAY": "Domingo",
       "DAY": "Día"
-    }
+    },
+    "QUANTITY_SHORT": "Cant",
+    "BATCH": "Lote",
+    "STATUS_CREATED": "Creada",
+    "STATUS_PENDING": "Pendiente",
+    "STATUS_REVIEW": "Revisión",
+    "STATUS_CONFIRMED": "Confirmada",
+    "STATUS_INCOMPLETE": "Incompleta",
+    "STATUS_CANCELLED": "Cancelada",
+    "AUDIT_ACTIONS": {
+      "CREATE": "Creación",
+      "UPDATE": "Actualización",
+      "DELETE": "Eliminación",
+      "STATUS_CHANGE": "Cambio Estado",
+      "RECEIVE": "Recepción",
+      "COOK": "Cocinado"
+    },
+    "PAGE_INFO": "Página {{current}} de {{total}}",
+    "TOTAL_COUNT": "({{count}} {{items}})"
   },
   "LOGIN": {
     "TITLE": "Smart Economato",
@@ -136,7 +154,11 @@
       "INVENTORY": "INVENTARIO",
       "MASTER_DATA": "GESTIÓN",
       "TRACEABILITY": "TRAZABILIDAD"
-    }
+    },
+    "INVENTORY": "Inventario",
+    "ORDERS": "Pedidos",
+    "RECEPTION": "Recepción",
+    "RECIPES": "Recetas"
   },
   "INVENTORY": {
     "TITLE": "Inventario",
@@ -197,10 +219,22 @@
     "EXPIRATION_DATE_LABEL": "Fecha de Expiración (Lote Inicial)",
     "SELECT_SUPPLIER": "Seleccionar proveedor...",
     "CREATE_BTN": "Crear Producto",
-    "SAVE_CHANGES_BTN": "Guardar Cambios"
+    "SAVE_CHANGES_BTN": "Guardar Cambios",
+    "LOT_QUANTITY_LABEL": "Lote de Compra (Opcional)",
+    "LOT_QUANTITY_HINT": "Cantidad mínima o múltiplo de compra.",
+    "EXPIRATION_REQUIRED": "La fecha de caducidad es obligatoria cuando se introduce stock inicial.",
+    "PRICE_PER_LOT_LABEL": "Precio por Lote (€)",
+    "PRICE_PER_LOT_HINT": "Se sincroniza con el precio unitario.",
+    "CONFIRM_CREATE_TITLE": "Confirmar creación",
+    "CONFIRM_CREATE_MSG": "¿Estás seguro de que deseas crear el producto \"{{name}}\"?",
+    "CODE_DETECTED": "Código detectado: {{code}}"
   },
   "PRODUCT_DETAIL": {
     "GENERAL_INFO": "Información General",
+    "CODE": "Código",
+    "SUPPLIER": "Proveedor",
+    "LOT_QUANTITY": "Cantidad por Lote",
+    "LOT_PRICE": "Precio por Lote",
     "PRICE_STOCK_INFO": "Precio y Stock",
     "UNIT_PRICE": "Precio Unitario",
     "CURRENT_STOCK": "Stock Actual",
@@ -294,7 +328,7 @@
     "SESSION_ERROR": "Error de sesión. Por favor inicia sesión de nuevo."
   },
   "INCIDENTS": {
-    "TITLE": "Gestión de incidencias",
+    "TITLE": "Incidencias",
     "ADMIN_TITLE": "Centro de control",
     "TABS": {
       "INCIDENTS": "Incidencias",
@@ -318,7 +352,12 @@
       "REVERT": "Revertir",
       "OPENING": "Abriendo...",
       "CLOSING": "Cerrando...",
-      "REVERTING": "Revirtiendo..."
+      "REVERTING": "Revirtiendo...",
+      "NEW": "Nueva incidencia",
+      "EDIT": "Editar",
+      "ACTIVATE": "Activar",
+      "DEACTIVATE": "Desactivar",
+      "ATTACH_AUDITS": "Adjuntar auditorías"
     },
     "STATS": {
       "TOTAL": "Incidencias totales",
@@ -374,7 +413,18 @@
       "RESOLUTION": "Resolución",
       "CLOSE_WITH_RESOLUTION": "Cerrar con resolución",
       "REVERT_HINT": "La reversión quedará registrada en la incidencia.",
-      "REVERT_REASON": "Motivo"
+      "REVERT_REASON": "Motivo",
+      "CREATE_TITLE": "Nueva incidencia",
+      "EDIT_TYPE_TITLE": "Editar tipo",
+      "NEW_TYPE_TITLE": "Nuevo tipo",
+      "TYPE_NAME": "Nombre",
+      "TYPE_DESC": "Descripción",
+      "CONFIRM_DOWNLOAD_TITLE": "Confirmar descarga",
+      "CONFIRM_DOWNLOAD_TEXT": "¿Deseas descargar este archivo PDF?",
+      "RESET_SECURITY_TITLE": "Confirmación de Seguridad",
+      "RESET_SECURITY_TEXT": "¿Estás SEGURO de que deseas resetear el historial? Esta acción borrará toda la cadena del ledger.",
+      "RESET_IRREVERSIBLE_TITLE": "¡ACCIÓN IRREVERSIBLE!",
+      "RESET_IRREVERSIBLE_TEXT": "Se perderán todos los datos de auditoría y el snapshot actual. ¿Deseas proceder definitivamente?"
     },
     "DETAIL": {
       "SUMMARY": "Resumen",
@@ -406,57 +456,101 @@
       "ATTACH_FILE": "Adjuntar archivo",
       "TAKE_PHOTO": "Tomar foto",
       "SEND": "Enviar",
-      "LOCKED": "La incidencia está cerrada. No se pueden enviar nuevos mensajes."
+      "LOCKED": "La incidencia está cerrada. No se pueden enviar nuevos mensajes.",
+      "MESSAGES": "mensajes",
+      "LOAD_IMAGE": "Cargando imagen...",
+      "NO_CONTENT": "Sin texto"
     },
     "STATUS": {
       "CREADO": "Creada",
       "ABIERTO": "Abierta",
       "CERRADO": "Cerrada",
       "CERRADO_CON_RESOLUCION": "Cerrada con resolución",
-      "CERRADO_SIN_RESOLUCION": "Cerrada sin resolución"
+      "CERRADO_SIN_RESOLUCION": "Cerrada sin resolución",
+      "ACTIVE": "Activo",
+      "INACTIVE": "Inactivo"
     },
     "SEVERITY": {
       "BAJA": "Baja",
       "MEDIA": "Media",
       "ALTA": "Alta",
       "NONE": "Sin nivel"
+    },
+    "CONTROL_CENTER": "Centro de control",
+    "MANAGEMENT": "Gestión de incidencias",
+    "MESSAGES": {
+      "EMPTY": "No hay incidencias",
+      "EMPTY_HINT": "Crea una nueva incidencia o ajusta los filtros para encontrar resultados.",
+      "LOADING_CHAT": "Cargando conversación...",
+      "EMPTY_CHAT": "Todavía no hay mensajes.",
+      "LOCKED": "La incidencia está cerrada. No se pueden enviar nuevos mensajes.",
+      "ATTACH_EMPTY": "No hay auditorías adjuntas.",
+      "ATTACH_SIDE_EMPTY": "No hay auditorías.",
+      "LOADING_ATTACHABLE": "Cargando auditorías adjuntables...",
+      "NO_ATTACHABLE": "No hay auditorías disponibles para adjuntar.",
+      "SAVING": "Guardando...",
+      "OPENING": "Abriendo...",
+      "CLOSING": "Cerrando...",
+      "ATTACHING": "Adjuntando...",
+      "REVERTING": "Revirtiendo..."
     }
   },
   "RECEPTION": {
     "TITLE": "RECEPCIÓN DE ÓRDENES",
     "LOADING": "Cargando órdenes...",
-    "NO_PENDING": "No hay órdenes pendientes",
-    "NO_REVIEW": "No hay órdenes en revisión",
-    "NO_CONFIRMED": "No hay órdenes confirmadas",
-    "NO_INCOMPLETE": "No hay órdenes incompletas",
-    "NO_CANCELLED": "No hay órdenes canceladas",
+    "NO_PENDING": "No hay pedidos pendientes de revisión.",
+    "NO_REVIEW": "No hay pedidos en proceso de revisión.",
+    "NO_CONFIRMED": "No hay pedidos confirmados.",
+    "NO_INCOMPLETE": "No hay pedidos incompletos.",
+    "NO_CANCELLED": "No hay pedidos cancelados.",
     "REVIEW_ORDER": "Revisar Orden",
     "CONFIRM_COMPLETE": "Confirmar Completa",
     "MARK_INCOMPLETE": "Marcar Incompleta",
     "PROCESS_RECEPTION": "Procesar Recepción",
     "CLAIM_MISSING": "Reclamar Faltantes",
     "MOVE_TO_REVIEW": "Mover a Revisión",
+    "LOAD_OLDER": "Cargar {{count}} pedidos más antiguos",
+    "MODAL": {
+      "TITLE": "Recepción de Pedido #{{id}}",
+      "SUMMARY": "Resumen de Recepción",
+      "SEARCH_PRODUCTS": "Buscar Productos",
+      "SEARCH_HINT": "Escanea un código o escribe el nombre para filtrar",
+      "SEARCH_PLACEHOLDER": "Buscar por nombre o código...",
+      "SCAN": "Escanear",
+      "CLEAR": "Limpiar",
+      "PRODUCT": "Producto",
+      "REQUESTED": "Pedido",
+      "RECEIVED_TOTAL": "Recibido Total",
+      "EXPIRY_DATE": "Fecha Caducidad",
+      "LOT_CODE": "Código Lote",
+      "LOT": "Lote",
+      "DELETE_LOT": "Eliminar lote",
+      "START_SCALE": "Iniciar lectura de báscula",
+      "STOP_SCALE": "Detener lectura de báscula",
+      "PROCESSING": "Procesando...",
+      "EXIT_WITHOUT_SAVING_TITLE": "Salir de recepción",
+      "EXIT_WITHOUT_SAVING": "¿Salir sin guardar? Los datos introducidos no se conservarán.",
+      "EXIT_WITHOUT_SAVING_BTN": "Salir sin guardar",
+      "SCALE_NOT_SUPPORTED": "Este navegador no soporta conexión serial con báscula. Usa Chrome o Edge recientes.",
+      "SCALE_CONNECTED": "Báscula conectada. Se actualizará el peso hasta cancelar.",
+      "SCALE_ERROR": "No se pudo iniciar la lectura de la báscula. Revisa permisos o conexión del puerto.",
+      "EXPIRATION_REQUIRED": "La fecha de caducidad es obligatoria para los lotes con cantidad recibida.",
+      "NAME_PLACEHOLDER": "Nombre del producto"
+    },
     "MESSAGES": {
-      "LOAD_ERROR": "Error al cargar órdenes",
+      "LOAD_ERROR": "Error al cargar los pedidos.",
       "REVIEW_CONFIRM_TITLE": "Mover a revisión",
       "REVIEW_CONFIRM_MSG": "¿Mover la orden #{{id}} a revisión?",
       "REVIEWING_INFO": "Revisando orden #{{id}}",
-      "REVIEW_SUCCESS": "Orden movida a revisión",
-      "UPDATE_STATUS_ERROR": "Error al actualizar estado",
-      "CLAIM_MISSING_TITLE": "Reclamar Faltantes",
+      "REVIEW_SUCCESS": "Orden movida a revisión correctamente.",
+      "UPDATE_STATUS_ERROR": "Error al actualizar el estado de la orden.",
+      "CLAIM_NO_MISSING": "No hay productos faltantes para esta orden.",
       "CLAIM_MISSING_MSG": "Los siguientes productos faltan de esta orden:\n\n{{items}}\n\n¿Deseas crear una nueva orden con estos productos faltantes?",
-      "CLAIM_NO_MISSING": "No hay items faltantes para esta orden.",
       "CLAIM_SUCCESS": "Nueva orden creada con los productos faltantes.",
-      "CLAIM_ERROR": "Error al crear la nueva orden.",
-      "CLAIM_FETCH_ERROR": "Error al obtener items faltantes.",
-      "CANCEL_CONFIRM_TITLE": "Cancelar orden",
-      "CANCEL_CONFIRM_MSG": "¿Cancelar la orden #{{id}}? Esta acción no se puede deshacer.",
-      "CANCEL_SUCCESS": "Orden cancelada",
-      "CANCEL_ERROR": "Error al cancelar orden",
-      "DELETE_CONFIRM_TITLE": "Eliminar orden",
-      "DELETE_CONFIRM_MSG": "¿Eliminar permanentemente la orden #{{id}}? Esta acción no se puede deshacer.",
-      "DELETE_SUCCESS": "Orden eliminada correctamente",
-      "DELETE_ERROR": "Error al eliminar orden"
+      "CLAIM_ERROR": "Error al crear la orden de reclamación.",
+      "MISSING_ITEMS_ERROR": "Error al obtener la lista de productos faltantes.",
+      "CONFIRM_RECEPTION": "¿Confirmar recepción de la orden #{{id}}?",
+      "COLLABORATION_REQUEST_SENT": "Solicitud de revisión compartida enviada."
     }
   },
   "RECEPTION_MODAL": {
@@ -490,7 +584,7 @@
   "RECIPES": {
     "TITLE": "Recetas",
     "CREATE": "Crear Receta",
-    "SEARCH_PLACEHOLDER": "Buscar receta...",
+    "SEARCH_PLACEHOLDER": "Buscar por nombre o descripción...",
     "ALLERGENS": "Alérgenos",
     "ALL": "Todos",
     "WITH_ALLERGENS": "Con alérgenos",
@@ -509,11 +603,118 @@
       "PENDING": "Pendiente",
       "APPROVED": "Aprobado",
       "REJECTED": "Rechazado"
+    },
+    "TITLE_LOWER": "recetas",
+    "ADD_RECIPE": "Nueva Receta",
+    "ADD_DRAFT": "Nuevo Borrador",
+    "CREATE_MODAL_TITLE": "Nueva Receta",
+    "CREATE_ACTION_LABEL": "Crear Receta",
+    "EDIT_MODAL_TITLE": "Editar Receta",
+    "PORTION_BASE": "ración",
+    "PORTIONS_BASE": "raciones",
+    "PORTION": "ración",
+    "PORTIONS": "raciones",
+    "ORDER_WIZARD_TITLE": "Generador de pedido basado en recetas",
+    "ORDER_WIZARD": {
+      "SELECT_RECIPES": "Paso 1: Seleccionar Recetas",
+      "CONFIGURE_ORDER": "Paso 2: Configurar Pedido",
+      "STEP_HELP": "Elige las recetas que quieres preparar y la cantidad de raciones para calcular el pedido automáticamente.",
+      "DESIRED_QUANTITIES": "Cantidades deseadas",
+      "BACK_TO_SELECTION": "Volver a selección de recetas"
+    },
+    "CUSTOM_ORDER": "Pedido a medida",
+    "CONTAINS_ALLERGENS": "Contiene alérgenos",
+    "NO_ALLERGENS": "Libre de alérgenos",
+    "ALLERGENS_BADGE": "ALÉRGENOS",
+    "SAFE_BADGE": "SEGURO",
+    "COST": "Coste",
+    "INGREDIENT": "ingrediente",
+    "INGREDIENTS": "ingredientes",
+    "NO_RECIPES_FOUND": "No se han encontrado recetas que coincidan con la búsqueda.",
+    "PRESENTATION": "Presentación",
+    "PRESENTATION_PLACEHOLDER": "Cómo emplatar o presentar el plato...",
+    "ELABORATION": "Elaboración",
+    "ELABORATION_PLACEHOLDER": "Pasos para cocinar la receta...",
+    "ELABORATION_HINT": "Puedes usar listas numeradas (1. paso) o viñetas.",
+    "SELLING_PRICE": "Precio Venta Sugerido",
+    "SELLING_PRICE_CURRENCY": "Precio de Venta (€)",
+    "SUGGEST_PRICE_HINT": "Sugerir precio (Margen 20%)",
+    "COMPONENTS": "Ingredientes / Componentes",
+    "ADD_COMPONENT": "Añadir Ingrediente",
+    "REMOVE_COMPONENT": "Quitar ingrediente",
+    "NAME_PLACEHOLDER": "Nombre de la receta...",
+    "NET": "Neto",
+    "GROSS": "Bruto",
+    "GROSS_SHORT": "Bruto",
+    "SUBTOTAL": "Subtotal",
+    "TOTAL_COST": "Coste Total Receta",
+    "MERMA_HINT": "Mermas aplicadas: {{percent}}%",
+    "WASTE_SHORT": "merma",
+    "NO_ALLERGENS_REG": "No tiene alérgenos registrados.",
+    "DETAIL": "Detalle",
+    "COOK_DETAIL_PLACEHOLDER": "Ej: Menú del día",
+    "COOK": "Registrar Cocinado",
+    "COOK_CONFIRM_TITLE": "Confirmar Cocinado",
+    "COOK_CONFIRM_MSG": "¿Confirmar el cocinado de {{quantity}} raciones de \"{{name}}\"? Se descontarán los ingredientes del stock.",
+    "DRAFTS": {
+      "TITLE": "Mis Borradores",
+      "TITLE_LOWER": "borradores",
+      "CREATE_MODAL_TITLE": "Sugerir Receta (IA)",
+      "CREATE_ACTION_LABEL": "Enviar Sugerencia",
+      "EDIT_MODAL_TITLE": "Editar Borrador",
+      "SAVE_CHANGES": "Guardar Cambios",
+      "SAVE_AND_RESUBMIT": "Guardar y Reenviar",
+      "REJECTION_REASON": "Motivo de rechazo",
+      "VIEW_DRAFT": "Ver detalle del borrador",
+      "EMPTY_MSG": "No tienes borradores de recetas sugeridos.",
+      "LOADING_MORE": "Cargando más borradores...",
+      "NO_COMPONENTS": "No hay componentes definidos.",
+      "RESUBMIT": "Reenviar",
+      "STATUS_PENDING": "Pendiente",
+      "STATUS_APPROVED": "Aprobado",
+      "STATUS_REJECTED": "Rechazado",
+      "LAST_UPDATE": "Última actualización",
+      "REVIEWER": "Revisor",
+      "MESSAGES": {
+        "LOAD_ERROR": "Error al cargar tus borradores.",
+        "NOT_EDITABLE": "Este borrador ya no se puede editar.",
+        "DELETE_CONFIRM_TITLE": "Eliminar Borrador",
+        "DELETE_CONFIRM_MSG": "¿Estás seguro de que deseas eliminar el borrador \"{{name}}\"?",
+        "DELETE_SUCCESS": "Borrador \"{{name}}\" eliminado correctamente.",
+        "DELETE_ERROR": "Error al eliminar el borrador.",
+        "RESUBMIT_SUCCESS": "Borrador \"{{name}}\" reenviado para revisión.",
+        "RESUBMIT_ERROR": "Error al reenviar el borrador.",
+        "SAVE_AND_SENT": "Borrador \"{{name}}\" guardado y enviado para revisión.",
+        "UPDATE_SUCCESS": "Borrador \"{{name}}\" actualizado correctamente.",
+        "UPDATE_ERROR": "Error al actualizar el borrador.",
+        "CREATE_SUCCESS": "Sugerencia \"{{name}}\" enviada correctamente.",
+        "CREATE_ERROR": "Error al enviar la sugerencia de receta."
+      }
+    },
+    "FILTERS": {
+      "ALLERGENS_ALL": "Todos los alérgenos",
+      "ALLERGENS_WITH": "Con alérgenos",
+      "ALLERGENS_WITHOUT": "Sin alérgenos"
+    },
+    "WARNINGS": {
+      "SLOW_LOAD_TITLE": "La carga está tardando",
+      "SLOW_LOAD_MSG": "La respuesta del servidor es más lenta de lo habitual. ¿Quieres seguir esperando o reintentar?",
+      "KEEP_WAITING": "Seguir esperando",
+      "RETRY": "Reintentar"
+    },
+    "MESSAGES": {
+      "LOAD_ERROR": "Error al cargar las recetas.",
+      "SEARCH_ERROR": "Error durante la búsqueda.",
+      "PRINT_SUCCESS": "PDF generado correctamente.",
+      "PRINT_ERROR": "Error al generar el PDF.",
+      "UPDATE_SUCCESS": "Receta \"{{name}}\" actualizada correctamente.",
+      "CREATE_SUCCESS": "Receta \"{{name}}\" creada correctamente.",
+      "COOK_SUCCESS": "Cocinado de \"{{name}}\" registrado. Stock actualizado."
     }
   },
   "ORDERS": {
-    "TITLE": "PEDIDOS",
-    "CREATE_ORDER": "+ CREAR PEDIDO",
+    "TITLE": "Pedidos",
+    "CREATE_ORDER": "Crear Pedido",
     "LOADING": "Cargando pedidos...",
     "NO_PENDING": "No hay pedidos pendientes",
     "CREATE_HINT": "Crea un nuevo pedido para comenzar",
@@ -532,11 +733,27 @@
       "DOWNLOAD_SUCCESS": "PDF descargado correctamente",
       "DOWNLOAD_ERROR": "Error al descargar el PDF",
       "DELETE_CONFIRM_TITLE": "Eliminar pedido",
-      "DELETE_CONFIRM_MSG": "¿Estás seguro de que deseas eliminar el pedido #{{id}}? Esta acción no se puede deshacer.",
+      "DELETE_CONFIRM_MSG": "¿Estás seguro de que quieres eliminar el pedido #{{id}}? Esta acción no se puede deshacer.",
       "DELETE_SUCCESS": "Pedido eliminado correctamente",
       "DELETE_ERROR": "Error al eliminar el pedido",
       "EDIT_CONFIRM_TITLE": "Editar pedido",
-      "EDIT_CONFIRM_MSG": "¿Deseas editar el pedido #{{id}}?"
+      "EDIT_CONFIRM_MSG": "¿Deseas editar el pedido #{{id}}?",
+      "CONFIRM_ORDER_TITLE": "Confirmar pedido",
+      "CONFIRM_ORDER_MSG": "¿Confirmar y enviar el pedido #{{id}} a recepción?",
+      "CONFIRM_SUCCESS": "Pedido enviado a recepción",
+      "CONFIRM_ERROR": "Error al confirmar pedido",
+      "OPEN_ERROR": "No se pudo abrir el pedido #{{id}}.",
+      "CREATE_SUCCESS": "Pedido creado exitosamente",
+      "UPDATE_SUCCESS": "Pedido actualizado exitosamente",
+      "CREATE_ERROR": "Error al crear el pedido",
+      "UPDATE_ERROR": "Error al actualizar el pedido",
+      "LOCK_ERROR_DEFAULT": "El pedido está siendo revisado por otro usuario.",
+      "LOCK_OWNER_TITLE": "Bloqueo activo",
+      "LOCK_OWNER_DETAIL": "La orden está en revisión por tu sesión activa.",
+      "LOCK_ANOTHER_USER": "Otro usuario",
+      "LOCK_IN_PROGRESS": "Revisión en curso",
+      "LOCK_ADMIN_HINT": "{{name}} lo está revisando. Puedes continuar como ADMIN.",
+      "LOCK_USER_HINT": "{{name}} abrió este pedido. Solo lectura mientras termina."
     },
     "STATUS_LABELS": {
       "CREATED": "Creado",
@@ -545,6 +762,54 @@
       "CONFIRMED": "Confirmado",
       "INCOMPLETE": "Incompleto",
       "CANCELLED": "Cancelado"
+    },
+    "EMPTY_TITLE": "No hay pedidos pendientes",
+    "EMPTY_MSG": "Crea un nuevo pedido para comenzar",
+    "DATE": "Fecha",
+    "PRODUCTS": "Productos",
+    "TOTAL": "Total",
+    "STATUS": {
+      "CREATED": "CREADO",
+      "PENDING": "PENDIENTE",
+      "REVIEW": "REVISIÓN",
+      "CONFIRMED": "CONFIRMADO",
+      "CANCELLED": "CANCELADO",
+      "INCOMPLETE": "INCOMPLETO"
+    },
+    "ACTIONS": {
+      "VIEW_DETAILS": "Ver Detalles",
+      "CONFIRM_ORDER": "Confirmar Pedido",
+      "LOAD_MORE": "Cargar más antiguas ({{count}} restantes)"
+    },
+    "MODAL": {
+      "TITLE_CREATE": "Crear Nuevo Pedido",
+      "TITLE_EDIT": "Editar Pedido #{{id}}",
+      "SELECT_SUPPLIER": "Seleccionar Proveedor",
+      "SELECT_USER": "Usuario Responsable",
+      "ADD_PRODUCT": "Añadir Producto",
+      "SEARCH_PRODUCT": "Buscar producto...",
+      "PRODUCTS_IN_ORDER": "Productos en el Pedido ({{count}})",
+      "EMPTY_HINT": "No hay productos agregados. Busca y agrega productos para crear el pedido.",
+      "PRICE": "Precio",
+      "SUBTOTAL": "Subtotal",
+      "ORDER_TOTAL": "Total Pedido",
+      "CANCEL": "Cancelar",
+      "SAVE": "Guardar Pedido",
+      "DELTA_EXACT": "Exacto",
+      "DELTA_EXCESS": "Exceso",
+      "DELTA_MISSING": "Faltante",
+      "DELTA_EXACT_HINT": "Cantidad exacta",
+      "DELTA_MISSING_HINT": "Falta cantidad",
+      "DELTA_EXCESS_HINT": "Hay de más",
+      "VALIDATION": {
+        "SUPPLIER_REQUIRED": "Debes seleccionar un proveedor",
+        "USER_REQUIRED": "Debes seleccionar un usuario",
+        "PRODUCT_REQUIRED": "Selecciona un producto",
+        "INVALID_QUANTITY": "Indica una cantidad válida",
+        "AT_LEAST_ONE": "Debes añadir al menos un producto",
+        "SELECTED_USER": "usuario seleccionado",
+        "CONFIRM_SUBMIT": "¿Crear pedido de {{count}} productos para {{name}}?"
+      }
     }
   },
   "ORDER_MODAL": {
@@ -918,7 +1183,23 @@
       "PRODUCT_COL": "PRODUCTO",
       "QUANTITY_COL": "CANTIDAD CONSUMIDA",
       "EMPTY_STATE": "Genera un informe para visualizar los datos.",
-      "DOWNLOAD_PDF": "Descargar PDF"
+      "DOWNLOAD_PDF": "Descargar PDF",
+      "GENERAL_INFO": "Información General",
+      "TOTAL_COOKINGS": "ELABORACIONES REGISTRADAS",
+      "TOTAL_PORTIONS": "PORCIONES PREPARADAS",
+      "RECIPE_DIVERSITY": "DIVERSIDAD DE RECETAS",
+      "PRODUCT_DIVERSITY": "DIVERSIDAD DE PRODUCTOS",
+      "PARTICIPATING_USERS": "USUARIOS PARTICIPANTES",
+      "TOTAL_ESTIMATED_COST": "COSTE ESTIMADO TOTAL",
+      "AVG_PORTION_PRICE": "PRECIO MEDIO POR PORCIÓN",
+      "EMISSION_DATE": "FECHA DE EMISIÓN",
+      "ECONOMIC_ANALYSIS": "Análisis Económico",
+      "EXPLANATION_MSG": "Los periodos de reporte (diario, semanal, mensual y anual) se calculan por días y meses naturales.",
+      "ESTIMATED_SALES": "VENTAS ESTIMADAS",
+      "EXPIRATION_COST": "GASTO POR CADUCIDAD",
+      "TOP_RECIPES": "Recetas Más Elaboradas",
+      "TOP_USERS": "Usuarios con Mayor Actividad",
+      "INVENTORY_CONSUMPTION": "Análisis de Consumo de Inventario"
     },
     "TRACEABILITY": {
       "MODAL_TITLE": "Trazabilidad de Ingredientes",
@@ -937,7 +1218,11 @@
       "ORDER_CHIP": "Orden #{{id}}",
       "INITIAL_STOCK": "Stock Inicial / Manual",
       "DETAILS_LABEL": "Detalles del Origen",
-      "EMPTY_STATE": "No se encontró información de trazabilidad para los ingredientes."
+      "EMPTY_STATE": "No se encontró información de trazabilidad para los ingredientes.",
+      "COOKING_SUMMARY": "Resumen del Cocinado",
+      "INGREDIENT_ORIGIN": "Origen por Ingrediente",
+      "ORDER_LINK_TITLE": "Ver detalle del pedido",
+      "EMPTY_TRACE": "No se encontró información de trazabilidad para los ingredientes."
     },
     "MESSAGES": {
       "LOAD_ERROR": "No se pudieron cargar los registros de cocina.",
@@ -955,112 +1240,208 @@
       "PDF_SUCCESS": "Informe descargado correctamente.",
       "PDF_ERROR": "Error al descargar el informe PDF.",
       "REPORT_ERROR": "No se pudo generar el informe de cocina",
-      "LOAD_ORDER_ERROR": "No se pudo cargar la orden #{{id}}"
+      "LOAD_ORDER_ERROR": "No se pudo cargar la orden #{{id}}",
+      "EMPTY_HISTORY": "No hay registros de cocina para los filtros aplicados",
+      "LOADING_REPORT": "Generando informe...",
+      "REPORT_TITLE": "Reporte de Cocina",
+      "REPORT_PERIOD": "Periodo: {{period}}",
+      "GENERATE_PROMPT": "Genera un informe para visualizar los datos."
     },
     "RANGES": {
       "DAILY": "Diario",
       "WEEKLY": "Semanal",
       "MONTHLY": "Mensual",
       "YEARLY": "Anual",
-      "ALL_TIME": "Todo el tiempo",
+      "ALL_TIME": "Histórico",
       "CUSTOM": "Personalizado"
+    },
+    "FILTERS": {
+      "SEARCH_PLACEHOLDER": "Buscar en historial...",
+      "RECIPE_ID": "ID Receta",
+      "USER_ID": "ID Usuario",
+      "FROM": "Desde",
+      "TO": "Hasta"
+    },
+    "TABLE": {
+      "DATE": "Fecha",
+      "RECIPE": "Receta",
+      "USER": "Usuario",
+      "QUANTITY": "Cantidad",
+      "ACTIONS": "Acciones"
+    },
+    "ACTIONS": {
+      "APPLY_FILTERS": "Aplicar Filtros",
+      "CLEAR_FILTERS": "Limpiar Filtros",
+      "DOWNLOAD_PDF": "Descargar PDF",
+      "REVERT_COOKING": "Revertir Cocinado",
+      "VIEW_DETAIL": "Ver detalle"
     }
   },
   "ORDERS_MGMT": {
     "TITLE": "Gestión de Órdenes",
-    "TAB_ORDERS": "Órdenes",
-    "TAB_AUDITS": "Auditorías",
-    "SEARCH_PLACEHOLDER": "Buscar por usuario o ID...",
-    "FILTER_ALL_STATUS": "Todos los estados",
-    "FILTER_ALL_SUPPLIERS": "Todos los proveedores",
-    "FILTER_ALL_USERS": "Todos los usuarios",
-    "STATS_TOTAL": "Total Órdenes",
-    "STATS_ACCUMULATED": "Total Acumulado",
-    "EMPTY_ORDERS": "No se encontraron órdenes",
-    "EMPTY_AUDITS": "No se encontraron auditorías",
-    "FIELD": "Campo",
-    "PREV_STATE": "Estado Anterior",
-    "NEW_STATE": "Estado Nuevo",
-    "ORDER_LINES": "Líneas de Pedido",
-    "REVERT_BTN": "Revertir",
-    "LOAD_MORE": "Cargar más líneas",
-    "AUDIT_DETAIL": "Detalle de Auditoría",
-    "CHANGE_STATUS_TITLE": "Cambiar Estado",
-    "NEW_STATUS": "Nuevo estado",
-    "SAVE_CHANGES": "Guardar Cambios",
-    "SAVING": "Guardando...",
-    "EXPORT": "Exportar",
-    "VIEW_DETAILS": "Ver detalles",
-    "ITEMS_PAGINATION": "{{total}} órdenes",
-    "MESSAGES": {
-      "LOAD_ERROR": "Error al cargar las órdenes",
-      "LOAD_AUDITS_ERROR": "Error al cargar las auditorías",
-      "LOAD_DETAILS_ERROR": "No se pudo cargar la orden #{{id}}",
-      "STATUS_UPDATE_SUCCESS": "Estado de la orden #{{id}} actualizado a {{status}}",
-      "STATUS_UPDATE_ERROR": "Error al actualizar el estado de la orden",
+    "TABS": {
+      "ORDERS": "Órdenes",
+      "AUDITS": "Auditoría"
+    },
+    "FILTERS": {
+      "SEARCH_PLACEHOLDER": "Buscar por usuario o ID...",
+      "FROM": "Desde",
+      "TO": "Hasta",
+      "ALL_STATUSES": "Todos los estados",
+      "ALL_SUPPLIERS": "Todos los proveedores",
+      "ALL_USERS": "Todos los usuarios",
+      "CLEAR": "Limpiar Filtros"
+    },
+    "STATS": {
+      "TOTAL_ORDERS": "Total Órdenes",
+      "TOTAL_ACCUMULATED": "Total Acumulado"
+    },
+    "TABLE": {
+      "ID": "ID",
+      "USER": "Usuario",
+      "DATE": "Fecha",
+      "STATUS": "Estado",
+      "TOTAL": "Total",
+      "ACTIONS": "Acciones",
+      "VIEW_DETAILS": "Ver detalles",
+      "CHANGE_STATUS": "Cambiar Estado",
+      "DOWNLOAD_PDF": "Descargar PDF",
+      "REVERT": "Revertir",
       "REVERT_CONFIRM_TITLE": "Revertir orden confirmada",
       "REVERT_CONFIRM_MSG": "Se revertirá la recepción de la orden #{{id}}. Esto devolverá el stock de los productos al inventario y restaurará el estado anterior del pedido.",
       "REVERT_SUCCESS": "Orden revertida correctamente",
-      "REVERT_ERROR": "Error al revertir la orden",
-      "REVERT_STOCK_ERROR": "Error al revertir el stock",
-      "REVERT_HISTORY_NOT_FOUND": "No se encontró el historial del pedido. Revirtiendo al estado inicial.",
-      "REVERT_REASON": "Reversión de orden #{{id}}",
-      "REVERT_DESCRIPTION": "Reversión automática orden #{{id}}",
-      "PDF_CONFIRM_TITLE": "Confirmar descarga",
-      "PDF_CONFIRM_MSG": "¿Deseas descargar este archivo PDF?",
-      "PDF_SUCCESS": "PDF descargado correctamente",
-      "PDF_ERROR": "Error al generar el PDF"
+      "REVERT_ERROR": "Error al revertir el stock",
+      "REVERT_COMM_ERROR": "Error de comunicación al revertir orden",
+      "NO_ORDERS": "No se encontraron órdenes",
+      "PAGE_INFO": "Página {{current}} de {{total}}",
+      "TOTAL_INFO": "({{count}} órdenes)"
     },
-    "AUDIT_ACTIONS": {
-      "ORDER_STATUS_CHANGED": "Estado cambiado",
-      "ORDER_ITEMS_CHANGED": "Items cambiados",
-      "ORDER_CREATED": "Orden creada",
-      "ORDER_DELETED": "Orden eliminada"
-    }
+    "AUDITS": {
+      "SEARCH_PLACEHOLDER": "Buscar por ID de orden o usuario...",
+      "DATE_TIME": "Fecha / Hora",
+      "ACTION": "Acción",
+      "ORDER_STATUS": "Estado pedido",
+      "ORDER_ID": "ID Pedido",
+      "USER": "Usuario",
+      "NO_AUDITS": "No se encontraron auditorías",
+      "MODAL_TITLE": "Detalle de Auditoría",
+      "FIELD": "Campo",
+      "PREVIOUS_STATE": "Estado Anterior",
+      "NEW_STATE": "Estado Nuevo",
+      "ORDER_LINES": "Líneas de Pedido",
+      "PRODUCT": "Producto",
+      "PREVIOUS_QTY": "Cantidad Anterior",
+      "NEW_QTY": "Cantidad Nueva",
+      "TAG_NEW": "Nuevo",
+      "TAG_REMOVED": "Eliminado",
+      "ORDER": "Pedido",
+      "DETAILS": "Detalles",
+      "PAGE_INFO": "Página {{current}} de {{total}}",
+      "TOTAL_INFO": "({{count}} auditorías)"
+    },
+    "STATUS_WARNING": "No se puede editar el estado de una orden confirmada o incompleta.",
+    "LOAD_ERROR": "Error al cargar las órdenes",
+    "AUDIT_LOAD_ERROR": "Error al cargar las auditorías",
+    "AUDIT_HISTORY_ERROR": "No se encontró el historial del pedido. Revirtiendo al estado inicial (Creado).",
+    "PDF_CONFIRM_TITLE": "Confirmar descarga",
+    "PDF_CONFIRM_MSG": "¿Deseas descargar este archivo PDF?",
+    "PDF_SUCCESS": "PDF descargado correctamente",
+    "PDF_ERROR": "Error al generar el PDF",
+    "ORDER_LOAD_ERROR": "No se pudo cargar la orden #{{id}}"
   },
   "PRODUCTS_MGMT": {
     "TITLE": "Gestión de Productos",
-    "TAB_PRODUCTS": "Productos",
-    "TAB_AUDITS": "Auditoría",
-    "SEARCH_PLACEHOLDER": "Buscar por nombre...",
-    "ADD_PRODUCT": "Agregar Producto",
-    "VIEW_ACTIVE": "Ver Activos",
-    "VIEW_DEACTIVATED": "Ver Desactivados",
-    "VIEW_HIDDEN": "Ver Ocultos",
-    "TOTAL_VALUE": "Valor Total",
-    "AVG_PRICE": "Precio Promedio",
-    "NO_PRODUCTS": "No se encontraron productos",
-    "AVAILABILITY": "Disponibilidad",
-    "ALL_MOVEMENTS": "Todos los movimientos",
-    "AUDIT_SEARCH": "Buscar en auditorías...",
-    "NO_AUDITS": "No se encontraron auditorías",
-    "AUDIT_DETAIL": "Detalle de Auditoría",
-    "PREV_STATE": "Estado Anterior",
-    "NEW_STATE": "Estado Nuevo",
-    "PREV_STOCK": "Stock Anterior",
-    "CURRENT_STOCK": "Stock Actual",
-    "DESCRIPTION": "Descripción",
-    "EXCEL": "Excel",
-    "SCAN": "Escanear",
-    "SCAN_BARCODE": "Escanear Código de Barras",
-    "STOCK": "Stock",
-    "PRICE_EUR": "Precio (€)",
+    "TABS": {
+      "PRODUCTS": "Productos",
+      "AUDITS": "Auditoría"
+    },
+    "CONTROLS": {
+      "SEARCH_PLACEHOLDER": "Buscar por nombre...",
+      "SCAN": "Escanear",
+      "SCAN_TITLE": "Escanear código de barras",
+      "ADD_PRODUCT": "Agregar Producto",
+      "VIEW_HIDDEN": "Ver Desactivados",
+      "VIEW_ACTIVE": "Ver Activos",
+      "VIEW_HIDDEN_TITLE": "Ver productos desactivados",
+      "EXCEL_TITLE": "Exportar a Excel",
+      "CLEAR": "Limpiar Filtros"
+    },
+    "STATS": {
+      "TOTAL": "Total",
+      "TOTAL_VALUE": "Valor Total",
+      "AVERAGE_PRICE": "Precio Promedio"
+    },
+    "TABLE": {
+      "NAME": "Nombre",
+      "STOCK": "Stock",
+      "PRICE": "Precio (€)",
+      "LOT": "Lote",
+      "AVAILABILITY": "Disponibilidad",
+      "ACTIONS": "Acciones",
+      "VIEW_DETAIL": "Ver detalle",
+      "EDIT": "Editar",
+      "NO_PRODUCTS": "No se encontraron productos"
+    },
+    "AUDITS": {
+      "SEARCH_PLACEHOLDER": "Buscar en auditorías...",
+      "ALL_MOVEMENTS": "Todos los movimientos",
+      "FROM": "Desde",
+      "TO": "Hasta",
+      "FILTER": "Filtrar",
+      "DATE": "Fecha",
+      "PRODUCT": "Producto",
+      "TYPE": "Tipo",
+      "USER": "Usuario",
+      "DESCRIPTION": "Descripción",
+      "NO_AUDITS": "No se encontraron auditorías",
+      "MODAL_TITLE": "Detalle de Auditoría",
+      "FIELD": "Campo",
+      "PREVIOUS_STATE": "Estado Anterior",
+      "NEW_STATE": "Estado Nuevo",
+      "TAG_ID": "ID",
+      "MESSAGES": {
+        "LOAD_ERROR": "Error al cargar las auditorías",
+        "HISTORY_ERROR": "No se encontró el historial del producto."
+      },
+      "ACTIONS": {
+        "HIDE_PRODUCT": "Producto desactivado",
+        "SHOW_PRODUCT": "Producto activado",
+        "UPDATE_PRODUCT": "Producto actualizado",
+        "CREATE_PRODUCT": "Producto creado",
+        "DELETE_PRODUCT": "Producto eliminado",
+        "STOCK_ADJUSTMENT": "Ajuste de stock",
+        "STOCK_IN": "Entrada de stock",
+        "STOCK_OUT": "Salida de stock",
+        "PRICE_UPDATE": "Actualización de precio",
+        "SUPPLIER_CHANGE": "Cambio de proveedor"
+      },
+      "TYPES": {
+        "MOSTRAR": "Mostrar",
+        "OCULTAR": "Ocultar",
+        "MODIFICACION": "Modificación",
+        "CREACION": "Creación"
+      },
+      "FIELDS": {
+        "NAME": "Nombre",
+        "CODE": "Código",
+        "UNIT": "Unidad",
+        "UNIT_PRICE": "Precio Unitario",
+        "AVAILABILITY": "Disponibilidad",
+        "HIDDEN": "Oculto",
+        "YES": "Sí",
+        "NO": "No",
+        "NOT_DEFINED": "No definido"
+      }
+    },
     "MESSAGES": {
       "LOAD_ERROR": "Error al cargar los productos",
-      "LOAD_AUDITS_ERROR": "Error al cargar las auditorías",
-      "TOGGLE_HIDDEN_SUCCESS": "Producto \"{{name}}\" ha sido {{action}}",
-      "HIDDEN": "desactivado",
-      "SHOWN": "activado",
-      "PRICE_UPDATE": "Actualización de precio",
-      "SUPPLIER_CHANGE": "Cambio de proveedor"
-    },
-    "MOVEMENTS": {
-      "ENTRY": "Entrada",
-      "EXIT": "Salida",
-      "ADJUSTMENT": "Ajuste",
-      "SALE": "Venta",
-      "WASTE": "Mermas",
-      "RETURN": "Devolución"
+      "CREATE_SUCCESS": "Producto creado correctamente",
+      "UPDATE_SUCCESS": "Producto actualizado correctamente",
+      "TOGGLE_HIDDEN_SUCCESS": "Producto {{action}} correctamente",
+      "ACTION_HIDDEN": "desactivado",
+      "ACTION_SHOWN": "activado",
+      "EXCEL_SUCCESS": "Excel descargado correctamente",
+      "EXCEL_ERROR": "Error al descargar Excel"
     }
   },
   "RECIPES_MGMT": {
@@ -1141,209 +1522,6 @@
       "PRESENTATION": "Presentación",
       "TOTAL_COST": "Coste Total",
       "ALLERGENS": "Alérgenos"
-    }
-  },
-  "RECIPES": {
-    "TITLE": "Recetas",
-    "TITLE_LOWER": "recetas",
-    "SEARCH_PLACEHOLDER": "Buscar receta...",
-    "ADD_RECIPE": "Crear Receta",
-    "ADD_DRAFT": "Crear Borrador",
-    "CREATE_MODAL_TITLE": "Crear Nueva Receta",
-    "CREATE_ACTION_LABEL": "Crear Receta",
-    "EDIT_MODAL_TITLE": "Editar Receta",
-    "PORTION_BASE": "ración base",
-    "PORTIONS_BASE": "raciones base",
-    "PORTION": "ración",
-    "PORTIONS": "raciones",
-    "ORDER_WIZARD_TITLE": "Crear pedido a partir de recetas",
-    "ORDER_WIZARD": {
-      "SELECT_RECIPES": "Seleccionar Recetas",
-      "CONFIGURE_ORDER": "Configurar Pedido",
-      "STEP_HELP": "Selecciona las recetas para las que deseas generar un pedido de ingredientes.",
-      "DESIRED_QUANTITIES": "Cantidades deseadas",
-      "BACK_TO_SELECTION": "Volver a selección de recetas",
-      "MESSAGES": {
-        "SELECT_AT_LEAST_ONE": "Selecciona al menos una receta.",
-        "ENRICH_ERROR": "Error al enriquecer información de productos.",
-        "CALCULATION_ERROR": "Error al calcular requisitos."
-      }
-    },
-    "CUSTOM_ORDER": "Orden Personalizada",
-    "CONTAINS_ALLERGENS": "Contiene alérgenos",
-    "NO_ALLERGENS": "Sin alérgenos",
-    "ALLERGENS_BADGE": "Alérgenos",
-    "SAFE_BADGE": "Sin alérgenos",
-    "COST": "Coste",
-    "INGREDIENT": "ingrediente",
-    "INGREDIENTS": "ingredientes",
-    "NO_RECIPES_FOUND": "No se encontraron recetas",
-    "PRESENTATION": "Presentación",
-    "PRESENTATION_PLACEHOLDER": "Describe cómo presentar el plato",
-    "ELABORATION": "Elaboración",
-    "ELABORATION_PLACEHOLDER": "Escribe los pasos de elaboración (uno por línea)",
-    "ELABORATION_HINT": "Cada línea será un paso de elaboración",
-    "PORTIONS": "Raciones",
-    "SELLING_PRICE": "Precio de venta",
-    "SELLING_PRICE_CURRENCY": "Precio de Venta (€)",
-    "SUGGEST_PRICE_HINT": "Sugerir precio (Margen 20%)",
-    "COMPONENTS": "Componentes",
-    "ADD_COMPONENT": "Agregar Componente",
-    "REMOVE_COMPONENT": "Eliminar componente",
-    "NAME_PLACEHOLDER": "Nombre de la receta",
-    "NET": "Neto",
-    "GROSS": "Bruto",
-    "GROSS_SHORT": "Bruto",
-    "SUBTOTAL": "Subtotal",
-    "TOTAL_COST": "Coste total",
-    "MERMA_HINT": "Este producto tiene un {{percent}}% de merma",
-    "WASTE_SHORT": "Merma",
-    "NO_ALLERGENS_REG": "Sin alérgenos registrados.",
-    "DETAIL": "Detalle",
-    "COOK_DETAIL_PLACEHOLDER": "Ej: Pedido mesa 5",
-    "COOK": "Cocinar",
-    "COOK_CONFIRM_TITLE": "Confirmar cocinado",
-    "COOK_CONFIRM_MSG": "¿Deseas cocinar {{quantity}} unidad(es) de \"{{name}}\"?",
-    "DRAFTS": {
-      "TITLE": "Borradores",
-      "TITLE_LOWER": "borradores",
-      "CREATE_MODAL_TITLE": "Crear Nuevo Borrador",
-      "CREATE_ACTION_LABEL": "Guardar Borrador",
-      "EDIT_MODAL_TITLE": "Editar Borrador",
-      "SAVE_AND_RESUBMIT": "Guardar y Reenviar",
-      "SAVE_CHANGES": "Guardar Cambios",
-      "VIEW_DRAFT": "Ver borrador",
-      "REJECTION_REASON": "Motivo rechazo",
-      "EMPTY_MSG": "Aún no tienes borradores",
-      "LOADING_MORE": "Cargando más borradores...",
-      "LAST_UPDATE": "Última actualización",
-      "REVIEWER": "Revisor",
-      "NO_COMPONENTS": "Esta receta aún no tiene componentes.",
-      "STATUS_PENDING": "Pendiente",
-      "STATUS_APPROVED": "Aprobado",
-      "STATUS_REJECTED": "Rechazado",
-      "RESUBMIT": "Reenviar",
-      "DELETE_CONFIRM_TITLE": "Eliminar borrador",
-      "DELETE_CONFIRM_MSG": "¿Seguro que deseas eliminar el borrador \"{{name}}\"?",
-      "NOT_EDITABLE": "Este borrador ya no se puede editar",
-      "MESSAGES": {
-        "LOAD_ERROR": "Error al cargar tus borradores",
-        "DELETE_SUCCESS": "Borrador \"{{name}}\" eliminado",
-        "DELETE_ERROR": "Error al eliminar el borrador",
-        "RESUBMIT_SUCCESS": "Borrador \"{{name}}\" reenviado",
-        "RESUBMIT_ERROR": "Error al reenviar el borrador",
-        "UPDATE_SUCCESS": "Borrador \"{{name}}\" actualizado",
-        "UPDATE_ERROR": "Error al actualizar el borrador",
-        "SAVE_AND_SENT": "Borrador \"{{name}}\" guardado y enviado",
-        "CREATE_SUCCESS": "Borrador \"{{name}}\" creado con éxito",
-        "CREATE_ERROR": "Error al crear el borrador"
-      }
-    },
-    "FILTERS": {
-      "ALLERGENS_ALL": "Alérgenos: Todos",
-      "ALLERGENS_WITH": "Con alérgenos",
-      "ALLERGENS_WITHOUT": "Sin alérgenos"
-    },
-    "WARNINGS": {
-      "SLOW_LOAD_TITLE": "La carga está tardando más de lo normal",
-      "SLOW_LOAD_MSG": "Estamos teniendo una respuesta lenta al cargar recetas. Puedes seguir esperando o reintentar ahora.",
-      "KEEP_WAITING": "Seguir esperando",
-      "RETRY": "Reintentar"
-    },
-    "MESSAGES": {
-      "LOAD_ERROR": "Error al cargar recetas",
-      "SEARCH_ERROR": "Error al buscar recetas",
-      "PRINT_SUCCESS": "PDF descargado correctamente",
-      "PRINT_ERROR": "Error al generar el PDF",
-      "UPDATE_SUCCESS": "Receta \"{{name}}\" actualizada con éxito",
-      "CREATE_SUCCESS": "Receta \"{{name}}\" creada con éxito",
-      "COOK_SUCCESS": "¡\"{{name}}\" cocinada con éxito!",
-      "NAME_REQUIRED": "El nombre de la receta es obligatorio",
-      "AT_LEAST_ONE_COMPONENT": "Debes agregar al menos un componente",
-      "INVALID_COMPONENTS": "Todos los componentes deben tener un producto y cantidad válidos",
-      "ACTION_SHOW": "mostrar",
-      "ACTION_HIDE": "ocultar",
-      "CONFIRM_VISIBILITY_TITLE": "Confirmar {{action}}",
-      "CONFIRM_VISIBILITY_MSG": "¿Estás seguro de que deseas {{action}} la receta \"{{name}}\"?"
-    }
-  },
-  "ORDERS": {
-    "TITLE": "Pedidos",
-    "CREATE_ORDER": "Crear Pedido",
-    "EMPTY_TITLE": "No hay pedidos pendientes",
-    "EMPTY_MSG": "Crea un nuevo pedido para comenzar",
-    "ORDER_NUMBER": "Pedido #{{id}}",
-    "UNKNOWN_USER": "Usuario desconocido",
-    "DATE": "Fecha",
-    "PRODUCTS": "Productos",
-    "TOTAL": "Total",
-    "STATUS": {
-      "CREATED": "CREADO",
-      "PENDING": "PENDIENTE",
-      "REVIEW": "REVISIÓN",
-      "CONFIRMED": "CONFIRMADO",
-      "CANCELLED": "CANCELADO",
-      "INCOMPLETE": "INCOMPLETO"
-    },
-    "ACTIONS": {
-      "VIEW_DETAILS": "Ver Detalles",
-      "CONFIRM_ORDER": "Confirmar Pedido",
-      "LOAD_MORE": "Cargar más antiguas ({{count}} restantes)"
-    },
-    "MESSAGES": {
-      "LOAD_ERROR": "Error al cargar pedidos",
-      "CONFIRM_ORDER_TITLE": "Confirmar pedido",
-      "CONFIRM_ORDER_MSG": "¿Confirmar y enviar el pedido #{{id}} a recepción?",
-      "CONFIRM_SUCCESS": "Pedido enviado a recepción",
-      "CONFIRM_ERROR": "Error al confirmar pedido",
-      "OPEN_ERROR": "No se pudo abrir el pedido #{{id}}.",
-      "DELETE_CONFIRM_TITLE": "Eliminar pedido",
-      "DELETE_CONFIRM_MSG": "¿Estás seguro de que quieres eliminar el pedido #{{id}}? Esta acción no se puede deshacer.",
-      "DELETE_SUCCESS": "Pedido eliminado correctamente",
-      "DELETE_ERROR": "Error al eliminar el pedido",
-      "CREATE_SUCCESS": "Pedido creado exitosamente",
-      "UPDATE_SUCCESS": "Pedido actualizado exitosamente",
-      "CREATE_ERROR": "Error al crear el pedido",
-      "UPDATE_ERROR": "Error al actualizar el pedido",
-      "EDIT_CONFIRM_TITLE": "Editar pedido",
-      "EDIT_CONFIRM_MSG": "¿Deseas editar el pedido #{{id}}?",
-      "LOCK_ERROR_DEFAULT": "El pedido está siendo revisado por otro usuario.",
-      "LOCK_OWNER_TITLE": "Bloqueo activo",
-      "LOCK_OWNER_DETAIL": "La orden está en revisión por tu sesión activa.",
-      "LOCK_ANOTHER_USER": "Otro usuario",
-      "LOCK_IN_PROGRESS": "Revisión en curso",
-      "LOCK_ADMIN_HINT": "{{name}} lo está revisando. Puedes continuar como ADMIN.",
-      "LOCK_USER_HINT": "{{name}} abrió este pedido. Solo lectura mientras termina."
-    },
-    "MODAL": {
-      "TITLE_CREATE": "Crear Nuevo Pedido",
-      "TITLE_EDIT": "Editar Pedido #{{id}}",
-      "SELECT_SUPPLIER": "Seleccionar Proveedor",
-      "SELECT_USER": "Usuario Responsable",
-      "ADD_PRODUCT": "Añadir Producto",
-      "SEARCH_PRODUCT": "Buscar producto...",
-      "PRODUCTS_IN_ORDER": "Productos en el Pedido ({{count}})",
-      "EMPTY_HINT": "No hay productos agregados. Busca y agrega productos para crear el pedido.",
-      "PRICE": "Precio",
-      "SUBTOTAL": "Subtotal",
-      "ORDER_TOTAL": "Total Pedido",
-      "CANCEL": "Cancelar",
-      "SAVE": "Guardar Pedido",
-      "DELTA_EXACT": "Exacto",
-      "DELTA_EXCESS": "Exceso",
-      "DELTA_MISSING": "Faltante",
-      "DELTA_EXACT_HINT": "Cantidad exacta",
-      "DELTA_MISSING_HINT": "Falta cantidad",
-      "DELTA_EXCESS_HINT": "Hay de más",
-      "VALIDATION": {
-        "SUPPLIER_REQUIRED": "Debes seleccionar un proveedor",
-        "USER_REQUIRED": "Debes seleccionar un usuario",
-        "PRODUCT_REQUIRED": "Selecciona un producto",
-        "INVALID_QUANTITY": "Indica una cantidad válida",
-        "AT_LEAST_ONE": "Debes añadir al menos un producto",
-        "SELECTED_USER": "usuario seleccionado",
-        "CONFIRM_SUBMIT": "¿Crear pedido de {{count}} productos para {{name}}?"
-      }
     }
   },
   "STOCK": {
@@ -1427,6 +1605,70 @@
     "TOTAL_ITEMS": "({{total}} {{itemType}})"
   },
   "BATCHES": {
+    "TITLE": "Gestión de Lotes",
+    "TABS": {
+      "ALL": "Todos los Lotes",
+      "CONTROL": "Control de Caducidad"
+    },
+    "SUBTABS": {
+      "EXPIRING": "Por Caducar",
+      "EXPIRED": "Caducados"
+    },
+    "FILTERS": {
+      "SEARCH_PLACEHOLDER": "Buscar por nombre de producto...",
+      "STATUS": "Estado",
+      "STATUS_ALL": "Todos los estados",
+      "STATUS_ACTIVE": "Solo activos",
+      "STATUS_DEPLETED": "Solo agotados",
+      "STATUS_EXPIRED": "Solo caducados",
+      "EXPIRING_IN": "Caducando en",
+      "DAYS": "días",
+      "TOTAL_BATCHES": "Total Lotes"
+    },
+    "TABLE": {
+      "ID": "ID",
+      "PRODUCT": "Producto",
+      "QUANTITY": "Cantidad",
+      "EXPIRATION": "Caducidad",
+      "DAYS_LEFT": "Días restantes",
+      "STATUS": "Estado",
+      "ACTIONS": "Acciones",
+      "INITIAL_QTY": "Cant. Original"
+    },
+    "MESSAGES": {
+      "ERROR_LOAD": "Error al cargar lotes",
+      "ERROR_LOAD_CONTROL": "Error al cargar control de caducidad",
+      "UPDATE_SUCCESS": "Caducidad actualizada correctamente",
+      "ERROR_UPDATE": "Error al actualizar fecha",
+      "WITHDRAW_CONFIRM_TITLE": "Desechar Lote",
+      "WITHDRAW_CONFIRM_EXPIRED_TITLE": "Retirar Lote Caducado",
+      "WITHDRAW_CONFIRM_MSG": "¿Estás seguro de que deseas desechar el lote #{{id}} de {{name}}? Esta acción es irreversible y se registrará como merma.",
+      "WITHDRAW_CONFIRM_EXPIRED_MSG": "¿Estás seguro de que deseas retirar el lote #{{id}} de {{name}} por caducidad? Se registrará como pérdida (merma).",
+      "WITHDRAW_SUCCESS": "Lote desechado correctamente",
+      "WITHDRAW_ERROR": "Error al desechar el lote",
+      "LOAD_TRACEABILITY_ERROR": "Error al cargar trazabilidad",
+      "NO_BATCHES": "No se encontraron lotes activos"
+    },
+    "STATUS": {
+      "DEPLETED": "Agotado",
+      "EXPIRED": "Caducado",
+      "UPCOMING": "Próximo",
+      "ACTIVE": "Activo"
+    },
+    "ACTIONS": {
+      "EDIT": "Editar Caducidad",
+      "DELETE": "Desechar Lote"
+    },
+    "MODALS": {
+      "VIEW_TITLE": "Detalle de Lote",
+      "TRACEABILITY_TAB": "Trazabilidad (Cocinados)",
+      "NO_COOKINGS": "Este lote no ha sido utilizado en ningún cocinado registrado.",
+      "RECIPE": "Receta",
+      "DATE": "Fecha",
+      "QUANTITY": "Cantidad usada",
+      "BATCH_CODE": "Código de lote",
+      "NO_ATTENTION": "No hay lotes que requieran atención inmediata."
+    },
     "TAB_ALERTS": "Alertas",
     "TAB_PREDICTIONS": "Predicciones",
     "TAB_LEDGER": "Historial",
@@ -1543,99 +1785,17 @@
       "PREDICTION": "Predicción",
       "EXPIRATION": "Caducidad",
       "COMBINED": "Combinada"
-    }
-  },
-  "BATCHES": {
-    "TITLE": "Gestión de Lotes",
-    "TABS": {
-      "ALL": "Todos los Lotes",
-      "CONTROL": "Control de Caducidad"
     },
-    "SUBTABS": {
-      "EXPIRING": "Por Caducar",
-      "EXPIRED": "Caducados"
-    },
-    "FILTERS": {
-      "SEARCH_PLACEHOLDER": "Buscar por nombre de producto...",
-      "STATUS": "Estado",
-      "STATUS_ALL": "Todos los estados",
-      "STATUS_ACTIVE": "Solo activos",
-      "STATUS_DEPLETED": "Solo agotados",
-      "STATUS_EXPIRED": "Solo caducados",
-      "EXPIRING_IN": "Caducando en",
-      "DAYS": "días",
-      "TOTAL_BATCHES": "Total Lotes"
-    },
-    "TABLE": {
-      "ID": "ID",
-      "PRODUCT": "Producto",
-      "QUANTITY": "Cantidad",
-      "EXPIRATION": "Caducidad",
-      "DAYS_LEFT": "Días restantes",
-      "STATUS": "Estado",
-      "ACTIONS": "Acciones",
-      "INITIAL_QTY": "Cant. Original"
-    },
-    "MESSAGES": {
-      "ERROR_LOAD": "Error al cargar lotes",
-      "ERROR_LOAD_CONTROL": "Error al cargar control de caducidad",
-      "UPDATE_SUCCESS": "Caducidad actualizada correctamente",
-      "ERROR_UPDATE": "Error al actualizar fecha",
-      "WITHDRAW_CONFIRM_TITLE": "Desechar Lote",
-      "WITHDRAW_CONFIRM_EXPIRED_TITLE": "Retirar Lote Caducado",
-      "WITHDRAW_CONFIRM_MSG": "¿Estás seguro de que deseas desechar el lote #{{id}} de {{name}}? Esta acción es irreversible y se registrará como merma.",
-      "WITHDRAW_CONFIRM_EXPIRED_MSG": "¿Estás seguro de que deseas retirar el lote #{{id}} de {{name}} por caducidad? Se registrará como pérdida (merma).",
-      "WITHDRAW_SUCCESS": "Lote desechado correctamente",
-      "WITHDRAW_ERROR": "Error al desechar el lote",
-      "LOAD_TRACEABILITY_ERROR": "Error al cargar trazabilidad",
-      "NO_BATCHES": "No se encontraron lotes activos"
-    },
-    "STATUS": {
-      "DEPLETED": "Agotado",
-      "EXPIRED": "Caducado",
-      "UPCOMING": "Próximo",
-      "ACTIVE": "Activo"
-    },
-    "ACTIONS": {
-      "EDIT": "Editar Caducidad",
-      "DELETE": "Desechar Lote"
-    },
-    "MODALS": {
-      "VIEW_TITLE": "Detalle de Lote",
-      "TRACEABILITY_TAB": "Trazabilidad (Cocinados)",
-      "NO_COOKINGS": "Este lote no ha sido utilizado en ningún cocinado registrado.",
-      "RECIPE": "Receta",
-      "DATE": "Fecha",
-      "QUANTITY": "Cantidad usada",
-      "BATCH_CODE": "Código de lote",
-      "NO_ATTENTION": "No hay lotes que requieran atención inmediata."
-    }
-  },
-  "TRACEABILITY": {
-    "MESSAGES": {
-      "LOAD_CRISES_ERROR": "No se pudieron cargar las alertas de trazabilidad.",
-      "LOAD_SUPPLIERS_ERROR": "No se pudieron cargar los proveedores.",
-      "LOAD_PRODUCTS_ERROR": "No se pudieron cargar los productos.",
-      "SUPPLIER_REQUIRED": "Debes seleccionar un proveedor.",
-      "PRODUCTS_REQUIRED": "Debes seleccionar al menos un producto.",
-      "REASON_REQUIRED": "Debes indicar un motivo de crisis.",
-      "DATES_REQUIRED": "Debes completar el rango de fechas.",
-      "ACTIVATE_SUCCESS": "Crisis {{code}} activada correctamente.",
-      "ACTIVATE_ERROR": "No se pudo activar la crisis.",
-      "LIFT_CONFIRM_TITLE": "Levantar crisis",
-      "LIFT_CONFIRM_MSG": "¿Seguro que deseas levantar {{code}}?",
-      "INVALID_AVAILABILITY": "La disponibilidad debe estar entre 0 y 100.",
-      "LIFT_SUCCESS": "Crisis {{code}} levantada correctamente.",
-      "LIFT_ERROR": "No se pudo levantar la crisis.",
-      "PDF_CONFIRM_TITLE": "Confirmar descarga",
-      "PDF_CONFIRM_MSG": "¿Deseas descargar este archivo PDF?",
-      "PDF_ERROR": "No se pudo descargar el reporte PDF.",
-      "LOAD_HISTORY_ERROR": "No se pudo cargar el historial."
-    },
-    "LABELS": {
-      "NO_BATCH": "Sin lote",
-      "BATCH": "Lote"
-    }
+    "EXPIRATION_CONTROL": "Control de Caducidades",
+    "BATCH_SHORT": "Lote",
+    "EXPIRED_ON": "Caducó el",
+    "EXPIRING_IN": "Caduca en {{days}} días",
+    "WITHDRAW": "Retirar",
+    "NO_BATCHES_MSG": "No hay lotes caducados ni próximos a caducar.",
+    "TAB_CONTROL": "Control de Caducidad",
+    "WITHDRAW_CONFIRM_TITLE": "Desechar Lote",
+    "WITHDRAW_CONFIRM_MSG": "¿Estás seguro de que deseas desechar el lote #{{id}} de {{name}}? Esta acción es irreversible y se registrará como merma.",
+    "WITHDRAW_SUCCESS": "Lote desechado correctamente"
   },
   "SETTINGS": {
     "TITLE": "Configuraciones del Sistema",
@@ -1869,7 +2029,16 @@
       "SELECT_SUPPLIER": "Debes seleccionar un proveedor.",
       "SELECT_PRODUCTS": "Debes seleccionar al menos un producto.",
       "REASON_REQUIRED": "Debes indicar un motivo de crisis.",
-      "DATES_REQUIRED": "Debes completar el rango de fechas."
+      "DATES_REQUIRED": "Debes completar el rango de fechas.",
+      "LOAD_CRISES_ERROR": "No se pudieron cargar las alertas de trazabilidad.",
+      "LOAD_SUPPLIERS_ERROR": "No se pudieron cargar los proveedores.",
+      "LOAD_PRODUCTS_ERROR": "No se pudieron cargar los productos.",
+      "SUPPLIER_REQUIRED": "Debes seleccionar un proveedor.",
+      "PRODUCTS_REQUIRED": "Debes seleccionar al menos un producto.",
+      "PDF_CONFIRM_TITLE": "Confirmar descarga",
+      "PDF_CONFIRM_MSG": "¿Deseas descargar este archivo PDF?",
+      "PDF_ERROR": "No se pudo descargar el reporte PDF.",
+      "LOAD_HISTORY_ERROR": "No se pudo cargar el historial."
     },
     "MODAL": {
       "DECLARE_TITLE": "Declarar Alerta de Trazabilidad",
@@ -1888,6 +2057,10 @@
       "IMPLICATED_ORDERS": "Pedidos Implicados",
       "IMPLICATED_COOKINGS": "Cocinados Implicados",
       "AVAILABILITY_PLACEHOLDER": "Disp. %"
+    },
+    "LABELS": {
+      "NO_BATCH": "Sin lote",
+      "BATCH": "Lote"
     }
   },
   "WEEKLY_PLANS": {
@@ -2178,199 +2351,6 @@
       "UPCOMING": "PRÓXIMO"
     }
   },
-  "KITCHEN": {
-    "TITLE": "Gestión de Cocina",
-    "TABS": {
-      "HISTORY": "Historial",
-      "REPORTS": "Informes"
-    },
-    "FILTERS": {
-      "SEARCH_PLACEHOLDER": "Buscar en historial...",
-      "RECIPE_ID": "ID Receta",
-      "USER_ID": "ID Usuario",
-      "FROM": "Desde",
-      "TO": "Hasta"
-    },
-    "TABLE": {
-      "DATE": "Fecha",
-      "RECIPE": "Receta",
-      "USER": "Usuario",
-      "QUANTITY": "Cantidad",
-      "ACTIONS": "Acciones"
-    },
-    "RANGES": {
-      "DAILY": "Diario",
-      "WEEKLY": "Semanal",
-      "MONTHLY": "Mensual",
-      "YEARLY": "Anual",
-      "ALL_TIME": "Histórico",
-      "CUSTOM": "Personalizado"
-    },
-    "MESSAGES": {
-      "EMPTY_HISTORY": "No hay registros de cocina para los filtros aplicados",
-      "LOADING_REPORT": "Generando informe...",
-      "REPORT_TITLE": "Reporte de Cocina",
-      "REPORT_PERIOD": "Periodo: {{period}}",
-      "GENERATE_PROMPT": "Genera un informe para visualizar los datos."
-    },
-    "REPORTS": {
-      "GENERAL_INFO": "Información General",
-      "TOTAL_COOKINGS": "ELABORACIONES REGISTRADAS",
-      "TOTAL_PORTIONS": "PORCIONES PREPARADAS",
-      "RECIPE_DIVERSITY": "DIVERSIDAD DE RECETAS",
-      "PRODUCT_DIVERSITY": "DIVERSIDAD DE PRODUCTOS",
-      "PARTICIPATING_USERS": "USUARIOS PARTICIPANTES",
-      "TOTAL_ESTIMATED_COST": "COSTE ESTIMADO TOTAL",
-      "AVG_PORTION_PRICE": "PRECIO MEDIO POR PORCIÓN",
-      "EMISSION_DATE": "FECHA DE EMISIÓN",
-      "ECONOMIC_ANALYSIS": "Análisis Económico",
-      "EXPLANATION_MSG": "Los periodos de reporte (diario, semanal, mensual y anual) se calculan por días y meses naturales.",
-      "ESTIMATED_SALES": "VENTAS ESTIMADAS",
-      "WASTE_COST": "GASTO POR MERMA",
-      "EXPIRATION_COST": "GASTO POR CADUCIDAD",
-      "GROSS_PROFIT": "GANANCIA BRUTA (Teórica)",
-      "NET_PROFIT": "GANANCIA NETA (Real)",
-      "TOP_RECIPES": "Recetas Más Elaboradas",
-      "TOP_USERS": "Usuarios con Mayor Actividad",
-      "INVENTORY_CONSUMPTION": "Análisis de Consumo de Inventario"
-    },
-    "TRACEABILITY": {
-      "MODAL_TITLE": "Trazabilidad de Ingredientes",
-      "LOADING": "Rastreando origen de ingredientes...",
-      "COOKING_SUMMARY": "Resumen del Cocinado",
-      "INGREDIENT_ORIGIN": "Origen por Ingrediente",
-      "BATCH_ORIGIN": "Lote origen",
-      "ORDER_ID": "ID Orden/Entrada",
-      "INITIAL_STOCK": "Stock Inicial / Manual",
-      "ORDER_LINK_TITLE": "Ver detalle del pedido",
-      "EMPTY_TRACE": "No se encontró información de trazabilidad para los ingredientes."
-    },
-    "ACTIONS": {
-      "APPLY_FILTERS": "Aplicar Filtros",
-      "CLEAR_FILTERS": "Limpiar Filtros",
-      "DOWNLOAD_PDF": "Descargar PDF",
-      "REVERT_COOKING": "Revertir Cocinado",
-      "VIEW_DETAIL": "Ver detalle"
-    }
-  },
-  "INCIDENTS": {
-    "TITLE": "Incidencias",
-    "CONTROL_CENTER": "Centro de control",
-    "MANAGEMENT": "Gestión de incidencias",
-    "TABS": {
-      "INCIDENTS": "Incidencias",
-      "TYPES": "Tipos"
-    },
-    "ACTIONS": {
-      "SHOW_FILTERS": "Mostrar filtros",
-      "HIDE_FILTERS": "Ocultar filtros",
-      "NEW": "Nueva incidencia",
-      "EXPORT": "Exportar",
-      "VIEW": "Ver",
-      "OPEN": "Abrir",
-      "CLOSE": "Cerrar",
-      "CLEAR": "Limpiar",
-      "FILTER": "Filtrar",
-      "EDIT": "Editar",
-      "ACTIVATE": "Activar",
-      "DEACTIVATE": "Desactivar",
-      "CANCEL": "Cancelar",
-      "SAVE": "Guardar",
-      "ATTACH_AUDITS": "Adjuntar auditorías",
-      "REVERT": "Revertir"
-    },
-    "STATS": {
-      "TOTAL": "Incidencias totales",
-      "PENDING": "Pendientes y abiertas",
-      "CLOSED": "Cerradas"
-    },
-    "FILTERS": {
-      "SEARCH_PLACEHOLDER": "Buscar por título o ID...",
-      "ALL_TYPES": "Todos los tipos",
-      "ALL_USERS": "Todos los usuarios",
-      "ALL_STATUS": "Todos los estados",
-      "ALL_SEVERITIES": "Todas las severidades",
-      "FROM": "Desde",
-      "TO": "Hasta"
-    },
-    "TABLE": {
-      "ID": "ID",
-      "TITLE": "Título",
-      "TYPE": "Tipo",
-      "STATUS": "Estado",
-      "SEVERITY": "Severidad",
-      "CREATED_BY": "Creado por",
-      "DATE": "Fecha",
-      "CHAT": "Chat",
-      "ACTIONS": "Acciones",
-      "RESPONSIBLE": "Responsable"
-    },
-    "STATUS": {
-      "CREADO": "Creada",
-      "ABIERTO": "Abierta",
-      "CERRADO": "Cerrada",
-      "CERRADO_CON_RESOLUCION": "Cerrada con resolución",
-      "CERRADO_SIN_RESOLUCION": "Cerrada sin resolución",
-      "ACTIVE": "Activo",
-      "INACTIVE": "Inactivo"
-    },
-    "SEVERITY": {
-      "BAJA": "Baja",
-      "MEDIA": "Media",
-      "ALTA": "Alta"
-    },
-    "MESSAGES": {
-      "EMPTY": "No hay incidencias",
-      "EMPTY_HINT": "Crea una nueva incidencia o ajusta los filtros para encontrar resultados.",
-      "LOADING_CHAT": "Cargando conversación...",
-      "EMPTY_CHAT": "Todavía no hay mensajes.",
-      "LOCKED": "La incidencia está cerrada. No se pueden enviar nuevos mensajes.",
-      "ATTACH_EMPTY": "No hay auditorías adjuntas.",
-      "ATTACH_SIDE_EMPTY": "No hay auditorías.",
-      "LOADING_ATTACHABLE": "Cargando auditorías adjuntables...",
-      "NO_ATTACHABLE": "No hay auditorías disponibles para adjuntar.",
-      "SAVING": "Guardando...",
-      "OPENING": "Abriendo...",
-      "CLOSING": "Cerrando...",
-      "ATTACHING": "Adjuntando...",
-      "REVERTING": "Revirtiendo..."
-    },
-    "CHAT": {
-      "MESSAGES": "mensajes",
-      "LOAD_IMAGE": "Cargando imagen...",
-      "DOWNLOAD_ORIGINAL": "Descargar original",
-      "DOWNLOAD_FILE": "Descargar {{name}}",
-      "READ": "Leído",
-      "SENT": "Enviado",
-      "OPTIMIZING": "Optimizando imagen...",
-      "PLACEHOLDER": "Mensaje",
-      "ATTACH_FILE": "Adjuntar archivo",
-      "TAKE_PHOTO": "Tomar foto",
-      "SEND": "Enviar",
-      "NO_CONTENT": "Sin texto"
-    },
-    "MODALS": {
-      "CREATE_TITLE": "Nueva incidencia",
-      "EDIT_TYPE_TITLE": "Editar tipo",
-      "NEW_TYPE_TITLE": "Nuevo tipo",
-      "TYPE_NAME": "Nombre",
-      "TYPE_DESC": "Descripción",
-      "OPEN_TITLE": "Abrir incidencia",
-      "CLOSE_TITLE": "Cerrar incidencia",
-      "CLOSE_WITH_RESOLUTION": "Cerrar con resolución",
-      "RESOLUTION": "Resolución",
-      "ATTACH_TITLE": "Adjuntar auditorías",
-      "REVERT_TITLE": "Revertir auditoría",
-      "REVERT_HINT": "La reversión quedará registrada en la incidencia.",
-      "REVERT_REASON": "Motivo",
-      "CONFIRM_DOWNLOAD_TITLE": "Confirmar descarga",
-      "CONFIRM_DOWNLOAD_TEXT": "¿Deseas descargar este archivo PDF?",
-      "RESET_SECURITY_TITLE": "Confirmación de Seguridad",
-      "RESET_SECURITY_TEXT": "¿Estás SEGURO de que deseas resetear el historial? Esta acción borrará toda la cadena del ledger.",
-      "RESET_IRREVERSIBLE_TITLE": "¡ACCIÓN IRREVERSIBLE!",
-      "RESET_IRREVERSIBLE_TEXT": "Se perderán todos los datos de auditoría y el snapshot actual. ¿Deseas proceder definitivamente?"
-    }
-  },
   "NOTIFICATIONS_MGMT": {
     "TITLE": "Gestión de Notificaciones",
     "TABS": {
@@ -2420,10 +2400,27 @@
     "L": "L",
     "UD": "Ud",
     "GR": "Gr",
-    "ML": "Ml"
+    "ML": "ml",
+    "G": "g",
+    "MG": "mg",
+    "CL": "cl",
+    "DL": "dl",
+    "UND": "Ud",
+    "UNIDAD": "Ud",
+    "UDS": "Uds"
   },
   "PRODUCT_MGMT": {
-    "SCAN": "Escanear Producto"
+    "SCAN": "Escanear",
+    "SCAN_BARCODE": "Escanear código de barras",
+    "EXCEL": "Excel",
+    "ADD_PRODUCT": "Agregar Producto",
+    "MESSAGES": {
+      "CREATE_SUCCESS": "Producto {{name}} creado correctamente.",
+      "UPDATE_SUCCESS": "Producto {{name}} actualizado correctamente.",
+      "TOGGLE_HIDDEN_SUCCESS_SINGLE": "Estado del producto actualizado correctamente."
+    },
+    "PDF_CONFIRM_TITLE": "Confirmar exportación",
+    "PDF_CONFIRM_MSG_EXCEL": "¿Deseas exportar el inventario a Excel?"
   },
   "STOCK_MGMT": {
     "TITLE": "Gestión de Stock",
@@ -2451,7 +2448,10 @@
       "DETAIL": {
         "TYPE": "Tipo",
         "RESOLUTION": "Resolución",
-        "ESTIMATED_DAILY": "Consumo Diario Est."
+        "ESTIMATED_DAILY": "Consumo diario est.",
+        "PROJECTED_14": "Consumo estimado (14 días)",
+        "COVERAGE": "Cobertura Estimada",
+        "LAST_UPDATE": "Última Actualización"
       },
       "TABLE": {
         "PRODUCT": "Producto",
@@ -2470,19 +2470,6 @@
         "PREDICTION": "Predicción",
         "EXPIRATION": "Caducidad",
         "COMBINED": "Combinada"
-      },
-      "INFO": {
-        "CURRENT": "Stock Actual",
-        "CONSUMED": "Consumo Proyectado",
-        "GAP": "Déficit"
-      },
-      "DETAIL": {
-        "TYPE": "Tipo",
-        "RESOLUTION": "Resolución",
-        "ESTIMATED_DAILY": "Consumo diario est.",
-        "PROJECTED_14": "Consumo estimado (14 días)",
-        "COVERAGE": "Cobertura Estimada",
-        "LAST_UPDATE": "Última Actualización"
       },
       "CHART": {
         "TITLE": "Análisis de Consumo y Evolución de Stock",
@@ -2710,6 +2697,146 @@
       "CONFIRM_BTN": "Generar pedidos",
       "CREATE_SUCCESS": "Pedidos creados correctamente.",
       "CREATE_ERROR": "Ocurrió un error al crear los pedidos."
+    }
+  },
+  "PRODUCT_EDIT": {
+    "TITLE": "Editar Producto",
+    "NAME": "Nombre",
+    "NAME_PLACEHOLDER": "Nombre del producto",
+    "CODE": "Código de Producto",
+    "CODE_PLACEHOLDER": "Ej: HAR002",
+    "BARCODE": "Código de Barras",
+    "BARCODE_PLACEHOLDER": "Ej: 8412345678901",
+    "SCAN_TOOLTIP": "Escanear código de barras",
+    "BARCODE_HINT": "Solo números, por ejemplo: 8412345678901.",
+    "UNIT": "Unidad",
+    "UNIT_PRICE": "Precio Unitario",
+    "LOT_QUANTITY": "Cantidad por Lote",
+    "LOT_QUANTITY_PLACEHOLDER": "Ej: 12",
+    "LOT_QUANTITY_HINT": "Múltiplo mínimo de compra.",
+    "PRICE_PER_LOT": "Precio por Lote",
+    "PRICE_PER_LOT_HINT": "Se sincroniza con el precio unitario.",
+    "AVAILABILITY": "Disponibilidad",
+    "AVAILABILITY_TOOLTIP": "Porcentaje aprovechable del producto.",
+    "AVAILABILITY_SUFFIX": "% aprovechable",
+    "AVAILABILITY_HINT": "Rendimiento tras limpieza/merma.",
+    "SUPPLIER": "Proveedor",
+    "SUPPLIER_PLACEHOLDER": "Seleccionar proveedor...",
+    "LOT_CHANGE_TITLE": "Confirmar cambio de lote",
+    "LOT_CHANGE_MSG": "Has cambiado la cantidad por lote. ¿Deseas continuar?",
+    "SCAN_TITLE": "Escanear Código de Barras",
+    "SCAN_SUCCESS": "Código detectado: {{code}}",
+    "SCAN_ERROR": "No se detectó ningún código",
+    "CONFIRM_TOGGLE_TITLE": "{{action}} producto",
+    "CONFIRM_TOGGLE_MSG": "¿Estás seguro de que deseas {{action}} el producto \"{{name}}\"?",
+    "ACTIONS": {
+      "ACTIVATE": "Activar Producto",
+      "ARCHIVE": "Archivar Producto",
+      "ACTIVATE_VERB": "activar",
+      "ARCHIVE_VERB": "archivar"
+    },
+    "PRODUCT": "Producto"
+  },
+  "STOCK_UPDATE": {
+    "TITLE": "Actualizar Stock",
+    "CURRENT_STOCK_SYSTEM": "Stock actual en sistema",
+    "NEW_STOCK": "Nuevo stock real",
+    "HINT": "Introduce el stock total tras el ajuste físico.",
+    "EXPIRATION_DATE": "Fecha de Expiración",
+    "REQUIRED_ON_INCREASE": "Obligatorio si hay entrada",
+    "EXPIRATION_HINT": "Si aumentas stock, debes indicar la caducidad del nuevo lote.",
+    "EXPIRATION_REQUIRED": "La fecha de caducidad es obligatoria para entradas de stock.",
+    "CONFIRM": "Confirmar Ajuste"
+  },
+  "WEEKLY_PLANS_MGMT": {
+    "TITLE": "Planes Semanales",
+    "SUBTITLE": "Vista administrativa con resumen global y por profesor.",
+    "NEW_PLAN": "Nuevo plan",
+    "VISION": {
+      "LABEL": "Visión",
+      "GLOBAL": "Vista global",
+      "TEACHER": "Vista del profesor: {{name}}",
+      "SEARCH_LABEL": "Profesor",
+      "SEARCH_PLACEHOLDER": "Buscar profesor por nombre o usuario"
+    },
+    "SUMMARY": {
+      "PLANS": "Planes",
+      "ACTIVE": "Activos / en curso",
+      "DRAFTS": "Borradores",
+      "COMPLETED": "Finalizados",
+      "TOTAL_SESSIONS": "Sesiones totales",
+      "CONFIRMED_SESSIONS": "Sesiones confirmadas"
+    },
+    "LIST": {
+      "TITLE": "Listado de planes",
+      "RESULTS": "{{count}} resultado",
+      "RESULTS_PLURAL": "{{count}} resultados",
+      "LOADING": "Cargando planes...",
+      "EMPTY": "No hay planes para la vista seleccionada.",
+      "WEEK": "Semana",
+      "CHEF": "Chef",
+      "SESSIONS": "{{count}} sesiones",
+      "EDIT": "Editar",
+      "DUPLICATE": "Duplicar"
+    },
+    "STATUS": {
+      "DRAFT": "Borrador",
+      "ACTIVE": "Activo",
+      "IN_PROGRESS": "En curso",
+      "COMPLETED": "Finalizado",
+      "CANCELLED": "Cancelado"
+    }
+  },
+  "SUPPLIERS_MGMT": {
+    "CACHE_INFO": "Caché de proveedores actualizada el {{date}}",
+    "UPDATE_CACHE": "Actualizar lista",
+    "UPDATING": "Actualizando...",
+    "MESSAGES": {
+      "CACHE_UPDATED": "Lista de proveedores actualizada correctamente",
+      "CACHE_ERROR": "Error al actualizar proveedores"
+    }
+  },
+  "AI_CHAT": {
+    "NEW_CHAT": "Nuevo Chat",
+    "CHANGE_PROVIDER": "Cambiar proveedor",
+    "HISTORY": "Historial de chats",
+    "GREETING": "¿En qué te puedo ayudar hoy?",
+    "NO_MESSAGES": "Sin mensajes en este chat",
+    "REASONING": "Razonando",
+    "VIEW_REASONING": "Visualizar razonamiento",
+    "TOOLS_USED": "Herramientas utilizadas",
+    "GENERATING": "Generando…",
+    "PLACEHOLDER": "Envía un mensaje a la IA...",
+    "STOP_GEN": "Detener generación",
+    "SEND_MSG": "Enviar mensaje",
+    "HISTORY_TITLE": "Historial de Chats",
+    "SEARCH_PLACEHOLDER": "Buscar por título o ID",
+    "NO_CONVERSATIONS": "Sin conversaciones",
+    "MESSAGES_COUNT": "{{count}} mensajes",
+    "EDIT": "Editar",
+    "ARCHIVE": "Archivar chat",
+    "ARCHIVE_CONFIRM_TITLE": "Archivar chat",
+    "ARCHIVE_CONFIRM_MSG": "Se archivará el chat \"{{title}}\". ¿Deseas continuar?",
+    "ARCHIVE_SUCCESS": "Chat archivado",
+    "RENAME_TITLE": "Editar chat",
+    "RENAME_LABEL": "Título",
+    "RENAME_PLACEHOLDER": "Título del chat",
+    "UPDATE_SUCCESS": "Chat actualizado",
+    "PROVIDER_MODAL_TITLE": "Cambiar proveedor",
+    "PROVIDER_LABEL": "Proveedor",
+    "PROVIDER_SUCCESS": "Proveedor actualizado",
+    "CANCEL": "Cancelar",
+    "SAVE": "Guardar",
+    "UPDATE": "Actualizar",
+    "ROLES": {
+      "USER": "Usuario",
+      "IA": "IA",
+      "SYSTEM": "Sistema",
+      "TOOL": "Herramienta"
+    },
+    "MESSAGES": {
+      "RETRYING": "Se perdió el stream. Reintentando una vez...",
+      "STREAM_ERROR": "No se pudo completar la respuesta IA: {{message}}"
     }
   }
 }

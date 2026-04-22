@@ -61,10 +61,10 @@
           <tr>
             <th class="sortable" (click)="onSort('id')" [attr.data-sort-dir]="getSortDir('id')">{{ 'BATCHES.TABLE.ID' | translate }}</th>
             <th class="sortable" (click)="onSort('productName')" [attr.data-sort-dir]="getSortDir('productName')">{{ 'BATCHES.TABLE.PRODUCT' | translate }}</th>
-            <th>{{ 'BATCHES.MODALS.BATCH_CODE' | translate || 'Código Lote' }}</th>
-            <th>{{ 'BATCHES.TABLE.INITIAL_QTY' | translate || 'Cant. Original' }}</th>
-            <th class="sortable" (click)="onSort('remainingQuantity')" [attr.data-sort-dir]="getSortDir('remainingQuantity')">{{ 'STOCK.PROJECTED.STOCK' | translate || 'Stock' }}</th>
-            <th class="sortable" (click)="onSort('receivedAt')" [attr.data-sort-dir]="getSortDir('receivedAt')">{{ 'COMMON.RECEIVED' | translate || 'Recibido' }}</th>
+            <th>{{ 'BATCHES.MODALS.BATCH_CODE' | translate }}</th>
+            <th>{{ 'BATCHES.TABLE.INITIAL_QTY' | translate }}</th>
+            <th class="sortable" (click)="onSort('remainingQuantity')" [attr.data-sort-dir]="getSortDir('remainingQuantity')">{{ 'STOCK.PROJECTED.STOCK' | translate }}</th>
+            <th class="sortable" (click)="onSort('receivedAt')" [attr.data-sort-dir]="getSortDir('receivedAt')">{{ 'COMMON.RECEIVED' | translate }}</th>
             <th class="sortable" (click)="onSort('expirationDate')" [attr.data-sort-dir]="getSortDir('expirationDate')">{{ 'BATCHES.TABLE.EXPIRATION' | translate }}</th>
             <th>{{ 'BATCHES.TABLE.STATUS' | translate }}</th>
             <th>{{ 'BATCHES.TABLE.ACTIONS' | translate }}</th>
@@ -135,7 +135,7 @@
                     </svg>
                   </button>
                   @if (!batch.depleted) {
-                    <button class="btn-eliminar btn-icon-only" (click)="$event.stopPropagation(); onWithdraw(batch)" [title]="'BATCHES.ACTIONS.DELETE' | translate || 'Desechar Lote'">
+                    <button class="btn-eliminar btn-icon-only" (click)="$event.stopPropagation(); onWithdraw(batch)" [title]="'BATCHES.ACTIONS.DELETE' | translate">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                         <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
@@ -147,7 +147,7 @@
             }
             @if (batches.length === 0 && !loading) {
               <tr>
-                <td colspan="9" class="empty-state">{{ 'BATCHES.MESSAGES.NO_BATCHES' | translate || 'No se encontraron lotes activos' }}</td>
+                <td colspan="9" class="empty-state">{{ 'BATCHES.MESSAGES.NO_BATCHES' | translate }}</td>
               </tr>
             }
           }
@@ -192,11 +192,11 @@
               </div>
               <div class="card-details">
                 <div class="detail-item">
-                  <span class="detail-label">{{ 'BATCHES.MODALS.BATCH_CODE' | translate || 'Codigo' }}:</span>
+                  <span class="detail-label">{{ 'BATCHES.MODALS.BATCH_CODE' | translate }}:</span>
                   <span>{{ batch.batchCode || '-' }}</span>
                 </div>
                 <div class="detail-item">
-                  <span class="detail-label">{{ 'STOCK.PROJECTED.STOCK' | translate || 'Stock' }}:</span>
+                  <span class="detail-label">{{ 'STOCK.PROJECTED.STOCK' | translate }}:</span>
                   <span class="stock-value" [class.stock-low]="batch.remainingQuantity < 5">
                     {{ batch.remainingQuantity | number:'1.0-2' }}
                   </span>
@@ -225,7 +225,7 @@
           </div>
         }
         @if (batches.length === 0 && !loading) {
-          <div class="empty-state">{{ 'BATCHES.MESSAGES.NO_BATCHES' | translate || 'No se encontraron lotes activos' }}</div>
+          <div class="empty-state">{{ 'BATCHES.MESSAGES.NO_BATCHES' | translate }}</div>
         }
       }
     </div>
@@ -356,7 +356,7 @@
               </tr>
             }
             @if (controlBatches.length === 0 && !loading) {
-              <tr><td colspan="6" class="empty-state">{{ 'BATCHES.MODALS.NO_ATTENTION' | translate || 'No hay lotes que requieran atención inmediata.' }}</td></tr>
+              <tr><td colspan="6" class="empty-state">{{ 'BATCHES.MODALS.NO_ATTENTION' | translate }}</td></tr>
             }
           }
         </tbody>
@@ -413,7 +413,7 @@
           </div>
         }
         @if (controlBatches.length === 0 && !loading) {
-          <div class="empty-state">{{ 'BATCHES.MODALS.NO_ATTENTION' | translate || 'No hay lotes que requieran atención inmediata.' }}</div>
+          <div class="empty-state">{{ 'BATCHES.MODALS.NO_ATTENTION' | translate }}</div>
         }
       }
     </div>

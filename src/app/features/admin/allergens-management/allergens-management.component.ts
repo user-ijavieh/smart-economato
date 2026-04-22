@@ -34,6 +34,7 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
     private scrollService = inject(ScrollService);
     private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
     messageService = inject(MessageService);
+    private translate = inject(TranslateService);
     private destroy$ = new Subject<void>();
 
     // ── State ──
