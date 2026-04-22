@@ -280,6 +280,10 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     return this.activeScaleTarget.productId === Number(detail.productId) && this.activeScaleTarget.lotIndex === lotIndex;
   }
 
+  manualRefresh(): void {
+
+  }
+
   private applyWeightToActiveLot(rawWeight: string): void {
     if (!this.activeScaleTarget || !this.order.details) {
       return;
