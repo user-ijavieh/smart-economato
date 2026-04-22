@@ -30,14 +30,14 @@ import { AiChatService } from '../../../core/services/ai-chat.service';
 import { MessageService } from '../../../core/services/message.service';
 import { SseStreamService } from '../../../core/services/sse-stream.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 type RetryableStatus = 429 | 502;
 
 @Component({
   selector: 'app-ai-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseModalComponent],
+  imports: [CommonModule, FormsModule, BaseModalComponent, TranslateModule],
   templateUrl: './ai-chat.component.html',
   styleUrl: './ai-chat.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

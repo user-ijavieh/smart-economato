@@ -20,7 +20,7 @@ import { Subject, Subscription, debounceTime, distinctUntilChanged, finalize, ta
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 import { OrderDetailsAdminModalComponent } from './order-details-admin-modal/order-details-admin-modal.component';
 import { OrderStatusChangeAdminModalComponent } from './order-status-change-admin-modal/order-status-change-admin-modal.component';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
   { value: 'CREATED', label: 'COMMON.STATUS_CREATED' },
@@ -39,7 +39,8 @@ const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
     FormsModule,
     BaseModalComponent,
     OrderDetailsAdminModalComponent,
-    OrderStatusChangeAdminModalComponent
+    OrderStatusChangeAdminModalComponent,
+    TranslateModule
   ],
   templateUrl: './orders-management.component.html',
   styleUrl: './orders-management.component.css',

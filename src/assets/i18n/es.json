@@ -64,6 +64,8 @@
     "AGO_MINS": "Hace {{count}} min",
     "SHOW_UTILITIES": "Mostrar utilidades",
     "HIDE_UTILITIES": "Ocultar utilidades",
+    "SWITCH_LANGUAGE": "Cambiar idioma",
+    "OPEN_MENU": "Abrir menú",
     "CONTINUE": "Continuar",
     "MERMA": "Merma",
     "ASSIGNMENTS_COUNT": "{{count}} asignaciones",
@@ -101,7 +103,10 @@
       "COOK": "Cocinado"
     },
     "PAGE_INFO": "Página {{current}} de {{total}}",
-    "TOTAL_COUNT": "({{count}} {{items}})"
+    "TOTAL_COUNT": "({{count}} {{items}})",
+    "THEME_LIGHT": "Cambiar a modo claro",
+    "THEME_DARK": "Cambiar a modo oscuro",
+    "CLEAR_CACHE": "Limpiar caché local"
   },
   "LOGIN": {
     "TITLE": "Smart Economato",
@@ -140,6 +145,7 @@
     "ADMIN_ROLE": "Administrador",
     "ADMIN_PANEL": "Panel Admin",
     "LOGOUT": "Cerrar sesión",
+    "TOGGLE": "Alternar menú",
     "GENERAL_VIEW": "Vista General",
     "INCIDENTS": "Incidencias",
     "BATCHES": "Lotes",
@@ -158,7 +164,12 @@
     "INVENTORY": "Inventario",
     "ORDERS": "Pedidos",
     "RECEPTION": "Recepción",
-    "RECIPES": "Recetas"
+    "RECIPES": "Recetas",
+    "KITCHEN": "Cocina",
+    "USERS": "Alumnos",
+    "MASTER_DATA": "Datos Maestros",
+    "PRODUCTS": "Productos",
+    "PROFILE": "Perfil"
   },
   "INVENTORY": {
     "TITLE": "Inventario",

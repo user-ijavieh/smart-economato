@@ -39,6 +39,7 @@ type TabKey =
   | 'notifications'
   | 'advanced'
   | 'ia'
+  | 'performance'
   | 'audit';
 
 type FileTypeOption = {
@@ -232,6 +233,11 @@ export class SettingsManagementComponent implements OnInit, OnDestroy {
     flushIntervalMs: 100,
     maxStreamDurationMs: 120000
   };
+
+  // Performance Tab State
+  lastSuppliersUpdate: Date | null = null;
+  refreshingSuppliers = false;
+
 
   ngOnInit(): void {
     this.loadSnapshot();
@@ -591,6 +597,26 @@ export class SettingsManagementComponent implements OnInit, OnDestroy {
     this.useCustomFileTypes = custom.length > 0;
     this.customIncidentMimeTypes = custom.join(', ');
   }
+
+  refreshSuppliersCache(): void {
+    this.refreshingSuppliers = true;
+    this.systemConfigService.refreshSuppliersCache()
+      .pipe(finalize(() => {
+        this.refreshingSuppliers = false;
+        this.cdr.detectChanges();
+      }))
+      .subscribe({
+        next: () => {
+          this.lastSuppliersUpdate = new Date();
+          this.messageService.showSuccess(this.translate.instant('SETTINGS.MESSAGES.CACHE_REFRESH_SUCCESS'));
+          this.cdr.detectChanges();
+        },
+        error: (err: Error) => {
+          this.messageService.showError(err.message);
+        }
+      });
+  }
+
 
   private buildAllowedMimeTypes(): string {
     const selectedMimes = this.fileTypeOptions

@@ -171,7 +171,7 @@
           <div class="custom-select-container">
             <div class="custom-select-trigger" (click)="toggleSupplierDropdown()" [class.active]="showSupplierDropdown">
               <span class="selected-value">{{ selectedSupplier?.name || ('COMMON.SELECT_SUPPLIER' | translate) }}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 20px" width="20px" fill="currentColor"><path d="M480-345 285-540l35-35 160 160 160-160 35 35-195 195Z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-345 285-540l35-35 160 160 160-160 35 35-195 195Z"/></svg>
             </div>
             
             @if (showSupplierDropdown) {
@@ -207,7 +207,7 @@
               <span class="selected-value">
                 {{ selectedProductIds.length === 0 ? ('COMMON.SELECT_PRODUCTS' | translate) : ('COMMON.ITEMS_SELECTED' | translate: { count: selectedProductIds.length }) }}
               </span>
-              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 20px" width="20px" fill="currentColor"><path d="M480-345 285-540l35-35 160 160 160-160 35 35-195 195Z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-345 285-540l35-35 160 160 160-160 35 35-195 195Z"/></svg>
             </div>
             
             @if (showProductDropdown) {
@@ -215,7 +215,7 @@
                 <div class="dropdown-search">
                   <input type="text" [(ngModel)]="productSearchTerm" (input)="onProductSearchInput()" [placeholder]="'COMMON.SEARCH_PRODUCT_PLACEHOLDER' | translate" (click)="$event.stopPropagation()" focus="true" />
                   <button type="button" class="btn-scan-dropdown" (click)="$event.stopPropagation(); openProductBarcodeScanner()" [title]="'COMMON.SCAN_BARCODE' | translate">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 18px" width="18px" fill="currentColor"><path d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z"/></svg>
                   </button>
                 </div>
                 <div class="dropdown-list" (scroll)="onProductDropdownScroll($event)">
