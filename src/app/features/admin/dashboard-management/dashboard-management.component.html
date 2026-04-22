@@ -44,7 +44,7 @@
                     <div class="rank-pos">#{{ i + 1 }}</div>
                     <div class="item-details">
                         <span class="item-primary">{{ recipe.name }}</span>
-                        <span class="item-secondary">{{ recipe.elaborations }} pedidos • {{ recipe.portions }} raciones</span>
+                        <span class="item-secondary">{{ recipe.portions }} raciones • {{ recipe.elaborations }} elaboraciones</span>
                     </div>
                 </div>
                 <div *ngIf="!loading && dashboardData?.topRecipes?.length === 0" class="empty-msg">Sin datos de ventas.</div>
