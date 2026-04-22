@@ -553,7 +553,7 @@
             <tr>
               <td>#{{ tx.id }}</td>
               <td>{{ tx.productName }}</td>
-              <td><span class="movement-badge" [ngClass]="getMovementTypeClass(tx.movementType)">{{ tx.movementType }}</span></td>
+              <td><span class="movement-badge" [ngClass]="getMovementTypeClass(tx.movementType)">{{ 'STOCK_MGMT.ADJUSTMENT.TYPES.' + tx.movementType | translate }}</span></td>
               <td class="delta-cell" [class.positive]="tx.quantityDelta > 0" [class.negative]="tx.quantityDelta < 0">{{ tx.quantityDelta > 0 ? '+' : '' }}{{ tx.quantityDelta | number:'1.0-3' }}</td>
               <td class="hide-on-mobile">{{ formatDate(tx.transactionTimestamp) }}</td>
             </tr>
@@ -643,7 +643,7 @@
               <td class="date-cell-ledger">{{ formatDate(tx.transactionTimestamp) }}</td>
               <td>
                 <span class="movement-badge" [ngClass]="getMovementTypeClass(tx.movementType)">
-                  {{ tx.movementType }}
+                  {{ 'STOCK_MGMT.ADJUSTMENT.TYPES.' + tx.movementType | translate }}
                 </span>
               </td>
               <td class="delta-cell" [class.positive]="tx.quantityDelta > 0" [class.negative]="tx.quantityDelta < 0">
@@ -653,7 +653,7 @@
               <td class="hide-on-mobile">
                 <div class="desc-cell">
                   <span class="tx-desc">{{ tx.description }}</span>
-                  <span class="tx-user">por {{ tx.userName }} @if(tx.orderId){ | Orden #{{tx.orderId}} }</span>
+                  <span class="tx-user">{{ 'COMMON.BY' | translate }} {{ tx.userName }} @if(tx.orderId){ | {{ 'COMMON.ORDER' | translate }} #{{tx.orderId}} }</span>
                 </div>
               </td>
               <td class="hide-on-mobile">
@@ -774,7 +774,7 @@
         <div class="detail-metric">
           <span class="detail-metric-label">{{ 'STOCK_MGMT.LEDGER.TABLE.TYPE' | translate }}</span>
           <span class="movement-badge" [ngClass]="getMovementTypeClass(selectedLedgerTx.movementType)">
-            {{ selectedLedgerTx.movementType }}
+            {{ 'STOCK_MGMT.ADJUSTMENT.TYPES.' + selectedLedgerTx.movementType | translate }}
           </span>
         </div>
         <div class="detail-metric">
@@ -850,10 +850,10 @@
         <div class="form-item form-item-flex">
           <label>{{ 'STOCK_MGMT.ADJUSTMENT.MOVEMENT_TYPE' | translate }}</label>
           <select [(ngModel)]="adjustmentType" class="input-standard">
-            <option value="AJUSTE">AJUSTE</option>
-            <option value="MERMA">MERMA</option>
-            <option value="ENTRADA">ENTRADA (Extra)</option>
-            <option value="SALIDA">SALIDA (Extra)</option>
+            <option value="AJUSTE">{{ 'STOCK_MGMT.ADJUSTMENT.TYPES.AJUSTE' | translate }}</option>
+            <option value="MERMA">{{ 'STOCK_MGMT.ADJUSTMENT.TYPES.MERMA' | translate }}</option>
+            <option value="ENTRADA">{{ 'STOCK_MGMT.ADJUSTMENT.TYPES.ENTRADA' | translate }}</option>
+            <option value="SALIDA">{{ 'STOCK_MGMT.ADJUSTMENT.TYPES.SALIDA' | translate }}</option>
           </select>
         </div>
       </div>

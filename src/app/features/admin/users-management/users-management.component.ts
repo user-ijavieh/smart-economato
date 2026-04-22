@@ -230,7 +230,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 },
                 error: (err) => {
                     console.error('Error loading users:', err);
-                    this.messageService.showError(this.translate.instant('USERS.MESSAGES.LOAD_USERS_ERROR'));
+                    this.messageService.showError(this.translate.instant('USERS.MESSAGES.ERROR_LOADING_USERS'));
                     this.loading = false;
                 }
             });

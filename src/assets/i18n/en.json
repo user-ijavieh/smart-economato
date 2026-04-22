@@ -58,6 +58,7 @@
     "REFRESH": "Refresh",
     "NO_DATA": "No data",
     "NO_DATE": "No date",
+    "N_A": "N/A",
     "RECEIVED": "Received",
     "NOW": "Now",
     "AGO_MINS": "{{count}} mins ago",
@@ -713,7 +714,7 @@
       "RESTORE_TITLE": "Activate User",
       "REMOVE": "Remove"
     },
-    "PAGINATION_INFO": "Page {{current}} de {{totalPages}} ({{total}} users)",
+    "PAGINATION_INFO": "Page {{current}} of {{totalPages}} ({{total}} users)",
     "SCREENS": {
       "NONE": "No data",
       "DASHBOARD": "Home",
@@ -731,10 +732,11 @@
       "PROFILE": "Profile"
     },
     "MESSAGES": {
-      "LOAD_TEACHERS_ERROR": "Error loading teachers",
-      "LOAD_HIDDEN_ERROR": "Error loading disabled users",
-      "LOAD_USERS_ERROR": "Error loading users",
-      "LOAD_ACTIVITY_ERROR": "Error loading activity history",
+      "ERROR_LOADING_TEACHERS": "Error loading teachers",
+      "ERROR_LOADING_HIDDEN_USERS": "Error loading disabled users",
+      "ERROR_LOADING_USERS": "Error loading users",
+      "ERROR_LOADING_ACTIVITY": "Error loading activity history",
+      "ERROR_TEACHER_STUDENTS": "Error loading teacher's students",
       "LOAD_DETAILS_ERROR": "Could not load full user data",
       "UPDATE_SUCCESS": "User updated successfully",
       "UPDATE_ERROR": "Error updating user",
@@ -801,7 +803,8 @@
       "DELETE_CONFIRM_TITLE": "Delete Supplier",
       "DELETE_CONFIRM_MSG": "Are you sure you want to delete supplier {{name}}? This action cannot be undone."
     },
-    "PAGINATION_INFO": "Page {{current}} of {{totalPages}} ({{total}} suppliers)"
+    "PAGINATION_INFO": "Page {{current}} of {{totalPages}} ({{total}} suppliers)",
+    "LOAD_ERROR": "Error loading suppliers"
   },
   "SUPPLIER_FORM": {
     "NAME": "Name *",
@@ -817,7 +820,9 @@
     "EDIT_TITLE": "Edit Supplier",
     "SAVE_CHANGES": "Save Changes",
     "CREATE_SUCCESS": "Supplier created successfully",
+    "CREATE_ERROR": "Error creating supplier",
     "UPDATE_SUCCESS": "Supplier updated successfully",
+    "UPDATE_ERROR": "Error updating supplier",
     "DELETE_SUCCESS": "Supplier deleted successfully",
     "DELETE_ERROR_ASSOCIATED": "Error deleting supplier. It may have associated products."
   },
@@ -1176,6 +1181,14 @@
         "DELETE_SUCCESS": "API key for {{provider}} deleted.",
         "DELETE_CONFIRM_TITLE": "Delete API key",
         "DELETE_CONFIRM_MSG": "Delete API key for {{provider}}? This action cannot be undone."
+      },
+      "PROVIDERS": {
+        "OPENAI": "OpenAI",
+        "ANTHROPIC": "Anthropic",
+        "DEEPSEEK": "DeepSeek",
+        "GOOGLE": "Google",
+        "GROK": "Grok",
+        "GROQ": "Groq"
       }
     },
     "FILE_TYPES": {
@@ -1849,7 +1862,91 @@
         "EXPIRATION_DATE_REQUIRED": "Expiration date is required for a new batch.",
         "ADJUSTMENT_SUCCESS": "Stock adjustment recorded successfully",
         "ERROR_REGISTER_ADJUSTMENT": "Error recording adjustment"
+      },
+      "ADJUSTMENT": {
+        "TITLE": "Manual Stock Adjustment",
+        "ENTRY": "Entry",
+        "EXIT": "Exit",
+        "QUANTITY": "Quantity",
+        "MOVEMENT_TYPE": "Movement Type",
+        "SEARCH_BATCH": "Search batch by ID or code (Optional)",
+        "BATCH_PLACEHOLDER": "Ex. 42 or LOT-2026-001",
+        "STOCK": "Stock",
+        "FIFO_HINT": "If not selected, FIFO is used (exits) or a new batch is created (entries).",
+        "EXPIRATION_DATE": "Expiration Date (New Batch) *",
+        "NEW_BATCH_HINT": "Mandatory when creating a new batch for inventory.",
+        "REASON": "Adjustment Reason *",
+        "REASON_PLACEHOLDER": "Ex. Inventory correction, unregistered wastage, breakage...",
+        "SUBMITTING": "Registering...",
+        "SUBMIT": "Register Adjustment",
+        "ORDER_MODAL_TITLE": "Generate a Replenishment Order",
+        "DAYS_COVER_PROMPT": "How many days of estimated stock do you want to cover?",
+        "DAYS": "days",
+        "TYPES": {
+          "AJUSTE": "ADJUSTMENT",
+          "MERMA": "WASTAGE",
+          "ENTRADA": "ENTRY (Extra)",
+          "SALIDA": "EXIT (Extra)",
+          "RECEPCION": "RECEPTION",
+          "PRODUCCION": "PRODUCTION"
+        }
       }
+    }
+  },
+  "ORDER_BUILDER": {
+    "MODES": {
+      "UNITS": "Units",
+      "LOTS": "Lots"
+    },
+    "TOGGLES": {
+      "ROUND_UP": "Round up units",
+      "CUSTOM_QTY": "Custom qty."
+    },
+    "PANELS": {
+      "ORDERS": "Orders",
+      "PENDING": "Pending"
+    },
+    "ACTIONS": {
+      "AUTO_CREATE": "Create automatically",
+      "REMOVE": "Remove",
+      "RETURN": "Return",
+      "CONFIRM": "Confirm orders",
+      "CREATING": "Creating..."
+    },
+    "SECTIONS": {
+      "PRODUCTS_COUNT": "{{count}} product{{count === 1 ? '' : 's'}}."
+    },
+    "TABLE": {
+      "NO_SUPPLIER": "No supplier",
+      "ORDER_TITLE": "Order {{num}}",
+      "TO_ORDER": "To order",
+      "SUBTOTAL": "Subtotal",
+      "TOTAL": "Total",
+      "DRAG_HINT": "Drag products here."
+    },
+    "POOL": {
+      "SEARCH_PLACEHOLDER": "Search...",
+      "EMPTY": "No pending products."
+    },
+    "UNITS": {
+      "LOT": "Lot",
+      "LOTS": "Lots",
+      "QTY": "Qty."
+    },
+    "BADGES": {
+      "LOT": "LOT"
+    },
+    "TOOLTIPS": {
+      "ONLY_UNITS": "Only available in Units mode",
+      "LOT_ROUNDED": "Rounded to nearest lot"
+    },
+    "MESSAGES": {
+      "NO_ITEMS_ERROR": "No order groups with products to create.",
+      "CONFIRM_TITLE": "Create orders",
+      "CONFIRM_MSG": "Do you want to generate {{count}} replenishment order(s)?",
+      "CONFIRM_BTN": "Generate orders",
+      "CREATE_SUCCESS": "Orders created successfully.",
+      "CREATE_ERROR": "An error occurred while creating the orders."
     }
   }
 }
