@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angula
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupplierService } from '../../../core/services/supplier.service';
+import { LoggerService } from '../../../core/services/logger.service';
 import { MessageService } from '../../../core/services/message.service';
 import { Observable, Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
@@ -25,6 +26,7 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
     styleUrl: './suppliers-management.component.css'
 })
 export class SuppliersManagementComponent implements OnInit, OnDestroy {
+    private readonly logger = inject(LoggerService);
     private supplierService = inject(SupplierService);
     private cdr = inject(ChangeDetectorRef);
     private scrollService = inject(ScrollService);
@@ -113,7 +115,7 @@ export class SuppliersManagementComponent implements OnInit, OnDestroy {
                 this.cdr.markForCheck();
             },
             error: (err: any) => {
-                console.error('Error loading suppliers:', err);
+                this.logger.error('Error loading suppliers:', err);
                 this.messageService.showError('Error al cargar los proveedores');
                 this.loading = false;
                 this.cdr.detectChanges();
@@ -240,7 +242,7 @@ export class SuppliersManagementComponent implements OnInit, OnDestroy {
                     this.loadSuppliers(this.currentPage);
                 },
                 error: (err) => {
-                    console.error('Error updating supplier:', err);
+                    this.logger.error('Error updating supplier:', err);
                     this.messageService.showError('Error al actualizar el proveedor');
                 }
             });
@@ -253,7 +255,7 @@ export class SuppliersManagementComponent implements OnInit, OnDestroy {
                     this.loadSuppliers();
                 },
                 error: (err) => {
-                    console.error('Error creating supplier:', err);
+                    this.logger.error('Error creating supplier:', err);
                     this.messageService.showError('Error al crear el proveedor');
                 }
             });
@@ -274,7 +276,7 @@ export class SuppliersManagementComponent implements OnInit, OnDestroy {
                 this.loadSuppliers(this.currentPage);
             },
             error: (err) => {
-                console.error('Error deleting supplier:', err);
+                this.logger.error('Error deleting supplier:', err);
                 const errorMessage = err.error?.message || 'Error al eliminar el proveedor. Puede tener productos asociados.';
                 this.messageService.showError(errorMessage);
             }

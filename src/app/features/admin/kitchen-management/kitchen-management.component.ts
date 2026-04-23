@@ -3,6 +3,7 @@ import { AsyncPipe, CommonModule, CurrencyPipe, DatePipe, DecimalPipe } from '@a
 import { FormsModule } from '@angular/forms';
 import { finalize, Observable, Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
+import { LoggerService } from '../../../core/services/logger.service';
 import { KitchenService } from '../../../core/services/kitchen.service';
 import { RecipeService } from '../../../core/services/recipe.service';
 import { OrderService } from '../../../core/services/order.service';
@@ -31,6 +32,7 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class KitchenManagementComponent implements OnInit, OnDestroy {
+  private readonly logger = inject(LoggerService);
   private kitchenService = inject(KitchenService);
   private recipeService = inject(RecipeService);
   private orderService = inject(OrderService);
@@ -320,7 +322,7 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
           this.traceData = data as ReverseTraceabilityDTO;
         },
         error: () => {
-          console.error('Error loading traceability for mobile modal');
+          this.logger.error('Error loading traceability for mobile modal');
           this.loadingTraceability = false;
           this.cdr.markForCheck();
         }
@@ -445,7 +447,7 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         },
         error: (error: any) => {
-          console.error('Error loading report:', error);
+          this.logger.error('Error loading report:', error);
           this.messageService.showError('No se pudo generar el informe de cocina');
         }
       });
@@ -475,7 +477,7 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
           this.messageService.showSuccess('Informe PDF descargado');
         },
         error: (err: any) => {
-          console.error('Error downloading report PDF:', err);
+          this.logger.error('Error downloading report PDF:', err);
           this.messageService.showError('No se pudo descargar el informe PDF');
         }
       });

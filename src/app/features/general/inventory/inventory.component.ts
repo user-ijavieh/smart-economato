@@ -16,6 +16,7 @@ import { BarcodeScannerComponent } from '../barcode-scanner/barcode-scanner.comp
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { ProductBatchService } from '../../../core/services/product-batch.service';
 import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.model';
+import { LoggerService } from '../../../core/services/logger.service';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { finalize, Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
@@ -40,6 +41,7 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
   ]
 })
 export class InventoryComponent implements OnInit, OnDestroy {
+  private logger = inject(LoggerService);
   private productService = inject(ProductService);
   private supplierService = inject(SupplierService);
   messageService = inject(MessageService);
@@ -154,7 +156,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('❌ Error loading products:', err);
+        this.logger.error('❌ Error loading products:', err);
         this.loading = false;
         this.initialLoad = false;
         this.cdr.detectChanges();
@@ -248,7 +250,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         this.suppliers = page.content;
       },
       error: (err) => {
-        console.error('Error cargando proveedores:', err);
+        this.logger.error('Error cargando proveedores:', err);
         // No mostrar mensaje de error al usuario, no es crítico
         this.suppliers = [];
       }
@@ -278,7 +280,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('❌ Error searching products:', err);
+        this.logger.error('❌ Error searching products:', err);
         this.loading = false;
         this.initialLoad = false;
         this.cdr.detectChanges();
@@ -477,7 +479,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         this.finalizeSubmit();
       },
       error: (err) => {
-        console.error('Error deactivating product:', err);
+        this.logger.error('Error deactivating product:', err);
       }
     });
   }

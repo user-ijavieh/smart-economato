@@ -5,6 +5,7 @@ import { BarcodeFormat } from '@zxing/library';
 import { MessageService } from '../../../core/services/message.service';
 import { ProductService } from '../../../core/services/product.service';
 import { Product } from '../../../shared/models/product.model';
+import { LoggerService } from '../../../core/services/logger.service';
 
 @Component({
   selector: 'app-barcode-scanner',
@@ -14,6 +15,7 @@ import { Product } from '../../../shared/models/product.model';
   styleUrl: './barcode-scanner.component.css'
 })
 export class BarcodeScannerComponent implements OnInit {
+  private logger = inject(LoggerService);
   @ViewChild('scanner') scanner!: ZXingScannerComponent;
   @Input() compact = true;
   @Output() productFound = new EventEmitter<Product>();
@@ -104,7 +106,7 @@ export class BarcodeScannerComponent implements OnInit {
   }
 
   onScanError(error: Error): void {
-    console.error('Scan error:', error);
+    this.logger.error('Scan error:', error);
   }
 
   scanAgain(): void {
