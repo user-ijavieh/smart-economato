@@ -25,8 +25,11 @@ export const errorHandlingInterceptor: HttpInterceptorFn = (req, next) => {
       // No mostrar 404 en el endpoint de plan actual, ya que es esperado si no hay plan activo
       const isCurrentPlanRequest = req.url.includes('/api/weekly-plans/current');
       const isNotFound = error.status === 404;
+      const isBadGateway = error.status === 502;
+      // No mostrar errores en PUT a ai-keys: el servicio hace fallback a POST internamente
+      const isAiKeyUpsert = req.method === 'PUT' && req.url.includes('/api/config/ai-keys');
 
-      if (!(isGetRequest && isForbidden) && !isUnauthorized && !(isCurrentPlanRequest && isNotFound)) {
+      if (!(isGetRequest && isForbidden) && !isUnauthorized && !(isCurrentPlanRequest && isNotFound) && !isBadGateway && !isAiKeyUpsert) {
         handleError(error, messageService);
       }
       return throwError(() => error);

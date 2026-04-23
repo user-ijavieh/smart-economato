@@ -61,6 +61,9 @@
         @for (message of messages; track trackByMessageId($index, message)) {
           <article class="ai-message-card" [class.is-user]="message.role === 'USER'" [class.is-tool]="message.role === 'TOOL'">
             <div class="ai-message-meta">
+              @if (message.role === 'ASSISTANT') {
+                <img [ngSrc]="chefPioAvatar" alt="Chef Pio" class="ai-avatar" width="28" height="28" />
+              }
               <span class="incident-pill" [class.status-open]="message.role === 'USER'" [class.status-closed]="message.role === 'ASSISTANT'" [class.status-tool]="message.role === 'TOOL'">
                 {{ formatRole(message.role) }}
               </span>
@@ -93,7 +96,11 @@
                 </div>
               </div>
             }
-            <p class="ai-message-content">{{ message.content }}</p>
+            @if (message.role === 'ASSISTANT') {
+              <div class="ai-message-content markdown-body" [innerHTML]="parseMarkdown(message.content)"></div>
+            } @else {
+              <p class="ai-message-content">{{ message.content }}</p>
+            }
             @if (message.role === 'TOOL' && message.toolResult) {
               <p class="ai-message-tool-result"><em>{{ message.toolResult }}</em></p>
             }
@@ -132,10 +139,12 @@
       @if (streamingPreview) {
         <article class="ai-message-card streaming">
           <div class="ai-message-meta">
-            <span class="incident-pill status-closed">IA</span>
+            <img [ngSrc]="chefPioAvatar" alt="Chef Pio" class="ai-avatar" width="28" height="28" />
+            <span class="incident-pill status-closed">Chef Pio</span>
             <small>Generando…</small>
           </div>
-          <p class="ai-message-content">{{ streamingPreview }}<span class="typing-cursor">|</span></p>
+          <div class="ai-message-content markdown-body" [innerHTML]="parseMarkdown(streamingPreview)"></div>
+          <span class="typing-cursor">|</span>
         </article>
       }
     </div>

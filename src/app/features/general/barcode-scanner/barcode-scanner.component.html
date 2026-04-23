@@ -19,19 +19,9 @@
   </div>
 
   <!-- Scanner viewport -->
-  <div class="scanner-container" *ngIf="scannerEnabled">
+  <div class="scanner-container" [hidden]="!scannerEnabled">
     <div class="scanner-viewport">
-      <zxing-scanner
-        #scanner
-        [device]="selectedDevice"
-        [enable]="scannerEnabled"
-        [formats]="allowedFormats"
-        (camerasFound)="onCamerasFound($event)"
-        (camerasNotFound)="onCamerasNotFound()"
-        (permissionResponse)="onPermissionResponse($event)"
-        (scanSuccess)="onScanSuccess($event)"
-        (scanError)="onScanError($event)"
-      ></zxing-scanner>
+      <video #videoElement autoplay playsinline muted></video>
       <!-- Scan overlay lines -->
       <div class="scan-overlay">
         <div class="scan-frame">
