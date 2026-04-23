@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, interval } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { filter, takeUntil } from 'rxjs/operators';
+import { LoggerService } from './logger.service';
 
 export interface QueuedRequest {
   id: number;
@@ -16,6 +17,7 @@ export interface QueuedRequest {
   providedIn: 'root',
 })
 export class OfflineSyncService {
+  private readonly logger = inject(LoggerService);
   private readonly DB_NAME = 'SmartEconomatoDB';
   private readonly STORE_NAME = 'sync-queue';
   
@@ -40,7 +42,7 @@ export class OfflineSyncService {
     const request = indexedDB.open(this.DB_NAME, 1);
 
     request.onerror = () => {
-      console.error('[OfflineSync] Error opening DB');
+      this.logger.error('[OfflineSync] Error opening DB');
     };
 
     request.onupgradeneeded = (event: any) => {
@@ -57,13 +59,11 @@ export class OfflineSyncService {
   private setupOnlineOfflineListeners(): void {
     window.addEventListener('online', () => {
       this.isOnline$.next(true);
-      console.log('[OfflineSync] Back online. Syncing queued requests...');
       this.syncQueuedRequests();
     });
 
     window.addEventListener('offline', () => {
       this.isOnline$.next(false);
-      console.log('[OfflineSync] Going offline. Requests will be queued.');
     });
   }
 
@@ -124,10 +124,9 @@ export class OfflineSyncService {
       const db = await this.openDB();
       db.put(this.STORE_NAME, queuedRequest);
       this.loadQueuedRequests();
-      console.log('[OfflineSync] Request queued:', url);
       return queuedRequest;
     } catch (error) {
-      console.error('[OfflineSync] Error queuing request:', error);
+      this.logger.error('[OfflineSync] Error queuing request:', error);
       throw error;
     }
   }
@@ -141,7 +140,7 @@ export class OfflineSyncService {
       const requests = await db.getAll(this.STORE_NAME);
       this.queuedRequests$.next(requests);
     } catch (error) {
-      console.error('[OfflineSync] Error loading queued requests:', error);
+      this.logger.error('[OfflineSync] Error loading queued requests:', error);
     }
   }
 
@@ -176,7 +175,6 @@ export class OfflineSyncService {
           if (response?.status && response.status >= 200 && response.status < 300) {
             await db.delete(this.STORE_NAME, req.id);
             this.syncComplete$.next({ success: true, url: req.url });
-            console.log('[OfflineSync] Synced:', req.url);
           }
         } catch (error) {
           req.retries = (req.retries || 0) + 1;
@@ -186,13 +184,13 @@ export class OfflineSyncService {
           } else {
             await db.put(this.STORE_NAME, req);
           }
-          console.warn('[OfflineSync] Error syncing request, retrying later:', error);
+          this.logger.warn('[OfflineSync] Error syncing request, retrying later:', error);
         }
       }
 
       this.loadQueuedRequests();
     } catch (error) {
-      console.error('[OfflineSync] Error in sync process:', error);
+      this.logger.error('[OfflineSync] Error in sync process:', error);
     } finally {
       this.syncInProgress$.next(false);
     }
@@ -206,9 +204,8 @@ export class OfflineSyncService {
       const db = await this.openDB();
       await db.clear(this.STORE_NAME);
       this.loadQueuedRequests();
-      console.log('[OfflineSync] Queue cleared');
     } catch (error) {
-      console.error('[OfflineSync] Error clearing queue:', error);
+      this.logger.error('[OfflineSync] Error clearing queue:', error);
     }
   }
 
@@ -220,7 +217,7 @@ export class OfflineSyncService {
       const db = await this.openDB();
       return await db.get(this.STORE_NAME, id);
     } catch (error) {
-      console.error('[OfflineSync] Error getting queued request:', error);
+      this.logger.error('[OfflineSync] Error getting queued request:', error);
       return undefined;
     }
   }

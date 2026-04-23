@@ -17,6 +17,7 @@ import { BarcodeScannerComponent } from '../../general/barcode-scanner/barcode-s
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { ScrollService } from '../../../core/services/scroll.service';
+import { LoggerService } from '../../../core/services/logger.service';
 import { PresenceTrackingService } from '../../../core/services/presence-tracking.service';
 import { finalize, catchError, forkJoin, takeUntil } from 'rxjs';
 import { of, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -41,6 +42,7 @@ import { ProductAudit } from '../../../shared/models/product-audit.model';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductsManagementComponent implements OnInit, OnDestroy {
+  private logger = inject(LoggerService);
   private productService = inject(ProductService);
   private productAuditService = inject(ProductAuditService);
   private supplierService = inject(SupplierService);
@@ -231,7 +233,7 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       },
       error: (err: any) => {
-        console.error('Error al cargar productos:', err);
+        this.logger.error('Error al cargar productos:', err);
         this.messageService.showError(this.translate.instant('PRODUCTS_MGMT.MESSAGES.LOAD_ERROR'));
         this.products = [];
         this.filteredProducts = [];
@@ -409,7 +411,7 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
           this.totalAuditsCount = (response as any).totalElements;
           this.totalAuditPages = (response as any).totalPages;
         } else {
-          console.warn('Respuesta inesperada del servicio de auditorías:', response);
+          this.logger.warn('Respuesta inesperada del servicio de auditorías:', response);
         }
 
         this.audits = auditsArray;

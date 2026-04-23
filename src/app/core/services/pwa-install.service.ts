@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { LoggerService } from './logger.service';
 import { TranslateService } from '@ngx-translate/core';
 
 declare global {
@@ -17,6 +18,7 @@ interface BeforeInstallPromptEvent extends Event {
   providedIn: 'root',
 })
 export class PwaInstallService {
+  private readonly logger = inject(LoggerService);
   private translate = inject(TranslateService);
   private canInstall$ = new BehaviorSubject<boolean>(false);
   private isInstalled$ = new BehaviorSubject<boolean>(this.checkIfInstalled());
@@ -35,7 +37,6 @@ export class PwaInstallService {
       event.preventDefault();
       this.installPrompt = event;
       this.canInstall$.next(true);
-      console.log('[PWA Install] Install prompt ready');
     });
 
     // Handle app installed
@@ -43,7 +44,6 @@ export class PwaInstallService {
       this.canInstall$.next(false);
       this.isInstalled$.next(true);
       this.installPrompt = null;
-      console.log('[PWA Install] App installed successfully');
     });
   }
 
@@ -94,7 +94,7 @@ export class PwaInstallService {
    */
   async installApp(): Promise<boolean> {
     if (!this.installPrompt) {
-      console.warn('[PWA Install] Install prompt not available');
+      this.logger.warn('[PWA Install] Install prompt not available');
       return false;
     }
 
@@ -103,14 +103,12 @@ export class PwaInstallService {
       const { outcome } = await this.installPrompt.userChoice;
       
       if (outcome === 'accepted') {
-        console.log('[PWA Install] User accepted the install prompt');
         return true;
       } else {
-        console.log('[PWA Install] User dismissed the install prompt');
         return false;
       }
     } catch (error) {
-      console.error('[PWA Install] Error during install:', error);
+      this.logger.error('[PWA Install] Error during install:', error);
       return false;
     }
   }
@@ -120,7 +118,7 @@ export class PwaInstallService {
    */
   async shareApp(): Promise<boolean> {
     if (!navigator.share) {
-      console.warn('[PWA Install] Share API not supported');
+      this.logger.warn('[PWA Install] Share API not supported');
       return false;
     }
 
@@ -133,7 +131,7 @@ export class PwaInstallService {
       return true;
     } catch (error) {
       if ((error as Error).name !== 'AbortError') {
-        console.error('[PWA Install] Error sharing:', error);
+        this.logger.error('[PWA Install] Error sharing:', error);
       }
       return false;
     }
