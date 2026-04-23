@@ -1,5 +1,5 @@
 <div class="admin-page-header">
-    <h1>Gestión de Productos</h1>
+    <h1>{{ 'PRODUCTS_MGMT.TITLE' | translate }}</h1>
 </div>
 
 <!-- Tab bar -->
@@ -8,13 +8,13 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/>
         </svg>
-        Productos
+        {{ 'PRODUCTS_MGMT.TABS.PRODUCTS' | translate }}
     </button>
     <button class="admin-tab-btn" [class.active]="activeTab === 'audits'" (click)="switchTab('audits')">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
         </svg>
-        Auditoría
+        {{ 'PRODUCTS_MGMT.TABS.AUDITS' | translate }}
     </button>
 </div>
 
@@ -22,23 +22,23 @@
 @if (activeTab === 'products') {
 <div class="page-content contenedor-principal">
     <div class="controls-bar controles">
-        <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por nombre..." (ngModelChange)="onSearch()" />
-        <button class="toolbar-btn btn-scan-product" (click)="openBarcodeScanner()" title="Escanear código de barras">
+        <input type="text" [(ngModel)]="searchTerm" [placeholder]="'PRODUCTS_MGMT.CONTROLS.SEARCH_PLACEHOLDER' | translate" (ngModelChange)="onSearch()" />
+        <button class="toolbar-btn btn-scan-product" (click)="openBarcodeScanner()" [title]="'PRODUCTS_MGMT.CONTROLS.SCAN_TITLE' | translate">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 -960 960 960">
                 <path d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z" />
             </svg>
-            Escanear
+            {{ 'PRODUCTS_MGMT.CONTROLS.SCAN' | translate }}
         </button>
         <button id="btnAgregarProducto" class="toolbar-btn" (click)="openCreateModal()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
             </svg>
-            Agregar Producto
+            {{ 'PRODUCTS_MGMT.CONTROLS.ADD_PRODUCT' | translate }}
         </button>
         @if (hasActiveFilters()) {
-        <button class="toolbar-btn btn-clear" (click)="clearFilters()">Limpiar Filtros</button>
+        <button class="toolbar-btn btn-clear" (click)="clearFilters()">{{ 'PRODUCTS_MGMT.CONTROLS.CLEAR' | translate }}</button>
         }
-        <button class="toolbar-btn btn-toggle-hidden" (click)="toggleShowHidden()" [class.active]="showHiddenProducts" title="Ver productos desactivados">
+        <button class="toolbar-btn btn-toggle-hidden" (click)="toggleShowHidden()" [class.active]="showHiddenProducts" [title]="'PRODUCTS_MGMT.CONTROLS.VIEW_HIDDEN_TITLE' | translate">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 @if (showHiddenProducts) {
                 <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
@@ -49,9 +49,9 @@
                 <path d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12-.708.708z"/>
                 }
             </svg>
-            {{ showHiddenProducts ? 'Ver Activos' : 'Ver Desactivados' }}
+            {{ (showHiddenProducts ? 'PRODUCTS_MGMT.CONTROLS.VIEW_ACTIVE' : 'PRODUCTS_MGMT.CONTROLS.VIEW_HIDDEN') | translate }}
         </button>
-        <button class="toolbar-btn btn-excel" (click)="exportToExcel()" title="Exportar a Excel">
+        <button class="toolbar-btn btn-excel" (click)="exportToExcel()" [title]="'PRODUCTS_MGMT.CONTROLS.EXCEL_TITLE' | translate">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
                 <path d="M5.75 6.75a.5.5 0 0 1 .71 0L8 8.29l1.54-1.54a.5.5 0 1 1 .71.71L8.71 9l1.54 1.54a.5.5 0 0 1-.71.71L8 9.71l-1.54 1.54a.5.5 0 0 1-.71-.71L7.29 9 5.75 7.46a.5.5 0 0 1 0-.71z"/>
@@ -64,15 +64,15 @@
     <div class="stats-row">
         <div class="stat-card">
             <span class="stat-number">{{ totalProducts }}</span>
-            <span class="stat-label">Total</span>
+            <span class="stat-label">{{ 'PRODUCTS_MGMT.STATS.TOTAL' | translate }}</span>
         </div>
         <div class="stat-card stat-value">
             <span class="stat-number">{{ totalValue | number:'1.2-2' }}€</span>
-            <span class="stat-label">Valor Total</span>
+            <span class="stat-label">{{ 'PRODUCTS_MGMT.STATS.TOTAL_VALUE' | translate }}</span>
         </div>
         <div class="stat-card stat-cost">
             <span class="stat-number">{{ averagePrice | number:'1.2-2' }}€</span>
-            <span class="stat-label">Precio Promedio</span>
+            <span class="stat-label">{{ 'PRODUCTS_MGMT.STATS.AVERAGE_PRICE' | translate }}</span>
         </div>
     </div>
 
@@ -80,12 +80,12 @@
         <table>
             <thead>
                 <tr>
-                    <th class="sortable" (click)="onSortProductsChange('name')" [attr.data-sort-dir]="getSortProductsDir('name')">Nombre</th>
-                    <th class="sortable" (click)="onSortProductsChange('currentStock')" [attr.data-sort-dir]="getSortProductsDir('currentStock')">Stock</th>
-                    <th class="hide-on-mobile sortable" (click)="onSortProductsChange('unitPrice')" [attr.data-sort-dir]="getSortProductsDir('unitPrice')">Precio (€)</th>
-                    <th class="hide-on-mobile">Lote</th>
-                    <th class="hide-on-mobile sortable" (click)="onSortProductsChange('availabilityPercentage')" [attr.data-sort-dir]="getSortProductsDir('availabilityPercentage')">Disponibilidad</th>
-                    <th class="hide-on-mobile">Acciones</th>
+                    <th class="sortable" (click)="onSortProductsChange('name')" [attr.data-sort-dir]="getSortProductsDir('name')">{{ 'PRODUCTS_MGMT.TABLE.NAME' | translate }}</th>
+                    <th class="sortable" (click)="onSortProductsChange('currentStock')" [attr.data-sort-dir]="getSortProductsDir('currentStock')">{{ 'PRODUCTS_MGMT.TABLE.STOCK' | translate }}</th>
+                    <th class="hide-on-mobile sortable" (click)="onSortProductsChange('unitPrice')" [attr.data-sort-dir]="getSortProductsDir('unitPrice')">{{ 'PRODUCTS_MGMT.TABLE.PRICE' | translate }}</th>
+                    <th class="hide-on-mobile">{{ 'PRODUCTS_MGMT.TABLE.LOT' | translate }}</th>
+                    <th class="hide-on-mobile sortable" (click)="onSortProductsChange('availabilityPercentage')" [attr.data-sort-dir]="getSortProductsDir('availabilityPercentage')">{{ 'PRODUCTS_MGMT.TABLE.AVAILABILITY' | translate }}</th>
+                    <th class="hide-on-mobile">{{ 'PRODUCTS_MGMT.TABLE.ACTIONS' | translate }}</th>
                     <th class="show-on-mobile-only mobile-icon-col"></th>
                 </tr>
             </thead>
@@ -106,7 +106,7 @@
                 } @else {
                 @for (product of filteredProducts; track product.id) {
                 <tr class="clickable-row mobile-clickable-row" [class.low-stock-row]="isLowStock(product)">
-                    <td class="product-name-cell" (click)="openDetailModal(product)">
+                    <td class="product-name-cell" (click)="openDetailModal(product)" [attr.data-label]="'PRODUCTS_MGMT.TABLE.NAME' | translate">
                         <div class="product-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/>
@@ -114,22 +114,22 @@
                         </div>
                         {{ product.name }}
                     </td>
-                    <td (click)="openDetailModal(product)">
+                    <td (click)="openDetailModal(product)" [attr.data-label]="'PRODUCTS_MGMT.TABLE.STOCK' | translate">
                         <span class="stock-value" [class.stock-low]="isLowStock(product)">
                             {{ product.currentStock | number:'1.2-2' }} {{ product.unit }}
                         </span>
                     </td>
-                    <td class="hide-on-mobile" (click)="openDetailModal(product)">
+                    <td class="hide-on-mobile" (click)="openDetailModal(product)" [attr.data-label]="'PRODUCTS_MGMT.TABLE.PRICE' | translate">
                         <span class="price-value">{{ product.unitPrice | number:'1.2-2' }} €</span>
                     </td>
-                    <td class="hide-on-mobile">
+                    <td class="hide-on-mobile" [attr.data-label]="'PRODUCTS_MGMT.TABLE.LOT' | translate">
                         @if (product.lotQuantity) {
                         <span class="lot-badge">{{ product.lotQuantity }} {{ product.unit }}</span>
                         } @else {
                         <span class="lot-badge lot-none">—</span>
                         }
                     </td>
-                    <td class="hide-on-mobile" (click)="openDetailModal(product)">
+                    <td class="hide-on-mobile" (click)="openDetailModal(product)" [attr.data-label]="'PRODUCTS_MGMT.TABLE.AVAILABILITY' | translate">
                         @if (product.availabilityPercentage !== undefined && product.availabilityPercentage !== null) {
                         <span class="availability-badge" [class.availability-high]="product.availabilityPercentage >= 70" [class.availability-medium]="product.availabilityPercentage >= 40 && product.availabilityPercentage < 70" [class.availability-low]="product.availabilityPercentage < 40">
                             {{ product.availabilityPercentage | number:'1.2-2' }}%
@@ -139,13 +139,13 @@
                         }
                     </td>
                     <td class="actions-cell hide-on-mobile" (click)="$event.stopPropagation()">
-                        <button class="btn-ver" (click)="openDetailModal(product)" title="Ver detalle">
+                        <button class="btn-ver" (click)="openDetailModal(product)" [title]="'PRODUCTS_MGMT.TABLE.VIEW_DETAIL' | translate">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                                 <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
                                 <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
                             </svg>
                         </button>
-                        <button class="btn-editar" (click)="openEditModal(product)" title="Editar">
+                        <button class="btn-editar" (click)="openEditModal(product)" [title]="'PRODUCTS_MGMT.TABLE.EDIT' | translate">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                                 <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                                 <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
@@ -162,7 +162,7 @@
                 @if (filteredProducts.length === 0 && !loading) {
                 <tr>
                     <td colspan="6" style="text-align: center; padding: 2rem; color: #999">
-                        No se encontraron productos
+                        {{ 'PRODUCTS_MGMT.TABLE.NO_PRODUCTS' | translate }}
                     </td>
                 </tr>
                 }
@@ -175,11 +175,11 @@
     <div class="pagination-controls">
         <button class="toolbar-btn btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
-            Anterior
+            {{ 'COMMON.PREVIOUS' | translate }}
         </button>
-        <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }} <span class="total-info">({{ totalElements }} productos)</span></span>
+        <span class="page-info">{{ 'COMMON.PAGE_INFO' | translate: { current: currentPage + 1, total: totalPages } }} <span class="total-info">{{ 'COMMON.TOTAL_COUNT' | translate: { count: totalElements, items: ('PRODUCTS_MGMT.TABS.PRODUCTS' | translate).toLowerCase() } }}</span></span>
         <button class="toolbar-btn btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
-            Siguiente
+            {{ 'COMMON.NEXT' | translate }}
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
         </button>
     </div>
@@ -191,26 +191,26 @@
 @if (activeTab === 'audits') {
 <div class="page-content contenedor-principal">
     <div class="controls-bar controles">
-        <input type="text" [(ngModel)]="auditSearchTerm" placeholder="Buscar en auditorías..." (ngModelChange)="onAuditSearch()" />
+        <input type="text" [(ngModel)]="auditSearchTerm" [placeholder]="'PRODUCTS_MGMT.AUDITS.SEARCH_PLACEHOLDER' | translate" (ngModelChange)="onAuditSearch()" />
         <select [(ngModel)]="auditMovementTypeFilter" (ngModelChange)="onAuditMovementTypeFilterChange()" class="action-select">
-            <option value="">Todos los movimientos</option>
+            <option value="">{{ 'PRODUCTS_MGMT.AUDITS.ALL_MOVEMENTS' | translate }}</option>
             @for (type of movementTypeOptions; track type.value) {
-            <option [value]="type.value">{{ type.label }}</option>
+            <option [value]="type.value">{{ 'PRODUCTS_MGMT.AUDITS.TYPES.' + type.value | translate }}</option>
             }
         </select>
         <div class="date-range-group">
-            <input type="date" [(ngModel)]="auditStartDate" class="date-input" placeholder="Desde" />
+            <input type="date" [(ngModel)]="auditStartDate" class="date-input" [placeholder]="'PRODUCTS_MGMT.AUDITS.FROM' | translate" />
             <span class="date-separator">—</span>
-            <input type="date" [(ngModel)]="auditEndDate" class="date-input" placeholder="Hasta" />
+            <input type="date" [(ngModel)]="auditEndDate" class="date-input" [placeholder]="'PRODUCTS_MGMT.AUDITS.TO' | translate" />
             <button class="toolbar-btn btn-date-filter" (click)="onAuditDateFilterChange()" [disabled]="!auditStartDate || !auditEndDate">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
                 </svg>
-                Filtrar
+                {{ 'PRODUCTS_MGMT.AUDITS.FILTER' | translate }}
             </button>
         </div>
         @if (hasActiveAuditFilters()) {
-        <button class="toolbar-btn btn-clear" (click)="clearAuditFilters()">Limpiar Filtros</button>
+        <button class="toolbar-btn btn-clear" (click)="clearAuditFilters()">{{ 'PRODUCTS_MGMT.CONTROLS.CLEAR' | translate }}</button>
         }
     </div>
 
@@ -218,11 +218,11 @@
         <table>
             <thead>
                 <tr>
-                    <th class="sortable" (click)="onSortAuditsChange('movementDate')" [attr.data-sort-dir]="getSortAuditsDir('movementDate')">Fecha</th>
-                    <th>Producto</th>
-                    <th class="hide-on-mobile">Tipo</th>
-                    <th class="hide-on-mobile">Usuario</th>
-                    <th class="hide-on-mobile">Descripción</th>
+                    <th class="sortable" (click)="onSortAuditsChange('movementDate')" [attr.data-sort-dir]="getSortAuditsDir('movementDate')">{{ 'PRODUCTS_MGMT.AUDITS.DATE' | translate }}</th>
+                    <th>{{ 'PRODUCTS_MGMT.AUDITS.PRODUCT' | translate }}</th>
+                    <th class="hide-on-mobile">{{ 'PRODUCTS_MGMT.AUDITS.TYPE' | translate }}</th>
+                    <th class="hide-on-mobile">{{ 'PRODUCTS_MGMT.AUDITS.USER' | translate }}</th>
+                    <th class="hide-on-mobile">{{ 'PRODUCTS_MGMT.AUDITS.DESCRIPTION' | translate }}</th>
                     <th class="show-on-mobile-only mobile-icon-col"></th>
                 </tr>
             </thead>
@@ -241,7 +241,7 @@
                 } @else {
                 @for (audit of filteredAudits; track audit.id) {
                 <tr class="audit-row clickable-row mobile-clickable-row" (click)="openAuditDetailModal(audit)">
-                    <td>
+                    <td [attr.data-label]="'PRODUCTS_MGMT.AUDITS.DATE' | translate">
                         <span class="date-cell-inner">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="date-icon">
                                 <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
@@ -249,18 +249,18 @@
                             {{ audit.movementDate | date:'dd/MM/yyyy HH:mm' }}
                         </span>
                     </td>
-                    <td>
+                    <td [attr.data-label]="'PRODUCTS_MGMT.AUDITS.PRODUCT' | translate">
                         <span class="product-name-audit">{{ audit.productName }}</span>
                     </td>
-                    <td class="hide-on-mobile">
+                    <td class="hide-on-mobile" [attr.data-label]="'PRODUCTS_MGMT.AUDITS.TYPE' | translate">
                         <span class="movement-badge" [ngClass]="'movement-' + audit.movementType.toLowerCase()">
-                            {{ audit.movementType }}
+                            {{ 'PRODUCTS_MGMT.AUDITS.TYPES.' + audit.movementType | translate }}
                         </span>
                     </td>
-                    <td class="hide-on-mobile">
+                    <td class="hide-on-mobile" [attr.data-label]="'PRODUCTS_MGMT.AUDITS.USER' | translate">
                         <span class="user-name">{{ audit.userName }}</span>
                     </td>
-                    <td class="details-cell hide-on-mobile">{{ translateActionDescription(audit.actionDescription) }}</td>
+                    <td class="details-cell hide-on-mobile" [attr.data-label]="'PRODUCTS_MGMT.AUDITS.DESCRIPTION' | translate">{{ translateActionDescription(audit.actionDescription) }}</td>
                     <td class="show-on-mobile-only mobile-icon-col">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
@@ -271,7 +271,7 @@
                 @if (filteredAudits.length === 0 && !loadingAudits) {
                 <tr>
                     <td colspan="6" style="text-align: center; padding: 2rem; color: #999">
-                        No se encontraron auditorías
+                        {{ 'PRODUCTS_MGMT.AUDITS.NO_AUDITS' | translate }}
                     </td>
                 </tr>
                 }
@@ -284,11 +284,11 @@
     <div class="pagination-controls">
         <button class="toolbar-btn btn-page" [disabled]="currentAuditPage === 0" (click)="changeAuditPage(-1)">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
-            Anterior
+            {{ 'COMMON.PREVIOUS' | translate }}
         </button>
-        <span class="page-info">Página {{ currentAuditPage + 1 }} de {{ totalAuditPages }} <span class="total-info">({{ totalAuditsCount }} auditorías)</span></span>
+        <span class="page-info">{{ 'COMMON.PAGE_INFO' | translate: { current: currentAuditPage + 1, total: totalAuditPages } }} <span class="total-info">{{ 'COMMON.TOTAL_COUNT' | translate: { count: totalAuditsCount, items: ('PRODUCTS_MGMT.TABS.AUDITS' | translate).toLowerCase() } }}</span></span>
         <button class="toolbar-btn btn-page" [disabled]="currentAuditPage === totalAuditPages - 1" (click)="changeAuditPage(1)">
-            Siguiente
+            {{ 'COMMON.NEXT' | translate }}
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
         </button>
     </div>
@@ -312,7 +312,7 @@
 }
 
 @if (showScannerModal) {
-<app-base-modal title="Escanear Código de Barras" size="md" (closed)="closeBarcodeScanner()">
+<app-base-modal [title]="'PRODUCTS_MGMT.CONTROLS.SCAN_TITLE' | translate" size="md" (closed)="closeBarcodeScanner()">
     <div class="scanner-modal-body">
         <app-barcode-scanner (productFound)="onProductFound($event)"></app-barcode-scanner>
     </div>
@@ -321,10 +321,10 @@
 
 <!-- Audit Detail Modal -->
 @if (showAuditDetailModal && selectedAudit) {
-<app-base-modal title="Detalle de Auditoría" [size]="hasDiffData ? 'lg' : 'md'" (closed)="closeAuditDetailModal()">
+<app-base-modal [title]="'PRODUCTS_MGMT.AUDITS.MODAL_TITLE' | translate" [size]="hasDiffData ? 'lg' : 'md'" (closed)="closeAuditDetailModal()">
     <div class="audit-modal-header-info">
         <span class="movement-badge" [ngClass]="'movement-' + selectedAudit.movementType.toLowerCase()">
-            {{ selectedAudit.movementType }}
+            {{ 'PRODUCTS_MGMT.AUDITS.TYPES.' + selectedAudit.movementType | translate }}
         </span>
         <span class="audit-header-date">{{ selectedAudit.movementDate | date:'dd/MM/yyyy HH:mm' }}</span>
         <span class="audit-header-user">{{ selectedAudit.userName }}</span>
@@ -337,17 +337,17 @@
             <table class="diff-table">
                 <thead>
                     <tr>
-                        <th class="diff-label-col">Campo</th>
-                        <th class="diff-prev-col">Estado Anterior</th>
-                        <th class="diff-next-col">Estado Nuevo</th>
+                        <th class="diff-label-col">{{ 'PRODUCTS_MGMT.AUDITS.FIELD' | translate }}</th>
+                        <th class="diff-prev-col">{{ 'PRODUCTS_MGMT.AUDITS.PREVIOUS_STATE' | translate }}</th>
+                        <th class="diff-next-col">{{ 'PRODUCTS_MGMT.AUDITS.NEW_STATE' | translate }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     @for (field of getDiffFields(); track field.label) {
                     <tr [class.diff-changed]="field.changed">
-                        <td class="diff-label">{{ field.label }}</td>
-                        <td class="diff-prev" [class.diff-highlight-old]="field.changed">{{ field.prev }}</td>
-                        <td class="diff-next" [class.diff-highlight-new]="field.changed">{{ field.next }}</td>
+                        <td class="diff-label">{{ field.label | translate }}</td>
+                        <td class="diff-prev" [class.diff-highlight-old]="field.changed">{{ field.prev | translate }}</td>
+                        <td class="diff-next" [class.diff-highlight-new]="field.changed">{{ field.next | translate }}</td>
                     </tr>
                     }
                 </tbody>
@@ -357,11 +357,11 @@
         <!-- Fallback: simple detail view (for CREATE / DELETE without prev/next) -->
         <div class="audit-modal-body">
             <div class="audit-field">
-                <span class="audit-field-label">Producto</span>
-                <span class="audit-field-value">{{ selectedAudit.productName }} <span class="id-badge">#{{ selectedAudit.productId }}</span></span>
+                <span class="audit-field-label">{{ 'PRODUCTS_MGMT.AUDITS.PRODUCT' | translate }}</span>
+                <span class="audit-field-value">{{ selectedAudit.productName }} <span class="id-badge">{{ 'PRODUCTS_MGMT.AUDITS.TAG_ID' | translate }} #{{ selectedAudit.productId }}</span></span>
             </div>
             <div class="audit-field audit-field-full">
-                <span class="audit-field-label">Descripción</span>
+                <span class="audit-field-label">{{ 'PRODUCTS_MGMT.AUDITS.DESCRIPTION' | translate }}</span>
                 <p class="audit-details-text">{{ translateActionDescription(selectedAudit.actionDescription) }}</p>
             </div>
         </div>
@@ -369,5 +369,3 @@
     </div>
 </app-base-modal>
 }
-
-

@@ -1,5 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { LoggerService } from './logger.service';
+import { TranslateService } from '@ngx-translate/core';
 
 declare global {
   interface WindowEventMap {
@@ -16,6 +18,8 @@ interface BeforeInstallPromptEvent extends Event {
   providedIn: 'root',
 })
 export class PwaInstallService {
+  private readonly logger = inject(LoggerService);
+  private translate = inject(TranslateService);
   private canInstall$ = new BehaviorSubject<boolean>(false);
   private isInstalled$ = new BehaviorSubject<boolean>(this.checkIfInstalled());
   private installPrompt: BeforeInstallPromptEvent | null = null;
@@ -33,7 +37,6 @@ export class PwaInstallService {
       event.preventDefault();
       this.installPrompt = event;
       this.canInstall$.next(true);
-      console.log('[PWA Install] Install prompt ready');
     });
 
     // Handle app installed
@@ -41,7 +44,6 @@ export class PwaInstallService {
       this.canInstall$.next(false);
       this.isInstalled$.next(true);
       this.installPrompt = null;
-      console.log('[PWA Install] App installed successfully');
     });
   }
 
@@ -92,7 +94,7 @@ export class PwaInstallService {
    */
   async installApp(): Promise<boolean> {
     if (!this.installPrompt) {
-      console.warn('[PWA Install] Install prompt not available');
+      this.logger.warn('[PWA Install] Install prompt not available');
       return false;
     }
 
@@ -101,14 +103,12 @@ export class PwaInstallService {
       const { outcome } = await this.installPrompt.userChoice;
       
       if (outcome === 'accepted') {
-        console.log('[PWA Install] User accepted the install prompt');
         return true;
       } else {
-        console.log('[PWA Install] User dismissed the install prompt');
         return false;
       }
     } catch (error) {
-      console.error('[PWA Install] Error during install:', error);
+      this.logger.error('[PWA Install] Error during install:', error);
       return false;
     }
   }
@@ -118,20 +118,20 @@ export class PwaInstallService {
    */
   async shareApp(): Promise<boolean> {
     if (!navigator.share) {
-      console.warn('[PWA Install] Share API not supported');
+      this.logger.warn('[PWA Install] Share API not supported');
       return false;
     }
 
     try {
       await navigator.share({
         title: 'SmartEconomato',
-        text: 'Instala SmartEconomato - Sistema de gestión de cocina profesional',
+        text: this.translate.instant('PWA.SHARE_TEXT'),
         url: window.location.href,
       });
       return true;
     } catch (error) {
       if ((error as Error).name !== 'AbortError') {
-        console.error('[PWA Install] Error sharing:', error);
+        this.logger.error('[PWA Install] Error sharing:', error);
       }
       return false;
     }
@@ -167,22 +167,22 @@ export class PwaInstallService {
    */
   getInstallInstructions(): string {
     if (this.isInstalled$.value) {
-      return 'La aplicación ya está instalada en tu dispositivo.';
+      return this.translate.instant('PWA.INSTRUCTIONS.ALREADY_INSTALLED');
     }
 
     if (this.installPrompt) {
-      return 'Presiona el botón "Instalar" para agregar SmartEconomato a tu pantalla de inicio.';
+      return this.translate.instant('PWA.INSTRUCTIONS.INSTALL_BTN');
     }
 
     // Fallback instructions for different browsers
     if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-      return 'En iOS: Abre el menú (⋯) y selecciona "Agregar a la pantalla de inicio"';
+      return this.translate.instant('PWA.INSTRUCTIONS.IOS');
     }
 
     if (/Android/.test(navigator.userAgent)) {
-      return 'En Android: Abre el menú (⋯) y selecciona "Instalar aplicación"';
+      return this.translate.instant('PWA.INSTRUCTIONS.ANDROID');
     }
 
-    return 'Tu navegador no soporta la instalación de PWAs. Actualiza a una versión más reciente.';
+    return this.translate.instant('PWA.INSTRUCTIONS.NOT_SUPPORTED');
   }
 }

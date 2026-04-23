@@ -3,6 +3,7 @@ import { AsyncPipe, CommonModule, CurrencyPipe, DatePipe, DecimalPipe } from '@a
 import { FormsModule } from '@angular/forms';
 import { finalize, Observable, Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
+import { LoggerService } from '../../../core/services/logger.service';
 import { KitchenService } from '../../../core/services/kitchen.service';
 import { RecipeService } from '../../../core/services/recipe.service';
 import { OrderService } from '../../../core/services/order.service';
@@ -20,17 +21,19 @@ import { ScrollService } from '../../../core/services/scroll.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { OrderDetailsModalComponent } from '../../general/orders/order-details-modal/order-details-modal.component';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-kitchen-management',
   standalone: true,
-  imports: [FormsModule, CommonModule, BaseModalComponent, OrderDetailsModalComponent],
+  imports: [FormsModule, CommonModule, BaseModalComponent, OrderDetailsModalComponent, TranslateModule],
 
   templateUrl: './kitchen-management.component.html',
   styleUrl: './kitchen-management.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class KitchenManagementComponent implements OnInit, OnDestroy {
+  private readonly logger = inject(LoggerService);
   private kitchenService = inject(KitchenService);
   private recipeService = inject(RecipeService);
   private orderService = inject(OrderService);
@@ -38,6 +41,7 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private scrollService = inject(ScrollService);
   private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
+  private translate = inject(TranslateService);
   messageService = inject(MessageService);
   private destroy$ = new Subject<void>();
 
@@ -155,7 +159,7 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         },
         error: () => {
-          this.messageService.showError('No se pudo cargar el historial de cocina');
+          this.messageService.showError(this.translate.instant('KITCHEN.MESSAGES.LOAD_ERROR') || 'No se pudo cargar el historial de cocina');
         }
       });
   }
@@ -234,12 +238,12 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
         error: () => {
           const filterName = activeFilters[0];
           const errorMessages: Record<string, string> = {
-            'recipe': 'No se pudo filtrar por receta',
-            'user': 'No se pudo filtrar por usuario',
-            'dateRange': 'No se pudo filtrar por rango de fechas',
-            'search': 'No se pudo buscar en el historial'
+            'recipe': this.translate.instant('KITCHEN.MESSAGES.FILTER_RECIPE_ERROR'),
+            'user': this.translate.instant('KITCHEN.MESSAGES.FILTER_USER_ERROR'),
+            'dateRange': this.translate.instant('KITCHEN.MESSAGES.FILTER_DATE_ERROR'),
+            'search': this.translate.instant('KITCHEN.MESSAGES.SEARCH_ERROR')
           };
-          this.messageService.showError(errorMessages[filterName] || 'No se pudo aplicar los filtros');
+          this.messageService.showError(errorMessages[filterName] || this.translate.instant('KITCHEN.MESSAGES.FILTER_GENERAL_ERROR'));
         }
       });
   }
@@ -286,7 +290,7 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError('No se pudo buscar en el historial');
+        this.messageService.showError(this.translate.instant('KITCHEN.MESSAGES.SEARCH_ERROR'));
         this.loadingHistory = false;
       }
     });
@@ -320,7 +324,7 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
           this.traceData = data as ReverseTraceabilityDTO;
         },
         error: () => {
-          console.error('Error loading traceability for mobile modal');
+          this.logger.error('Error loading traceability for mobile modal');
           this.loadingTraceability = false;
           this.cdr.markForCheck();
         }
@@ -396,8 +400,8 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
 
   async revertAudit(audit: RecipeCookingAudit): Promise<void> {
     const confirmed = await this.messageService.confirm(
-      'Revertir cocinado',
-      `Se revertirá el cocinado de la receta "${audit.recipeName}" y se devolverá stock de los ingredientes a sus lotes originales.`
+      this.translate.instant('KITCHEN.ACTIONS.REVERT_COOKING'),
+      this.translate.instant('KITCHEN.MESSAGES.REVERT_CONFIRM', { recipeName: audit.recipeName })
     );
 
     if (!confirmed) {
@@ -409,11 +413,11 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
 
     this.recipeService.revertCooking(audit.id).subscribe({
       next: () => {
-        this.messageService.showSuccess('Audit reverted successfully');
+        this.messageService.showSuccess(this.translate.instant('KITCHEN.MESSAGES.REVERT_SUCCESS'));
         this.loadHistory(this.currentPage);
       },
       error: (err: any) => {
-        const msg = err.error?.message || err.error || 'Error al revertir el cocinado';
+        const msg = err.error?.message || err.error || this.translate.instant('KITCHEN.MESSAGES.REVERT_ERROR');
         this.messageService.showError(msg);
         this.loadingHistory = false;
         this.cdr.markForCheck();
@@ -427,19 +431,16 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('Loading report with range:', this.reportRange, 'start:', this.reportStartDate, 'end:', this.reportEndDate);
     this.loadingReport = true;
     this.cdr.markForCheck();
 
     this.kitchenService.getKitchenReport(this.reportRange, this.reportStartDate, this.reportEndDate)
       .pipe(finalize(() => {
-        console.log('Report load finalized');
         this.loadingReport = false;
         this.cdr.markForCheck();
       }))
       .subscribe({
         next: (report) => {
-          console.log('Report received:', report);
           if (report && report.topRecipes) {
             // Sort by quantity as priority
             report.topRecipes.sort((a, b) => b.totalQuantityCooked - a.totalQuantityCooked);
@@ -448,21 +449,21 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         },
         error: (error: any) => {
-          console.error('Error loading report:', error);
-          this.messageService.showError('No se pudo generar el informe de cocina');
+          this.logger.error('Error loading report:', error);
+          this.messageService.showError(this.translate.instant('KITCHEN.MESSAGES.REPORT_ERROR'));
         }
       });
   }
 
   async downloadReportPdf(): Promise<void> {
     if (this.reportRange === 'CUSTOM' && (!this.reportStartDate || !this.reportEndDate)) {
-      this.messageService.showWarning('Debes indicar fecha de inicio y fin para rango personalizado');
+      this.messageService.showWarning(this.translate.instant('KITCHEN.MESSAGES.CUSTOM_RANGE_WARNING'));
       return;
     }
 
     const confirmed = await this.messageService.confirm(
-      'Confirmar descarga',
-      '¿Deseas descargar este archivo PDF?'
+      this.translate.instant('COMMON.CONFIRM_DOWNLOAD'),
+      this.translate.instant('COMMON.CONFIRM_DOWNLOAD_PDF')
     );
     if (!confirmed) return;
 
@@ -475,11 +476,11 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
           anchor.download = `reporte-cocina-${this.reportRange.toLowerCase()}.pdf`;
           anchor.click();
           window.URL.revokeObjectURL(url);
-          this.messageService.showSuccess('Informe PDF descargado');
+          this.messageService.showSuccess(this.translate.instant('KITCHEN.MESSAGES.PDF_SUCCESS'));
         },
         error: (err: any) => {
-          console.error('Error downloading report PDF:', err);
-          this.messageService.showError('No se pudo descargar el informe PDF');
+          this.logger.error('Error downloading report PDF:', err);
+          this.messageService.showError(this.translate.instant('KITCHEN.MESSAGES.PDF_ERROR'));
         }
       });
   }
@@ -499,12 +500,12 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
 
   translateRange(range: ReportRange): string {
     const translations: Record<ReportRange, string> = {
-      'DAILY': 'Diario',
-      'WEEKLY': 'Semanal',
-      'MONTHLY': 'Mensual',
-      'YEARLY': 'Anual',
-      'ALL_TIME': 'Histórico',
-      'CUSTOM': 'Personalizado'
+      'DAILY': this.translate.instant('KITCHEN.RANGES.DAILY'),
+      'WEEKLY': this.translate.instant('KITCHEN.RANGES.WEEKLY'),
+      'MONTHLY': this.translate.instant('KITCHEN.RANGES.MONTHLY'),
+      'YEARLY': this.translate.instant('KITCHEN.RANGES.YEARLY'),
+      'ALL_TIME': this.translate.instant('KITCHEN.RANGES.ALL_TIME'),
+      'CUSTOM': this.translate.instant('KITCHEN.RANGES.CUSTOM')
     };
     return translations[range] || range;
   }
@@ -578,7 +579,7 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError(`No se pudo cargar la orden #${orderId}`);
+        this.messageService.showError(this.translate.instant('KITCHEN.MESSAGES.ORDER_LOAD_ERROR', { id: orderId }));
       }
     });
   }

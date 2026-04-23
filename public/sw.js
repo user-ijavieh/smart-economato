@@ -13,6 +13,16 @@ const API_CACHE = `smart-economato-api-${CACHE_VERSION}`;
 const SYNC_QUEUE_STORE = 'sync-queue';
 const OFFLINE_RESPONSES_STORE = 'offline-responses';
 
+const IS_DEV = self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1';
+const swLogger = {
+  warn: (...args) => {
+    if (IS_DEV) console.warn(...args);
+  },
+  error: (...args) => {
+    console.error(...args);
+  }
+};
+
 // Maximum cache sizes
 const MAX_API_CACHE_SIZE = 50; // 50 items max per cache
 const MAX_STATIC_CACHE_SIZE = 100;
@@ -46,16 +56,13 @@ const SYNC_ROUTES = [
 
 // ─── Install: pre-cache static shell ───────────────────────────
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing new version...');
   event.waitUntil(
     caches
       .open(STATIC_CACHE)
       .then((cache) => {
-        console.log('[SW] Precaching assets...');
         return cache.addAll(PRECACHE_ASSETS);
       })
       .then(() => {
-        console.log('[SW] Skip waiting - activating immediately');
         return self.skipWaiting();
       })
   );
@@ -63,7 +70,6 @@ self.addEventListener('install', (event) => {
 
 // ─── Activate: clean up old caches ─────────────────────────────
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating new version...');
   event.waitUntil(
     caches
       .keys()
@@ -71,11 +77,9 @@ self.addEventListener('activate', (event) => {
         const oldCaches = keys.filter(
           (k) => k !== STATIC_CACHE && k !== API_CACHE
         );
-        console.log('[SW] Deleting old caches:', oldCaches);
         return Promise.all(oldCaches.map((k) => caches.delete(k)));
       })
       .then(() => {
-        console.log('[SW] Claiming clients...');
         return self.clients.claim();
       })
   );
@@ -84,7 +88,6 @@ self.addEventListener('activate', (event) => {
 // ─── Message Handler: receive SKIP_WAITING ─────────────────────
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
-    console.log('[SW] SKIP_WAITING message received');
     self.skipWaiting();
   }
 });
@@ -221,7 +224,7 @@ async function queueRequestForSync(request) {
     queue.push(queueItem);
     await db.put(SYNC_QUEUE_STORE, queueItem);
   } catch (e) {
-    console.warn('[SW] Error queueing request:', e);
+    swLogger.warn('[SW] Error queueing request:', e);
   }
 }
 
@@ -324,15 +327,15 @@ async function syncQueuedRequests() {
           await notifyClientsSync(item, true);
           await db.delete(SYNC_QUEUE_STORE, item.id);
         } else {
-          console.warn(`[SW Sync] Fallo con status ${response.status} para ${item.url}`);
+          swLogger.warn(`[SW Sync] Fallo con status ${response.status} para ${item.url}`);
         }
       } catch (err) {
-        console.warn(`[SW Sync] Error syncing ${item.url}:`, err);
+        swLogger.warn(`[SW Sync] Error syncing ${item.url}:`, err);
         // Keep in queue for next attempt
       }
     }
   } catch (e) {
-    console.error('[SW Sync] Error en sincronización:', e);
+    swLogger.error('[SW Sync] Error en sincronización:', e);
   }
 }
 

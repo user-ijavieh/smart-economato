@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, OnInit, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
 export interface SelectableItem {
@@ -12,13 +13,16 @@ export interface SelectableItem {
 @Component({
   selector: 'app-multi-select-dropdown',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   template: `
     <div class="multi-select-wrapper" [class.open]="isOpen">
       <div class="select-trigger" (click)="toggle()">
         <span class="select-value">
           @if (selectedItems.length > 0) {
-            {{ selectedItems.length }} seleccionado{{ selectedItems.length !== 1 ? 's' : '' }}
+            {{ selectedItems.length === 1 
+              ? ('COMMON.SELECTED_COUNT_ONE' | translate) 
+              : ('COMMON.SELECTED_COUNT_OTHER' | translate:{count: selectedItems.length}) 
+            }}
           } @else {
             {{ placeholder }}
           }
@@ -34,7 +38,7 @@ export interface SelectableItem {
             type="text" 
             [(ngModel)]="searchText" 
             (ngModelChange)="onSearch($event)"
-            placeholder="Buscar..."
+            [placeholder]="'COMMON.SEARCH' | translate"
             class="search-input"
             autocomplete="off"
           />
@@ -52,11 +56,11 @@ export interface SelectableItem {
                 </label>
               }
             } @else {
-              <div class="list-empty">No hay resultados</div>
+              <div class="list-empty">{{ 'COMMON.NO_RESULTS' | translate }}</div>
             }
             
             @if (loadingMore) {
-              <div class="list-loading">Cargando más...</div>
+              <div class="list-loading">{{ 'COMMON.LOADING_MORE' | translate }}</div>
             }
           </div>
         </div>

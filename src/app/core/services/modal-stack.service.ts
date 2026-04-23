@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ModalStackService {
   private stack: string[] = [];
   private readonly baseZIndex = 60000;
   private readonly zIndexStep = 20;
+  private readonly stackCountSubject = new BehaviorSubject(0);
+
+  readonly stackCount$ = this.stackCountSubject.asObservable();
 
   register(id: string): void {
     if (this.stack.includes(id)) {
@@ -12,10 +16,12 @@ export class ModalStackService {
     }
 
     this.stack.push(id);
+    this.stackCountSubject.next(this.stack.length);
   }
 
   unregister(id: string): void {
     this.stack = this.stack.filter(item => item !== id);
+    this.stackCountSubject.next(this.stack.length);
   }
 
   isTop(id: string): boolean {
@@ -33,5 +39,9 @@ export class ModalStackService {
     }
 
     return this.baseZIndex + index * this.zIndexStep;
+  }
+
+  hasActiveModals(): boolean {
+    return this.stack.length > 0;
   }
 }

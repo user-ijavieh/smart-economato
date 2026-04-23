@@ -3,13 +3,21 @@ import { appConfig } from './app/app.config';
 import { App } from './app/app';
 import { environment } from './environments/environment';
 
+const appLogger = {
+  warn: (...args: any[]) => {
+    if (!environment.production) console.warn(...args);
+  },
+  error: (...args: any[]) => {
+    console.error(...args);
+  }
+};
+
 bootstrapApplication(App, appConfig)
   .then(() => registerServiceWorker())
-  .catch((err) => console.error(err));
+  .catch((err) => appLogger.error(err));
 
 function registerServiceWorker(): void {
   if (!('serviceWorker' in navigator)) {
-    console.warn('[SW] Service Workers no soportados en este navegador');
     return;
   }
 
@@ -25,11 +33,10 @@ function registerServiceWorker(): void {
     navigator.serviceWorker
       .register('/sw.js', { scope: '/' })
       .then((reg) => {
-        console.log('[SW] ✓ Service Worker registrado. Scope:', reg.scope);
 
         // Check for updates periodically
         setInterval(() => {
-          reg.update().catch((err) => console.warn('[SW] Error checking updates:', err));
+          reg.update().catch((err) => appLogger.warn('[SW] Error checking updates:', err));
         }, 60000);
 
         reg.addEventListener('updatefound', () => {
@@ -38,7 +45,6 @@ function registerServiceWorker(): void {
 
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              console.log('[SW] ⚠ Nueva versión disponible');
 
               reg.active?.postMessage({ type: 'SKIP_WAITING' });
 
@@ -50,7 +56,6 @@ function registerServiceWorker(): void {
                     tag: 'sw-update',
                   });
                 } catch {
-                  console.log('[SW] Could not show update notification');
                 }
               }
 
@@ -66,7 +71,7 @@ function registerServiceWorker(): void {
           });
         });
       })
-      .catch((err) => console.warn('[SW] ✗ Error al registrar:', err));
+      .catch((err) => appLogger.warn('[SW] ✗ Error al registrar:', err));
   });
 }
 
@@ -84,6 +89,5 @@ function cleanupServiceWorkersAndCaches(): void {
         )
       );
     })
-    .then(() => console.log('[SW] Desarrollo/local: service worker desregistrado y caché limpiada'))
-    .catch((err) => console.warn('[SW] Error limpiando SW/caché en desarrollo:', err));
+    .catch((err) => appLogger.warn('[SW] Error limpiando SW/caché en desarrollo:', err));
 }

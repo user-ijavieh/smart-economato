@@ -1,5 +1,5 @@
 <div class="admin-page-header">
-  <h1>Gestión de Cocina</h1>
+  <h1>{{ 'KITCHEN.TITLE' | translate }}</h1>
 </div>
 
 <div class="admin-tab-bar">
@@ -9,36 +9,36 @@
       <path d="M8.5 4.5a.5.5 0 0 0-1 0v4h-3a.5.5 0 0 0 0 1h4a.5.5 0 0 0 .5-.5v-4z"/>
     </svg>
 
-    Historial
+    {{ 'KITCHEN.TABS.HISTORY' | translate }}
   </button>
   <button class="admin-tab-btn" [class.active]="activeTab === 'reports'" (click)="switchTab('reports')">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor">
       <path d="M280-280h80v-200h-80v200Zm160 0h80v-400h-80v400Zm160 0h80v-280h-80v280ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/>
     </svg>
-    Informes
+    {{ 'KITCHEN.TABS.REPORTS' | translate }}
   </button>
 </div>
 
 @if (activeTab === 'history') {
 <div class="page-content contenedor-principal">
   <div class="controls-bar controles">
-    <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar en historial..." (ngModelChange)="applySearchFilter()" />
-    <input type="number" [(ngModel)]="recipeIdFilter" placeholder="ID Receta" min="1" class="id-input" />
-    <input type="number" [(ngModel)]="userIdFilter" placeholder="ID Usuario" min="1" class="id-input" />
+    <input type="text" [(ngModel)]="searchTerm" [placeholder]="'KITCHEN.FILTERS.SEARCH_PLACEHOLDER' | translate" (ngModelChange)="applySearchFilter()" />
+    <input type="number" [(ngModel)]="recipeIdFilter" [placeholder]="'KITCHEN.FILTERS.RECIPE_ID' | translate" min="1" class="id-input" />
+    <input type="number" [(ngModel)]="userIdFilter" [placeholder]="'KITCHEN.FILTERS.USER_ID' | translate" min="1" class="id-input" />
     <div class="date-range-group">
       <div class="date-filter-field">
-        <span class="date-field-label">Desde</span>
-        <input type="date" [(ngModel)]="startDate" class="date-input" title="Desde" />
+        <span class="date-field-label">{{ 'KITCHEN.FILTERS.FROM' | translate }}</span>
+        <input type="date" [(ngModel)]="startDate" class="date-input" [title]="'KITCHEN.FILTERS.FROM' | translate" />
       </div>
       <span class="date-separator">—</span>
       <div class="date-filter-field">
-        <span class="date-field-label">Hasta</span>
-        <input type="date" [(ngModel)]="endDate" class="date-input" title="Hasta" />
+        <span class="date-field-label">{{ 'KITCHEN.FILTERS.TO' | translate }}</span>
+        <input type="date" [(ngModel)]="endDate" class="date-input" [title]="'KITCHEN.FILTERS.TO' | translate" />
       </div>
     </div>
-    <button class="btn-filter" (click)="applyServerFilters()">Aplicar Filtros</button>
+    <button class="btn-filter" (click)="applyServerFilters()">{{ 'KITCHEN.FILTERS.APPLY' | translate }}</button>
     @if (hasActiveHistoryFilters()) {
-    <button class="btn-clear" (click)="clearHistoryFilters()">Limpiar Filtros</button>
+    <button class="btn-clear" (click)="clearHistoryFilters()">{{ 'KITCHEN.FILTERS.CLEAR' | translate }}</button>
     }
   </div>
 
@@ -51,30 +51,30 @@
             (click)="onSortHistoryChange('cookingDate')"
             [attr.data-sort-dir]="getSortHistoryDir('cookingDate')"
           >
-            Fecha
+            {{ 'KITCHEN.TABLE.DATE' | translate }}
           </th>
           <th
             class="sortable"
             (click)="onSortHistoryChange('recipeName')"
             [attr.data-sort-dir]="getSortHistoryDir('recipeName')"
           >
-            Receta
+            {{ 'KITCHEN.TABLE.RECIPE' | translate }}
           </th>
           <th
             class="sortable hide-on-mobile"
             (click)="onSortHistoryChange('userName')"
             [attr.data-sort-dir]="getSortHistoryDir('userName')"
           >
-            Usuario
+            {{ 'KITCHEN.TABLE.USER' | translate }}
           </th>
           <th
             class="sortable hide-on-mobile"
             (click)="onSortHistoryChange('quantityCooked')"
             [attr.data-sort-dir]="getSortHistoryDir('quantityCooked')"
           >
-            Cantidad
+            {{ 'KITCHEN.TABLE.QUANTITY' | translate }}
           </th>
-          <th class="hide-on-mobile">Acciones</th>
+          <th class="hide-on-mobile">{{ 'KITCHEN.TABLE.ACTIONS' | translate }}</th>
           <th class="show-on-mobile-only mobile-icon-col"></th>
         </tr>
       </thead>
@@ -105,13 +105,13 @@
           <td class="hide-on-mobile">{{ audit.quantityCooked | number:'1.2-2' }}</td>
           <td class="actions-cell hide-on-mobile" (click)="$event.stopPropagation()">
               <div class="actions-cell">
-                <button class="btn-trace" (click)="viewTraceability(audit)" title="Ver detalle">
+                <button class="btn-trace" (click)="viewTraceability(audit)" [title]="'KITCHEN.ACTIONS.VIEW_TRACE' | translate">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
                     <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
                   </svg>
                 </button>
-                <button class="btn-revert" (click)="revertAudit(audit)" title="Revertir">
+                <button class="btn-revert" (click)="revertAudit(audit)" [title]="'KITCHEN.ACTIONS.REVERT_COOKING' | translate">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/>
                     <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966a.25.25 0 0 0 .41-.192z"/>
@@ -128,7 +128,7 @@
         }
         @if (filteredAudits.length === 0) {
         <tr>
-          <td colspan="6" class="empty-row">No hay registros de cocina para los filtros aplicados</td>
+          <td colspan="6" class="empty-row">{{ 'KITCHEN.MESSAGES.EMPTY_HISTORY' | translate }}</td>
         </tr>
         }
         }
@@ -140,11 +140,11 @@
   <div class="pagination-controls">
     <button class="btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
-      Anterior
+      {{ 'KITCHEN.PAGINATION.PREVIOUS' | translate }}
     </button>
-    <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }} <span class="total-info">({{ totalElements }} registros)</span></span>
+    <span class="page-info">{{ 'KITCHEN.PAGINATION.PAGE_INFO' | translate:{page: currentPage + 1, total: totalPages, elements: totalElements} }}</span>
     <button class="btn-page" [disabled]="currentPage >= totalPages - 1" (click)="changePage(1)">
-      Siguiente
+      {{ 'KITCHEN.PAGINATION.NEXT' | translate }}
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6-6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
     </button>
   </div>
@@ -152,32 +152,32 @@
   
   <!-- Mobile Detail Modal para History -->
   @if (showMobileModal && selectedAuditForMobile) {
-    <app-base-modal [title]="'Receta #' + selectedAuditForMobile.recipeId" size="md" (closed)="closeMobileModal()">
+    <app-base-modal [title]="('KITCHEN.TABLE.RECIPE' | translate) + ' #' + selectedAuditForMobile.recipeId" size="md" (closed)="closeMobileModal()">
       <div class="detail-field">
-                  <span class="detail-label">Receta</span>
+                  <span class="detail-label">{{ 'KITCHEN.TABLE.RECIPE' | translate }}</span>
                   <span class="detail-value">{{ selectedAuditForMobile.recipeName }}</span>
       </div>
       <div class="detail-field">
-                  <span class="detail-label">Usuario</span>
+                  <span class="detail-label">{{ 'KITCHEN.TABLE.USER' | translate }}</span>
                   <span class="detail-value">{{ selectedAuditForMobile.userName }} (ID: {{ selectedAuditForMobile.userId }})</span>
       </div>
       <div class="detail-field">
-                  <span class="detail-label">Fecha de Cocinado</span>
+                  <span class="detail-label">{{ 'KITCHEN.TABLE.DATE' | translate }}</span>
                   <span class="detail-value">{{ formatDate(selectedAuditForMobile.cookingDate) }}</span>
       </div>
       <div class="detail-field">
-                  <span class="detail-label">Cantidad (Porciones)</span>
+                  <span class="detail-label">{{ 'KITCHEN.TABLE.QUANTITY' | translate }} ({{ 'KITCHEN.LABELS.PORTIONS' | translate }})</span>
                   <span class="detail-value">{{ selectedAuditForMobile.quantityCooked | number:'1.2-2' }}</span>
       </div>
 
               <!-- Trazabilidad en Móvil -->
       <div class="mobile-traceability-section">
-                  <h3 class="section-title">Trazabilidad de Ingredientes</h3>
+                  <h3 class="section-title">{{ 'KITCHEN.TRACEABILITY.TITLE' | translate }}</h3>
                   
                   @if (loadingTraceability) {
                     <div class="loading-traceability-mobile">
                       <div class="spinner-small"></div>
-                      <p>Cargando origen...</p>
+                      <p>{{ 'KITCHEN.TRACEABILITY.LOADING' | translate }}</p>
                     </div>
                   } @else if (traceData) {
                     <div class="mobile-ingredients-list">
@@ -186,37 +186,37 @@
                           <div class="ingredient-name-mobile">{{ ingredient.productName }}</div>
                           <div class="mobile-trace-grid">
                             <div class="mobile-trace-item">
-                              <span class="mobile-trace-label">Lote:</span>
+                              <span class="mobile-trace-label">{{ 'KITCHEN.TRACEABILITY.BATCH' | translate }}:</span>
                               <span class="mobile-trace-value">
                                 @if (ingredient.batchCode || ingredient.batchId) {
-                                  {{ ingredient.batchCode || 'Sin codigo' }}
+                                  {{ ingredient.batchCode || ('KITCHEN.TRACEABILITY.NO_CODE' | translate) }}
                                   @if (ingredient.batchId) {
                                     <span>(#{{ ingredient.batchId }})</span>
                                   }
                                 } @else {
-                                  Sin lote
+                                  {{ 'KITCHEN.TRACEABILITY.NO_BATCH' | translate }}
                                 }
                               </span>
                             </div>
                             <div class="mobile-trace-item">
-                              <span class="mobile-trace-label">Origen:</span>
+                              <span class="mobile-trace-label">{{ 'KITCHEN.TRACEABILITY.ORIGIN' | translate }}:</span>
                               <span class="mobile-trace-value">
                                 @if (ingredient.orderId) {
-                                  <span class="order-chip-mobile" (click)="goToOrder(ingredient.orderId, $event)">Orden #{{ ingredient.orderId }}</span>
+                                  <span class="order-chip-mobile" (click)="goToOrder(ingredient.orderId, $event)">{{ 'KITCHEN.TRACEABILITY.ORDER' | translate }} #{{ ingredient.orderId }}</span>
                                 } @else {
-                                  <span class="initial-stock-badge-small">Manual / Stock Inicial</span>
+                                  <span class="initial-stock-badge-small">{{ 'KITCHEN.TRACEABILITY.INITIAL_STOCK' | translate }}</span>
                                 }
                               </span>
                             </div>
                             <div class="mobile-trace-item">
-                              <span class="mobile-trace-label">Proveedor:</span>
-                              <span class="mobile-trace-value">{{ ingredient.supplierName || 'Desconocido' }}</span>
+                              <span class="mobile-trace-label">{{ 'KITCHEN.TRACEABILITY.SUPPLIER' | translate }}:</span>
+                              <span class="mobile-trace-value">{{ ingredient.supplierName || ('KITCHEN.TRACEABILITY.UNKNOWN' | translate) }}</span>
                             </div>
                           </div>
                         </div>
                       }
                       @if (!traceData.ingredientTrace.length) {
-                        <p class="empty-trace-mobile">No hay datos de trazabilidad.</p>
+                        <p class="empty-trace-mobile">{{ 'KITCHEN.TRACEABILITY.NO_DATA' | translate }}</p>
                       }
                     </div>
                   }
@@ -224,7 +224,7 @@
 
               <div class="detail-actions">
                 <button class="btn-revert btn-full" (click)="revertAudit(selectedAuditForMobile); closeMobileModal()">
-                  Revertir Cocinado
+                  {{ 'KITCHEN.ACTIONS.REVERT_COOKING' | translate }}
                 </button>
       </div>
   </app-base-modal>
@@ -249,65 +249,64 @@
     </div>
     }
 
-    <button class="btn-pdf" (click)="downloadReportPdf()">Descargar PDF</button>
+    <button class="btn-pdf" (click)="downloadReportPdf()">{{ 'KITCHEN.REPORTS.DOWNLOAD_PDF' | translate }}</button>
   </div>
 
   @if (loadingReport) {
-  <div class="loading-report">Generando informe...</div>
+  <div class="loading-report">{{ 'KITCHEN.MESSAGES.LOADING_REPORT' | translate }}</div>
   } @else if (report) {
-  
   <div class="report-header">
-    <h2>Reporte de Cocina</h2>
-    <p class="report-period">Periodo: {{ report.reportPeriod || formatReportPeriod() }}</p>
+    <h2>{{ 'KITCHEN.REPORTS.REPORT_TITLE' | translate }}</h2>
+    <p class="report-period">{{ 'KITCHEN.REPORTS.PERIOD' | translate }}: {{ report.reportPeriod || formatReportPeriod() }}</p>
   </div>
 
   <div class="info-general-section">
-    <h3 class="section-title">Información General</h3>
+    <h3 class="section-title">{{ 'KITCHEN.REPORTS.GENERAL_INFO' | translate }}</h3>
     <div class="info-grid">
       <div class="info-item">
-        <span class="info-label">ELABORACIONES REGISTRADAS:</span>
+        <span class="info-label">{{ 'KITCHEN.REPORTS.LABELS.SESSIONS' | translate }}:</span>
         <span class="info-value">{{ report.totalCookingSessions }}</span>
       </div>
       <div class="info-item">
-        <span class="info-label">PORCIONES PREPARADAS:</span>
+        <span class="info-label">{{ 'KITCHEN.REPORTS.LABELS.PORTIONS' | translate }}:</span>
         <span class="info-value">{{ report.totalPortionsCooked | number:'1.2-2' }}</span>
       </div>
       <div class="info-item">
-        <span class="info-label">DIVERSIDAD DE RECETAS:</span>
+        <span class="info-label">{{ 'KITCHEN.REPORTS.LABELS.RECIPES' | translate }}:</span>
         <span class="info-value">{{ report.distinctRecipesCooked }}</span>
       </div>
       <div class="info-item">
-        <span class="info-label">DIVERSIDAD DE PRODUCTOS:</span>
+        <span class="info-label">{{ 'KITCHEN.REPORTS.LABELS.PRODUCTS' | translate }}:</span>
         <span class="info-value">{{ report.distinctProductsUsed }}</span>
       </div>
       <div class="info-item">
-        <span class="info-label">USUARIOS PARTICIPANTES:</span>
+        <span class="info-label">{{ 'KITCHEN.REPORTS.LABELS.USERS' | translate }}:</span>
         <span class="info-value">{{ report.distinctUsersCooking }}</span>
       </div>
       <div class="info-item highlight">
-        <span class="info-label">COSTE ESTIMADO TOTAL:</span>
+        <span class="info-label">{{ 'KITCHEN.REPORTS.LABELS.ESTIMATED_COST' | translate }}:</span>
         <span class="info-value">{{ report.totalEstimatedCost | currency:'EUR' }}</span>
       </div>
       <div class="info-item highlight">
-        <span class="info-label">PRECIO MEDIO POR PORCIÓN:</span>
+        <span class="info-label">{{ 'KITCHEN.REPORTS.LABELS.AVG_PRICE' | translate }}:</span>
         <span class="info-value">{{ (report.totalPortionsCooked > 0 ? report.totalEstimatedCost / report.totalPortionsCooked : 0) | currency:'EUR' }}</span>
       </div>
       <div class="info-item">
-        <span class="info-label">FECHA DE EMISIÓN:</span>
+        <span class="info-label">{{ 'KITCHEN.REPORTS.LABELS.ISSUE_DATE' | translate }}:</span>
         <span class="info-value">{{ getCurrentDate() }}</span>
       </div>
     </div>
   </div>
 
   <div class="financial-analysis-section">
-    <h3 class="section-title">Análisis Económico</h3>
+    <h3 class="section-title">{{ 'KITCHEN.REPORTS.ECONOMIC_ANALYSIS' | translate }}</h3>
     
     <div class="report-explanation-box">
       <div class="explanation-icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
       </div>
       <div class="explanation-text">
-        Los periodos de reporte (diario, semanal, mensual y anual) se calculan por <strong>días y meses naturales</strong>. Esto significa que un mes 'natural' abarca desde el primer hasta el último día del calendario para darte una visión exacta del rendimiento real de la cocina.
+        {{ 'KITCHEN.REPORTS.EXPLANATION' | translate }}
       </div>
     </div>
 
@@ -321,7 +320,7 @@
           </svg>
         </div>
         <div class="card-info">
-          <span class="card-label">VENTAS ESTIMADAS</span>
+          <span class="card-label">{{ 'KITCHEN.REPORTS.CARDS.ESTIMATED_SALES' | translate }}</span>
           <span class="card-value">{{ report.totalSales | currency:'EUR' }}</span>
         </div>
       </div>
@@ -330,7 +329,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
         </div>
         <div class="card-info">
-          <span class="card-label">GASTO POR MERMA</span>
+          <span class="card-label">{{ 'KITCHEN.REPORTS.CARDS.WASTE_COST' | translate }}</span>
           <span class="card-value">{{ report.totalWasteCost | currency:'EUR' }}</span>
         </div>
       </div>
@@ -340,7 +339,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><line x1="10" y1="14" x2="14" y2="18"></line><line x1="14" y1="14" x2="10" y2="18"></line></svg>
         </div>
         <div class="card-info">
-          <span class="card-label">GASTO POR CADUCIDAD</span>
+          <span class="card-label">{{ 'KITCHEN.REPORTS.CARDS.EXPIRATION_COST' | translate }}</span>
           <span class="card-value">{{ report.totalExpiredWasteCost | currency:'EUR' }}</span>
         </div>
       </div>
@@ -350,7 +349,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
         </div>
         <div class="card-info">
-          <span class="card-label">GANANCIA BRUTA (Teórica)</span>
+          <span class="card-label">{{ 'KITCHEN.REPORTS.CARDS.GROSS_PROFIT' | translate }}</span>
           <span class="card-value">{{ report.grossProfit | currency:'EUR' }}</span>
         </div>
       </div>
@@ -359,7 +358,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="2" ry="2"></rect><circle cx="12" cy="12" r="2"></circle><line x1="17" y1="12" x2="17.01" y2="12"></line><line x1="7" y1="12" x2="7.01" y2="12"></line></svg>
         </div>
         <div class="card-info">
-          <span class="card-label">GANANCIA NETA (Real)</span>
+          <span class="card-label">{{ 'KITCHEN.REPORTS.CARDS.NET_PROFIT' | translate }}</span>
           <span class="card-value">{{ report.netProfit | currency:'EUR' }}</span>
         </div>
       </div>
@@ -367,13 +366,13 @@
   </div>
 
     <div class="tabla-contenedor">
-      <h3 class="table-title">Recetas Más Elaboradas</h3>
+      <h3 class="table-title">{{ 'KITCHEN.REPORTS.TOP_RECIPES' | translate }}</h3>
       <table>
         <thead>
           <tr>
-            <th>RECETA</th>
-            <th>VECES PREPARADA</th>
-            <th>PORCIONES TOTALES</th>
+            <th>{{ 'KITCHEN.TABLE.RECIPE' | translate }}</th>
+            <th>{{ 'KITCHEN.REPORTS.TABLE.TIMES_PREPARED' | translate }}</th>
+            <th>{{ 'KITCHEN.REPORTS.TABLE.TOTAL_PORTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -387,7 +386,7 @@
             }
           } @else {
           <tr>
-            <td colspan="3" class="empty-row">Sin datos</td>
+            <td colspan="3" class="empty-row">{{ 'KITCHEN.MESSAGES.NO_DATA' | translate }}</td>
           </tr>
           }
         </tbody>
@@ -395,12 +394,12 @@
     </div>
 
     <div class="tabla-contenedor">
-      <h3 class="table-title">Usuarios con Mayor Actividad</h3>
+      <h3 class="table-title">{{ 'KITCHEN.REPORTS.TOP_USERS' | translate }}</h3>
       <table>
         <thead>
           <tr>
-            <th>USUARIO</th>
-            <th>NUMERO DE ELABORACIONES</th>
+            <th>{{ 'KITCHEN.TABLE.USER' | translate }}</th>
+            <th>{{ 'KITCHEN.REPORTS.TABLE.SESSIONS_COUNT' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -413,7 +412,7 @@
             }
           } @else {
           <tr>
-            <td colspan="2" class="empty-row">Sin datos</td>
+            <td colspan="2" class="empty-row">{{ 'KITCHEN.MESSAGES.NO_DATA' | translate }}</td>
           </tr>
           }
         </tbody>
@@ -421,12 +420,12 @@
     </div>
 
     <div class="tabla-contenedor">
-      <h3 class="table-title">Análisis de Consumo de Inventario</h3>
+      <h3 class="table-title">{{ 'KITCHEN.REPORTS.INVENTORY_CONSUMPTION' | translate }}</h3>
       <table>
         <thead>
           <tr>
-            <th>PRODUCTO</th>
-            <th>CANTIDAD CONSUMIDA</th>
+            <th>{{ 'KITCHEN.REPORTS.TABLE.PRODUCT' | translate }}</th>
+            <th>{{ 'KITCHEN.REPORTS.TABLE.QUANTITY_CONSUMED' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -439,52 +438,52 @@
             }
           } @else {
           <tr>
-            <td colspan="2" class="empty-row">Sin datos</td>
+            <td colspan="2" class="empty-row">{{ 'KITCHEN.MESSAGES.NO_DATA' | translate }}</td>
           </tr>
           }
         </tbody>
       </table>
     </div>
   } @else {
-    <div class="empty-state">Genera un informe para visualizar los datos.</div>
+    <div class="empty-state">{{ 'KITCHEN.MESSAGES.GENERATE_REPORT_PROMPT' | translate }}</div>
   }
 </div>
 }
 
 <!-- Traceability Modal -->
 @if (showTraceabilityModal) {
-<app-base-modal title="Trazabilidad de Ingredientes" size="lg" (closed)="closeTraceabilityModal()">
+<app-base-modal [title]="'KITCHEN.TRACEABILITY.TITLE' | translate" size="lg" (closed)="closeTraceabilityModal()">
     <div class="modal-container traceability-modal-container">
         @if (loadingTraceability) {
           <div class="loading-traceability">
             <div class="spinner"></div>
-            <p>Rastreando origen de ingredientes...</p>
+            <p>{{ 'KITCHEN.TRACEABILITY.LOADING_INGREDIENTS' | translate }}</p>
           </div>
         } @else if (traceData) {
           <div class="traceability-summary">
-            <h3>Resumen del Cocinado</h3>
+            <h3>{{ 'KITCHEN.TRACEABILITY.COOKING_SUMMARY' | translate }}</h3>
             <div class="summary-grid">
               <div class="summary-item">
-                <span class="summary-label">Receta</span>
+                <span class="summary-label">{{ 'KITCHEN.TABLE.RECIPE' | translate }}</span>
                 <span class="summary-value">{{ traceData.cookingAudit.recipeName }}</span>
               </div>
               <div class="summary-item">
-                <span class="summary-label">Cocinero</span>
+                <span class="summary-label">{{ 'KITCHEN.TABLE.USER' | translate }}</span>
                 <span class="summary-value">{{ traceData.cookingAudit.userName }}</span>
               </div>
               <div class="summary-item">
-                <span class="summary-label">Fecha</span>
+                <span class="summary-label">{{ 'KITCHEN.TABLE.DATE' | translate }}</span>
                 <span class="summary-value">{{ traceData.cookingAudit.cookingDate | date:'dd/MM/yyyy HH:mm' }}</span>
               </div>
               <div class="summary-item">
-                <span class="summary-label">Cantidad</span>
-                <span class="summary-value">{{ traceData.cookingAudit.quantityCooked }} raciones</span>
+                <span class="summary-label">{{ 'KITCHEN.TABLE.QUANTITY' | translate }}</span>
+                <span class="summary-value">{{ traceData.cookingAudit.quantityCooked }} {{ 'KITCHEN.LABELS.PORTIONS' | translate }}</span>
               </div>
             </div>
           </div>
 
           <div class="ingredients-trace-section">
-            <h3 class="section-title">Origen por Ingrediente</h3>
+            <h3 class="section-title">{{ 'KITCHEN.TRACEABILITY.ORIGIN_BY_INGREDIENT' | translate }}</h3>
             <div class="ingredients-trace-list">
               @for (ingredient of traceData.ingredientTrace; track ingredient.productName) {
                 <div class="ingredient-trace-card">
@@ -493,39 +492,39 @@
                   </div>
                   <div class="trace-details-grid">
                     <div class="trace-item">
-                      <span class="trace-label">Lote origen</span>
+                      <span class="trace-label">{{ 'KITCHEN.TRACEABILITY.ORIGIN_BATCH' | translate }}</span>
                       <span class="trace-value">
                         @if (ingredient.batchCode || ingredient.batchId) {
-                          {{ ingredient.batchCode || 'Sin codigo' }}
+                          {{ ingredient.batchCode || ('KITCHEN.TRACEABILITY.NO_CODE' | translate) }}
                           @if (ingredient.batchId) {
                             <span>(#{{ ingredient.batchId }})</span>
                           }
                         } @else {
-                          Sin lote
+                          {{ 'KITCHEN.TRACEABILITY.NO_BATCH' | translate }}
                         }
                       </span>
                     </div>
                     <div class="trace-item">
-                      <span class="trace-label">Proveedor</span>
-                      <span class="trace-value">{{ ingredient.supplierName || 'Desconocido' }}</span>
+                      <span class="trace-label">{{ 'KITCHEN.TRACEABILITY.SUPPLIER' | translate }}</span>
+                      <span class="trace-value">{{ ingredient.supplierName || ('KITCHEN.TRACEABILITY.UNKNOWN' | translate) }}</span>
                     </div>
                     <div class="trace-item">
-                      <span class="trace-label">ID Orden/Entrada</span>
+                      <span class="trace-label">{{ 'KITCHEN.TRACEABILITY.ID_ORDER_ENTRY' | translate }}</span>
                       <span class="trace-value">
                         @if (ingredient.orderId) {
-                          <a class="order-link" href="#" (click)="goToOrder(ingredient.orderId, $event)" title="Ver detalle del pedido">
-                            <span class="order-id-chip">Orden #{{ ingredient.orderId }}</span>
+                          <a class="order-link" href="#" (click)="goToOrder(ingredient.orderId, $event)" [title]="'KITCHEN.TRACEABILITY.VIEW_ORDER_DETAIL' | translate">
+                            <span class="order-id-chip">{{ 'KITCHEN.TRACEABILITY.ORDER' | translate }} #{{ ingredient.orderId }}</span>
                             <span class="order-meta">
                               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                               {{ ingredient.orderDate | date:'dd/MM/yyyy HH:mm' }}
                             </span>
                             <span class="order-meta">
                               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                              {{ ingredient.orderUserName || 'Generado' }}
+                              {{ ingredient.orderUserName || ('KITCHEN.TRACEABILITY.GENERATED' | translate) }}
                             </span>
                           </a>
                         } @else {
-                          <span class="initial-stock-badge">Stock Inicial / Manual</span>
+                          <span class="initial-stock-badge">{{ 'KITCHEN.TRACEABILITY.INITIAL_STOCK' | translate }}</span>
                         }
                         @if (ingredient.movementType) {
                           <span class="movement-type-badge">{{ ingredient.movementType }}</span>
@@ -534,7 +533,7 @@
                     </div>
                     @if (ingredient.description && !ingredient.orderId) {
                       <div class="trace-item full-width">
-                        <span class="trace-label">Detalles del Origen</span>
+                        <span class="trace-label">{{ 'KITCHEN.TRACEABILITY.ORIGIN_DETAILS' | translate }}</span>
                         <span class="trace-value">{{ ingredient.description }}</span>
                       </div>
                     }
@@ -542,7 +541,7 @@
                 </div>
               }
               @if (!traceData.ingredientTrace.length) {
-                <p class="empty-state">No se encontró información de trazabilidad para los ingredientes.</p>
+                <p class="empty-state">{{ 'KITCHEN.TRACEABILITY.NO_DATA_FOUND' | translate }}</p>
               }
             </div>
           </div>

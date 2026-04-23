@@ -12,6 +12,7 @@
 @import 'styles/_modal-utilities.css';
 @import 'styles/_modal-admin-overrides.css';
 @import 'styles/_shared-components.css';
+@import 'styles/_utilities-dock.css';
 
 /* ===== MODAL BUTTON BASE ===== */
 .modal-btn {
