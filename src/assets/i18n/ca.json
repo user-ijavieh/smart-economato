@@ -1,6 +1,7 @@
 {
   "COMMON": {
     "CANCEL": "Cancel·lar",
+    "BACK": "Tornar",
     "CLOSE": "Tancar",
     "CONFIRM": "Confirmar",
     "SAVE": "Guardar",
@@ -278,6 +279,7 @@
     "USERS": "Alumnes",
     "MASTER_DATA": "Dades Mestres",
     "PRODUCTS": "Productes",
+    "TRACEABILITY": "Traçabilitat",
     "PROFILE": "Perfil"
   },
   "INVENTORY": {
@@ -322,6 +324,7 @@
     "EDIT_TITLE": "Editar Producte",
     "CREATE_TITLE": "Afegir Nou Producte",
     "NAME_LABEL": "Nom *",
+    "NAME_PLACEHOLDER": "Ex. Tomàquet de penjar",
     "CODE_LABEL": "Codi *",
     "CODE_PLACEHOLDER": "Ex: ABC-123",
     "PRICE_LABEL": "Preu (€) *",
@@ -451,7 +454,10 @@
     "ADMIN_TITLE": "Centre de control",
     "TABS": {
       "INCIDENTS": "Incidències",
-      "TYPES": "Tipus"
+      "TYPES": "Tipus",
+      "SUMMARY": "Resum",
+      "CHAT": "Xat ({{count}})",
+      "AUDITS": "Auditories ({{count}})"
     },
     "ACTIONS": {
       "SHOW_FILTERS": "Mostrar filtres",
@@ -676,6 +682,7 @@
       "LOAD_ERROR": "Error en carregar les comandes.",
       "REVIEW_CONFIRM_TITLE": "Moure a revisió",
       "REVIEW_CONFIRM_MSG": "Moure l'ordre #{{id}} a revisió?",
+      "MOVE_TO_REVIEW_CONFIRM": "Moure l'ordre #{{id}} a revisió?",
       "REVIEWING_INFO": "Revisant ordre #{{id}}",
       "REVIEW_SUCCESS": "Ordre moguda a revisió correctament.",
       "UPDATE_STATUS_ERROR": "Error en actualitzar l'estat de l'ordre.",
@@ -2496,7 +2503,18 @@
       "TITLE_USER": "Ex. Recordatori",
       "MESSAGE_ROLE": "Escriu el missatge que veuran els usuaris...",
       "MESSAGE_USER": "Escriu el missatge...",
-      "SEARCH_USER": "Cerca per nom o usuari"
+      "SEARCH_USER": "Cerca per nom o usuari",
+      "NO_TITLE": "(Sense títol)",
+      "USER": "Usuari"
+    },
+    "MESSAGES": {
+      "PREVIEW_ROLE": "Vista prèvia: Notificació per a {{role}} - \"{{title}}\"",
+      "PREVIEW_USER": "Vista prèvia: Notificació per a {{user}} - \"{{title}}\"",
+      "SEND_SUCCESS_ROLE": "Notificació enviada correctament al grup {{role}}.",
+      "SEND_SUCCESS_USER": "Notificació enviada correctament a l'usuari {{user}}.",
+      "SEND_SUCCESS_TITLE": "Notificació enviada",
+      "SEND_ERROR": "No s'ha pogut enviar la notificació.",
+      "SEND_ERROR_TITLE": "Error d'enviament"
     },
     "ERRORS": {
       "TITLE_REQUIRED": "El títol és obligatori i ha de tenir com a màxim 100 caràcters.",

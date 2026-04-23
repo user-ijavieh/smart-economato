@@ -1,6 +1,7 @@
 {
   "COMMON": {
     "CANCEL": "Cancelar",
+    "BACK": "Volver",
     "CLOSE": "Cerrar",
     "CONFIRM": "Confirmar",
     "SAVE": "Guardar",
@@ -278,6 +279,7 @@
     "USERS": "Alumnos",
     "MASTER_DATA": "Datos Maestros",
     "PRODUCTS": "Productos",
+    "TRACEABILITY": "Trazabilidad",
     "PROFILE": "Perfil"
   },
   "INVENTORY": {
@@ -322,6 +324,7 @@
     "EDIT_TITLE": "Editar Producto",
     "CREATE_TITLE": "Agregar Nuevo Producto",
     "NAME_LABEL": "Nombre *",
+    "NAME_PLACEHOLDER": "Ej. Tomate de colgar",
     "CODE_LABEL": "Código *",
     "CODE_PLACEHOLDER": "Ej: ABC-123",
     "PRICE_LABEL": "Precio (€) *",
@@ -453,7 +456,10 @@
     "ADMIN_TITLE": "Centro de control",
     "TABS": {
       "INCIDENTS": "Incidencias",
-      "TYPES": "Tipos"
+      "TYPES": "Tipos",
+      "SUMMARY": "Resumen",
+      "CHAT": "Chat ({{count}})",
+      "AUDITS": "Auditorías ({{count}})"
     },
     "ACTIONS": {
       "SHOW_FILTERS": "Mostrar filtros",
@@ -678,6 +684,7 @@
       "LOAD_ERROR": "Error al cargar los pedidos.",
       "REVIEW_CONFIRM_TITLE": "Mover a revisión",
       "REVIEW_CONFIRM_MSG": "¿Mover la orden #{{id}} a revisión?",
+      "MOVE_TO_REVIEW_CONFIRM": "¿Mover la orden #{{id}} a revisión?",
       "REVIEWING_INFO": "Revisando orden #{{id}}",
       "REVIEW_SUCCESS": "Orden movida a revisión correctamente.",
       "UPDATE_STATUS_ERROR": "Error al actualizar el estado de la orden.",
@@ -2519,7 +2526,18 @@
       "TITLE_USER": "Ej. Recordatorio",
       "MESSAGE_ROLE": "Escribe el mensaje que verán los usuarios...",
       "MESSAGE_USER": "Escribe el mensaje...",
-      "SEARCH_USER": "Busca por nombre o usuario"
+      "SEARCH_USER": "Busca por nombre o usuario",
+      "NO_TITLE": "(Sin título)",
+      "USER": "Usuario"
+    },
+    "MESSAGES": {
+      "PREVIEW_ROLE": "Vista previa: Notificación para {{role}} - \"{{title}}\"",
+      "PREVIEW_USER": "Vista previa: Notificación para {{user}} - \"{{title}}\"",
+      "SEND_SUCCESS_ROLE": "Notificación enviada correctamente al grupo {{role}}.",
+      "SEND_SUCCESS_USER": "Notificación enviada correctamente al usuario {{user}}.",
+      "SEND_SUCCESS_TITLE": "Notificación enviada",
+      "SEND_ERROR": "No se pudo enviar la notificación.",
+      "SEND_ERROR_TITLE": "Error de envío"
     },
     "ERRORS": {
       "TITLE_REQUIRED": "El título es obligatorio y debe tener máximo 100 caracteres.",
