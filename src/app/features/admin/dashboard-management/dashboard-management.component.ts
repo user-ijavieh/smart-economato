@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, inject, ViewChild, ChangeDetectorRef } fr
 import { CommonModule } from '@angular/common';
 import { DashboardService } from '../../../core/services/dashboard.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DashboardData } from '../../../shared/models/dashboard.model';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
@@ -11,7 +12,7 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-dashboard-management',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective],
+  imports: [CommonModule, BaseChartDirective, TranslateModule],
   templateUrl: './dashboard-management.component.html',
   styleUrl: './dashboard-management.component.css'
 })
@@ -20,6 +21,7 @@ export class DashboardManagementComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private themeService = inject(ThemeService);
   private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
 
   private destroy$ = new Subject<void>();
 
@@ -46,7 +48,7 @@ export class DashboardManagementComponent implements OnInit, OnDestroy {
             let label = context.dataset.label || '';
             if (label) label += ': ';
             if (context.parsed.y !== null) {
-              label += new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(context.parsed.y);
+              label += new Intl.NumberFormat(this.translate.currentLang || 'es-ES', { style: 'currency', currency: 'EUR' }).format(context.parsed.y);
             }
             return label;
           }
@@ -98,8 +100,29 @@ export class DashboardManagementComponent implements OnInit, OnDestroy {
   };
 
   ngOnInit(): void {
+    this.updateChartLabels();
     this.loadDashboardData();
     this.listenToThemeChanges();
+    this.listenToLanguageChanges();
+  }
+
+  private listenToLanguageChanges(): void {
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.updateChartLabels();
+        this.chart?.update();
+        this.cdr.detectChanges();
+      });
+  }
+
+  private updateChartLabels(): void {
+    if (this.barChartOptions?.scales?.['x']) {
+      (this.barChartOptions.scales['x'] as any).title.text = this.translate.instant('DASHBOARD.CHART.SUPPLIERS');
+    }
+    if (this.barChartOptions?.scales?.['y']) {
+      (this.barChartOptions.scales['y'] as any).title.text = this.translate.instant('DASHBOARD.CHART.TOTAL_EXPENSES');
+    }
   }
 
   ngOnDestroy(): void {
@@ -141,7 +164,7 @@ export class DashboardManagementComponent implements OnInit, OnDestroy {
   }
 
   get userName(): string {
-    return this.authService.getName() || 'Administrador';
+    return this.authService.getName() || this.translate.instant('ADMIN_PANEL.FALLBACK_NAME');
   }
 
   get userInitials(): string {

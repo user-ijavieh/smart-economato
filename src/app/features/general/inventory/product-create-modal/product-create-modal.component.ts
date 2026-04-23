@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter, ViewChild, inject } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ProductRequest } from '../../../../shared/models/product.model';
 import { Supplier } from '../../../../shared/models/supplier.model';
@@ -10,7 +11,7 @@ import { SearchableDropdownComponent, SearchableItem } from '../../../../shared/
 @Component({
   selector: 'app-product-create-modal',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent, BarcodeScannerComponent, SearchableDropdownComponent],
+  imports: [FormsModule, BaseModalComponent, BarcodeScannerComponent, SearchableDropdownComponent, TranslateModule],
   templateUrl: './product-create-modal.component.html',
   styleUrl: './product-create-modal.component.css'
 })
@@ -24,6 +25,7 @@ export class ProductCreateModalComponent {
   @ViewChild('createForm') createForm?: NgForm;
 
   private messageService = inject(MessageService);
+  private translate = inject(TranslateService);
   showScannerModal = false;
 
   formData = {
@@ -78,8 +80,8 @@ export class ProductCreateModalComponent {
 
     // Mostrar diálogo de confirmación
     const confirmed = await this.messageService.confirm(
-      'Confirmar creación',
-      `¿Estás seguro de que deseas crear el producto "${this.formData.name}"?`
+      this.translate.instant('PRODUCT_FORM.CONFIRM_CREATE_TITLE'),
+      this.translate.instant('PRODUCT_FORM.CONFIRM_CREATE_MSG', { name: this.formData.name })
     );
 
     if (!confirmed) return;
@@ -108,7 +110,7 @@ export class ProductCreateModalComponent {
     }
 
     if (currentStock > 0 && !this.formData.expirationDate) {
-      this.messageService.showError('La fecha de caducidad es obligatoria cuando se introduce stock inicial.');
+      this.messageService.showError(this.translate.instant('PRODUCT_FORM.EXPIRATION_REQUIRED'));
       return;
     }
 
@@ -148,7 +150,7 @@ export class ProductCreateModalComponent {
   onCodeScanned(code: string): void {
     this.formData.barcode = code.trim();
     this.showScannerModal = false;
-    this.messageService.showSuccess(`Código detectado: ${this.formData.barcode}`);
+    this.messageService.showSuccess(this.translate.instant('PRODUCT_FORM.CODE_DETECTED', { code: this.formData.barcode }));
   }
 
   resetForm(): void {

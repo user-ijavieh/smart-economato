@@ -1,5 +1,5 @@
 <nav id="sidebar" class="sidebar" [class.close]="!isOpen && !isMobile" [class.admin-mode]="isAdminRoute" [class.mobile-open]="mobileOpen">
-  <button class="mobile-close-btn" (click)="closeMobileMenu()" aria-label="Cerrar menú">
+  <button class="mobile-close-btn" (click)="closeMobileMenu()" [attr.aria-label]="'COMMON.CLOSE' | translate">
     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
       <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
     </svg>
@@ -11,7 +11,7 @@
         id="toggle-btn"
         [class.rotate]="!isOpen"
         (click)="toggleSidebar()"
-        aria-label="Alternar menú"
+        [attr.aria-label]="'SIDEBAR.TOGGLE' | translate"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -34,7 +34,7 @@
         </div>
         <div class="user-details" *ngIf="isOpen || isMobile">
           <span class="user-name">{{ getUserName() }}</span>
-          <span *ngIf="isAdminRoute" class="user-role">Administrador</span>
+          <span *ngIf="isAdminRoute" class="user-role">{{ 'SIDEBAR.ADMIN_ROLE' | translate }}</span>
         </div>
       </div>
     </li>
@@ -43,7 +43,7 @@
     @for (item of filteredNavItems; track item.route) {
     @if (item.section) {
     <li class="nav-section-label">
-      <span>{{ item.section }}</span>
+      <span>{{ item.section | translate }}</span>
     </li>
     }
       <li>
@@ -273,7 +273,7 @@
             <path d="m368-214-55-124-124-55 124-55 55-124 55 124 124 55-124 55-55 124Zm280-302-36-82-82-36 82-36 36-82 36 82 82 36-82 36-36 82Zm0 318-22-50-50-22 50-22 22-50 22 50 50 22-50 22-22 50Z"/>
           </svg>
         }
-          <span>{{ item.label }}</span>
+          <span>{{ item.label | translate }}</span>
         </a>
       </li>
     }
@@ -292,7 +292,7 @@
             d="M480-440q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0-80q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0 440q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-400Zm0-315-240 90v189q0 54 15 105t41 96q42-21 88-33t96-12q50 0 96 12t88 33q26-45 41-96t15-105v-189l-240-90Zm0 515q-36 0-70 8t-65 22q29 30 63 52t72 34q38-12 72-34t63-52q-31-14-65-22t-70-8Z"
           />
         </svg>
-        <span>Panel Admin</span>
+        <span>{{ 'SIDEBAR.ADMIN_PANEL' | translate }}</span>
       </a>
     </li>
 

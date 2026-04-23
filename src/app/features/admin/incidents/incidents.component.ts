@@ -39,6 +39,7 @@ import { User } from '../../../shared/models/user.model';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 type IncidentTab = 'incidents' | 'types';
 type DetailTab = 'summary' | 'chat' | 'audits';
@@ -57,7 +58,7 @@ interface TypeFormState {
 @Component({
   selector: 'app-incidents',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseModalComponent],
+  imports: [CommonModule, FormsModule, BaseModalComponent, TranslateModule],
   templateUrl: './incidents.component.html',
   styleUrl: './incidents.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -71,6 +72,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly syncCacheInvalidationService = inject(SyncCacheInvalidationService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
+  private readonly translate = inject(TranslateService);
   private readonly destroy$ = new Subject<void>();
   private chatRealtimeClient?: Client;
   private chatRealtimeConnected = false;
@@ -272,7 +274,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError('No se pudieron cargar las incidencias');
+        this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.LOAD_ERROR') || 'No se pudieron cargar las incidencias');
       }
     });
   }
@@ -349,7 +351,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   saveIncident(): void {
     if (!this.incidentForm.incidentTypeId || !this.incidentForm.title.trim() || !this.incidentForm.description.trim()) {
-      this.messageService.showWarning('Completa el tipo, título y descripción');
+      this.messageService.showWarning(this.translate.instant('INCIDENTS.MESSAGES.WARNING_COMPLETE_FORM') || 'Completa el tipo, título y descripción');
       return;
     }
 
@@ -367,12 +369,12 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
       })
     ).subscribe({
       next: incident => {
-        this.messageService.showSuccess('Incidencia creada');
+        this.messageService.showSuccess(this.translate.instant('INCIDENTS.MESSAGES.CREATE_SUCCESS') || 'Incidencia creada');
         this.showCreateModal = false;
         this.loadIncidents();
         this.openIncidentDetail(incident.id);
       },
-      error: () => this.messageService.showError('No se pudo crear la incidencia')
+      error: () => this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.CREATE_ERROR') || 'No se pudo crear la incidencia')
     });
   }
 
@@ -422,7 +424,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError('No se pudo cargar el detalle de la incidencia');
+        this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.DETAIL_ERROR') || 'No se pudo cargar el detalle de la incidencia');
       }
     });
   }
@@ -494,12 +496,12 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
       })
     ).subscribe({
       next: incident => {
-        this.messageService.showSuccess('Incidencia abierta');
+        this.messageService.showSuccess(this.translate.instant('INCIDENTS.MESSAGES.OPEN_SUCCESS') || 'Incidencia abierta');
         this.showOpenModal = false;
         this.selectedIncident = incident;
         this.refreshSelectedIncident();
       },
-      error: () => this.messageService.showError('No se pudo abrir la incidencia')
+      error: () => this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.OPEN_ERROR') || 'No se pudo abrir la incidencia')
     });
   }
 
@@ -525,12 +527,12 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
       })
     ).subscribe({
       next: incident => {
-        this.messageService.showSuccess('Incidencia cerrada');
+        this.messageService.showSuccess(this.translate.instant('INCIDENTS.MESSAGES.CLOSE_SUCCESS') || 'Incidencia cerrada');
         this.showCloseModal = false;
         this.selectedIncident = incident;
         this.refreshSelectedIncident();
       },
-      error: () => this.messageService.showError('No se pudo cerrar la incidencia')
+      error: () => this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.CLOSE_ERROR') || 'No se pudo cerrar la incidencia')
     });
   }
 
@@ -561,7 +563,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
     } catch {
       this.chatFile = selectedFile;
       this.createChatFilePreview();
-      this.messageService.showWarning('No se pudo optimizar la imagen. Se enviara el archivo original.');
+      this.messageService.showWarning(this.translate.instant('INCIDENTS.MESSAGES.WARNING_OPTIMIZE') || 'No se pudo optimizar la imagen. Se enviara el archivo original.');
     } finally {
       this.compressingChatFile = false;
       this.cdr.markForCheck();
@@ -688,12 +690,12 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
     const hasText = this.chatContent.trim().length > 0;
     const hasFile = !!this.chatFile;
     if (!hasText && !hasFile) {
-      this.messageService.showWarning('Escribe un mensaje o adjunta un archivo');
+      this.messageService.showWarning(this.translate.instant('INCIDENTS.MESSAGES.WARNING_MESSAGE_EMPTY') || 'Escribe un mensaje o adjunta un archivo');
       return;
     }
 
     if (this.compressingChatFile) {
-      this.messageService.showInfo('Espera a que termine la compresion de la imagen');
+      this.messageService.showInfo(this.translate.instant('INCIDENTS.MESSAGES.WARNING_WAIT_OPTIMIZE') || 'Espera a que termine la compresion de la imagen');
       return;
     }
 
@@ -715,10 +717,10 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
         this.chatFile = null;
         this.chatFilePreviewUrl = null;
         this.markChatAsRead();
-        this.messageService.showSuccess('Mensaje enviado');
+        this.messageService.showSuccess(this.translate.instant('INCIDENTS.MESSAGES.SENT_SUCCESS') || 'Mensaje enviado');
         this.refreshSelectedIncident();
       },
-      error: () => this.messageService.showError('No se pudo enviar el mensaje')
+      error: () => this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.SENT_ERROR') || 'No se pudo enviar el mensaje')
     });
   }
 
@@ -740,12 +742,12 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     if (this.typingUsers.length === 1) {
-      return `${this.typingUsers[0].userName} esta escribiendo...`;
+      return this.translate.instant('INCIDENTS.MESSAGES.TYPING', { name: this.typingUsers[0].userName }) || `${this.typingUsers[0].userName} esta escribiendo...`;
     }
 
     const first = this.typingUsers[0].userName;
     const extra = this.typingUsers.length - 1;
-    return `${first} y ${extra} mas estan escribiendo...`;
+    return this.translate.instant('INCIDENTS.MESSAGES.TYPING_MULTIPLE', { name: first, count: extra }) || `${first} y ${extra} mas estan escribiendo...`;
   }
 
   isOwnChatMessage(message: IncidentChatMessage): boolean {
@@ -764,18 +766,18 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
   messageReadByLabel(message: IncidentChatMessage): string {
     const readers = this.messageReadByOthers(message);
     if (readers.length === 0) {
-      return 'Aun no leido por otros participantes';
+      return this.translate.instant('INCIDENTS.MESSAGES.NOT_READ') || 'Aun no leido por otros participantes';
     }
 
-    const names = readers.map(reader => reader.userName).filter(Boolean);
-    return names.length > 0 ? `Leido por: ${names.join(', ')}` : 'Leido';
+    const names = readers.map(reader => reader.userName).filter(Boolean).join(', ');
+    return this.translate.instant('INCIDENTS.MESSAGES.READ_BY', { names }) || `Leido por: ${names}`;
   }
 
   downloadAttachment(message: IncidentChatMessage): void {
     if (!this.selectedIncidentId) return;
     this.incidentService.downloadChatAttachment(this.selectedIncidentId, message.id).subscribe({
       next: blob => this.downloadBlob(blob, message.attachmentFilename || 'adjunto'),
-      error: () => this.messageService.showError('No se pudo descargar el adjunto')
+      error: () => this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.DOWNLOAD_ERROR') || 'No se pudo descargar el adjunto')
     });
   }
 
@@ -862,17 +864,17 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.selectedIncidentId) return;
 
     const confirmed = await this.messageService.confirm(
-      'Confirmar descarga',
-      '¿Deseas descargar este archivo PDF?'
+      this.translate.instant('COMMON.CONFIRM_DOWNLOAD'),
+      this.translate.instant('COMMON.CONFIRM_DOWNLOAD_PDF')
     );
     if (!confirmed) return;
 
     this.incidentService.exportPdf(this.selectedIncidentId).subscribe({
       next: blob => {
         this.downloadBlob(blob, `incidencia-${this.selectedIncidentId}.pdf`);
-        this.messageService.showSuccess('PDF descargado correctamente');
+        this.messageService.showSuccess(this.translate.instant('INCIDENTS.MESSAGES.PDF_SUCCESS') || 'PDF descargado correctamente');
       },
-      error: () => this.messageService.showError('Error al generar el PDF')
+      error: () => this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.PDF_ERROR') || 'Error al generar el PDF')
     });
   }
 
@@ -900,7 +902,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
         this.incidentTypes = types || [];
         this.cdr.markForCheck();
       },
-      error: () => this.messageService.showError('No se pudieron cargar los tipos de incidencia')
+      error: () => this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.TYPES_LOAD_ERROR') || 'No se pudieron cargar los tipos de incidencia')
     });
   }
 
@@ -915,7 +917,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   saveType(): void {
     if (!this.typeForm.name.trim()) {
-      this.messageService.showWarning('Indica un nombre para el tipo');
+      this.messageService.showWarning(this.translate.instant('INCIDENTS.MESSAGES.WARNING_NAME') || 'Indica un nombre para el tipo');
       return;
     }
 
@@ -936,11 +938,11 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
       })
     ).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.editingType ? 'Tipo actualizado' : 'Tipo creado');
+        this.messageService.showSuccess(this.editingType ? (this.translate.instant('INCIDENTS.MESSAGES.TYPE_UPDATE_SUCCESS') || 'Tipo actualizado') : (this.translate.instant('INCIDENTS.MESSAGES.TYPE_CREATE_SUCCESS') || 'Tipo creado'));
         this.showTypeModal = false;
         this.loadIncidentTypes();
       },
-      error: () => this.messageService.showError('No se pudo guardar el tipo')
+      error: () => this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.TYPE_SAVE_ERROR') || 'No se pudo guardar el tipo')
     });
   }
 
@@ -949,8 +951,8 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
     const action = currentlyActive ? 'desactivar' : 'activar';
 
     const confirmed = await this.messageService.confirm(
-      `${currentlyActive ? 'Desactivar' : 'Activar'} tipo`,
-      `¿Deseas ${action} el tipo "${type.name}"?`
+      this.translate.instant(currentlyActive ? 'INCIDENTS.ACTIONS.DEACTIVATE_TYPE' : 'INCIDENTS.ACTIONS.ACTIVATE_TYPE', { name: type.name }) || `${currentlyActive ? 'Desactivar' : 'Activar'} tipo`,
+      this.translate.instant('INCIDENTS.MESSAGES.TYPE_TOGGLE_CONFIRM', { action, name: type.name }) || `¿Deseas ${action} el tipo "${type.name}"?`
     );
 
     if (!confirmed) return;
@@ -967,10 +969,10 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
           this.incidentTypes = [...this.incidentTypes];
         }
 
-        this.messageService.showSuccess(currentlyActive ? 'Tipo desactivado' : 'Tipo activado');
+        this.messageService.showSuccess(this.translate.instant(currentlyActive ? 'INCIDENTS.MESSAGES.TYPE_DEACTIVATED' : 'INCIDENTS.MESSAGES.TYPE_ACTIVATED') || (currentlyActive ? 'Tipo desactivado' : 'Tipo activado'));
         this.cdr.markForCheck();
       },
-      error: () => this.messageService.showError('No se pudo cambiar el estado del tipo')
+      error: () => this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.TYPE_TOGGLE_ERROR') || 'No se pudo cambiar el estado del tipo')
     });
   }
 
@@ -994,7 +996,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
         this.attachableAudits = audits || [];
         this.cdr.markForCheck();
       },
-      error: () => this.messageService.showError('No se pudieron cargar las auditorías adjuntables')
+      error: () => this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.LOADING_ATTACHABLE_ERROR') || 'No se pudieron cargar las auditorías adjuntables')
     });
   }
 
@@ -1009,7 +1011,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   attachAudits(): void {
     if (!this.selectedIncidentId || this.selectedAttachAuditIds.size === 0) {
-      this.messageService.showWarning('Selecciona al menos una auditoría');
+      this.messageService.showWarning(this.translate.instant('INCIDENTS.MESSAGES.WARNING_SELECT_AUDIT') || 'Selecciona al menos una auditoría');
       return;
     }
 
@@ -1022,11 +1024,11 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
       })
     ).subscribe({
       next: () => {
-        this.messageService.showSuccess('Auditorías adjuntadas');
+        this.messageService.showSuccess(this.translate.instant('INCIDENTS.MESSAGES.ATTACH_SUCCESS') || 'Auditorías adjuntadas');
         this.showAttachModal = false;
         this.refreshSelectedIncident();
       },
-      error: () => this.messageService.showError('No se pudieron adjuntar las auditorías')
+      error: () => this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.ATTACH_ERROR') || 'No se pudieron adjuntar las auditorías')
     });
   }
 
@@ -1045,7 +1047,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
     };
 
     if (!request.reason) {
-      this.messageService.showWarning('Indica un motivo para la reversión');
+      this.messageService.showWarning(this.translate.instant('INCIDENTS.MESSAGES.WARNING_REASON') || 'Indica un motivo para la reversión');
       return;
     }
 
@@ -1057,11 +1059,11 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
       })
     ).subscribe({
       next: () => {
-        this.messageService.showSuccess('Auditoría revertida');
+        this.messageService.showSuccess(this.translate.instant('INCIDENTS.MESSAGES.REVERT_SUCCESS') || 'Auditoría revertida');
         this.showRevertModal = false;
         this.refreshSelectedIncident();
       },
-      error: () => this.messageService.showError('No se pudo revertir la auditoría')
+      error: () => this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.REVERT_ERROR') || 'No se pudo revertir la auditoría')
     });
   }
 
@@ -1091,7 +1093,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!value) return '-';
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return '-';
-    return date.toLocaleString([], {
+    return date.toLocaleString(this.translate.currentLang || [], {
       day: '2-digit',
       month: '2-digit',
       hour: '2-digit',
@@ -1103,7 +1105,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!value) return '-';
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return '-';
-    return date.toLocaleString([], {
+    return date.toLocaleString(this.translate.currentLang || [], {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -1114,20 +1116,20 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   formatStatus(status: IncidentStatus | string | null | undefined): string {
     switch (status) {
-      case 'CREADO': return 'Creada';
-      case 'ABIERTO': return 'Abierta';
+      case 'CREADO': return this.translate.instant('INCIDENTS.STATUS.CREADO') || 'Creada';
+      case 'ABIERTO': return this.translate.instant('INCIDENTS.STATUS.ABIERTO') || 'Abierta';
       case 'CERRADO_CON_RESOLUCION':
-      case 'CERRADO_SIN_RESOLUCION': return 'Cerrada';
+      case 'CERRADO_SIN_RESOLUCION': return this.translate.instant('INCIDENTS.STATUS.CERRADO') || 'Cerrada';
       default: return '-';
     }
   }
 
   formatSeverity(severity?: IncidentSeverity | null): string {
     switch (severity) {
-      case 'ALTA': return 'Alta';
-      case 'MEDIA': return 'Media';
-      case 'BAJA': return 'Baja';
-      default: return 'Sin nivel';
+      case 'ALTA': return this.translate.instant('INCIDENTS.SEVERITY.HIGH') || 'Alta';
+      case 'MEDIA': return this.translate.instant('INCIDENTS.SEVERITY.MEDIUM') || 'Media';
+      case 'BAJA': return this.translate.instant('INCIDENTS.SEVERITY.LOW') || 'Baja';
+      default: return this.translate.instant('INCIDENTS.SEVERITY.NONE') || 'Sin nivel';
     }
   }
 
