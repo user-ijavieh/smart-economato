@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { LoggerService } from './logger.service';
 
 declare global {
   interface WindowEventMap {
@@ -16,6 +17,7 @@ interface BeforeInstallPromptEvent extends Event {
   providedIn: 'root',
 })
 export class PwaInstallService {
+  private readonly logger = inject(LoggerService);
   private canInstall$ = new BehaviorSubject<boolean>(false);
   private isInstalled$ = new BehaviorSubject<boolean>(this.checkIfInstalled());
   private installPrompt: BeforeInstallPromptEvent | null = null;
@@ -90,7 +92,7 @@ export class PwaInstallService {
    */
   async installApp(): Promise<boolean> {
     if (!this.installPrompt) {
-      console.warn('[PWA Install] Install prompt not available');
+      this.logger.warn('[PWA Install] Install prompt not available');
       return false;
     }
 
@@ -104,7 +106,7 @@ export class PwaInstallService {
         return false;
       }
     } catch (error) {
-      console.error('[PWA Install] Error during install:', error);
+      this.logger.error('[PWA Install] Error during install:', error);
       return false;
     }
   }
@@ -114,7 +116,7 @@ export class PwaInstallService {
    */
   async shareApp(): Promise<boolean> {
     if (!navigator.share) {
-      console.warn('[PWA Install] Share API not supported');
+      this.logger.warn('[PWA Install] Share API not supported');
       return false;
     }
 
@@ -127,7 +129,7 @@ export class PwaInstallService {
       return true;
     } catch (error) {
       if ((error as Error).name !== 'AbortError') {
-        console.error('[PWA Install] Error sharing:', error);
+        this.logger.error('[PWA Install] Error sharing:', error);
       }
       return false;
     }
