@@ -9,6 +9,7 @@ import { NotificationService } from './notification.service';
 import { PresenceTrackingService } from './presence-tracking.service';
 import { SyncCacheInvalidationService } from './sync-cache-invalidation.service';
 import { HttpQueryCacheService } from './http-query-cache.service';
+import { StorageService } from './storage.service';
 
 interface LoginRequest {
   name: string;
@@ -48,6 +49,7 @@ export class AuthService {
   private presenceTrackingService = inject(PresenceTrackingService);
   private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
   private httpQueryCacheService = inject(HttpQueryCacheService);
+  private storageService = inject(StorageService);
   private apiUrl = environment.apiUrl;
   private TOKEN_KEY = 'auth_token';
   private ROLE_KEY = 'user_role';
@@ -80,11 +82,11 @@ export class AuthService {
 
     return this.http.get<UserProfileResponse>(`${this.apiUrl}/api/users/me`).pipe(
       tap(profile => {
-        localStorage.setItem(this.NAME_KEY, profile.name);
-        localStorage.setItem(this.USERNAME_KEY, profile.user);
+        this.storageService.set(this.NAME_KEY, profile.name);
+        this.storageService.set(this.USERNAME_KEY, profile.user);
         this.setRole(profile.role);
-        localStorage.setItem(this.ID_KEY, profile.id.toString());
-        localStorage.setItem(this.FIRST_LOGIN_KEY, String(profile.firstLogin));
+        this.storageService.set(this.ID_KEY, profile.id.toString());
+        this.storageService.set(this.FIRST_LOGIN_KEY, String(profile.firstLogin));
       })
     );
   }
@@ -95,21 +97,21 @@ export class AuthService {
       { name, password } as LoginRequest
     ).pipe(
       tap(response => {
-        localStorage.setItem(this.TOKEN_KEY, response.token);
+        this.storageService.set(this.TOKEN_KEY, response.token);
       }),
       switchMap(() => this.http.get<UserProfileResponse>(`${this.apiUrl}/api/users/me`)),
       tap(profile => {
         if (profile.hidden) {
           this.webSocketService.disconnect();
-          localStorage.removeItem(this.TOKEN_KEY);
+          this.storageService.remove(this.TOKEN_KEY);
           throw new Error('user_hidden');
         }
         this.syncCacheInvalidationService.initialize();
-        localStorage.setItem(this.NAME_KEY, profile.name);
-        localStorage.setItem(this.USERNAME_KEY, profile.user);
+        this.storageService.set(this.NAME_KEY, profile.name);
+        this.storageService.set(this.USERNAME_KEY, profile.user);
         this.setRole(profile.role);
-        localStorage.setItem(this.ID_KEY, profile.id.toString());
-        localStorage.setItem(this.FIRST_LOGIN_KEY, String(profile.firstLogin));
+        this.storageService.set(this.ID_KEY, profile.id.toString());
+        this.storageService.set(this.FIRST_LOGIN_KEY, String(profile.firstLogin));
         this.webSocketService.connect(this.getToken() || '', profile.role);
         this.notificationService.connect(this.getToken() || '', profile.role);
         this.presenceTrackingService.initialize();
@@ -144,44 +146,44 @@ export class AuthService {
     this.notificationService.disconnect();
     this.syncCacheInvalidationService.destroy();
     this.httpQueryCacheService.clearAll();
-    localStorage.removeItem(this.TOKEN_KEY);
+    this.storageService.remove(this.TOKEN_KEY);
     this.setRole(null);
-    localStorage.removeItem(this.NAME_KEY);
-    localStorage.removeItem(this.USERNAME_KEY);
-    localStorage.removeItem(this.ID_KEY);
-    localStorage.removeItem(this.FIRST_LOGIN_KEY);
-    localStorage.removeItem('ai_last_chat_id');
+    this.storageService.remove(this.NAME_KEY);
+    this.storageService.remove(this.USERNAME_KEY);
+    this.storageService.remove(this.ID_KEY);
+    this.storageService.remove(this.FIRST_LOGIN_KEY);
+    this.storageService.remove('ai_last_chat_id');
     this.isLoggedIn$.next(false);
     this.router.navigate(['/login']);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return this.storageService.get(this.TOKEN_KEY);
   }
 
   getRole(): string | null {
-    return localStorage.getItem(this.ROLE_KEY);
+    return this.storageService.get(this.ROLE_KEY);
   }
 
   getName(): string | null {
-    return localStorage.getItem(this.NAME_KEY);
+    return this.storageService.get(this.NAME_KEY);
   }
 
   getUsername(): string | null {
-    return localStorage.getItem(this.USERNAME_KEY);
+    return this.storageService.get(this.USERNAME_KEY);
   }
 
   getUserId(): number | null {
-    const id = localStorage.getItem(this.ID_KEY);
+    const id = this.storageService.get(this.ID_KEY);
     return id ? parseInt(id, 10) : null;
   }
 
   isFirstLogin(): boolean {
-    return localStorage.getItem(this.FIRST_LOGIN_KEY) === 'true';
+    return this.storageService.get(this.FIRST_LOGIN_KEY) === 'true';
   }
 
   clearFirstLogin(): void {
-    localStorage.setItem(this.FIRST_LOGIN_KEY, 'false');
+    this.storageService.set(this.FIRST_LOGIN_KEY, 'false');
   }
 
   hasPermission(method: string, url: string): boolean {
@@ -236,9 +238,9 @@ export class AuthService {
 
   private setRole(role: string | null): void {
     if (role) {
-      localStorage.setItem(this.ROLE_KEY, role);
+      this.storageService.set(this.ROLE_KEY, role);
     } else {
-      localStorage.removeItem(this.ROLE_KEY);
+      this.storageService.remove(this.ROLE_KEY);
     }
     this.role$Subject.next(role);
   }
@@ -256,6 +258,6 @@ export class AuthService {
   }
 
   private hasToken(): boolean {
-    return !!localStorage.getItem(this.TOKEN_KEY);
+    return !!this.storageService.get(this.TOKEN_KEY);
   }
 }

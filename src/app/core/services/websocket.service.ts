@@ -5,6 +5,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { PresenceUpdateRequest, UserPresenceSnapshot } from '../../shared/models/presence.model';
 import { SyncEvent } from '../../shared/models/sync-event.model';
+import { StorageService } from './storage.service';
 
 export interface AlertMessage {
   code: string;
@@ -15,6 +16,7 @@ export interface AlertMessage {
 @Injectable({ providedIn: 'root' })
 export class WebSocketService {
   private readonly ngZone = inject(NgZone);
+  private readonly storageService = inject(StorageService);
   private client?: Client;
   private broadcastSubscription?: StompSubscription;
   private personalSubscription?: StompSubscription;
@@ -55,7 +57,7 @@ export class WebSocketService {
         Authorization: `Bearer ${jwtToken}`
       },
       beforeConnect: async () => {
-        const freshToken = localStorage.getItem('auth_token') || jwtToken;
+        const freshToken = this.storageService.get('auth_token') || jwtToken;
         this.connectedToken = freshToken;
 
         if (this.client) {
