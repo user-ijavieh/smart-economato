@@ -30,6 +30,7 @@ import { AiChatService } from '../../../core/services/ai-chat.service';
 import { MessageService } from '../../../core/services/message.service';
 import { SseStreamService } from '../../../core/services/sse-stream.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { StorageService } from '../../../core/services/storage.service';
 
 type RetryableStatus = 429 | 502;
 
@@ -47,6 +48,7 @@ export class AiChatComponent implements OnInit, OnDestroy {
   private readonly sseStreamService = inject(SseStreamService);
   private readonly authService = inject(AuthService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly storageService = inject(StorageService);
   private readonly destroy$ = new Subject<void>();
 
   @ViewChild('chatScroller') chatScroller?: ElementRef<HTMLDivElement>;
@@ -89,13 +91,13 @@ export class AiChatComponent implements OnInit, OnDestroy {
   expandedReasoning: Record<number, boolean> = {};
 
   ngOnInit(): void {
-    const cachedProvider = localStorage.getItem('ai_last_provider') as AiProvider;
+    const cachedProvider = this.storageService.get('ai_last_provider', 'local') as AiProvider;
     if (cachedProvider) {
       this.providerSelection = cachedProvider;
     }
     this.loadProviders();
 
-    const cachedChatId = localStorage.getItem('ai_last_chat_id');
+    const cachedChatId = this.storageService.get('ai_last_chat_id');
     if (cachedChatId) {
       this.selectedChatId = +cachedChatId;
     }
@@ -176,7 +178,7 @@ export class AiChatComponent implements OnInit, OnDestroy {
       .subscribe({
         next: providers => {
           this.providers = providers;
-          if (providers.length > 0 && !localStorage.getItem('ai_last_provider')) {
+          if (providers.length > 0 && !this.storageService.get('ai_last_provider', 'local')) {
             this.providerSelection = providers[0].name;
           }
           this.cdr.markForCheck();
@@ -191,7 +193,7 @@ export class AiChatComponent implements OnInit, OnDestroy {
     this.cancelStreaming();
     this.selectedChatId = null;
     this.selectedChat = null;
-    localStorage.removeItem('ai_last_chat_id');
+    this.storageService.remove('ai_last_chat_id');
     this.messages = [];
     this.streamingPreview = '';
     this.showHistoryDrawer = false;
@@ -204,7 +206,7 @@ export class AiChatComponent implements OnInit, OnDestroy {
     }
 
     this.selectedChatId = chatId;
-    localStorage.setItem('ai_last_chat_id', String(chatId));
+    this.storageService.set('ai_last_chat_id', String(chatId));
     this.selectedChat = this.chats.find(chat => chat.id === chatId) || null;
     if (this.selectedChat) {
       this.providerSelection = this.selectedChat.activeProvider;
@@ -476,7 +478,7 @@ export class AiChatComponent implements OnInit, OnDestroy {
 
   changeProvider(): void {
     if (!this.selectedChatId) {
-      localStorage.setItem('ai_last_provider', this.providerSelection);
+      this.storageService.set('ai_last_provider', this.providerSelection, 'local');
       this.showProviderModal = false;
       this.cdr.markForCheck();
       return;
@@ -488,7 +490,7 @@ export class AiChatComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: updated => {
-          localStorage.setItem('ai_last_provider', this.providerSelection);
+          this.storageService.set('ai_last_provider', this.providerSelection, 'local');
           this.showProviderModal = false;
           this.chats = this.chats.map(chat => chat.id === updated.id ? updated : chat);
           this.selectedChat = updated;

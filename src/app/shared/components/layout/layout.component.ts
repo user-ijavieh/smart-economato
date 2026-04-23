@@ -11,6 +11,7 @@ import { slideInAnimation } from '../../animations/route-animations';
 import { NotificationService, SessionNotification } from '../../../core/services/notification.service';
 import { PresenceTrackingService } from '../../../core/services/presence-tracking.service';
 import { HttpQueryCacheService } from '../../../core/services/http-query-cache.service';
+import { StorageService } from '../../../core/services/storage.service';
 
 @Component({
   selector: 'app-layout',
@@ -29,6 +30,7 @@ export class LayoutComponent {
   private notificationService = inject(NotificationService);
   private presenceTrackingService = inject(PresenceTrackingService);
   private httpQueryCacheService = inject(HttpQueryCacheService);
+  private storageService = inject(StorageService);
   private destroyRef = inject(DestroyRef);
 
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
@@ -45,7 +47,7 @@ export class LayoutComponent {
   readonly isNotificationPanelRendered = signal(false);
   readonly isNotificationPanelClosing = signal(false);
   readonly notificationPulse = signal(false);
-  readonly showUtilities = signal<boolean>(localStorage.getItem('layout_utilities_visible') !== 'false');
+  readonly showUtilities = signal<boolean>(this.storageService.get('layout_utilities_visible', 'local') !== 'false');
 
   private notificationCloseTimer?: ReturnType<typeof setTimeout>;
 
@@ -203,12 +205,12 @@ export class LayoutComponent {
   toggleUtilities(): void {
     const newValue = !this.showUtilities();
     this.showUtilities.set(newValue);
-    localStorage.setItem('layout_utilities_visible', String(newValue));
+    this.storageService.set('layout_utilities_visible', String(newValue), 'local');
   }
 
   closeUtilities(): void {
     this.showUtilities.set(false);
-    localStorage.setItem('layout_utilities_visible', 'false');
+    this.storageService.set('layout_utilities_visible', 'false', 'local');
   }
 
   toggleNotificationPanel(event: MouseEvent): void {

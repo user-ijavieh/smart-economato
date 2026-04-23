@@ -5,6 +5,7 @@ import { BehaviorSubject, Observable, Subject, distinctUntilChanged, map } from 
 import { environment } from '../../../environments/environment';
 import { MessageService } from './message.service';
 import { NotificationApiService, NotificationResponseDTO } from './notification-api.service';
+import { StorageService } from './storage.service';
 
 export type AppRole = 'ADMIN' | 'CHEF' | 'ELEVATED' | 'USER';
 export type RoleEscalationReason = 'MANUAL_GRANTED' | 'MANUAL_REVOKED' | 'AUTO_EXPIRED';
@@ -41,6 +42,7 @@ export class NotificationService {
   private readonly messageService = inject(MessageService);
   private readonly notificationApiService = inject(NotificationApiService);
   private readonly ngZone = inject(NgZone);
+  private readonly storageService = inject(StorageService);
 
   private client?: Client;
   private roleSubscription?: StompSubscription;
@@ -84,7 +86,7 @@ export class NotificationService {
         Authorization: `Bearer ${jwtToken}`
       },
       beforeConnect: async () => {
-        const freshToken = localStorage.getItem('auth_token');
+        const freshToken = this.storageService.get('auth_token');
         if (!freshToken) {
           throw new Error('Missing auth token for notifications WebSocket');
         }
