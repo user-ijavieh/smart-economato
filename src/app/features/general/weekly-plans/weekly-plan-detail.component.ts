@@ -307,7 +307,7 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
 
     this.orderService.searchByProducts({
       productIds,
-      statuses: ['CREATED', 'PENDING', 'REVIEW']
+      statuses: ['PENDING', 'REVIEW']
     }).subscribe({
       next: (batch) => {
         const quantityMap = batch?.totalQuantityPerProduct || {};
@@ -341,6 +341,12 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
   private sortStockRequirements(requirements: WeeklyPlanStockRequirement[]): WeeklyPlanStockRequirement[] {
     return [...requirements].sort((a, b) => {
       if (this.stockSortMode === 'shortage') {
+        const aAtRisk = !!a.expirationRisk;
+        const bAtRisk = !!b.expirationRisk;
+        if (aAtRisk !== bAtRisk) {
+          return aAtRisk ? -1 : 1;
+        }
+
         const aCovered = (a.sufficient !== false) && (this.getUncoveredStockShortage(a) === 0);
         const bCovered = (b.sufficient !== false) && (this.getUncoveredStockShortage(b) === 0);
 
@@ -399,7 +405,11 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
   }
 
   private getRequirementsNeedingReplenishment(): WeeklyPlanStockRequirement[] {
-    return this.stockRequirements.filter(requirement => this.getUncoveredStockShortage(requirement) > 0);
+    return this.stockRequirements.filter(requirement =>
+      this.getUncoveredStockShortage(requirement) > 0 ||
+      !requirement.sufficient ||
+      requirement.expirationRisk
+    );
   }
 
   calculateProgress(): number {
@@ -480,8 +490,13 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
         this.messageService.showSuccess(this.translate.instant('WEEKLY_PLANS.MESSAGES.ACTIVATE_SUCCESS'));
         this.loadPlan();
       },
-      error: (err) => {
-        this.messageService.showError(err.error?.message || this.translate.instant('WEEKLY_PLANS.MESSAGES.ACTIVATE_ERROR'));
+      error: (err) => {  
+    const backendMessage = typeof err?.error?.message === 'string' ? err.error.message : '';  
+    if (backendMessage.toLowerCase().includes('caduc')) {  
+        this.messageService.showError(`${backendMessage} ${this.translate.instant('WEEKLY_PLANS.MESSAGES.CHECK_INVENTORY_TAB') || 'Revisa la pestaña de inventario requerido para identificar productos en riesgo.'}`);  
+    } else {  
+        this.messageService.showError(backendMessage || this.translate.instant('WEEKLY_PLANS.MESSAGES.ACTIVATE_ERROR') || 'No se pudo activar el plan.');  
+    },  
       },
       complete: () => {
         this.activatingPlan = false;
@@ -643,8 +658,11 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
         this.messageService.showSuccess(this.translate.instant('WEEKLY_PLANS.MESSAGES.CONFIRM_SESSION_SUCCESS'));
         this.loadPlan();
       },
-      error: (err) => this.messageService.showError(err.error?.message || this.translate.instant('WEEKLY_PLANS.MESSAGES.CONFIRM_SESSION_ERROR'))
-    });
+error: (err) => {  
+    const backendMessage = typeof err?.error?.message === 'string' ? err.error.message : '';  
+    this.messageService.showError(backendMessage || this.translate.instant('WEEKLY_PLANS.MESSAGES.CONFIRM_SESSION_ERROR') || 'Error al confirmar la sesión. Verifica stock disponible y estado del plan.');  
+}
+  });
   }
 
   async cancelSlot(slot: WeeklyPlanSlotResponse) {
@@ -727,7 +745,10 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
         this.messageService.showSuccess(this.translate.instant('WEEKLY_PLANS.MESSAGES.CONFIRM_DAY_SUCCESS', { day: dayName }));
         this.loadPlan();
       },
-      error: (err) => this.messageService.showError(err.error?.message || this.translate.instant('WEEKLY_PLANS.MESSAGES.CONFIRM_DAY_ERROR'))
+error: (err) => {  
+    const backendMessage = typeof err?.error?.message === 'string' ? err.error.message : '';  
+    this.messageService.showError(backendMessage || this.translate.instant('WEEKLY_PLANS.MESSAGES.CONFIRM_DAY_ERROR') || 'Error al confirmar el día. Verifica stock disponible y estado del plan.');  
+}
     });
   }
 

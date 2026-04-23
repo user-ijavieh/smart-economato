@@ -1,16 +1,11 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';  
 import { CommonModule, DatePipe, DecimalPipe, UpperCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subscription, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import { catchError, of } from 'rxjs';
+import { Subscription, catchError, of } from 'rxjs';
 import {
   Order,
   OrderDetail,
-  OrderReceptionRequest,
-  OrderReviewLockStatus,
-  OrderReviewCollaborationState,
-  OrderCollaborationUser,
-  OrderCollaborationFieldLock
+  OrderReceptionRequest
 } from '../../../../shared/models/order.model';
 import { OrderService } from '../../../../core/services/order.service';
 import { MessageService } from '../../../../core/services/message.service';
@@ -33,12 +28,6 @@ import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.c
   styleUrl: './order-reception-modal.component.css'
 })
 export class OrderReceptionModalComponent implements OnInit, OnDestroy {
-  private static readonly LOCK_HEARTBEAT_INTERVAL_MS = 30000;
-  private static readonly CONFLICT_COOLDOWN_MS = 3000;
-  private static readonly ACQUIRE_RETRY_COOLDOWN_MS = 4000;
-  private static readonly HEARTBEAT_BACKOFF_BASE_MS = 1000;
-  private static readonly HEARTBEAT_BACKOFF_MAX_MS = 30000;
-
   @Input({ required: true }) order!: Order;
   @Output() closeModal = new EventEmitter<void>();
   @Output() receptionProcessed = new EventEmitter<void>();
@@ -52,43 +41,18 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
   private orderReviewCollaborationStateService = inject(OrderReviewCollaborationStateService);
   private webSocketService = inject(WebSocketService);
   public translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
 
   isProcessing = false;
   isScaleListening = false;
   searchTerm = '';
   showScannerModal = false;
   filteredDetails: OrderDetail[] = [];
-  reviewLockStatus: OrderReviewLockStatus | null = null;
-  collaborationState: OrderReviewCollaborationState | null = null;
-  roundingMode: 'units' | 'lots' = 'lots';
-  lockInfoTitle = '';
-  lockInfoDetail = '';
-  lockBlockedForCurrentUser = false;
-  requestingSharedReview = false;
-  admittingUserIds = new Set<number>();
-  // DESHABILITADO: displayMode feature - Modo lectura en viewing_locked
-  // displayMode: 'editing' | 'viewing_locked' = 'editing';
+  roundingMode: 'lots' | 'units' = 'lots';
 
   private scaleSubscription?: Subscription;
   private listeningSubscription?: Subscription;
-  private searchSubscription?: Subscription;
-  private lockStatusSubscription?: Subscription;
-  private collaborationStatusSubscription?: Subscription;
-  private websocketConnectionSubscription?: Subscription;
-  private syncEventSubscription?: Subscription;
-  private patchSubject = new Subject<{ fieldPath: string, value: any }>();
-  private patchSubscription?: Subscription;
-  private heartbeatTimerId: ReturnType<typeof setTimeout> | null = null;
   private activeScaleTarget: { productId: number; lotIndex: number } | null = null;
-  private acquiringLock = false;
-  private activeFieldLocks = new Set<string>();
-  private processCooldownUntil = 0;
-  private acquireRetryBlockedUntil = 0;
-  private sharedReviewAutoRequested = false;
-  private conflictBlockedByOtherUser = false;
-  private closedByExternalStatus = false;
-  private heartbeatFailureCount = 0;
-  private lockReleaseAttempted = false;
 
   beforeCloseHandler = async (): Promise<boolean> => {
     if (this.isProcessing) {
@@ -108,10 +72,12 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
 
     this.scaleSubscription = this.scaleService.weight$.subscribe(weight => {
       this.applyWeightToActiveLot(weight);
+      this.cdr.detectChanges();
     });
 
     this.listeningSubscription = this.scaleService.listening$.subscribe(isListening => {
       this.isScaleListening = isListening;
+      this.cdr.detectChanges();
 
       if (!isListening) {
         this.activeScaleTarget = null;
@@ -127,37 +93,12 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     }
 
     this.applySearch();
-    
-    // Configurar debouncing para actualizaciones colaborativas
-    this.patchSubscription = this.patchSubject.pipe(
-      debounceTime(500)
-    ).subscribe(({ fieldPath, value }) => {
-      if (this.canEditCollaboratively) {
-        this.orderReviewCollaborationStateService.patchField(this.order.id, fieldPath, value).subscribe({
-          error: () => {}
-        });
-      }
-    });
-
-    // DESHABILITADO: Sistema de locks y colaboración compartida
-    // this.initializeReviewLock();
-    // this.initializeCollaboration();
   }
 
   ngOnDestroy(): void {
     this.scaleSubscription?.unsubscribe();
     this.listeningSubscription?.unsubscribe();
-    this.searchSubscription?.unsubscribe();
-    this.lockStatusSubscription?.unsubscribe();
-    this.collaborationStatusSubscription?.unsubscribe();
-    this.websocketConnectionSubscription?.unsubscribe();
-    this.syncEventSubscription?.unsubscribe();
-    this.patchSubscription?.unsubscribe();
-    // DESHABILITADO: Sistema de locks y colaboración compartida
-    // this.stopLockHeartbeat();
-    // this.releaseAllFieldLocks();
     void this.scaleService.stopListening();
-    // this.releaseLockIfOwned();
   }
 
   onSearchTermChange(term: string): void {
@@ -247,9 +188,6 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
       const safeLotCount = Number.isFinite(parsedLotCount) && parsedLotCount >= 0 ? parsedLotCount : 0;
       const newQuantity = safeLotCount * detail.lotQuantity;
       detail.lots![lotIndex].quantity = Math.round(newQuantity * 10000) / 10000;
-      
-      // Trigger collaboration sync if active
-      this.onLotFieldChange(detail, lotIndex, 'quantity', detail.lots![lotIndex].quantity);
     }
   }
 
@@ -275,11 +213,11 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     const received = this.getTotalReceived(detail);
     
     if (received === expected) {
-      return '✓'; // Tick para justo
+      return '✓';
     } else if (received < expected) {
-      return '✕'; // X para falta
+      return '✕';
     } else {
-      return '▲'; // Triángulo para hay de más
+      return '▲';
     }
   }
 
@@ -304,9 +242,6 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
 
   close(): void {
     void this.scaleService.stopListening();
-    this.stopLockHeartbeat();
-    this.releaseAllFieldLocks();
-    this.releaseLockIfOwned();
     this.closeModal.emit();
   }
 
@@ -486,23 +421,23 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
 
     try {
       await this.scaleService.startListening({ baudRate: 9600 });
-      this.messageService.showInfo(this.translate.instant('RECEPTION.MODAL.SCALE_CONNECTED'));
-    } catch {
-      this.activeScaleTarget = null;
-      this.messageService.showError(this.translate.instant('RECEPTION.MODAL.SCALE_ERROR'));
-    }
-  }
-
-  private isCollaborationAvailable(): boolean {
-    return !!this.reviewLockStatus && !!this.collaborationState;
+  this.messageService.showInfo(this.translate.instant('RECEPTION.MODAL.SCALE_CONNECTED'));  
+  } catch (error: any) {  
+  this.activeScaleTarget = null;  
+  const detail = error?.message || 'Error desconocido';  
+  this.messageService.showError(`${this.translate.instant('RECEPTION.MODAL.SCALE_ERROR')}: ${detail}`);  
+  console.error('Error abriendo báscula:', error);  
   }
 
   isScaleActiveForLot(detail: any, lotIndex: number): boolean {
     if (!this.isScaleListening || !this.activeScaleTarget) {
       return false;
     }
-
     return this.activeScaleTarget.productId === Number(detail.productId) && this.activeScaleTarget.lotIndex === lotIndex;
+  }
+
+  manualRefresh(): void {
+
   }
 
   private applyWeightToActiveLot(rawWeight: string): void {
@@ -550,7 +485,6 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Validar cantidades negativas o nulas
     const hasInvalidQuantities = this.order.details.some(d => {
       const total = this.getTotalReceived(d);
       return total < 0 || d.lots?.some(lot => lot.quantity < 0 || lot.quantity === null || lot.quantity === undefined);
@@ -978,62 +912,5 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
 
   private isCurrentUserAdmin(): boolean {
     return this.authService.getRole() === 'ADMIN';
-  }
-
-  private startLockHeartbeat(): void {
-    if (this.heartbeatTimerId !== null) {
-      return;
-    }
-
-    this.heartbeatFailureCount = 0;
-    this.scheduleNextHeartbeat(OrderReceptionModalComponent.LOCK_HEARTBEAT_INTERVAL_MS);
-  }
-
-  private scheduleNextHeartbeat(delayMs: number): void {
-    if (this.heartbeatTimerId !== null) {
-      clearTimeout(this.heartbeatTimerId);
-    }
-
-    this.heartbeatTimerId = setTimeout(() => {
-      this.orderReviewLockStateService.heartbeat(this.order.id).subscribe({
-        next: status => {
-          this.heartbeatFailureCount = 0;
-          this.reviewLockStatus = status;
-          this.applyLockUiStatus(status);
-          if (status.locked && status.currentUserOwner) {
-            this.scheduleNextHeartbeat(OrderReceptionModalComponent.LOCK_HEARTBEAT_INTERVAL_MS);
-          }
-        },
-        error: () => {
-          this.heartbeatFailureCount += 1;
-          const backoffMs = Math.min(
-            OrderReceptionModalComponent.HEARTBEAT_BACKOFF_MAX_MS,
-            OrderReceptionModalComponent.HEARTBEAT_BACKOFF_BASE_MS * (2 ** (this.heartbeatFailureCount - 1))
-          );
-
-          this.orderReviewLockStateService.refresh(this.order.id).subscribe({
-            next: status => {
-              this.reviewLockStatus = status;
-              this.applyLockUiStatus(status);
-              if (status.locked && status.currentUserOwner) {
-                this.scheduleNextHeartbeat(backoffMs);
-              }
-            },
-            error: () => {
-              this.scheduleNextHeartbeat(backoffMs);
-            }
-          });
-        }
-      });
-    }, delayMs);
-  }
-
-  private stopLockHeartbeat(): void {
-    if (this.heartbeatTimerId === null) {
-      return;
-    }
-
-    clearTimeout(this.heartbeatTimerId);
-    this.heartbeatTimerId = null;
   }
 }

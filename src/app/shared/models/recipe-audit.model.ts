@@ -1,6 +1,6 @@
 export interface RecipeAudit {
-    id_recipe: number;
-    id_user: number;
+    id_recipe?: number;
+    id_user?: number;
     action: string;
     details: string;
     auditDate: string;

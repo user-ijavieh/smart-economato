@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 const STX = 0x02;
@@ -24,6 +24,8 @@ interface SerialNavigatorLike extends Navigator {
 export class ScaleService {
   private readonly weightSubject = new Subject<string>();
   private readonly listeningSubject = new BehaviorSubject<boolean>(false);
+  
+  constructor(private ngZone: NgZone) {}
 
   private port: SerialPortLike | null = null;
   private reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
@@ -69,7 +71,9 @@ export class ScaleService {
       this.reader = this.port.readable.getReader();
       this.shouldRead = true;
       this.buffer = [];
-      this.listeningSubject.next(true);
+      this.ngZone.run(() => {
+        this.listeningSubject.next(true);
+      });
 
       this.readLoopPromise = this.readLoop();
     } catch (error) {
@@ -133,7 +137,9 @@ export class ScaleService {
           }
 
           if (weight !== lastWeight) {
-            this.weightSubject.next(weight);
+            this.ngZone.run(() => {
+              this.weightSubject.next(weight);
+            });
             lastWeight = weight;
           }
         }
@@ -165,7 +171,9 @@ export class ScaleService {
     this.readLoopPromise = null;
     this.shouldRead = false;
     this.buffer = [];
-    this.listeningSubject.next(false);
+    this.ngZone.run(() => {
+      this.listeningSubject.next(false);
+    });
   }
 
   private extractFrames(inputBuffer: number[]): { frames: number[][]; rest: number[] } {
