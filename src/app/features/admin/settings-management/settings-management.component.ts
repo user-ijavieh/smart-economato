@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit, OnDestroy, inject } from '@angula
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs';
 import { MessageService } from '../../../core/services/message.service';
@@ -38,6 +39,7 @@ type TabKey =
   | 'notifications'
   | 'advanced'
   | 'ia'
+  | 'performance'
   | 'audit';
 
 type FileTypeOption = {
@@ -49,7 +51,7 @@ type FileTypeOption = {
 @Component({
   selector: 'app-settings-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatePipe],
+  imports: [CommonModule, FormsModule, DatePipe, TranslateModule],
   templateUrl: './settings-management.component.html',
   styleUrl: './settings-management.component.css',
   animations: [
@@ -70,44 +72,45 @@ export class SettingsManagementComponent implements OnInit, OnDestroy {
   private aiConfigService = inject(AiConfigurationService);
   private messageService = inject(MessageService);
   private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
 
-  readonly tabs: Array<{ key: TabKey; label: string }> = [
-    { key: 'presence', label: 'Presencia' },
-    { key: 'alerts', label: 'Alertas' },
-    { key: 'predictions', label: 'Predicciones' },
-    { key: 'sessions', label: 'Sesiones' },
-    { key: 'security', label: 'Seguridad' },
-    { key: 'incidents', label: 'Incidencias' },
-    { key: 'notifications', label: 'Notificaciones' },
-    { key: 'advanced', label: 'Avanzado' },
-    { key: 'ia', label: 'IA' },
-    { key: 'audit', label: 'Auditoría' }
+  readonly tabs: Array<{ key: TabKey; labelKey: string }> = [
+    { key: 'presence', labelKey: 'SETTINGS.TABS.PRESENCE' },
+    { key: 'alerts', labelKey: 'SETTINGS.TABS.ALERTS' },
+    { key: 'predictions', labelKey: 'SETTINGS.TABS.PREDICTIONS' },
+    { key: 'sessions', labelKey: 'SETTINGS.TABS.SESSIONS' },
+    { key: 'security', labelKey: 'SETTINGS.TABS.SECURITY' },
+    { key: 'incidents', labelKey: 'SETTINGS.TABS.INCIDENTS' },
+    { key: 'notifications', labelKey: 'SETTINGS.TABS.NOTIFICATIONS' },
+    { key: 'advanced', labelKey: 'SETTINGS.TABS.ADVANCED' },
+    { key: 'ia', labelKey: 'SETTINGS.TABS.IA' },
+    { key: 'audit', labelKey: 'SETTINGS.TABS.AUDIT' }
   ];
 
-  readonly fileTypeOptions: FileTypeOption[] = [
+  readonly fileTypeOptions: Array<{ key: string; labelKey: string; mimes: string[] }> = [
     {
       key: 'images',
-      label: 'Imágenes',
+      labelKey: 'SETTINGS.FILE_TYPES.IMAGES',
       mimes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
     },
     {
       key: 'pdf',
-      label: 'PDF',
+      labelKey: 'SETTINGS.FILE_TYPES.PDF',
       mimes: ['application/pdf']
     },
     {
       key: 'word',
-      label: 'Word',
+      labelKey: 'SETTINGS.FILE_TYPES.WORD',
       mimes: ['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
     },
     {
       key: 'excel',
-      label: 'Excel',
+      labelKey: 'SETTINGS.FILE_TYPES.EXCEL',
       mimes: ['application/ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
     },
     {
       key: 'video',
-      label: 'Videos',
+      labelKey: 'SETTINGS.FILE_TYPES.VIDEO',
       mimes: ['video/mp4', 'video/webm', 'video/quicktime']
     }
   ];
@@ -231,6 +234,11 @@ export class SettingsManagementComponent implements OnInit, OnDestroy {
     maxStreamDurationMs: 120000
   };
 
+  // Performance Tab State
+  lastSuppliersUpdate: Date | null = null;
+  refreshingSuppliers = false;
+
+
   ngOnInit(): void {
     this.loadSnapshot();
   }
@@ -296,14 +304,14 @@ export class SettingsManagementComponent implements OnInit, OnDestroy {
           }
 
           if (showSuccessMessage) {
-            this.messageService.showSuccess('Configuración recargada correctamente');
+            this.messageService.showSuccess(this.translate.instant('SETTINGS.MESSAGES.RELOAD_SUCCESS'));
           }
 
           this.cdr.detectChanges();
 
         },
         error: () => {
-          this.messageService.showError('No se pudo cargar la configuración del sistema');
+          this.messageService.showError(this.translate.instant('SETTINGS.MESSAGES.LOAD_ERROR'));
           this.cdr.detectChanges();
         }
       });
@@ -374,10 +382,10 @@ export class SettingsManagementComponent implements OnInit, OnDestroy {
       .pipe(finalize(() => (this.saving = false)))
       .subscribe({
         next: () => {
-          this.messageService.showSuccess('Configuración actualizada correctamente');
+          this.messageService.showSuccess(this.translate.instant('SETTINGS.MESSAGES.SAVE_SUCCESS'));
           this.loadSnapshot();
         },
-        error: () => this.messageService.showError('No se pudo guardar la configuración')
+        error: () => this.messageService.showError(this.translate.instant('SETTINGS.MESSAGES.SAVE_ERROR'))
       });
   }
 
@@ -408,7 +416,7 @@ export class SettingsManagementComponent implements OnInit, OnDestroy {
           this.cdr.detectChanges();
         },
         error: (err: Error) => {
-          this.messageService.showError('No se pudo cargar la configuración de IA: ' + err.message);
+          this.messageService.showError(this.translate.instant('SETTINGS.IA.ERRORS.LOAD_ERROR', { error: err.message }));
           this.cdr.detectChanges();
         }
       });
@@ -423,7 +431,7 @@ export class SettingsManagementComponent implements OnInit, OnDestroy {
 
   saveAiKey(): void {
     if (!this.aiNewKeyProvider || !this.aiNewKeyValue.trim()) {
-      this.messageService.showError('Selecciona proveedor e ingresa la clave API.');
+      this.messageService.showError(this.translate.instant('SETTINGS.IA.ERRORS.SELECT_PROVIDER_KEY'));
       return;
     }
 
@@ -449,11 +457,11 @@ export class SettingsManagementComponent implements OnInit, OnDestroy {
           }
           this.aiShowNewKeyForm = false;
           this.aiNewKeyValue = '';
-          this.messageService.showSuccess(`Clave API para ${this.aiNewKeyProvider} guardada.`);
+          this.messageService.showSuccess(this.translate.instant('SETTINGS.IA.MESSAGES.SAVE_SUCCESS', { provider: this.aiNewKeyProvider }));
           this.cdr.detectChanges();
         },
         error: (err: Error) => {
-          this.messageService.showError('Error al guardar clave: ' + err.message);
+          this.messageService.showError(this.translate.instant('SETTINGS.IA.ERRORS.SAVE_ERROR', { error: err.message }));
         }
       });
   }
@@ -464,10 +472,10 @@ export class SettingsManagementComponent implements OnInit, OnDestroy {
 
     this.messageService
       .confirm(
-        'Eliminar clave API',
-        `¿Eliminar clave API para ${provider}? Esta acción no se puede deshacer.`,
-        'Eliminar',
-        'Cancelar'
+        this.translate.instant('SETTINGS.IA.MESSAGES.DELETE_CONFIRM_TITLE'),
+        this.translate.instant('SETTINGS.IA.MESSAGES.DELETE_CONFIRM_MSG', { provider }),
+        this.translate.instant('SETTINGS.IA.ACTIONS.DELETE'),
+        this.translate.instant('SETTINGS.IA.ACTIONS.CANCEL')
       )
       .then((confirmed) => {
         if (confirmed) {
@@ -477,11 +485,11 @@ export class SettingsManagementComponent implements OnInit, OnDestroy {
             .subscribe({
               next: () => {
                 this.aiKeys = this.aiKeys.filter(k => k.provider !== provider);
-                this.messageService.showSuccess(`Clave API para ${provider} eliminada.`);
+                this.messageService.showSuccess(this.translate.instant('SETTINGS.IA.MESSAGES.DELETE_SUCCESS', { provider }));
                 this.cdr.detectChanges();
               },
               error: (err: Error) => {
-                this.messageService.showError('Error al eliminar clave: ' + err.message);
+                this.messageService.showError(this.translate.instant('SETTINGS.IA.ERRORS.DELETE_ERROR', { error: err.message }));
               }
             });
         }
@@ -491,10 +499,10 @@ export class SettingsManagementComponent implements OnInit, OnDestroy {
 
   async purgePresenceLogs(): Promise<void> {
     const confirmed = await this.messageService.confirm(
-      'Purgar actividad de presencia',
-      'Se eliminarán los registros de actividad de presencia seleccionados. Esta acción no se puede deshacer.',
-      'Purgar',
-      'Cancelar'
+      this.translate.instant('SETTINGS.PURGE_PRESENCE.TITLE'),
+      this.translate.instant('SETTINGS.PURGE_PRESENCE.MSG'),
+      this.translate.instant('SETTINGS.LABELS.PURGE'),
+      this.translate.instant('SETTINGS.LABELS.CANCEL')
     );
     if (!confirmed) {
       return;
@@ -502,19 +510,19 @@ export class SettingsManagementComponent implements OnInit, OnDestroy {
 
     this.systemConfigService.purgePresenceLogs().subscribe({
       next: result => {
-        this.messageService.showSuccess(`Se eliminaron ${result.deletedCount} logs de presencia`);
+        this.messageService.showSuccess(this.translate.instant('SETTINGS.MESSAGES.PURGE_PRESENCE_SUCCESS', { count: result.deletedCount }));
         this.loadSnapshot();
       },
-      error: () => this.messageService.showError('No se pudo purgar el log de presencia')
+      error: () => this.messageService.showError(this.translate.instant('SETTINGS.MESSAGES.PURGE_PRESENCE_ERROR'))
     });
   }
 
   async purgeNotificationLogs(): Promise<void> {
     const confirmed = await this.messageService.confirm(
-      'Purgar notificaciones leídas',
-      'Se eliminarán las notificaciones leídas. Esta acción no se puede deshacer.',
-      'Purgar',
-      'Cancelar'
+      this.translate.instant('SETTINGS.PURGE_NOTIFICATIONS.TITLE'),
+      this.translate.instant('SETTINGS.PURGE_NOTIFICATIONS.MSG'),
+      this.translate.instant('SETTINGS.LABELS.PURGE'),
+      this.translate.instant('SETTINGS.LABELS.CANCEL')
     );
     if (!confirmed) {
       return;
@@ -522,10 +530,10 @@ export class SettingsManagementComponent implements OnInit, OnDestroy {
 
     this.systemConfigService.purgeNotificationLogs().subscribe({
       next: result => {
-        this.messageService.showSuccess(`Se eliminaron ${result.deletedCount} notificaciones`);
+        this.messageService.showSuccess(this.translate.instant('SETTINGS.MESSAGES.PURGE_NOTIFICATIONS_SUCCESS', { count: result.deletedCount }));
         this.loadSnapshot();
       },
-      error: () => this.messageService.showError('No se pudo purgar el log de notificaciones')
+      error: () => this.messageService.showError(this.translate.instant('SETTINGS.MESSAGES.PURGE_NOTIFICATIONS_ERROR'))
     });
   }
 
@@ -546,7 +554,7 @@ export class SettingsManagementComponent implements OnInit, OnDestroy {
           this.cdr.detectChanges();
         },
         error: () => {
-          this.messageService.showError('No se pudo cargar la auditoría global');
+          this.messageService.showError(this.translate.instant('SETTINGS.MESSAGES.LOAD_AUDIT_ERROR'));
           this.cdr.detectChanges();
         }
       });
@@ -589,6 +597,26 @@ export class SettingsManagementComponent implements OnInit, OnDestroy {
     this.useCustomFileTypes = custom.length > 0;
     this.customIncidentMimeTypes = custom.join(', ');
   }
+
+  refreshSuppliersCache(): void {
+    this.refreshingSuppliers = true;
+    this.systemConfigService.refreshSuppliersCache()
+      .pipe(finalize(() => {
+        this.refreshingSuppliers = false;
+        this.cdr.detectChanges();
+      }))
+      .subscribe({
+        next: () => {
+          this.lastSuppliersUpdate = new Date();
+          this.messageService.showSuccess(this.translate.instant('SETTINGS.MESSAGES.CACHE_REFRESH_SUCCESS'));
+          this.cdr.detectChanges();
+        },
+        error: (err: Error) => {
+          this.messageService.showError(err.message);
+        }
+      });
+  }
+
 
   private buildAllowedMimeTypes(): string {
     const selectedMimes = this.fileTypeOptions

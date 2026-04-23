@@ -1,7 +1,8 @@
 import { Component, Input, Output, EventEmitter, inject, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { Order, OrderDetail } from '../../../../shared/models/order.model';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { Order, OrderReviewLockStatus, OrderDetail } from '../../../../shared/models/order.model';
 import { OrderService } from '../../../../core/services/order.service';
 import { MessageService } from '../../../../core/services/message.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -11,7 +12,7 @@ import { LoggerService } from '../../../../core/services/logger.service';
 @Component({
   selector: 'app-order-details-modal',
   standalone: true,
-  imports: [CommonModule, BaseModalComponent, DecimalPipe],
+  imports: [CommonModule, BaseModalComponent, DecimalPipe, TranslateModule],
   templateUrl: './order-details-modal.component.html',
   styleUrl: './order-details-modal.component.css'
 })
@@ -25,6 +26,9 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
   private orderService = inject(OrderService);
   private messageService = inject(MessageService);
   private authService = inject(AuthService);
+  private orderReviewLockStateService = inject(OrderReviewLockStateService);
+  private translate = inject(TranslateService);
+
   isDownloading = false;
   visibleDetailsCount = 20;
   readonly detailsPageSize = 20;
@@ -72,9 +76,9 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
   getQuantityDeltaLabel(detail: OrderDetail): string {
     const delta = this.getQuantityDelta(detail);
     if (delta === null) return '—';
-    if (delta === 0) return 'Exacto';
-    if (delta > 0) return `Exceso +${delta}`;
-    return `Faltante ${Math.abs(delta)}`;
+    if (delta === 0) return this.translate.instant('ORDERS.MODAL.DELTA_EXACT');
+    if (delta > 0) return `${this.translate.instant('ORDERS.MODAL.DELTA_EXCESS')} +${delta}`;
+    return `${this.translate.instant('ORDERS.MODAL.DELTA_MISSING')} ${Math.abs(delta)}`;
   }
 
   getComparisonSymbol(detail: OrderDetail): string {
@@ -90,10 +94,19 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
     }
   }
 
+  getComparisonTitle(detail: OrderDetail): string {
+    const symbol = this.getComparisonSymbol(detail);
+    if (symbol === '✓') return 'ORDERS.MODAL.DELTA_EXACT_HINT';
+    if (symbol === '✕') return 'ORDERS.MODAL.DELTA_MISSING_HINT';
+    if (symbol === '▲') return 'ORDERS.MODAL.DELTA_EXCESS_HINT';
+    return '';
+  }
+
   getFormattedQuantity(detail: OrderDetail): string {
     const received = this.getReceivedQuantity(detail);
-    if (received === null) return `${detail.quantity} ${detail.unit || 'uds'}`;
-    return `${detail.quantity} / ${received} ${detail.unit || 'uds'}`;
+    const unitLabel = detail.unit || this.translate.instant('COMMON.UNITS_SHORT') || 'uds';
+    if (received === null) return `${detail.quantity} ${unitLabel}`;
+    return `${detail.quantity} / ${received} ${unitLabel}`;
   }
 
   close(): void {
@@ -110,7 +123,7 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
   formatDate(dateString: string | undefined): string {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', { 
+    return date.toLocaleDateString(this.translate.currentLang === 'es' ? 'es-ES' : 'en-US', { 
       year: 'numeric', 
       month: 'long', 
       day: 'numeric',
@@ -121,12 +134,12 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
 
   getStatusLabel(status: string): string {
     const labels: Record<string, string> = {
-      'CREATED': 'Creado',
-      'PENDING': 'Pendiente',
-      'REVIEW': 'En Revisión',
-      'CONFIRMED': 'Confirmado',
-      'INCOMPLETE': 'Incompleto',
-      'CANCELLED': 'Cancelado'
+      'CREATED': this.translate.instant('ORDERS.STATUS.CREATED'),
+      'PENDING': this.translate.instant('ORDERS.STATUS.PENDING'),
+      'REVIEW': this.translate.instant('ORDERS.STATUS.REVIEW'),
+      'CONFIRMED': this.translate.instant('ORDERS.STATUS.CONFIRMED'),
+      'INCOMPLETE': this.translate.instant('ORDERS.STATUS.INCOMPLETE'),
+      'CANCELLED': this.translate.instant('ORDERS.STATUS.CANCELLED')
     };
     return labels[status] || status;
   }
@@ -145,9 +158,13 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
 
   async onEdit(): Promise<void> {
     if (!this.order) return;
+    if (this.lockBlockedForCurrentUser) {
+      this.messageService.showError(this.lockInfoDetail || this.translate.instant('ORDERS.MESSAGES.LOCK_ERROR_DEFAULT'));
+      return;
+    }
     const confirmed = await this.messageService.confirm(
-      'Editar pedido',
-      `¿Deseas editar el pedido #${this.order.id}?`
+      this.translate.instant('ORDERS.MESSAGES.EDIT_CONFIRM_TITLE'),
+      this.translate.instant('ORDERS.MESSAGES.EDIT_CONFIRM_MSG', { id: this.order.id })
     );
     if (confirmed) {
       this.editOrderRequested.emit(this.order);
@@ -156,18 +173,22 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
 
   async onDelete(): Promise<void> {
     if (!this.order) return;
+    if (this.lockBlockedForCurrentUser) {
+      this.messageService.showError(this.lockInfoDetail || this.translate.instant('ORDERS.MESSAGES.LOCK_ERROR_DEFAULT'));
+      return;
+    }
     const confirmed = await this.messageService.confirm(
-      'Eliminar pedido',
-      `¿Estás seguro de que deseas eliminar el pedido #${this.order.id}? Esta acción no se puede deshacer.`
+      this.translate.instant('ORDERS.MESSAGES.DELETE_CONFIRM_TITLE'),
+      this.translate.instant('ORDERS.MESSAGES.DELETE_CONFIRM_MSG', { id: this.order.id })
     );
     if (confirmed) {
       this.orderService.delete(this.order.id).subscribe({
         next: () => {
-          this.messageService.showSuccess('Pedido eliminado correctamente');
+          this.messageService.showSuccess(this.translate.instant('ORDERS.MESSAGES.DELETE_SUCCESS'));
           this.deleteOrder.emit(this.order!.id);
         },
         error: () => {
-          this.messageService.showError('Error al eliminar el pedido');
+          this.messageService.showError(this.translate.instant('ORDERS.MESSAGES.DELETE_ERROR'));
         }
       });
     }
@@ -177,8 +198,8 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
     if (!this.order?.id) return;
 
     const confirmed = await this.messageService.confirm(
-      'Confirmar descarga',
-      '¿Deseas descargar este archivo PDF?'
+      this.translate.instant('COMMON.PDF_CONFIRM_TITLE'),
+      this.translate.instant('COMMON.PDF_CONFIRM_MSG')
     );
     if (!confirmed) return;
 
@@ -191,12 +212,12 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
         link.download = `pedido-${this.order?.id}.pdf`;
         link.click();
         window.URL.revokeObjectURL(url);
-        this.messageService.showSuccess('PDF descargado correctamente');
+        this.messageService.showSuccess(this.translate.instant('COMMON.PDF_SUCCESS'));
         this.isDownloading = false;
       },
       error: (error) => {
         this.logger.error('Error al descargar el PDF:', error);
-        this.messageService.showError('Error al descargar el PDF');
+        this.messageService.showError(this.translate.instant('COMMON.PDF_ERROR'));
         this.isDownloading = false;
       }
     });
@@ -204,6 +225,20 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
 
 
 
+    if (status.currentUserOwner) {
+      this.lockBlockedForCurrentUser = false;
+      this.lockInfoTitle = this.translate.instant('ORDERS.MESSAGES.LOCK_OWNER_TITLE');
+      this.lockInfoDetail = this.translate.instant('ORDERS.MESSAGES.LOCK_OWNER_DETAIL');
+      return;
+    }
+
+    const lockOwner = status.lockedByDisplayName || status.lockedByUsername || this.translate.instant('ORDERS.MESSAGES.LOCK_ANOTHER_USER');
+    this.lockBlockedForCurrentUser = this.authService.getRole() !== 'ADMIN';
+    this.lockInfoTitle = this.translate.instant('ORDERS.MESSAGES.LOCK_IN_PROGRESS');
+    this.lockInfoDetail = this.authService.getRole() === 'ADMIN'
+      ? this.translate.instant('ORDERS.MESSAGES.LOCK_ADMIN_HINT', { name: lockOwner })
+      : this.translate.instant('ORDERS.MESSAGES.LOCK_USER_HINT', { name: lockOwner });
+  }
 
 
   onRoundingModeChange(mode: 'units' | 'lots'): void {
