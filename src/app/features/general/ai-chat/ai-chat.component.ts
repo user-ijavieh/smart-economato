@@ -30,14 +30,13 @@ import { AiChatService } from '../../../core/services/ai-chat.service';
 import { MessageService } from '../../../core/services/message.service';
 import { SseStreamService } from '../../../core/services/sse-stream.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 type RetryableStatus = 429 | 502;
 
 @Component({
   selector: 'app-ai-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseModalComponent, TranslateModule],
+  imports: [CommonModule, FormsModule, BaseModalComponent],
   templateUrl: './ai-chat.component.html',
   styleUrl: './ai-chat.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -47,7 +46,6 @@ export class AiChatComponent implements OnInit, OnDestroy {
   private readonly messageService = inject(MessageService);
   private readonly sseStreamService = inject(SseStreamService);
   private readonly authService = inject(AuthService);
-  private readonly translate = inject(TranslateService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroy$ = new Subject<void>();
 
@@ -439,14 +437,14 @@ export class AiChatComponent implements OnInit, OnDestroy {
     const retryable = this.isRetryableError(message);
 
     if (retryable && retry < 1) {
-      this.messageService.showWarning(this.translate.instant('AI_CHAT.MESSAGES.RETRYING'));
+      this.messageService.showWarning('Se perdió el stream. Reintentando una vez...');
       await this.trySendStream(chatId, request, retry + 1);
       return;
     }
 
     this.streamingPreview = '';
     this.sendingMessage = false; // Desbloqueamos en caso de error
-    this.messageService.showError(this.translate.instant('AI_CHAT.MESSAGES.STREAM_ERROR', { message }));
+    this.messageService.showError(`No se pudo completar la respuesta IA: ${message}`);
     this.cdr.markForCheck();
   }
 
@@ -494,7 +492,7 @@ export class AiChatComponent implements OnInit, OnDestroy {
           this.showProviderModal = false;
           this.chats = this.chats.map(chat => chat.id === updated.id ? updated : chat);
           this.selectedChat = updated;
-          this.messageService.showSuccess(this.translate.instant('AI_CHAT.PROVIDER_SUCCESS'));
+          this.messageService.showSuccess('Proveedor actualizado');
           this.cdr.markForCheck();
         },
         error: (error: Error) => {
@@ -514,10 +512,10 @@ export class AiChatComponent implements OnInit, OnDestroy {
   archiveChat(chat: AiChatDto): void {
     this.messageService
       .confirm(
-        this.translate.instant('AI_CHAT.ARCHIVE_CONFIRM_TITLE'),
-        this.translate.instant('AI_CHAT.ARCHIVE_CONFIRM_MSG', { title: chat.title || `#${chat.id}` }),
-        this.translate.instant('AI_CHAT.ARCHIVE'),
-        this.translate.instant('AI_CHAT.CANCEL')
+        'Archivar chat',
+        `Se archivará el chat "${chat.title}". ¿Deseas continuar?`,
+        'Archivar',
+        'Cancelar'
       )
       .then(confirmed => {
         if (!confirmed) {
@@ -528,7 +526,7 @@ export class AiChatComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: () => {
-              this.messageService.showSuccess(this.translate.instant('AI_CHAT.ARCHIVE_SUCCESS'));
+              this.messageService.showSuccess('Chat archivado');
               this.chats = this.chats.filter(item => item.id !== chat.id);
               if (this.selectedChatId === chat.id) {
                 this.selectedChatId = null;
@@ -570,7 +568,7 @@ export class AiChatComponent implements OnInit, OnDestroy {
           if (this.selectedChatId === updated.id) {
             this.selectedChat = updated;
           }
-          this.messageService.showSuccess(this.translate.instant('AI_CHAT.UPDATE_SUCCESS'));
+          this.messageService.showSuccess('Chat actualizado');
           this.cdr.markForCheck();
         },
         error: (error: Error) => {
@@ -679,10 +677,10 @@ export class AiChatComponent implements OnInit, OnDestroy {
 
   formatRole(role: string): string {
     const roleLabels: Record<string, string> = {
-      'USER': this.authService.getName() || this.translate.instant('AI_CHAT.ROLES.USER'),
-      'ASSISTANT': this.translate.instant('AI_CHAT.ROLES.IA'),
-      'SYSTEM': this.translate.instant('AI_CHAT.ROLES.SYSTEM'),
-      'TOOL': '🔧 ' + this.translate.instant('AI_CHAT.ROLES.TOOL')
+      'USER': this.authService.getName() || 'Usuario',
+      'ASSISTANT': 'IA',
+      'SYSTEM': 'Sistema',
+      'TOOL': '🔧 Herramienta'
     };
     return roleLabels[role] || role;
   }

@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { AllergenService } from '../../../core/services/allergen.service';
 import { MessageService } from '../../../core/services/message.service';
 import { Allergen, AllergenRequest } from '../../../shared/models/allergen.model';
@@ -21,8 +20,7 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
         CommonModule,
         FormsModule,
         BaseModalComponent,
-        SuppliersManagementComponent,
-        TranslateModule
+        SuppliersManagementComponent
     ],
     templateUrl: './allergens-management.component.html',
     styleUrl: './allergens-management.component.css',
@@ -34,10 +32,9 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
     private scrollService = inject(ScrollService);
     private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
     messageService = inject(MessageService);
-    private translate = inject(TranslateService);
     private destroy$ = new Subject<void>();
 
-    // ── State ──
+    // ── Allergens state ──
     allergens: Allergen[] = [];
     filteredAllergens: Allergen[] = [];
     loading = true;
@@ -107,7 +104,8 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
         this.loading = true;
         this.currentPage = page;
         this.serverCurrentPage = page;
-
+        
+        // Removed array clear to prevent layout shift during pagination/sorting
         this.cdr.detectChanges();
 
         const term = this.searchTerm.trim();
@@ -167,7 +165,7 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
                 },
                 error: (err: any) => {
                     console.error('Error loading allergens:', err);
-                    this.messageService.showError(this.translate.instant('ALLERGENS.LOAD_ERROR') || 'Error al cargar los alérgenos');
+                    this.messageService.showError('Error al cargar los alérgenos');
                 }
             });
         }
@@ -195,7 +193,8 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
         let result = term
             ? safeAllergens.filter(a => a.name.toLowerCase().includes(term))
             : [...safeAllergens];
-
+            
+        // Sorting fallback (essential for filtering results or backend delay)
         const factor = this.sortDir === 'asc' ? 1 : -1;
         result.sort((a, b) => {
             const valA = ((a as any)?.[this.sortColumn] ?? '');
@@ -205,9 +204,9 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
             }
             return ((Number(valA) || 0) - (Number(valB) || 0)) * factor;
         });
-
+        
         this.filteredAllergens = result;
-
+        
         if (term) {
             this.totalPages = 1;
             this.currentPage = 0;
@@ -221,7 +220,7 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
     }
 
-    onSearch(): void {
+    onSearch(): void { 
         this.searchSubject.next(this.searchTerm);
     }
 
@@ -271,7 +270,7 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
     saveModal(): void {
         const name = this.modalName.trim();
         if (!name) {
-            this.messageService.showError(this.translate.instant('ALLERGENS.NAME_EMPTY_ERROR'));
+            this.messageService.showError('El nombre del alérgeno no puede estar vacío');
             return;
         }
 
@@ -283,12 +282,12 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
         if (this.modalMode === 'create') {
             this.allergenService.create(request).subscribe({
                 next: (allergen) => {
-                    this.messageService.showSuccess(this.translate.instant('ALLERGENS.CREATE_SUCCESS', { name: allergen.name }));
+                    this.messageService.showSuccess(`Alérgeno "${allergen.name}" creado con éxito`);
                     this.closeModal();
                     this.loadAllergens();
                 },
                 error: (err) => {
-                    const msg = err.error?.message || err.error || this.translate.instant('ALLERGENS.CREATE_ERROR');
+                    const msg = err.error?.message || err.error || 'Error al crear el alérgeno';
                     this.messageService.showError(msg);
                     this.modalSaving = false;
                     this.cdr.markForCheck();
@@ -298,12 +297,12 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
             if (!this.selectedAllergen) return;
             this.allergenService.update(this.selectedAllergen.id, request).subscribe({
                 next: (allergen) => {
-                    this.messageService.showSuccess(this.translate.instant('ALLERGENS.UPDATE_SUCCESS', { name: allergen.name }));
+                    this.messageService.showSuccess(`Alérgeno "${allergen.name}" actualizado con éxito`);
                     this.closeModal();
                     this.loadAllergens();
                 },
                 error: (err) => {
-                    const msg = err.error?.message || err.error || this.translate.instant('ALLERGENS.UPDATE_ERROR');
+                    const msg = err.error?.message || err.error || 'Error al actualizar el alérgeno';
                     this.messageService.showError(msg);
                     this.modalSaving = false;
                     this.cdr.markForCheck();
@@ -315,19 +314,19 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
     // ── Delete ──
     async deleteAllergen(allergen: Allergen): Promise<void> {
         const confirmed = await this.messageService.confirm(
-            this.translate.instant('ALLERGENS.DELETE_CONFIRM_TITLE'),
-            this.translate.instant('ALLERGENS.DELETE_CONFIRM_MSG', { name: allergen.name })
+            '¿Eliminar alérgeno?',
+            `¿Estás seguro de que quieres eliminar "${allergen.name}"? Esta acción no se puede deshacer.`
         );
 
         if (!confirmed) return;
 
         this.allergenService.delete(allergen.id).subscribe({
             next: () => {
-                this.messageService.showSuccess(this.translate.instant('ALLERGENS.DELETE_SUCCESS', { name: allergen.name }));
+                this.messageService.showSuccess(`Alérgeno "${allergen.name}" eliminado correctamente`);
                 this.loadAllergens();
             },
             error: (err) => {
-                const msg = err.error?.message || err.error || this.translate.instant('ALLERGENS.DELETE_ERROR');
+                const msg = err.error?.message || err.error || 'Error al eliminar el alérgeno';
                 this.messageService.showError(msg);
             }
         });

@@ -8,12 +8,11 @@ import { WeeklyPlanResponse } from '../../../shared/models/weekly-plan.model';
 import { SearchableDropdownComponent, SearchableItem } from '../../../shared/components/searchable-dropdown/searchable-dropdown.component';
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { Subject, takeUntil } from 'rxjs';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-weekly-plans-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, SearchableDropdownComponent, TranslateModule],
+  imports: [CommonModule, FormsModule, SearchableDropdownComponent],
   templateUrl: './weekly-plans-management.html',
   styleUrl: './weekly-plans-management.css',
 })
@@ -23,7 +22,6 @@ export class WeeklyPlansManagement implements OnInit, OnDestroy {
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
   private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
-  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   teacherItems: SearchableItem[] = [];
@@ -93,10 +91,10 @@ export class WeeklyPlansManagement implements OnInit, OnDestroy {
 
   get viewTitle(): string {
     if (!this.selectedTeacherId) {
-      return this.translate.instant('WEEKLY_PLANS_MGMT.VISION.GLOBAL');
+      return 'Vista global';
     }
     const teacherLabel = this.selectedTeacherName || `#${this.selectedTeacherId}`;
-    return this.translate.instant('WEEKLY_PLANS_MGMT.VISION.TEACHER', { name: teacherLabel });
+    return `Vista del profesor: ${teacherLabel}`;
   }
 
   onTeacherSearch(query: string): void {
@@ -151,11 +149,11 @@ export class WeeklyPlansManagement implements OnInit, OnDestroy {
 
   statusLabel(status: string): string {
     const labels: Record<string, string> = {
-      DRAFT: this.translate.instant('WEEKLY_PLANS_MGMT.STATUS.DRAFT'),
-      ACTIVE: this.translate.instant('WEEKLY_PLANS_MGMT.STATUS.ACTIVE'),
-      IN_PROGRESS: this.translate.instant('WEEKLY_PLANS_MGMT.STATUS.IN_PROGRESS'),
-      COMPLETED: this.translate.instant('WEEKLY_PLANS_MGMT.STATUS.COMPLETED'),
-      CANCELLED: this.translate.instant('WEEKLY_PLANS_MGMT.STATUS.CANCELLED')
+      DRAFT: 'Borrador',
+      ACTIVE: 'Activo',
+      IN_PROGRESS: 'En curso',
+      COMPLETED: 'Finalizado',
+      CANCELLED: 'Cancelado'
     };
     return labels[status] || status;
   }

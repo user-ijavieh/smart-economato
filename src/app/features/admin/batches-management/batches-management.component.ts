@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { ProductBatchService } from '../../../core/services/product-batch.service';
 import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.model';
 import { RecipeCookingAudit } from '../../../shared/models/kitchen.model';
@@ -20,7 +19,7 @@ type ControlSubTab = 'expiring' | 'expired';
 @Component({
   selector: 'app-batches-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, BatchExpirationModalComponent, BaseModalComponent, TranslateModule],
+  imports: [CommonModule, FormsModule, BatchExpirationModalComponent, BaseModalComponent],
   templateUrl: './batches-management.component.html',
   styleUrl: './batches-management.component.css'
 })
@@ -31,7 +30,6 @@ export class BatchesManagementComponent implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
   private scrollService = inject(ScrollService);
   private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
-  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   // Tabs
@@ -133,7 +131,7 @@ export class BatchesManagementComponent implements OnInit, OnDestroy {
           this.cdr.detectChanges();
         },
         error: (err) => {
-          this.messageService.showError(this.translate.instant('BATCHES.MESSAGES.ERROR_LOAD'));
+          this.messageService.showError("Error al cargar lotes");
           this.loading = false;
           this.cdr.detectChanges();
         }
@@ -167,7 +165,7 @@ export class BatchesManagementComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: () => {
-        this.messageService.showError(this.translate.instant('BATCHES.MESSAGES.ERROR_LOAD_CONTROL'));
+        this.messageService.showError("Error al cargar control de caducidad");
         this.loading = false;
         this.cdr.detectChanges();
       }
@@ -273,29 +271,34 @@ export class BatchesManagementComponent implements OnInit, OnDestroy {
     if (this.selectedBatch) {
       this.batchService.updateBatchExpiration(this.selectedBatch.id, data).subscribe({
         next: () => {
-          this.messageService.showSuccess(this.translate.instant('BATCHES.MESSAGES.UPDATE_SUCCESS'));
+          this.messageService.showSuccess("Caducidad actualizada correctamente");
           this.showEditModal = false;
           this.refreshData();
         },
-        error: (err) => this.messageService.showError(this.translate.instant('BATCHES.MESSAGES.ERROR_UPDATE'))
+        error: (err) => this.messageService.showError('Error al actualizar fecha')
       });
     }
   }
 
   async onWithdraw(batch: ProductBatchResponseDTO): Promise<void> {
     const isExpired = batch.expired;
+    const actionName = isExpired ? 'Retirar Lote Caducado' : 'Desechar Lote';
+    const warningText = isExpired 
+      ? `¿Estás seguro de que deseas retirar el lote #${batch.id} de ${batch.productName} por caducidad? Se registrará como pérdida (merma).`
+      : `¿Estás seguro de que deseas desechar el lote #${batch.id} de ${batch.productName}? Esta acción es irreversible y se registrará como merma.`;
+
     const confirmed = await this.messageService.confirm(
-      isExpired ? this.translate.instant('BATCHES.MESSAGES.WITHDRAW_CONFIRM_EXPIRED_TITLE') : this.translate.instant('BATCHES.MESSAGES.WITHDRAW_CONFIRM_TITLE'),
-      isExpired ? this.translate.instant('BATCHES.MESSAGES.WITHDRAW_CONFIRM_EXPIRED_MSG', { id: batch.id, name: batch.productName }) : this.translate.instant('BATCHES.MESSAGES.WITHDRAW_CONFIRM_MSG', { id: batch.id, name: batch.productName })
+      actionName,
+      warningText
     );
 
     if (confirmed) {
       this.batchService.withdrawBatch(batch.id).subscribe({
         next: () => {
-          this.messageService.showSuccess(this.translate.instant('BATCHES.MESSAGES.WITHDRAW_SUCCESS'));
+          this.messageService.showSuccess("Lote desechado correctamente");
           this.refreshData();
         },
-        error: () => this.messageService.showError(this.translate.instant('BATCHES.MESSAGES.WITHDRAW_ERROR'))
+        error: () => this.messageService.showError("Error al desechar el lote")
       });
     }
   }
@@ -307,9 +310,9 @@ export class BatchesManagementComponent implements OnInit, OnDestroy {
   }
 
   getStatusText(batch: ProductBatchResponseDTO): string {
-    if (batch.depleted) return this.translate.instant('BATCHES.STATUS.DEPLETED');
-    if (batch.expired) return this.translate.instant('BATCHES.STATUS.EXPIRED');
-    if (batch.daysUntilExpiration <= 7) return this.translate.instant('BATCHES.STATUS.UPCOMING');
-    return this.translate.instant('BATCHES.STATUS.ACTIVE');
+    if (batch.depleted) return 'Agotado';
+    if (batch.expired) return 'Caducado';
+    if (batch.daysUntilExpiration <= 7) return 'Próximo';
+    return 'Activo';
   }
 }

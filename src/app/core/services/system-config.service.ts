@@ -161,11 +161,4 @@ export class SystemConfigService {
       })
     );
   }
-
-  refreshSuppliersCache(): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/cache/refresh/suppliers`, {}).pipe(
-      tap(() => this.cache.invalidateDomains(['product']))
-    );
-  }
-
 }
