@@ -1,35 +1,35 @@
 <app-base-modal [title]="title" size="md" (closed)="onClose()">
     <form [formGroup]="supplierForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
-            <label for="name">Nombre *</label>
-            <input id="name" type="text" formControlName="name" placeholder="Nombre del proveedor"
+            <label for="name">{{ 'SUPPLIER_FORM.NAME' | translate }}</label>
+            <input id="name" type="text" formControlName="name" [placeholder]="'SUPPLIER_FORM.NAME_PLACEHOLDER' | translate"
                 [class.input-error]="supplierForm.get('name')?.invalid && supplierForm.get('name')?.touched" />
             @if (supplierForm.get('name')?.hasError('required') && supplierForm.get('name')?.touched) {
-            <p class="field-error">El nombre es requerido</p>
+            <p class="field-error">{{ 'SUPPLIER_FORM.NAME_REQUIRED' | translate }}</p>
             }
             @if (supplierForm.get('name')?.hasError('minlength') && supplierForm.get('name')?.touched) {
-            <p class="field-error">El nombre debe tener al menos 2 caracteres</p>
+            <p class="field-error">{{ 'SUPPLIER_FORM.NAME_MIN_LENGTH' | translate }}</p>
             }
         </div>
 
         <div class="form-group">
-            <label for="email">Email</label>
-            <input id="email" type="email" formControlName="email" placeholder="correo@ejemplo.com"
+            <label for="email">{{ 'SUPPLIER_FORM.EMAIL' | translate }}</label>
+            <input id="email" type="email" formControlName="email" [placeholder]="'SUPPLIER_FORM.EMAIL_PLACEHOLDER' | translate"
                 [class.input-error]="supplierForm.get('email')?.invalid && supplierForm.get('email')?.touched" />
             @if (supplierForm.get('email')?.hasError('email') && supplierForm.get('email')?.touched) {
-            <p class="field-error">Introduce un email válido</p>
+            <p class="field-error">{{ 'SUPPLIER_FORM.EMAIL_INVALID' | translate }}</p>
             }
         </div>
 
         <div class="form-group form-group-last">
-            <label for="phone">Teléfono</label>
-            <input id="phone" type="text" formControlName="phone" placeholder="+34 600 123 456" />
+            <label for="phone">{{ 'SUPPLIER_FORM.PHONE' | translate }}</label>
+            <input id="phone" type="text" formControlName="phone" [placeholder]="'SUPPLIER_FORM.PHONE_PLACEHOLDER' | translate" />
         </div>
     </form>
 
     <div modal-footer>
         <button type="button" class="modal-btn modal-btn-primary" (click)="onSubmit()" [disabled]="supplierForm.invalid">
-            {{ isEditMode ? 'Guardar Cambios' : 'Crear Proveedor' }}
+            {{ (isEditMode ? 'SUPPLIER_FORM.SAVE_CHANGES' : 'SUPPLIER_FORM.CREATE_TITLE') | translate }}
         </button>
     </div>
 </app-base-modal>

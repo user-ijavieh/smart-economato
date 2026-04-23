@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { RecipeService } from '../../../core/services/recipe.service';
 import { RecipeDraftService } from '../../../core/services/recipe-draft.service';
@@ -30,7 +31,8 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
         RecipeCreateModalComponent,
         RecipeEditModalComponent,
         RecipeDetailModalComponent,
-        BaseModalComponent
+        BaseModalComponent,
+        TranslateModule
     ],
     templateUrl: './recipes-management.component.html',
     styleUrl: './recipes-management.component.css',
@@ -46,6 +48,7 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
     private cdr = inject(ChangeDetectorRef);
     private scrollService = inject(ScrollService);
     private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
+    private translate = inject(TranslateService);
     messageService = inject(MessageService);
     private destroy$ = new Subject<void>();
 
@@ -280,7 +283,7 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
                 this.cdr.markForCheck();
             },
             error: () => {
-                this.messageService.showError('Error al cargar las recetas');
+                this.messageService.showError(this.translate.instant('RECIPE_MGMT.MESSAGES.LOAD_ERROR'));
             }
         });
     }
@@ -334,17 +337,18 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
 
         const currentlyHidden = this.showHiddenRecipes;
         const newHiddenState = !currentlyHidden;
-        const actionText = newHiddenState ? 'ocultado' : 'mostrado';
+        const actionTextKey = newHiddenState ? 'COMMON.HIDDEN' : 'COMMON.SHOWN';
+        const actionText = this.translate.instant(actionTextKey).toLowerCase();
 
         this.recipeService.toggleHidden(this.selectedRecipe.id, newHiddenState).subscribe({
             next: () => {
-                this.messageService.showSuccess(`Receta "${this.selectedRecipe!.name}" ha sido ${actionText}`);
+                this.messageService.showSuccess(this.translate.instant('RECIPE_MGMT.MESSAGES.TOGGLE_HIDDEN_SUCCESS', { name: this.selectedRecipe!.name, action: actionText }));
                 this.closeEditModal();
                 this.loadRecipes();
                 this.loadStats();
             },
             error: (err: any) => {
-                const errorMessage = err.error?.message || err.message || `Error al ${newHiddenState ? 'ocultar' : 'mostrar'} receta`;
+                const errorMessage = err.error?.message || err.message || this.translate.instant('RECIPE_MGMT.MESSAGES.TOGGLE_HIDDEN_ERROR', { action: actionText });
                 this.messageService.showError(errorMessage);
             }
         });
@@ -423,7 +427,7 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
             },
             error: () => {
-                this.messageService.showError('Error al cargar las auditorías');
+                this.messageService.showError(this.translate.instant('RECIPE_MGMT.AUDITS.LOAD_ERROR'));
             }
         });
     }
@@ -554,7 +558,7 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
                 this.cdr.markForCheck();
             },
             error: () => {
-                this.messageService.showError('Error al cargar los borradores de recetas');
+                this.messageService.showError(this.translate.instant('RECIPE_MGMT.DRAFTS.LOAD_ERROR'));
             }
         });
     }
@@ -594,9 +598,9 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
 
     getDraftStatusLabel(status: RecipeDraftStatus): string {
         switch (status) {
-            case 'PENDING': return 'Pendiente';
-            case 'APPROVED': return 'Aprobado';
-            case 'REJECTED': return 'Rechazado';
+            case 'PENDING': return this.translate.instant('COMMON.STATUS_PENDING');
+            case 'APPROVED': return this.translate.instant('COMMON.STATUS_APPROVED');
+            case 'REJECTED': return this.translate.instant('COMMON.STATUS_REJECTED');
             default: return status;
         }
     }
@@ -612,19 +616,19 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
 
     async approveDraft(draft: RecipeDraft): Promise<void> {
         const confirmed = await this.messageService.confirm(
-            'Aprobar borrador',
-            `¿Deseas aprobar el borrador "${draft.name}"?`
+            this.translate.instant('RECIPE_MGMT.DRAFTS.APPROVE_CONFIRM_TITLE'),
+            this.translate.instant('RECIPE_MGMT.DRAFTS.APPROVE_CONFIRM_MSG', { name: draft.name })
         );
         if (!confirmed) return;
 
         this.recipeDraftService.approve(draft.id).subscribe({
             next: () => {
-                this.messageService.showSuccess(`Borrador "${draft.name}" aprobado`);
+                this.messageService.showSuccess(this.translate.instant('RECIPE_MGMT.DRAFTS.APPROVE_SUCCESS', { name: draft.name }));
                 this.closeDraftDetailModal();
                 this.loadDrafts(this.currentDraftPage);
             },
             error: (err: any) => {
-                const msg = err.error?.message || err.error || 'Error al aprobar el borrador';
+                const msg = err.error?.message || err.error || this.translate.instant('RECIPE_MGMT.DRAFTS.APPROVE_ERROR');
                 this.messageService.showError(msg);
             }
         });
@@ -652,19 +656,19 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
 
         const reason = this.rejectDraftReason.trim();
         if (!reason) {
-            this.messageService.showWarning('Debes indicar un motivo de rechazo');
+            this.messageService.showWarning(this.translate.instant('RECIPE_MGMT.DRAFTS.REJECT_REASON_EMPTY'));
             return;
         }
 
         const draft = this.selectedDraftToReject;
         this.recipeDraftService.reject(draft.id, reason).subscribe({
             next: () => {
-                this.messageService.showSuccess(`Borrador "${draft.name}" rechazado`);
+                this.messageService.showSuccess(this.translate.instant('RECIPE_MGMT.DRAFTS.REJECT_SUCCESS', { name: draft.name }));
                 this.closeRejectDraftModal();
                 this.loadDrafts(this.currentDraftPage);
             },
             error: (err: any) => {
-                const msg = err.error?.message || err.error || 'Error al rechazar el borrador';
+                const msg = err.error?.message || err.error || this.translate.instant('RECIPE_MGMT.DRAFTS.REJECT_ERROR');
                 this.messageService.showError(msg);
             }
         });
@@ -693,7 +697,7 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
                 this.openDetailModal(recipe);
             },
             error: () => {
-                this.messageService.showError('No se pudo cargar la receta aprobada');
+                this.messageService.showError(this.translate.instant('RECIPE_MGMT.DRAFTS.APPROVED_LOAD_ERROR'));
             }
         });
     }
@@ -708,9 +712,9 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
 
     translateAction(action: string): string {
         const u = action.toUpperCase();
-        if (u.includes('CREA') || u === 'CREATE_RECIPE') return 'Crear';
-        if (u.includes('MODIFIC') || u === 'UPDATE_RECIPE') return 'Actualizar';
-        if (u.includes('ELIMIN') || u === 'DELETE_RECIPE') return 'Eliminar';
+        if (u.includes('CREA') || u === 'CREATE_RECIPE') return this.translate.instant('COMMON.AUDIT_ACTIONS.CREATE');
+        if (u.includes('MODIFIC') || u === 'UPDATE_RECIPE') return this.translate.instant('COMMON.AUDIT_ACTIONS.UPDATE');
+        if (u.includes('ELIMIN') || u === 'DELETE_RECIPE') return this.translate.instant('COMMON.AUDIT_ACTIONS.DELETE');
         return action;
     }
 
@@ -791,7 +795,7 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
 
     formatDate(dateStr: string): string {
         const d = new Date(dateStr);
-        return d.toLocaleString('es-ES', {
+        return d.toLocaleString(this.translate.currentLang, {
             day: '2-digit', month: '2-digit', year: 'numeric',
             hour: '2-digit', minute: '2-digit'
         });
