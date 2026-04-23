@@ -1,14 +1,13 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
 import { Recipe } from '../../../../shared/models/recipe.model';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 
 @Component({
   selector: 'app-recipe-detail-modal',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent, DecimalPipe, TranslateModule],
+  imports: [FormsModule, BaseModalComponent, DecimalPipe],
   templateUrl: './recipe-detail-modal.component.html',
   styleUrl: './recipe-detail-modal.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -61,3 +60,4 @@ export class RecipeDetailModalComponent {
     return net * 100 / availability;
   }
 }
+

@@ -1,20 +1,20 @@
-<app-base-modal [title]="'PRODUCT_FORM.CREATE_TITLE' | translate" size="md" [closeOnBackdrop]="false" (closed)="onClose()">
+<app-base-modal title="Crear Nuevo Producto" size="md" [closeOnBackdrop]="false" (closed)="onClose()">
   <form #createForm="ngForm" (ngSubmit)="onSubmit()" [class.admin-mode]="isAdmin" [class.general-mode]="!isAdmin">
     <div class="form-grid">
       <div class="form-group">
-        <label for="name">{{ 'PRODUCT_FORM.NAME_LABEL' | translate }}</label>
+        <label for="name">Nombre *</label>
         <input type="text" id="name" [(ngModel)]="formData.name" name="name" required
-          [placeholder]="'PRODUCT_FORM.NAME_PLACEHOLDER' | translate" />
+          placeholder="Nombre del producto" />
       </div>
 
       <div class="form-group">
-        <label for="productCode">{{ 'PRODUCT_FORM.CODE_LABEL' | translate }}</label>
+        <label for="productCode">Código de Producto *</label>
         <input type="text" id="productCode" [(ngModel)]="formData.productCode" name="productCode" required
-          [placeholder]="'PRODUCT_FORM.CODE_PLACEHOLDER' | translate" />
+          placeholder="Ej: HAR002" />
       </div>
 
       <div class="form-group">
-        <label for="barcode">{{ 'PRODUCT_FORM.BARCODE_LABEL' | translate }}</label>
+        <label for="barcode">Código de Barras</label>
         <div class="code-input-row">
           <input
             type="text"
@@ -24,19 +24,19 @@
             inputmode="numeric"
             pattern="[0-9]*"
             maxlength="32"
-            [placeholder]="'PRODUCT_FORM.CODE_PLACEHOLDER' | translate"
+            placeholder="Ej: 8412345678901"
           />
-          <button type="button" class="btn-scan-code" (click)="openBarcodeScanner()" [title]="'INVENTORY.SCAN_TITLE' | translate">
+          <button type="button" class="btn-scan-code" (click)="openBarcodeScanner()" title="Escanear código de barras">
             <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor">
               <path d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z" />
             </svg>
           </button>
         </div>
-        <small class="field-hint">{{ 'PRODUCT_FORM.BARCODE_HINT' | translate }}</small>
+        <small class="field-hint">Solo números, por ejemplo: 8412345678901.</small>
       </div>
 
       <div class="form-group">
-        <label for="unit">{{ 'PRODUCT_FORM.UNIT_LABEL' | translate }}</label>
+        <label for="unit">Unidad *</label>
         <select id="unit" [(ngModel)]="formData.unit" name="unit" required>
           @for (unit of allowedUnits; track unit) {
           <option [value]="unit">{{ unit }}</option>
@@ -45,61 +45,61 @@
       </div>
 
       <div class="form-group">
-        <label for="unitPrice">{{ 'COMMON.UNIT_PRICE' | translate }} (€) *</label>
+        <label for="unitPrice">Precio Unitario (€) *</label>
         <input type="number" id="unitPrice" [(ngModel)]="formData.unitPrice" name="unitPrice" required min="0"
           step="0.01" placeholder="0.00" />
       </div>
 
       <div class="form-group">
-        <label for="lotQuantity">{{ 'PRODUCT_FORM.LOT_QUANTITY_LABEL' | translate }}</label>
+        <label for="lotQuantity">Cantidad por Lote (Opcional)</label>
         <div class="input-with-unit">
           <input type="number" id="lotQuantity" [(ngModel)]="formData.lotQuantity" name="lotQuantity" step="0.001" min="0.001" placeholder="Ej: 12" />
           @if (formData.unit) {
             <span class="inline-unit">{{ formData.unit }}</span>
           }
         </div>
-        <small class="field-hint">{{ 'PRODUCT_FORM.LOT_QUANTITY_HINT' | translate }}</small>
+        <small class="field-hint">Múltiplo mínimo de compra.</small>
       </div>
 
       @if (formData.lotQuantity && formData.lotQuantity > 0) {
       <div class="form-group">
-        <label for="pricePerLot">{{ 'PRODUCT_FORM.PRICE_PER_LOT_LABEL' | translate }}</label>
+        <label for="pricePerLot">Precio por Lote (€)</label>
         <input type="number" id="pricePerLot" [(ngModel)]="pricePerLot" name="pricePerLot" step="0.01" min="0" placeholder="0.00" />
-        <small class="field-hint">{{ 'PRODUCT_FORM.PRICE_PER_LOT_HINT' | translate }}</small>
+        <small class="field-hint">Se sincroniza con el precio unitario.</small>
       </div>
       }
 
       <div class="form-group">
-        <label for="currentStock">{{ 'PRODUCT_FORM.STOCK_LABEL' | translate }}</label>
+        <label for="currentStock">Stock Inicial *</label>
         <input type="number" id="currentStock" [(ngModel)]="formData.currentStock" name="currentStock" required
           min="0" step="0.01" placeholder="0" />
       </div>
 
       <div class="form-group merma-group">
         <label for="availabilityPercentage">
-          {{ 'PRODUCT_FORM.AVAILABILITY_LABEL' | translate }}
-          <span class="merma-tooltip" [title]="'PRODUCT_FORM.AVAILABILITY_TOOLTIP' | translate">ⓘ</span>
+          Disponibilidad (%)
+          <span class="merma-tooltip" title="Porcentaje del producto que es aprovechable para cocinar. Ej: un plátano con 80% — de 1 kg comprado, solo 800 g son utilizables.">ⓘ</span>
         </label>
         <div class="merma-input-wrapper">
           <input type="number" id="availabilityPercentage" [(ngModel)]="formData.availabilityPercentage" name="availabilityPercentage"
             min="0" max="100" step="0.01" placeholder="100" />
-          <span class="merma-suffix">{{ 'PRODUCT_FORM.AVAILABILITY_SUFFIX' | translate }}</span>
+          <span class="merma-suffix">% aprovechable</span>
         </div>
-        <small class="field-hint">{{ 'PRODUCT_FORM.AVAILABILITY_HINT' | translate }}</small>
+        <small class="field-hint">Rendimiento tras limpieza/merma. Ej: plátano ≈ 80%, pollo entero ≈ 65%.</small>
       </div>
 
       <div class="form-group">
-        <label for="expirationDate">{{ 'PRODUCT_FORM.EXPIRATION_DATE_LABEL' | translate }} @if (formData.currentStock > 0) { <span class="required-asterisk">*</span> }</label>
+        <label for="expirationDate">Fecha de Expiración (Lote Inicial) @if (formData.currentStock > 0) { <span class="required-asterisk">*</span> }</label>
         <input type="date" id="expirationDate" [(ngModel)]="formData.expirationDate" name="expirationDate" />
       </div>
 
       <div class="form-group full-width">
-        <label for="supplierId">{{ 'PRODUCT_FORM.SUPPLIER_LABEL' | translate }}</label>
+        <label for="supplierId">Proveedor</label>
         <app-searchable-dropdown
           [items]="supplierSearchItems"
           [selectedIds]="formData.supplierId ? [formData.supplierId] : []"
           [initialText]="selectedSupplierName"
-          [placeholder]="'PRODUCT_FORM.SELECT_SUPPLIER' | translate"
+          placeholder="Seleccionar proveedor..."
           (itemSelected)="onSupplierSelected($event)"
         ></app-searchable-dropdown>
       </div>
@@ -108,13 +108,13 @@
 
   <div modal-footer>
     <button type="button" class="modal-btn modal-btn-primary modal-btn-full" (click)="onSubmit()" [disabled]="!createForm.valid">
-      {{ 'PRODUCT_FORM.CREATE_BTN' | translate }}
+      Crear Producto
     </button>
   </div>
 </app-base-modal>
 
 @if (showScannerModal) {
-  <app-base-modal [title]="'BARCODE_SCANNER.TITLE' | translate" size="md" (closed)="closeBarcodeScanner()">
+  <app-base-modal title="Escanear Código de Barras" size="md" (closed)="closeBarcodeScanner()">
     <div class="scanner-modal-body">
       <app-barcode-scanner (codeScanned)="onCodeScanned($event)"></app-barcode-scanner>
     </div>

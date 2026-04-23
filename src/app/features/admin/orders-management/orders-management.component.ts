@@ -19,15 +19,14 @@ import { Subject, Subscription, debounceTime, distinctUntilChanged, finalize, ta
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 import { OrderDetailsAdminModalComponent } from './order-details-admin-modal/order-details-admin-modal.component';
 import { OrderStatusChangeAdminModalComponent } from './order-status-change-admin-modal/order-status-change-admin-modal.component';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
-  { value: 'CREATED', label: 'COMMON.STATUS_CREATED' },
-  { value: 'PENDING', label: 'COMMON.STATUS_PENDING' },
-  { value: 'REVIEW', label: 'COMMON.STATUS_REVIEW' },
-  { value: 'CONFIRMED', label: 'COMMON.STATUS_CONFIRMED' },
-  { value: 'INCOMPLETE', label: 'COMMON.STATUS_INCOMPLETE' },
-  { value: 'CANCELLED', label: 'COMMON.STATUS_CANCELLED' },
+  { value: 'CREATED', label: 'Creada' },
+  { value: 'PENDING', label: 'Pendiente' },
+  { value: 'REVIEW', label: 'Revisión' },
+  { value: 'CONFIRMED', label: 'Confirmada' },
+  { value: 'INCOMPLETE', label: 'Incompleta' },
+  { value: 'CANCELLED', label: 'Cancelada' },
 ];
 
 @Component({
@@ -38,8 +37,7 @@ const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
     FormsModule,
     BaseModalComponent,
     OrderDetailsAdminModalComponent,
-    OrderStatusChangeAdminModalComponent,
-    TranslateModule
+    OrderStatusChangeAdminModalComponent
   ],
   templateUrl: './orders-management.component.html',
   styleUrl: './orders-management.component.css',
@@ -56,7 +54,6 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
-  private translate = inject(TranslateService);
   messageService = inject(MessageService);
 
   // ── Tab state ──
@@ -237,7 +234,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError(this.translate.instant('ORDERS_MGMT.LOAD_ERROR'));
+        this.messageService.showError('Error al cargar las órdenes');
       }
     });
   }
@@ -333,7 +330,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   // ── Change Status Modal ──
   openChangeStatusModal(order: Order): void {
     if (!this.isStatusEditable(order)) {
-      this.messageService.showWarning(this.translate.instant('ORDERS_MGMT.STATUS_WARNING'));
+      this.messageService.showWarning('No se puede editar el estado de una orden confirmada o incompleta.');
       return;
     }
     this.orderForStatusChange = order;
@@ -443,7 +440,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
         this.applyAuditOrderFilters();
         this.cdr.detectChanges();
       },
-      error: () => { this.messageService.showError(this.translate.instant('ORDERS_MGMT.AUDIT_LOAD_ERROR')); }
+      error: () => { this.messageService.showError('Error al cargar las auditorías'); }
     });
   }
 
@@ -537,9 +534,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   }
 
   getReceptionStatusLabel(order: Order): string {
-    return order.receptionDate 
-      ? this.translate.instant('COMMON.RECEIVED') 
-      : this.translate.instant('COMMON.STATUS_PENDING');
+    return order.receptionDate ? 'Recibido' : 'Pendiente';
   }
 
   getReceptionStatusClass(order: Order): string {
@@ -598,7 +593,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
         this.clearOrderIdQueryParam();
       },
       error: () => {
-        this.messageService.showError(this.translate.instant('ORDERS_MGMT.ORDER_LOAD_ERROR', { id: targetOrderId }));
+        this.messageService.showError(`No se pudo cargar la orden #${targetOrderId}`);
         this.clearOrderIdQueryParam();
       }
     });
@@ -628,7 +623,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   openStatusEditorFromDetail(): void {
     if (!this.selectedOrder) return;
     if (!this.isStatusEditable(this.selectedOrder)) {
-      this.messageService.showWarning(this.translate.instant('ORDERS_MGMT.STATUS_WARNING'));
+      this.messageService.showWarning('No se puede editar el estado de una orden confirmada o incompleta.');
       return;
     }
     const selected = this.selectedOrder;
@@ -642,8 +637,8 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
 
   async revertOrder(order: Order): Promise<void> {
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('ORDERS_MGMT.TABLE.REVERT_CONFIRM_TITLE'),
-      this.translate.instant('ORDERS_MGMT.TABLE.REVERT_CONFIRM_MSG', { id: order.id })
+      'Revertir orden confirmada',
+      `Se revertirá la recepción de la orden #${order.id}. Esto devolverá el stock de los productos al inventario y restaurará el estado anterior del pedido.`
     );
 
     if (!confirmed || !order.id || !order.details) return;
@@ -682,7 +677,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
         this.proceedWithRevert(order, previousStatus);
       },
       error: () => {
-        this.messageService.showWarning(this.translate.instant('ORDERS_MGMT.AUDIT_HISTORY_ERROR'));
+        this.messageService.showWarning('No se encontró el historial del pedido. Revirtiendo al estado inicial (Creado).');
         this.proceedWithRevert(order, 'CREATED');
       }
     });
@@ -691,26 +686,26 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   private proceedWithRevert(order: Order, previousStatus: OrderStatus): void {
     if (!order.details) return;
     const request = {
-      reason: this.translate.instant('ORDERS_MGMT.REVERSION_REASON', { id: order.id }),
+      reason: `Reversión de orden #${order.id}`,
       orderId: order.id,
       movements: order.details.map((detail: any) => ({
         productId: detail.productId,
         quantityDelta: -detail.quantity,
         movementType: 'AJUSTE' as 'AJUSTE',
-        description: this.translate.instant('ORDERS_MGMT.REVERSION_AUTO_DESC', { id: order.id })
+        description: `Reversión automática orden #${order.id}`
       }))
     };
 
     this.kitchenService.revertCookingBatch(request).subscribe({
       next: (res: any) => {
         if (res.success || res.id) {
-          this.messageService.showSuccess(this.translate.instant('ORDERS_MGMT.TABLE.REVERT_SUCCESS'));
+          this.messageService.showSuccess(`Orden revertida correctamente`);
           this.loadAllOrders();
         } else {
-          this.messageService.showError(res.message || this.translate.instant('ORDERS_MGMT.TABLE.REVERT_ERROR'));
+          this.messageService.showError(res.message || 'Error al revertir el stock');
         }
       },
-      error: () => this.messageService.showError(this.translate.instant('ORDERS_MGMT.TABLE.REVERT_COMM_ERROR'))
+      error: () => this.messageService.showError('Error de comunicación al revertir orden')
     });
   }
 
@@ -718,8 +713,8 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     if (!order || !order.id) return;
 
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('ORDERS_MGMT.PDF_CONFIRM_TITLE'),
-      this.translate.instant('ORDERS_MGMT.PDF_CONFIRM_MSG')
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo PDF?'
     );
     if (!confirmed) return;
 
@@ -733,10 +728,10 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
         a.click();
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
-        this.messageService.showSuccess(this.translate.instant('ORDERS_MGMT.PDF_SUCCESS'));
+        this.messageService.showSuccess('PDF descargado correctamente');
       },
       error: () => {
-        this.messageService.showError(this.translate.instant('ORDERS_MGMT.PDF_ERROR'));
+        this.messageService.showError('Error al generar el PDF');
       }
     });
   }
@@ -832,29 +827,29 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
       });
     };
 
-    compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.STATUS'), ['status', 'estado'], (val) => {
+    compareAliases('Estado', ['status', 'estado'], (val) => {
       const normalized = this.normalizeStatus(val);
       return normalized === '—' ? '—' : this.formatStatus(normalized);
     });
-    compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.DETAILS_COUNT'), ['numeroDetalles', 'detailsCount', 'detailCount', 'numDetails']);
-    compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.ORDER_ID'), ['orderId', 'idPedido', 'id_order', 'id']);
-    compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.USER_ID'), ['userId', 'usuarioId', 'idUsuario']);
-    compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.ORDER_DATE'), ['orderDate', 'fechaOrden'], (val) => this.formatAuditDateValue(val));
+    compareAliases('Nº Detalles', ['numeroDetalles', 'detailsCount', 'detailCount', 'numDetails']);
+    compareAliases('ID Pedido', ['orderId', 'idPedido', 'id_order', 'id']);
+    compareAliases('ID Usuario', ['userId', 'usuarioId', 'idUsuario']);
+    compareAliases('Fecha Orden', ['orderDate', 'fechaOrden'], (val) => this.formatAuditDateValue(val));
 
     const hasSupplier = this.getAuditStateValue(prev, ['supplierName', 'nombreProveedor']) !== null
       || this.getAuditStateValue(next, ['supplierName', 'nombreProveedor']) !== null;
     if (hasSupplier) {
-      compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.SUPPLIER'), ['supplierName', 'nombreProveedor']);
+      compareAliases('Proveedor', ['supplierName', 'nombreProveedor']);
     }
 
     const hasTotalPrice = this.getAuditStateValue(prev, ['totalPrice', 'precioTotal']) !== null
       || this.getAuditStateValue(next, ['totalPrice', 'precioTotal']) !== null;
     if (hasTotalPrice) {
-      compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.TOTAL_PRICE'), ['totalPrice', 'precioTotal'], (val) => this.formatCurrency(val));
+      compareAliases('Precio Total', ['totalPrice', 'precioTotal'], (val) => this.formatCurrency(val));
     }
 
     if (this.getAuditStateValue(prev, ['receptionDate', 'fechaRecepcion']) || this.getAuditStateValue(next, ['receptionDate', 'fechaRecepcion'])) {
-      compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.RECEPTION_DATE'), ['receptionDate', 'fechaRecepcion'], (val) => this.formatAuditDateValue(val));
+      compareAliases('Fecha Recepción', ['receptionDate', 'fechaRecepcion'], (val) => this.formatAuditDateValue(val));
     }
 
     return fields;
@@ -901,7 +896,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     if (!dateStr) return '—';
     try {
       const date = new Date(dateStr);
-      return date.toLocaleString(this.translate.currentLang || [], {
+      return date.toLocaleString('es-ES', {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
@@ -915,16 +910,18 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   }
 
   formatDate(dateStr: string): string {
-    return new Date(dateStr).toLocaleString(this.translate.currentLang || [], {
+    return new Date(dateStr).toLocaleString('es-ES', {
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit'
     });
   }
 
   formatStatus(status: string): string {
-    const key = `COMMON.STATUS_${status}`;
-    const translated = this.translate.instant(key);
-    return translated !== key ? translated : status;
+    const map: Record<string, string> = {
+      CREATED: 'Creada', PENDING: 'Pendiente', REVIEW: 'Revisión',
+      CONFIRMED: 'Confirmada', INCOMPLETE: 'Incompleta', CANCELLED: 'Cancelada'
+    };
+    return map[status] || status;
   }
 
   getStatusClass(status: string): string {
@@ -956,13 +953,13 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
 
   translateAction(action: string): string {
     const u = action.toUpperCase();
-    if (u.includes('CREATE')) return this.translate.instant('COMMON.AUDIT_ACTIONS.CREATE');
-    if (u.includes('UPDATE')) return this.translate.instant('COMMON.AUDIT_ACTIONS.UPDATE');
-    if (u.includes('DELETE')) return this.translate.instant('COMMON.AUDIT_ACTIONS.DELETE');
-    if (u.includes('RECEP')) return this.translate.instant('COMMON.AUDIT_ACTIONS.RECEPTION');
-    if (u.includes('CONFIRM')) return this.translate.instant('COMMON.AUDIT_ACTIONS.CONFIRM');
-    if (u.includes('REVERSION')) return this.translate.instant('COMMON.AUDIT_ACTIONS.REVERSION');
-    if (u.includes('CAMBIO') && u.includes('ESTADO')) return this.translate.instant('COMMON.AUDIT_ACTIONS.STATUS_CHANGE');
+    if (u.includes('CREATE')) return 'Creación';
+    if (u.includes('UPDATE')) return 'Modificación';
+    if (u.includes('DELETE')) return 'Eliminación';
+    if (u.includes('RECEP')) return 'Recepcionado';
+    if (u.includes('CONFIRM')) return 'Confirmado';
+    if (u.includes('REVERSION')) return 'Reversión';
+    if (u.includes('CAMBIO') && u.includes('ESTADO')) return 'Cambio Estado';
     return action;
   }
 
