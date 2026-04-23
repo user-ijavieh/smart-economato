@@ -13,6 +13,8 @@ import { Recipe, CookableRecipe } from '../../../shared/models/recipe.model';
 import { User } from '../../../shared/models/user.model';
 import { SearchableDropdownComponent, SearchableItem } from '../../../shared/components/searchable-dropdown/searchable-dropdown.component';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
+import { StorageService } from '../../../core/services/storage.service';
+import { LoggerService } from '../../../core/services/logger.service';
 
 type DistributionMode = 'EQUITATIVE' | 'HISTORICAL' | 'RANDOM';
 
@@ -69,6 +71,7 @@ interface StockUsageRow {
   styleUrls: ['./weekly-plan-wizard.component.css']
 })
 export class WeeklyPlanWizardComponent implements OnInit {
+  private logger = inject(LoggerService);
   private weeklyPlanService = inject(WeeklyPlanService);
   private authService = inject(AuthService);
   private recipeService = inject(RecipeService);
@@ -78,6 +81,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
   private messageService = inject(MessageService);
+  private storageService = inject(StorageService);
   private pendingOrdersByProduct: Record<number, number> = {};
   private pendingOrdersLookupKey = '';
   private pendingOrdersLoading = false;
@@ -169,7 +173,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
 
     this.role = this.authService.getRole();
     if (this.role === 'CHEF' || this.role === 'ELEVATED') {
-      const userStr = localStorage.getItem('currentUser');
+      const userStr = this.storageService.get('currentUser');
       if (userStr) {
         try {
           const userObj = JSON.parse(userStr);
@@ -903,18 +907,18 @@ export class WeeklyPlanWizardComponent implements OnInit {
       excludedStudentIds: this.autoCreateExcludedStudentIds,
       distributionMode: this.autoCreateDistributionMode
     };
-    localStorage.setItem(this.AUTO_CREATE_STORAGE_KEY, JSON.stringify(options));
+    this.storageService.set(this.AUTO_CREATE_STORAGE_KEY, JSON.stringify(options), 'local');
   }
 
   private loadAutoCreateOptions(): AutoCreateOptions | null {
-    const data = localStorage.getItem(this.AUTO_CREATE_STORAGE_KEY);
+    const data = this.storageService.get(this.AUTO_CREATE_STORAGE_KEY, 'local');
     if (!data) {
       return null;
     }
     try {
       return JSON.parse(data) as AutoCreateOptions;
     } catch (e) {
-      console.error('Error parsing auto create options from localStorage', e);
+      this.logger.error('Error parsing auto create options from localStorage', e);
       return null;
     }
   }

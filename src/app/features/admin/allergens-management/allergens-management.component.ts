@@ -12,6 +12,7 @@ import { finalize, Observable, of, Subject, debounceTime, distinctUntilChanged, 
 import { Page } from '../../../shared/models/page.model';
 import { catchError, map } from 'rxjs/operators';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
+import { LoggerService } from '../../../core/services/logger.service';
 
 @Component({
     selector: 'app-allergens-management',
@@ -27,6 +28,7 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AllergensManagementComponent implements OnInit, OnDestroy {
+    private logger = inject(LoggerService);
     private allergenService = inject(AllergenService);
     private cdr = inject(ChangeDetectorRef);
     private scrollService = inject(ScrollService);
@@ -164,7 +166,7 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
                     this.applyFilter();
                 },
                 error: (err: any) => {
-                    console.error('Error loading allergens:', err);
+                    this.logger.error('Error loading allergens:', err);
                     this.messageService.showError('Error al cargar los alérgenos');
                 }
             });
