@@ -592,7 +592,28 @@
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.14);
 }
 
-.btn-scale:disabled {
+.btn-refresh-scale {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--theme-border-glass);
+  background: var(--theme-input-bg);
+  color: var(--theme-text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-refresh-scale:hover:not(:disabled) {
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
+  background: color-mix(in srgb, var(--brand-primary) 10%, var(--theme-input-bg));
+}
+
+.btn-scale:disabled,
+.btn-refresh-scale:disabled {
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -804,7 +825,7 @@
 
 .input-with-unit .form-control {
   flex: 1;
-  min-width: 60px;
+  min-width: 100px;
   padding-right: 10px; /* No longer needs space for absolute label */
 }
 
