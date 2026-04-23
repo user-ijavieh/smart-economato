@@ -57,13 +57,11 @@ export class OfflineSyncService {
   private setupOnlineOfflineListeners(): void {
     window.addEventListener('online', () => {
       this.isOnline$.next(true);
-      console.log('[OfflineSync] Back online. Syncing queued requests...');
       this.syncQueuedRequests();
     });
 
     window.addEventListener('offline', () => {
       this.isOnline$.next(false);
-      console.log('[OfflineSync] Going offline. Requests will be queued.');
     });
   }
 
@@ -124,7 +122,6 @@ export class OfflineSyncService {
       const db = await this.openDB();
       db.put(this.STORE_NAME, queuedRequest);
       this.loadQueuedRequests();
-      console.log('[OfflineSync] Request queued:', url);
       return queuedRequest;
     } catch (error) {
       console.error('[OfflineSync] Error queuing request:', error);
@@ -176,7 +173,6 @@ export class OfflineSyncService {
           if (response?.status && response.status >= 200 && response.status < 300) {
             await db.delete(this.STORE_NAME, req.id);
             this.syncComplete$.next({ success: true, url: req.url });
-            console.log('[OfflineSync] Synced:', req.url);
           }
         } catch (error) {
           req.retries = (req.retries || 0) + 1;
@@ -206,7 +202,6 @@ export class OfflineSyncService {
       const db = await this.openDB();
       await db.clear(this.STORE_NAME);
       this.loadQueuedRequests();
-      console.log('[OfflineSync] Queue cleared');
     } catch (error) {
       console.error('[OfflineSync] Error clearing queue:', error);
     }
