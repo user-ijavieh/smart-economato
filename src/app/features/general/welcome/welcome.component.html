@@ -13,11 +13,11 @@
   <!-- Header -->
   <div class="header">
     <img src="/assets/img/logo-candelaria-new-sin-fondo.png" alt="Candelaria" class="header-logo">
-    <h1>Inicio</h1>
+    <h1>{{ 'WELCOME.HEADER' | translate }}</h1>
   </div>
 
   <div class="utilities-container" [class.collapsed]="!showUtilities()">
-    <button class="utilities-toggle" (click)="toggleUtilities()" [attr.aria-label]="showUtilities() ? 'Ocultar utilidades' : 'Mostrar utilidades'">
+    <button class="utilities-toggle" (click)="toggleUtilities()" [attr.aria-label]="(showUtilities() ? 'COMMON.HIDE_UTILITIES' : 'COMMON.SHOW_UTILITIES') | translate">
       <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
         @if (showUtilities()) {
           <path d="m600-240-57-56 184-184-184-184 57-56 240 240-240 240Z"/>
@@ -27,7 +27,7 @@
       </svg>
     </button>
 
-    <button class="mobile-theme-toggle" (click)="toggleTheme()" [attr.aria-label]="isDarkMode() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+    <button class="mobile-theme-toggle" (click)="toggleTheme()" [attr.aria-label]="(isDarkMode() ? 'LOGIN.THEME_LIGHT' : 'LOGIN.THEME_DARK') | translate">
       @if (isDarkMode()) {
         <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
           <path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z" />
@@ -41,7 +41,7 @@
 
     <button
       class="notifications-bell"
-      [attr.aria-label]="'Abrir notificaciones'"
+      [attr.aria-label]="'NOTIFICATIONS.TITLE' | translate"
       (click)="toggleNotificationPanel($event)"
     >
       <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
@@ -54,7 +54,7 @@
 
     <button
       class="cache-utility"
-      [attr.aria-label]="'Limpiar cache local'"
+      [attr.aria-label]="'WELCOME.CLEAR_CACHE_TITLE' | translate"
       (click)="openClearCacheModal()"
     >
       <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
@@ -64,7 +64,7 @@
 
     <button
       class="logout-utility"
-      [attr.aria-label]="'Cerrar sesión'"
+      [attr.aria-label]="'WELCOME.LOGOUT' | translate"
       (click)="logout()"
     >
       <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
@@ -85,12 +85,12 @@
       (click)="stopPanelPropagation($event)"
     >
       <header class="notifications-panel__header">
-        <h2>Notificaciones</h2>
-        <button type="button" (click)="markAllNotificationsAsRead()">Marcar todo como leído</button>
+        <h2>{{ 'NOTIFICATIONS.TITLE' | translate }}</h2>
+        <button type="button" (click)="markAllNotificationsAsRead()">{{ 'NOTIFICATIONS.MARK_ALL_READ' | translate }}</button>
       </header>
 
       @if (notifications().length === 0) {
-        <div class="notifications-empty">No tienes notificaciones</div>
+        <div class="notifications-empty">{{ 'NOTIFICATIONS.EMPTY' | translate }}</div>
       } @else {
         <ul class="notifications-list">
           @for (notification of notifications(); track notification.id) {
@@ -141,15 +141,15 @@
 
   <!-- Contenido -->
   <div class="mainContent">
-    <h2 class="welcome-title">¡Bienvenido a Smart Economato!</h2>
+    <h2 class="welcome-title">{{ 'WELCOME.TITLE' | translate }}</h2>
 
     <div class="buttonsContainer">
       @for (card of filteredNavCards; track card.route) {
       <a [routerLink]="card.route" class="btn-card">
         <div class="btn-card-icon">
-          <img [src]="card.icon" [alt]="card.label">
+          <img [src]="card.icon" [alt]="card.key | translate">
         </div>
-        <span>{{ card.label }}</span>
+        <span>{{ card.key | translate }}</span>
       </a>
       }
 
@@ -159,7 +159,7 @@
             <path d="m368-214-55-124-124-55 124-55 55-124 55 124 124 55-124 55-55 124Zm280-302-36-82-82-36 82-36 36-82 36 82 82 36-82 36-36 82Zm0 318-22-50-50-22 50-22 22-50 22 50 50 22-50 22-22 50Z"/>
           </svg>
         </div>
-        <span>Chat IA</span>
+        <span>{{ 'SIDEBAR.AI_CHAT' | translate }}</span>
       </a>
 
       @if (isTeacher) {
@@ -169,16 +169,16 @@
             <path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400Zm-160 160q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Z"/>
           </svg>
         </div>
-        <span>Planes Semanales</span>
+        <span>{{ 'SIDEBAR.WEEKLY_PLANS' | translate }}</span>
       </a>
       }
 
       @if (isChef) {
       <a routerLink="/profile" class="btn-card">
         <div class="btn-card-icon">
-          <img src="/assets/img/icons/students-white.svg" alt="Gestión de alumnos">
+          <img src="/assets/img/icons/students-white.svg" [alt]="'WELCOME.STUDENTS_MANAGEMENT' | translate">
         </div>
-        <span>Gestión de alumnos</span>
+        <span>{{ 'WELCOME.STUDENTS_MANAGEMENT' | translate }}</span>
       </a>
       }
       @if (isAdmin) {
@@ -189,7 +189,7 @@
               d="M480-440q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0-80q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0 440q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-400Zm0-315-240 90v189q0 54 15 105t41 96q42-21 88-33t96-12q50 0 96 12t88 33q26-45 41-96t15-105v-189l-240-90Zm0 515q-36 0-70 8t-65 22q29 30 63 52t72 34q38-12 72-34t63-52q-31-14-65-22t-70-8Z" />
           </svg>
         </div>
-        <span>Panel Admin</span>
+        <span>{{ 'WELCOME.ADMIN_PANEL' | translate }}</span>
       </a>
       }
     </div>
@@ -208,13 +208,13 @@
         <line x1="21" y1="12" x2="9" y2="12" />
       </svg>
     </div>
-    <h2>¿Cerrar sesión?</h2>
-    <p>Estás a punto de salir de tu cuenta. ¿Deseas continuar?</p>
+    <h2>{{ 'WELCOME.LOGOUT_CONFIRM_TITLE' | translate }}</h2>
+    <p>{{ 'WELCOME.LOGOUT_CONFIRM_MSG' | translate }}</p>
   </div>
 
   <div modal-footer class="logout-modal-actions">
-    <button class="btn-logout-cancel" (click)="cancelLogout()">Cancelar</button>
-    <button class="btn-logout-confirm" (click)="confirmLogout()">Cerrar Sesión</button>
+    <button class="btn-logout-cancel" (click)="cancelLogout()">{{ 'COMMON.CANCEL' | translate }}</button>
+    <button class="btn-logout-confirm" (click)="confirmLogout()">{{ 'WELCOME.LOGOUT_CONFIRM_BTN' | translate }}</button>
   </div>
 </app-base-modal>
 }
@@ -230,16 +230,13 @@
         <path d="M19 6l-1 14H6L5 6" />
       </svg>
     </div>
-    <h2>¿Limpiar cache local?</h2>
-    <p>
-      Si ves datos antiguos, puedes usar este botón para limpiar toda la cache.
-      La siguiente vez que entres o recargues una pantalla, los datos se pedirán de nuevo al servidor.
-    </p>
+    <h2>{{ 'WELCOME.CLEAR_CACHE_TITLE' | translate }}</h2>
+    <p>{{ 'WELCOME.CLEAR_CACHE_MSG' | translate }}</p>
   </div>
 
   <div modal-footer class="logout-modal-actions">
-    <button class="btn-logout-cancel" (click)="cancelClearCache()">Cancelar</button>
-    <button class="btn-cache-confirm" (click)="confirmClearCache()">Limpiar cache</button>
+    <button class="btn-logout-cancel" (click)="cancelClearCache()">{{ 'COMMON.CANCEL' | translate }}</button>
+    <button class="btn-cache-confirm" (click)="confirmClearCache()">{{ 'WELCOME.CLEAR_CACHE_BTN' | translate }}</button>
   </div>
 </app-base-modal>
 }

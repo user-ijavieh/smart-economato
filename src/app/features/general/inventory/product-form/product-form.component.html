@@ -1,9 +1,9 @@
 <div class="formulario-producto">
-  <h3>{{ isEditing ? 'Editar Producto' : 'Agregar Nuevo Producto' }}</h3>
+  <h3>{{ (isEditing ? 'PRODUCT_FORM.EDIT_TITLE' : 'PRODUCT_FORM.CREATE_TITLE') | translate }}</h3>
   <form (ngSubmit)="onSubmit()">
     <div class="form-row">
       <div class="form-group">
-        <label for="nombreProducto">Nombre *</label>
+        <label for="nombreProducto">{{ 'PRODUCT_FORM.NAME_LABEL' | translate }}</label>
         <input
           type="text"
           id="nombreProducto"
@@ -13,13 +13,13 @@
         />
       </div>
       <div class="form-group">
-        <label for="codigoProducto">Código *</label>
+        <label for="codigoProducto">{{ 'PRODUCT_FORM.CODE_LABEL' | translate }}</label>
         <input
           type="text"
           id="codigoProducto"
           [(ngModel)]="formProduct.productCode"
           name="productCode"
-          placeholder="Ej: ABC-123"
+          [placeholder]="'PRODUCT_FORM.CODE_PLACEHOLDER' | translate"
           required
         />
       </div>
@@ -27,7 +27,7 @@
 
     <div class="form-row">
       <div class="form-group">
-        <label for="precioProducto">Precio (€) *</label>
+        <label for="precioProducto">{{ 'PRODUCT_FORM.PRICE_LABEL' | translate }}</label>
         <input
           type="number"
           id="precioProducto"
@@ -42,7 +42,7 @@
 
     <div class="form-row">
       <div class="form-group">
-        <label for="stockProducto">Stock Inicial *</label>
+        <label for="stockProducto">{{ 'PRODUCT_FORM.STOCK_LABEL' | translate }}</label>
         <input
           type="number"
           id="stockProducto"
@@ -57,7 +57,7 @@
 
     <div class="form-row">
       <div class="form-group">
-        <label for="unidadProducto">Unidad</label>
+        <label for="unidadProducto">{{ 'PRODUCT_FORM.UNIT_LABEL' | translate }}</label>
         <select id="unidadProducto" [(ngModel)]="formProduct.unit" name="unit" required>
           @for (unit of allowedUnits; track unit) {
             <option [value]="unit">{{ unit }}</option>
@@ -65,7 +65,7 @@
         </select>
       </div>
       <div class="form-group">
-        <label for="loteProducto">Lote de Compra (Opcional)</label>
+        <label for="loteProducto">{{ 'PRODUCT_FORM.LOT_QUANTITY_LABEL' | translate }}</label>
         <div class="input-with-unit">
           <input
             type="number"
@@ -80,18 +80,18 @@
             <span class="inline-unit">{{ formProduct.unit }}</span>
           }
         </div>
-        <small class="form-text">Cantidad mínima o múltiplo de compra.</small>
+        <small class="form-text">{{ 'PRODUCT_FORM.LOT_QUANTITY_HINT' | translate }}</small>
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-group full-width">
-        <label for="proveedorProducto">Proveedor</label>
+        <label for="proveedorProducto">{{ 'PRODUCT_FORM.SUPPLIER_LABEL' | translate }}</label>
         <app-searchable-dropdown
           [items]="supplierSearchItems"
           [selectedIds]="formProduct.supplierId ? [formProduct.supplierId] : []"
           [initialText]="selectedSupplierName"
-          placeholder="Seleccionar proveedor..."
+          [placeholder]="'PRODUCT_FORM.SELECT_SUPPLIER' | translate"
           (itemSelected)="onSupplierSelected($event)"
         ></app-searchable-dropdown>
       </div>
@@ -99,7 +99,7 @@
 
     <div class="form-actions">
       <button type="submit" class="btn-guardar">
-        {{ isEditing ? 'Actualizar' : 'Guardar' }}
+        {{ (isEditing ? 'PRODUCT_FORM.UPDATE_BTN' : 'COMMON.SAVE') | translate }}
       </button>
     </div>
   </form>

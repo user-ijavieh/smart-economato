@@ -1,5 +1,5 @@
 <header class="admin-page-header">
-  <h1>Configuraciones del Sistema</h1>
+  <h1>{{ 'SETTINGS.TITLE' | translate }}</h1>
 </header>
 
 <div class="admin-tab-bar">
@@ -10,13 +10,13 @@
     [class.active]="activeTab === tab.key"
     (click)="onTabChange(tab.key)"
   >
-    {{ tab.label }}
+    {{ tab.labelKey | translate }}
   </button>
 </div>
 
 <div class="contenedor-principal">
   <div class="toolbar">
-    <button type="button" class="toolbar-btn" (click)="reloadCurrentView()" [disabled]="loading || saving">Recargar configuración</button>
+    <button type="button" class="toolbar-btn" (click)="reloadCurrentView()" [disabled]="loading || saving">{{ 'SETTINGS.RELOAD' | translate }}</button>
     <button
       *ngIf="activeTab !== 'audit'"
       type="button"
@@ -24,349 +24,367 @@
       (click)="saveActiveTab()"
       [disabled]="loading || saving"
     >
-      {{ saving ? 'Guardando...' : 'Guardar Cambios' }}
+      {{ saving ? ('SETTINGS.SAVING' | translate) : ('SETTINGS.SAVE' | translate) }}
     </button>
   </div>
 
   <section *ngIf="activeTab === 'presence'" class="config-card" [@tabContent]>
-    <h2>Presencia</h2>
+    <h2>{{ 'SETTINGS.PRESENCE.TITLE' | translate }}</h2>
     <section class="stats-row">
       <article class="stat-card">
         <p class="stat-number">{{ presenceTotalLogCount }}</p>
-        <p class="stat-label">Registros de presencia</p>
+        <p class="stat-label">{{ 'SETTINGS.PRESENCE.RECORDS' | translate }}</p>
       </article>
     </section>
     <div class="form-grid">
       <label class="toggle-line">
         <input type="checkbox" [(ngModel)]="presenceConfig.presenceAuditEnabled" name="presenceAuditEnabled" />
-        Habilitar auditoría de presencia
+        {{ 'SETTINGS.PRESENCE.ENABLE_AUDIT' | translate }}
       </label>
       <label class="toggle-line">
         <input type="checkbox" [(ngModel)]="presenceConfig.presenceAutoCleanupEnabled" name="presenceAutoCleanupEnabled" />
-        Habilitar limpieza automática
+        {{ 'SETTINGS.PRESENCE.ENABLE_CLEANUP' | translate }}
       </label>
       <label>
-        Días de retención
+        {{ 'SETTINGS.PRESENCE.RETENTION_DAYS' | translate }}
         <input type="number" [(ngModel)]="presenceConfig.presenceAutoCleanupDays" name="presenceAutoCleanupDays" min="1" max="3650" />
       </label>
     </div>
-    <button type="button" class="toolbar-btn btn-danger" (click)="purgePresenceLogs()">Purgar logs de actividad</button>
+    <button type="button" class="toolbar-btn btn-danger" (click)="purgePresenceLogs()">{{ 'SETTINGS.PRESENCE.PURGE_BTN' | translate }}</button>
   </section>
 
   <section *ngIf="activeTab === 'alerts'" class="config-card" [@tabContent]>
-    <h2>Alertas</h2>
+    <h2>{{ 'SETTINGS.ALERTS.TITLE' | translate }}</h2>
     <div class="form-grid">
-      <label>Días para nivel normal <input type="number" [(ngModel)]="alertsConfig.alertThresholdOkDays" name="alertThresholdOkDays" min="1" /></label>
-      <label>Días para nivel bajo <input type="number" [(ngModel)]="alertsConfig.alertThresholdLowDays" name="alertThresholdLowDays" min="1" /></label>
-      <label>Días para nivel medio <input type="number" [(ngModel)]="alertsConfig.alertThresholdMediumDays" name="alertThresholdMediumDays" min="1" /></label>
-      <label>Días para nivel alto <input type="number" [(ngModel)]="alertsConfig.alertThresholdHighDays" name="alertThresholdHighDays" min="1" /></label>
-      <label>Expiración crítica <input type="number" [(ngModel)]="alertsConfig.expirationCriticalDays" name="expirationCriticalDays" min="1" /></label>
-      <label>Expiración alta <input type="number" [(ngModel)]="alertsConfig.expirationHighDays" name="expirationHighDays" min="1" /></label>
-      <label>Expiración media <input type="number" [(ngModel)]="alertsConfig.expirationMediumDays" name="expirationMediumDays" min="1" /></label>
-      <label>Días a proyectar (demanda) <input type="number" [(ngModel)]="alertsConfig.forecastHorizonDays" name="forecastHorizonDays" min="1" /></label>
-      <label>Historial para proyección (semanas) <input type="number" [(ngModel)]="alertsConfig.forecastHistoryWeeks" name="forecastHistoryWeeks" min="1" /></label>
+      <label>{{ 'SETTINGS.ALERTS.NORMAL_DAYS' | translate }} <input type="number" [(ngModel)]="alertsConfig.alertThresholdOkDays" name="alertThresholdOkDays" min="1" /></label>
+      <label>{{ 'SETTINGS.ALERTS.LOW_DAYS' | translate }} <input type="number" [(ngModel)]="alertsConfig.alertThresholdLowDays" name="alertThresholdLowDays" min="1" /></label>
+      <label>{{ 'SETTINGS.ALERTS.MEDIUM_DAYS' | translate }} <input type="number" [(ngModel)]="alertsConfig.alertThresholdMediumDays" name="alertThresholdMediumDays" min="1" /></label>
+      <label>{{ 'SETTINGS.ALERTS.HIGH_DAYS' | translate }} <input type="number" [(ngModel)]="alertsConfig.alertThresholdHighDays" name="alertThresholdHighDays" min="1" /></label>
+      <label>{{ 'SETTINGS.ALERTS.EXPIRATION_CRITICAL' | translate }} <input type="number" [(ngModel)]="alertsConfig.expirationCriticalDays" name="expirationCriticalDays" min="1" /></label>
+      <label>{{ 'SETTINGS.ALERTS.EXPIRATION_HIGH' | translate }} <input type="number" [(ngModel)]="alertsConfig.expirationHighDays" name="expirationHighDays" min="1" /></label>
+      <label>{{ 'SETTINGS.ALERTS.EXPIRATION_MEDIUM' | translate }} <input type="number" [(ngModel)]="alertsConfig.expirationMediumDays" name="expirationMediumDays" min="1" /></label>
+      <label>{{ 'SETTINGS.ALERTS.FORECAST_HORIZON' | translate }} <input type="number" [(ngModel)]="alertsConfig.forecastHorizonDays" name="forecastHorizonDays" min="1" /></label>
+      <label>{{ 'SETTINGS.ALERTS.FORECAST_HISTORY' | translate }} <input type="number" [(ngModel)]="alertsConfig.forecastHistoryWeeks" name="forecastHistoryWeeks" min="1" /></label>
     </div>
   </section>
 
   <section *ngIf="activeTab === 'predictions'" class="config-card" [@tabContent]>
-    <h2>Predicciones</h2>
+    <h2>{{ 'SETTINGS.PREDICTIONS.TITLE' | translate }}</h2>
     <div class="form-grid">
       <label class="toggle-line">
         <input type="checkbox" [(ngModel)]="predictionsConfig.predictionRefreshEnabled" name="predictionRefreshEnabled" />
-        Refresco automático habilitado
+        {{ 'SETTINGS.PREDICTIONS.ENABLE_REFRESH' | translate }}
       </label>
-      <label>Frecuencia de actualización (horas) <input type="number" [(ngModel)]="predictionsConfig.predictionRefreshIntervalHours" name="predictionRefreshIntervalHours" min="1" max="24" /></label>
-      <label>Días de historial <input type="number" [(ngModel)]="predictionsConfig.predictionHistoryDays" name="predictionHistoryDays" min="7" max="365" /></label>
-      <label>Productos por lote de cálculo <input type="number" [(ngModel)]="predictionsConfig.predictionBatchSize" name="predictionBatchSize" min="1" max="100" /></label>
+      <label>{{ 'SETTINGS.PREDICTIONS.REFRESH_INTERVAL' | translate }} <input type="number" [(ngModel)]="predictionsConfig.predictionRefreshIntervalHours" name="predictionRefreshIntervalHours" min="1" max="24" /></label>
+      <label>{{ 'SETTINGS.PREDICTIONS.HISTORY_DAYS' | translate }} <input type="number" [(ngModel)]="predictionsConfig.predictionHistoryDays" name="predictionHistoryDays" min="7" max="365" /></label>
+      <label>{{ 'SETTINGS.PREDICTIONS.BATCH_SIZE' | translate }} <input type="number" [(ngModel)]="predictionsConfig.predictionBatchSize" name="predictionBatchSize" min="1" max="100" /></label>
     </div>
   </section>
 
   <section *ngIf="activeTab === 'sessions'" class="config-card" [@tabContent]>
-    <h2>Sesiones</h2>
+    <h2>{{ 'SETTINGS.SESSIONS.TITLE' | translate }}</h2>
     <div class="form-grid">
-      <label>Timeout de sesión inactiva (segundos)
+      <label>{{ 'SETTINGS.SESSIONS.TIMEOUT' | translate }}
         <input type="number" [(ngModel)]="sessionsConfig.staleSessionTimeoutSeconds" name="staleSessionTimeoutSeconds" min="10" max="3600" />
       </label>
     </div>
   </section>
 
   <section *ngIf="activeTab === 'security'" class="config-card" [@tabContent]>
-    <h2>Seguridad</h2>
+    <h2>{{ 'SETTINGS.SECURITY.TITLE' | translate }}</h2>
     <div class="form-grid">
-      <label>Duración de sesión (horas)
+      <label>{{ 'SETTINGS.SECURITY.JWT_EXPIRATION' | translate }}
         <input type="number" [(ngModel)]="securityJwtExpirationHours" name="securityJwtExpirationHours" min="0.1" max="168" step="0.1" />
       </label>
-      <label>Longitud mínima de password
+      <label>{{ 'SETTINGS.SECURITY.MIN_PASSWORD' | translate }}
         <input type="number" [(ngModel)]="securityConfig.minPasswordLength" name="minPasswordLength" min="4" max="128" />
       </label>
-      <label>Escalación máxima (minutos)
+      <label>{{ 'SETTINGS.SECURITY.MAX_ESCALATION' | translate }}
         <input type="number" [(ngModel)]="securityConfig.maxEscalationMinutes" name="maxEscalationMinutes" min="1" max="10080" />
       </label>
     </div>
   </section>
 
   <section *ngIf="activeTab === 'incidents'" class="config-card" [@tabContent]>
-    <h2>Incidencias</h2>
+    <h2>{{ 'SETTINGS.INCIDENTS.TITLE' | translate }}</h2>
     <div class="form-grid">
-      <label>Longitud máxima de mensaje chat
+      <label>{{ 'SETTINGS.INCIDENTS.MAX_CHAT_LENGTH' | translate }}
         <input type="number" [(ngModel)]="incidentsConfig.maxChatMessageLength" name="maxChatMessageLength" min="100" max="50000" />
       </label>
-      <label>Máx. auditorías anexables
+      <label>{{ 'SETTINGS.INCIDENTS.MAX_ATTACHABLE' | translate }}
         <input type="number" [(ngModel)]="incidentsConfig.maxAdminAttachableAudits" name="maxAdminAttachableAudits" min="1" max="1000" />
       </label>
-      <label>Tamaño máximo de archivo (MB)
+      <label>{{ 'SETTINGS.INCIDENTS.MAX_UPLOAD_SIZE' | translate }}
         <input type="number" [(ngModel)]="incidentsMaxUploadSizeMB" name="incidentsMaxUploadSizeMB" min="1" max="100" step="0.5" />
       </label>
       <div class="full-width selector-block">
-        <p class="selector-title">Tipos de archivo permitidos</p>
-        <p class="selector-help">Selecciona los tipos permitidos.</p>
+        <p class="selector-title">{{ 'SETTINGS.INCIDENTS.ALLOWED_TYPES' | translate }}</p>
+        <p class="selector-help">{{ 'SETTINGS.INCIDENTS.ALLOWED_TYPES_HELP' | translate }}</p>
         <label class="toggle-line" *ngFor="let option of fileTypeOptions">
           <input
             type="checkbox"
             [checked]="selectedIncidentFileTypes.includes(option.key)"
             (change)="onIncidentFileTypeToggle(option.key, $any($event.target).checked)"
           />
-          {{ option.label }}
+          {{ option.labelKey | translate }}
         </label>
         <label class="toggle-line">
           <input type="checkbox" [(ngModel)]="useCustomFileTypes" name="useCustomFileTypes" />
-          Añadir tipos personalizados
+          {{ 'SETTINGS.INCIDENTS.ADD_CUSTOM_TYPES' | translate }}
         </label>
       </div>
-      <label class="full-width" *ngIf="useCustomFileTypes">Tipos personalizados (opcional, separados por coma)
-        <textarea [(ngModel)]="customIncidentMimeTypes" name="customIncidentMimeTypes" rows="3" placeholder="ejemplo: video/x-msvideo, application/x-rar-compressed"></textarea>
+      <label class="full-width" *ngIf="useCustomFileTypes">{{ 'SETTINGS.INCIDENTS.CUSTOM_TYPES_LABEL' | translate }}
+        <textarea [(ngModel)]="customIncidentMimeTypes" name="customIncidentMimeTypes" rows="3" [placeholder]="'SETTINGS.INCIDENTS.CUSTOM_TYPES_PLACEHOLDER' | translate"></textarea>
       </label>
     </div>
   </section>
 
   <section *ngIf="activeTab === 'notifications'" class="config-card" [@tabContent]>
-    <h2>Notificaciones</h2>
+    <h2>{{ 'SETTINGS.NOTIFICATIONS.TITLE' | translate }}</h2>
     <section class="stats-row">
       <article class="stat-card stat-primary">
         <p class="stat-number">{{ notificationsTotalCount }}</p>
-        <p class="stat-label">Notificaciones totales</p>
+        <p class="stat-label">{{ 'SETTINGS.NOTIFICATIONS.TOTAL' | translate }}</p>
       </article>
     </section>
     <div class="form-grid">
-      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyWeeklyPlanCreated" name="notifyWeeklyPlanCreated" /> Plan semanal creado</label>
-      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyWeeklyPlanActivated" name="notifyWeeklyPlanActivated" /> Plan semanal activado</label>
-      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyWeeklyPlanSlotConfirmed" name="notifyWeeklyPlanSlotConfirmed" /> Slot confirmado</label>
-      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyWeeklyPlanDayConfirmed" name="notifyWeeklyPlanDayConfirmed" /> Día confirmado</label>
-      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyWeeklyPlanCompleted" name="notifyWeeklyPlanCompleted" /> Plan completado</label>
-      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyWeeklyPlanCancelled" name="notifyWeeklyPlanCancelled" /> Plan cancelado</label>
-      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyFoodCrisisActivated" name="notifyFoodCrisisActivated" /> Crisis activada</label>
-      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyFoodCrisisLifted" name="notifyFoodCrisisLifted" /> Crisis levantada</label>
-      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyStockPredictionTriggered" name="notifyStockPredictionTriggered" /> Predicción de stock</label>
-      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyIncidentCreated" name="notifyIncidentCreated" /> Incidencia creada</label>
-      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyIncidentOpened" name="notifyIncidentOpened" /> Incidencia abierta</label>
-      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyIncidentClosed" name="notifyIncidentClosed" /> Incidencia cerrada</label>
-      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyIncidentChatMessage" name="notifyIncidentChatMessage" /> Mensaje en chat de incidencia</label>
-      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notificationAutoCleanupEnabled" name="notificationAutoCleanupEnabled" /> Limpieza automática</label>
-      <label>Días de retención
+      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyWeeklyPlanCreated" name="notifyWeeklyPlanCreated" /> {{ 'SETTINGS.NOTIFICATIONS.EVENTS.PLAN_CREATED' | translate }}</label>
+      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyWeeklyPlanActivated" name="notifyWeeklyPlanActivated" /> {{ 'SETTINGS.NOTIFICATIONS.EVENTS.PLAN_ACTIVATED' | translate }}</label>
+      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyWeeklyPlanSlotConfirmed" name="notifyWeeklyPlanSlotConfirmed" /> {{ 'SETTINGS.NOTIFICATIONS.EVENTS.SLOT_CONFIRMED' | translate }}</label>
+      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyWeeklyPlanDayConfirmed" name="notifyWeeklyPlanDayConfirmed" /> {{ 'SETTINGS.NOTIFICATIONS.EVENTS.DAY_CONFIRMED' | translate }}</label>
+      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyWeeklyPlanCompleted" name="notifyWeeklyPlanCompleted" /> {{ 'SETTINGS.NOTIFICATIONS.EVENTS.PLAN_COMPLETED' | translate }}</label>
+      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyWeeklyPlanCancelled" name="notifyWeeklyPlanCancelled" /> {{ 'SETTINGS.NOTIFICATIONS.EVENTS.PLAN_CANCELLED' | translate }}</label>
+      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyFoodCrisisActivated" name="notifyFoodCrisisActivated" /> {{ 'SETTINGS.NOTIFICATIONS.EVENTS.CRISIS_ACTIVATED' | translate }}</label>
+      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyFoodCrisisLifted" name="notifyFoodCrisisLifted" /> {{ 'SETTINGS.NOTIFICATIONS.EVENTS.CRISIS_LIFTED' | translate }}</label>
+      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyStockPredictionTriggered" name="notifyStockPredictionTriggered" /> {{ 'SETTINGS.NOTIFICATIONS.EVENTS.STOCK_PREDICTION' | translate }}</label>
+      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyIncidentCreated" name="notifyIncidentCreated" /> {{ 'SETTINGS.NOTIFICATIONS.EVENTS.INCIDENT_CREATED' | translate }}</label>
+      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyIncidentOpened" name="notifyIncidentOpened" /> {{ 'SETTINGS.NOTIFICATIONS.EVENTS.INCIDENT_OPENED' | translate }}</label>
+      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyIncidentClosed" name="notifyIncidentClosed" /> {{ 'SETTINGS.NOTIFICATIONS.EVENTS.INCIDENT_CLOSED' | translate }}</label>
+      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notifyIncidentChatMessage" name="notifyIncidentChatMessage" /> {{ 'SETTINGS.NOTIFICATIONS.EVENTS.INCIDENT_CHAT' | translate }}</label>
+      <label class="toggle-line"><input type="checkbox" [(ngModel)]="notificationsConfig.notificationAutoCleanupEnabled" name="notificationAutoCleanupEnabled" /> {{ 'SETTINGS.NOTIFICATIONS.CLEANUP' | translate }}</label>
+      <label>{{ 'SETTINGS.NOTIFICATIONS.RETENTION_DAYS' | translate }}
         <input type="number" [(ngModel)]="notificationsConfig.notificationRetentionDays" name="notificationRetentionDays" min="1" max="3650" />
       </label>
     </div>
-    <button type="button" class="toolbar-btn btn-danger" (click)="purgeNotificationLogs()">Purgar notificaciones leídas</button>
+    <button type="button" class="toolbar-btn btn-danger" (click)="purgeNotificationLogs()">{{ 'SETTINGS.NOTIFICATIONS.PURGE_BTN' | translate }}</button>
+  </section>
+
+  <section *ngIf="activeTab === 'performance'" class="config-card" [@tabContent]>
+    <h2>{{ 'SETTINGS.PERFORMANCE.TITLE' | translate }}</h2>
+    <div class="ia-subsection">
+      <h3>{{ 'SETTINGS.PERFORMANCE.SUPPLIERS.TITLE' | translate }}</h3>
+      <p class="ia-subsection-help">{{ 'SETTINGS.PERFORMANCE.SUPPLIERS.HELP' | translate }}</p>
+      
+      <div class="cache-info-card">
+        <div class="cache-status">
+          <span class="status-dot" [class.active]="lastSuppliersUpdate"></span>
+          <span>{{ (lastSuppliersUpdate ? ('SUPPLIERS_MGMT.CACHE_INFO' | translate:{date: (lastSuppliersUpdate | date:'short')}) : ('COMMON.N_A' | translate)) }}</span>
+        </div>
+        <button type="button" class="toolbar-btn toolbar-btn--primary" (click)="refreshSuppliersCache()" [disabled]="refreshingSuppliers">
+          {{ refreshingSuppliers ? ('SUPPLIERS_MGMT.UPDATING' | translate) : ('SUPPLIERS_MGMT.UPDATE_CACHE' | translate) }}
+        </button>
+      </div>
+    </div>
   </section>
 
   <section *ngIf="activeTab === 'advanced'" class="config-card" [@tabContent]>
-    <h2>Avanzado</h2>
+    <h2>{{ 'SETTINGS.ADVANCED.TITLE' | translate }}</h2>
     <div class="form-grid">
-      <label>Intervalo de procesamiento de cola (ms)
+      <label>{{ 'SETTINGS.ADVANCED.OUTBOX_INTERVAL' | translate }}
         <input type="number" [(ngModel)]="advancedConfig.outboxProcessingIntervalMs" name="outboxProcessingIntervalMs" min="1000" max="60000" />
       </label>
-      <label>Tamaño de lote de cola
+      <label>{{ 'SETTINGS.ADVANCED.OUTBOX_BATCH' | translate }}
         <input type="number" [(ngModel)]="advancedConfig.outboxBatchSize" name="outboxBatchSize" min="1" max="500" />
       </label>
-      <label>Máximo de fallos consecutivos
+      <label>{{ 'SETTINGS.ADVANCED.OUTBOX_MAX_FAILURES' | translate }}
         <input type="number" [(ngModel)]="advancedConfig.outboxMaxConsecutiveFailures" name="outboxMaxConsecutiveFailures" min="1" max="50" />
       </label>
-      <label>Tiempo de espera de Kafka (segundos)
+      <label>{{ 'SETTINGS.ADVANCED.KAFKA_TIMEOUT' | translate }}
         <input type="number" [(ngModel)]="advancedConfig.kafkaSendTimeoutSeconds" name="kafkaSendTimeoutSeconds" min="1" max="60" />
       </label>
     </div>
   </section>
 
   <section *ngIf="activeTab === 'audit'" class="config-card" [@tabContent]>
-    <h2>Auditoría Global</h2>
+    <h2>{{ 'SETTINGS.AUDIT.TITLE' | translate }}</h2>
     <section class="stats-row">
       <article class="stat-card stat-total-cost">
-        <p class="stat-number">{{ snapshotMeta.updatedBy || 'N/D' }}</p>
+        <p class="stat-number">{{ snapshotMeta.updatedBy || ('COMMON.N_A' | translate) }}</p>
         <p class="stat-label">
-          Última edición
+          {{ 'SETTINGS.AUDIT.LAST_EDITION' | translate }}
           <span *ngIf="snapshotMeta.updatedAt"> · {{ snapshotMeta.updatedAt | date: 'short' }}</span>
         </p>
       </article>
     </section>
 
-    <div *ngIf="auditLoading" class="empty-state">Cargando auditoría...</div>
+    <div *ngIf="auditLoading" class="empty-state">{{ 'SETTINGS.AUDIT.LOADING' | translate }}</div>
 
     <div *ngIf="!auditLoading" class="tabla-contenedor">
       <table>
         <thead>
           <tr>
-            <th>Fecha</th>
-            <th>Usuario</th>
-            <th>Categoría</th>
-            <th>Campo</th>
-            <th>Anterior</th>
-            <th>Nuevo</th>
+            <th>{{ 'SETTINGS.AUDIT.TABLE.DATE' | translate }}</th>
+            <th>{{ 'SETTINGS.AUDIT.TABLE.USER' | translate }}</th>
+            <th>{{ 'SETTINGS.AUDIT.TABLE.CATEGORY' | translate }}</th>
+            <th>{{ 'SETTINGS.AUDIT.TABLE.FIELD' | translate }}</th>
+            <th>{{ 'SETTINGS.AUDIT.TABLE.OLD_VALUE' | translate }}</th>
+            <th>{{ 'SETTINGS.AUDIT.TABLE.NEW_VALUE' | translate }}</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let log of auditLogs">
             <td>{{ log.changedAt | date: 'short' }}</td>
-            <td>{{ log.username || 'N/D' }}</td>
+            <td>{{ log.username || ('COMMON.N_A' | translate) }}</td>
             <td>{{ log.category }}</td>
             <td>{{ log.fieldName }}</td>
             <td>{{ log.oldValue || '-' }}</td>
             <td>{{ log.newValue || '-' }}</td>
           </tr>
           <tr *ngIf="auditLogs.length === 0">
-            <td colspan="6" class="empty-state">Sin registros de auditoría</td>
+            <td colspan="6" class="empty-state">{{ 'SETTINGS.AUDIT.EMPTY' | translate }}</td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <div class="pagination-bar">
-      <button type="button" class="toolbar-btn" [disabled]="auditPage <= 0 || auditLoading" (click)="loadAudit(auditPage - 1)">Anterior</button>
-      <span>Página {{ auditPage + 1 }} de {{ auditTotalPages || 1 }}</span>
-      <button type="button" class="toolbar-btn" [disabled]="auditPage + 1 >= auditTotalPages || auditLoading" (click)="loadAudit(auditPage + 1)">Siguiente</button>
+      <button type="button" class="toolbar-btn" [disabled]="auditPage <= 0 || auditLoading" (click)="loadAudit(auditPage - 1)">{{ 'SETTINGS.AUDIT.PAGINATION.PREVIOUS' | translate }}</button>
+      <span>{{ 'SETTINGS.AUDIT.PAGINATION.PAGE_INFO' | translate:{page: auditPage + 1, total: auditTotalPages || 1} }}</span>
+      <button type="button" class="toolbar-btn" [disabled]="auditPage + 1 >= auditTotalPages || auditLoading" (click)="loadAudit(auditPage + 1)">{{ 'SETTINGS.AUDIT.PAGINATION.NEXT' | translate }}</button>
     </div>
   </section>
 
   <!-- IA Configuration Tab -->
   <section *ngIf="activeTab === 'ia'" class="config-card" [@tabContent]>
-    <h2>Configuración de IA</h2>
+    <h2>{{ 'SETTINGS.IA.TITLE' | translate }}</h2>
 
-    <div *ngIf="aiLoading" class="empty-state">Cargando configuración de IA...</div>
+    <div *ngIf="aiLoading" class="empty-state">{{ 'SETTINGS.IA.LOADING' | translate }}</div>
 
     <div *ngIf="!aiLoading">
       <!-- Subsection: API Keys -->
       <div class="ia-subsection">
-        <h3>Claves API</h3>
+        <h3>{{ 'SETTINGS.IA.API_KEYS' | translate }}</h3>
         <div class="ia-keys-list">
           <div *ngFor="let key of aiKeys" class="ia-key-item">
             <div class="key-provider">{{ key.provider }}</div>
             <div class="key-info">
               <span class="key-preview">{{ key.keyPreview || '••••••••••' }}</span>
               <span class="key-date" *ngIf="key.lastUpdatedAt">
-                Última actualización: {{ key.lastUpdatedAt | date: 'short' }}
+                {{ 'SETTINGS.IA.LAST_UPDATE' | translate:{date: (key.lastUpdatedAt | date: 'short')} }}
               </span>
             </div>
             <div class="key-actions">
               <button type="button" class="toolbar-btn toolbar-btn--small" (click)="showAiNewKeyForm()">
-                Actualizar
+                {{ 'SETTINGS.IA.ACTIONS.UPDATE' | translate }}
               </button>
               <button type="button" class="toolbar-btn toolbar-btn--danger toolbar-btn--small" (click)="deleteAiKey(key.provider)">
-                Eliminar
+                {{ 'SETTINGS.IA.ACTIONS.DELETE' | translate }}
               </button>
             </div>
           </div>
 
           <div *ngIf="aiKeys.length === 0" class="empty-state-card">
-            <p>No hay claves API configuradas.</p>
+            <p>{{ 'SETTINGS.IA.NO_KEYS' | translate }}</p>
           </div>
         </div>
 
         <div *ngIf="aiShowNewKeyForm" class="ia-new-key-form">
-          <h4>Agregar/Actualizar Clave API</h4>
+          <h4>{{ 'SETTINGS.IA.FORM_TITLE' | translate }}</h4>
           <div class="form-grid">
             <label>
-              Proveedor
+              {{ 'SETTINGS.IA.PROVIDER' | translate }}
               <select [(ngModel)]="aiNewKeyProvider" class="form-input provider-select">
-                <option value="">--Seleccionar--</option>
-                <option value="OPENAI">OpenAI</option>
-                <option value="ANTHROPIC">Anthropic</option>
-                <option value="DEEPSEEK">DeepSeek</option>
-                <option value="GOOGLE">Google</option>
-                <option value="GROK">Grok</option>
-                <option value="GROQ">Groq</option>
+                <option value="">{{ 'SETTINGS.IA.SELECT_PROVIDER' | translate }}</option>
+                <option value="OPENAI">{{ 'SETTINGS.IA.PROVIDERS.OPENAI' | translate }}</option>
+                <option value="ANTHROPIC">{{ 'SETTINGS.IA.PROVIDERS.ANTHROPIC' | translate }}</option>
+                <option value="DEEPSEEK">{{ 'SETTINGS.IA.PROVIDERS.DEEPSEEK' | translate }}</option>
+                <option value="GOOGLE">{{ 'SETTINGS.IA.PROVIDERS.GOOGLE' | translate }}</option>
+                <option value="GROK">{{ 'SETTINGS.IA.PROVIDERS.GROK' | translate }}</option>
+                <option value="GROQ">{{ 'SETTINGS.IA.PROVIDERS.GROQ' | translate }}</option>
               </select>
             </label>
             <label class="span-2">
-              Clave API
-              <input type="password" [(ngModel)]="aiNewKeyValue" placeholder="Ingresa la clave API..." class="form-input" />
+              {{ 'SETTINGS.IA.API_KEY_LABEL' | translate }}
+              <input type="password" [(ngModel)]="aiNewKeyValue" [placeholder]="'SETTINGS.IA.API_KEY_PLACEHOLDER' | translate" class="form-input" />
             </label>
           </div>
           <div class="button-group">
-            <button type="button" class="toolbar-btn" (click)="aiShowNewKeyForm = false">Cancelar</button>
+            <button type="button" class="toolbar-btn" (click)="aiShowNewKeyForm = false">{{ 'SETTINGS.IA.ACTIONS.CANCEL' | translate }}</button>
             <button type="button" class="toolbar-btn toolbar-btn--primary" (click)="saveAiKey()" [disabled]="aiSavingKey">
-              {{ aiSavingKey ? 'Guardando...' : 'Guardar' }}
+              {{ aiSavingKey ? ('SETTINGS.SAVING' | translate) : ('SETTINGS.IA.ACTIONS.SAVE' | translate) }}
             </button>
           </div>
         </div>
 
         <button *ngIf="!aiShowNewKeyForm" type="button" class="toolbar-btn toolbar-btn--primary" (click)="showAiNewKeyForm()">
-          + Agregar Clave
+          {{ 'SETTINGS.IA.ADD_KEY' | translate }}
         </button>
       </div>
 
       <!-- Subsection: Chat Technical Configuration -->
       <div class="ia-subsection">
-        <h3>Configuración Técnica de Chat</h3>
+        <h3>{{ 'SETTINGS.IA.TECHNICAL_CONFIG' | translate }}</h3>
         <div class="form-grid">
           <label>
-            Proveedor por defecto
+            {{ 'SETTINGS.IA.DEFAULT_PROVIDER' | translate }}
             <select [(ngModel)]="aiChatConfig.defaultProvider" class="form-input">
-              <option value="OPENAI">OpenAI</option>
-              <option value="ANTHROPIC">Anthropic</option>
-              <option value="DEEPSEEK">DeepSeek</option>
-              <option value="GOOGLE">Google</option>
-              <option value="GROK">Grok</option>
-              <option value="GROQ">Groq</option>
+              <option value="OPENAI">{{ 'SETTINGS.IA.PROVIDERS.OPENAI' | translate }}</option>
+              <option value="ANTHROPIC">{{ 'SETTINGS.IA.PROVIDERS.ANTHROPIC' | translate }}</option>
+              <option value="DEEPSEEK">{{ 'SETTINGS.IA.PROVIDERS.DEEPSEEK' | translate }}</option>
+              <option value="GOOGLE">{{ 'SETTINGS.IA.PROVIDERS.GOOGLE' | translate }}</option>
+              <option value="GROK">{{ 'SETTINGS.IA.PROVIDERS.GROK' | translate }}</option>
+              <option value="GROQ">{{ 'SETTINGS.IA.PROVIDERS.GROQ' | translate }}</option>
             </select>
           </label>
           <label>
-            Idioma por defecto
+            {{ 'SETTINGS.IA.DEFAULT_LANGUAGE' | translate }}
             <input type="text" [(ngModel)]="aiChatConfig.defaultLanguage" placeholder="es" class="form-input" />
           </label>
           <label>
-            Idiomas soportados (separados por comas)
+            {{ 'SETTINGS.IA.SUPPORTED_LANGUAGES' | translate }}
             <input type="text" [(ngModel)]="aiChatConfig.supportedLanguages" placeholder="es,en,fr,de" class="form-input" />
           </label>
           <label>
-            Longitud máxima del título
+            {{ 'SETTINGS.IA.MAX_TITLE_LENGTH' | translate }}
             <input type="number" [(ngModel)]="aiChatConfig.titleMaxLength" min="1" class="form-input" />
           </label>
           <label>
-            Streams concurrentes por usuario
+            {{ 'SETTINGS.IA.CONCURRENT_STREAMS' | translate }}
             <input type="number" [(ngModel)]="aiChatConfig.maxConcurrentStreamsPerUser" min="1" class="form-input" />
           </label>
           <label>
-            Días de historial máximo
+            {{ 'SETTINGS.IA.MAX_HISTORY_DAYS' | translate }}
             <input type="number" [(ngModel)]="aiChatConfig.maxChatHistoryDays" min="1" class="form-input" />
           </label>
           <label class="toggle-line">
             <input type="checkbox" [(ngModel)]="aiChatConfig.autoArchiveOnLimit" />
-            Archivar automáticamente al alcanzar límite
+            {{ 'SETTINGS.IA.AUTO_ARCHIVE' | translate }}
           </label>
         </div>
       </div>
 
       <!-- Subsection: Streaming Configuration -->
       <div class="ia-subsection">
-        <h3>Configuración de Streaming</h3>
+        <h3>{{ 'SETTINGS.IA.STREAMING_CONFIG' | translate }}</h3>
         <div class="form-grid">
           <label class="toggle-line">
             <input type="checkbox" [(ngModel)]="aiStreamingConfig.enableThinkingStream" />
-            Habilitar streaming de pensamiento
+            {{ 'SETTINGS.IA.ENABLE_THINKING' | translate }}
           </label>
           <label class="toggle-line">
             <input type="checkbox" [(ngModel)]="aiStreamingConfig.enableToolStream" />
-            Habilitar streaming de herramientas
+            {{ 'SETTINGS.IA.ENABLE_TOOL' | translate }}
           </label>
           <label>
-            Tamaño del chunk (bytes)
+            {{ 'SETTINGS.IA.CHUNK_SIZE' | translate }}
             <input type="number" [(ngModel)]="aiStreamingConfig.chunkSize" min="256" class="form-input" />
           </label>
           <label>
-            Intervalo de vaciado (ms)
+            {{ 'SETTINGS.IA.FLUSH_INTERVAL' | translate }}
             <input type="number" [(ngModel)]="aiStreamingConfig.flushIntervalMs" min="10" class="form-input" />
           </label>
           <label>
-            Duración máxima del stream (ms)
+            {{ 'SETTINGS.IA.MAX_STREAM_DURATION' | translate }}
             <input type="number" [(ngModel)]="aiStreamingConfig.maxStreamDurationMs" min="5000" class="form-input" />
           </label>
         </div>
