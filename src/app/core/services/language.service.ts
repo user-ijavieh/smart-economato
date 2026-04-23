@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 const LANGUAGE_STORAGE_KEY = 'smart-economato-language';
-const AVAILABLE_LANGUAGES = ['es', 'en'] as const;
+const AVAILABLE_LANGUAGES = ['es', 'en', 'ca'] as const;
 
 type SupportedLanguage = (typeof AVAILABLE_LANGUAGES)[number];
 

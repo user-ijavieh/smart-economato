@@ -26,6 +26,8 @@
         }
       </svg>
     </button>
+  
+    <app-language-selector></app-language-selector>
 
     <button class="mobile-theme-toggle" (click)="toggleTheme()" [attr.aria-label]="(isDarkMode() ? 'LOGIN.THEME_LIGHT' : 'LOGIN.THEME_DARK') | translate">
       @if (isDarkMode()) {
