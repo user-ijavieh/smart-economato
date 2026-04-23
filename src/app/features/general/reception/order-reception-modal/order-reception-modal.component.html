@@ -1,20 +1,20 @@
-<app-base-modal [title]="'Procesar Recepción de Orden #' + order.id" size="lg" [closeOnBackdrop]="false"
+<app-base-modal [title]="'RECEPTION.MODAL.TITLE' | translate: { id: order.id }" size="lg" [closeOnBackdrop]="false"
   headerClass="reception-header" [beforeClose]="beforeCloseHandler" (closed)="close()">
 
   <div class="order-reception-content">
     <div class="detail-group">
-      <p><strong>Usuario:</strong> {{ order.userName }}</p>
-      <p><strong>Fecha Solicitud:</strong> {{ order.orderDate | date:'dd/MM/yyyy' }}</p>
+      <p><strong>{{ 'COMMON.USER' | translate }}:</strong> {{ order.userName }}</p>
+      <p><strong>{{ 'ORDERS.DATE' | translate }}:</strong> {{ order.orderDate | date:'dd/MM/yyyy' }}</p>
     </div>
 
     <div class="reception-summary">
       <div class="section-header-row">
-        <h3 class="summary-title">Resumen de Productos</h3>
+        <h3 class="summary-title">{{ 'RECEPTION.MODAL.SUMMARY' | translate }}</h3>
         <div class="view-mode-toggle">
           <button type="button" [class.active]="roundingMode === 'units'"
-            (click)="onRoundingModeChange('units')">Unidades</button>
+            (click)="onRoundingModeChange('units')">{{ 'ORDER_BUILDER.MODES.UNITS' | translate }}</button>
           <button type="button" [class.active]="roundingMode === 'lots'"
-            (click)="onRoundingModeChange('lots')">Lotes</button>
+            (click)="onRoundingModeChange('lots')">{{ 'ORDER_BUILDER.MODES.LOTS' | translate }}</button>
         </div>
       </div>
       <div class="summary-items">
@@ -25,9 +25,9 @@
             <span class="quantity-value" [class.total-match]="getTotalReceived(detail) === detail.quantity"
               [class.total-excess]="getTotalReceived(detail) > detail.quantity">
               @if (roundingMode === 'lots' && detail.lotQuantity) {
-              {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} Lotes ({{ detail.quantity |
+              {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} {{ 'RECEPTION.MODAL.LOTS' | translate }} ({{ detail.quantity |
               number:'1.0-2' }}{{ formatUnit(detail.unit, false) }}) /
-              {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} Lotes ({{
+              {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} {{ 'RECEPTION.MODAL.LOTS' | translate }} ({{
               getTotalReceived(detail) | number:'1.0-2' }}{{ formatUnit(detail.unit, false) }})
               } @else {
               {{ getFormattedQuantity(detail) }}
@@ -46,24 +46,24 @@
 
     <div class="reception-search-bar">
       <div class="search-bar-header">
-        <span class="search-bar-title">Buscar productos a procesar</span>
-        <span class="search-bar-hint">Escribe un nombre o usa el escáner</span>
+        <span class="search-bar-title">{{ 'RECEPTION.MODAL.SEARCH_PRODUCTS' | translate }}</span>
+        <span class="search-bar-hint">{{ 'RECEPTION.MODAL.SEARCH_HINT' | translate }}</span>
       </div>
       <div class="search-input-group">
         <input type="text" class="form-control search-input" [(ngModel)]="searchTerm"
-          (ngModelChange)="onSearchTermChange($event)" placeholder="Buscar producto por nombre o código" />
+          (ngModelChange)="onSearchTermChange($event)" [placeholder]="'RECEPTION.MODAL.SEARCH_PLACEHOLDER' | translate" />
         <button type="button" class="btn-barcode" (click)="openBarcodeScanner()" [disabled]="isInputDisabled()"
-          title="Buscar por código de barras">
+          [title]="'LEDGER.SCAN_TOOLTIP' | translate">
           <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"
             fill="currentColor">
             <path
               d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z" />
           </svg>
-          Escanear
+          {{ 'RECEPTION.MODAL.SCAN' | translate }}
         </button>
         @if (searchTerm) {
         <button type="button" class="btn-clear-search" (click)="clearSearch()"
-          [disabled]="isInputDisabled()">Limpiar</button>
+          [disabled]="isInputDisabled()">{{ 'RECEPTION.MODAL.CLEAR' | translate }}</button>
         }
       </div>
     </div>
@@ -72,21 +72,21 @@
       <table class="modal-table details-table">
         <thead>
           <tr>
-            <th>Producto</th>
-            <th class="text-center">Solicitado</th>
-            <th class="text-center received-col">Recibido (Total)</th>
-            <th class="text-center expiry-col">F. Caducidad <span class="required-asterisk">*</span></th>
-            <th class="text-center">Codigo de lote (opcional)</th>
+            <th>{{ 'RECEPTION.MODAL.PRODUCT' | translate }}</th>
+            <th class="text-center">{{ 'RECEPTION.MODAL.REQUESTED' | translate }}</th>
+            <th class="text-center received-col">{{ 'RECEPTION.MODAL.RECEIVED_TOTAL' | translate }}</th>
+            <th class="text-center expiry-col">{{ 'RECEPTION.MODAL.EXPIRY_DATE' | translate }} <span class="required-asterisk">*</span></th>
+            <th class="text-center">{{ 'RECEPTION.MODAL.LOT_CODE' | translate }}</th>
           </tr>
         </thead>
         <tbody>
           @for (detail of visibleDetails; track detail.productId) {
           <tr class="product-base-row">
-            <td><strong>{{ detail.productName }}</strong> @if (detail.lotQuantity) { <small>(Lote: {{ detail.lotQuantity
+            <td><strong>{{ detail.productName }}</strong> @if (detail.lotQuantity) { <small>({{ 'RECEPTION.MODAL.LOT' | translate }}: {{ detail.lotQuantity
                 }} {{ formatUnit(detail.unit) }})</small> }</td>
             <td class="text-center">
               @if (roundingMode === 'lots' && detail.lotQuantity) {
-              {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} Lotes ({{ detail.quantity |
+              {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} {{ 'RECEPTION.MODAL.LOTS' | translate }} ({{ detail.quantity |
               number:'1.0-2' }}{{ formatUnit(detail.unit, false) }})
               } @else {
               {{ detail.quantity }} {{ formatUnit(detail.unit) }}
@@ -96,7 +96,7 @@
               <span class="total-badge" [class.total-match]="getTotalReceived(detail) === detail.quantity"
                 [class.total-excess]="getTotalReceived(detail) > detail.quantity">
                 @if (roundingMode === 'lots' && detail.lotQuantity) {
-                {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} Lotes ({{
+                {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} {{ 'RECEPTION.MODAL.LOTS' | translate }} ({{
                 getTotalReceived(detail) | number:'1.0-2' }}{{ formatUnit(detail.unit, false) }})
                 } @else {
                 {{ getTotalReceived(detail) }}
@@ -105,13 +105,13 @@
             </td>
             <td class="text-right" colspan="2">
               <button type="button" class="btn btn-sm btn-secondary add-lot-btn" (click)="addLot(detail)"
-                [disabled]="isInputDisabled()">+ Lote</button>
+                [disabled]="isInputDisabled()">+ {{ 'RECEPTION.MODAL.LOT' | translate }}</button>
             </td>
           </tr>
           @for (lot of detail.lots; track $index) {
           <tr class="lot-row">
             <td class="lot-indent" colspan="2">
-              <span class="lot-label">↳ Lote {{ $index + 1 }}</span>
+              <span class="lot-label">↳ {{ 'RECEPTION.MODAL.LOT' | translate }} {{ $index + 1 }}</span>
             </td>
             <td class="text-center received-col">
               <div class="quantity-cell-actions">
@@ -121,7 +121,7 @@
                     [ngModel]="getLotCount(lot.quantity, detail.lotQuantity)"
                     (ngModelChange)="updateLotQuantity(detail, $index, $event)"
                     min="0" step="0.1" [disabled]="isInputDisabled()" />
-                  <span class="inline-unit lot-unit">Lote × {{ detail.lotQuantity }}{{ formatUnit(detail.unit) }}</span>
+                  <span class="inline-unit lot-unit">{{ 'RECEPTION.MODAL.LOT' | translate }} × {{ detail.lotQuantity }}{{ formatUnit(detail.unit) }}</span>
                 </div>
                 } @else {
                 <input type="number" class="form-control quantity-input" [(ngModel)]="lot.quantity"
@@ -129,7 +129,7 @@
                 }
                 <button type="button" class="btn-scale" [class.btn-scale-active]="isScaleActiveForLot(detail, $index)"
                   [disabled]="isInputDisabled()"
-                  [title]="isScaleActiveForLot(detail, $index) ? 'Detener lectura de báscula' : 'Iniciar lectura de báscula'"
+                  [title]="isScaleActiveForLot(detail, $index) ? ('RECEPTION.MODAL.STOP_SCALE' | translate) : ('RECEPTION.MODAL.START_SCALE' | translate)"
                   (click)="toggleScaleForLot(detail, $index)">
                   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                     <path
@@ -146,16 +146,16 @@
               </div>
             </td>
             <td class="text-center expiry-col lot-actions-cell">
-              <input type="date" class="form-control quantity-input" [(ngModel)]="lot.expirationDate"
+              <input type="date" [attr.lang]="translate.currentLang" class="form-control quantity-input" [(ngModel)]="lot.expirationDate"
                 [disabled]="isInputDisabled()" />
               @if (detail.lots!.length > 1) {
               <button type="button" class="btn-remove-lot" (click)="removeLot(detail, $index)"
-                [disabled]="isInputDisabled()" title="Eliminar lote">✕</button>
+                [disabled]="isInputDisabled()" [title]="'RECEPTION.MODAL.DELETE_LOT' | translate">✕</button>
               }
             </td>
             <td class="text-center">
               <input type="text" class="form-control quantity-input" [(ngModel)]="lot.batchCode"
-                maxlength="100" placeholder="Ej. LOT-2026-001" [disabled]="isInputDisabled()" />
+                maxlength="100" placeholder="{{ 'RECEPTION.MODAL.EXAMPLE_PREFIX' | translate }} LOT-2026-001" [disabled]="isInputDisabled()" />
             </td>
           </tr>
           }
@@ -171,9 +171,9 @@
           <div>
             <div class="mobile-product-name">{{ detail.productName }}</div>
             <div class="mobile-product-meta">
-              Solicitado:
+              {{ 'RECEPTION.MODAL.REQUESTED' | translate }}:
               @if (roundingMode === 'lots' && detail.lotQuantity) {
-              {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} lotes de {{ detail.lotQuantity }}
+              {{ getLotCount(detail.quantity, detail.lotQuantity) | number:'1.0-2' }} {{ 'RECEPTION.MODAL.LOTS_LOWER' | translate }} de {{ detail.lotQuantity }}
               {{ formatUnit(detail.unit, false) }} ({{ detail.quantity | number:'1.0-2' }} {{ formatUnit(detail.unit,
               false) }})
               } @else {
@@ -181,11 +181,11 @@
               }
             </div>
             <div class="mobile-product-meta">
-              Recibido total:
+              {{ 'RECEPTION.MODAL.RECEIVED_TOTAL' | translate }}:
               <span class="total-badge" [class.total-match]="getTotalReceived(detail) === detail.quantity"
                 [class.total-excess]="getTotalReceived(detail) > detail.quantity">
                 @if (roundingMode === 'lots' && detail.lotQuantity) {
-                {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} Lotes de {{
+                {{ getLotCount(getTotalReceived(detail), detail.lotQuantity) | number:'1.0-2' }} {{ 'RECEPTION.MODAL.LOTS_LOWER' | translate }} de {{
                 detail.lotQuantity }} {{ formatUnit(detail.unit, false) }} ({{ getTotalReceived(detail) | number:'1.0-2'
                 }} {{ formatUnit(detail.unit, false) }})
                 } @else {
@@ -195,19 +195,19 @@
             </div>
           </div>
           <button type="button" class="btn btn-sm btn-secondary add-lot-btn" (click)="addLot(detail)"
-            [disabled]="isInputDisabled()">+ Lote</button>
+            [disabled]="isInputDisabled()">+ {{ 'RECEPTION.MODAL.LOT' | translate }}</button>
         </div>
 
         <div class="mobile-lots-list">
           @for (lot of detail.lots; track $index) {
           <article class="mobile-lot-card">
-            <div class="mobile-lot-title">Lote {{ $index + 1 }}</div>
+            <div class="mobile-lot-title">{{ 'RECEPTION.MODAL.LOT' | translate }} {{ $index + 1 }}</div>
 
-            <label class="mobile-field-label">CODIGO</label>
+            <label class="mobile-field-label">{{ 'RECEPTION.MODAL.LOT_CODE' | translate | uppercase }}</label>
             <input type="text" class="form-control quantity-input" [(ngModel)]="lot.batchCode"
-              maxlength="100" placeholder="Ej. LOT-2026-001" [disabled]="isInputDisabled()" />
+              maxlength="100" placeholder="{{ 'RECEPTION.MODAL.EXAMPLE_PREFIX' | translate }} LOT-2026-001" [disabled]="isInputDisabled()" />
 
-            <label class="mobile-field-label">RECIBIDO</label>
+            <label class="mobile-field-label">{{ 'RECEPTION.MODAL.RECEIVED' | translate | uppercase }}</label>
             <div class="quantity-cell-actions mobile-quantity-actions">
               @if (roundingMode === 'lots' && detail.lotQuantity) {
               <div class="input-with-unit">
@@ -215,7 +215,7 @@
                   [ngModel]="getLotCount(lot.quantity, detail.lotQuantity)"
                   (ngModelChange)="updateLotQuantity(detail, $index, $event)"
                   min="0" step="0.1" [disabled]="isInputDisabled()" />
-                <span class="inline-unit lot-unit">Lote de {{ detail.lotQuantity }} {{ formatUnit(detail.unit, false)
+                <span class="inline-unit lot-unit">{{ 'RECEPTION.MODAL.LOT' | translate }} de {{ detail.lotQuantity }} {{ formatUnit(detail.unit, false)
                   }}</span>
               </div>
               } @else {
@@ -224,7 +224,7 @@
               }
               <button type="button" class="btn-scale" [class.btn-scale-active]="isScaleActiveForLot(detail, $index)"
                 [disabled]="isInputDisabled()"
-                [title]="isScaleActiveForLot(detail, $index) ? 'Detener lectura de báscula' : 'Iniciar lectura de báscula'"
+                [title]="isScaleActiveForLot(detail, $index) ? ('RECEPTION.MODAL.STOP_SCALE' | translate) : ('RECEPTION.MODAL.START_SCALE' | translate)"
                 (click)="toggleScaleForLot(detail, $index)">
                 <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                   <path
@@ -240,13 +240,13 @@
               }
             </div>
 
-            <label class="mobile-field-label">FECHA DE CADUCIDAD <span class="required-asterisk">*</span></label>
+            <label class="mobile-field-label">{{ 'RECEPTION.MODAL.EXPIRY_DATE' | translate | uppercase }} <span class="required-asterisk">*</span></label>
             <div class="mobile-expiration-row">
-              <input type="date" class="form-control quantity-input" [(ngModel)]="lot.expirationDate"
+              <input type="date" [attr.lang]="translate.currentLang" class="form-control quantity-input" [(ngModel)]="lot.expirationDate"
                 [disabled]="isInputDisabled()" />
               @if (detail.lots!.length > 1) {
               <button type="button" class="btn-remove-lot" (click)="removeLot(detail, $index)"
-                [disabled]="isInputDisabled()" title="Eliminar lote">✕</button>
+                [disabled]="isInputDisabled()" [title]="'RECEPTION.MODAL.DELETE_LOT' | translate">✕</button>
               }
             </div>
           </article>
@@ -258,7 +258,7 @@
   </div>
 
   @if (showScannerModal) {
-  <app-base-modal title="Buscar por código de barras" size="md" backdropVariant="soft" (closed)="closeBarcodeScanner()">
+  <app-base-modal [title]="'RECEPTION.MODAL.SCAN' | translate" size="md" backdropVariant="soft" (closed)="closeBarcodeScanner()">
     <div class="scanner-modal-body">
       <app-barcode-scanner (productFound)="onProductFound($event)"></app-barcode-scanner>
     </div>
@@ -269,9 +269,9 @@
     <button class="modal-btn modal-btn-success" (click)="processReception()"
       [disabled]="isProcessing">
       @if (isProcessing) {
-      <span>Procesando...</span>
+      <span>{{ 'RECEPTION.MODAL.PROCESSING' | translate }}</span>
       } @else {
-      <span>Procesar Recepción</span>
+      <span>{{ 'RECEPTION.PROCESS_RECEPTION' | translate }}</span>
       }
     </button>
   </div>
