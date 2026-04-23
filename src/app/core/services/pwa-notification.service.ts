@@ -50,7 +50,6 @@ export class PwaNotificationService {
    */
   async requestPermission(): Promise<boolean> {
     if (!('Notification' in window)) {
-      console.warn('[PWA Notification] Notifications not supported');
       return false;
     }
 
@@ -77,7 +76,6 @@ export class PwaNotificationService {
    */
   async showNotification(options: NotificationOptions): Promise<Notification | null> {
     if (!('serviceWorker' in navigator) || !('Notification' in window)) {
-      console.warn('[PWA Notification] Notifications not supported');
       return null;
     }
 
@@ -104,7 +102,6 @@ export class PwaNotificationService {
 
       await registration.showNotification(options.title, notificationOptions);
 
-      console.log('[PWA Notification] Notification shown:', options.title);
       return null;
     } catch (error) {
       console.error('[PWA Notification] Error showing notification:', error);
@@ -215,7 +212,6 @@ export class PwaNotificationService {
 
     navigator.serviceWorker.addEventListener('message', (event) => {
       if (event.data.type === 'NOTIFICATION_CLICK') {
-        console.log('[PWA Notification] Notification clicked:', event.data);
         // Handle notification click if needed
       }
     });
@@ -226,7 +222,6 @@ export class PwaNotificationService {
    */
   async subscribeToPushNotifications(vapidPublicKey: string): Promise<PushSubscription | null> {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-      console.warn('[PWA Notification] Push notifications not supported');
       return null;
     }
 
@@ -236,8 +231,6 @@ export class PwaNotificationService {
         userVisibleOnly: true,
         applicationServerKey: this.urlBase64ToUint8Array(vapidPublicKey) as any,
       });
-
-      console.log('[PWA Notification] Push subscription created');
       return subscription;
     } catch (error) {
       console.error('[PWA Notification] Error subscribing to push:', error);
@@ -256,7 +249,6 @@ export class PwaNotificationService {
       const subscription = await registration.pushManager.getSubscription();
       if (subscription) {
         await subscription.unsubscribe();
-        console.log('[PWA Notification] Unsubscribed from push');
         return true;
       }
       return false;

@@ -46,16 +46,13 @@ const SYNC_ROUTES = [
 
 // ─── Install: pre-cache static shell ───────────────────────────
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing new version...');
   event.waitUntil(
     caches
       .open(STATIC_CACHE)
       .then((cache) => {
-        console.log('[SW] Precaching assets...');
         return cache.addAll(PRECACHE_ASSETS);
       })
       .then(() => {
-        console.log('[SW] Skip waiting - activating immediately');
         return self.skipWaiting();
       })
   );
@@ -63,7 +60,6 @@ self.addEventListener('install', (event) => {
 
 // ─── Activate: clean up old caches ─────────────────────────────
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating new version...');
   event.waitUntil(
     caches
       .keys()
@@ -71,11 +67,9 @@ self.addEventListener('activate', (event) => {
         const oldCaches = keys.filter(
           (k) => k !== STATIC_CACHE && k !== API_CACHE
         );
-        console.log('[SW] Deleting old caches:', oldCaches);
         return Promise.all(oldCaches.map((k) => caches.delete(k)));
       })
       .then(() => {
-        console.log('[SW] Claiming clients...');
         return self.clients.claim();
       })
   );
@@ -84,7 +78,6 @@ self.addEventListener('activate', (event) => {
 // ─── Message Handler: receive SKIP_WAITING ─────────────────────
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
-    console.log('[SW] SKIP_WAITING message received');
     self.skipWaiting();
   }
 });

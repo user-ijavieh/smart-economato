@@ -220,7 +220,6 @@ export class BatchesManagementComponent implements OnInit, OnDestroy {
   }
 
   openViewModal(batch: ProductBatchResponseDTO): void {
-    console.log('[BatchesManagement] openViewModal called with batch id:', batch?.id);
     this.selectedBatch = batch;
     this.showViewModal = true;
     this.loadingCookings = true;
@@ -234,7 +233,6 @@ export class BatchesManagementComponent implements OnInit, OnDestroy {
 
     this.traceabilityService.getBatchCookings(batch.id).subscribe({
       next: (cookings) => {
-        console.log('[BatchesManagement] Traceability response received:', cookings);
         this.batchCookings = cookings || [];
         this.loadingCookings = false;
         this.cdr.detectChanges();

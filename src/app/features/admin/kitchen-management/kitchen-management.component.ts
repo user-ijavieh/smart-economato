@@ -427,19 +427,16 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('Loading report with range:', this.reportRange, 'start:', this.reportStartDate, 'end:', this.reportEndDate);
     this.loadingReport = true;
     this.cdr.markForCheck();
 
     this.kitchenService.getKitchenReport(this.reportRange, this.reportStartDate, this.reportEndDate)
       .pipe(finalize(() => {
-        console.log('Report load finalized');
         this.loadingReport = false;
         this.cdr.markForCheck();
       }))
       .subscribe({
         next: (report) => {
-          console.log('Report received:', report);
           if (report && report.topRecipes) {
             // Sort by quantity as priority
             report.topRecipes.sort((a, b) => b.totalQuantityCooked - a.totalQuantityCooked);
