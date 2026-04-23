@@ -96,11 +96,8 @@ export class WeeklyPlanService {
   }
 
   getStockRequirements(planId: number): Observable<WeeklyPlanStockRequirement[]> {
-    return this.cache.getOrFetch(
-      'weekly_plan',
-      `stockRequirements:${planId}`,
-      () => this.http.get<WeeklyPlanStockRequirement[]>(`${this.url}/${planId}/stock-requirements`)
-    );
+    // Date-sensitive endpoint: avoid client cache so expiration-aware values stay fresh.
+    return this.http.get<WeeklyPlanStockRequirement[]>(`${this.url}/${planId}/stock-requirements`);
   }
 
   cancelSlot(planId: number, slotId: number): Observable<WeeklyPlanSlotResponse> {

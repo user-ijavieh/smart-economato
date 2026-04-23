@@ -424,6 +424,11 @@ export class WeeklyPlanWizardComponent implements OnInit {
       return;
     }
 
+    if (this.currentStep === 1 && this.isPastWeek(this.weekStartDate)) {
+      this.messageService.showWarning('No se puede crear un plan para una semana anterior a la actual.');
+      return;
+    }
+
     if (this.currentStep === 1 && !this.editMode && !this.duplicateMode) {
       if (this.role === 'ADMIN' && !this.chefId) {
         this.messageService.showWarning(this.translate.instant('WEEKLY_PLANS.WIZARD.CHEF_WARN'));
@@ -724,15 +729,30 @@ export class WeeklyPlanWizardComponent implements OnInit {
 
   weekStartToday() {
     const today = new Date();
-    const day = today.getDay();
-    const mondayOffset = day === 0 ? -6 : 1 - day;
-    const monday = new Date(today);
-    monday.setDate(today.getDate() + mondayOffset);
-    this.weekStartDate = this.toIsoDate(monday);
+    this.weekStartDate = this.normalizeToMonday(this.toIsoDate(today));
     if (this.currentStep === 1) {
       this.nextStep();
     }
   }
+
+  onWeekStartDateChange(value: string) {
+    this.weekStartDate = this.normalizeToMonday(value);
+  }
+
+  private normalizeToMonday(dateStr: string): string {
+    if (!dateStr) return '';
+    
+    // Use T00:00:00 to ensure the date is interpreted in local time
+    const date = new Date(`${dateStr}T00:00:00`);
+    if (isNaN(date.getTime())) return dateStr;
+
+    const day = date.getDay(); // 0 (Sun) to 6 (Sat)
+    const mondayOffset = day === 0 ? -6 : 1 - day;
+    
+    date.setDate(date.getDate() + mondayOffset);
+    return this.toIsoDate(date);
+  }
+
 
   trackBySlotIdOrIndex(index: number, slot: any) {
     return slot.id ?? `${slot.dayOfWeek}-${index}`;
@@ -1442,6 +1462,11 @@ export class WeeklyPlanWizardComponent implements OnInit {
   save() {
     if (!this.weekStartDate) return;
 
+    if (this.isPastWeek(this.weekStartDate)) {
+      this.messageService.showError('No se puede crear un plan para una semana anterior a la actual.');
+      return;
+    }
+
     if (this.role === 'ADMIN' && !this.chefId) {
       this.messageService.showWarning(this.translate.instant('WEEKLY_PLANS.WIZARD.CHEF_WARN'));
       return;
@@ -1480,7 +1505,8 @@ export class WeeklyPlanWizardComponent implements OnInit {
         },
         error: (err) => {
           this.saving = false;
-          this.messageService.showError(err.error?.message || this.translate.instant('WEEKLY_PLANS.WIZARD.UPDATE_ERROR'));
+const backendMessage = typeof err?.error?.message === 'string' ? err.error.message : '';  
+          this.messageService.showError(backendMessage || this.translate.instant('WEEKLY_PLANS.WIZARD.UPDATE_ERROR') || 'Error al actualizar el plan semanal.');
         }
       });
     } else {
@@ -1492,10 +1518,30 @@ export class WeeklyPlanWizardComponent implements OnInit {
         },
         error: (err) => {
           this.saving = false;
-          this.messageService.showError(err.error?.message || this.translate.instant('WEEKLY_PLANS.WIZARD.CREATE_ERROR'));
+const backendMessage = typeof err?.error?.message === 'string' ? err.error.message : '';  
+          this.messageService.showError(backendMessage || this.translate.instant('WEEKLY_PLANS.WIZARD.CREATE_ERROR') || 'Error al guardar el plan semanal.');
         }
       });
     }
+  }
+
+  private isPastWeek(weekStartDate: string): boolean {
+    if (!weekStartDate) {
+      return false;
+    }
+
+    const selected = new Date(`${weekStartDate}T00:00:00`);
+    if (Number.isNaN(selected.getTime())) {
+      return false;
+    }
+
+    const now = new Date();
+    const mondayOffset = now.getDay() === 0 ? -6 : 1 - now.getDay();
+    const currentWeekMonday = new Date(now);
+    currentWeekMonday.setDate(now.getDate() + mondayOffset);
+    currentWeekMonday.setHours(0, 0, 0, 0);
+
+    return selected < currentWeekMonday;
   }
 
   async cancel() {
@@ -1543,8 +1589,9 @@ export class WeeklyPlanWizardComponent implements OnInit {
   private addDaysToDate(dateStr: string, days: number): string {
     const date = new Date(`${dateStr}T00:00:00`);
     date.setDate(date.getDate() + days);
-    return date.toISOString().split('T')[0];
+    return this.toIsoDate(date);
   }
+
 
   private getBaseRoute(): string {
     return this.router.url.startsWith('/admin-panel/weekly-plans')

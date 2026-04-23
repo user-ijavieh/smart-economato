@@ -142,7 +142,7 @@
       } @else {
       <div class="orders-container">
         @for (order of getDisplayedOrders('REVIEW'); track order.id) {
-          <div class="order-card" [style.border-left-color]="getStatusColor('REVIEW')" [class.locked]="isReviewBlocked(order)">
+          <div class="order-card" [style.border-left-color]="getStatusColor('REVIEW')">
           <div class="order-header" [style.background]="getStatusBgColor('REVIEW')">
             <div class="order-title">
               <div class="order-user">
@@ -155,19 +155,7 @@
             <span class="order-status">{{ getStatusLabel(order.status) }}</span>
           </div>
 
-            @if (getReviewLockInfo(order)) {
-              <div class="review-lock-banner" [class.review-lock-banner-blocking]="isReviewBlocked(order)">
-                <div class="review-lock-banner-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" focusable="false">
-                    <path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm-6 8.5V15a1 1 0 1 1 2 0v2.5h-2ZM10 9V7a2 2 0 0 1 4 0v2h-4Z" />
-                  </svg>
-                </div>
-                <div class="review-lock-banner-copy">
-                  <span class="review-lock-banner-title">{{ getReviewLockLabel(order) }}</span>
-                  <span class="review-lock-banner-detail">{{ getReviewLockDetail(order) }}</span>
-                </div>
-              </div>
-            }
+
 
           <div class="order-body">
             <div class="order-detail">

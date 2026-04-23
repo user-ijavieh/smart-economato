@@ -23,9 +23,9 @@
         <h2>{{ 'WEEKLY_PLANS.WIZARD.STEP_1_TITLE' | translate }}</h2>
 
         <div class="form-group">
-          <label for="weekStartDate">{{ 'WEEKLY_PLANS.WIZARD.WEEK_START' | translate }}</label>
-          <input id="weekStartDate" type="date" class="form-input" [(ngModel)]="weekStartDate" />
-          <p class="field-hint">{{ 'WEEKLY_PLANS.WIZARD.WEEK_START_HINT' | translate }}</p>
+<label for="weekStartDate">{{ 'WEEKLY_PLANS.WIZARD.WEEK_START' | translate }}</label>  
+<input id="weekStartDate" type="date" class="form-input" [ngModel]="weekStartDate" (ngModelChange)="onWeekStartDateChange($event)" />  
+<p class="field-hint">{{ 'WEEKLY_PLANS.WIZARD.WEEK_START_HINT' | translate }}</p>
         </div>
 
         <div class="wizard-actions step1-actions">

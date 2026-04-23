@@ -2,12 +2,10 @@ import { Component, Input, Output, EventEmitter, inject, OnChanges, SimpleChange
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Order, OrderReviewLockStatus } from '../../../../shared/models/order.model';
-import { OrderDetail } from '../../../../shared/models/order.model';
+import { Order, OrderReviewLockStatus, OrderDetail } from '../../../../shared/models/order.model';
 import { OrderService } from '../../../../core/services/order.service';
 import { MessageService } from '../../../../core/services/message.service';
 import { AuthService } from '../../../../core/services/auth.service';
-import { OrderReviewLockStateService } from '../../../../core/services/order-review-lock-state.service';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 
 @Component({
@@ -32,23 +30,17 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
   isDownloading = false;
   visibleDetailsCount = 20;
   readonly detailsPageSize = 20;
-  reviewLockStatus: OrderReviewLockStatus | null = null;
-  lockInfoTitle = '';
-  lockInfoDetail = '';
-  lockBlockedForCurrentUser = false;
   roundingMode: 'units' | 'lots' = 'lots';
 
-  private lockStatusSubscription?: Subscription;
+
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['order']) {
       this.visibleDetailsCount = this.detailsPageSize;
-      this.initializeReviewLock();
     }
   }
 
   ngOnDestroy(): void {
-    this.lockStatusSubscription?.unsubscribe();
   }
 
   get displayedDetails() {
@@ -229,36 +221,7 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
     });
   }
 
-  private initializeReviewLock(): void {
-    if (!this.order) {
-      this.lockStatusSubscription?.unsubscribe();
-      this.lockStatusSubscription = undefined;
-      this.lockInfoTitle = '';
-      this.lockInfoDetail = '';
-      this.lockBlockedForCurrentUser = false;
-      return;
-    }
 
-    this.lockStatusSubscription?.unsubscribe();
-    this.lockStatusSubscription = this.orderReviewLockStateService.watchOrder(this.order.id).subscribe(status => {
-      this.reviewLockStatus = status;
-      this.applyLockUiStatus(status);
-    });
-
-    const orderId = this.order.id;
-    this.orderReviewLockStateService.refresh(orderId).subscribe({
-      next: status => this.applyLockUiStatus(status),
-      error: () => {}
-    });
-  }
-
-  private applyLockUiStatus(status: OrderReviewLockStatus | null): void {
-    if (!status || !status.locked) {
-      this.lockBlockedForCurrentUser = false;
-      this.lockInfoTitle = '';
-      this.lockInfoDetail = '';
-      return;
-    }
 
     if (status.currentUserOwner) {
       this.lockBlockedForCurrentUser = false;
@@ -274,6 +237,7 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
       ? this.translate.instant('ORDERS.MESSAGES.LOCK_ADMIN_HINT', { name: lockOwner })
       : this.translate.instant('ORDERS.MESSAGES.LOCK_USER_HINT', { name: lockOwner });
   }
+
 
   onRoundingModeChange(mode: 'units' | 'lots'): void {
     this.roundingMode = mode;

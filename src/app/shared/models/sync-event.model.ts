@@ -6,16 +6,7 @@ export type SyncAction =
   | 'CONFIRM'
   | 'REVERT'
   | 'RECEIVE'
-  | 'LOCK_ACQUIRED'
-  | 'LOCK_RELEASED'
-  | 'LOCK_EXPIRED'
-  | 'COLLAB_REQUESTED'
-  | 'COLLAB_ADMITTED'
-  | 'COLLAB_PARTICIPANT_LEFT'
-  | 'COLLAB_FIELD_LOCKED'
-  | 'COLLAB_FIELD_UNLOCKED'
-  | 'COLLAB_FIELD_PATCHED'
-  | 'COLLAB_STATE_CLEARED';
+  | 'RECEIVE';
 
 export type SyncAffectedDomain =
   | 'product'

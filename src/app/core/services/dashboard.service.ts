@@ -91,7 +91,7 @@ export class DashboardService {
             name: val.name,
             elaborations: val.count,
             portions: val.portions
-        })).sort((a, b) => b.elaborations - a.elaborations).slice(0, 5);
+        })).sort((a, b) => b.portions - a.portions).slice(0, 5);
 
 
         // Map real expiring batches

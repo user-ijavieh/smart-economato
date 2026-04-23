@@ -436,10 +436,10 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
         if (this.auditSearchTerm.trim()) {
             const term = this.auditSearchTerm.toLowerCase();
             result = result.filter(a =>
-                a.details.toLowerCase().includes(term) ||
-                a.action.toLowerCase().includes(term) ||
-                a.id_recipe.toString().includes(term) ||
-                a.id_user.toString().includes(term)
+                (a.details?.toLowerCase().includes(term) ?? false) ||
+                (a.action?.toLowerCase().includes(term) ?? false) ||
+                (a.id_recipe?.toString().includes(term) ?? false) ||
+                (a.id_user?.toString().includes(term) ?? false)
             );
         }
 
@@ -717,8 +717,8 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
     }
 
     loadUsersForAudits(): void {
-        // Obtener IDs únicos de usuarios que realmente aparecen en las auditorías
-        const userIds = [...new Set(this.audits.map(a => a.id_user))];
+        // Obtener IDs únicos de usuarios que realmente aparecen en las auditorías, filtrando nulos/indefinidos
+        const userIds = [...new Set(this.audits.map(a => a.id_user).filter(id => id !== undefined && id !== null))] as number[];
         
         // Filtrar solo los usuarios que no tenemos en caché
         const missingUserIds = userIds.filter(id => !this.userMap[id]);
@@ -768,11 +768,13 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
         });
     }
 
-    getUserName(userId: number): string {
+    getUserName(userId: number | undefined): string {
+        if (userId === undefined || userId === null) return 'Usuario desconocido';
         return this.userMap[userId] || `Usuario #${userId}`;
     }
 
-    getRecipeName(recipeId: number): string {
+    getRecipeName(recipeId: number | undefined): string {
+        if (recipeId === undefined || recipeId === null) return 'Receta eliminada';
         const recipe = this.recipes.find(r => r.id === recipeId);
         return recipe ? recipe.name : `Receta #${recipeId}`;
     }

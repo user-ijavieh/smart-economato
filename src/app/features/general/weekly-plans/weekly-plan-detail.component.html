@@ -309,7 +309,7 @@
     } @else if (filteredStockRequirements.length > 0) {
     <div class="stock-list">
       @for (req of filteredStockRequirements; track req.productId) {
-      <div class="stock-item" [class.insufficient]="!req.sufficient">
+      <div class="stock-item" [class.insufficient]="!req.sufficient || req.expirationRisk">
         <div class="item-info">
           <div class="item-name">
             {{ req.productName }}
@@ -318,6 +318,13 @@
               {{ 'COMMON.MERMA' | translate }}: {{ 100 - (req.availabilityPercentage || 100) | number:'1.0-0' }}%
               </span>
               }
+
+            @if (req.expirationRisk) {
+            <span class="merma-tag"
+              [title]="'Parte del stock de este producto caduca antes del inicio del plan.'">
+              Riesgo de caducidad
+            </span>
+            }
           </div>
           <div class="item-qty highlight">{{ 'WEEKLY_PLANS.DETAIL.GROSS_REQUIRED' | translate }}: <strong>{{ req.grossRequiredQuantity | number:'1.2-2'
               }}</strong></div>
@@ -349,11 +356,30 @@
             </span>
           </div>
           }
-          <div class="item-status" [class.insufficient]="!req.sufficient">
+
+          @if ((req.expiringBeforePlanStock || 0) > 0) {
+          <div class="item-qty">
+            <span class="stock-warning stock-expired-warning"
+              [title]="'Cantidad que caduca antes del plan y reduce el stock efectivo.'">
+              Stock que caduca antes del plan: <strong>{{ req.expiringBeforePlanStock | number:'1.2-2' }}</strong>
+            </span>
+          </div>
+          }
+
+          @if (req.nearestExpirationDate) {
+          <div class="item-qty secondary">
+            Próxima caducidad: {{ req.nearestExpirationDate }}
+          </div>
+          }
+          <div class="item-status" [class.insufficient]="!req.sufficient" [class.covered]="!req.sufficient && getUncoveredStockShortage(req) === 0">
             @if (req.sufficient) {
             <span class="sufficient-label">{{ 'WEEKLY_PLANS.DETAIL.HAVE_STOCK' | translate: { qty: (getRealAvailableStock(req) | number:'1.2-2') } }}</span>
             } @else {
-            <span class="insufficient-label">{{ 'WEEKLY_PLANS.DETAIL.INSUFFICIENT_STOCK' | translate: { qty: (getUncoveredStockShortage(req) | number:'1.2-2') } }}</span>
+@if (getUncoveredStockShortage(req) === 0) {  
+    <span class="covered-label">{{ 'WEEKLY_PLANS.DETAIL.COVERED_BY_ORDERS' | translate }}</span>  
+} @else {  
+    <span class="insufficient-label">{{ 'WEEKLY_PLANS.DETAIL.INSUFFICIENT_STOCK' | translate: { qty: (getUncoveredStockShortage(req) | number:'1.2-2') } }}</span>  
+}
             }
           </div>
 
