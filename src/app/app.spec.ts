@@ -14,10 +14,12 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title', async () => {
+  it('should render the app shell', () => {
     const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
+    fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, smart-economato');
+
+    expect(compiled.querySelector('app-toast')).toBeTruthy();
+    expect(compiled.querySelector('app-confirm-dialog')).toBeTruthy();
   });
 });
