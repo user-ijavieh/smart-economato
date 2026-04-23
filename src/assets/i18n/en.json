@@ -1,6 +1,7 @@
 {
   "COMMON": {
     "CANCEL": "Cancel",
+    "BACK": "Back",
     "CLOSE": "Close",
     "CONFIRM": "Confirm",
     "SAVE": "Save",
@@ -278,6 +279,7 @@
     "USERS": "Students",
     "MASTER_DATA": "Master Data",
     "PRODUCTS": "Products",
+    "TRACEABILITY": "Traceability",
     "PROFILE": "Profile"
   },
   "INVENTORY": {
@@ -322,6 +324,7 @@
     "EDIT_TITLE": "Edit Product",
     "CREATE_TITLE": "Add New Product",
     "NAME_LABEL": "Name *",
+    "NAME_PLACEHOLDER": "e.g. Hanging tomato",
     "CODE_LABEL": "Code *",
     "CODE_PLACEHOLDER": "Ex: ABC-123",
     "PRICE_LABEL": "Price (€) *",
@@ -453,7 +456,10 @@
     "ADMIN_TITLE": "Control center",
     "TABS": {
       "INCIDENTS": "Incidents",
-      "TYPES": "Types"
+      "TYPES": "Types",
+      "SUMMARY": "Summary",
+      "CHAT": "Chat ({{count}})",
+      "AUDITS": "Audits ({{count}})"
     },
     "ACTIONS": {
       "SHOW_FILTERS": "Show filters",
@@ -693,6 +699,7 @@
       "LOAD_ERROR": "Error loading orders",
       "REVIEW_CONFIRM_TITLE": "Move to review",
       "REVIEW_CONFIRM_MSG": "Move order #{{id}} to review?",
+      "MOVE_TO_REVIEW_CONFIRM": "Move order #{{id}} to review?",
       "REVIEWING_INFO": "Reviewing order #{{id}}",
       "REVIEW_SUCCESS": "Order moved to review",
       "UPDATE_STATUS_ERROR": "Error updating status",
@@ -2910,7 +2917,18 @@
       "TITLE_USER": "e.g. Reminder",
       "MESSAGE_ROLE": "Write the message users will see...",
       "MESSAGE_USER": "Write the message...",
-      "SEARCH_USER": "Search by name or username"
+      "SEARCH_USER": "Search by name or username",
+      "NO_TITLE": "(No title)",
+      "USER": "User"
+    },
+    "MESSAGES": {
+      "PREVIEW_ROLE": "Preview: Notification for {{role}} - \"{{title}}\"",
+      "PREVIEW_USER": "Preview: Notification for {{user}} - \"{{title}}\"",
+      "SEND_SUCCESS_ROLE": "Notification sent successfully to group {{role}}.",
+      "SEND_SUCCESS_USER": "Notification sent successfully to user {{user}}.",
+      "SEND_SUCCESS_TITLE": "Notification sent",
+      "SEND_ERROR": "Could not send the notification.",
+      "SEND_ERROR_TITLE": "Send error"
     },
     "ERRORS": {
       "TITLE_REQUIRED": "Title is required and must have at most 100 characters.",

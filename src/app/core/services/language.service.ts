@@ -12,7 +12,7 @@ type SupportedLanguage = (typeof AVAILABLE_LANGUAGES)[number];
 export class LanguageService {
   private readonly translate = inject(TranslateService);
   readonly supportedLanguages = AVAILABLE_LANGUAGES;
-  readonly defaultLanguage: SupportedLanguage = 'en';
+  readonly defaultLanguage: SupportedLanguage = 'es';
 
   constructor() {
     this.translate.addLangs(this.supportedLanguages as unknown as string[]);
@@ -22,14 +22,22 @@ export class LanguageService {
 
   initLanguage(): void {
     const persistedLang = this.getStoredLanguage();
-    // Si hay un idioma guardado, lo usamos, pero si es la primera vez o queremos forzar el cambio:
-    const selectedLanguage = persistedLang || this.defaultLanguage;
-    this.translate.use(selectedLanguage);
     
-    // Si queremos asegurar el cambio ahora mismo, podemos forzarlo:
-    if (!persistedLang) {
-      this.setLanguage('en');
+    if (persistedLang) {
+      this.translate.use(persistedLang);
+      return;
     }
+
+    // Si no hay idioma guardado, intentamos detectar el del navegador
+    const browserLang = this.translate.getBrowserLang();
+    const detectedLang = (browserLang && (this.supportedLanguages as readonly string[]).includes(browserLang))
+      ? (browserLang as SupportedLanguage)
+      : this.defaultLanguage;
+
+    this.translate.use(detectedLang);
+    
+    // Guardamos la detección inicial para que sea consistente en la sesión
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, detectedLang);
   }
 
   setLanguage(language: string): void {

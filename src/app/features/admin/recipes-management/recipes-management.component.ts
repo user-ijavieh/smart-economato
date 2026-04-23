@@ -335,20 +335,25 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
     onToggleHiddenFromModal(): void {
         if (!this.selectedRecipe) return;
 
-        const currentlyHidden = this.showHiddenRecipes;
-        const newHiddenState = !currentlyHidden;
+        const isCurrentlyHidden = this.selectedRecipe.isHidden;
+        const newHiddenState = !isCurrentlyHidden;
         const actionTextKey = newHiddenState ? 'COMMON.HIDDEN' : 'COMMON.SHOWN';
         const actionText = this.translate.instant(actionTextKey).toLowerCase();
 
         this.recipeService.toggleHidden(this.selectedRecipe.id, newHiddenState).subscribe({
             next: () => {
-                this.messageService.showSuccess(this.translate.instant('RECIPE_MGMT.MESSAGES.TOGGLE_HIDDEN_SUCCESS', { name: this.selectedRecipe!.name, action: actionText }));
+                this.messageService.showSuccess(this.translate.instant('RECIPE_MGMT.MESSAGES.TOGGLE_HIDDEN_SUCCESS', { 
+                    name: this.selectedRecipe!.name, 
+                    action: actionText 
+                }));
                 this.closeEditModal();
                 this.loadRecipes();
                 this.loadStats();
             },
             error: (err: any) => {
-                const errorMessage = err.error?.message || err.message || this.translate.instant('RECIPE_MGMT.MESSAGES.TOGGLE_HIDDEN_ERROR', { action: actionText });
+                const errorMessage = err.error?.message || err.message || this.translate.instant('RECIPE_MGMT.MESSAGES.TOGGLE_HIDDEN_ERROR', { 
+                    action: actionText 
+                });
                 this.messageService.showError(errorMessage);
             }
         });
