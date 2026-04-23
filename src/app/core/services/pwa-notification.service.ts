@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { LoggerService } from './logger.service';
 
 export interface NotificationOptions {
   title: string;
@@ -22,6 +23,7 @@ interface NotificationAction {
   providedIn: 'root',
 })
 export class PwaNotificationService {
+  private readonly logger = inject(LoggerService);
   private permission$ = new BehaviorSubject<NotificationPermission | null>(
     this.getNotificationPermission()
   );
@@ -63,7 +65,7 @@ export class PwaNotificationService {
         this.permission$.next(permission);
         return permission === 'granted';
       } catch (error) {
-        console.error('[PWA Notification] Error requesting permission:', error);
+        this.logger.error('[PWA Notification] Error requesting permission:', error);
         return false;
       }
     }
@@ -104,7 +106,7 @@ export class PwaNotificationService {
 
       return null;
     } catch (error) {
-      console.error('[PWA Notification] Error showing notification:', error);
+      this.logger.error('[PWA Notification] Error showing notification:', error);
       return null;
     }
   }
@@ -170,7 +172,7 @@ export class PwaNotificationService {
       const notifications = await registration.getNotifications({ tag });
       notifications.forEach((n) => n.close());
     } catch (error) {
-      console.error('[PWA Notification] Error closing notification:', error);
+      this.logger.error('[PWA Notification] Error closing notification:', error);
     }
   }
 
@@ -185,7 +187,7 @@ export class PwaNotificationService {
       const notifications = await registration.getNotifications();
       notifications.forEach((n) => n.close());
     } catch (error) {
-      console.error('[PWA Notification] Error closing all notifications:', error);
+      this.logger.error('[PWA Notification] Error closing all notifications:', error);
     }
   }
 
@@ -199,7 +201,7 @@ export class PwaNotificationService {
       const registration = await navigator.serviceWorker.ready;
       return await registration.getNotifications();
     } catch (error) {
-      console.error('[PWA Notification] Error getting notifications:', error);
+      this.logger.error('[PWA Notification] Error getting notifications:', error);
       return [];
     }
   }
@@ -233,7 +235,7 @@ export class PwaNotificationService {
       });
       return subscription;
     } catch (error) {
-      console.error('[PWA Notification] Error subscribing to push:', error);
+      this.logger.error('[PWA Notification] Error subscribing to push:', error);
       return null;
     }
   }
@@ -253,7 +255,7 @@ export class PwaNotificationService {
       }
       return false;
     } catch (error) {
-      console.error('[PWA Notification] Error unsubscribing:', error);
+      this.logger.error('[PWA Notification] Error unsubscribing:', error);
       return false;
     }
   }

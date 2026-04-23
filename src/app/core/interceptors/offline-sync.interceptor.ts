@@ -10,11 +10,13 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, take, filter, switchMap } from 'rxjs/operators';
 import { OfflineSyncService } from '../services/offline-sync.service';
 import { PwaNotificationService } from '../services/pwa-notification.service';
+import { LoggerService } from '../services/logger.service';
 
 @Injectable()
 export class OfflineSyncInterceptor implements HttpInterceptor {
   private offlineSync = inject(OfflineSyncService);
   private notifications = inject(PwaNotificationService);
+  private logger = inject(LoggerService);
   private isRefreshing = new BehaviorSubject<boolean>(false);
   private refreshTokenSubject = new BehaviorSubject<any>(null);
 
@@ -95,7 +97,7 @@ export class OfflineSyncInterceptor implements HttpInterceptor {
       errorMessage = `Error ${error.status}: ${error.error?.message || error.statusText}`;
     }
 
-    console.error('[SyncInterceptor]', errorMessage);
+    this.logger.error('[SyncInterceptor]', errorMessage);
 
     // Show notification for critical errors
     if (error.status >= 500) {

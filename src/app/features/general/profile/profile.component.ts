@@ -12,6 +12,7 @@ import { UserPresenceSnapshot } from '../../../shared/models/presence.model';
 import { UserActivityService } from '../../../core/services/user-activity.service';
 import { UserActivityLogResponse } from '../../../shared/models/user-activity.model';
 import { MessageService } from '../../../core/services/message.service';
+import { LoggerService } from '../../../core/services/logger.service';
 
 @Component({
   selector: 'app-profile',
@@ -21,6 +22,7 @@ import { MessageService } from '../../../core/services/message.service';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit, OnDestroy {
+  private logger = inject(LoggerService);
   private userService = inject(UserService);
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
@@ -138,7 +140,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error al cargar alumnos', err);
+        this.logger.error('Error al cargar alumnos', err);
         this.loadingStudents = false;
         this.cdr.detectChanges();
       }
@@ -229,7 +231,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.loadStudents();
         },
         error: (err) => {
-          console.error(err);
+          this.logger.error(err);
           alert('Error al intentar dar permisos temporales.');
         }
       });
@@ -257,7 +259,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.loadStudents();
         },
         error: (err) => {
-          console.error(err);
+          this.logger.error(err);
           alert('Error al intentar revocar permisos temporales.');
         }
       });
@@ -300,7 +302,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error loading students activity', err);
+        this.logger.error('Error loading students activity', err);
         this.activityLoading = false;
         this.cdr.detectChanges();
       }

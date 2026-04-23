@@ -4,6 +4,7 @@ import { catchError, throwError } from 'rxjs';
 import { Role, hasPermission, getUrlPattern } from '../../shared/models/role-permissions';
 import { environment } from '../../../environments/environment';
 import { StorageService } from '../services/storage.service';
+import { LoggerService } from '../services/logger.service';
 
 const SESSION_KEYS_TO_CLEAR = [
   'auth_token',
@@ -39,6 +40,7 @@ function isAllowedUserScopedRequest(method: string, apiPath: string, userRole: R
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const storageService = inject(StorageService);
+  const logger = inject(LoggerService);
   const token = storageService.get('auth_token');
   const userRole = storageService.get('user_role') as Role;
   const requestUrl = req.url;
@@ -71,7 +73,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           if (error.status === 401) {
             resetSessionAndRedirectToLogin(storageService);
           } else if (error.status === 403) {
-            console.error('Acceso denegado:', error.error?.message);
+            logger.error('Acceso denegado:', error.error?.message);
           }
           return throwError(() => error);
         })
@@ -81,7 +83,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const urlPattern = getUrlPattern(apiPath);
 
     if (!hasPermission(userRole, method, urlPattern)) {
-      console.error('[AUTH INTERCEPTOR] FORBIDDEN:', { method, url: req.url, pattern: urlPattern, role: userRole });
+      logger.error('[AUTH INTERCEPTOR] FORBIDDEN:', { method, url: req.url, pattern: urlPattern, role: userRole });
       return throwError(() => new HttpErrorResponse({
         error: { message: `No tienes permisos para realizar esta acción. Rol: ${userRole}` },
         status: 403,
@@ -96,7 +98,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         // 401: Token inválido/expirado - logout automático
         resetSessionAndRedirectToLogin(storageService);
       } else if (error.status === 403) {
-        console.error('Acceso denegado:', error.error?.message);
+        logger.error('Acceso denegado:', error.error?.message);
       }
       return throwError(() => error);
     })

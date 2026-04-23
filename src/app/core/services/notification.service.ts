@@ -6,6 +6,7 @@ import { environment } from '../../../environments/environment';
 import { MessageService } from './message.service';
 import { NotificationApiService, NotificationResponseDTO } from './notification-api.service';
 import { StorageService } from './storage.service';
+import { LoggerService } from './logger.service';
 
 export type AppRole = 'ADMIN' | 'CHEF' | 'ELEVATED' | 'USER';
 export type RoleEscalationReason = 'MANUAL_GRANTED' | 'MANUAL_REVOKED' | 'AUTO_EXPIRED';
@@ -43,6 +44,7 @@ export class NotificationService {
   private readonly notificationApiService = inject(NotificationApiService);
   private readonly ngZone = inject(NgZone);
   private readonly storageService = inject(StorageService);
+  private readonly logger = inject(LoggerService);
 
   private client?: Client;
   private roleSubscription?: StompSubscription;
@@ -130,7 +132,7 @@ export class NotificationService {
       },
       onStompError: frame => {
         const message = frame.headers['message'] || frame.body || '';
-        console.error('Notification STOMP error:', message);
+        this.logger.error('Notification STOMP error:', message);
 
         if (/unauthorized|jwt|401/i.test(message)) {
           this.disconnect();
@@ -138,11 +140,11 @@ export class NotificationService {
       },
       onWebSocketClose: closeEvent => {
         if (closeEvent.code !== 1000) {
-          console.warn('Notification websocket closed unexpectedly:', closeEvent.reason || closeEvent.code);
+          this.logger.warn('Notification websocket closed unexpectedly:', closeEvent.reason || closeEvent.code);
         }
       },
       onWebSocketError: event => {
-        console.error('Notification websocket transport error:', event);
+        this.logger.error('Notification websocket transport error:', event);
       }
     });
 
@@ -237,7 +239,7 @@ export class NotificationService {
         this.showIncomingToast(normalized);
       });
     } catch (error) {
-      console.error('Invalid notification payload:', error);
+      this.logger.error('Invalid notification payload:', error);
     }
   }
 
@@ -255,7 +257,7 @@ export class NotificationService {
         this.notificationsSubject.next(merged);
       },
       error: error => {
-        console.warn('Could not load persisted notifications:', error);
+        this.logger.warn('Could not load persisted notifications:', error);
       }
     });
   }
@@ -364,7 +366,7 @@ export class NotificationService {
         void audioContext.close();
       };
     } catch (error) {
-      console.warn('Could not play notification tone:', error);
+      this.logger.warn('Could not play notification tone:', error);
     }
   }
 
