@@ -1,5 +1,5 @@
 import { Component, inject, HostListener, ViewChild, ChangeDetectionStrategy, signal, DestroyRef } from '@angular/core';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, UpperCasePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterModule, RouterOutlet, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
@@ -11,11 +11,14 @@ import { slideInAnimation } from '../../animations/route-animations';
 import { NotificationService, SessionNotification } from '../../../core/services/notification.service';
 import { PresenceTrackingService } from '../../../core/services/presence-tracking.service';
 import { HttpQueryCacheService } from '../../../core/services/http-query-cache.service';
+import { StorageService } from '../../../core/services/storage.service';
+import { LanguageService } from '../../../core/services/language.service';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [AsyncPipe, RouterModule, SidebarComponent, BaseModalComponent],
+  imports: [AsyncPipe, UpperCasePipe, RouterModule, SidebarComponent, BaseModalComponent, TranslateModule],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.css',
   animations: [slideInAnimation],
@@ -29,13 +32,16 @@ export class LayoutComponent {
   private notificationService = inject(NotificationService);
   private presenceTrackingService = inject(PresenceTrackingService);
   private httpQueryCacheService = inject(HttpQueryCacheService);
+  private storageService = inject(StorageService);
+  private languageService = inject(LanguageService);
+  private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
 
-  sidebarOpen = window.innerWidth > 800;
-  mobileMenuOpen = false;
-  isMobile = window.innerWidth <= 800;
+  public sidebarOpen: boolean = window.innerWidth > 800;
+  public mobileMenuOpen: boolean = false;
+  public isMobile = window.innerWidth <= 800;
   showLogoutModal = false;
   showClearCacheModal = false;
 
@@ -45,7 +51,7 @@ export class LayoutComponent {
   readonly isNotificationPanelRendered = signal(false);
   readonly isNotificationPanelClosing = signal(false);
   readonly notificationPulse = signal(false);
-  readonly showUtilities = signal<boolean>(localStorage.getItem('layout_utilities_visible') !== 'false');
+  readonly showUtilities = signal<boolean>(this.storageService.get('layout_utilities_visible', 'local') !== 'false');
 
   private notificationCloseTimer?: ReturnType<typeof setTimeout>;
 
@@ -112,6 +118,15 @@ export class LayoutComponent {
     if (!this.isMobile) {
       this.mobileMenuOpen = false;
     }
+  }
+
+  getActiveLanguage(): string {
+    return this.languageService.getActiveLanguage();
+  }
+
+  toggleLanguage(): void {
+    const current = this.getActiveLanguage();
+    this.languageService.setLanguage(current === 'es' ? 'en' : 'es');
   }
 
   private navigateWithShortcut(direction: number) {
@@ -197,18 +212,18 @@ export class LayoutComponent {
   confirmClearCache(): void {
     this.httpQueryCacheService.clearAll();
     this.showClearCacheModal = false;
-    this.messageService.showSuccess('Cache limpiada. Si habias datos antiguos, se recargaran en la siguiente consulta.');
+    this.messageService.showSuccess(this.translate.instant('WELCOME.CACHE_CLEARED_SUCCESS'));
   }
 
   toggleUtilities(): void {
     const newValue = !this.showUtilities();
     this.showUtilities.set(newValue);
-    localStorage.setItem('layout_utilities_visible', String(newValue));
+    this.storageService.set('layout_utilities_visible', String(newValue), 'local');
   }
 
   closeUtilities(): void {
     this.showUtilities.set(false);
-    localStorage.setItem('layout_utilities_visible', 'false');
+    this.storageService.set('layout_utilities_visible', 'false', 'local');
   }
 
   toggleNotificationPanel(event: MouseEvent): void {
@@ -286,11 +301,11 @@ export class LayoutComponent {
     const diffMinutes = Math.floor(diffMs / 60000);
 
     if (diffMinutes < 1) {
-      return 'Ahora';
+      return this.translate.instant('COMMON.NOW') || 'Ahora';
     }
 
     if (diffMinutes < 60) {
-      return `Hace ${diffMinutes} min`;
+      return this.translate.instant('COMMON.AGO_MINS', { count: diffMinutes }) || `Hace ${diffMinutes} min`;
     }
 
     if (diffMinutes < 24 * 60) {

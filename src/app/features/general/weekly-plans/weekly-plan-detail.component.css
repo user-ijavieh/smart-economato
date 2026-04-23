@@ -235,6 +235,18 @@
   background: var(--brand-primary);
 }
 
+:host-context(body.admin-theme) .tab-btn.active {
+  color: var(--color-accent-admin);
+}
+
+:host-context(body.admin-theme) .tab-btn.active::after {
+  background: var(--color-accent-admin);
+}
+
+:host-context(body.admin-theme) .tab-btn:focus-visible {
+  outline-color: var(--color-accent-admin);
+}
+
 /* KANBAN BOARD */
 .kanban-board {
   display: grid;

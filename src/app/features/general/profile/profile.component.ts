@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { UserService } from '../../../core/services/user.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../shared/models/user.model';
@@ -12,21 +13,24 @@ import { UserPresenceSnapshot } from '../../../shared/models/presence.model';
 import { UserActivityService } from '../../../core/services/user-activity.service';
 import { UserActivityLogResponse } from '../../../shared/models/user-activity.model';
 import { MessageService } from '../../../core/services/message.service';
+import { LoggerService } from '../../../core/services/logger.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseModalComponent],
+  imports: [CommonModule, FormsModule, BaseModalComponent, TranslateModule],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit, OnDestroy {
+  private logger = inject(LoggerService);
   private userService = inject(UserService);
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
   private webSocketService = inject(WebSocketService);
   private userActivityService = inject(UserActivityService);
   private messageService = inject(MessageService);
+  private translate = inject(TranslateService);
   private presenceSubscription?: Subscription;
 
   currentUser: User | null = null;
@@ -98,7 +102,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   loadCurrentUser() {
     this.currentUser = {
       id: this.authService.getUserId() || 0,
-      name: this.authService.getName() || 'Usuario',
+      name: this.authService.getName() || this.translate.instant('COMMON.USER'),
       role: (this.authService.getRole() as any) || 'USER',
       user: '' 
     };
@@ -138,7 +142,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error al cargar alumnos', err);
+        this.logger.error('Error al cargar alumnos', err);
         this.loadingStudents = false;
         this.cdr.detectChanges();
       }
@@ -211,7 +215,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     if (!this.selectedStudent) return;
     
     if (!this.durationInput || this.durationInput < 1) {
-       alert('Introduzca una duración válida en minutos.');
+       this.messageService.showError(this.translate.instant('PROFILE.INVALID_DURATION'));
        return;
     }
 
@@ -229,16 +233,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.loadStudents();
         },
         error: (err) => {
-          console.error(err);
-          alert('Error al intentar dar permisos temporales.');
+           this.logger.error(err);
+          this.messageService.showError(this.translate.instant('PROFILE.ESCALATE_ERROR'));
         }
       });
   }
 
   async deescalate(student: User): Promise<void> {
     const confirmed = await this.messageService.confirm(
-      '¿Revocar permisos temporales?',
-      `¿Seguro que quieres revocar los permisos de "${student.name}"?`
+      this.translate.instant('PROFILE.DEESCALATE_CONFIRM_TITLE'),
+      this.translate.instant('PROFILE.DEESCALATE_CONFIRM_MSG', { name: student.name })
     );
 
     if (!confirmed) {
@@ -257,8 +261,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.loadStudents();
         },
         error: (err) => {
-          console.error(err);
-          alert('Error al intentar revocar permisos temporales.');
+         this.logger.error(err);
+          this.messageService.showError(this.translate.instant('PROFILE.DEESCALATE_ERROR'));
         }
       });
   }
@@ -300,7 +304,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error loading students activity', err);
+        this.logger.error('Error loading students activity', err);
         this.activityLoading = false;
         this.cdr.detectChanges();
       }
@@ -310,11 +314,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
   formatActivityAction(action: string): string {
     switch (action) {
       case 'CONNECTED':
-        return 'Conectado';
+        return this.translate.instant('PROFILE.ACTIVITY.CONNECTED');
       case 'DISCONNECTED':
-        return 'Desconectado';
+        return this.translate.instant('PROFILE.ACTIVITY.DISCONNECTED');
       case 'SCREEN_CHANGED':
-        return 'Cambio de pantalla';
+        return this.translate.instant('PROFILE.ACTIVITY.SCREEN_CHANGED');
       default:
         return action;
     }
@@ -327,24 +331,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   private translateScreenName(screen?: string | null): string {
-    if (!screen) return 'Sin datos';
+    if (!screen) return this.translate.instant('PROFILE.SCREENS.NONE');
 
-    const map: Record<string, string> = {
-      DASHBOARD: 'Inicio',
-      USER_MANAGEMENT: 'Gestión de usuarios',
-      PRODUCT_MANAGEMENT: 'Gestión de productos',
-      ORDER_MANAGEMENT: 'Gestión de pedidos',
-      STOCK_MANAGEMENT: 'Gestión de stock',
-      RECIPE_MANAGEMENT: 'Gestión de recetas',
-      NOTIFICATIONS_MANAGEMENT: 'Gestión de notificaciones',
-      INCIDENTS: 'Incidencias',
-      ORDERS: 'Pedidos',
-      ORDER_RECEPTION: 'Recepción de pedidos',
-      RECIPES: 'Recetas',
-      INVENTORY: 'Inventario',
-      PROFILE: 'Perfil'
-    };
-
-    return map[screen] || screen.replaceAll('_', ' ');
+    const key = `PROFILE.SCREENS.${screen}`;
+    const translated = this.translate.instant(key);
+    
+    // If translation doesn't exist, fallback to original or format it
+    if (translated === key) {
+        return screen.replaceAll('_', ' ');
+    }
+    
+    return translated;
   }
 }

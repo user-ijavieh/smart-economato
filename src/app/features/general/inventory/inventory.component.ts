@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef, OnDestroy } from '@angula
 import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { FormsModule } from '@angular/forms';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { ProductService } from '../../../core/services/product.service';
 import { MessageService } from '../../../core/services/message.service';
 import { SupplierService } from '../../../core/services/supplier.service';
@@ -16,6 +17,7 @@ import { BarcodeScannerComponent } from '../barcode-scanner/barcode-scanner.comp
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { ProductBatchService } from '../../../core/services/product-batch.service';
 import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.model';
+import { LoggerService } from '../../../core/services/logger.service';
 import { ScrollService } from '../../../core/services/scroll.service';
 import { finalize, Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
@@ -24,7 +26,7 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductFormComponent, ProductEditModalComponent, ProductCreateModalComponent, ProductDetailModalComponent, BarcodeScannerComponent, BaseModalComponent],
+  imports: [CommonModule, FormsModule, ProductFormComponent, ProductEditModalComponent, ProductCreateModalComponent, ProductDetailModalComponent, BarcodeScannerComponent, BaseModalComponent, TranslateModule],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.css',
   animations: [
@@ -40,6 +42,7 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
   ]
 })
 export class InventoryComponent implements OnInit, OnDestroy {
+  private logger = inject(LoggerService);
   private productService = inject(ProductService);
   private supplierService = inject(SupplierService);
   messageService = inject(MessageService);
@@ -48,6 +51,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
   private cdr = inject(ChangeDetectorRef);
   private scrollService = inject(ScrollService);
+  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   // Listas de datos
@@ -154,7 +158,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('❌ Error loading products:', err);
+        this.logger.error('❌ Error loading products:', err);
         this.loading = false;
         this.initialLoad = false;
         this.cdr.detectChanges();
@@ -202,15 +206,15 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   async onWithdrawBatch(batch: ProductBatchResponseDTO): Promise<void> {
     const confirmed = await this.messageService.confirm(
-      'Retirar lote',
-      `¿Estás seguro de que deseas retirar el lote ${batch.id} de "${batch.productName}"? Se registrará como merma en el ledger.`
+      this.translate.instant('BATCHES.WITHDRAW_CONFIRM_TITLE'),
+      this.translate.instant('BATCHES.WITHDRAW_CONFIRM_MSG', { id: batch.id, name: batch.productName })
     );
 
     if (!confirmed) return;
 
     this.productBatchService.withdrawBatch(batch.id).subscribe({
       next: () => {
-        this.messageService.showSuccess('Lote retirado correctamente');
+        this.messageService.showSuccess(this.translate.instant('BATCHES.WITHDRAW_SUCCESS'));
         this.loadExpirations();
         this.loadProducts(); // Reload main stock
       },
@@ -248,7 +252,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         this.suppliers = page.content;
       },
       error: (err) => {
-        console.error('Error cargando proveedores:', err);
+        this.logger.error('Error cargando proveedores:', err);
         // No mostrar mensaje de error al usuario, no es crítico
         this.suppliers = [];
       }
@@ -278,7 +282,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('❌ Error searching products:', err);
+        this.logger.error('❌ Error searching products:', err);
         this.loading = false;
         this.initialLoad = false;
         this.cdr.detectChanges();
@@ -302,8 +306,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   async exportToExcel(): Promise<void> {
     const confirmed = await this.messageService.confirm(
-      'Confirmar descarga',
-      '¿Deseas descargar este archivo Excel?'
+      this.translate.instant('PRODUCT_MGMT.PDF_CONFIRM_TITLE'),
+      this.translate.instant('PRODUCT_MGMT.PDF_CONFIRM_MSG_EXCEL')
     );
     if (!confirmed) return;
 
@@ -315,7 +319,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         link.download = `productos_${new Date().toISOString().split('T')[0]}.xlsx`;
         link.click();
         window.URL.revokeObjectURL(url);
-        this.messageService.showSuccess('Excel descargado correctamente');
+        this.messageService.showSuccess(this.translate.instant('COMMON.EXPORT_SUCCESS'));
       },
       error: (err) => {
         // Handled by interceptor
@@ -366,7 +370,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     // Pero lo implementamos por compatibilidad
     this.productService.toggleHidden(this.selectedProduct.id, true).subscribe({
       next: () => {
-        this.messageService.showSuccess('Producto desactivado correctamente');
+        this.messageService.showSuccess(this.translate.instant('PRODUCT_MGMT.MESSAGES.TOGGLE_HIDDEN_SUCCESS_SINGLE'));
         this.showEditModal = false;
         this.selectedProduct = null;
         this.loadProducts();
@@ -385,7 +389,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
     this.productService.update(editingProductId, productData).subscribe({
       next: (response) => {
-        this.messageService.showSuccess('Producto actualizado correctamente');
+        this.messageService.showSuccess(this.translate.instant('PRODUCT_MGMT.MESSAGES.UPDATE_SUCCESS', { name: productData.name }));
 
         // Close child modal and preserve parent detail modal state when stacked.
         this.showEditModal = false;
@@ -412,7 +416,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   onSaveProduct(productData: ProductRequest): void {
     this.productService.create(productData).subscribe({
       next: () => {
-        this.messageService.showSuccess('Producto creado correctamente');
+        this.messageService.showSuccess(this.translate.instant('PRODUCT_MGMT.MESSAGES.CREATE_SUCCESS', { name: productData.name }));
         this.showCreateModal = false;
         this.loadProducts();
       },
@@ -473,11 +477,11 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
     this.productService.update(this.selectedProduct.id, productRequest).subscribe({
       next: () => {
-        this.messageService.showSuccess('Producto desactivado correctamente');
+        this.messageService.showSuccess(this.translate.instant('PRODUCT_MGMT.MESSAGES.TOGGLE_HIDDEN_SUCCESS_SINGLE'));
         this.finalizeSubmit();
       },
       error: (err) => {
-        console.error('Error deactivating product:', err);
+        this.logger.error('Error deactivating product:', err);
       }
     });
   }

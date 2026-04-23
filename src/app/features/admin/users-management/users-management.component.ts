@@ -1,10 +1,12 @@
 import { Component, OnDestroy, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { forkJoin, of, switchMap, takeUntil } from 'rxjs';
 import { Subscription } from 'rxjs';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { UserService } from '../../../core/services/user.service';
+import { LoggerService } from '../../../core/services/logger.service';
 import { MessageService } from '../../../core/services/message.service';
 import { User, UserRequest, BatchAssignResponse } from '../../../shared/models/user.model';
 import { UserFormModalComponent } from './user-form-modal/user-form-modal.component';
@@ -25,12 +27,14 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
         CommonModule,
         FormsModule,
         UserFormModalComponent,
-        BaseModalComponent
+        BaseModalComponent,
+        TranslateModule
     ],
     templateUrl: './users-management.component.html',
     styleUrl: './users-management.component.css'
 })
 export class UsersManagementComponent implements OnInit, OnDestroy {
+    private readonly logger = inject(LoggerService);
     private userService = inject(UserService);
     private cdr = inject(ChangeDetectorRef);
     private scrollService = inject(ScrollService);
@@ -38,6 +42,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
     private userActivityService = inject(UserActivityService);
     private presenceTrackingService = inject(PresenceTrackingService);
     private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
+    private translate = inject(TranslateService);
     messageService = inject(MessageService);
     private destroy$ = new Subject<void>();
     private presenceSubscription?: Subscription;
@@ -181,8 +186,8 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
             },
             error: (err) => {
-                console.error('Error loading teachers:', err);
-                this.messageService.showError('Error al cargar los profesores');
+                this.logger.error('Error loading teachers:', err);
+                this.messageService.showError(this.translate.instant('USERS.MESSAGES.ERROR_LOADING_TEACHERS'));
             }
         });
     }
@@ -210,7 +215,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                     this.cdr.detectChanges();
                 },
                 error: (err) => {
-                    console.error('Error searching users:', err);
+                    this.logger.error('Error searching users:', err);
                     this.messageService.showError('Error al buscar usuarios');
                     this.loading = false;
                     this.cdr.detectChanges();
@@ -232,8 +237,8 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                     this.cdr.detectChanges();
                 },
                 error: (err) => {
-                    console.error('Error loading hidden users:', err);
-                    this.messageService.showError('Error al cargar los usuarios desactivados');
+                    this.logger.error('Error loading hidden users:', err);
+                    this.messageService.showError(this.translate.instant('USERS.MESSAGES.ERROR_LOADING_HIDDEN_USERS'));
                     this.loading = false;
                 }
             });
@@ -248,8 +253,8 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                     this.cdr.detectChanges();
                 },
                 error: (err) => {
-                    console.error('Error loading users:', err);
-                    this.messageService.showError('Error al cargar los usuarios');
+                    this.logger.error('Error loading users:', err);
+                    this.messageService.showError(this.translate.instant('USERS.MESSAGES.ERROR_LOADING_USERS'));
                     this.loading = false;
                 }
             });
@@ -266,8 +271,8 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                     this.cdr.detectChanges();
                 },
                 error: (err) => {
-                    console.error('Error loading users:', err);
-                    this.messageService.showError('Error al cargar los usuarios');
+                    this.logger.error('Error loading users:', err);
+                    this.messageService.showError(this.translate.instant('USERS.MESSAGES.LOAD_USERS_ERROR'));
                     this.loading = false;
                 }
             });
@@ -467,8 +472,8 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
             },
             error: (err) => {
-                console.error('Error loading user activity:', err);
-                this.messageService.showError('Error al cargar el historial de actividad');
+                this.logger.error('Error loading user activity:', err);
+                this.messageService.showError(this.translate.instant('USERS.MESSAGES.ERROR_LOADING_ACTIVITY'));
                 this.activityLoading = false;
                 this.cdr.detectChanges();
             }
@@ -536,35 +541,36 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
     }
 
     private translateScreenName(screen?: string | null): string {
-        if (!screen) return 'Sin datos';
+        if (!screen) return this.translate.instant('USERS.PRESENCE.NO_DATA');
 
         const map: Record<string, string> = {
-            DASHBOARD: 'Inicio',
-            USER_MANAGEMENT: 'Gestión de usuarios',
-            PRODUCT_MANAGEMENT: 'Gestión de productos',
-            ORDER_MANAGEMENT: 'Gestión de pedidos',
-            STOCK_MANAGEMENT: 'Gestión de stock',
-            RECIPE_MANAGEMENT: 'Gestión de recetas',
-            NOTIFICATIONS_MANAGEMENT: 'Gestión de notificaciones',
-            INCIDENTS: 'Incidencias',
-            ORDERS: 'Pedidos',
-            ORDER_RECEPTION: 'Recepción de pedidos',
-            RECIPES: 'Recetas',
-            INVENTORY: 'Inventario',
-            PROFILE: 'Perfil'
+            DASHBOARD: 'NAV.DASHBOARD',
+            USER_MANAGEMENT: 'NAV.USERS',
+            PRODUCT_MANAGEMENT: 'NAV.PRODUCTS',
+            ORDER_MANAGEMENT: 'NAV.ORDERS',
+            STOCK_MANAGEMENT: 'NAV.STOCK',
+            RECIPE_MANAGEMENT: 'NAV.RECIPES',
+            NOTIFICATIONS_MANAGEMENT: 'NAV.NOTIFICATIONS',
+            INCIDENTS: 'NAV.INCIDENTS',
+            ORDERS: 'NAV.ORDERS_SIMPLE',
+            ORDER_RECEPTION: 'NAV.ORDER_RECEPTION',
+            RECIPES: 'NAV.RECIPES_SIMPLE',
+            INVENTORY: 'NAV.INVENTORY',
+            PROFILE: 'NAV.PROFILE'
         };
 
-        return map[screen] || screen.replaceAll('_', ' ');
+        const key = map[screen];
+        return key ? this.translate.instant(key) : screen.replaceAll('_', ' ');
     }
 
     formatActivityAction(action: string): string {
         switch (action) {
             case 'CONNECTED':
-                return 'Conectado';
+                return this.translate.instant('USERS.PRESENCE.ACTIONS.CONNECTED');
             case 'DISCONNECTED':
-                return 'Desconectado';
+                return this.translate.instant('USERS.PRESENCE.ACTIONS.DISCONNECTED');
             case 'SCREEN_CHANGED':
-                return 'Cambio de pantalla';
+                return this.translate.instant('USERS.PRESENCE.ACTIONS.SCREEN_CHANGED');
             default:
                 return action;
         }
@@ -602,8 +608,8 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
             },
             error: (err) => {
-                console.error('Error loading assignment data:', err);
-                this.messageService.showError('Error al cargar los datos de asignacion');
+                this.logger.error('Error loading assignment data:', err);
+                this.messageService.showError(this.translate.instant('USERS.MESSAGES.ERROR_LOADING_ASSIGNMENTS'));
                 this.loadingAssignments = false;
                 this.cdr.detectChanges();
             }
@@ -630,7 +636,10 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
             event.dataTransfer.effectAllowed = 'move';
 
             const dragBadge = document.createElement('div');
-            dragBadge.textContent = `${this.draggedStudentIds.length} alumno${this.draggedStudentIds.length > 1 ? 's' : ''}`;
+            const studentsLabel = this.draggedStudentIds.length > 1 
+                ? this.translate.instant('USERS.ASSIGNMENTS.STUDENTS_PLURAL') 
+                : this.translate.instant('USERS.ASSIGNMENTS.STUDENT_SINGULAR');
+            dragBadge.textContent = `${this.draggedStudentIds.length} ${studentsLabel}`;
             dragBadge.style.position = 'fixed';
             dragBadge.style.top = '-1000px';
             dragBadge.style.left = '-1000px';
@@ -976,9 +985,9 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 const totalFailed = responses.reduce((sum, r) => sum + (r.failedStudentIds?.length || 0), 0);
 
                 if (totalFailed > 0) {
-                    this.messageService.showWarning(`${totalProcessed} alumnos asignados, ${totalFailed} fallaron`);
+                    this.messageService.showWarning(this.translate.instant('USERS.MESSAGES.BATCH_PARTIAL_SUCCESS', { processed: totalProcessed, failed: totalFailed }));
                 } else {
-                    this.messageService.showSuccess(`${totalProcessed} alumnos asignados correctamente`);
+                    this.messageService.showSuccess(this.translate.instant('USERS.MESSAGES.BATCH_SUCCESS', { count: totalProcessed }));
                 }
 
                 this.assigningInProgress = false;
@@ -986,8 +995,8 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 this.loadAssignmentData();
             },
             error: (err) => {
-                console.error('Error assigning students:', err);
-                this.messageService.showError('Error al asignar los alumnos');
+                this.logger.error('Error assigning students:', err);
+                this.messageService.showError(this.translate.instant('USERS.MESSAGES.ERROR_ASSIGNING'));
                 this.assigningInProgress = false;
                 this.cdr.detectChanges();
             }
@@ -999,7 +1008,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
     openCreateModal(): void {
         this.selectedUser = null;
         this.showFormModal = true;
-        this.presenceTrackingService.reportModal('Creación de usuario');
+        this.presenceTrackingService.reportModal(this.translate.instant('USERS.MODAL.CREATE_TITLE'));
     }
 
     openEditModal(user: User): void {
@@ -1009,7 +1018,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
         if (hasTeacherProperty) {
             this.selectedUser = { ...user };
             this.showFormModal = true;
-            this.presenceTrackingService.reportModal('Edición de usuario', user.name);
+            this.presenceTrackingService.reportModal(this.translate.instant('USERS.MODAL.EDIT_TITLE'), user.name);
             return;
         }
 
@@ -1017,12 +1026,12 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
             next: (fullUser) => {
                 this.selectedUser = { ...fullUser };
                 this.showFormModal = true;
-                this.presenceTrackingService.reportModal('Edición de usuario', fullUser.name);
+                this.presenceTrackingService.reportModal(this.translate.instant('USERS.MODAL.EDIT_TITLE'), fullUser.name);
                 this.cdr.detectChanges();
             },
             error: (err) => {
-                console.error('Error loading user details:', err);
-                this.messageService.showError('No se pudieron cargar los datos completos del usuario');
+                this.logger.error('Error loading user details:', err);
+                this.messageService.showError(this.translate.instant('USERS.MESSAGES.LOAD_DETAILS_ERROR'));
             }
         });
     }
@@ -1050,8 +1059,8 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
             },
             error: (err) => {
-                console.error('Error loading user details:', err);
-                this.messageService.showError('No se pudieron cargar los datos completos del usuario');
+                this.logger.error('Error loading user details:', err);
+                this.messageService.showError(this.translate.instant('USERS.MESSAGES.LOAD_DETAILS_ERROR'));
             }
         });
     }
@@ -1081,10 +1090,10 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
             },
             error: (err) => {
-                console.error('Error loading teacher students:', err);
+                this.logger.error('Error loading teacher students:', err);
                 this.loadingTeacherStudentsForDetail = false;
                 this.teacherStudentsForDetail = [];
-                this.messageService.showError('No se pudo cargar la lista de alumnos del profesor');
+                this.messageService.showError(this.translate.instant('USERS.MESSAGES.ERROR_TEACHER_STUDENTS'));
                 this.cdr.detectChanges();
             }
         });
@@ -1127,13 +1136,13 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 })
             ).subscribe({
                 next: () => {
-                    this.messageService.showSuccess('Usuario actualizado correctamente');
+                    this.messageService.showSuccess(this.translate.instant('USERS.MESSAGES.UPDATE_SUCCESS'));
                     this.closeFormModal();
                     this.loadUsers();
                 },
                 error: (err) => {
-                    console.error('Error updating user:', err);
-                    this.messageService.showError('Error al actualizar el usuario');
+                    this.logger.error('Error updating user:', err);
+                    this.messageService.showError(this.translate.instant('USERS.MESSAGES.UPDATE_ERROR'));
                 }
             });
         } else {
@@ -1158,12 +1167,12 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 })
             ).subscribe({
                 next: () => {
-                    this.messageService.showSuccess('Usuario creado correctamente');
+                    this.messageService.showSuccess(this.translate.instant('USERS.MESSAGES.CREATE_SUCCESS'));
                     this.loadUsers();
                 },
                 error: (err) => {
-                    console.error('Error creating user:', err);
-                    this.messageService.showError('Error al crear el usuario');
+                    this.logger.error('Error creating user:', err);
+                    this.messageService.showError(this.translate.instant('USERS.MESSAGES.CREATE_ERROR'));
                 }
             });
         }
@@ -1175,23 +1184,27 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
     }
 
     async toggleUserVisibility(user: User): Promise<void> {
-        const actionText = this.showingHidden ? 'activar' : 'desactivar';
+        const actionTitle = this.showingHidden ? 'USERS.MESSAGES.ACTIVATE_CONFIRM_TITLE' : 'USERS.MESSAGES.DEACTIVATE_CONFIRM_TITLE';
+        const actionMsg = this.showingHidden ? 'USERS.MESSAGES.ACTIVATE_CONFIRM_MSG' : 'USERS.MESSAGES.DEACTIVATE_CONFIRM_MSG';
+        
         const confirmed = await this.messageService.confirm(
-            this.showingHidden ? '¿Activar usuario?' : '¿Desactivar usuario?',
-            `¿Estás seguro de que quieres ${actionText} a "${user.name}"?`
+            this.translate.instant(actionTitle),
+            this.translate.instant(actionMsg, { name: user.name })
         );
 
         if (!confirmed) return;
 
         this.userService.toggleHidden(user.id, !this.showingHidden).subscribe({
             next: () => {
-                this.messageService.showSuccess(`Usuario ${this.showingHidden ? 'activado' : 'desactivado'} correctamente`);
+                const successMsg = this.showingHidden ? 'USERS.MESSAGES.ACTIVATE_SUCCESS' : 'USERS.MESSAGES.DEACTIVATE_SUCCESS';
+                this.messageService.showSuccess(this.translate.instant(successMsg));
                 this.loadUsers(this.currentPage);
                 this.cdr.detectChanges();
             },
             error: (err) => {
-                console.error(`Error ${actionText} usuario:`, err);
-                const errorMessage = err.error?.message || `Error al ${actionText} el usuario`;
+this.logger.error(`Error ${actionText} usuario:`, err);  
+                const errorKey = this.showingHidden ? 'USERS.MESSAGES.ACTIVATE_ERROR' : 'USERS.MESSAGES.DEACTIVATE_ERROR';  
+                const errorMessage = err.error?.message || this.translate.instant(errorKey);
                 this.messageService.showError(errorMessage);
                 this.cdr.detectChanges();
             }
@@ -1209,25 +1222,16 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
 
     getRoleLabel(role: string): string {
         switch (role) {
-            case 'ADMIN':
-                return 'Administrador';
-            case 'CHEF':
-                return 'Profesor';
-            case 'USER':
-                return 'Alumno';
-            case 'ELEVATED':
-                return 'Alumno';
-            default:
-                return role;
+            case 'ADMIN': return this.translate.instant('COMMON.ROLES.ADMIN');
+            case 'CHEF': return this.translate.instant('COMMON.ROLES.CHEF');
+            case 'USER': return this.translate.instant('COMMON.ROLES.STUDENT');
+            case 'ELEVATED': return this.translate.instant('COMMON.ROLES.STUDENT');
+            default: return role;
         }
     }
 
     countByRole(role: string): number {
         return this.filteredUsers.filter(u => u.role === role).length;
-    }
-
-    getExistingUsers(): string[] {
-        return this.users.map(u => u.user);
     }
 
     isStudentRole(role: string): boolean {

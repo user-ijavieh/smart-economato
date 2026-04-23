@@ -1,8 +1,8 @@
-<div class="alert-stack" [class.collapsed]="!showAlerts()" aria-live="assertive" aria-atomic="false" (click)="stopPropagation($event)">
+<div class="alert-stack" [class.collapsed]="!showAlerts()" [style.z-index]="zIndex()" aria-live="assertive" aria-atomic="false" (click)="stopPropagation($event)">
   <button
     type="button"
     class="alert-toggle"
-    [attr.aria-label]="showAlerts() ? 'Ocultar alertas' : 'Mostrar alertas'"
+    [attr.aria-label]="(showAlerts() ? 'ALERTS.HIDE' : 'ALERTS.SHOW') | translate"
     (click)="toggleAlerts($event)"
   >
     <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
@@ -46,7 +46,7 @@
             }
           </ul>
         }
-        <p class="alert-time">{{ alert.timestamp | date: 'dd/MM/yyyy HH:mm:ss' }}</p>
+        <p class="alert-time">{{ alert.timestamp | date: 'medium' }}</p>
       </div>
     </section>
   }
@@ -63,7 +63,7 @@
       <!-- Contenido -->
       <div class="alert-content">
         <p class="alert-title">{{ alert.title }}</p>
-        <p class="alert-time">{{ alert.timestamp | date: 'dd/MM/yyyy HH:mm:ss' }}</p>
+        <p class="alert-time">{{ alert.timestamp | date: 'medium' }}</p>
       </div>
     </section>
   }

@@ -1,5 +1,5 @@
 <div class="page-header admin-page-header">
-    <h1>Gestión de Usuarios</h1>
+    <h1>{{ 'USERS.TITLE' | translate }}</h1>
 </div>
 
 <div class="admin-tab-bar">
@@ -7,39 +7,39 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
         </svg>
-        Usuarios
+        {{ 'USERS.TABS.USERS' | translate }}
     </button>
     <button class="admin-tab-btn" [class.active]="activeTab === 'assignments'" (click)="switchTab('assignments')">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" />
         </svg>
-        Asignaciones
+        {{ 'USERS.TABS.ASSIGNMENTS' | translate }}
     </button>
     <button class="admin-tab-btn" [class.active]="activeTab === 'presence'" (click)="switchTab('presence')">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 14.93V19h-2v-2.07A8.012 8.012 0 0 1 5.07 13H3v-2h2.07A8.012 8.012 0 0 1 11 5.07V3h2v2.07A8.012 8.012 0 0 1 18.93 11H21v2h-2.07A8.012 8.012 0 0 1 13 16.93ZM12 7a5 5 0 1 0 5 5 5.006 5.006 0 0 0-5-5Z" />
         </svg>
-        Presencia
+        {{ 'USERS.TABS.PRESENCE' | translate }}
     </button>
 </div>
 
 @if (activeTab === 'users') {
 <div class="page-content contenedor-principal">
     <div class="controls-bar controles">
-        <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por nombre o usuario..."
+        <input type="text" [(ngModel)]="searchTerm" [placeholder]="'USERS.FILTERS.SEARCH_PLACEHOLDER' | translate"
             (ngModelChange)="onSearch()" />
         <select [(ngModel)]="roleFilter" (ngModelChange)="onRoleFilterChange()" class="role-select">
-            <option value="">Todos los roles</option>
-            <option value="ADMIN">Administrador</option>
-            <option value="CHEF">Profesor</option>
-            <option value="USER">Alumno</option>
+            <option value="">{{ 'USERS.FILTERS.ROLE_ALL' | translate }}</option>
+            <option value="ADMIN">{{ 'USERS.FILTERS.ROLE_ADMIN' | translate }}</option>
+            <option value="CHEF">{{ 'USERS.FILTERS.ROLE_CHEF' | translate }}</option>
+            <option value="USER">{{ 'USERS.FILTERS.ROLE_USER' | translate }}</option>
         </select>
         <button id="btnAgregarUsuario" class="toolbar-btn" (click)="openCreateModal()" *ngIf="!showingHidden">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path
                     d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z" />
             </svg>
-            Agregar Usuario
+            {{ 'USERS.ACTIONS.ADD_USER' | translate }}
         </button>
         <button class="toolbar-btn btn-toggle-view" [class.active]="showingHidden" (click)="toggleView()">
             <svg *ngIf="!showingHidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -56,29 +56,31 @@
                 <path
                     d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12-.708.708z" />
             </svg>
-            {{ showingHidden ? 'Ver Activos' : 'Ver Desactivados' }}
+            {{ showingHidden ? ('USERS.ACTIONS.VIEW_ACTIVE' | translate) : ('USERS.ACTIONS.VIEW_HIDDEN' | translate) }}
         </button>
         @if (hasActiveFilters()) {
-        <button class="toolbar-btn btn-clear" (click)="clearFilters()">Limpiar Filtros</button>
+        <button class="toolbar-btn btn-clear" (click)="clearFilters()">{{ 'COMMON.CLEAR_FILTERS' | translate }}</button>
         }
     </div>
 
     <div class="stats-row">
         <div class="stat-card">
             <span class="stat-number">{{ filteredUsers.length }}</span>
-            <span class="stat-label">Total {{ showingHidden ? 'Desactivados' : 'Activos' }}</span>
+            <span class="stat-label">
+                {{ showingHidden ? ('USERS.STATS.TOTAL_HIDDEN' | translate) : ('USERS.STATS.TOTAL_ACTIVE' | translate) }}
+            </span>
         </div>
         <div class="stat-card stat-admin">
             <span class="stat-number">{{ countByRole('ADMIN') }}</span>
-            <span class="stat-label">Admins</span>
+            <span class="stat-label">{{ 'USERS.STATS.ADMINS' | translate }}</span>
         </div>
         <div class="stat-card stat-chef">
             <span class="stat-number">{{ countByRole('CHEF') }}</span>
-            <span class="stat-label">Chefs</span>
+            <span class="stat-label">{{ 'USERS.STATS.CHEFS' | translate }}</span>
         </div>
         <div class="stat-card stat-user">
             <span class="stat-number">{{ countByRole('USER') }}</span>
-            <span class="stat-label">Usuarios</span>
+            <span class="stat-label">{{ 'USERS.STATS.USERS' | translate }}</span>
         </div>
     </div>
 
@@ -86,11 +88,11 @@
         <table>
             <thead>
                 <tr>
-                    <th class="sortable" (click)="onSortChange('name')" [attr.data-sort-dir]="getSortDir('name')">Nombre</th>
-                    <th class="hide-on-mobile">Usuario</th>
-                    <th class="sortable" (click)="onSortChange('role')" [attr.data-sort-dir]="getSortDir('role')">Rol</th>
-                    <th class="hide-on-mobile">Profesor</th>
-                    <th class="hide-on-mobile">Acciones</th>
+                    <th class="sortable" (click)="onSortChange('name')" [attr.data-sort-dir]="getSortDir('name')">{{ 'USERS.TABLE.NAME' | translate }}</th>
+                    <th class="hide-on-mobile">{{ 'USERS.TABLE.USER' | translate }}</th>
+                    <th class="sortable" (click)="onSortChange('role')" [attr.data-sort-dir]="getSortDir('role')">{{ 'USERS.TABLE.ROLE' | translate }}</th>
+                    <th class="hide-on-mobile">{{ 'USERS.TABLE.TEACHER' | translate }}</th>
+                    <th class="hide-on-mobile">{{ 'USERS.TABLE.ACTIONS' | translate }}</th>
                     <th class="show-on-mobile-only mobile-icon-col"></th>
                 </tr>
             </thead>
@@ -115,7 +117,7 @@
                             <div class="user-name-meta">
                                 <span class="user-name">{{ user.name }}</span>
                                 @if (isStudentRole(user.role)) {
-                                <span class="teacher-subtitle">Profesor: {{ user.teacher?.name || 'Sin asignar' }}</span>
+                                <span class="teacher-subtitle">{{ 'USERS.TABLE.STUDENT_TEACHER' | translate:{name: user.teacher?.name || ('USERS.TABLE.UNASSIGNED' | translate)} }}</span>
                                 }
                             </div>
                         </div>
@@ -128,14 +130,14 @@
                     </td>
                     <td class="hide-on-mobile teacher-cell">
                         @if (isStudentRole(user.role)) {
-                        <span class="teacher-cell-name">{{ user.teacher?.name || 'Sin asignar' }}</span>
+                        <span class="teacher-cell-name">{{ user.teacher?.name || ('USERS.TABLE.UNASSIGNED' | translate) }}</span>
                         } @else {
                         <span class="teacher-cell-name teacher-cell-empty">-</span>
                         }
                     </td>
                     <td class="hide-on-mobile" (click)="$event.stopPropagation()">
                         <div class="actions-cell">
-                            <button class="btn-ver" (click)="openMobileModal(user)" title="Ver detalles">
+                            <button class="btn-ver" (click)="openMobileModal(user)" [title]="'COMMON.VIEW_DETAILS' | translate">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     viewBox="0 0 16 16">
                                     <path
@@ -145,7 +147,7 @@
                                 </svg>
                             </button>
                             <button *ngIf="!showingHidden" class="btn-editar" (click)="openEditModal(user)"
-                                title="Editar">
+                                [title]="'USERS.ACTIONS.EDIT' | translate">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     viewBox="0 0 16 16">
                                     <path
@@ -155,7 +157,7 @@
                                 </svg>
                             </button>
                             <button *ngIf="!showingHidden" class="btn-ocultar" (click)="toggleUserVisibility(user)"
-                                title="Desactivar Usuario">
+                                [title]="'USERS.ACTIONS.HIDE' | translate">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     viewBox="0 0 16 16">
                                     <path
@@ -167,7 +169,7 @@
                                 </svg>
                             </button>
                             <button *ngIf="showingHidden" class="btn-mostrar" (click)="toggleUserVisibility(user)"
-                                title="Activar Usuario">
+                                [title]="'USERS.ACTIONS.RESTORE' | translate">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     viewBox="0 0 16 16">
                                     <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
@@ -187,7 +189,7 @@
                 @if (filteredUsers.length === 0 && !loading) {
                 <tr>
                     <td colspan="6" style="text-align: center; padding: 2rem; color: #999">
-                        No se encontraron usuarios
+                        {{ 'USERS.TABLE.EMPTY' | translate }}
                     </td>
                 </tr>
                 }
@@ -200,11 +202,11 @@
     <div class="pagination-controls">
         <button class="toolbar-btn btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
-            Anterior
+            {{ 'COMMON.PREVIOUS' | translate }}
         </button>
-        <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }} <span class="total-info">({{ totalElements }} usuarios)</span></span>
+        <span class="page-info">{{ 'USERS.PAGINATION_INFO' | translate:{current: currentPage + 1, totalPages: totalPages, total: totalElements} }}</span>
         <button class="toolbar-btn btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
-            Siguiente
+            {{ 'COMMON.NEXT' | translate }}
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
         </button>
     </div>
@@ -217,7 +219,7 @@
     <div class="stats-row">
         <div class="stat-card stat-user">
             <span class="stat-number">{{ connectedSnapshots.length }}</span>
-            <span class="stat-label">Conectados ahora</span>
+            <span class="stat-label">{{ 'USERS.STATS.CONNECTED_NOW' | translate }}</span>
         </div>
     </div>
 
@@ -226,10 +228,10 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Usuario</th>
-                        <th>Estado</th>
-                        <th>Pantalla</th>
-                        <th class="hide-on-mobile">Última actividad</th>
+                        <th>{{ 'USERS.TABLE.USER' | translate }}</th>
+                        <th>{{ 'USERS.PRESENCE.TABLE_STATUS' | translate }}</th>
+                        <th>{{ 'USERS.PRESENCE.TABLE_SCREEN' | translate }}</th>
+                        <th class="hide-on-mobile">{{ 'USERS.PRESENCE.TABLE_LAST_ACTIVITY' | translate }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -244,7 +246,7 @@
                             </div>
                         </td>
                         @if (getPresenceForUser(user.id!); as presence) {
-                        <td><span class="presence-pill connected">En línea</span></td>
+                        <td><span class="presence-pill connected">{{ 'USERS.PRESENCE.ONLINE' | translate }}</span></td>
                         <td>{{ getCurrentScreen(presence) }}</td>
                         <td class="hide-on-mobile">{{ getLastHeartbeat(presence) | date:'short' }}</td>
                         }
@@ -253,7 +255,7 @@
                     @if (onlineUsers.length === 0) {
                     <tr>
                         <td colspan="4" style="text-align: center; padding: 1.5rem; color: var(--theme-text-secondary);">
-                            No hay usuarios en línea
+                            {{ 'USERS.PRESENCE.EMPTY' | translate }}
                         </td>
                     </tr>
                     }
@@ -263,7 +265,7 @@
 
         <div class="activity-feed" (scroll)="onActivityScroll($event)">
             <div class="feed-header">
-                <h3>Historial de actividad</h3>
+                <h3>{{ 'USERS.PRESENCE.FEED_TITLE' | translate }}</h3>
             </div>
 
             @for (log of activityLogs; track trackByActivityId($index, log)) {
@@ -280,11 +282,11 @@
             }
 
             @if (activityLoading) {
-            <div class="activity-loading">Cargando actividad...</div>
+            <div class="activity-loading">{{ 'USERS.PRESENCE.LOADING_FEED' | translate }}</div>
             }
 
             @if (!activityLoading && activityLogs.length === 0) {
-            <div class="activity-empty">Sin eventos de actividad</div>
+            <div class="activity-empty">{{ 'USERS.PRESENCE.EMPTY_FEED' | translate }}</div>
             }
         </div>
     </div>
@@ -314,12 +316,12 @@
             (dragover)="onDragOverUnassigned($event)"
             (dragleave)="onDragLeave()"
             (drop)="onDropBackToUnassigned($event)"
-            aria-label="Zona de alumnos sin profesor">
+            [attr.aria-label]="'USERS.ASSIGNMENTS.UNASSIGNED_TITLE' | translate">
             <div class="column-header">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                 </svg>
-                <h2>Alumnos sin profesor</h2>
+                <h2>{{ 'USERS.ASSIGNMENTS.UNASSIGNED_TITLE' | translate }}</h2>
                 <span class="count-badge">{{ unassignedStudents.length }}</span>
                 <button class="selection-toggle" (click)="selectAllStudents()" [class.active]="isAllSelected" type="button">
                     <span class="selection-toggle-box">
@@ -329,7 +331,7 @@
                         </svg>
                         }
                     </span>
-                    Seleccionar todos
+                    {{ 'USERS.ASSIGNMENTS.SELECT_ALL' | translate }}
                 </button>
             </div>
             <div class="students-search">
@@ -337,14 +339,14 @@
                     type="text"
                     [(ngModel)]="assignmentStudentSearchTerm"
                     (ngModelChange)="onAssignmentSearch()"
-                    placeholder="Buscar alumno por nombre..."
-                    aria-label="Buscar alumnos por nombre"
+                    [placeholder]="'PROFILE.SEARCH_PLACEHOLDER' | translate"
+                    [attr.aria-label]="'PROFILE.SEARCH_PLACEHOLDER' | translate"
                 />
             </div>
-            <div class="students-list" role="listbox" aria-label="Alumnos sin asignar" (scroll)="onUnassignedScroll($event)">
+            <div class="students-list" role="listbox" [attr.aria-label]="'USERS.ASSIGNMENTS.UNASSIGNED_TITLE' | translate" (scroll)="onUnassignedScroll($event)">
                 @if (selectionCount > 0) {
                 <div class="selection-actions">
-                    <span>{{ selectionCount }} seleccionados</span>
+                    <span>{{ 'USERS.ASSIGNMENTS.SELECTED_COUNT' | translate:{count: selectionCount} }}</span>
                 </div>
                 }
                 @for (student of visibleUnassignedStudents; track student.id) {
@@ -373,23 +375,23 @@
                 </div>
                 }
                 @if (unassignedLoadingMore) {
-                <div class="students-list-status">Cargando alumnos...</div>
+                <div class="students-list-status">{{ 'COMMON.LOADING' | translate }}</div>
                 }
                 @if (filteredUnassignedStudents.length === 0 && assignmentStudentSearchTerm.trim()) {
                 <div class="empty-state">
-                    <span>No se encontraron alumnos con ese nombre</span>
+                    <span>{{ 'PROFILE.SEARCH_EMPTY' | translate }}</span>
                 </div>
                 } @else if (filteredUnassignedStudents.length === 0 && !hasPendingAssignments()) {
                 <div class="empty-state">
                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                     </svg>
-                    <span>Todos los alumnos tienen profesor</span>
+                    <span>{{ 'USERS.ASSIGNMENTS.ALL_ASSIGNED' | translate }}</span>
                 </div>
                 }
                 @if (filteredUnassignedStudents.length === 0 && !assignmentStudentSearchTerm.trim() && hasPendingAssignments()) {
                 <div class="empty-state drop-hint-state">
-                    <span>Arrastra aquí para desasignar</span>
+                    <span>{{ 'USERS.ASSIGNMENTS.DRAG_HINT' | translate }}</span>
                 </div>
                 }
             </div>
@@ -403,18 +405,18 @@
                 (dragover)="onDragOverTeacher($event, teacher.id)"
                 (dragleave)="onDragLeave()"
                 (drop)="onDrop($event, teacher.id)"
-                aria-label="Zona de asignación para profesor">
+                [attr.aria-label]="'USERS.ASSIGNMENTS.TEACHER_ROLE' | translate">
                 <div class="teacher-header">
                     <div class="user-avatar-small teacher-avatar">{{ teacher.name.charAt(0).toUpperCase() }}</div>
                     <div class="teacher-info">
                         <span class="teacher-name">{{ teacher.name }}</span>
-                        <span class="teacher-role">Profesor</span>
+                        <span class="teacher-role">{{ 'USERS.ASSIGNMENTS.TEACHER_ROLE' | translate }}</span>
                     </div>
                     @if (getPendingForTeacher(teacher.id).length > 0) {
                     <span class="count-badge pending-badge">+{{ getPendingForTeacher(teacher.id).length }}</span>
                     }
                 </div>
-                <div class="teacher-students-area" role="listbox" aria-label="Alumnos pendientes para profesor">
+                <div class="teacher-students-area" role="listbox" [attr.aria-label]="'USERS.ASSIGNMENTS.DRAG_TEACHER_HINT' | translate">
                     @for (student of getPendingForTeacher(teacher.id); track student.id) {
                     <div class="assigned-student-chip"
                         draggable="true"
@@ -423,8 +425,8 @@
                         (dragend)="onDragEnd()">
                         <div class="chip-avatar">{{ student.name.charAt(0).toUpperCase() }}</div>
                         <span class="chip-name">{{ student.name }}</span>
-                        <button class="chip-remove" (click)="removeFromTeacher(student, teacher.id)" title="Quitar"
-                            [attr.aria-label]="'Quitar alumno ' + student.name + ' del profesor ' + teacher.name">
+                        <button class="chip-remove" (click)="removeFromTeacher(student, teacher.id)" [title]="'USERS.ACTIONS.REMOVE' | translate"
+                            [attr.aria-label]="'USERS.ACTIONS.REMOVE' | translate">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                                 <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
                             </svg>
@@ -436,7 +438,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                         </svg>
-                        Arrastra alumnos aquí
+                        {{ 'USERS.ASSIGNMENTS.DRAG_TEACHER_HINT' | translate }}
                     </div>
                     }
                 </div>
@@ -444,7 +446,7 @@
             }
             @if (teachers.length === 0) {
             <div class="empty-state">
-                <span>No hay profesores registrados</span>
+                <span>{{ 'USERS.ASSIGNMENTS.NO_TEACHERS' | translate }}</span>
             </div>
             }
         </div>
@@ -452,16 +454,16 @@
 
     @if (hasPendingAssignments()) {
     <div class="assignments-actions">
-        <span class="actions-summary">{{ totalPendingCount }} alumno{{ totalPendingCount > 1 ? 's' : '' }} por asignar</span>
+        <span class="actions-summary">{{ totalPendingCount === 1 ? ('USERS.ASSIGNMENTS.PENDING_COUNT_ONE' | translate) : ('USERS.ASSIGNMENTS.PENDING_COUNT_OTHER' | translate:{count: totalPendingCount}) }}</span>
         <div class="actions-buttons">
             <button class="btn-cancel-assignments" (click)="clearPendingAssignments()">
-                Cancelar
+                {{ 'COMMON.CANCEL' | translate }}
             </button>
             <button class="btn-confirm-assignments" (click)="confirmAssignments()" [disabled]="assigningInProgress">
                 @if (assigningInProgress) {
-                <span class="spinner"></span> Asignando...
+                <span class="spinner"></span> {{ 'USERS.ASSIGNMENTS.ASSIGNING' | translate }}
                 } @else {
-                Confirmar Asignaciones
+                {{ 'USERS.ASSIGNMENTS.CONFIRM' | translate }}
                 }
             </button>
         </div>
@@ -473,7 +475,7 @@
 
 <!-- Modal de creación/edición -->
 @if (showFormModal) {
-<app-user-form-modal [user]="selectedUser" [teachers]="teachers" [existingUsers]="getExistingUsers()" (save)="onSaveUser($event)"
+<app-user-form-modal [user]="selectedUser" [teachers]="teachers" (save)="onSaveUser($event)"
     (close)="closeFormModal()"></app-user-form-modal>
 }
 
@@ -481,11 +483,11 @@
 @if (activeTab === 'users' && showMobileModal && selectedUserForMobile) {
 <app-base-modal [title]="selectedUserForMobile.name" size="sm" (closed)="closeMobileModal()">
     <div class="detail-field">
-        <span class="detail-label">Usuario</span>
+        <span class="detail-label">{{ 'USERS.TABLE.USER' | translate }}</span>
         <span class="detail-value">{{ selectedUserForMobile.user }}</span>
     </div>
     <div class="detail-field">
-        <span class="detail-label">Rol</span>
+        <span class="detail-label">{{ 'USERS.TABLE.ROLE' | translate }}</span>
         <span class="detail-value">
             <span class="role-badge" [ngClass]="getRoleBadgeClass(selectedUserForMobile.role)">
                 {{ getRoleLabel(selectedUserForMobile.role) }}
@@ -493,20 +495,20 @@
         </span>
     </div>
     <div class="detail-field">
-        <span class="detail-label">Profesor</span>
-        <span class="detail-value">{{ selectedUserForMobile.teacher?.name || 'Sin asignar' }}</span>
+        <span class="detail-label">{{ 'USERS.TABLE.TEACHER' | translate }}</span>
+        <span class="detail-value">{{ selectedUserForMobile.teacher?.name || ('USERS.TABLE.UNASSIGNED' | translate) }}</span>
     </div>
     <div class="detail-field">
-        <span class="detail-label">Estado</span>
-        <span class="detail-value">{{ showingHidden ? 'Desactivado' : 'Activo' }}</span>
+        <span class="detail-label">{{ 'COMMON.STATUS' | translate }}</span>
+        <span class="detail-value">{{ showingHidden ? ('USERS.ACTIONS.VIEW_HIDDEN' | translate) : ('USERS.ACTIONS.VIEW_ACTIVE' | translate) }}</span>
     </div>
     @if (selectedUserForMobile.role === 'CHEF') {
     <div class="detail-field">
-        <span class="detail-label">Alumnos asignados</span>
+        <span class="detail-label">{{ 'PROFILE.MY_STUDENTS' | translate }}</span>
         @if (loadingTeacherStudentsForDetail) {
-        <span class="detail-value">Cargando alumnos...</span>
+        <span class="detail-value">{{ 'COMMON.LOADING' | translate }}</span>
         } @else if (teacherStudentsForDetail.length === 0) {
-        <span class="detail-value">Sin alumnos asignados</span>
+        <span class="detail-value">{{ 'PROFILE.NO_STUDENTS' | translate }}</span>
         } @else {
         <div class="teacher-students-list">
             @for (student of teacherStudentsForDetail; track student.id) {
@@ -518,13 +520,13 @@
     }
     <div modal-footer class="detail-actions">
         <button *ngIf="!showingHidden" class="btn-editar btn-full" (click)="openEditFromMobile()">
-            Editar Usuario
+            {{ 'USERS.ACTIONS.EDIT' | translate }}
         </button>
         <button *ngIf="!showingHidden" class="btn-ocultar btn-full" (click)="toggleUserVisibility(selectedUserForMobile); closeMobileModal()">
-            Desactivar Usuario
+            {{ 'USERS.ACTIONS.HIDE' | translate }}
         </button>
         <button *ngIf="showingHidden" class="btn-mostrar btn-full" (click)="toggleUserVisibility(selectedUserForMobile); closeMobileModal()">
-            Activar Usuario
+            {{ 'USERS.ACTIONS.RESTORE' | translate }}
         </button>
     </div>
 </app-base-modal>

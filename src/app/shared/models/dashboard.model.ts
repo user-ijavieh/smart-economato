@@ -1,21 +1,15 @@
 export interface DashboardKpis {
     activeTeachers: number;
     expiringProductsCount: number;
+    openIncidentsCount: number;
 }
 
 export interface TopRecipe {
     id: number;
     name: string;
     elaborations: number;
+    portions: number;
     image?: string;
-}
-
-export interface TopStudent {
-    id: number;
-    name: string;
-    activePlans: number;
-    elaborations: number;
-    avatar?: string;
 }
 
 export interface ExpiringProduct {
@@ -33,11 +27,17 @@ export interface ExpenseDataPoint {
     value: number;
 }
 
+export interface RecentOrder {
+    id: number;
+    userName: string;
+    orderDate: string;
+}
+
 export interface DashboardData {
     kpis: DashboardKpis;
     topRecipes: TopRecipe[];
-    topStudents: TopStudent[];
     expiringProducts: ExpiringProduct[];
+    recentOrders: RecentOrder[];
     expenses: {
         week: ExpenseDataPoint[];
         month: ExpenseDataPoint[];

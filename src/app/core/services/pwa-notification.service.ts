@@ -1,5 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { LoggerService } from './logger.service';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface NotificationOptions {
   title: string;
@@ -22,6 +24,8 @@ interface NotificationAction {
   providedIn: 'root',
 })
 export class PwaNotificationService {
+  private readonly logger = inject(LoggerService);
+  private translate = inject(TranslateService);
   private permission$ = new BehaviorSubject<NotificationPermission | null>(
     this.getNotificationPermission()
   );
@@ -50,7 +54,6 @@ export class PwaNotificationService {
    */
   async requestPermission(): Promise<boolean> {
     if (!('Notification' in window)) {
-      console.warn('[PWA Notification] Notifications not supported');
       return false;
     }
 
@@ -64,7 +67,7 @@ export class PwaNotificationService {
         this.permission$.next(permission);
         return permission === 'granted';
       } catch (error) {
-        console.error('[PWA Notification] Error requesting permission:', error);
+        this.logger.error('[PWA Notification] Error requesting permission:', error);
         return false;
       }
     }
@@ -77,7 +80,6 @@ export class PwaNotificationService {
    */
   async showNotification(options: NotificationOptions): Promise<Notification | null> {
     if (!('serviceWorker' in navigator) || !('Notification' in window)) {
-      console.warn('[PWA Notification] Notifications not supported');
       return null;
     }
 
@@ -104,10 +106,9 @@ export class PwaNotificationService {
 
       await registration.showNotification(options.title, notificationOptions);
 
-      console.log('[PWA Notification] Notification shown:', options.title);
       return null;
     } catch (error) {
-      console.error('[PWA Notification] Error showing notification:', error);
+      this.logger.error('[PWA Notification] Error showing notification:', error);
       return null;
     }
   }
@@ -118,7 +119,7 @@ export class PwaNotificationService {
   async showSuccess(title: string, body?: string): Promise<Notification | null> {
     return this.showNotification({
       title,
-      body: body || 'Operación completada correctamente',
+      body: body || this.translate.instant('PWA.NOTIFICATIONS.SUCCESS_BODY'),
       tag: 'success',
       vibrate: [100, 50, 100],
     });
@@ -129,8 +130,8 @@ export class PwaNotificationService {
    */
   async showError(title: string, body?: string): Promise<Notification | null> {
     return this.showNotification({
-      title: title || 'Error',
-      body: body || 'Algo salió mal',
+      title: title || this.translate.instant('PWA.NOTIFICATIONS.ERROR_TITLE'),
+      body: body || this.translate.instant('PWA.NOTIFICATIONS.ERROR_BODY'),
       tag: 'error',
       vibrate: [500],
       requireInteraction: true,
@@ -143,7 +144,7 @@ export class PwaNotificationService {
   async showWarning(title: string, body?: string): Promise<Notification | null> {
     return this.showNotification({
       title,
-      body: body || 'Aviso importante',
+      body: body || this.translate.instant('PWA.NOTIFICATIONS.WARNING_BODY'),
       tag: 'warning',
       vibrate: [300, 100, 300],
       requireInteraction: true,
@@ -173,7 +174,7 @@ export class PwaNotificationService {
       const notifications = await registration.getNotifications({ tag });
       notifications.forEach((n) => n.close());
     } catch (error) {
-      console.error('[PWA Notification] Error closing notification:', error);
+      this.logger.error('[PWA Notification] Error closing notification:', error);
     }
   }
 
@@ -188,7 +189,7 @@ export class PwaNotificationService {
       const notifications = await registration.getNotifications();
       notifications.forEach((n) => n.close());
     } catch (error) {
-      console.error('[PWA Notification] Error closing all notifications:', error);
+      this.logger.error('[PWA Notification] Error closing all notifications:', error);
     }
   }
 
@@ -202,7 +203,7 @@ export class PwaNotificationService {
       const registration = await navigator.serviceWorker.ready;
       return await registration.getNotifications();
     } catch (error) {
-      console.error('[PWA Notification] Error getting notifications:', error);
+      this.logger.error('[PWA Notification] Error getting notifications:', error);
       return [];
     }
   }
@@ -215,7 +216,6 @@ export class PwaNotificationService {
 
     navigator.serviceWorker.addEventListener('message', (event) => {
       if (event.data.type === 'NOTIFICATION_CLICK') {
-        console.log('[PWA Notification] Notification clicked:', event.data);
         // Handle notification click if needed
       }
     });
@@ -226,7 +226,6 @@ export class PwaNotificationService {
    */
   async subscribeToPushNotifications(vapidPublicKey: string): Promise<PushSubscription | null> {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-      console.warn('[PWA Notification] Push notifications not supported');
       return null;
     }
 
@@ -236,11 +235,9 @@ export class PwaNotificationService {
         userVisibleOnly: true,
         applicationServerKey: this.urlBase64ToUint8Array(vapidPublicKey) as any,
       });
-
-      console.log('[PWA Notification] Push subscription created');
       return subscription;
     } catch (error) {
-      console.error('[PWA Notification] Error subscribing to push:', error);
+      this.logger.error('[PWA Notification] Error subscribing to push:', error);
       return null;
     }
   }
@@ -256,12 +253,11 @@ export class PwaNotificationService {
       const subscription = await registration.pushManager.getSubscription();
       if (subscription) {
         await subscription.unsubscribe();
-        console.log('[PWA Notification] Unsubscribed from push');
         return true;
       }
       return false;
     } catch (error) {
-      console.error('[PWA Notification] Error unsubscribing:', error);
+      this.logger.error('[PWA Notification] Error unsubscribing:', error);
       return false;
     }
   }
