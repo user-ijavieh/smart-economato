@@ -33,7 +33,6 @@ export class PwaInstallService {
       event.preventDefault();
       this.installPrompt = event;
       this.canInstall$.next(true);
-      console.log('[PWA Install] Install prompt ready');
     });
 
     // Handle app installed
@@ -41,7 +40,6 @@ export class PwaInstallService {
       this.canInstall$.next(false);
       this.isInstalled$.next(true);
       this.installPrompt = null;
-      console.log('[PWA Install] App installed successfully');
     });
   }
 
@@ -101,10 +99,8 @@ export class PwaInstallService {
       const { outcome } = await this.installPrompt.userChoice;
       
       if (outcome === 'accepted') {
-        console.log('[PWA Install] User accepted the install prompt');
         return true;
       } else {
-        console.log('[PWA Install] User dismissed the install prompt');
         return false;
       }
     } catch (error) {
