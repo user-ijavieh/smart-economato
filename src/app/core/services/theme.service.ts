@@ -1,6 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { StorageService } from './storage.service';
 
 type ThemeMode = 'dark' | 'light';
 
@@ -9,6 +10,7 @@ type ThemeMode = 'dark' | 'light';
 })
 export class ThemeService {
   private readonly document = inject(DOCUMENT);
+  private readonly storageService = inject(StorageService);
   private currentTheme: ThemeMode = this.readStoredTheme();
   readonly theme$ = new BehaviorSubject<ThemeMode>(this.currentTheme);
 
@@ -38,7 +40,7 @@ export class ThemeService {
       return 'dark';
     }
 
-    const stored = localStorage.getItem('theme');
+    const stored = this.storageService.get('theme', 'local');
     return stored === 'light' ? 'light' : 'dark';
   }
 
@@ -47,7 +49,7 @@ export class ThemeService {
       return;
     }
 
-    localStorage.setItem('theme', theme);
+    this.storageService.set('theme', theme, 'local');
   }
 
   private applyThemeAttribute(theme: ThemeMode): void {

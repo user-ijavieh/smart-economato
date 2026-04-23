@@ -141,11 +141,9 @@ export class RecipesComponent implements OnInit, OnDestroy {
       })
     ).subscribe({
       next: (page) => {
-        console.log('📦 Recipes Loaded:', page);
         this.recipes = page.content;
         this.totalElements = page.totalElements;
         this.totalPages = page.totalPages;
-        console.log('🔢 Total Pages:', this.totalPages);
         this.initialLoad = false;
         this.cdr.markForCheck();
       },
