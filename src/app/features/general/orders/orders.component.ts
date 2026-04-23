@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, inject, ChangeDetectorRef } from '@angula
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { OrderService } from '../../../core/services/order.service';
 import { MessageService } from '../../../core/services/message.service';
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
@@ -13,7 +14,7 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-orders',
   standalone: true,
-  imports: [CommonModule, FormsModule, OrderModalComponent, OrderDetailsModalComponent],
+  imports: [CommonModule, FormsModule, OrderModalComponent, OrderDetailsModalComponent, TranslateModule],
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.css'
 })
@@ -34,6 +35,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private translate = inject(TranslateService);
   private pendingOpenOrderId: number | null = null;
   private destroy$ = new Subject<void>();
 
@@ -81,21 +83,21 @@ export class OrdersComponent implements OnInit, OnDestroy {
     this.orderService.getByStatus('CREATED').subscribe({
       next: (response) => {
         let ordersArray: Order[] = [];
-        
+
         if (Array.isArray(response)) {
           ordersArray = response;
         } else if (response && Array.isArray((response as any).content)) {
           ordersArray = (response as any).content;
         }
-        
+
         this.orders = [...ordersArray].sort((a, b) => b.id - a.id);
-        this.displayCount = 1;
+        this.displayCount = 10;
         this.tryOpenOrderFromQueryParam();
         this.loading = false;
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError('Error al cargar pedidos');
+        this.messageService.showError(this.translate.instant('ORDERS.MESSAGES.LOAD_ERROR'));
         this.loading = false;
         this.cdr.markForCheck();
       }
@@ -149,7 +151,8 @@ export class OrdersComponent implements OnInit, OnDestroy {
   }
 
   public formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('es-ES', {
+    const d = new Date(date);
+    return d.toLocaleDateString(this.translate.currentLang === 'es' ? 'es-ES' : 'en-US', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric'
@@ -170,8 +173,8 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
   public async confirmOrder(order: Order): Promise<void> {
     const confirmed = await this.messageService.confirm(
-      'Confirmar pedido',
-      `¿Confirmar y enviar el pedido #${order.id} a recepción?`
+      this.translate.instant('ORDERS.MESSAGES.CONFIRM_ORDER_TITLE'),
+      this.translate.instant('ORDERS.MESSAGES.CONFIRM_ORDER_MSG', { id: order.id })
     );
 
     if (!confirmed) {
@@ -180,11 +183,11 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
     this.orderService.updateStatus(order.id, 'PENDING').subscribe({
       next: () => {
-        this.messageService.showSuccess('Pedido enviado a recepción');
+        this.messageService.showSuccess(this.translate.instant('ORDERS.MESSAGES.CONFIRM_SUCCESS'));
         this.loadOrders();
       },
       error: () => {
-        this.messageService.showError('Error al confirmar pedido');
+        this.messageService.showError(this.translate.instant('ORDERS.MESSAGES.CONFIRM_ERROR'));
       }
     });
   }
@@ -211,7 +214,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
         this.clearOpenOrderQueryParam();
       },
       error: () => {
-        this.messageService.showError(`No se pudo abrir el pedido #${targetOrderId}.`);
+        this.messageService.showError(this.translate.instant('ORDERS.MESSAGES.OPEN_ERROR', { id: targetOrderId }));
         this.clearOpenOrderQueryParam();
       }
     });
@@ -240,8 +243,8 @@ export class OrdersComponent implements OnInit, OnDestroy {
     if (!order?.id) return;
 
     const confirmed = await this.messageService.confirm(
-      'Confirmar descarga',
-      '¿Deseas descargar este archivo PDF?'
+      this.translate.instant('COMMON.PDF_CONFIRM_TITLE'),
+      this.translate.instant('COMMON.PDF_CONFIRM_MSG')
     );
     if (!confirmed) return;
 
@@ -253,11 +256,11 @@ export class OrdersComponent implements OnInit, OnDestroy {
         link.download = `pedido-${order.id}.pdf`;
         link.click();
         window.URL.revokeObjectURL(url);
-        this.messageService.showSuccess('PDF descargado correctamente');
+        this.messageService.showSuccess(this.translate.instant('COMMON.PDF_SUCCESS'));
       },
       error: (error) => {
         console.error('Error al descargar el PDF:', error);
-        this.messageService.showError('Error al descargar el PDF');
+        this.messageService.showError(this.translate.instant('COMMON.PDF_ERROR'));
       }
     });
   }

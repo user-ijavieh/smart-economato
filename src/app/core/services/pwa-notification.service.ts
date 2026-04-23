@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface NotificationOptions {
   title: string;
@@ -22,6 +23,7 @@ interface NotificationAction {
   providedIn: 'root',
 })
 export class PwaNotificationService {
+  private translate = inject(TranslateService);
   private permission$ = new BehaviorSubject<NotificationPermission | null>(
     this.getNotificationPermission()
   );
@@ -118,7 +120,7 @@ export class PwaNotificationService {
   async showSuccess(title: string, body?: string): Promise<Notification | null> {
     return this.showNotification({
       title,
-      body: body || 'Operación completada correctamente',
+      body: body || this.translate.instant('PWA.NOTIFICATIONS.SUCCESS_BODY'),
       tag: 'success',
       vibrate: [100, 50, 100],
     });
@@ -129,8 +131,8 @@ export class PwaNotificationService {
    */
   async showError(title: string, body?: string): Promise<Notification | null> {
     return this.showNotification({
-      title: title || 'Error',
-      body: body || 'Algo salió mal',
+      title: title || this.translate.instant('PWA.NOTIFICATIONS.ERROR_TITLE'),
+      body: body || this.translate.instant('PWA.NOTIFICATIONS.ERROR_BODY'),
       tag: 'error',
       vibrate: [500],
       requireInteraction: true,
@@ -143,7 +145,7 @@ export class PwaNotificationService {
   async showWarning(title: string, body?: string): Promise<Notification | null> {
     return this.showNotification({
       title,
-      body: body || 'Aviso importante',
+      body: body || this.translate.instant('PWA.NOTIFICATIONS.WARNING_BODY'),
       tag: 'warning',
       vibrate: [300, 100, 300],
       requireInteraction: true,
