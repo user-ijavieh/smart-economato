@@ -8,10 +8,12 @@ import {
   ViewChild,
   inject
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
+import { marked } from 'marked';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import {
   AiChangeProviderRequest,
@@ -37,7 +39,7 @@ type RetryableStatus = 429 | 502;
 @Component({
   selector: 'app-ai-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseModalComponent],
+  imports: [CommonModule, FormsModule, BaseModalComponent, NgOptimizedImage],
   templateUrl: './ai-chat.component.html',
   styleUrl: './ai-chat.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -48,8 +50,11 @@ export class AiChatComponent implements OnInit, OnDestroy {
   private readonly sseStreamService = inject(SseStreamService);
   private readonly authService = inject(AuthService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly sanitizer = inject(DomSanitizer);
   private readonly storageService = inject(StorageService);
   private readonly destroy$ = new Subject<void>();
+
+  readonly chefPioAvatar = '/assets/img/chef-pio-avatar.png';
 
   @ViewChild('chatScroller') chatScroller?: ElementRef<HTMLDivElement>;
 
@@ -91,6 +96,11 @@ export class AiChatComponent implements OnInit, OnDestroy {
   expandedReasoning: Record<number, boolean> = {};
 
   ngOnInit(): void {
+    marked.setOptions({
+      breaks: true,
+      gfm: true
+    });
+
     const cachedProvider = this.storageService.get('ai_last_provider', 'local') as AiProvider;
     if (cachedProvider) {
       this.providerSelection = cachedProvider;
@@ -680,11 +690,20 @@ export class AiChatComponent implements OnInit, OnDestroy {
   formatRole(role: string): string {
     const roleLabels: Record<string, string> = {
       'USER': this.authService.getName() || 'Usuario',
-      'ASSISTANT': 'IA',
+      'ASSISTANT': 'Chef Pio',
       'SYSTEM': 'Sistema',
       'TOOL': '🔧 Herramienta'
     };
     return roleLabels[role] || role;
+  }
+
+  parseMarkdown(content: string): SafeHtml {
+    if (!content) {
+      return this.sanitizer.bypassSecurityTrustHtml('');
+    }
+
+    const html = marked.parse(content) as string;
+    return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 
   private updateSelectedChatMeta(): void {
