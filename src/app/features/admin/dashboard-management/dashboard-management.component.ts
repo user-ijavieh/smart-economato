@@ -8,7 +8,6 @@ import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { ThemeService } from '../../../core/services/theme.service';
 import { Subject, takeUntil } from 'rxjs';
-import { LoggerService } from '../../../core/services/logger.service';
 
 @Component({
   selector: 'app-dashboard-management',
@@ -18,7 +17,6 @@ import { LoggerService } from '../../../core/services/logger.service';
   styleUrl: './dashboard-management.component.css'
 })
 export class DashboardManagementComponent implements OnInit, OnDestroy {
-  private logger = inject(LoggerService);
   private dashboardService = inject(DashboardService);
   private authService = inject(AuthService);
   private themeService = inject(ThemeService);
@@ -186,7 +184,7 @@ export class DashboardManagementComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        this.logger.error('Error loading dashboard data', err);
+        console.error('Error loading dashboard data', err);
         this.loading = false;
         this.cdr.detectChanges();
       }
