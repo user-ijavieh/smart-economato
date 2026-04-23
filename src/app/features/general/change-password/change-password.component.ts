@@ -7,6 +7,8 @@ import { AuthService } from '../../../core/services/auth.service';
 import { MessageService } from '../../../core/services/message.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { LoggerService } from '../../../core/services/logger.service';
+import { LanguageService } from '../../../core/services/language.service';
+import { LanguageSelectorComponent } from '../../../shared/components/layout/language-selector/language-selector.component';
 
 export function robustPasswordValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
@@ -37,7 +39,7 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
 @Component({
     selector: 'app-change-password',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+    imports: [CommonModule, ReactiveFormsModule, TranslateModule, LanguageSelectorComponent],
     templateUrl: './change-password.component.html',
     styleUrl: './change-password.component.css'
 })
@@ -49,6 +51,7 @@ export class ChangePasswordComponent {
     private messageService = inject(MessageService);
     private themeService = inject(ThemeService);
     private translate = inject(TranslateService);
+    private languageService = inject(LanguageService);
 
     loading = false;
 

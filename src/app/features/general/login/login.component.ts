@@ -7,11 +7,13 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
 import { MessageService } from '../../../core/services/message.service';
 import { ThemeService } from '../../../core/services/theme.service';
+import { LanguageService } from '../../../core/services/language.service';
+import { LanguageSelectorComponent } from '../../../shared/components/layout/language-selector/language-selector.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, LanguageSelectorComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -23,6 +25,7 @@ export class LoginComponent {
   private cdr = inject(ChangeDetectorRef);
   private themeService = inject(ThemeService);
   private translate = inject(TranslateService);
+  private languageService = inject(LanguageService);
 
   loginForm = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(3)]),

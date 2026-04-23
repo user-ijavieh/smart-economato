@@ -9,11 +9,14 @@ import { NotificationService, SessionNotification } from '../../../core/services
 import { HttpQueryCacheService } from '../../../core/services/http-query-cache.service';
 import { MessageService } from '../../../core/services/message.service';
 import { StorageService } from '../../../core/services/storage.service';
+import { LanguageService } from '../../../core/services/language.service';
+import { AsyncPipe } from '@angular/common';
+import { LanguageSelectorComponent } from '../../../shared/components/layout/language-selector/language-selector.component';
 
 @Component({
   selector: 'app-welcome',
   standalone: true,
-  imports: [RouterModule, BaseModalComponent, TranslateModule],
+  imports: [RouterModule, BaseModalComponent, TranslateModule, LanguageSelectorComponent],
   templateUrl: './welcome.component.html',
   styleUrl: './welcome.component.css'
 })
@@ -26,6 +29,7 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
   private storageService = inject(StorageService);
   private translate = inject(TranslateService);
+  private languageService = inject(LanguageService);
 
   slides = [
     '/assets/img/carousel/carousel1.jpg',

@@ -1,5 +1,5 @@
 import { Component, inject, HostListener, ViewChild, ChangeDetectionStrategy, signal, DestroyRef } from '@angular/core';
-import { AsyncPipe, UpperCasePipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterModule, RouterOutlet, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
@@ -14,11 +14,12 @@ import { HttpQueryCacheService } from '../../../core/services/http-query-cache.s
 import { LanguageService } from '../../../core/services/language.service';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { StorageService } from '../../../core/services/storage.service';
+import { LanguageSelectorComponent } from './language-selector/language-selector.component';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [AsyncPipe, UpperCasePipe, RouterModule, SidebarComponent, BaseModalComponent, TranslateModule],
+  imports: [AsyncPipe, RouterModule, SidebarComponent, BaseModalComponent, TranslateModule, LanguageSelectorComponent],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.css',
   animations: [slideInAnimation],
@@ -120,14 +121,7 @@ export class LayoutComponent {
     }
   }
 
-  getActiveLanguage(): string {
-    return this.languageService.getActiveLanguage();
-  }
 
-  toggleLanguage(): void {
-    const current = this.getActiveLanguage();
-    this.languageService.setLanguage(current === 'es' ? 'en' : 'es');
-  }
 
   private navigateWithShortcut(direction: number) {
     if (!this.sidebar) return;

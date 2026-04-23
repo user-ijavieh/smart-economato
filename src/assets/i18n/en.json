@@ -33,6 +33,8 @@
     "UNITS": "units",
     "UNITS_LOWER": "units",
     "UNITS_SHORT": "units",
+    "LOTS": "Lots",
+    "LOTS_COUNT_LABEL": "Lots: {{count}}",
     "MORE": "more",
     "VIEW_DETAILS": "View Details",
     "SEARCH_PRODUCT": "Search product...",
@@ -47,6 +49,7 @@
     "LOADING_MORE_PRODUCTS": "Loading more products...",
     "NO_PRODUCTS_AVAILABLE": "No products available",
     "LOAD_MORE": "Load older",
+    "LOAD_MORE_PRODUCTS": "Load more products",
     "NAME_LABEL": "Name:",
     "NONE": "None",
     "PREV": "Prev",
@@ -209,6 +212,7 @@
       "MASTER_DATA": "MANAGEMENT",
       "TRACEABILITY": "TRACEABILITY"
     },
+    "ALLERGENS": "Allergens",
     "INVENTORY": "Inventory",
     "ORDERS": "Orders",
     "RECEPTION": "Reception",
@@ -589,19 +593,22 @@
       "TYPING": "{{name}} is typing...",
       "ATTACHMENT": "Attachment",
       "READ_BY": "Read by",
-      "SYSTEM": "System Message"
+      "SYSTEM": "System Message",
+      "MESSAGES": "messages"
     },
     "STATUS": {
       "CREADO": "Created",
       "ABIERTO": "Open",
       "CERRADO": "Closed",
       "CERRADO_CON_RESOLUCION": "Closed with resolution",
-      "CERRADO_SIN_RESOLUCION": "Closed without resolution"
+      "CERRADO_SIN_RESOLUCION": "Closed without resolution",
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive"
     },
     "SEVERITY": {
-      "BAJA": "Low",
-      "MEDIA": "Medium",
-      "ALTA": "High",
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High",
       "NONE": "No level"
     },
     "MESSAGES": {
@@ -853,6 +860,7 @@
     "STATUS_CREATED": "CREATED",
     "CONFIRM_ORDER": "Confirm Order",
     "STATUS": {
+      "CREATED": "CREATED",
       "PENDING": "Pending",
       "REVIEW": "In Review",
       "CONFIRMED": "Confirmed",
@@ -861,6 +869,8 @@
     },
     "ACTIONS": {
       "VIEW_DETAILS": "View Details",
+      "CONFIRM_ORDER": "Confirm Order",
+      "LOAD_MORE": "Load older ({{count}} remaining)",
       "CANCEL": "Cancel",
       "DELETE": "Delete"
     },
@@ -892,6 +902,29 @@
       "CONFIRMED": "Confirmed",
       "INCOMPLETE": "Incomplete",
       "CANCELLED": "Cancelled"
+    },
+    "EMPTY_TITLE": "No pending orders",
+    "EMPTY_MSG": "Create a new order to start",
+    "MODAL": {
+      "TITLE_CREATE": "Create New Order",
+      "TITLE_EDIT": "Edit Order #{{id}}",
+      "SELECT_SUPPLIER": "Select Supplier",
+      "SELECT_USER": "Responsible User",
+      "ADD_PRODUCT": "Add Product",
+      "SEARCH_PRODUCT": "Search product...",
+      "PRODUCTS_IN_ORDER": "Products in Order ({{count}})",
+      "EMPTY_HINT": "No products added. Search and add products to create the order.",
+      "PRICE": "Price",
+      "SUBTOTAL": "Subtotal",
+      "ORDER_TOTAL": "Order Total",
+      "CANCEL": "Cancel",
+      "SAVE": "Save Order",
+      "DELTA_EXACT": "Exact",
+      "DELTA_EXCESS": "Excess",
+      "DELTA_MISSING": "Missing",
+      "DELTA_EXACT_HINT": "Exact quantity",
+      "DELTA_MISSING_HINT": "Missing quantity",
+      "DELTA_EXCESS_HINT": "Too many items"
     }
   },
   "ORDER_MODAL": {

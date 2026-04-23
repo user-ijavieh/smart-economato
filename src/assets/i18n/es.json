@@ -24,6 +24,8 @@
     "UNITS": "unidades",
     "UNITS_LOWER": "unidades",
     "UNITS_SHORT": "uds",
+    "LOTS": "Lotes",
+    "LOTS_COUNT_LABEL": "Lotes: {{count}}",
     "SUPPLIER": "Proveedor",
     "ACTIONS": "Acciones",
     "STATUS": "Estado",
@@ -47,6 +49,7 @@
     "LOADING_MORE_PRODUCTS": "Cargando más productos...",
     "NO_PRODUCTS_AVAILABLE": "No hay productos disponibles",
     "LOAD_MORE": "Cargar más antiguas",
+    "LOAD_MORE_PRODUCTS": "Cargar más productos",
     "NAME_LABEL": "Nombre:",
     "NONE": "Ninguno",
     "PREV": "Anterior",
@@ -209,6 +212,7 @@
       "MASTER_DATA": "GESTIÓN",
       "TRACEABILITY": "TRAZABILIDAD"
     },
+    "ALLERGENS": "Alérgenos",
     "INVENTORY": "Inventario",
     "ORDERS": "Pedidos",
     "RECEPTION": "Recepción",
@@ -589,9 +593,9 @@
       "INACTIVE": "Inactivo"
     },
     "SEVERITY": {
-      "BAJA": "Baja",
-      "MEDIA": "Media",
-      "ALTA": "Alta",
+      "LOW": "Baja",
+      "MEDIUM": "Media",
+      "HIGH": "Alta",
       "NONE": "Sin nivel"
     },
     "CONTROL_CENTER": "Centro de control",
