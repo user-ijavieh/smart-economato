@@ -1,19 +1,22 @@
+import { inject } from '@angular/core';
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
 import { Role, hasPermission, getUrlPattern } from '../../shared/models/role-permissions';
 import { environment } from '../../../environments/environment';
+import { StorageService } from '../services/storage.service';
 
 const SESSION_KEYS_TO_CLEAR = [
   'auth_token',
   'user_role',
   'user_name',
+  'user_username',
   'user_id',
   'first_login',
   'ai_last_chat_id'
 ];
 
-function resetSessionAndRedirectToLogin(): void {
-  SESSION_KEYS_TO_CLEAR.forEach(key => localStorage.removeItem(key));
+function resetSessionAndRedirectToLogin(storageService: StorageService): void {
+  SESSION_KEYS_TO_CLEAR.forEach(key => storageService.remove(key));
 
   const currentPath = window.location.pathname;
   if (currentPath !== '/login') {
@@ -21,8 +24,8 @@ function resetSessionAndRedirectToLogin(): void {
   }
 }
 
-function isAllowedUserScopedRequest(method: string, apiPath: string, userRole: Role): boolean {
-  const userIdRaw = localStorage.getItem('user_id');
+function isAllowedUserScopedRequest(method: string, apiPath: string, userRole: Role, storageService: StorageService): boolean {
+  const userIdRaw = storageService.get('user_id');
   const currentUserId = userIdRaw ? Number(userIdRaw) : NaN;
 
   const userByIdMatch = apiPath.match(/^\/api\/users\/(\d+)$/);
@@ -35,8 +38,9 @@ function isAllowedUserScopedRequest(method: string, apiPath: string, userRole: R
 }
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = localStorage.getItem('auth_token');
-  const userRole = localStorage.getItem('user_role') as Role;
+  const storageService = inject(StorageService);
+  const token = storageService.get('auth_token');
+  const userRole = storageService.get('user_role') as Role;
   const requestUrl = req.url;
   const isRelativeApiRequest = requestUrl.startsWith('/api/');
   const isAbsoluteApiRequest = requestUrl.includes(environment.apiUrl + '/api/');
@@ -61,11 +65,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       ? requestUrl.split('?')[0]
       : requestUrl.replace(environment.apiUrl, '').split('?')[0];
 
-    if (isAllowedUserScopedRequest(method, apiPath, userRole)) {
+    if (isAllowedUserScopedRequest(method, apiPath, userRole, storageService)) {
       return next(req).pipe(
         catchError((error: HttpErrorResponse) => {
           if (error.status === 401) {
-            resetSessionAndRedirectToLogin();
+            resetSessionAndRedirectToLogin(storageService);
           } else if (error.status === 403) {
             console.error('Acceso denegado:', error.error?.message);
           }
@@ -90,7 +94,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
         // 401: Token inválido/expirado - logout automático
-        resetSessionAndRedirectToLogin();
+        resetSessionAndRedirectToLogin(storageService);
       } else if (error.status === 403) {
         console.error('Acceso denegado:', error.error?.message);
       }
