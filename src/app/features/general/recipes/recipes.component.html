@@ -1,13 +1,13 @@
 <!-- Header -->
 <div class="page-header header-recetas">
-  <h1>{{ 'SIDEBAR.RECIPES' | translate }}</h1>
+  <h1>Recetas</h1>
   @if (!canEdit()) {
     <div class="recipes-user-tabs">
       <button class="recipes-tab-btn" [class.active]="activeTab === 'recipes'" (click)="switchTab('recipes')">
-        {{ 'SIDEBAR.RECIPES' | translate }}
+        Recetas
       </button>
       <button class="recipes-tab-btn" [class.active]="activeTab === 'drafts'" (click)="switchTab('drafts')">
-        {{ 'RECIPES.DRAFTS.TITLE' | translate }}
+        Borradores
       </button>
     </div>
   }
@@ -22,29 +22,29 @@
       <input
         type="text"
         [(ngModel)]="searchTerm"
-        [placeholder]="'RECIPES.SEARCH_PLACEHOLDER' | translate"
+        placeholder="Buscar receta..."
         (ngModelChange)="onSearch()"
       />
     </div>
 
     <div class="filter-group">
       <select [(ngModel)]="filterAllergens" (ngModelChange)="applyFilters()">
-        <option value="all">{{ 'RECIPES.FILTERS.ALLERGENS_ALL' | translate }}</option>
-        <option value="with">{{ 'RECIPES.FILTERS.ALLERGENS_WITH' | translate }}</option>
-        <option value="without">{{ 'RECIPES.FILTERS.ALLERGENS_WITHOUT' | translate }}</option>
+        <option value="all">Alérgenos: Todos</option>
+        <option value="with">Con alérgenos</option>
+        <option value="without">Sin alérgenos</option>
       </select>
     </div>
 
-    <button *ngIf="canEdit()" class="btn-secondary" (click)="openOrderWizard()" [title]="'RECIPES.ORDER_WIZARD_TITLE' | translate">
+    <button *ngIf="canEdit()" class="btn-secondary" (click)="openOrderWizard()" title="Crear pedido a partir de recetas">
        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-       {{ 'RECIPES.CUSTOM_ORDER' | translate }}
+       Orden Personalizada
     </button>
 
-    <button id="btnCrearReceta" class="btn-primary" (click)="openCreateModal()" [title]="(canEdit() ? 'RECIPES.CREATE_MODAL_TITLE' : 'RECIPES.DRAFTS.CREATE_MODAL_TITLE') | translate">
+    <button id="btnCrearReceta" class="btn-primary" (click)="openCreateModal()" [title]="canEdit() ? 'Crear nueva receta' : 'Crear nuevo borrador'">
       <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
         <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
       </svg>
-      {{ (canEdit() ? 'RECIPES.ADD_RECIPE' : 'RECIPES.ADD_DRAFT') | translate }}
+      {{ canEdit() ? 'Crear Receta' : 'Crear Borrador' }}
     </button>
   </div>
 
@@ -76,21 +76,21 @@
         >
           <!-- Indicador de alérgenos -->
           @if (hasAllergens(recipe)) {
-            <div class="allergen-badge" [title]="'RECIPES.CONTAINS_ALLERGENS' | translate">
+            <div class="allergen-badge" title="Contiene alérgenos">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
                 <line x1="12" y1="9" x2="12" y2="13"/>
                 <line x1="12" y1="17" x2="12.01" y2="17"/>
               </svg>
-              <span>{{ 'RECIPES.ALLERGENS_BADGE' | translate }}</span>
+              <span>Alérgenos</span>
             </div>
           } @else {
-            <div class="allergen-badge safe" [title]="'RECIPES.NO_ALLERGENS' | translate">
+            <div class="allergen-badge safe" title="Sin alérgenos">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                 <polyline points="22 4 12 14.01 9 11.01"/>
               </svg>
-              <span>{{ 'RECIPES.SAFE_BADGE' | translate }}</span>
+              <span>Sin alérgenos</span>
             </div>
           }
 
@@ -106,9 +106,9 @@
           <div class="card-footer">
             <div class="card-pricing-group">
               <span class="card-selling-price">{{ recipe.sellingPrice | number:'1.2-2' }} €</span>
-              <span class="card-cost-price">{{ 'RECIPES.COST' | translate }}: {{ recipe.totalCost | number:'1.2-2' }} €</span>
+              <span class="card-cost-price">Coste: {{ recipe.totalCost | number:'1.2-2' }} €</span>
             </div>
-            <span class="card-components">{{ recipe.components.length }} {{ (recipe.components.length === 1 ? 'RECIPES.INGREDIENT' : 'RECIPES.INGREDIENTS') | translate }}</span>
+            <span class="card-components">{{ recipe.components.length }} ingredientes</span>
           </div>
 
         </div>
@@ -116,7 +116,7 @@
 
       @if (recipes.length === 0) {
         <div class="empty-state">
-          <p>{{ 'RECIPES.NO_RECIPES_FOUND' | translate }}</p>
+          <p>No se encontraron recetas</p>
         </div>
       }
     </div>
@@ -126,22 +126,22 @@
       <div class="pagination-container">
         <div class="pagination-controls">
           <button class="btn-page" [disabled]="currentPage === 0 || loading" (click)="onPageChange(currentPage - 1)">
-            {{ 'COMMON.PREVIOUS' | translate }}
+            Anterior
           </button>
           <span class="page-info">
-            {{ 'COMMON.PAGE' | translate }} {{ currentPage + 1 }} {{ 'COMMON.OF' | translate }} {{ totalPages }}
-            <span class="total-info">({{ totalElements }} {{ 'RECIPES.TITLE_LOWER' | translate }})</span>
+            Página {{ currentPage + 1 }} de {{ totalPages }}
+            <span class="total-info">({{ totalElements }} recetas)</span>
           </span>
 
-          <select class="size-selector" [ngModel]="pageSize" (change)="onSizeChange($event)" [title]="'COMMON.PER_PAGE' | translate">
-            <option [value]="6">6 {{ 'COMMON.PER_PAGE' | translate }}</option>
-            <option [value]="12">12 {{ 'COMMON.PER_PAGE' | translate }}</option>
-            <option [value]="24">24 {{ 'COMMON.PER_PAGE' | translate }}</option>
-            <option [value]="48">48 {{ 'COMMON.PER_PAGE' | translate }}</option>
+          <select class="size-selector" [ngModel]="pageSize" (change)="onSizeChange($event)" title="Recetas por página">
+            <option [value]="6">6 por pág.</option>
+            <option [value]="12">12 por pág.</option>
+            <option [value]="24">24 por pág.</option>
+            <option [value]="48">48 por pág.</option>
           </select>
 
           <button class="btn-page" [disabled]="currentPage >= totalPages - 1 || loading" (click)='onPageChange(currentPage + 1)'>
-            {{ 'COMMON.NEXT' | translate }}
+            Siguiente
           </button>
         </div>
       </div>
@@ -153,9 +153,9 @@
 @if (activeTab === 'drafts' && !canEdit()) {
   <div class="page-content contenedor-principal">
     <div class="controls-bar controles">
-      <span class="page-info">{{ 'COMMON.TOTAL' | translate }}: {{ totalDraftElements }} {{ 'RECIPES.DRAFTS.TITLE_LOWER' | translate }}</span>
-      <button class="btn-primary" (click)="openCreateModal()" [title]="'RECIPES.DRAFTS.CREATE_MODAL_TITLE' | translate">
-        {{ 'RECIPES.ADD_DRAFT' | translate }}
+      <span class="page-info">Total: {{ totalDraftElements }} borradores</span>
+      <button class="btn-primary" (click)="openCreateModal()" title="Crear nuevo borrador">
+        Crear Borrador
       </button>
     </div>
 
@@ -163,11 +163,11 @@
       <table class="drafts-table">
         <thead>
           <tr>
-            <th>{{ 'COMMON.NAME' | translate }}</th>
-            <th class="hide-on-mobile">{{ 'COMMON.STATUS' | translate }}</th>
-            <th class="hide-on-mobile">{{ 'COMMON.UPDATED' | translate }}</th>
-            <th class="hide-on-mobile">{{ 'RECIPES.DRAFTS.REJECTION_REASON' | translate }}</th>
-            <th class="hide-on-mobile">{{ 'COMMON.ACTIONS' | translate }}</th>
+            <th>Nombre</th>
+            <th class="hide-on-mobile">Estado</th>
+            <th class="hide-on-mobile">Actualizado</th>
+            <th class="hide-on-mobile">Motivo rechazo</th>
+            <th class="hide-on-mobile">Acciones</th>
             <th class="show-on-mobile-only mobile-icon-col"></th>
           </tr>
         </thead>
@@ -189,7 +189,7 @@
                 <td>
                   <strong>{{ draft.name }}</strong>
                   @if (draft.isHidden) {
-                    <span class="status-badge danger" style="margin-left: 8px;">{{ 'COMMON.HIDDEN' | translate }}</span>
+                    <span class="status-badge danger" style="margin-left: 8px;">Oculto</span>
                   }
                 </td>
                 <td class="hide-on-mobile">
@@ -200,7 +200,7 @@
                 <td class="hide-on-mobile">{{ (draft.updatedAt || draft.createdAt) | date:'dd/MM/yyyy HH:mm' }}</td>
                 <td class="hide-on-mobile">{{ draft.rejectionReason || '—' }}</td>
                 <td class="actions-cell hide-on-mobile" (click)="$event.stopPropagation()">
-                  <button class="btn-ver" (click)="openDraftDetailModal(draft)" [title]="'RECIPES.DRAFTS.VIEW_DRAFT' | translate">
+                  <button class="btn-ver" (click)="openDraftDetailModal(draft)" title="Ver borrador">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                       <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
                       <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
@@ -218,13 +218,13 @@
             @if (drafts.length === 0 && !loadingDrafts) {
               <tr>
                 <td colspan="6" style="text-align: center; padding: 2rem; color: #999">
-                  {{ 'RECIPES.DRAFTS.EMPTY_MSG' | translate }}
+                  Aún no tienes borradores
                 </td>
               </tr>
             }
             @if (loadingDrafts && drafts.length > 0) {
               <tr>
-                <td colspan="6" class="drafts-loading-more">{{ 'RECIPES.DRAFTS.LOADING_MORE' | translate }}</td>
+                <td colspan="6" class="drafts-loading-more">Cargando más borradores...</td>
               </tr>
             }
           }
@@ -268,14 +268,14 @@
 }
 
 @if (showLoadWarningModal) {
-  <app-base-modal [title]="'RECIPES.WARNINGS.SLOW_LOAD_TITLE' | translate" size="sm" [closeOnBackdrop]="false" (closed)="closeLoadWarningModal()">
+  <app-base-modal title="La carga está tardando más de lo normal" size="sm" [closeOnBackdrop]="false" (closed)="closeLoadWarningModal()">
     <div class="draft-modal-body">
-      <p>{{ 'RECIPES.WARNINGS.SLOW_LOAD_MSG' | translate }}</p>
+      <p>Estamos teniendo una respuesta lenta al cargar recetas. Puedes seguir esperando o reintentar ahora.</p>
     </div>
     <div modal-footer>
       <div class="draft-footer-actions">
-        <button class="draft-modal-btn draft-modal-btn-secondary" type="button" (click)="closeLoadWarningModal()">{{ 'RECIPES.WARNINGS.KEEP_WAITING' | translate }}</button>
-        <button class="draft-modal-btn draft-modal-btn-primary" type="button" (click)="retryLoadAfterWarning()">{{ 'RECIPES.WARNINGS.RETRY' | translate }}</button>
+        <button class="draft-modal-btn draft-modal-btn-secondary" type="button" (click)="closeLoadWarningModal()">Seguir esperando</button>
+        <button class="draft-modal-btn draft-modal-btn-primary" type="button" (click)="retryLoadAfterWarning()">Reintentar</button>
       </div>
     </div>
   </app-base-modal>
@@ -286,7 +286,7 @@
     <div class="draft-modal-body">
       <div class="draft-summary-grid">
         <div class="draft-field">
-          <span class="draft-field-label">{{ 'COMMON.STATUS' | translate }}</span>
+          <span class="draft-field-label">Estado</span>
           <span class="draft-field-value draft-status-value">
             <span class="status-badge" [ngClass]="getDraftStatusClass(selectedDraftForDetail.status)">
               {{ getDraftStatusLabel(selectedDraftForDetail.status) }}
@@ -294,63 +294,63 @@
           </span>
         </div>
         <div class="draft-field">
-          <span class="draft-field-label">{{ 'RECIPES.PORTIONS' | translate }}</span>
+          <span class="draft-field-label">Porciones</span>
           <span class="draft-field-value">{{ selectedDraftForDetail.portions }}</span>
         </div>
         <div class="draft-field">
-          <span class="draft-field-label">{{ 'COMMON.VISIBLE' | translate }}</span>
-          <span class="draft-field-value">{{ selectedDraftForDetail.isHidden ? ('COMMON.HIDDEN' | translate) : ('COMMON.VISIBLE' | translate) }}</span>
+          <span class="draft-field-label">Visible</span>
+          <span class="draft-field-value">{{ selectedDraftForDetail.isHidden ? 'Oculto' : 'Visible' }}</span>
         </div>
         <div class="draft-field">
-          <span class="draft-field-label">{{ 'COMMON.CREATOR' | translate }}</span>
+          <span class="draft-field-label">Creador</span>
           <span class="draft-field-value">{{ selectedDraftForDetail.createdByName || ('#' + selectedDraftForDetail.createdById) }}</span>
         </div>
         <div class="draft-field">
-          <span class="draft-field-label">{{ 'RECIPES.DRAFTS.LAST_UPDATE' | translate }}</span>
+          <span class="draft-field-label">Última actualización</span>
           <span class="draft-field-value">{{ (selectedDraftForDetail.updatedAt || selectedDraftForDetail.createdAt) | date:'dd/MM/yyyy HH:mm' }}</span>
         </div>
         <div class="draft-field">
-          <span class="draft-field-label">{{ 'RECIPES.DRAFTS.REVIEWER' | translate }}</span>
+          <span class="draft-field-label">Revisor</span>
           <span class="draft-field-value">{{ selectedDraftForDetail.reviewedByName || '—' }}</span>
         </div>
       </div>
 
       <div class="draft-section">
-        <h4>{{ 'RECIPES.PRESENTATION' | translate }}</h4>
+        <h4>Presentación</h4>
         <p>{{ selectedDraftForDetail.presentation || '—' }}</p>
       </div>
 
       <div class="draft-section">
-        <h4>{{ 'RECIPES.ELABORATION' | translate }}</h4>
+        <h4>Elaboración</h4>
         <p class="draft-preformatted">{{ selectedDraftForDetail.elaboration || '—' }}</p>
       </div>
 
       <div class="draft-section">
-        <h4>{{ 'RECIPES.COMPONENTS' | translate }}</h4>
+        <h4>Componentes</h4>
         @if (selectedDraftForDetail.components.length > 0) {
           <table class="modal-table draft-components-table">
             <thead>
               <tr>
-                <th>{{ 'COMMON.PRODUCT' | translate }}</th>
-                <th>{{ 'COMMON.QUANTITY' | translate }}</th>
+                <th>Producto</th>
+                <th>Cantidad</th>
               </tr>
             </thead>
             <tbody>
               @for (component of selectedDraftForDetail.components; track component.productId) {
                 <tr>
-                  <td>{{ 'COMMON.PRODUCT' | translate }} #{{ component.productId }}</td>
+                  <td>Producto #{{ component.productId }}</td>
                   <td>{{ component.quantity }}</td>
                 </tr>
               }
             </tbody>
           </table>
         } @else {
-          <p>{{ 'RECIPES.DRAFTS.NO_COMPONENTS' | translate }}</p>
+          <p>Esta receta aún no tiene componentes.</p>
         }
       </div>
 
       <div class="draft-section">
-        <h4>{{ 'SIDEBAR.ALLERGENS' | translate }}</h4>
+        <h4>Alérgenos</h4>
         @if (selectedDraftForDetail.allergenIds.length > 0) {
           <div class="draft-tags-list">
             @for (allergenId of selectedDraftForDetail.allergenIds; track allergenId) {
@@ -358,13 +358,13 @@
             }
           </div>
         } @else {
-          <p>{{ 'RECIPES.NO_ALLERGENS_REG' | translate }}</p>
+          <p>Sin alérgenos registrados.</p>
         }
       </div>
 
       @if (selectedDraftForDetail.rejectionReason) {
         <div class="draft-section">
-          <h4>{{ 'RECIPES.DRAFTS.REJECTION_REASON' | translate }}</h4>
+          <h4>Motivo de rechazo</h4>
           <p class="draft-rejection-reason">{{ selectedDraftForDetail.rejectionReason }}</p>
         </div>
       }
@@ -374,21 +374,21 @@
       <div class="draft-footer-actions">
         @if (canEditDraft(selectedDraftForDetail)) {
           <button class="draft-modal-btn draft-modal-btn-primary" type="button" (click)="openEditDraftFromDetail()">
-            {{ 'COMMON.EDIT' | translate }}
+            Editar
           </button>
         }
         @if (selectedDraftForDetail.status === 'PENDING') {
           <button class="draft-modal-btn draft-modal-btn-danger" type="button" (click)="deleteDraft(selectedDraftForDetail)">
-            {{ 'COMMON.DELETE' | translate }}
+            Eliminar
           </button>
         }
         @if (selectedDraftForDetail.status === 'REJECTED') {
           <button class="draft-modal-btn draft-modal-btn-success" type="button" (click)="resubmitDraft(selectedDraftForDetail)">
-            {{ 'RECIPES.DRAFTS.RESUBMIT' | translate }}
+            Reenviar
           </button>
         }
         <button class="draft-modal-btn draft-modal-btn-neutral" type="button" (click)="closeDraftDetailModal()">
-          {{ 'COMMON.CLOSE' | translate }}
+          Cerrar
         </button>
       </div>
     </div>

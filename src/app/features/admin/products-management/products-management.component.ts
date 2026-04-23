@@ -8,7 +8,7 @@ import { UserService } from '../../../core/services/user.service';
 import { StatsService } from '../../../core/services/stats.service';
 import { MessageService } from '../../../core/services/message.service';
 import { Product, ProductRequest } from '../../../shared/models/product.model';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { ProductAudit } from '../../../shared/models/product-audit.model';
 import { Supplier } from '../../../shared/models/supplier.model';
 import { ProductCreateModalComponent } from '../../general/inventory/product-create-modal/product-create-modal.component';
 import { ProductEditModalComponent } from '../../general/inventory/product-edit-modal/product-edit-modal.component';
@@ -21,7 +21,6 @@ import { PresenceTrackingService } from '../../../core/services/presence-trackin
 import { finalize, catchError, forkJoin, takeUntil } from 'rxjs';
 import { of, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
-import { ProductAudit } from '../../../shared/models/product-audit.model';
 
 @Component({
   selector: 'app-products-management',
@@ -33,8 +32,7 @@ import { ProductAudit } from '../../../shared/models/product-audit.model';
     ProductEditModalComponent,
     ProductDetailModalComponent,
     BarcodeScannerComponent,
-    BaseModalComponent,
-    TranslateModule
+    BaseModalComponent
   ],
   templateUrl: './products-management.component.html',
   styleUrl: './products-management.component.css',
@@ -51,7 +49,6 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
   private presenceTrackingService = inject(PresenceTrackingService);
   private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
   messageService = inject(MessageService);
-  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   // ── Tab state ──
@@ -232,7 +229,7 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         console.error('Error al cargar productos:', err);
-        this.messageService.showError(this.translate.instant('PRODUCTS_MGMT.MESSAGES.LOAD_ERROR'));
+        this.messageService.showError('Error al cargar los productos');
         this.products = [];
         this.filteredProducts = [];
         this.cdr.markForCheck();
@@ -425,7 +422,7 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: () => {
-        this.messageService.showError(this.translate.instant('PRODUCTS_MGMT.AUDITS.MESSAGES.LOAD_ERROR'));
+        this.messageService.showError('Error al cargar las auditorías');
       }
     });
   }
@@ -515,7 +512,7 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: (users: any[]) => {
         users.forEach(user => {
-          this.userMap[user.id] = user.username || user.name || this.translate.instant('COMMON.UNKNOWN_USER');
+          this.userMap[user.id] = user.username || user.name || 'Usuario desconocido';
         });
         this.cdr.markForCheck();
       }
@@ -528,16 +525,16 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
 
   translateActionDescription(description: string): string {
     const translations: { [key: string]: string } = {
-      'HIDE_PRODUCT': this.translate.instant('PRODUCTS_MGMT.AUDITS.ACTIONS.HIDE_PRODUCT'),
-      'SHOW_PRODUCT': this.translate.instant('PRODUCTS_MGMT.AUDITS.ACTIONS.SHOW_PRODUCT'),
-      'UPDATE_PRODUCT': this.translate.instant('PRODUCTS_MGMT.AUDITS.ACTIONS.UPDATE_PRODUCT'),
-      'CREATE_PRODUCT': this.translate.instant('PRODUCTS_MGMT.AUDITS.ACTIONS.CREATE_PRODUCT'),
-      'DELETE_PRODUCT': this.translate.instant('PRODUCTS_MGMT.AUDITS.ACTIONS.DELETE_PRODUCT'),
-      'STOCK_ADJUSTMENT': this.translate.instant('PRODUCTS_MGMT.AUDITS.ACTIONS.STOCK_ADJUSTMENT'),
-      'STOCK_IN': this.translate.instant('PRODUCTS_MGMT.AUDITS.ACTIONS.STOCK_IN'),
-      'STOCK_OUT': this.translate.instant('PRODUCTS_MGMT.AUDITS.ACTIONS.STOCK_OUT'),
-      'PRICE_UPDATE': this.translate.instant('PRODUCTS_MGMT.AUDITS.ACTIONS.PRICE_UPDATE'),
-      'SUPPLIER_CHANGE': this.translate.instant('PRODUCTS_MGMT.AUDITS.ACTIONS.SUPPLIER_CHANGE')
+      'HIDE_PRODUCT': 'Producto desactivado',
+      'SHOW_PRODUCT': 'Producto activado',
+      'UPDATE_PRODUCT': 'Producto actualizado',
+      'CREATE_PRODUCT': 'Producto creado',
+      'DELETE_PRODUCT': 'Producto eliminado',
+      'STOCK_ADJUSTMENT': 'Ajuste de stock',
+      'STOCK_IN': 'Entrada de stock',
+      'STOCK_OUT': 'Salida de stock',
+      'PRICE_UPDATE': 'Actualización de precio',
+      'SUPPLIER_CHANGE': 'Cambio de proveedor'
     };
     return translations[description] || description;
   }
@@ -569,14 +566,14 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
   onSaveProduct(productData: ProductRequest): void {
     this.productService.create(productData).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.translate.instant('PRODUCTS_MGMT.MESSAGES.CREATE_SUCCESS'));
+        this.messageService.showSuccess('Producto creado correctamente');
         this.showCreateModal = false;
         this.presenceTrackingService.clearContext();
         this.loadProducts(this.currentPage);
         this.loadStats();
       },
       error: (err) => {
-        const errorMessage = err.error?.message || err.message || this.translate.instant('PRODUCTS_MGMT.MESSAGES.CREATE_ERROR');
+        const errorMessage = err.error?.message || err.message || 'Error al crear producto';
         this.messageService.showError(errorMessage);
       }
     });
@@ -607,7 +604,7 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
 
     this.productService.update(editingProductId, productData).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.translate.instant('PRODUCTS_MGMT.MESSAGES.UPDATE_SUCCESS'));
+        this.messageService.showSuccess('Producto actualizado correctamente');
         this.showEditModal = false;
 
         if (keepDetailOpen && this.selectedProduct) {
@@ -625,7 +622,7 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
         this.loadStats();
       },
       error: (err) => {
-        const errorMessage = err.error?.message || err.message || this.translate.instant('PRODUCTS_MGMT.MESSAGES.UPDATE_ERROR');
+        const errorMessage = err.error?.message || err.message || 'Error al actualizar producto';
         this.messageService.showError(errorMessage);
       }
     });
@@ -641,11 +638,7 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
 
     this.productService.toggleHidden(this.selectedProduct.id, newHiddenState).subscribe({
       next: () => {
-        const actionLabel = newHiddenState ? 
-          this.translate.instant('PRODUCTS_MGMT.MESSAGES.ACTION_HIDDEN') : 
-          this.translate.instant('PRODUCTS_MGMT.MESSAGES.ACTION_SHOWN');
-        
-        this.messageService.showSuccess(this.translate.instant('PRODUCTS_MGMT.MESSAGES.TOGGLE_HIDDEN_SUCCESS', { action: actionLabel }));
+        this.messageService.showSuccess(`Producto ${actionText} correctamente`);
         this.showEditModal = false;
         this.selectedProduct = null;
         this.presenceTrackingService.clearContext();
@@ -683,8 +676,8 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
 
   async exportToExcel(): Promise<void> {
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('COMMON.PDF_CONFIRM_TITLE'),
-      this.translate.instant('COMMON.PDF_CONFIRM_MSG')
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo Excel?'
     );
     if (!confirmed) return;
 
@@ -696,10 +689,10 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
         link.download = `productos_${new Date().toISOString().split('T')[0]}.xlsx`;
         link.click();
         window.URL.revokeObjectURL(url);
-        this.messageService.showSuccess(this.translate.instant('PRODUCTS_MGMT.MESSAGES.EXCEL_SUCCESS'));
+        this.messageService.showSuccess('Excel descargado correctamente');
       },
       error: (err) => {
-        const errorMessage = err.error?.message || err.message || this.translate.instant('PRODUCTS_MGMT.MESSAGES.EXCEL_ERROR');
+        const errorMessage = err.error?.message || err.message || 'Error al descargar Excel';
         this.messageService.showError(errorMessage);
       }
     });
@@ -732,7 +725,7 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
 
     // Nombre
     fields.push({
-      label: 'PRODUCTS_MGMT.AUDITS.FIELDS.NAME',
+      label: 'Nombre',
       prev: prev.nombre ?? '',
       next: next.nombre ?? '',
       changed: prev.nombre !== next.nombre
@@ -740,7 +733,7 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
 
     // Código de Producto
     fields.push({
-      label: 'PRODUCTS_MGMT.AUDITS.FIELDS.CODE',
+      label: 'Código',
       prev: prev.codigoProducto ?? '',
       next: next.codigoProducto ?? '',
       changed: prev.codigoProducto !== next.codigoProducto
@@ -748,7 +741,7 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
 
     // Unidad
     fields.push({
-      label: 'PRODUCTS_MGMT.AUDITS.FIELDS.UNIT',
+      label: 'Unidad',
       prev: prev.unidad ?? '',
       next: next.unidad ?? '',
       changed: prev.unidad !== next.unidad
@@ -758,7 +751,7 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
     const prevPrice = prev.precioUnitario?.toFixed(2) ?? '0.00';
     const nextPrice = next.precioUnitario?.toFixed(2) ?? '0.00';
     fields.push({
-      label: 'PRODUCTS_MGMT.AUDITS.FIELDS.UNIT_PRICE',
+      label: 'Precio Unitario',
       prev: prevPrice + ' €',
       next: nextPrice + ' €',
       changed: prevPrice !== nextPrice
@@ -766,10 +759,10 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
 
     // Disponibilidad (si existe)
     if (prev.disponibilidad !== undefined || next.disponibilidad !== undefined) {
-      const prevAvail = prev.disponibilidad !== undefined ? prev.disponibilidad + '%' : 'PRODUCTS_MGMT.AUDITS.FIELDS.NOT_DEFINED';
-      const nextAvail = next.disponibilidad !== undefined ? next.disponibilidad + '%' : 'PRODUCTS_MGMT.AUDITS.FIELDS.NOT_DEFINED';
+      const prevAvail = prev.disponibilidad !== undefined ? prev.disponibilidad + '%' : 'No definido';
+      const nextAvail = next.disponibilidad !== undefined ? next.disponibilidad + '%' : 'No definido';
       fields.push({
-        label: 'PRODUCTS_MGMT.AUDITS.FIELDS.AVAILABILITY',
+        label: 'Disponibilidad',
         prev: prevAvail,
         next: nextAvail,
         changed: prevAvail !== nextAvail
@@ -778,9 +771,9 @@ export class ProductsManagementComponent implements OnInit, OnDestroy {
 
     // Oculto
     fields.push({
-      label: 'PRODUCTS_MGMT.AUDITS.FIELDS.HIDDEN',
-      prev: prev.oculto ? 'PRODUCTS_MGMT.AUDITS.FIELDS.YES' : 'PRODUCTS_MGMT.AUDITS.FIELDS.NO',
-      next: next.oculto ? 'PRODUCTS_MGMT.AUDITS.FIELDS.YES' : 'PRODUCTS_MGMT.AUDITS.FIELDS.NO',
+      label: 'Oculto',
+      prev: prev.oculto ? 'Sí' : 'No',
+      next: next.oculto ? 'Sí' : 'No',
       changed: prev.oculto !== next.oculto
     });
 

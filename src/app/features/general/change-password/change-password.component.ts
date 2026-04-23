@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { MessageService } from '../../../core/services/message.service';
 import { ThemeService } from '../../../core/services/theme.service';
@@ -36,7 +35,7 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
 @Component({
     selector: 'app-change-password',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+    imports: [CommonModule, ReactiveFormsModule],
     templateUrl: './change-password.component.html',
     styleUrl: './change-password.component.css'
 })
@@ -46,7 +45,6 @@ export class ChangePasswordComponent {
     private route = inject(ActivatedRoute);
     private messageService = inject(MessageService);
     private themeService = inject(ThemeService);
-    private translate = inject(TranslateService);
 
     loading = false;
 
@@ -68,7 +66,7 @@ export class ChangePasswordComponent {
 
     onSubmit() {
         if (this.form.invalid) {
-            this.messageService.showError(this.translate.instant('CHANGE_PWD.VALIDATE_ERROR'));
+            this.messageService.showError('Por favor, revisa los errores en la contraseña.');
             return;
         }
 
@@ -76,7 +74,7 @@ export class ChangePasswordComponent {
         const userId = this.authService.getUserId();
 
         if (!userId) {
-            this.messageService.showError(this.translate.instant('CHANGE_PWD.SESSION_ERROR'));
+            this.messageService.showError('Error de sesión. Por favor inicia sesión de nuevo.');
             this.authService.logout();
             return;
         }
@@ -86,7 +84,7 @@ export class ChangePasswordComponent {
         this.authService.changePassword(userId, oldPassword!, newPassword!).subscribe({
             next: () => {
                 this.authService.clearFirstLogin();
-                this.messageService.showSuccess(this.translate.instant('CHANGE_PWD.SUCCESS'));
+                this.messageService.showSuccess('Contraseña actualizada correctamente');
 
                 const returnUrl = this.getSafeReturnUrl();
                 if (returnUrl) {
@@ -104,7 +102,7 @@ export class ChangePasswordComponent {
             error: (err) => {
                 this.loading = false;
                 console.error(err);
-                this.messageService.showError(this.translate.instant('CHANGE_PWD.ERROR'));
+                this.messageService.showError('Error al cambiar la contraseña. Verifica tu contraseña actual.');
             }
         });
     }

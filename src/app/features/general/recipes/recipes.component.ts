@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RecipeService } from '../../../core/services/recipe.service';
 import { RecipeDraftService } from '../../../core/services/recipe-draft.service';
 import { MessageService } from '../../../core/services/message.service';
@@ -21,7 +20,7 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 @Component({
   selector: 'app-recipes',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseModalComponent, RecipeDetailModalComponent, RecipeEditModalComponent, RecipeCreateModalComponent, RecipeOrderWizardModalComponent, TranslateModule],
+  imports: [CommonModule, FormsModule, BaseModalComponent, RecipeDetailModalComponent, RecipeEditModalComponent, RecipeCreateModalComponent, RecipeOrderWizardModalComponent],
   templateUrl: './recipes.component.html',
   styleUrl: './recipes.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -34,7 +33,6 @@ export class RecipesComponent implements OnInit, OnDestroy {
   private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
   private cdr = inject(ChangeDetectorRef);
   private scrollService = inject(ScrollService);
-  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   recipes: Recipe[] = [];
@@ -52,8 +50,8 @@ export class RecipesComponent implements OnInit, OnDestroy {
   showOrderWizard = false;
   showDraftDetailModal = false;
   activeTab: 'recipes' | 'drafts' = 'recipes';
-  createModalTitle = '';
-  createActionLabel = '';
+  createModalTitle = 'Crear Nueva Receta';
+  createActionLabel = 'Crear Receta';
   createMode: 'recipe-create' | 'draft-create' | 'draft-edit' = 'recipe-create';
   selectedDraftForEdit: RecipeDraft | null = null;
   selectedDraftForDetail: RecipeDraft | null = null;
@@ -80,7 +78,6 @@ export class RecipesComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initialiseSearchSubscription();
     this.loadRecipes();
-    this.updateCreateModalLabels();
 
     this.syncCacheInvalidationService.invalidatedDomains$
       .pipe(takeUntil(this.destroy$))
@@ -93,12 +90,6 @@ export class RecipesComponent implements OnInit, OnDestroy {
           }
         }
       });
-      
-    // Re-update labels if language changes
-    this.translate.onLangChange.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.updateCreateModalLabels();
-      this.cdr.markForCheck();
-    });
   }
 
   ngOnDestroy(): void {
@@ -150,14 +141,16 @@ export class RecipesComponent implements OnInit, OnDestroy {
       })
     ).subscribe({
       next: (page) => {
+        console.log('📦 Recipes Loaded:', page);
         this.recipes = page.content;
         this.totalElements = page.totalElements;
         this.totalPages = page.totalPages;
+        console.log('🔢 Total Pages:', this.totalPages);
         this.initialLoad = false;
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError(this.translate.instant('RECIPES.MESSAGES.LOAD_ERROR'));
+        this.messageService.showError('Error al cargar recetas');
       }
     });
   }
@@ -195,12 +188,15 @@ export class RecipesComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         },
         error: () => {
-          this.messageService.showError(this.translate.instant('RECIPES.MESSAGES.SEARCH_ERROR'));
+          this.messageService.showError('Error al buscar recetas');
         }
       });
   }
 
   applyFilters(): void {
+    // Client-side filters now only apply to the current page if absolutely necessary, 
+    // but ideally we should move everything to backend.
+    // For now, we will just reload recipes which resets to page 0
     this.currentPage = 0;
     if (this.searchTerm) {
       this.onSearch();
@@ -287,8 +283,8 @@ export class RecipesComponent implements OnInit, OnDestroy {
     if (!this.selectedRecipe) return;
 
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('PRODUCT_MGMT.PDF_CONFIRM_TITLE'),
-      this.translate.instant('PRODUCT_MGMT.PDF_CONFIRM_MSG')
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo PDF?'
     );
     if (!confirmed) return;
 
@@ -308,10 +304,10 @@ export class RecipesComponent implements OnInit, OnDestroy {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
 
-        this.messageService.showSuccess(this.translate.instant('RECIPES.MESSAGES.PRINT_SUCCESS'));
+        this.messageService.showSuccess('PDF descargado correctamente');
       },
       error: () => {
-        this.messageService.showError(this.translate.instant('RECIPES.MESSAGES.PRINT_ERROR'));
+        this.messageService.showError('Error al generar el PDF');
       }
     });
   }
@@ -324,25 +320,18 @@ export class RecipesComponent implements OnInit, OnDestroy {
     this.showEditModal = false;
   }
 
-  private updateCreateModalLabels(): void {
-    if (this.canEdit()) {
-      this.createModalTitle = this.translate.instant('RECIPES.CREATE_MODAL_TITLE');
-      this.createActionLabel = this.translate.instant('RECIPES.CREATE_ACTION_LABEL');
-    } else {
-      this.createModalTitle = this.translate.instant('RECIPES.DRAFTS.CREATE_MODAL_TITLE');
-      this.createActionLabel = this.translate.instant('RECIPES.DRAFTS.CREATE_ACTION_LABEL');
-    }
-  }
-
   openCreateModal(): void {
     if (this.canEdit()) {
       this.createMode = 'recipe-create';
       this.selectedDraftForEdit = null;
+      this.createModalTitle = 'Crear Nueva Receta';
+      this.createActionLabel = 'Crear Receta';
     } else {
       this.createMode = 'draft-create';
       this.selectedDraftForEdit = null;
+      this.createModalTitle = 'Crear Nuevo Borrador';
+      this.createActionLabel = 'Guardar Borrador';
     }
-    this.updateCreateModalLabels();
     this.showCreateModal = true;
     this.cdr.markForCheck();
   }
@@ -396,7 +385,7 @@ export class RecipesComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         },
         error: () => {
-          this.messageService.showError(this.translate.instant('RECIPES.DRAFTS.MESSAGES.LOAD_ERROR'));
+          this.messageService.showError('Error al cargar tus borradores');
         }
       });
   }
@@ -417,11 +406,11 @@ export class RecipesComponent implements OnInit, OnDestroy {
   getDraftStatusLabel(status: RecipeDraft['status']): string {
     switch (status) {
       case 'PENDING':
-        return this.translate.instant('RECIPES.DRAFTS.STATUS_PENDING');
+        return 'Pendiente';
       case 'APPROVED':
-        return this.translate.instant('RECIPES.DRAFTS.STATUS_APPROVED');
+        return 'Aprobado';
       case 'REJECTED':
-        return this.translate.instant('RECIPES.DRAFTS.STATUS_REJECTED');
+        return 'Rechazado';
       default:
         return status;
     }
@@ -458,14 +447,14 @@ export class RecipesComponent implements OnInit, OnDestroy {
 
   openEditDraftModal(draft: RecipeDraft): void {
     if (!this.canEditDraft(draft)) {
-      this.messageService.showError(this.translate.instant('RECIPES.DRAFTS.MESSAGES.NOT_EDITABLE'));
+      this.messageService.showError('Este borrador ya no se puede editar');
       return;
     }
 
     this.createMode = 'draft-edit';
     this.selectedDraftForEdit = draft;
-    this.createModalTitle = `${this.translate.instant('RECIPES.DRAFTS.EDIT_MODAL_TITLE')}: ${draft.name}`;
-    this.createActionLabel = draft.status === 'REJECTED' ? this.translate.instant('RECIPES.DRAFTS.SAVE_AND_RESUBMIT') : this.translate.instant('RECIPES.DRAFTS.SAVE_CHANGES');
+    this.createModalTitle = `Editar Borrador: ${draft.name}`;
+    this.createActionLabel = draft.status === 'REJECTED' ? 'Guardar y Reenviar' : 'Guardar Cambios';
     this.showCreateModal = true;
     this.closeDraftDetailModal();
     this.cdr.markForCheck();
@@ -478,8 +467,8 @@ export class RecipesComponent implements OnInit, OnDestroy {
 
   async deleteDraft(draft: RecipeDraft): Promise<void> {
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('RECIPES.DRAFTS.DELETE_CONFIRM_TITLE'),
-      this.translate.instant('RECIPES.DRAFTS.DELETE_CONFIRM_MSG', { name: draft.name })
+      'Eliminar borrador',
+      `¿Seguro que deseas eliminar el borrador "${draft.name}"?`
     );
 
     if (!confirmed) {
@@ -488,12 +477,12 @@ export class RecipesComponent implements OnInit, OnDestroy {
 
     this.recipeDraftService.delete(draft.id).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.translate.instant('RECIPES.DRAFTS.MESSAGES.DELETE_SUCCESS', { name: draft.name }));
+        this.messageService.showSuccess(`Borrador "${draft.name}" eliminado`);
         this.closeDraftDetailModal();
         this.loadMyDrafts(this.currentDraftPage);
       },
       error: () => {
-        this.messageService.showError(this.translate.instant('RECIPES.DRAFTS.MESSAGES.DELETE_ERROR'));
+        this.messageService.showError('Error al eliminar el borrador');
       }
     });
   }
@@ -502,12 +491,12 @@ export class RecipesComponent implements OnInit, OnDestroy {
     const request = this.toDraftRequest(this.mapDraftToRecipeRequest(draft), draft);
     this.recipeDraftService.update(draft.id, request).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.translate.instant('RECIPES.DRAFTS.MESSAGES.RESUBMIT_SUCCESS', { name: draft.name }));
+        this.messageService.showSuccess(`Borrador "${draft.name}" reenviado`);
         this.closeDraftDetailModal();
         this.loadMyDrafts(this.currentDraftPage);
       },
       error: () => {
-        this.messageService.showError(this.translate.instant('RECIPES.DRAFTS.MESSAGES.RESUBMIT_ERROR'));
+        this.messageService.showError('Error al reenviar el borrador');
       }
     });
   }
@@ -517,7 +506,7 @@ export class RecipesComponent implements OnInit, OnDestroy {
 
     this.recipeService.update(this.selectedRecipe.id, recipeRequest).subscribe({
       next: (recipe) => {
-        this.messageService.showSuccess(this.translate.instant('RECIPES.MESSAGES.UPDATE_SUCCESS', { name: recipe.name }));
+        this.messageService.showSuccess(`Receta "${recipe.name}" actualizada con éxito`);
         this.closeEditModal();
         this.closeModal();
         this.loadRecipes();
@@ -532,7 +521,7 @@ export class RecipesComponent implements OnInit, OnDestroy {
     if (this.createMode === 'recipe-create') {
       this.recipeService.create(recipeRequest).subscribe({
         next: (recipe) => {
-          this.messageService.showSuccess(this.translate.instant('RECIPES.MESSAGES.CREATE_SUCCESS', { name: recipe.name }));
+          this.messageService.showSuccess(`Receta "${recipe.name}" creada con éxito`);
           this.closeCreateModal();
           this.loadRecipes();
         },
@@ -549,14 +538,14 @@ export class RecipesComponent implements OnInit, OnDestroy {
         next: (draft) => {
           this.messageService.showSuccess(
             draft.status === 'PENDING'
-              ? this.translate.instant('RECIPES.DRAFTS.MESSAGES.SAVE_AND_SENT', { name: draft.name })
-              : this.translate.instant('RECIPES.DRAFTS.MESSAGES.UPDATE_SUCCESS', { name: draft.name })
+              ? `Borrador "${draft.name}" guardado y enviado`
+              : `Borrador "${draft.name}" actualizado`
           );
           this.closeCreateModal();
           this.loadMyDrafts(this.currentDraftPage);
         },
         error: () => {
-          this.messageService.showError(this.translate.instant('RECIPES.DRAFTS.MESSAGES.UPDATE_ERROR'));
+          this.messageService.showError('Error al actualizar el borrador');
         }
       });
       return;
@@ -566,12 +555,12 @@ export class RecipesComponent implements OnInit, OnDestroy {
 
     this.recipeDraftService.create(draftRequest).subscribe({
       next: (recipe) => {
-        this.messageService.showSuccess(this.translate.instant('RECIPES.DRAFTS.MESSAGES.CREATE_SUCCESS', { name: recipe.name }));
+        this.messageService.showSuccess(`Borrador "${recipe.name}" creado con éxito`);
         this.closeCreateModal();
         this.loadMyDrafts(0);
       },
       error: (err) => {
-        this.messageService.showError(this.translate.instant('RECIPES.DRAFTS.MESSAGES.CREATE_ERROR'));
+        this.messageService.showError('Error al crear el borrador');
       }
     });
   }
@@ -580,8 +569,8 @@ export class RecipesComponent implements OnInit, OnDestroy {
     if (!this.selectedRecipe) return;
 
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('RECIPES.COOK_CONFIRM_TITLE'),
-      this.translate.instant('RECIPES.COOK_CONFIRM_MSG', { quantity: event.quantity, name: this.selectedRecipe.name })
+      'Confirmar cocinado',
+      `¿Deseas cocinar ${event.quantity} unidad(es) de "${this.selectedRecipe.name}"?`
     );
 
     if (!confirmed) return;
@@ -592,7 +581,7 @@ export class RecipesComponent implements OnInit, OnDestroy {
       details: event.details
     }).subscribe({
       next: (recipe) => {
-        this.messageService.showSuccess(this.translate.instant('RECIPES.MESSAGES.COOK_SUCCESS', { name: recipe.name }));
+        this.messageService.showSuccess(`¡"${recipe.name}" cocinada con éxito!`);
         this.closeModal();
         this.loadRecipes();
       },

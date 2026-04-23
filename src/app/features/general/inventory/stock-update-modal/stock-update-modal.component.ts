@@ -1,22 +1,17 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ViewChild, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Product, ProductRequest } from '../../../../shared/models/product.model';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
-import { MessageService } from '../../../../core/services/message.service';
 
 @Component({
   selector: 'app-stock-update-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseModalComponent, TranslateModule],
+  imports: [CommonModule, FormsModule, BaseModalComponent],
   templateUrl: './stock-update-modal.component.html',
   styleUrl: './stock-update-modal.component.css'
 })
 export class StockUpdateModalComponent implements OnChanges {
-  private translate = inject(TranslateService);
-  private messageService = inject(MessageService);
-
   @Input() product: Product | null = null;
   @Input() isAdmin = false;
   @Output() save = new EventEmitter<ProductRequest>();
@@ -43,9 +38,18 @@ export class StockUpdateModalComponent implements OnChanges {
     if (!this.product) return;
 
     if (this.currentStock > (this.product.currentStock || 0) && !this.expirationDate) {
-      this.messageService.showWarning(this.translate.instant('STOCK_UPDATE.EXPIRATION_REQUIRED'));
+      // Usaremos una alerta genérica ya que no se inyectó messageService aun aquí
+      alert('Al registrar un incremento de stock, la caducidad es obligatoria.');
       return;
     }
+
+    // Build the ProductRequest with ONLY stock updated, and existing values for others
+    // The backend logic checks stockDelta, so currentStock is crucial.
+    // Other fields are required by ProductRequestDTO validity checks (e.g. valid unit), so we pass them along.
+
+    // We must ensure we don't accidentally wipe out other fields if the product has them.
+    // However, the backend logic for updateStockManually validates existing vs new name, etc.
+    // Ideally we send the exact same data as the product has, just with new stock.
 
     const productRequest: ProductRequest = {
       name: this.product.name,

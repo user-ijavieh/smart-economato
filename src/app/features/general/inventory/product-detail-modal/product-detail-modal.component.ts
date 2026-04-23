@@ -4,12 +4,11 @@ import { Product } from '../../../../shared/models/product.model';
 import { ProductBatchService } from '../../../../core/services/product-batch.service';
 import { ProductBatchResponseDTO } from '../../../../shared/models/product-batch.model';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
-import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-product-detail-modal',
   standalone: true,
-  imports: [BaseModalComponent, DatePipe, DecimalPipe, TranslateModule],
+  imports: [BaseModalComponent, DatePipe, DecimalPipe],
   templateUrl: './product-detail-modal.component.html',
   styleUrl: './product-detail-modal.component.css'
 })

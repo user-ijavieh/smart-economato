@@ -2,7 +2,6 @@ import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { AlertMessage, WebSocketService } from '../../../../core/services/websocket.service';
 import { ModalStackService } from '../../../../core/services/modal-stack.service';
 
@@ -17,26 +16,25 @@ interface AlertViewModel {
 }
 
 const ALERT_TEXT: Record<string, string> = {
-  DB_FAILURE: 'ALERTS.DB_FAILURE',
-  REDIS_FAILURE: 'ALERTS.REDIS_FAILURE',
-  KAFKA_FAILURE: 'ALERTS.KAFKA_FAILURE',
-  REPLICA_FAILURE: 'ALERTS.REPLICA_FAILURE',
-  DB_RECOVERED: 'ALERTS.DB_RECOVERED',
-  REDIS_RECOVERED: 'ALERTS.REDIS_RECOVERED',
-  KAFKA_RECOVERED: 'ALERTS.KAFKA_RECOVERED',
-  REPLICA_RECOVERED: 'ALERTS.REPLICA_RECOVERED'
+  DB_FAILURE: 'La base de datos principal no está disponible.',
+  REDIS_FAILURE: 'El servicio de caché no está disponible.',
+  KAFKA_FAILURE: 'El servicio de mensajería no está disponible.',
+  REPLICA_FAILURE: 'La réplica de datos no está disponible.',
+  DB_RECOVERED: 'La base de datos se ha restablecido.',
+  REDIS_RECOVERED: 'El servicio de caché se ha restablecido.',
+  KAFKA_RECOVERED: 'El servicio de mensajería se ha restablecido.',
+  REPLICA_RECOVERED: 'La réplica de datos se ha restablecido.'
 };
 
 const SERVICE_NAMES: Record<string, string> = {
-  REDIS: 'ALERTS.REDIS',
-  KAFKA: 'ALERTS.KAFKA',
-  REPLICA: 'ALERTS.REPLICA'
+  REDIS: 'Servicio de caché',
+  KAFKA: 'Servicio de mensajería',
+  REPLICA: 'Réplica de datos'
 };
 
 @Component({
   selector: 'app-alert-notification',
-  standalone: true,
-  imports: [DatePipe, TranslateModule],
+  imports: [DatePipe],
   templateUrl: './alert-notification.component.html',
   styleUrl: './alert-notification.component.css'
 })
@@ -44,7 +42,6 @@ export class AlertNotificationComponent {
   private readonly webSocketService = inject(WebSocketService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly modalStack = inject(ModalStackService);
-  private readonly translate = inject(TranslateService);
 
   private readonly activeFailures = signal<Record<string, AlertViewModel>>({});
   private readonly recoveredAlerts = signal<AlertViewModel[]>([]);
@@ -72,15 +69,14 @@ export class AlertNotificationComponent {
     if (partialFailures.length > 1) {
       const services = partialFailures.map(f => {
         const serviceKey = f.code.replace('_FAILURE', '');
-        const translationKey = SERVICE_NAMES[serviceKey];
-        return translationKey ? this.translate.instant(translationKey) : serviceKey;
+        return SERVICE_NAMES[serviceKey] || serviceKey;
       });
       const latestTimestamp = Math.max(...partialFailures.map(f => f.timestamp));
 
       const mergedAlert: AlertViewModel = {
         id: 'merged-partial-failure',
         code: 'MERGED_PARTIAL_FAILURE',
-        title: this.translate.instant('ALERTS.SYSTEM_PARTIALLY_DOWN'),
+        title: 'Sistema parcialmente caído',
         timestamp: latestTimestamp,
         kind: 'failure',
         severity: 'partial',
@@ -118,8 +114,7 @@ export class AlertNotificationComponent {
 
   private handleAlert(alert: AlertMessage): void {
     const normalizedCode = alert.code?.toUpperCase?.() ?? '';
-    const translationKey = ALERT_TEXT[normalizedCode];
-    const title = translationKey ? this.translate.instant(translationKey) : this.translate.instant('ALERTS.SERVICE_STATUS_UPDATED');
+    const title = ALERT_TEXT[normalizedCode] ?? 'Estado de servicio actualizado.';
     const groupCode = normalizedCode.replace(/_(FAILURE|RECOVERED)$/, '');
 
     if (normalizedCode.endsWith('_FAILURE')) {
