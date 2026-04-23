@@ -6,6 +6,7 @@ import { OrderService } from '../../../../core/services/order.service';
 import { MessageService } from '../../../../core/services/message.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
+import { LoggerService } from '../../../../core/services/logger.service';
 
 @Component({
   selector: 'app-order-details-modal',
@@ -15,6 +16,7 @@ import { BaseModalComponent } from '../../../../shared/components/base-modal/bas
   styleUrl: './order-details-modal.component.css'
 })
 export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
+  private logger = inject(LoggerService);
   @Input() order: Order | null = null;
   @Output() closeModal = new EventEmitter<void>();
   @Output() deleteOrder = new EventEmitter<number>();
@@ -193,7 +195,7 @@ export class OrderDetailsModalComponent implements OnChanges, OnDestroy {
         this.isDownloading = false;
       },
       error: (error) => {
-        console.error('Error al descargar el PDF:', error);
+        this.logger.error('Error al descargar el PDF:', error);
         this.messageService.showError('Error al descargar el PDF');
         this.isDownloading = false;
       }

@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { MessageService } from '../../../core/services/message.service';
 import { ThemeService } from '../../../core/services/theme.service';
+import { LoggerService } from '../../../core/services/logger.service';
 
 export function robustPasswordValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
@@ -40,6 +41,7 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
     styleUrl: './change-password.component.css'
 })
 export class ChangePasswordComponent {
+    private logger = inject(LoggerService);
     private authService = inject(AuthService);
     private router = inject(Router);
     private route = inject(ActivatedRoute);
@@ -101,7 +103,7 @@ export class ChangePasswordComponent {
             },
             error: (err) => {
                 this.loading = false;
-                console.error(err);
+                this.logger.error(err);
                 this.messageService.showError('Error al cambiar la contraseña. Verifica tu contraseña actual.');
             }
         });

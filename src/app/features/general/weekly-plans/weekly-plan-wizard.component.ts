@@ -14,6 +14,7 @@ import { User } from '../../../shared/models/user.model';
 import { SearchableDropdownComponent, SearchableItem } from '../../../shared/components/searchable-dropdown/searchable-dropdown.component';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { StorageService } from '../../../core/services/storage.service';
+import { LoggerService } from '../../../core/services/logger.service';
 
 type DistributionMode = 'EQUITATIVE' | 'HISTORICAL' | 'RANDOM';
 
@@ -70,6 +71,7 @@ interface StockUsageRow {
   styleUrls: ['./weekly-plan-wizard.component.css']
 })
 export class WeeklyPlanWizardComponent implements OnInit {
+  private logger = inject(LoggerService);
   private weeklyPlanService = inject(WeeklyPlanService);
   private authService = inject(AuthService);
   private recipeService = inject(RecipeService);
@@ -916,7 +918,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
     try {
       return JSON.parse(data) as AutoCreateOptions;
     } catch (e) {
-      console.error('Error parsing auto create options from localStorage', e);
+      this.logger.error('Error parsing auto create options from localStorage', e);
       return null;
     }
   }
