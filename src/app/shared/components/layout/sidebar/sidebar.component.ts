@@ -4,7 +4,6 @@ import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ThemeService } from '../../../../core/services/theme.service';
 import { Subscription, filter } from 'rxjs';
-import { TranslateModule } from '@ngx-translate/core';
 
 interface NavItem {
   label: string;
@@ -16,7 +15,7 @@ interface NavItem {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css'
 })
@@ -39,35 +38,34 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   // Items para la vista normal
   private defaultNavItems: NavItem[] = [
-    { label: 'SIDEBAR.GENERAL_VIEW', route: '/welcome', icon: 'home' },
-    { label: 'SIDEBAR.INVENTORY', route: '/inventario', icon: 'inventory' },
-    { label: 'SIDEBAR.RECIPES', route: '/recipes', icon: 'book' },
-    { label: 'SIDEBAR.WEEKLY_PLANS', route: '/weekly-plans', icon: 'calendar' },
-    { label: 'SIDEBAR.ORDERS', route: '/orders', icon: 'cart' },
-    { label: 'SIDEBAR.RECEPTION', route: '/reception', icon: 'truck' },
-    { label: 'SIDEBAR.INCIDENTS', route: '/incidents', icon: 'alert' },
-    { label: 'SIDEBAR.AI_CHAT', route: '/ai-chat', icon: 'chat' },
-    { label: 'SIDEBAR.PROFILE', route: '/profile', icon: 'person' }
+    { label: 'Inicio', route: '/welcome', icon: 'home' },
+    { label: 'Inventario', route: '/inventario', icon: 'inventory' },
+    { label: 'Recetas', route: '/recipes', icon: 'book' },
+    { label: 'Plan Semanal', route: '/weekly-plans', icon: 'calendar' },
+    { label: 'Pedidos', route: '/orders', icon: 'cart' },
+    { label: 'Recepción', route: '/reception', icon: 'truck' },
+    { label: 'Incidencias', route: '/incidents', icon: 'alert' },
+    { label: 'Chat IA', route: '/ai-chat', icon: 'chat' },
+    { label: 'Perfil', route: '/profile', icon: 'person' }
   ];
 
   // Items para la vista admin
   private adminNavItems: NavItem[] = [
-    { label: 'SIDEBAR.DASHBOARD', route: '/admin-panel/dashboard', icon: 'dashboard' },
-    { label: 'SIDEBAR.GENERAL_VIEW', route: '/welcome', icon: 'home' },
-    { label: 'SIDEBAR.ORDERS', route: '/admin-panel/orders', icon: 'cart', section: 'SIDEBAR.SECTIONS.OPERATIONS' },
-    { label: 'SIDEBAR.RECEPTION', route: '/reception', icon: 'truck' },
-    { label: 'SIDEBAR.WEEKLY_PLANS', route: '/admin-panel/weekly-plans', icon: 'calendar' },
-    { label: 'SIDEBAR.KITCHEN', route: '/admin-panel/kitchen', icon: 'kitchen' },
-    { label: 'SIDEBAR.INCIDENTS', route: '/admin-panel/incidents', icon: 'alert' },
-    { label: 'SIDEBAR.INVENTORY', route: '/admin-panel/stock', icon: 'inventory', section: 'SIDEBAR.SECTIONS.INVENTORY' },
-    { label: 'SIDEBAR.BATCHES', route: '/admin-panel/batches', icon: 'batches' },
-    { label: 'SIDEBAR.PRODUCTS', route: '/admin-panel/products', icon: 'products' },
-    { label: 'SIDEBAR.RECIPES', route: '/admin-panel/recipes', icon: 'menu_book' },
-    { label: 'SIDEBAR.MASTER_DATA', route: '/admin-panel/master-data', icon: 'database', section: 'SIDEBAR.SECTIONS.MANAGEMENT' },
-    { label: 'SIDEBAR.USERS', route: '/admin-panel/users', icon: 'people' },
-    { label: 'SIDEBAR.NOTIFICATIONS', route: '/admin-panel/notifications', icon: 'notifications' },
-    { label: 'SIDEBAR.SETTINGS', route: '/admin-panel/settings', icon: 'settings' },
-    { label: 'SIDEBAR.TRACEABILITY', route: '/admin-panel/traceability', icon: 'shield', section: 'SIDEBAR.SECTIONS.TRACEABILITY' }
+    { label: 'Dashboard', route: '/admin-panel/dashboard', icon: 'dashboard' },
+    { label: 'Vista General', route: '/welcome', icon: 'home' },
+    { label: 'Órdenes', route: '/admin-panel/orders', icon: 'cart', section: 'OPERACIONES' },
+    { label: 'Planes Semanales', route: '/admin-panel/weekly-plans', icon: 'calendar' },
+    { label: 'Cocina', route: '/admin-panel/kitchen', icon: 'kitchen' },
+    { label: 'Incidencias', route: '/admin-panel/incidents', icon: 'alert' },
+    { label: 'Stock', route: '/admin-panel/stock', icon: 'inventory', section: 'INVENTARIO' },
+    { label: 'Lotes', route: '/admin-panel/batches', icon: 'batches' },
+    { label: 'Productos', route: '/admin-panel/products', icon: 'products' },
+    { label: 'Recetas', route: '/admin-panel/recipes', icon: 'menu_book' },
+    { label: 'Datos Maestros', route: '/admin-panel/master-data', icon: 'database', section: 'GESTIÓN' },
+    { label: 'Alumnos', route: '/admin-panel/users', icon: 'people' },
+    { label: 'Notificaciones', route: '/admin-panel/notifications', icon: 'notifications' },
+    { label: 'Configuraciones', route: '/admin-panel/settings', icon: 'settings' },
+    { label: 'Crisis Alimentaria', route: '/admin-panel/traceability', icon: 'shield', section: 'TRAZABILIDAD' }
   ];
 
   ngOnInit(): void {
@@ -113,19 +111,19 @@ export class SidebarComponent implements OnInit, OnDestroy {
     const userRole = this.getUserRole();
     if (userRole === 'ADMIN') {
       return this.defaultNavItems.filter(item => 
-        item.label !== 'SIDEBAR.WEEKLY_PLANS' && 
-        item.label !== 'SIDEBAR.INCIDENTS' && 
-        item.label !== 'SIDEBAR.PROFILE'
+        item.label !== 'Plan Semanal' && 
+        item.label !== 'Incidencias' && 
+        item.label !== 'Perfil'
       );
     }
     if (userRole === 'USER') {
       return this.defaultNavItems.filter(item =>
-        item.label !== 'SIDEBAR.RECEPTION' &&
-        item.label !== 'SIDEBAR.ORDERS' &&
-        item.label !== 'SIDEBAR.PROFILE' &&
-        item.label !== 'SIDEBAR.INCIDENTS' &&
-        item.label !== 'SIDEBAR.AI_CHAT' &&
-        item.label !== 'SIDEBAR.WEEKLY_PLANS'
+        item.label !== 'Recepción' &&
+        item.label !== 'Pedidos' &&
+        item.label !== 'Perfil' &&
+        item.label !== 'Incidencias' &&
+        item.label !== 'Chat IA' &&
+        item.label !== 'Plan Semanal'
       );
     }
     if (userRole === 'CHEF' || userRole === 'ELEVATED') {

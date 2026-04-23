@@ -3,7 +3,7 @@
         <!-- Presentación -->
         @if (recipe.presentation) {
         <div class="modal-section">
-          <h4>{{ 'RECIPES.PRESENTATION' | translate }}</h4>
+          <h4>Presentación</h4>
           <p>{{ recipe.presentation }}</p>
         </div>
         }
@@ -11,7 +11,7 @@
         <!-- Elaboración -->
         @if (recipe.elaboration) {
         <div class="modal-section">
-          <h4>{{ 'RECIPES.ELABORATION' | translate }}</h4>
+          <h4>Elaboración</h4>
           <ol class="elaboration-steps">
             @for (step of getElaborationSteps(recipe.elaboration); track $index) {
             <li>{{ step.replace(/^\d+\.\s*/, '') }}</li>
@@ -23,14 +23,14 @@
         <!-- Ingredientes -->
         @if (recipe.components.length > 0) {
         <div class="modal-section">
-          <h4>{{ 'RECIPES.COMPONENTS' | translate }}</h4>
+          <h4>Ingredientes</h4>
           <table class="modal-table ingredients-table">
             <thead>
               <tr>
-                <th>{{ 'COMMON.PRODUCT' | translate }}</th>
-                <th>{{ 'RECIPES.NET' | translate }}</th>
-                <th>{{ 'RECIPES.GROSS' | translate }}</th>
-                <th>{{ 'RECIPES.SUBTOTAL' | translate }}</th>
+                <th>Producto</th>
+                <th>Neto</th>
+                <th>Bruto</th>
+                <th>Subtotal</th>
               </tr>
             </thead>
             <tbody>
@@ -39,8 +39,8 @@
                 <td class="product-cell">
                   <span class="product-name">{{ comp.productName }}</span>
                   @if (comp.availabilityPercentage && comp.availabilityPercentage < 100) {
-                  <span class="merma-hint" [title]="'RECIPES.MERMA_HINT' | translate: { percent: (100 - comp.availabilityPercentage) | number:'1.1-2' }">
-                    ({{ (100 - comp.availabilityPercentage) | number:'1.1-2' }}% {{ 'RECIPES.WASTE_SHORT' | translate }})
+                  <span class="merma-hint" [title]="'Este producto tiene un ' + ((100 - comp.availabilityPercentage) | number:'1.1-2') + '% de merma'">
+                    ({{ (100 - comp.availabilityPercentage) | number:'1.1-2' }}% merma)
                   </span>
                   }
                 </td>
@@ -55,12 +55,12 @@
 
             <tfoot>
               <tr>
-                <td colspan="3" class="total-label">{{ 'RECIPES.TOTAL_COST' | translate }}</td>
+                <td colspan="3" class="total-label">Coste total</td>
                 <td class="total-value">{{ recipe.totalCost | number:'1.2-2' }}&nbsp;€</td>
               </tr>
               @if (recipe.sellingPrice) {
               <tr class="selling-price-row">
-                <td colspan="3" class="selling-label">{{ 'RECIPES.SELLING_PRICE' | translate }}</td>
+                <td colspan="3" class="selling-label">Precio de venta</td>
                 <td class="selling-value">{{ recipe.sellingPrice | number:'1.2-2' }}&nbsp;€</td>
               </tr>
               }
@@ -72,7 +72,7 @@
 
         <!-- Alérgenos -->
         <div class="modal-section">
-          <h4>{{ 'SIDEBAR.ALLERGENS' | translate }}</h4>
+          <h4>Alérgenos</h4>
           @if (hasAllergens()) {
           <div class="allergens-list">
             @for (allergen of recipe.allergens; track allergen.id) {
@@ -80,7 +80,7 @@
             }
           </div>
           } @else {
-          <p class="no-allergens">{{ 'RECIPES.NO_ALLERGENS_REG' | translate }}</p>
+          <p class="no-allergens">Esta receta no contiene alérgenos conocidos.</p>
           }
         </div>
 
@@ -88,12 +88,12 @@
     @if (canCook) {
     <div class="cook-form">
       <div class="cook-field">
-        <label>{{ 'COMMON.QUANTITY' | translate }}</label>
+        <label>Cantidad</label>
         <input type="number" [(ngModel)]="cookQuantity" min="1" step="1" />
       </div>
       <div class="cook-field cook-field-detail">
-        <label>{{ 'RECIPES.DETAIL' | translate }}</label>
-        <input type="text" [(ngModel)]="cookDetails" [placeholder]="'RECIPES.COOK_DETAIL_PLACEHOLDER' | translate" />
+        <label>Detalle</label>
+        <input type="text" [(ngModel)]="cookDetails" placeholder="Ej: Pedido mesa 5" />
       </div>
     </div>
     }
@@ -107,7 +107,7 @@
           <line x1="16" y1="17" x2="8" y2="17" />
           <polyline points="10 9 9 9 8 9" />
         </svg>
-        {{ 'COMMON.EXPORT' | translate }}
+        Exportar
       </button>
       @if (canEdit) {
       <button class="modal-btn modal-btn-primary" (click)="editRecipe()">
@@ -116,7 +116,7 @@
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
           <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
         </svg>
-        {{ 'COMMON.EDIT' | translate }}
+        Editar
       </button>
       }
       @if (canCook) {
@@ -126,7 +126,7 @@
           <path
             d="M12 2C6.48 2 2 6 2 10c0 1.5.5 3 1.5 4.2L2 22l4-2 4 2 4-2 4 2-1.5-7.8C17.5 13 18 11.5 18 10c0-4-4.48-8-6-8z" />
         </svg>
-        {{ 'RECIPES.COOK' | translate }}
+        Cocinar
       </button>
       }
     </div>

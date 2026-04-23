@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterModule } from '@angular/router';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { ThemeService } from '../../../core/services/theme.service';
@@ -13,7 +12,7 @@ import { StorageService } from '../../../core/services/storage.service';
 @Component({
   selector: 'app-welcome',
   standalone: true,
-  imports: [RouterModule, BaseModalComponent, TranslateModule],
+  imports: [RouterModule, BaseModalComponent],
   templateUrl: './welcome.component.html',
   styleUrl: './welcome.component.css'
 })
@@ -25,7 +24,6 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   private httpQueryCacheService = inject(HttpQueryCacheService);
   private messageService = inject(MessageService);
   private storageService = inject(StorageService);
-  private translate = inject(TranslateService);
 
   slides = [
     '/assets/img/carousel/carousel1.jpg',
@@ -37,17 +35,17 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   private notificationCloseTimer?: ReturnType<typeof setTimeout>;
 
   navCards = [
-    { label: 'Inventario', route: '/inventario', icon: '/assets/img/icons/inventory.svg', key: 'SIDEBAR.INVENTORY' },
-    { label: 'Pedidos', route: '/orders', icon: '/assets/img/icons/order.svg', key: 'SIDEBAR.ORDERS' },
-    { label: 'Recepción', route: '/reception', icon: '/assets/img/icons/reception-v2.svg', key: 'SIDEBAR.RECEPTION' },
-    { label: 'Recetas', route: '/recipes', icon: '/assets/img/icons/recipes.svg', key: 'SIDEBAR.RECIPES' },
+    { label: 'Inventario', route: '/inventario', icon: '/assets/img/icons/inventory.svg' },
+    { label: 'Pedidos', route: '/orders', icon: '/assets/img/icons/order.svg' },
+    { label: 'Recepción', route: '/reception', icon: '/assets/img/icons/reception.svg' },
+    { label: 'Recetas', route: '/recipes', icon: '/assets/img/icons/recipes.svg' },
   ];
 
   get filteredNavCards() {
     const userRole = this.authService.getRole();
     if (userRole === 'USER') {
       return this.navCards.filter(card =>
-        card.key !== 'SIDEBAR.ORDERS' && card.key !== 'SIDEBAR.RECEPTION'
+        card.label !== 'Pedidos' && card.label !== 'Recepción'
       );
     }
     return this.navCards;
@@ -199,18 +197,18 @@ export class WelcomeComponent implements OnInit, OnDestroy {
     const diffMinutes = Math.floor(diffMs / 60000);
 
     if (diffMinutes < 1) {
-      return this.translate.instant('COMMON.NOW') || 'Ahora';
+      return 'Ahora';
     }
 
     if (diffMinutes < 60) {
-      return this.translate.instant('COMMON.AGO_MINS', { count: diffMinutes }) || `Hace ${diffMinutes} min`;
+      return `Hace ${diffMinutes} min`;
     }
 
     if (diffMinutes < 24 * 60) {
-      return date.toLocaleTimeString(this.translate.currentLang || [], { hour: '2-digit', minute: '2-digit' });
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
-    return date.toLocaleDateString(this.translate.currentLang || [], { day: '2-digit', month: '2-digit' });
+    return date.toLocaleDateString([], { day: '2-digit', month: '2-digit' });
   }
 
   openClearCacheModal(): void {
@@ -227,6 +225,6 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   confirmClearCache(): void {
     this.httpQueryCacheService.clearAll();
     this.showClearCacheModal = false;
-    this.messageService.showSuccess(this.translate.instant('WELCOME.CACHE_CLEARED_SUCCESS'));
+    this.messageService.showSuccess('Cache limpiada. Si habias datos antiguos, se recargaran en la siguiente consulta.');
   }
 }

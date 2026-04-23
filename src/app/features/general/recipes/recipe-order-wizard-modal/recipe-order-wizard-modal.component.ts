@@ -2,7 +2,6 @@ import { Component, Output, EventEmitter, OnInit, inject, ChangeDetectorRef } fr
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 import { OrderBuilderComponent } from '../../../../shared/components/order-builder/order-builder.component';
 import { RecipeService } from '../../../../core/services/recipe.service';
@@ -22,7 +21,7 @@ interface SelectedRecipe {
 @Component({
   selector: 'app-recipe-order-wizard-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseModalComponent, OrderBuilderComponent, TranslateModule],
+  imports: [CommonModule, FormsModule, BaseModalComponent, OrderBuilderComponent],
   templateUrl: './recipe-order-wizard-modal.component.html',
   styleUrls: ['./recipe-order-wizard-modal.component.css']
 })
@@ -33,7 +32,6 @@ export class RecipeOrderWizardModalComponent implements OnInit {
   private messageService = inject(MessageService);
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
-  private translate = inject(TranslateService);
 
   @Output() closed = new EventEmitter<void>();
 
@@ -97,7 +95,7 @@ export class RecipeOrderWizardModalComponent implements OnInit {
 
   async nextStep(): Promise<void> {
     if (this.selectedRecipes.length === 0) {
-      this.messageService.showWarning(this.translate.instant('RECIPES.ORDER_WIZARD.MESSAGES.SELECT_AT_LEAST_ONE'));
+      this.messageService.showWarning('Selecciona al menos una receta.');
       return;
     }
 
@@ -131,7 +129,7 @@ export class RecipeOrderWizardModalComponent implements OnInit {
           
           this.step = 2;
         } catch (err) {
-          this.messageService.showError(this.translate.instant('RECIPES.ORDER_WIZARD.MESSAGES.ENRICH_ERROR'));
+          this.messageService.showError('Error al enriquecer información de productos.');
         } finally {
           this.loadingRequirements = false;
           this.cdr.detectChanges();
@@ -139,7 +137,7 @@ export class RecipeOrderWizardModalComponent implements OnInit {
       },
       error: () => {
         this.loadingRequirements = false;
-        this.messageService.showError(this.translate.instant('RECIPES.ORDER_WIZARD.MESSAGES.CALCULATION_ERROR'));
+        this.messageService.showError('Error al calcular requisitos.');
         this.cdr.detectChanges();
       }
     });

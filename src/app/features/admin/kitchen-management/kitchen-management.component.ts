@@ -21,12 +21,11 @@ import { ScrollService } from '../../../core/services/scroll.service';
 import { BaseModalComponent } from '../../../shared/components/base-modal/base-modal.component';
 import { OrderDetailsModalComponent } from '../../general/orders/order-details-modal/order-details-modal.component';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-kitchen-management',
   standalone: true,
-  imports: [FormsModule, CommonModule, BaseModalComponent, OrderDetailsModalComponent, TranslateModule],
+  imports: [FormsModule, CommonModule, BaseModalComponent, OrderDetailsModalComponent],
 
   templateUrl: './kitchen-management.component.html',
   styleUrl: './kitchen-management.component.css',
@@ -41,7 +40,6 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private scrollService = inject(ScrollService);
   private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
-  private translate = inject(TranslateService);
   messageService = inject(MessageService);
   private destroy$ = new Subject<void>();
 
@@ -159,7 +157,7 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         },
         error: () => {
-          this.messageService.showError(this.translate.instant('KITCHEN.MESSAGES.LOAD_ERROR') || 'No se pudo cargar el historial de cocina');
+          this.messageService.showError('No se pudo cargar el historial de cocina');
         }
       });
   }
@@ -238,12 +236,12 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
         error: () => {
           const filterName = activeFilters[0];
           const errorMessages: Record<string, string> = {
-            'recipe': this.translate.instant('KITCHEN.MESSAGES.FILTER_RECIPE_ERROR'),
-            'user': this.translate.instant('KITCHEN.MESSAGES.FILTER_USER_ERROR'),
-            'dateRange': this.translate.instant('KITCHEN.MESSAGES.FILTER_DATE_ERROR'),
-            'search': this.translate.instant('KITCHEN.MESSAGES.SEARCH_ERROR')
+            'recipe': 'No se pudo filtrar por receta',
+            'user': 'No se pudo filtrar por usuario',
+            'dateRange': 'No se pudo filtrar por rango de fechas',
+            'search': 'No se pudo buscar en el historial'
           };
-          this.messageService.showError(errorMessages[filterName] || this.translate.instant('KITCHEN.MESSAGES.FILTER_GENERAL_ERROR'));
+          this.messageService.showError(errorMessages[filterName] || 'No se pudo aplicar los filtros');
         }
       });
   }
@@ -290,7 +288,7 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError(this.translate.instant('KITCHEN.MESSAGES.SEARCH_ERROR'));
+        this.messageService.showError('No se pudo buscar en el historial');
         this.loadingHistory = false;
       }
     });
@@ -400,8 +398,8 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
 
   async revertAudit(audit: RecipeCookingAudit): Promise<void> {
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('KITCHEN.ACTIONS.REVERT_COOKING'),
-      this.translate.instant('KITCHEN.MESSAGES.REVERT_CONFIRM', { recipeName: audit.recipeName })
+      'Revertir cocinado',
+      `Se revertirá el cocinado de la receta "${audit.recipeName}" y se devolverá stock de los ingredientes a sus lotes originales.`
     );
 
     if (!confirmed) {
@@ -413,11 +411,11 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
 
     this.recipeService.revertCooking(audit.id).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.translate.instant('KITCHEN.MESSAGES.REVERT_SUCCESS'));
+        this.messageService.showSuccess('Audit reverted successfully');
         this.loadHistory(this.currentPage);
       },
       error: (err: any) => {
-        const msg = err.error?.message || err.error || this.translate.instant('KITCHEN.MESSAGES.REVERT_ERROR');
+        const msg = err.error?.message || err.error || 'Error al revertir el cocinado';
         this.messageService.showError(msg);
         this.loadingHistory = false;
         this.cdr.markForCheck();
@@ -450,20 +448,20 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
         },
         error: (error: any) => {
           this.logger.error('Error loading report:', error);
-          this.messageService.showError(this.translate.instant('KITCHEN.MESSAGES.REPORT_ERROR'));
+          this.messageService.showError('No se pudo generar el informe de cocina');
         }
       });
   }
 
   async downloadReportPdf(): Promise<void> {
     if (this.reportRange === 'CUSTOM' && (!this.reportStartDate || !this.reportEndDate)) {
-      this.messageService.showWarning(this.translate.instant('KITCHEN.MESSAGES.CUSTOM_RANGE_WARNING'));
+      this.messageService.showWarning('Debes indicar fecha de inicio y fin para rango personalizado');
       return;
     }
 
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('COMMON.CONFIRM_DOWNLOAD'),
-      this.translate.instant('COMMON.CONFIRM_DOWNLOAD_PDF')
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo PDF?'
     );
     if (!confirmed) return;
 
@@ -476,11 +474,11 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
           anchor.download = `reporte-cocina-${this.reportRange.toLowerCase()}.pdf`;
           anchor.click();
           window.URL.revokeObjectURL(url);
-          this.messageService.showSuccess(this.translate.instant('KITCHEN.MESSAGES.PDF_SUCCESS'));
+          this.messageService.showSuccess('Informe PDF descargado');
         },
         error: (err: any) => {
           this.logger.error('Error downloading report PDF:', err);
-          this.messageService.showError(this.translate.instant('KITCHEN.MESSAGES.PDF_ERROR'));
+          this.messageService.showError('No se pudo descargar el informe PDF');
         }
       });
   }
@@ -500,12 +498,12 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
 
   translateRange(range: ReportRange): string {
     const translations: Record<ReportRange, string> = {
-      'DAILY': this.translate.instant('KITCHEN.RANGES.DAILY'),
-      'WEEKLY': this.translate.instant('KITCHEN.RANGES.WEEKLY'),
-      'MONTHLY': this.translate.instant('KITCHEN.RANGES.MONTHLY'),
-      'YEARLY': this.translate.instant('KITCHEN.RANGES.YEARLY'),
-      'ALL_TIME': this.translate.instant('KITCHEN.RANGES.ALL_TIME'),
-      'CUSTOM': this.translate.instant('KITCHEN.RANGES.CUSTOM')
+      'DAILY': 'Diario',
+      'WEEKLY': 'Semanal',
+      'MONTHLY': 'Mensual',
+      'YEARLY': 'Anual',
+      'ALL_TIME': 'Histórico',
+      'CUSTOM': 'Personalizado'
     };
     return translations[range] || range;
   }
@@ -579,7 +577,7 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError(this.translate.instant('KITCHEN.MESSAGES.ORDER_LOAD_ERROR', { id: orderId }));
+        this.messageService.showError(`No se pudo cargar la orden #${orderId}`);
       }
     });
   }

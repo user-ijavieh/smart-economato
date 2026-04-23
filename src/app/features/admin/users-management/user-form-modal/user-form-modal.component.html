@@ -9,15 +9,15 @@
                 <polyline points="22 4 12 14.01 9 11.01" />
             </svg>
         </div>
-        <h3>{{ 'USERS.USER_FORM.CREDENTIALS.SUCCESS' | translate }}</h3>
-        <p class="credentials-note">{{ 'USERS.USER_FORM.CREDENTIALS.SAVE_NOTE' | translate }}</p>
+        <h3>¡Usuario creado con éxito!</h3>
+        <p class="credentials-note">Guarda estas credenciales. La contraseña no se podrá recuperar.</p>
         <div class="credentials-box">
             <div class="credential-row">
-                <span class="credential-label">{{ 'USERS.USER_FORM.CREDENTIALS.USER_LABEL' | translate }}</span>
+                <span class="credential-label">Usuario</span>
                 <span class="credential-value">{{ generatedUser }}</span>
             </div>
             <div class="credential-row">
-                <span class="credential-label">{{ 'USERS.USER_FORM.CREDENTIALS.PASS_LABEL' | translate }}</span>
+                <span class="credential-label">Contraseña</span>
                 <span class="credential-value credential-password">{{ generatedPassword }}</span>
             </div>
         </div>
@@ -28,17 +28,17 @@
                     stroke="currentColor" stroke-width="2.5">
                     <polyline points="20 6 9 17 4 12" />
                 </svg>
-                {{ 'COMMON.COPIED' | translate }}
+                ¡Copiado!
                 } @else {
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2">
                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                 </svg>
-                {{ 'USERS.USER_FORM.CREDENTIALS.COPY_BTN' | translate }}
+                Copiar credenciales
                 }
             </button>
-            <button type="button" class="btn-done" (click)="onClose()">{{ 'COMMON.CLOSE' | translate }}</button>
+            <button type="button" class="btn-done" (click)="onClose()">Cerrar</button>
         </div>
     </div>
     }
@@ -47,35 +47,35 @@
     <!-- Form -->
     <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
-            <label for="name">{{ 'USERS.USER_FORM.NAME' | translate }}</label>
-            <input id="name" type="text" formControlName="name" [placeholder]="'USERS.USER_FORM.NAME_PLACEHOLDER' | translate"
+            <label for="name">Nombre</label>
+            <input id="name" type="text" formControlName="name" placeholder="Nombre del usuario"
                 [class.input-error]="userForm.get('name')?.invalid && userForm.get('name')?.touched" />
             @if (userForm.get('name')?.hasError('required') && userForm.get('name')?.touched) {
-            <p class="field-error">{{ 'USERS.USER_FORM.ERRORS.NAME_REQUIRED' | translate }}</p>
+            <p class="field-error">El nombre es requerido</p>
             }
             @if (userForm.get('name')?.hasError('minlength') && userForm.get('name')?.touched) {
-            <p class="field-error">{{ 'USERS.USER_FORM.ERRORS.NAME_MINLENGTH' | translate }}</p>
+            <p class="field-error">El nombre debe tener al menos 3 caracteres</p>
             }
         </div>
 
         <!-- User and password only in edit mode -->
         @if (isEditMode) {
         <div class="form-group">
-            <label for="user">{{ 'USERS.USER_FORM.USERNAME' | translate }}</label>
-            <input id="user" type="text" formControlName="user" [placeholder]="'USERS.USER_FORM.USERNAME_PLACEHOLDER' | translate"
+            <label for="user">Usuario</label>
+            <input id="user" type="text" formControlName="user" placeholder="nombre_usuario"
                 [class.input-error]="userForm.get('user')?.invalid && userForm.get('user')?.touched" />
             @if (userForm.get('user')?.hasError('required') && userForm.get('user')?.touched) {
-            <p class="field-error">{{ 'USERS.USER_FORM.ERRORS.USER_REQUIRED' | translate }}</p>
+            <p class="field-error">El usuario es requerido</p>
             }
             @if (userForm.get('user')?.hasError('minlength') && userForm.get('user')?.touched) {
-            <p class="field-error">{{ 'USERS.USER_FORM.ERRORS.USER_MINLENGTH' | translate }}</p>
+            <p class="field-error">El usuario debe tener al menos 3 caracteres</p>
             }
         </div>
 
         <div class="form-group">
             <label for="password">
-                {{ 'USERS.USER_FORM.PASSWORD' | translate }}
-                <span class="optional-label">{{ 'USERS.USER_FORM.PASSWORD_OPTIONAL' | translate }}</span>
+                Contraseña
+                <span class="optional-label">(dejar vacío para no cambiar)</span>
             </label>
             <input id="password" type="password" formControlName="password" placeholder="********" />
         </div>
@@ -87,12 +87,12 @@
                 <line x1="12" y1="16" x2="12" y2="12" />
                 <line x1="12" y1="8" x2="12.01" y2="8" />
             </svg>
-            <span>{{ 'USERS.USER_FORM.AUTO_GEN_NOTE' | translate }}</span>
+            <span>El usuario y la contraseña se generarán automáticamente al crear.</span>
         </div>
         }
 
         <div class="form-group">
-            <label for="role">{{ 'USERS.USER_FORM.ROLE' | translate }}</label>
+            <label for="role">Rol</label>
             <select id="role" formControlName="role">
                 @for (roleOption of availableRoleOptions; track roleOption.value) {
                 <option [value]="roleOption.value">{{ roleOption.label }}</option>
@@ -102,12 +102,12 @@
 
         @if (showTeacherField) {
         <div class="form-group">
-            <label for="teacherId">{{ 'USERS.USER_FORM.TEACHER' | translate }}</label>
+            <label for="teacherId">Profesor asignado</label>
             <app-searchable-dropdown
                 [items]="teacherSearchItems"
                 [selectedIds]="userForm.get('teacherId')?.value ? [userForm.get('teacherId')?.value] : []"
                 [initialText]="selectedTeacherName"
-                [placeholder]="'USERS.USER_FORM.TEACHER_PLACEHOLDER' | translate"
+                placeholder="Seleccionar profesor..."
                 (itemSelected)="onTeacherSelected($event)"
             ></app-searchable-dropdown>
         </div>
@@ -118,7 +118,7 @@
     @if (!showCredentials) {
     <div modal-footer>
         <button type="button" class="modal-btn modal-btn-primary" (click)="onSubmit()" [disabled]="userForm.invalid">
-            {{ (isEditMode ? 'USERS.USER_FORM.SUBMIT_EDIT' : 'USERS.USER_FORM.SUBMIT_CREATE') | translate }}
+            {{ isEditMode ? 'Guardar Cambios' : 'Crear Usuario' }}
         </button>
     </div>
     }

@@ -2,23 +2,23 @@
   @if (product) {
     <!-- Información General -->
     <div class="modal-section">
-      <h4>{{ 'PRODUCT_DETAIL.GENERAL_INFO' | translate }}</h4>
+      <h4>Información General</h4>
       <table class="modal-table details-table">
         <tbody>
           <tr>
-            <td class="detail-label">{{ 'PRODUCT_DETAIL.CODE' | translate }}</td>
+            <td class="detail-label">Código</td>
             <td>{{ product.productCode || '—' }}</td>
           </tr>
           <tr>
-            <td class="detail-label">{{ 'COMMON.UNIT' | translate }}</td>
+            <td class="detail-label">Unidad</td>
             <td>{{ product.unit }}</td>
           </tr>
           <tr>
-            <td class="detail-label">{{ 'PRODUCT_DETAIL.SUPPLIER' | translate }}</td>
+            <td class="detail-label">Proveedor</td>
             <td>{{ product.supplier?.name || '—' }}</td>
           </tr>
           <tr>
-            <td class="detail-label">{{ 'PRODUCT_DETAIL.LOT_QUANTITY' | translate }}</td>
+            <td class="detail-label">Cantidad por Lote</td>
             <td>{{ product.lotQuantity || '1' }} {{ product.unit }}</td>
           </tr>
         </tbody>
@@ -27,41 +27,41 @@
 
     <!-- Precio y Stock -->
     <div class="modal-section">
-      <h4>{{ 'PRODUCT_DETAIL.PRICE_STOCK_INFO' | translate }}</h4>
+      <h4>Precio y Stock</h4>
       <table class="modal-table details-table">
         <tbody>
           <tr>
-            <td class="detail-label">{{ 'PRODUCT_DETAIL.UNIT_PRICE' | translate }}</td>
+            <td class="detail-label">Precio Unitario</td>
             <td class="price-value">{{ product.unitPrice | number: '1.2-2' }} €</td>
           </tr>
           @if (product.lotQuantity && product.lotQuantity > 0) {
           <tr>
-            <td class="detail-label">{{ 'PRODUCT_DETAIL.LOT_PRICE' | translate }}</td>
+            <td class="detail-label">Precio por Lote</td>
             <td class="price-value-alt">{{ (product.unitPrice * product.lotQuantity) | number: '1.2-2' }} € <small>({{ product.lotQuantity }} {{ product.unit }})</small></td>
           </tr>
           }
           <tr [class.low-stock-row]="isLowStock()">
-            <td class="detail-label">{{ 'PRODUCT_DETAIL.CURRENT_STOCK' | translate }}</td>
+            <td class="detail-label">Stock Actual</td>
             <td>{{ product.currentStock }} {{ product.unit }}</td>
           </tr>
           @if (getMermaPercentage() !== null) {
           <tr>
-            <td class="detail-label">{{ 'PRODUCT_DETAIL.AVAILABILITY' | translate }}</td>
+            <td class="detail-label">Merma</td>
             <td>
               <div class="merma-display">
                 <div class="merma-header">
-                  <span class="usable-pct">{{ 'PRODUCT_DETAIL.USABLE_VALUE' | translate: { value: (getUsablePercentage()! | number:'1.0-1') } }}</span>
+                  <span class="usable-pct"><strong>{{ getUsablePercentage()! | number:'1.0-1' }}%</strong> aprovechable</span>
                   <span class="merma-badge-small" [class.merma-low]="getMermaPercentage()! <= 10" [class.merma-medium]="getMermaPercentage()! > 10 && getMermaPercentage()! <= 30" [class.merma-high]="getMermaPercentage()! > 30">
-                    ({{ 'PRODUCT_DETAIL.MERMA_VALUE' | translate: { value: (getMermaPercentage()! | number:'1.0-1') } }})
+                    ({{ getMermaPercentage()! | number:'1.0-1' }}% merma)
                   </span>
                 </div>
                 <div class="merma-bar-track">
                   <div class="merma-bar-fill" [style.width.%]="getUsablePercentage()" [class.merma-bar-low]="getMermaPercentage()! <= 10" [class.merma-bar-medium]="getMermaPercentage()! > 10 && getMermaPercentage()! <= 30" [class.merma-bar-high]="getMermaPercentage()! > 30"></div>
                 </div>
                 <div class="merma-stocks">
-                  <span>{{ 'PRODUCT_DETAIL.GROSS' | translate }}: <strong>{{ product.currentStock }} {{ product.unit }}</strong></span>
+                  <span>Bruto: <strong>{{ product.currentStock }} {{ product.unit }}</strong></span>
                   <span class="stock-divider">|</span>
-                  <span>{{ 'PRODUCT_DETAIL.NET_USABLE' | translate }}: <strong>{{ getUsableStock()! | number:'1.2-2' }} {{ product.unit }}</strong></span>
+                  <span>Neto: <strong>{{ getUsableStock()! | number:'1.2-2' }} {{ product.unit }}</strong></span>
                 </div>
               </div>
             </td>
@@ -73,17 +73,17 @@
 
     <!-- Lotes (Trazabilidad) -->
     <div class="modal-section">
-      <h4>{{ 'PRODUCT_DETAIL.ACTIVE_BATCHES' | translate }}</h4>
+      <h4>Lotes Activos</h4>
       <div class="batches-container">
         @if (loadingBatches) {
-          <p class="loading-text">{{ 'PRODUCT_DETAIL.LOADING_BATCHES' | translate }}</p>
+          <p class="loading-text">Cargando lotes...</p>
         } @else if (batches.length > 0) {
           <table class="modal-table batches-table">
             <thead>
               <tr>
-                <th>{{ 'PRODUCT_DETAIL.BATCH_ID' | translate }}</th>
-                <th>{{ 'PRODUCT_DETAIL.BATCH_QTY' | translate }}</th>
-                <th>{{ 'PRODUCT_DETAIL.BATCH_EXP' | translate }}</th>
+                <th>ID</th>
+                <th>Cantidad</th>
+                <th>Caducidad</th>
               </tr>
             </thead>
             <tbody>
@@ -93,14 +93,14 @@
                   <td>{{ batch.remainingQuantity }} {{ product.unit }}</td>
                   <td>
                     {{ batch.expirationDate ? (batch.expirationDate | date:'dd/MM/yyyy') : '—' }}
-                    @if (batch.expired) { <span class="badge-expired">{{ 'PRODUCT_DETAIL.EXPIRED_BADGE' | translate }}</span> }
+                    @if (batch.expired) { <span class="badge-expired">CADUCADO</span> }
                   </td>
                 </tr>
               }
             </tbody>
           </table>
         } @else {
-          <p class="empty-text">{{ 'PRODUCT_DETAIL.NO_BATCHES' | translate }}</p>
+          <p class="empty-text">No hay lotes activos registrados.</p>
         }
       </div>
     </div>
@@ -108,7 +108,7 @@
     <!-- Descripción -->
     @if (product.description) {
       <div class="modal-section">
-        <h4>{{ 'PRODUCT_DETAIL.DESCRIPTION' | translate }}</h4>
+        <h4>Descripción</h4>
         <p>{{ product.description }}</p>
       </div>
     }
@@ -119,7 +119,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
           <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
         </svg>
-        <span>{{ 'PRODUCT_DETAIL.LOW_STOCK_ALERT' | translate }}</span>
+        <span>Stock bajo: Por debajo del mínimo recomendado</span>
       </div>
     }
   }
@@ -128,7 +128,7 @@
     @if (shouldShowActions()) {
       <button class="modal-btn modal-btn-primary" (click)="onEdit()">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        {{ 'PRODUCT_FORM.EDIT_TITLE' | translate }}
+        Editar Producto
       </button>
     }
   </div>

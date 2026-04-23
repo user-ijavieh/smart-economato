@@ -2,29 +2,29 @@
   <div (click)="closeAllDropdowns()">
     <form class="create-form" (click)="$event.stopPropagation()">
       <div class="form-group">
-        <label for="recipe-name">{{ 'COMMON.NAME' | translate }} <span class="required">*</span></label>
+        <label for="recipe-name">Nombre <span class="required">*</span></label>
         <input id="recipe-name" type="text" [(ngModel)]="createForm.name" name="name"
-          [placeholder]="'RECIPES.NAME_PLACEHOLDER' | translate" required />
+          placeholder="Nombre de la receta" required />
       </div>
 
       <div class="form-group">
-        <label for="recipe-elaboration">{{ 'RECIPES.ELABORATION' | translate }}</label>
+        <label for="recipe-elaboration">Elaboración</label>
         <textarea id="recipe-elaboration" [(ngModel)]="createForm.elaboration" name="elaboration" rows="5"
-          [placeholder]="'RECIPES.ELABORATION_PLACEHOLDER' | translate"></textarea>
-        <small>{{ 'RECIPES.ELABORATION_HINT' | translate }}</small>
+          placeholder="Escribe los pasos de elaboración (uno por línea)"></textarea>
+        <small>Cada línea será un paso de elaboración</small>
       </div>
 
       <div class="form-group">
-        <label for="recipe-presentation">{{ 'RECIPES.PRESENTATION' | translate }}</label>
+        <label for="recipe-presentation">Presentación</label>
         <textarea id="recipe-presentation" [(ngModel)]="createForm.presentation" name="presentation" rows="3"
-          [placeholder]="'RECIPES.PRESENTATION_PLACEHOLDER' | translate"></textarea>
+          placeholder="Describe cómo presentar el plato"></textarea>
       </div>
 
       <div class="form-group">
-        <label>{{ 'RECIPES.COMPONENTS' | translate }} <span class="required">*</span></label>
+        <label>Componentes <span class="required">*</span></label>
 
         @if (loadingProducts) {
-        <p class="loading-text">{{ 'COMMON.LOADING_PRODUCTS' | translate }}</p>
+        <p class="loading-text">Cargando productos...</p>
         }
 
         @if (!loadingProducts) {
@@ -34,8 +34,8 @@
             <div class="product-select-wrapper" (click)="$event.stopPropagation()">
               <input type="text" [(ngModel)]="component.searchText" (focus)="toggleProductDropdown(i)"
                 (ngModelChange)="onProductSearch($event, i)" [name]="'product-search-' + i" class="product-select"
-                [placeholder]="'COMMON.SEARCH_PRODUCT' | translate" autocomplete="off" />
-              <button type="button" class="btn-scan-inline" (click)="openBarcodeScanner(i)" [title]="'PRODUCT_MGMT.SCAN_BARCODE' | translate">
+                placeholder="Buscar producto..." autocomplete="off" />
+              <button type="button" class="btn-scan-inline" (click)="openBarcodeScanner(i)" title="Escanear código de barras">
                 <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor">
                   <path d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z" />
                 </svg>
@@ -51,33 +51,33 @@
                 </div>
                 }
                 } @else {
-                <div class="product-option disabled">{{ 'COMMON.NO_PRODUCTS_FOUND' | translate }}</div>
+                <div class="product-option disabled">No se encontraron productos</div>
                 }
 
                 @if (loadingMoreProducts) {
                 <div class="product-option loading">
-                  <span>{{ 'COMMON.LOADING_MORE_PRODUCTS' | translate }}</span>
+                  <span>Cargando más productos...</span>
                 </div>
                 }
               </div>
               }
             </div>
 
-            <input type="number" [(ngModel)]="component.quantity" [name]="'quantity-' + i" [placeholder]="'COMMON.QUANTITY' | translate"
+            <input type="number" [(ngModel)]="component.quantity" [name]="'quantity-' + i" placeholder="Cantidad"
               min="0" step="0.01" class="quantity-input" />
 
             <div class="merma-preview" *ngIf="component.productId !== 0">
                 @if (component.availabilityPercentage && component.availabilityPercentage < 100) {
-                  <span class="merma-badge" [title]="'RECIPES.MERMA_HINT' | translate: { percent: (100 - component.availabilityPercentage) | number:'1.1-2' }">
-                    {{ (100 - component.availabilityPercentage) | number:'1.1-2' }}% {{ 'RECIPES.WASTE_SHORT' | translate }}
+                  <span class="merma-badge" [title]="((100 - component.availabilityPercentage) | number:'1.1-2') + '% de reducción por merma'">
+                    {{ (100 - component.availabilityPercentage) | number:'1.1-2' }}% Merma
                   </span>
                   <span class="gross-preview">
-                    {{ 'RECIPES.GROSS_SHORT' | translate }}: <strong>{{ getGrossQuantity(component.quantity, component.availabilityPercentage) | number:'1.2-3' }}</strong>
+                    Bruto: <strong>{{ getGrossQuantity(component.quantity, component.availabilityPercentage) | number:'1.2-3' }}</strong>
                   </span>
                 }
             </div>
 
-            <button type="button" class="btn-remove" (click)="removeComponent(i)" [title]="'RECIPES.REMOVE_COMPONENT' | translate">
+            <button type="button" class="btn-remove" (click)="removeComponent(i)" title="Eliminar componente">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18" />
@@ -94,16 +94,16 @@
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
-          {{ 'RECIPES.ADD_COMPONENT' | translate }}
+          Agregar Componente
         </button>
         }
       </div>
 
       <div class="form-group">
-        <label>{{ 'SIDEBAR.ALLERGENS' | translate }}</label>
+        <label>Alérgenos</label>
 
         @if (loadingAllergens) {
-        <p class="loading-text">{{ 'COMMON.LOADING' | translate }}...</p>
+        <p class="loading-text">Cargando alérgenos...</p>
         }
 
         @if (!loadingAllergens) {
@@ -127,7 +127,7 @@
 </app-base-modal>
 
 @if (showScannerModal) {
-  <app-base-modal [title]="'PRODUCT_MGMT.SCAN_BARCODE' | translate" size="md" (closed)="closeBarcodeScanner()">
+  <app-base-modal title="Escanear Código de Barras" size="md" (closed)="closeBarcodeScanner()">
     <div class="scanner-modal-body">
       <app-barcode-scanner (productFound)="onScannedProductFound($event)"></app-barcode-scanner>
     </div>
