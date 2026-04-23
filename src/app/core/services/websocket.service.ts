@@ -5,8 +5,6 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { PresenceUpdateRequest, UserPresenceSnapshot } from '../../shared/models/presence.model';
 import { SyncEvent } from '../../shared/models/sync-event.model';
-import { StorageService } from './storage.service';
-import { LoggerService } from './logger.service';
 
 export interface AlertMessage {
   code: string;
@@ -17,8 +15,6 @@ export interface AlertMessage {
 @Injectable({ providedIn: 'root' })
 export class WebSocketService {
   private readonly ngZone = inject(NgZone);
-  private readonly storageService = inject(StorageService);
-  private readonly logger = inject(LoggerService);
   private client?: Client;
   private broadcastSubscription?: StompSubscription;
   private personalSubscription?: StompSubscription;
@@ -59,7 +55,7 @@ export class WebSocketService {
         Authorization: `Bearer ${jwtToken}`
       },
       beforeConnect: async () => {
-        const freshToken = this.storageService.get('auth_token') || jwtToken;
+        const freshToken = localStorage.getItem('auth_token') || jwtToken;
         this.connectedToken = freshToken;
 
         if (this.client) {
@@ -112,7 +108,7 @@ export class WebSocketService {
         this.ngZone.run(() => this.connectedSubject.next(false));
       },
       onStompError: frame => {
-        this.logger.error('STOMP error:', frame.headers['message'] || frame.body);
+        console.error('STOMP error:', frame.headers['message'] || frame.body);
       }
     });
 
@@ -147,7 +143,7 @@ export class WebSocketService {
       const alert: AlertMessage = JSON.parse(message.body) as AlertMessage;
       this.ngZone.run(() => this.alertSubject.next(alert));
     } catch (error) {
-      this.logger.error('Invalid alert payload:', error);
+      console.error('Invalid alert payload:', error);
     }
   }
 
@@ -164,7 +160,7 @@ export class WebSocketService {
 
       this.ngZone.run(() => this.syncEventSubject.next(payload));
     } catch (error) {
-      this.logger.error('Invalid sync payload:', error);
+      console.error('Invalid sync payload:', error);
     }
   }
 
@@ -173,7 +169,7 @@ export class WebSocketService {
       const payload = JSON.parse(message.body) as UserPresenceSnapshot[];
       this.ngZone.run(() => this.adminPresenceSubject.next(Array.isArray(payload) ? payload : []));
     } catch (error) {
-      this.logger.error('Invalid admin presence payload:', error);
+      console.error('Invalid admin presence payload:', error);
     }
   }
 
@@ -182,7 +178,7 @@ export class WebSocketService {
       const payload = JSON.parse(message.body) as UserPresenceSnapshot[];
       this.ngZone.run(() => this.studentPresenceSubject.next(Array.isArray(payload) ? payload : []));
     } catch (error) {
-      this.logger.error('Invalid student presence payload:', error);
+      console.error('Invalid student presence payload:', error);
     }
   }
 

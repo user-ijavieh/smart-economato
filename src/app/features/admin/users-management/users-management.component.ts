@@ -6,7 +6,6 @@ import { forkJoin, of, switchMap, takeUntil } from 'rxjs';
 import { Subscription } from 'rxjs';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { UserService } from '../../../core/services/user.service';
-import { LoggerService } from '../../../core/services/logger.service';
 import { MessageService } from '../../../core/services/message.service';
 import { User, UserRequest, BatchAssignResponse } from '../../../shared/models/user.model';
 import { UserFormModalComponent } from './user-form-modal/user-form-modal.component';
@@ -34,7 +33,6 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
     styleUrl: './users-management.component.css'
 })
 export class UsersManagementComponent implements OnInit, OnDestroy {
-    private readonly logger = inject(LoggerService);
     private userService = inject(UserService);
     private cdr = inject(ChangeDetectorRef);
     private scrollService = inject(ScrollService);
@@ -186,7 +184,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
             },
             error: (err) => {
-                this.logger.error('Error loading teachers:', err);
+                console.error('Error loading teachers:', err);
                 this.messageService.showError(this.translate.instant('USERS.MESSAGES.ERROR_LOADING_TEACHERS'));
             }
         });
@@ -215,7 +213,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                     this.cdr.detectChanges();
                 },
                 error: (err) => {
-                    this.logger.error('Error searching users:', err);
+                    console.error('Error searching users:', err);
                     this.messageService.showError('Error al buscar usuarios');
                     this.loading = false;
                     this.cdr.detectChanges();
@@ -237,7 +235,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                     this.cdr.detectChanges();
                 },
                 error: (err) => {
-                    this.logger.error('Error loading hidden users:', err);
+                    console.error('Error loading hidden users:', err);
                     this.messageService.showError(this.translate.instant('USERS.MESSAGES.ERROR_LOADING_HIDDEN_USERS'));
                     this.loading = false;
                 }
@@ -253,7 +251,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                     this.cdr.detectChanges();
                 },
                 error: (err) => {
-                    this.logger.error('Error loading users:', err);
+                    console.error('Error loading users:', err);
                     this.messageService.showError(this.translate.instant('USERS.MESSAGES.ERROR_LOADING_USERS'));
                     this.loading = false;
                 }
@@ -271,7 +269,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                     this.cdr.detectChanges();
                 },
                 error: (err) => {
-                    this.logger.error('Error loading users:', err);
+                    console.error('Error loading users:', err);
                     this.messageService.showError(this.translate.instant('USERS.MESSAGES.LOAD_USERS_ERROR'));
                     this.loading = false;
                 }
@@ -472,7 +470,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
             },
             error: (err) => {
-                this.logger.error('Error loading user activity:', err);
+                console.error('Error loading user activity:', err);
                 this.messageService.showError(this.translate.instant('USERS.MESSAGES.ERROR_LOADING_ACTIVITY'));
                 this.activityLoading = false;
                 this.cdr.detectChanges();
@@ -608,7 +606,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
             },
             error: (err) => {
-                this.logger.error('Error loading assignment data:', err);
+                console.error('Error loading assignment data:', err);
                 this.messageService.showError(this.translate.instant('USERS.MESSAGES.ERROR_LOADING_ASSIGNMENTS'));
                 this.loadingAssignments = false;
                 this.cdr.detectChanges();
@@ -995,7 +993,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 this.loadAssignmentData();
             },
             error: (err) => {
-                this.logger.error('Error assigning students:', err);
+                console.error('Error assigning students:', err);
                 this.messageService.showError(this.translate.instant('USERS.MESSAGES.ERROR_ASSIGNING'));
                 this.assigningInProgress = false;
                 this.cdr.detectChanges();
@@ -1030,7 +1028,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
             },
             error: (err) => {
-                this.logger.error('Error loading user details:', err);
+                console.error('Error loading user details:', err);
                 this.messageService.showError(this.translate.instant('USERS.MESSAGES.LOAD_DETAILS_ERROR'));
             }
         });
@@ -1059,7 +1057,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
             },
             error: (err) => {
-                this.logger.error('Error loading user details:', err);
+                console.error('Error loading user details:', err);
                 this.messageService.showError(this.translate.instant('USERS.MESSAGES.LOAD_DETAILS_ERROR'));
             }
         });
@@ -1090,7 +1088,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
             },
             error: (err) => {
-                this.logger.error('Error loading teacher students:', err);
+                console.error('Error loading teacher students:', err);
                 this.loadingTeacherStudentsForDetail = false;
                 this.teacherStudentsForDetail = [];
                 this.messageService.showError(this.translate.instant('USERS.MESSAGES.ERROR_TEACHER_STUDENTS'));
@@ -1141,7 +1139,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                     this.loadUsers();
                 },
                 error: (err) => {
-                    this.logger.error('Error updating user:', err);
+                    console.error('Error updating user:', err);
                     this.messageService.showError(this.translate.instant('USERS.MESSAGES.UPDATE_ERROR'));
                 }
             });
@@ -1171,7 +1169,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                     this.loadUsers();
                 },
                 error: (err) => {
-                    this.logger.error('Error creating user:', err);
+                    console.error('Error creating user:', err);
                     this.messageService.showError(this.translate.instant('USERS.MESSAGES.CREATE_ERROR'));
                 }
             });
@@ -1202,8 +1200,7 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
             },
             error: (err) => {
-this.logger.error(`Error ${actionText} usuario:`, err);  
-                const errorKey = this.showingHidden ? 'USERS.MESSAGES.ACTIVATE_ERROR' : 'USERS.MESSAGES.DEACTIVATE_ERROR';  
+                const errorKey = this.showingHidden ? 'USERS.MESSAGES.ACTIVATE_ERROR' : 'USERS.MESSAGES.DEACTIVATE_ERROR';
                 const errorMessage = err.error?.message || this.translate.instant(errorKey);
                 this.messageService.showError(errorMessage);
                 this.cdr.detectChanges();

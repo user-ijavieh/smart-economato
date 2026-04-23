@@ -8,7 +8,6 @@ import { ThemeService } from '../../../core/services/theme.service';
 import { NotificationService, SessionNotification } from '../../../core/services/notification.service';
 import { HttpQueryCacheService } from '../../../core/services/http-query-cache.service';
 import { MessageService } from '../../../core/services/message.service';
-import { StorageService } from '../../../core/services/storage.service';
 
 @Component({
   selector: 'app-welcome',
@@ -24,7 +23,6 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);
   private httpQueryCacheService = inject(HttpQueryCacheService);
   private messageService = inject(MessageService);
-  private storageService = inject(StorageService);
   private translate = inject(TranslateService);
 
   slides = [
@@ -92,7 +90,7 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   readonly isNotificationPanelOpen = signal(false);
   readonly isNotificationPanelRendered = signal(false);
   readonly isNotificationPanelClosing = signal(false);
-  readonly showUtilities = signal<boolean>(this.storageService.get('welcome_utilities_visible', 'local') !== 'false');
+  readonly showUtilities = signal<boolean>(localStorage.getItem('welcome_utilities_visible') !== 'false');
 
   logout(): void {
     if (this.isNotificationPanelOpen()) {
@@ -121,7 +119,7 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   toggleUtilities(): void {
     const newValue = !this.showUtilities();
     this.showUtilities.set(newValue);
-    this.storageService.set('welcome_utilities_visible', String(newValue), 'local');
+    localStorage.setItem('welcome_utilities_visible', String(newValue));
   }
 
   toggleNotificationPanel(event: MouseEvent): void {

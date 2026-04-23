@@ -5,7 +5,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { AlertMessage, WebSocketService } from '../../../../core/services/websocket.service';
 import { ModalStackService } from '../../../../core/services/modal-stack.service';
-import { StorageService } from '../../../../core/services/storage.service';
 
 interface AlertViewModel {
   id: string;
@@ -45,7 +44,6 @@ export class AlertNotificationComponent {
   private readonly webSocketService = inject(WebSocketService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly modalStack = inject(ModalStackService);
-  private readonly storageService = inject(StorageService);
   private readonly translate = inject(TranslateService);
 
   private readonly activeFailures = signal<Record<string, AlertViewModel>>({});
@@ -56,7 +54,7 @@ export class AlertNotificationComponent {
 
   readonly failures = this.activeFailures.asReadonly();
   readonly recoveries = this.recoveredAlerts.asReadonly();
-  readonly showAlerts = signal<boolean>(this.storageService.get('layout_alerts_visible', 'local') !== 'false');
+  readonly showAlerts = signal<boolean>(localStorage.getItem('layout_alerts_visible') !== 'false');
   readonly zIndex = computed(() => (this.modalStackCount() > 0 ? 80010 : 32000));
 
   constructor() {
@@ -107,7 +105,7 @@ export class AlertNotificationComponent {
     event.stopPropagation();
     const newValue = !this.showAlerts();
     this.showAlerts.set(newValue);
-    this.storageService.set('layout_alerts_visible', String(newValue), 'local');
+    localStorage.setItem('layout_alerts_visible', String(newValue));
   }
 
   stopPropagation(event: MouseEvent): void {

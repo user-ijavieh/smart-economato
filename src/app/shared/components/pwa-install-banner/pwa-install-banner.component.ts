@@ -4,7 +4,6 @@ import { Subject, takeUntil } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PwaInstallService } from '../../../core/services/pwa-install.service';
 import { PwaNotificationService } from '../../../core/services/pwa-notification.service';
-import { StorageService } from '../../../core/services/storage.service';
 
 /**
  * PWA Install Banner Component
@@ -162,7 +161,6 @@ export class PwaInstallBannerComponent implements OnInit, OnDestroy {
   showInstallBtn = false;
   showShareBtn = false;
   instructions = '';
-  private readonly storageService = inject(StorageService);
 
   private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
@@ -224,7 +222,7 @@ export class PwaInstallBannerComponent implements OnInit, OnDestroy {
     this.showBanner = false;
     // Remember dismissal in localStorage (24 hours)
     const dismissUntil = Date.now() + 24 * 60 * 60 * 1000;
-    this.storageService.set('pwa-banner-dismiss-until', dismissUntil.toString(), 'local');
+    localStorage.setItem('pwa-banner-dismiss-until', dismissUntil.toString());
   }
 
   ngOnDestroy() {

@@ -16,7 +16,6 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.component';
 import { SEARCH_DEBOUNCE_MS } from '../../../../core/constants/search.constants';
 import { SearchableDropdownComponent, SearchableItem } from '../../../../shared/components/searchable-dropdown/searchable-dropdown.component';
-import { LoggerService } from '../../../../core/services/logger.service';
 
 interface OrderItem {
   productId: number;
@@ -35,7 +34,6 @@ interface OrderItem {
   styleUrl: './order-modal.component.css'
 })
 export class OrderModalComponent implements OnInit, OnDestroy {
-  private logger = inject(LoggerService);
   private orderService = inject(OrderService);
   private productService = inject(ProductService);
   private userService = inject(UserService);
@@ -505,7 +503,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
         this.closeModal.emit();
       },
       error: (error) => {
-        this.logger.error('Error submitting order:', error);
+        console.error('Error submitting order:', error);
         this.messageService.showError(this.editOrder 
           ? this.translate.instant('ORDERS.MESSAGES.UPDATE_ERROR') 
           : this.translate.instant('ORDERS.MESSAGES.CREATE_ERROR'));

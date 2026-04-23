@@ -5,8 +5,6 @@ import { BehaviorSubject, Observable, Subject, distinctUntilChanged, map } from 
 import { environment } from '../../../environments/environment';
 import { MessageService } from './message.service';
 import { NotificationApiService, NotificationResponseDTO } from './notification-api.service';
-import { StorageService } from './storage.service';
-import { LoggerService } from './logger.service';
 
 export type AppRole = 'ADMIN' | 'CHEF' | 'ELEVATED' | 'USER';
 export type RoleEscalationReason = 'MANUAL_GRANTED' | 'MANUAL_REVOKED' | 'AUTO_EXPIRED';
@@ -43,8 +41,6 @@ export class NotificationService {
   private readonly messageService = inject(MessageService);
   private readonly notificationApiService = inject(NotificationApiService);
   private readonly ngZone = inject(NgZone);
-  private readonly storageService = inject(StorageService);
-  private readonly logger = inject(LoggerService);
 
   private client?: Client;
   private roleSubscription?: StompSubscription;
@@ -88,7 +84,7 @@ export class NotificationService {
         Authorization: `Bearer ${jwtToken}`
       },
       beforeConnect: async () => {
-        const freshToken = this.storageService.get('auth_token');
+        const freshToken = localStorage.getItem('auth_token');
         if (!freshToken) {
           throw new Error('Missing auth token for notifications WebSocket');
         }
@@ -132,7 +128,7 @@ export class NotificationService {
       },
       onStompError: frame => {
         const message = frame.headers['message'] || frame.body || '';
-        this.logger.error('Notification STOMP error:', message);
+        console.error('Notification STOMP error:', message);
 
         if (/unauthorized|jwt|401/i.test(message)) {
           this.disconnect();
@@ -140,11 +136,11 @@ export class NotificationService {
       },
       onWebSocketClose: closeEvent => {
         if (closeEvent.code !== 1000) {
-          this.logger.warn('Notification websocket closed unexpectedly:', closeEvent.reason || closeEvent.code);
+          console.warn('Notification websocket closed unexpectedly:', closeEvent.reason || closeEvent.code);
         }
       },
       onWebSocketError: event => {
-        this.logger.error('Notification websocket transport error:', event);
+        console.error('Notification websocket transport error:', event);
       }
     });
 
@@ -239,7 +235,7 @@ export class NotificationService {
         this.showIncomingToast(normalized);
       });
     } catch (error) {
-      this.logger.error('Invalid notification payload:', error);
+      console.error('Invalid notification payload:', error);
     }
   }
 
@@ -257,7 +253,7 @@ export class NotificationService {
         this.notificationsSubject.next(merged);
       },
       error: error => {
-        this.logger.warn('Could not load persisted notifications:', error);
+        console.warn('Could not load persisted notifications:', error);
       }
     });
   }
@@ -366,7 +362,7 @@ export class NotificationService {
         void audioContext.close();
       };
     } catch (error) {
-      this.logger.warn('Could not play notification tone:', error);
+      console.warn('Could not play notification tone:', error);
     }
   }
 

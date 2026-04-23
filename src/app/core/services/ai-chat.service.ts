@@ -3,7 +3,6 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, timeout } from 'rxjs/operators';
 import { AuthService } from './auth.service';
-import { LoggerService } from './logger.service';
 import { environment } from '../../../environments/environment';
 import {
   AiChatDto,
@@ -23,7 +22,6 @@ import {
 export class AiChatService {
   private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
-  private readonly logger = inject(LoggerService);
   private readonly apiUrl = environment.apiUrl;
   private readonly baseUrl = `${this.apiUrl}/api/chat`;
   private readonly requestTimeoutMs = 30000; // 30s for non-streaming requests
@@ -250,7 +248,7 @@ export class AiChatService {
     if (error instanceof HttpErrorResponse) {
       if (error.status === 200) {
         errorMessage = 'Respuesta inválida del backend (HTTP 200). Revisa el formato JSON devuelto por el servicio.';
-        this.logger.error('AiChatService parse error:', error);
+        console.error('AiChatService parse error:', error);
         return throwError(() => new Error(errorMessage));
       }
 
@@ -280,7 +278,7 @@ export class AiChatService {
       errorMessage = 'Tiempo de espera agotado. Reintentar.';
     }
 
-    this.logger.error('AiChatService error:', error);
+    console.error('AiChatService error:', error);
     return throwError(() => new Error(errorMessage));
   }
 }
