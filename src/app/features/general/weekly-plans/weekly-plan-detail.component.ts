@@ -496,7 +496,7 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
         this.messageService.showError(`${backendMessage} ${this.translate.instant('WEEKLY_PLANS.MESSAGES.CHECK_INVENTORY_TAB') || 'Revisa la pestaña de inventario requerido para identificar productos en riesgo.'}`);  
     } else {  
         this.messageService.showError(backendMessage || this.translate.instant('WEEKLY_PLANS.MESSAGES.ACTIVATE_ERROR') || 'No se pudo activar el plan.');  
-    },  
+    }  
       },
       complete: () => {
         this.activatingPlan = false;
