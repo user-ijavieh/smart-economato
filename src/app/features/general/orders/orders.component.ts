@@ -10,6 +10,7 @@ import { Order, OrderStatus } from '../../../shared/models/order.model';
 import { OrderModalComponent } from './order-modal/order-modal.component';
 import { OrderDetailsModalComponent } from './order-details-modal/order-details-modal.component';
 import { Subject, takeUntil } from 'rxjs';
+import { LoggerService } from '../../../core/services/logger.service';
 
 @Component({
   selector: 'app-orders',
@@ -19,6 +20,7 @@ import { Subject, takeUntil } from 'rxjs';
   styleUrl: './orders.component.css'
 })
 export class OrdersComponent implements OnInit, OnDestroy {
+  private logger = inject(LoggerService);
   public orders: Order[] = [];
   public loading = false;
   public showModal = false;
@@ -259,7 +261,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
         this.messageService.showSuccess(this.translate.instant('COMMON.PDF_SUCCESS'));
       },
       error: (error) => {
-        console.error('Error al descargar el PDF:', error);
+        this.logger.error('Error al descargar el PDF:', error);
         this.messageService.showError(this.translate.instant('COMMON.PDF_ERROR'));
       }
     });

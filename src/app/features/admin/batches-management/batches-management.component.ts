@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { ProductBatchService } from '../../../core/services/product-batch.service';
+import { LoggerService } from '../../../core/services/logger.service';
 import { ProductBatchResponseDTO } from '../../../shared/models/product-batch.model';
 import { RecipeCookingAudit } from '../../../shared/models/kitchen.model';
 import { TraceabilityService } from '../../../core/services/traceability.service';
@@ -25,6 +26,7 @@ type ControlSubTab = 'expiring' | 'expired';
   styleUrl: './batches-management.component.css'
 })
 export class BatchesManagementComponent implements OnInit, OnDestroy {
+  private readonly logger = inject(LoggerService);
   private batchService = inject(ProductBatchService);
   private traceabilityService = inject(TraceabilityService);
   private cdr = inject(ChangeDetectorRef);
@@ -222,27 +224,25 @@ export class BatchesManagementComponent implements OnInit, OnDestroy {
   }
 
   openViewModal(batch: ProductBatchResponseDTO): void {
-    console.log('[BatchesManagement] openViewModal called with batch id:', batch?.id);
     this.selectedBatch = batch;
     this.showViewModal = true;
     this.loadingCookings = true;
     this.batchCookings = [];
     
     if (!batch || !batch.id) {
-      console.warn('Batch is undefined or has no id');
+      this.logger.warn('Batch is undefined or has no id');
       this.loadingCookings = false;
       return;
     }
 
     this.traceabilityService.getBatchCookings(batch.id).subscribe({
       next: (cookings) => {
-        console.log('[BatchesManagement] Traceability response received:', cookings);
         this.batchCookings = cookings || [];
         this.loadingCookings = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('[BatchesManagement] Traceability request failed:', err);
+        this.logger.error('[BatchesManagement] Traceability request failed:', err);
         this.loadingCookings = false;
         this.cdr.detectChanges();
       }

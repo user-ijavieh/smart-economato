@@ -39,6 +39,7 @@ import { User } from '../../../shared/models/user.model';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
+import { LoggerService } from '../../../core/services/logger.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 type IncidentTab = 'incidents' | 'types';
@@ -64,6 +65,7 @@ interface TypeFormState {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
+  private logger = inject(LoggerService);
   private readonly authService = inject(AuthService);
   private readonly incidentService = inject(IncidentService);
   private readonly userService = inject(UserService);
@@ -1245,13 +1247,13 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       },
       onStompError: frame => {
-        console.error('Incident chat STOMP error:', frame.headers['message'] || frame.body);
+        this.logger.error('Incident chat STOMP error:', frame.headers['message'] || frame.body);
       },
       onWebSocketClose: () => {
         this.chatRealtimeConnected = false;
       },
       onWebSocketError: error => {
-        console.error('Incident chat websocket transport error:', error);
+        this.logger.error('Incident chat websocket transport error:', error);
       }
     });
 
@@ -1327,7 +1329,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
       this.cdr.markForCheck();
     } catch (error) {
-      console.error('Invalid incident chat payload:', error);
+      this.logger.error('Invalid incident chat payload:', error);
     }
   }
 
@@ -1337,7 +1339,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
       this.applyReadReceiptToMessages(payload);
       this.cdr.markForCheck();
     } catch (error) {
-      console.error('Invalid incident read receipt payload:', error);
+      this.logger.error('Invalid incident read receipt payload:', error);
     }
   }
 
@@ -1369,7 +1371,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
       this.remoteTypingTimeoutByUser.set(payload.userId, timeoutId);
       this.cdr.markForCheck();
     } catch (error) {
-      console.error('Invalid incident typing payload:', error);
+      this.logger.error('Invalid incident typing payload:', error);
     }
   }
 

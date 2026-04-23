@@ -5,11 +5,13 @@ import { environment } from '../../../environments/environment';
 import { User, UserRequest, BatchAssignResponse } from '../../shared/models/user.model';
 import { Page } from '../../shared/models/page.model';
 import { HttpQueryCacheService } from './http-query-cache.service';
+import { StorageService } from './storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private http = inject(HttpClient);
   private cache = inject(HttpQueryCacheService);
+  private storageService = inject(StorageService);
   private url = `${environment.apiUrl}/api/users`;
 
   getAll(page = 0, size = 20, sort?: string): Observable<Page<User>> {
@@ -126,7 +128,7 @@ export class UserService {
 
   search(term: string, page = 0, size = 20, sort?: string): Observable<Page<User>> {
     return this.cache.getOrFetch('weekly_plan', `users:search:${term}:${page}:${size}:${sort ?? ''}`, () => {
-      const role = (localStorage.getItem('user_role') || '').toUpperCase();
+      const role = (this.storageService.get('user_role') || '').toUpperCase();
       let params = new HttpParams()
         .set('term', term)
         .set('page', page.toString())
@@ -150,7 +152,7 @@ export class UserService {
       .set('size', '1')
       .set('sort', 'name,asc');
 
-    const role = (localStorage.getItem('user_role') || '').toUpperCase();
+    const role = (this.storageService.get('user_role') || '').toUpperCase();
     const endpoint = role === 'CHEF' ? `${this.url}/teachers/search` : `${this.url}/search`;
 
     return this.http.get<Page<User>>(endpoint, { params }).pipe(

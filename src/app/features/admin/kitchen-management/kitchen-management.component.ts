@@ -3,6 +3,7 @@ import { AsyncPipe, CommonModule, CurrencyPipe, DatePipe, DecimalPipe } from '@a
 import { FormsModule } from '@angular/forms';
 import { finalize, Observable, Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
+import { LoggerService } from '../../../core/services/logger.service';
 import { KitchenService } from '../../../core/services/kitchen.service';
 import { RecipeService } from '../../../core/services/recipe.service';
 import { OrderService } from '../../../core/services/order.service';
@@ -32,6 +33,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class KitchenManagementComponent implements OnInit, OnDestroy {
+  private readonly logger = inject(LoggerService);
   private kitchenService = inject(KitchenService);
   private recipeService = inject(RecipeService);
   private orderService = inject(OrderService);
@@ -322,7 +324,7 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
           this.traceData = data as ReverseTraceabilityDTO;
         },
         error: () => {
-          console.error('Error loading traceability for mobile modal');
+          this.logger.error('Error loading traceability for mobile modal');
           this.loadingTraceability = false;
           this.cdr.markForCheck();
         }
@@ -429,19 +431,16 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('Loading report with range:', this.reportRange, 'start:', this.reportStartDate, 'end:', this.reportEndDate);
     this.loadingReport = true;
     this.cdr.markForCheck();
 
     this.kitchenService.getKitchenReport(this.reportRange, this.reportStartDate, this.reportEndDate)
       .pipe(finalize(() => {
-        console.log('Report load finalized');
         this.loadingReport = false;
         this.cdr.markForCheck();
       }))
       .subscribe({
         next: (report) => {
-          console.log('Report received:', report);
           if (report && report.topRecipes) {
             // Sort by quantity as priority
             report.topRecipes.sort((a, b) => b.totalQuantityCooked - a.totalQuantityCooked);
@@ -450,7 +449,7 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         },
         error: (error: any) => {
-          console.error('Error loading report:', error);
+          this.logger.error('Error loading report:', error);
           this.messageService.showError(this.translate.instant('KITCHEN.MESSAGES.REPORT_ERROR'));
         }
       });
@@ -480,7 +479,7 @@ export class KitchenManagementComponent implements OnInit, OnDestroy {
           this.messageService.showSuccess(this.translate.instant('KITCHEN.MESSAGES.PDF_SUCCESS'));
         },
         error: (err: any) => {
-          console.error('Error downloading report PDF:', err);
+          this.logger.error('Error downloading report PDF:', err);
           this.messageService.showError(this.translate.instant('KITCHEN.MESSAGES.PDF_ERROR'));
         }
       });

@@ -18,6 +18,7 @@ import { BaseModalComponent } from '../../../shared/components/base-modal/base-m
 import { ScrollService } from '../../../core/services/scroll.service';
 import { finalize, catchError, forkJoin, takeUntil } from 'rxjs';
 import { of, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { LoggerService } from '../../../core/services/logger.service';
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
@@ -38,6 +39,7 @@ import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecipesManagementComponent implements OnInit, OnDestroy {
+    private logger = inject(LoggerService);
     private recipeService = inject(RecipeService);
     private recipeDraftService = inject(RecipeDraftService);
     private recipeAuditService = inject(RecipeAuditService);
@@ -212,7 +214,7 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
             },
             error: (err: any) => {
-                console.error('Error loading recipe stats:', err);
+                this.logger.error('Error loading recipe stats:', err);
                 this.cdr.detectChanges();
             }
         });
@@ -408,7 +410,7 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
                     this.totalAuditsCount = (response as any).totalElements;
                     this.totalAuditPages = (response as any).totalPages;
                 } else {
-                    console.warn('Respuesta inesperada del servicio de auditorías:', response);
+                    this.logger.warn('Respuesta inesperada del servicio de auditorías:', response);
                 }
                 
                 this.audits = auditsArray;
