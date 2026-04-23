@@ -100,7 +100,7 @@ export class OfflineSyncInterceptor implements HttpInterceptor {
     this.logger.error('[SyncInterceptor]', errorMessage);
 
     // Show notification for critical errors
-    if (error.status >= 500) {
+    if (error.status >= 500 && error.status !== 502) {
       this.notifications.showError(
         'Error del servidor',
         'El servidor no está disponible. Intenta más tarde.'

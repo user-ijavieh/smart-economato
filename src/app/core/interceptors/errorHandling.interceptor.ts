@@ -25,8 +25,9 @@ export const errorHandlingInterceptor: HttpInterceptorFn = (req, next) => {
       // No mostrar 404 en el endpoint de plan actual, ya que es esperado si no hay plan activo
       const isCurrentPlanRequest = req.url.includes('/api/weekly-plans/current');
       const isNotFound = error.status === 404;
+      const isBadGateway = error.status === 502;
 
-      if (!(isGetRequest && isForbidden) && !isUnauthorized && !(isCurrentPlanRequest && isNotFound)) {
+      if (!(isGetRequest && isForbidden) && !isUnauthorized && !(isCurrentPlanRequest && isNotFound) && !isBadGateway) {
         handleError(error, messageService);
       }
       return throwError(() => error);
