@@ -1,20 +1,20 @@
 <div class="admin-page-header">
-  <h1>{{ 'BATCHES.TITLE' | translate }}</h1>
+  <h1>Gestión de Lotes</h1>
 </div>
 
 <!-- Tab bar -->
 <div class="admin-tab-bar">
   <button class="admin-tab-btn" [class.active]="activeTab === 'all'" (click)="switchTab('all')">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/>
+      <path d="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/>
     </svg>
-    {{ 'BATCHES.TABS.ALL' | translate }}
+    Lotes
   </button>
   <button class="admin-tab-btn" [class.active]="activeTab === 'control'" (click)="switchTab('control')">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor">
       <path d="M480-120q-33 0-56.5-23.5T400-200h160q0 33-23.5 56.5T480-120ZM160-240v-80h80v-280q0-83 50-149.5T420-830v-50q0-25 17.5-42.5T480-940q25 0 42.5 17.5T540-880v50q80 16 130 82.5T720-600v280h80v80H160Zm320-360q-33 0-56.5 23.5T400-520v280h160v-280q0-33-23.5-56.5T480-600Z"/>
     </svg>
-    {{ 'BATCHES.TABS.CONTROL' | translate }}
+    Caducidad
   </button>
 </div>
 
@@ -23,18 +23,18 @@
     <!-- CONTROLES TAB 1 -->
     <div class="controles">
       <div class="search-group">
-        <input type="text" class="input-standard" [(ngModel)]="searchTerm" [placeholder]="'BATCHES.FILTERS.SEARCH_PLACEHOLDER' | translate" (ngModelChange)="onSearch()" />
+        <input type="text" class="input-standard" [(ngModel)]="searchTerm" placeholder="Buscar por producto o codigo de lote..." (ngModelChange)="onSearch()" />
       </div>
       
       <select [(ngModel)]="statusFilter" (change)="onSearch()" class="action-select">
-        <option value="all">{{ 'BATCHES.FILTERS.STATUS_ALL' | translate }}</option>
-        <option value="active">{{ 'BATCHES.FILTERS.STATUS_ACTIVE' | translate }}</option>
-        <option value="depleted">{{ 'BATCHES.FILTERS.STATUS_DEPLETED' | translate }}</option>
-        <option value="expired">{{ 'BATCHES.FILTERS.STATUS_EXPIRED' | translate }}</option>
+        <option value="all">Ver Todos</option>
+        <option value="active">Solo Activos</option>
+        <option value="depleted">Solo Agotados</option>
+        <option value="expired">Solo Caducados</option>
       </select>
 
       @if (searchTerm || statusFilter !== 'all') {
-        <button class="toolbar-btn btn-clear" (click)="clearFilters()">{{ 'COMMON.CLEAR_FILTERS' | translate }}</button>
+        <button class="toolbar-btn btn-clear" (click)="clearFilters()">Limpiar Filtros</button>
       }
     </div>
 
@@ -42,15 +42,15 @@
     <div class="stats-row">
       <div class="stat-card">
         <span class="stat-number">{{ totalElements }}</span>
-        <span class="stat-label">{{ 'COMMON.TOTAL' | translate }}</span>
+        <span class="stat-label">Total Lotes</span>
       </div>
       <div class="stat-card stat-critical">
         <span class="stat-number">{{ expiredCount }}</span>
-        <span class="stat-label">{{ 'BATCHES.SUBTABS.EXPIRED' | translate }}</span>
+        <span class="stat-label">Caducados</span>
       </div>
       <div class="stat-card stat-cost">
         <span class="stat-number">{{ expiringSoonCount }}</span>
-        <span class="stat-label">{{ 'BATCHES.STATUS.UPCOMING' | translate }}</span>
+        <span class="stat-label">Prox. Vencimiento</span>
       </div>
     </div>
 
@@ -59,15 +59,15 @@
       <table>
         <thead>
           <tr>
-            <th class="sortable" (click)="onSort('id')" [attr.data-sort-dir]="getSortDir('id')">{{ 'BATCHES.TABLE.ID' | translate }}</th>
-            <th class="sortable" (click)="onSort('productName')" [attr.data-sort-dir]="getSortDir('productName')">{{ 'BATCHES.TABLE.PRODUCT' | translate }}</th>
-            <th>{{ 'BATCHES.MODALS.BATCH_CODE' | translate }}</th>
-            <th>{{ 'BATCHES.TABLE.INITIAL_QTY' | translate }}</th>
-            <th class="sortable" (click)="onSort('remainingQuantity')" [attr.data-sort-dir]="getSortDir('remainingQuantity')">{{ 'STOCK.PROJECTED.STOCK' | translate }}</th>
-            <th class="sortable" (click)="onSort('receivedAt')" [attr.data-sort-dir]="getSortDir('receivedAt')">{{ 'COMMON.RECEIVED' | translate }}</th>
-            <th class="sortable" (click)="onSort('expirationDate')" [attr.data-sort-dir]="getSortDir('expirationDate')">{{ 'BATCHES.TABLE.EXPIRATION' | translate }}</th>
-            <th>{{ 'BATCHES.TABLE.STATUS' | translate }}</th>
-            <th>{{ 'BATCHES.TABLE.ACTIONS' | translate }}</th>
+            <th class="sortable" (click)="onSort('id')" [attr.data-sort-dir]="getSortDir('id')">ID</th>
+            <th class="sortable" (click)="onSort('productName')" [attr.data-sort-dir]="getSortDir('productName')">Producto</th>
+            <th>Código Lote</th>
+            <th>Cant. Original</th>
+            <th class="sortable" (click)="onSort('remainingQuantity')" [attr.data-sort-dir]="getSortDir('remainingQuantity')">Stock</th>
+            <th class="sortable" (click)="onSort('receivedAt')" [attr.data-sort-dir]="getSortDir('receivedAt')">Recibido</th>
+            <th class="sortable" (click)="onSort('expirationDate')" [attr.data-sort-dir]="getSortDir('expirationDate')">Caducidad</th>
+            <th>Estado</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody [class.loading]="loading">
@@ -120,7 +120,7 @@
                 </td>
                 <td>
                   <span class="date-badge" [class.expired]="batch.expired" [class.warning]="batch.daysUntilExpiration <= 7 && !batch.expired">
-                    {{ (batch.expirationDate | date:'dd/MM/yyyy') || ('COMMON.NO_DATE' | translate) }}
+                    {{ (batch.expirationDate | date:'dd/MM/yyyy') || 'Sin fecha' }}
                   </span>
                 </td>
                 <td>
@@ -135,7 +135,7 @@
                     </svg>
                   </button>
                   @if (!batch.depleted) {
-                    <button class="btn-eliminar btn-icon-only" (click)="$event.stopPropagation(); onWithdraw(batch)" [title]="'BATCHES.ACTIONS.DELETE' | translate">
+                    <button class="btn-eliminar btn-icon-only" (click)="$event.stopPropagation(); onWithdraw(batch)" title="Desechar Lote">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                         <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
@@ -147,7 +147,7 @@
             }
             @if (batches.length === 0 && !loading) {
               <tr>
-                <td colspan="9" class="empty-state">{{ 'BATCHES.MESSAGES.NO_BATCHES' | translate }}</td>
+                <td colspan="9" class="empty-state">No se encontraron lotes activos</td>
               </tr>
             }
           }
@@ -192,29 +192,29 @@
               </div>
               <div class="card-details">
                 <div class="detail-item">
-                  <span class="detail-label">{{ 'BATCHES.MODALS.BATCH_CODE' | translate }}:</span>
+                  <span class="detail-label">Codigo:</span>
                   <span>{{ batch.batchCode || '-' }}</span>
                 </div>
                 <div class="detail-item">
-                  <span class="detail-label">{{ 'STOCK.PROJECTED.STOCK' | translate }}:</span>
+                  <span class="detail-label">Stock:</span>
                   <span class="stock-value" [class.stock-low]="batch.remainingQuantity < 5">
                     {{ batch.remainingQuantity | number:'1.0-2' }}
                   </span>
                 </div>
                 <div class="detail-item">
-                  <span class="detail-label">{{ 'BATCHES.TABLE.EXPIRATION' | translate }}:</span>
+                  <span class="detail-label">Caducidad:</span>
                   <span class="date-badge" [class.expired]="batch.expired" [class.warning]="batch.daysUntilExpiration <= 7 && !batch.expired">
-                    {{ (batch.expirationDate | date:'dd/MM/yyyy') || ('COMMON.NO_DATE' | translate) }}
+                    {{ (batch.expirationDate | date:'dd/MM/yyyy') || 'Sin fecha' }}
                   </span>
                 </div>
               </div>
             </div>
             <div class="card-footer">
               <div class="received-info">
-                {{ 'COMMON.RECEIVED' | translate }}: {{ batch.receivedAt | date:'dd/MM/yy' }}
+                Recibido: {{ batch.receivedAt | date:'dd/MM/yy' }}
               </div>
               <div class="card-actions">
-                <button class="btn-eliminar" (click)="$event.stopPropagation(); onWithdraw(batch)" [title]="'BATCHES.ACTIONS.DELETE' | translate">
+                <button class="btn-eliminar" (click)="$event.stopPropagation(); onWithdraw(batch)" title="Desechar Lote">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                     <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
@@ -225,7 +225,7 @@
           </div>
         }
         @if (batches.length === 0 && !loading) {
-          <div class="empty-state">{{ 'BATCHES.MESSAGES.NO_BATCHES' | translate }}</div>
+          <div class="empty-state">No se encontraron lotes activos</div>
         }
       }
     </div>
@@ -234,11 +234,11 @@
     <div class="pagination-controls">
         <button class="toolbar-btn btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
-            {{ 'COMMON.PREVIOUS' | translate }}
+            Anterior
         </button>
-        <span class="page-info">{{ 'COMMON.PAGE' | translate }} {{ currentPage + 1 }} {{ 'COMMON.OF' | translate }} {{ totalPages }} <span class="total-info">({{ totalElements }} {{ 'BATCHES.TITLE' | translate | lowercase }})</span></span>
+        <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }} <span class="total-info">({{ totalElements }} lotes)</span></span>
         <button class="toolbar-btn btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
-            {{ 'COMMON.NEXT' | translate }}
+            Siguiente
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
         </button>
     </div>
@@ -255,24 +255,24 @@
             <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
             <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
           </svg>
-          {{ 'BATCHES.SUBTABS.EXPIRING' | translate }}
+          Por vencer
         </button>
         <button class="tab-btn tab-btn-expired" [class.active]="batchesSubTab === 'expired'" (click)="setSubTab('expired')">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
             <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
           </svg>
-          {{ 'BATCHES.SUBTABS.EXPIRED' | translate }}
+          Caducados
         </button>
       </div>
 
       <div class="filter-actions-right">
         @if (batchesSubTab === 'expiring') {
           <div class="premium-filter-group">
-            <label class="filter-label">{{ 'BATCHES.FILTERS.EXPIRING_IN' | translate }}:</label>
+            <label class="filter-label">Días objetivo:</label>
             <div class="input-with-button">
               <input type="number" min="1" max="90" [(ngModel)]="expiringDays" class="days-input" />
-              <button (click)="loadControlBatches()" class="toolbar-btn btn-refresh-icon" [title]="'COMMON.REFRESH' | translate">
+              <button (click)="loadControlBatches()" class="toolbar-btn btn-refresh-icon" title="Actualizar vista">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
                   <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
                   <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
@@ -289,12 +289,12 @@
       <table>
         <thead>
             <tr>
-              <th class="sortable">{{ 'BATCHES.TABLE.PRODUCT' | translate }}</th>
-              <th class="sortable">{{ 'BATCHES.TABLE.EXPIRATION' | translate }}</th>
-              <th class="sortable">{{ 'COMMON.RECEIVED' | translate }}</th>
-              <th class="sortable">{{ 'STOCK.PROJECTED.STOCK' | translate }}</th>
-              <th>{{ 'BATCHES.TABLE.STATUS' | translate }}</th>
-              <th>{{ 'BATCHES.TABLE.ACTIONS' | translate }}</th>
+              <th class="sortable">Producto</th>
+              <th class="sortable">Caducidad</th>
+              <th class="sortable">Recibido</th>
+              <th class="sortable">Stock Lote</th>
+              <th>Estado</th>
+              <th>Acciones</th>
             </tr>
         </thead>
         <tbody [class.loading]="loading">
@@ -315,7 +315,7 @@
                 <td>
                   <div class="product-cell">
                     <strong class="product-name-text">{{ batch.productName }}</strong>
-                    <span class="unit-tag">{{ 'TRACEABILITY.LABELS.BATCH' | translate }} #{{ batch.id }}</span>
+                    <span class="unit-tag">Lote #{{ batch.id }}</span>
                   </div>
                 </td>
                 <td>
@@ -341,7 +341,7 @@
                   </span>
                 </td>
                 <td class="actions-cell">
-                  <button class="btn-editar" (click)="$event.stopPropagation(); onRowClick(batch)" [title]="'BATCHES.ACTIONS.EDIT' | translate">
+                  <button class="btn-editar" (click)="$event.stopPropagation(); onRowClick(batch)" title="Editar Caducidad">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                     </svg>
@@ -356,7 +356,7 @@
               </tr>
             }
             @if (controlBatches.length === 0 && !loading) {
-              <tr><td colspan="6" class="empty-state">{{ 'BATCHES.MODALS.NO_ATTENTION' | translate }}</td></tr>
+              <tr><td colspan="6" class="empty-state">No hay lotes que requieran atención inmediata.</td></tr>
             }
           }
         </tbody>
@@ -408,12 +408,12 @@
               </div>
             </div>
             <div class="card-footer">
-              <button class="btn-eliminar" (click)="$event.stopPropagation(); onWithdraw(batch)">{{ 'COMMON.DELETE' | translate }}</button>
+              <button class="btn-eliminar" (click)="$event.stopPropagation(); onWithdraw(batch)">Eliminar</button>
             </div>
           </div>
         }
         @if (controlBatches.length === 0 && !loading) {
-          <div class="empty-state">{{ 'BATCHES.MODALS.NO_ATTENTION' | translate }}</div>
+          <div class="empty-state">No hay lotes que requieran atención inmediata.</div>
         }
       }
     </div>
@@ -422,11 +422,11 @@
       <div class="pagination-controls">
         <button class="toolbar-btn btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
-          {{ 'COMMON.PREVIOUS' | translate }}
+          Anterior
         </button>
-        <span class="page-info">{{ 'COMMON.PAGE' | translate }} {{ currentPage + 1 }} {{ 'COMMON.OF' | translate }} {{ totalPages }} <span class="total-info">({{ totalElements }} {{ 'BATCHES.TITLE' | translate | lowercase }})</span></span>
+        <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }} <span class="total-info">({{ totalElements }} lotes)</span></span>
         <button class="toolbar-btn btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
-          {{ 'COMMON.NEXT' | translate }}
+          Siguiente
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
         </button>
       </div>
@@ -445,37 +445,37 @@
 
 <!-- MODAL VISUALIZACION -->
 @if (showViewModal && selectedBatch) {
-  <app-base-modal [title]="'BATCHES.MODALS.VIEW_TITLE' | translate" size="lg" (closed)="onViewModalClosed()">
+  <app-base-modal title="Información de Lote #{{ selectedBatch.id }}" size="lg" (closed)="onViewModalClosed()">
     <div class="modal-container traceability-modal-container">
       <div class="crisis-detail-content" style="border-left: none; padding: 0;">
         <div class="detail-grid-standard">
           <div class="detail-col">
-            <strong>{{ 'BATCHES.TABLE.PRODUCT' | translate }}:</strong>
+            <strong>Producto:</strong>
             <p>{{ selectedBatch.productName }}</p>
-            <strong>{{ 'BATCHES.MODALS.BATCH_CODE' | translate }}:</strong>
+            <strong>Código de lote:</strong>
             <p>{{ selectedBatch.batchCode || '-' }}</p>
-            <strong>{{ 'BATCHES.TABLE.STATUS' | translate }}:</strong>
+            <strong>Estado:</strong>
             <p>{{ getStatusText(selectedBatch) }}</p>
           </div>
           <div class="detail-col">
-            <strong>{{ 'BATCHES.TABLE.INITIAL_QTY' | translate }}:</strong>
+            <strong>Cantidad Original:</strong>
             <p>{{ selectedBatch.initialQuantity | number:'1.0-2' }}</p>
-            <strong>{{ 'STOCK.PROJECTED.STOCK' | translate }}:</strong>
+            <strong>Stock Restante:</strong>
             <p>{{ selectedBatch.remainingQuantity | number:'1.0-2' }}</p>
-            <strong>{{ 'BATCHES.TABLE.EXPIRATION' | translate }}:</strong>
-            <p>{{ (selectedBatch.expirationDate | date:'dd/MM/yyyy') || ('COMMON.NO_DATE' | translate) }}</p>
+            <strong>Caducidad:</strong>
+            <p>{{ (selectedBatch.expirationDate | date:'dd/MM/yyyy') || 'Sin fecha' }}</p>
           </div>
         </div>
 
         <div class="affected-batches-section" style="margin-top: 20px;">
-          <strong>{{ 'BATCHES.MODALS.TRACEABILITY_TAB' | translate }}</strong>
+          <strong>Trazabilidad</strong>
           
           @if (loadingCookings) {
-            <p style="margin-top: 10px; color: #666;">{{ 'COMMON.LOADING' | translate }}...</p>
+            <p style="margin-top: 10px; color: #666;">Cargando trazabilidad...</p>
           } @else if (batchCookings.length > 0) {
             <div class="traceability-table-wrap" style="margin-top: 10px;">
               <table class="traceability-sub-table">
-                <thead><tr><th>#ID</th><th>{{ 'BATCHES.MODALS.RECIPE' | translate }}</th><th>{{ 'WEEKLY_PLANS.RESPONSIBLE' | translate }}</th><th>{{ 'BATCHES.MODALS.DATE' | translate }}</th><th>{{ 'BATCHES.MODALS.QUANTITY' | translate }}</th></tr></thead>
+                <thead><tr><th>#ID</th><th>Receta</th><th>Cocinero</th><th>Fecha</th><th>Cantidad</th></tr></thead>
                 <tbody>
                   @for (cook of batchCookings; track cook.id) {
                     <tr>
@@ -490,7 +490,7 @@
               </table>
             </div>
           } @else {
-             <p style="margin-top: 10px; color: #666; font-style: italic;">{{ 'BATCHES.MODALS.NO_COOKINGS' | translate }}</p>
+             <p style="margin-top: 10px; color: #666; font-style: italic;">No se han registrado cocinados con este lote.</p>
           }
         </div>
       </div>
@@ -501,7 +501,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
           </svg>
-          {{ 'BATCHES.ACTIONS.EDIT' | translate }}
+          Editar Caducidad
         </button>
       </div>
     </div>

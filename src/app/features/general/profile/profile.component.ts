@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { UserService } from '../../../core/services/user.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../shared/models/user.model';
@@ -18,7 +17,7 @@ import { LoggerService } from '../../../core/services/logger.service';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseModalComponent, TranslateModule],
+  imports: [CommonModule, FormsModule, BaseModalComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
@@ -30,7 +29,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   private webSocketService = inject(WebSocketService);
   private userActivityService = inject(UserActivityService);
   private messageService = inject(MessageService);
-  private translate = inject(TranslateService);
   private presenceSubscription?: Subscription;
 
   currentUser: User | null = null;
@@ -102,7 +100,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   loadCurrentUser() {
     this.currentUser = {
       id: this.authService.getUserId() || 0,
-      name: this.authService.getName() || this.translate.instant('COMMON.USER'),
+      name: this.authService.getName() || 'Usuario',
       role: (this.authService.getRole() as any) || 'USER',
       user: '' 
     };
@@ -215,7 +213,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     if (!this.selectedStudent) return;
     
     if (!this.durationInput || this.durationInput < 1) {
-       this.messageService.showError(this.translate.instant('PROFILE.INVALID_DURATION'));
+       alert('Introduzca una duración válida en minutos.');
        return;
     }
 
@@ -234,15 +232,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.logger.error(err);
-          this.messageService.showError(this.translate.instant('PROFILE.ESCALATE_ERROR'));
+          alert('Error al intentar dar permisos temporales.');
         }
       });
   }
 
   async deescalate(student: User): Promise<void> {
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('PROFILE.DEESCALATE_CONFIRM_TITLE'),
-      this.translate.instant('PROFILE.DEESCALATE_CONFIRM_MSG', { name: student.name })
+      '¿Revocar permisos temporales?',
+      `¿Seguro que quieres revocar los permisos de "${student.name}"?`
     );
 
     if (!confirmed) {
@@ -262,7 +260,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.logger.error(err);
-          this.messageService.showError(this.translate.instant('PROFILE.DEESCALATE_ERROR'));
+          alert('Error al intentar revocar permisos temporales.');
         }
       });
   }
@@ -314,11 +312,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
   formatActivityAction(action: string): string {
     switch (action) {
       case 'CONNECTED':
-        return this.translate.instant('PROFILE.ACTIVITY.CONNECTED');
+        return 'Conectado';
       case 'DISCONNECTED':
-        return this.translate.instant('PROFILE.ACTIVITY.DISCONNECTED');
+        return 'Desconectado';
       case 'SCREEN_CHANGED':
-        return this.translate.instant('PROFILE.ACTIVITY.SCREEN_CHANGED');
+        return 'Cambio de pantalla';
       default:
         return action;
     }
@@ -331,16 +329,24 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   private translateScreenName(screen?: string | null): string {
-    if (!screen) return this.translate.instant('PROFILE.SCREENS.NONE');
+    if (!screen) return 'Sin datos';
 
-    const key = `PROFILE.SCREENS.${screen}`;
-    const translated = this.translate.instant(key);
-    
-    // If translation doesn't exist, fallback to original or format it
-    if (translated === key) {
-        return screen.replaceAll('_', ' ');
-    }
-    
-    return translated;
+    const map: Record<string, string> = {
+      DASHBOARD: 'Inicio',
+      USER_MANAGEMENT: 'Gestión de usuarios',
+      PRODUCT_MANAGEMENT: 'Gestión de productos',
+      ORDER_MANAGEMENT: 'Gestión de pedidos',
+      STOCK_MANAGEMENT: 'Gestión de stock',
+      RECIPE_MANAGEMENT: 'Gestión de recetas',
+      NOTIFICATIONS_MANAGEMENT: 'Gestión de notificaciones',
+      INCIDENTS: 'Incidencias',
+      ORDERS: 'Pedidos',
+      ORDER_RECEPTION: 'Recepción de pedidos',
+      RECIPES: 'Recetas',
+      INVENTORY: 'Inventario',
+      PROFILE: 'Perfil'
+    };
+
+    return map[screen] || screen.replaceAll('_', ' ');
   }
 }

@@ -1,8 +1,6 @@
-import { ApplicationConfig, provideZonelessChangeDetection, importProvidersFrom } from '@angular/core';
+import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
-import { HttpClient, provideHttpClient, withInterceptors, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { TranslateModule, TranslateLoader, provideTranslateService } from '@ngx-translate/core';
-import { TranslateHttpLoader, provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { provideHttpClient, withInterceptors, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
@@ -18,10 +16,6 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor, errorHandlingInterceptor])),
     { provide: HTTP_INTERCEPTORS, useClass: OfflineSyncInterceptor, multi: true },
     provideAnimationsAsync(),
-    provideCharts(withDefaultRegisterables()),
-    provideTranslateService({
-      defaultLanguage: 'es',
-      loader: provideTranslateHttpLoader({ prefix: './assets/i18n/', suffix: '.json' })
-    })
+    provideCharts(withDefaultRegisterables())
   ]
 };

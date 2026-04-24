@@ -8,15 +8,13 @@ import { UserService } from '../../../core/services/user.service';
 import { AppRole } from '../../../core/services/notification.service';
 import { User } from '../../../shared/models/user.model';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-
 
 type NotificationTargetRole = Exclude<AppRole, 'ELEVATED'>;
 
 @Component({
   selector: 'app-notifications-management',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './notifications-management.component.html',
   styleUrl: './notifications-management.component.css'
 })
@@ -25,12 +23,11 @@ export class NotificationsManagementComponent implements OnDestroy {
   private readonly notificationApiService = inject(NotificationApiService);
   private readonly userService = inject(UserService);
   private readonly messageService = inject(MessageService);
-  private readonly translate = inject(TranslateService);
 
   readonly roles: Array<{ value: NotificationTargetRole; label: string }> = [
-    { value: 'ADMIN', label: 'COMMON.ROLES.ADMIN' },
-    { value: 'CHEF', label: 'COMMON.ROLES.CHEF' },
-    { value: 'USER', label: 'COMMON.ROLES.STUDENT' }
+    { value: 'ADMIN', label: 'Administrador' },
+    { value: 'CHEF', label: 'Profesor' },
+    { value: 'USER', label: 'Alumno' }
   ];
 
   activeTab: 'role' | 'user' = 'role';
@@ -106,18 +103,14 @@ export class NotificationsManagementComponent implements OnDestroy {
       .pipe(finalize(() => (this.sendingRole = false)))
       .subscribe({
         next: () => {
-          const successMsg = this.translate.instant('NOTIFICATIONS_MGMT.MESSAGES.SEND_SUCCESS_ROLE', { role: this.getRoleLabel(role) });
-          const successTitle = this.translate.instant('NOTIFICATIONS_MGMT.MESSAGES.SEND_SUCCESS_TITLE');
-          this.messageService.showSuccess(successMsg, 4000, {
-            title: successTitle
+          this.messageService.showSuccess(`Notificación enviada a ${this.getRoleLabel(role)}.`, 4000, {
+            title: 'Envío completado'
           });
           this.roleForm.reset({ role: this.roleForm.controls.role.value, title: '', message: '' });
         },
         error: (error: { error?: { message?: string } }) => {
-          const errorMsg = error?.error?.message || this.translate.instant('NOTIFICATIONS_MGMT.MESSAGES.SEND_ERROR');
-          const errorTitle = this.translate.instant('NOTIFICATIONS_MGMT.MESSAGES.SEND_ERROR_TITLE');
-          this.messageService.showError(errorMsg, 6000, {
-            title: errorTitle
+          this.messageService.showError(error?.error?.message || 'No se pudo enviar la notificación.', 6000, {
+            title: 'Error al enviar'
           });
         }
       });
@@ -136,19 +129,15 @@ export class NotificationsManagementComponent implements OnDestroy {
       .pipe(finalize(() => (this.sendingUser = false)))
       .subscribe({
         next: () => {
-          const successMsg = this.translate.instant('NOTIFICATIONS_MGMT.MESSAGES.SEND_SUCCESS_USER', { user: username });
-          const successTitle = this.translate.instant('NOTIFICATIONS_MGMT.MESSAGES.SEND_SUCCESS_TITLE');
-          this.messageService.showSuccess(successMsg, 4000, {
-            title: successTitle
+          this.messageService.showSuccess(`Notificación enviada a ${username}.`, 4000, {
+            title: 'Envío completado'
           });
           this.userForm.reset({ username: '', title: '', message: '' });
           this.filteredUsers = [];
         },
         error: (error: { error?: { message?: string } }) => {
-          const errorMsg = error?.error?.message || this.translate.instant('NOTIFICATIONS_MGMT.MESSAGES.SEND_ERROR');
-          const errorTitle = this.translate.instant('NOTIFICATIONS_MGMT.MESSAGES.SEND_ERROR_TITLE');
-          this.messageService.showError(errorMsg, 6000, {
-            title: errorTitle
+          this.messageService.showError(error?.error?.message || 'No se pudo enviar la notificación.', 6000, {
+            title: 'Error al enviar'
           });
         }
       });
@@ -156,20 +145,14 @@ export class NotificationsManagementComponent implements OnDestroy {
 
   rolePreview(): string {
     const role = this.roleForm.controls.role.value;
-    const title = this.roleForm.controls.title.value.trim() || this.translate.instant('NOTIFICATIONS_MGMT.PLACEHOLDERS.NO_TITLE');
-    return this.translate.instant('NOTIFICATIONS_MGMT.MESSAGES.PREVIEW_ROLE', { 
-      role: this.getRoleLabel(role),
-      title: title
-    });
+    const title = this.roleForm.controls.title.value.trim() || 'Sin título';
+    return `Vas a enviar al grupo ${this.getRoleLabel(role)}: “${title}”.`;
   }
 
   userPreview(): string {
-    const username = this.userForm.controls.username.value.trim() || this.translate.instant('NOTIFICATIONS_MGMT.PLACEHOLDERS.USER');
-    const title = this.userForm.controls.title.value.trim() || this.translate.instant('NOTIFICATIONS_MGMT.PLACEHOLDERS.NO_TITLE');
-    return this.translate.instant('NOTIFICATIONS_MGMT.MESSAGES.PREVIEW_USER', { 
-      user: username,
-      title: title
-    });
+    const username = this.userForm.controls.username.value.trim() || 'usuario';
+    const title = this.userForm.controls.title.value.trim() || 'Sin título';
+    return `Vas a enviar a ${username}: “${title}”.`;
   }
 
   private searchUsers(term: string): void {
@@ -196,7 +179,6 @@ export class NotificationsManagementComponent implements OnDestroy {
   }
 
   private getRoleLabel(role: NotificationTargetRole): string {
-    const key = this.roles.find(item => item.value === role)?.label ?? role;
-    return this.translate.instant(key);
+    return this.roles.find(item => item.value === role)?.label ?? role;
   }
 }

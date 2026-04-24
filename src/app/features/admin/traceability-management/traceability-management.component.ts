@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angula
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize, debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 import { SupplierService } from '../../../core/services/supplier.service';
@@ -23,7 +22,7 @@ type CrisisView = 'active' | 'history';
 @Component({
   selector: 'app-traceability-management',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent, BarcodeScannerComponent, DatePipe, DecimalPipe, TranslateModule],
+  imports: [FormsModule, BaseModalComponent, BarcodeScannerComponent, DatePipe, DecimalPipe],
   templateUrl: './traceability-management.component.html',
   styleUrl: './traceability-management.component.css'
 })
@@ -33,7 +32,6 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
   private productService = inject(ProductService);
   private cdr = inject(ChangeDetectorRef);
   private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
-  private translate = inject(TranslateService);
   messageService = inject(MessageService);
 
   private destroy$ = new Subject<void>();
@@ -42,7 +40,6 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
   activating = false;
   searching = false;
   showActivationModal = false;
-  loadingActive = false;
 
   // -- Supplier Selection State --
   suppliers: Supplier[] = [];
@@ -129,23 +126,17 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
   }
 
   loadCrises(): void {
-    this.loadingActive = true;
-    this.traceabilityService.getCrises().pipe(
-      finalize(() => {
-        this.loadingActive = false;
-        this.cdr.markForCheck();
-      })
-    ).subscribe({
+    this.traceabilityService.getCrises().subscribe({
       next: crises => {
-        this.activeCrises = [];
         crises.forEach(c => {
           if (c.status === 'ACTIVE') {
             this.addOrUpdateCrisis(c);
           }
         });
         this.onActiveSearch();
+        this.cdr.markForCheck();
       },
-      error: () => this.messageService.showError(this.translate.instant('TRACEABILITY.MESSAGES.LOAD_ERROR'))
+      error: () => this.messageService.showError('No se pudieron cargar las alertas de trazabilidad.')
     });
   }
 
@@ -209,6 +200,9 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
     this.loadingSuppliers = true;
     this.cdr.markForCheck();
     
+    // Using getAll for simplicity if searchByTerm doesn't support pagination
+    // Actually our SupplierService has searchByTerm but it returns Supplier[] directly
+    // Let's use getAll with search if we can, or just getAll with page
     this.supplierService.getAll(this.supplierPage, 20, 'name,asc').pipe(
       finalize(() => {
         this.loadingSuppliers = false;
@@ -217,6 +211,7 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: (page: any) => {
         const content = page.content || [];
+        // Filter by search term locally if backend doesn't support it in getAll
         const term = this.supplierSearchTerm.toLowerCase();
         const filtered = term ? content.filter((s: Supplier) => s.name.toLowerCase().includes(term)) : content;
         
@@ -226,7 +221,7 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
         this.supplierTotalPages = page.totalPages;
         this.cdr.markForCheck();
       },
-      error: () => this.messageService.showError(this.translate.instant('COMMON.ERROR_LOADING_SUPPLIERS'))
+      error: () => this.messageService.showError('No se pudieron cargar los proveedores.')
     });
   }
 
@@ -316,7 +311,7 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
         this.productTotalPages = page.totalPages;
         this.cdr.markForCheck();
       },
-      error: () => this.messageService.showError(this.translate.instant('COMMON.ERROR_LOADING_PRODUCTS'))
+      error: () => this.messageService.showError('No se pudieron cargar los productos.')
     });
   }
 
@@ -346,22 +341,22 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
 
   activateCrisis(): void {
     if (!this.selectedSupplierId) {
-      this.messageService.showError(this.translate.instant('TRACEABILITY.MESSAGES.SELECT_SUPPLIER'));
+      this.messageService.showError('Debes seleccionar un proveedor.');
       return;
     }
 
     if (!this.selectedProductIds.length) {
-      this.messageService.showError(this.translate.instant('TRACEABILITY.MESSAGES.SELECT_PRODUCTS'));
+      this.messageService.showError('Debes seleccionar al menos un producto.');
       return;
     }
 
     if (!this.reason.trim()) {
-      this.messageService.showError(this.translate.instant('TRACEABILITY.MESSAGES.REASON_REQUIRED'));
+      this.messageService.showError('Debes indicar un motivo de crisis.');
       return;
     }
 
     if (!this.dateFrom || !this.dateTo) {
-      this.messageService.showError(this.translate.instant('TRACEABILITY.MESSAGES.DATES_REQUIRED'));
+      this.messageService.showError('Debes completar el rango de fechas.');
       return;
     }
 
@@ -379,11 +374,11 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: crisis => {
         this.addOrUpdateCrisis(crisis);
-        this.messageService.showSuccess(this.translate.instant('TRACEABILITY.MESSAGES.ACTIVATE_SUCCESS', { code: crisis.crisisCode }));
+        this.messageService.showSuccess(`Crisis ${crisis.crisisCode} activada correctamente.`);
         this.closeActivationModal();
       },
       error: (error) => {
-        this.messageService.showError(error?.error?.message || this.translate.instant('TRACEABILITY.MESSAGES.ACTIVATE_ERROR'));
+        this.messageService.showError(error?.error?.message || 'No se pudo activar la crisis.');
       }
     });
   }
@@ -399,6 +394,7 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
     this.selectedSupplierId = null;
     this.selectedProductIds = [];
     this.reason = '';
+    // Keep dates as they are or reset them to current week
     this.cdr.markForCheck();
   }
 
@@ -406,8 +402,8 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
 
   async liftCrisis(crisis: CrisisResponseDTO): Promise<void> {
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('TRACEABILITY.MESSAGES.LIFT_CONFIRM_TITLE'),
-      this.translate.instant('TRACEABILITY.MESSAGES.LIFT_CONFIRM_MSG', { code: crisis.crisisCode })
+      'Levantar crisis',
+      `¿Seguro que deseas levantar ${crisis.crisisCode}?`
     );
 
     if (!confirmed) {
@@ -420,7 +416,7 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
       : Number(availabilityValue);
 
     if (parsedAvailability !== undefined && (Number.isNaN(parsedAvailability) || parsedAvailability < 0 || parsedAvailability > 100)) {
-      this.messageService.showError(this.translate.instant('TRACEABILITY.MESSAGES.INVALID_AVAILABILITY'));
+      this.messageService.showError('La disponibilidad debe estar entre 0 y 100.');
       return;
     }
 
@@ -431,18 +427,18 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
       next: () => {
         const lifted: CrisisResponseDTO = { ...crisis, status: 'LIFTED' };
         this.addOrUpdateCrisis(lifted);
-        this.messageService.showSuccess(this.translate.instant('TRACEABILITY.MESSAGES.LIFT_SUCCESS', { code: crisis.crisisCode }));
+        this.messageService.showSuccess(`Crisis ${crisis.crisisCode} levantada correctamente.`);
       },
       error: (error) => {
-        this.messageService.showError(error?.error?.message || this.translate.instant('TRACEABILITY.MESSAGES.LIFT_ERROR'));
+        this.messageService.showError(error?.error?.message || 'No se pudo levantar la crisis.');
       }
     });
   }
 
   async downloadReport(crisis: CrisisResponseDTO): Promise<void> {
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('COMMON.PDF_CONFIRM_TITLE'),
-      this.translate.instant('COMMON.PDF_CONFIRM_MSG')
+      'Confirmar descarga',
+      '¿Deseas descargar este archivo PDF?'
     );
     if (!confirmed) return;
 
@@ -456,9 +452,8 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
         anchor.click();
         document.body.removeChild(anchor);
         window.URL.revokeObjectURL(url);
-        this.messageService.showSuccess(this.translate.instant('COMMON.PDF_SUCCESS'));
       },
-      error: () => this.messageService.showError(this.translate.instant('COMMON.PDF_ERROR'))
+      error: () => this.messageService.showError('No se pudo descargar el reporte PDF.')
     });
   }
 
@@ -473,7 +468,7 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.selectedCrisis = null;
       this.cdr.markForCheck();
-    }, 300);
+    }, 300); // Wait for translation / animation
   }
 
   onActiveSearch(): void {
@@ -564,7 +559,7 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
         this.historyTotalElements = response.totalElements;
         this.historyHasMore = this.historyPage < this.historyTotalPages - 1;
       },
-      error: () => this.messageService.showError(this.translate.instant('TRACEABILITY.MESSAGES.HISTORY_LOAD_ERROR'))
+      error: () => this.messageService.showError('No se pudo cargar el historial.')
     });
   }
 
@@ -635,14 +630,14 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
       const info = details[productName];
 
       if (!info) {
-        return { productName, lotLabel: this.translate.instant('BATCHES.NO_BATCH') };
+        return { productName, lotLabel: 'Sin lote' };
       }
 
       const lotCode = (info.batchCode || '').trim();
       const lotId = info.batchId;
       const lotLabel = lotCode
         ? lotCode
-        : (lotId ? `${this.translate.instant('BATCHES.BATCH')} #${lotId}` : this.translate.instant('BATCHES.NO_BATCH'));
+        : (lotId ? `Lote #${lotId}` : 'Sin lote');
 
       return { productName, lotLabel };
     });
