@@ -90,6 +90,20 @@ export class KitchenService {
     );
   }
 
+  searchCookingAuditsByUserName(name: string): Observable<RecipeCookingAudit[]> {
+    const params = new HttpParams().set('name', name);
+
+    return this.http.get<any[]>(`${this.auditsUrl}/user/search`, { params }).pipe(
+      catchError((error) => {
+        if (error?.status === 404) {
+          return this.http.get<any[]>(`${this.legacyAuditsUrl}/user/search`, { params });
+        }
+        return throwError(() => error);
+      }),
+      map(audits => audits.map(audit => this.normalizeAudit(audit)))
+    );
+  }
+
   revertCookingBatch(request: BatchStockMovementRequest): Observable<BatchStockMovementResponse> {
     return this.http.post<BatchStockMovementResponse>(`${this.ledgerUrl}/batch`, request);
   }
