@@ -133,7 +133,7 @@
       "RECEPTION": "Pedido Recibido",
       "REVERSION": "Reversión de Stock"
     },
-    "PAGE_INFO": "Página {{current}} de {{total}}",
+    "PAGE_INFO": "Página {{page}} de {{total}}",
     "TOTAL_COUNT": "({{count}} {{items}})",
     "THEME_LIGHT": "Cambiar a modo claro",
     "THEME_DARK": "Cambiar a modo oscuro",
@@ -141,6 +141,9 @@
     "BY": "Por",
     "ORDER": "Orden",
     "UNITS_COUNT": "{{count}} unidades",
+    "LOTS_COUNT": "{{count}} lotes",
+    "LOTS_OF": "{{count}} lotes de {{unit}}",
+    "LOTS_SHORT": "Lotes",
     "STUDENTS_COUNT": "{{count}} alumnos",
     "COLLAPSE_COLUMN": "Colapsar columna",
     "EXPAND_COLUMN": "Expandir columna",
@@ -554,7 +557,9 @@
       "RESET_IRREVERSIBLE_TITLE": "¡ACCIÓN IRREVERSIBLE!",
       "RESET_IRREVERSIBLE_TEXT": "Se perderán todos los datos de auditoría y el snapshot actual. ¿Deseas proceder definitivamente?"
     },
-
+    "MESSAGES": {
+      "REVERT_ERROR": "Error al revertir la auditoría"
+    },
     "DETAIL": {
       "SUMMARY": "Resumen",
       "CHAT": "Chat ({{count}})",
@@ -1867,7 +1872,7 @@
     "ORDER": "Orden"
   },
   "PAGINATION": {
-    "PAGE_INFO": "Página {{current}} de {{totalPages}}",
+    "PAGE_INFO": "Página {{page}} de {{total}}",
     "TOTAL_ITEMS": "({{total}} {{itemType}})"
   },
   "BATCHES": {
@@ -2717,7 +2722,11 @@
     },
     "MODALS": {
       "CONFIRM_DOWNLOAD_TITLE": "Confirmar Descarga",
-      "CONFIRM_DOWNLOAD_TEXT": "¿Deseas descargar el reporte de stock en formato PDF?"
+      "CONFIRM_DOWNLOAD_TEXT": "¿Deseas descargar el reporte de stock en formato PDF?",
+      "RESET_SECURITY_TITLE": "Confirmación de Seguridad",
+      "RESET_SECURITY_TEXT": "¿Estás SEGURO de que deseas resetear el historial? Esta acción borrará toda la cadena del ledger.",
+      "RESET_IRREVERSIBLE_TITLE": "¡ACCIÓN IRREVERSIBLE!",
+      "RESET_IRREVERSIBLE_TEXT": "Se perderán todos los datos de auditoría y el snapshot actual. ¿Deseas proceder definitivamente?"
     },
     "REPOSITION": {
       "TITLE": "Generar una Orden de Reposición",
@@ -2730,8 +2739,22 @@
         "ENTRADA": "ENTRADA",
         "REVERSION": "REVERSIÓN",
         "MERMA": "MERMA",
-        "AJUSTE": "AJUSTE"
-      }
+        "AJUSTE": "AJUSTE",
+        "SALIDA": "SALIDA"
+      },
+      "TITLE": "Ajuste Manual de Stock",
+      "ENTRY": "Entrada",
+      "EXIT": "Salida",
+      "QUANTITY": "Cantidad",
+      "BATCH_PLACEHOLDER": "Escribe el código o ID de lote...",
+      "MOVEMENT_TYPE": "Tipo de movimiento",
+      "EXPIRATION_DATE": "Fecha de caducidad",
+      "REASON": "Motivo / Descripción",
+      "SEARCH_BATCH": "Buscar lote",
+      "FIFO_HINT": "Si no seleccionas un lote, se aplicará criterio FIFO (First In, First Out).",
+      "NEW_BATCH_HINT": "Al ser una entrada sin lote existente, se creará uno nuevo con esta fecha.",
+      "REASON_PLACEHOLDER": "Explica el motivo del ajuste (ej: rotura, error de inventario...)",
+      "SUBMIT": "Confirmar Ajuste"
     },
     "TABS": {
       "ALERTS": "Alertas",
@@ -2742,6 +2765,7 @@
       "NEW_ORDER": "Nueva Orden de Reposición",
       "DAY": "día",
       "DAYS": "Días",
+      "PRODUCTS": "productos",
       "STATS": {
         "CRITICAL": "Crítico",
         "HIGH": "Alto",
