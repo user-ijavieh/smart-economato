@@ -4,6 +4,8 @@
     "BACK": "Tornar",
     "CLOSE": "Tancar",
     "CONFIRM": "Confirmar",
+    "APPROVE": "Aprovar",
+    "REJECT": "Rebutjar",
     "SAVE": "Guardar",
     "SAVE_CHANGES": "Guardar Canvis",
     "CREATE": "Crear",
@@ -14,6 +16,7 @@
     "SAVING": "Guardant...",
     "DOWNLOADING": "Descarregant...",
     "CLEAR_FILTERS": "Netejar Filtres",
+    "CLEAR": "Netejar",
     "FILTERS": "Filtres",
     "SHOW": "Mostrar:",
     "NAME": "Nom",
@@ -106,6 +109,7 @@
     "STATUS_APPROVED": "Aprovada",
     "STATUS_REJECTED": "Rebutjada",
     "STATUS_HIDDEN": "Desactivat",
+    "STATUS_DELETED": "Eliminat",
     "STATUS_PENDING_PLURAL": "Pendents",
     "STATUS_APPROVED_PLURAL": "Aprovats",
     "STATUS_REJECTED_PLURAL": "Rebutjats",
@@ -134,12 +138,33 @@
     "THEME_LIGHT": "Canviar a mode clar",
     "THEME_DARK": "Canviar a mode fosc",
     "CLEAR_CACHE": "Netejar cau local",
+    "BY": "Per",
+    "ORDER": "Ordre",
+    "UNITS_COUNT": "{{count}} unitats",
+    "STUDENTS_COUNT": "{{count}} alumnes",
+    "COLLAPSE_COLUMN": "Col·lapsar columna",
+    "EXPAND_COLUMN": "Expandir columna",
+    "SEARCH_PRODUCT_PLACEHOLDER": "Buscar producte...",
+    "GROSS": "Brut",
+    "NET": "Net",
+    "ORDERS_COUNT": "{{count}} comandes",
+    "SHORTAGES": "Faltants",
+    "ACTIVATE": "Activar",
+    "COMPLETED": "Finalitzat",
+    "SELECT_SUPPLIER": "Seleccionar proveïdor",
+    "SELECT_PRODUCTS": "Seleccionar productes",
+    "SCAN_BARCODE": "Escanejar codi de barres",
+    "SHOWING_RESULTS": "Mostrant {{current}} de {{total}} resultats",
+    "PDF_DOWNLOAD": "Descarregar PDF",
+    "CONFIRM_DOWNLOAD": "Confirmar descàrrega",
+    "CONFIRM_DOWNLOAD_PDF": "Vols descarregar el fitxer en format PDF?",
     "ROLES": {
       "ADMIN": "Administrador",
       "CHEF": "Chef / Professor",
       "STUDENT": "Alumne"
     },
     "SUCCESS": "Èxit",
+    "PDF_SUCCESS": "PDF descarregat correctament",
     "ERROR": "Error",
     "WARNING": "Advertència",
     "INFO": "Informació",
@@ -403,6 +428,16 @@
       "CONTROL_CENTER": "Centre de control",
       "INCIDENTS_MANAGEMENT": "Gestió d'incidències"
     },
+    "FORM": {
+      "TITLE": "Títol",
+      "TYPE": "Tipus",
+      "DESCRIPTION": "Descripció",
+      "SEVERITY": "Severitat",
+      "NAME_PLACEHOLDER": "Ex: Contaminació creuada",
+      "TYPE_DESCRIPTION_PLACEHOLDER": "Descriu quan s'aplica aquest tipus d'incidència.",
+      "TITLE_PLACEHOLDER": "Ex: Producte en mal estat a càmera 2",
+      "DESCRIPTION_PLACEHOLDER": "Detalla què ha passat, quan es va detectar i l'impacte observat."
+    },
     "ADMIN_TITLE": "Centre de control",
     "TABS": {
       "INCIDENTS": "Incidències",
@@ -415,6 +450,7 @@
       "SHOW_FILTERS": "Mostrar filtres",
       "HIDE_FILTERS": "Ocultar filtres",
       "NEW_INCIDENT": "Nova incidència",
+      "CREATE": "Crear",
       "NEW_TYPE": "Nou tipus",
       "FILTER": "Filtrar",
       "CLEAR": "Netejar",
@@ -435,7 +471,8 @@
       "EDIT": "Editar",
       "ACTIVATE": "Activar",
       "DEACTIVATE": "Desactivar",
-      "ATTACH_AUDITS": "Adjuntar auditories"
+      "ATTACH_AUDITS": "Adjuntar auditories",
+      "DEACTIVATE_TYPE": "Desactivar tipus"
     },
     "STATS": {
       "TOTAL": "Incidències totals",
@@ -504,6 +541,7 @@
       "RESET_IRREVERSIBLE_TITLE": "ACCIÓ IRREVERSIBLE!",
       "RESET_IRREVERSIBLE_TEXT": "Es perdran totes les dades d'auditoria i el snapshot actual. Vols procedir definitivament?"
     },
+
     "DETAIL": {
       "SUMMARY": "Resum",
       "CHAT": "Xat ({{count}})",
@@ -558,6 +596,10 @@
     "CONTROL_CENTER": "Centre de control",
     "MANAGEMENT": "Gestió d'incidències",
     "MESSAGES": {
+      "TYPE_TOGGLE_CONFIRM": "Vols {{action}} el tipus \"{{name}}\"?",
+      "TYPE_TOGGLE_SUCCESS": "Estat del tipus d'incidència actualitzat",
+      "LOAD_TYPES_ERROR": "Error en carregar els tipus d'incidència",
+      "LOAD_INCIDENTS_ERROR": "Error en carregar les incidències",
       "EMPTY": "No hi ha incidències",
       "EMPTY_HINT": "Crea una nova incidència o ajusta els filtres per trobar resultats.",
       "LOADING_CHAT": "Carregant conversa...",
@@ -1028,6 +1070,10 @@
   },
   "USERS": {
     "TITLE": "Gestió d'Usuaris",
+    "MODAL": {
+      "CREATE_TITLE": "Crear Nou Usuari",
+      "EDIT_TITLE": "Editar Usuari"
+    },
     "TABS": {
       "USERS": "Usuaris",
       "ASSIGNMENTS": "Assignacions",
@@ -1145,32 +1191,36 @@
       "ACTION_CONNECTED": "Connectat",
       "ACTION_DISCONNECTED": "Desconnectat",
       "ACTION_SCREEN_CHANGED": "Canvi de pantalla"
+    },
+    "USER_FORM": {
+      "NAME": "Nom",
+      "NAME_PLACEHOLDER": "Nom complet",
+      "ERRORS": {
+        "NAME_REQUIRED": "El nom és obligatori",
+        "NAME_MINLENGTH": "El nom ha de tenir almenys 3 caràcters",
+        "USER_REQUIRED": "L'usuari és obligatori",
+        "USER_MINLENGTH": "L'usuari ha de tenir almenys 3 caràcters"
+      },
+      "USERNAME": "Usuari",
+      "USERNAME_PLACEHOLDER": "Ex: jgarcia",
+      "PASSWORD": "Contrasenya",
+      "PASSWORD_OPTIONAL": "(deixar buit per mantenir actual)",
+      "AUTO_GEN_NOTE": "L'usuari i la contrasenya es generaran automàticament en crear.",
+      "ROLE": "Rol de l'usuari",
+      "TEACHER": "Professor assignat",
+      "TEACHER_PLACEHOLDER": "Buscar professor...",
+      "SUBMIT_CREATE": "Crear Usuari",
+      "SUBMIT_EDIT": "Guardar Canvis",
+      "CREDENTIALS": {
+        "SUCCESS": "Usuari creat amb èxit!",
+        "SAVE_NOTE": "Guarda aquestes credencials. La contrasenya no es podrà recuperar.",
+        "USER_LABEL": "Usuari:",
+        "PASS_LABEL": "Contrasenya:",
+        "COPY_BTN": "Copiar credencials"
+      }
     }
   },
-  "USER_FORM": {
-    "TITLE_CREATE": "Crear Usuari",
-    "TITLE_EDIT": "Editar Usuari",
-    "CREATED_SUCCESS": "Usuari creat amb èxit!",
-    "CREDENTIALS_NOTE": "Guarda aquestes credencials. La contrasenya no es podrà recuperar.",
-    "COPIED": "Copiat!",
-    "COPY_CREDENTIALS": "Copiar credencials",
-    "NAME": "Nom",
-    "NAME_PLACEHOLDER": "Nom de l'usuari",
-    "NAME_REQUIRED": "El nom és requerit",
-    "NAME_MIN_LENGTH": "El nom ha de tenir almenys 3 caràcters",
-    "USER": "Usuari",
-    "USER_PLACEHOLDER": "nom_usuari",
-    "USER_REQUIRED": "L'usuari és requerit",
-    "USER_MIN_LENGTH": "L'usuari ha de tenir almenys 3 caràcters",
-    "PASSWORD": "Contrasenya",
-    "PASSWORD_OPTIONAL": "(deixar buit per no canviar)",
-    "AUTO_GENERATE_INFO": "L'usuari i la contrasenya es generaran automàticament en crear.",
-    "ROLE": "Rol",
-    "TEACHER": "Professor assignat",
-    "UNASSIGNED": "Sense professor",
-    "SAVE_CHANGES": "Guardar Canvis",
-    "CLOSE": "Tancar"
-  },
+
   "SUPPLIERS": {
     "TITLE": "Gestió de Proveïdors",
     "FILTERS": {
@@ -1235,7 +1285,11 @@
     "CREATE_SUCCESS": "Al·lèrgen \"{{name}}\" creat amb èxit",
     "UPDATE_SUCCESS": "Al·lèrgen \"{{name}}\" actualitzat amb èxit",
     "DELETE_SUCCESS": "Al·lèrgen \"{{name}}\" eliminat correctament",
-    "NAME_EMPTY_ERROR": "El nom de l'al·lèrgen no pot estar buit"
+    "NAME_EMPTY_ERROR": "El nom de l'al·lèrgen no pot estar buit",
+    "LOAD_ERROR": "Error en carregar els al·lèrgens",
+    "CREATE_ERROR": "Error en crear l'al·lèrgen",
+    "UPDATE_ERROR": "Error en actualitzar l'al·lèrgen",
+    "DELETE_ERROR": "Error en eliminar l'al·lèrgen"
   },
   "KITCHEN": {
     "TITLE": "Gestió de Cuina",
@@ -1278,52 +1332,39 @@
     },
     "REPORTS": {
       "LOADING": "Generant informe...",
-      "TITLE": "Informe de Cuina",
-      "PERIOD": "Període:",
-      "INFO_TITLE": "Informació General",
-      "SESSIONS": "ELABORACIONS REGISTRADES:",
-      "PORTIONS": "PORCIONS PREPARADES:",
-      "RECIPES_COUNT": "DIVERSITAT DE RECEPTES:",
-      "PRODUCTS_COUNT": "DIVERSITAT DE PRODUCTES:",
-      "USERS_COUNT": "USUARIS PARTICIPANTS:",
-      "TOTAL_COST": "COST ESTIMAT TOTAL:",
-      "AVG_PRICE": "PREU MITJÀ PER PORCIÓ:",
-      "ISSUE_DATE": "DATA D'EMISSÓ:",
-      "FINANCIAL_TITLE": "Anàlisi Econòmica",
-      "REPORT_HINT": "Els períodes d'informe (diari, setmanal, mensual i anual) es calculen per <strong>dies i mesos naturals</strong>. Això significa que un mes 'natural' abarca des del primer fins a l'últim dia del calendari per donar-te una visió exacta del rendiment real de la cuina.",
-      "SALES_ESTIMATED": "VENDES ESTIMADES",
-      "WASTE_COST": "DESPESA PER MERMA",
-      "EXPIRED_COST": "DESPESA PER CADUCITAT",
-      "GROSS_PROFIT": "GUANY BRUT (Teòric)",
-      "NET_PROFIT": "GUANY NET (Real)",
-      "TOP_RECIPES_TITLE": "Receptes Més Elaborades",
-      "TOP_USERS_TITLE": "Usuaris amb Més Activitat",
-      "CONSUMPTION_TITLE": "Anàlisi de Consum d'Inventari",
-      "RECIPE_COL": "RECEPTA",
-      "TIMES_COOKED_COL": "VEGADES PREPARADA",
-      "TOTAL_QUANTITY_COL": "PORCIONS TOTALS",
-      "USER_COL": "USUARI",
-      "SESSIONS_COL": "NOMBRE D'ELABORACIONS",
-      "PRODUCT_COL": "PRODUCTE",
-      "QUANTITY_COL": "QUANTITAT CONSUMIDA",
-      "EMPTY_STATE": "Genera un informe per visualitzar les dades.",
-      "DOWNLOAD_PDF": "Descarregar PDF",
+      "REPORT_TITLE": "Informe de Cuina",
+      "PERIOD": "Període",
       "GENERAL_INFO": "Informació General",
-      "TOTAL_COOKINGS": "ELABORACIONS REGISTRADES",
-      "TOTAL_PORTIONS": "PORCIONS PREPARADES",
-      "RECIPE_DIVERSITY": "DIVERSITAT DE RECEPTES",
-      "PRODUCT_DIVERSITY": "DIVERSITAT DE PRODUCTES",
-      "PARTICIPATING_USERS": "USUARIS PARTICIPANTS",
-      "TOTAL_ESTIMATED_COST": "COST ESTIMAT TOTAL",
-      "AVG_PORTION_PRICE": "PREU MITJÀ PER PORCIÓ",
-      "EMISSION_DATE": "DATA D'EMISSÓ",
       "ECONOMIC_ANALYSIS": "Anàlisi Econòmica",
-      "EXPLANATION_MSG": "Els períodes d'informe es calculen per dies i mesos naturals.",
-      "ESTIMATED_SALES": "VENDES ESTIMADES",
-      "EXPIRATION_COST": "DESPESA PER CADUCITAT",
+      "EXPLANATION": "Els períodes d'informe (diari, setmanal, mensual i anual) es calculen per dies i mesos naturals. Això significa que un mes 'natural' abarca des del primer fins a l'últim dia del calendari per donar-te una visió exacta del rendiment real de la cuina.",
+      "DOWNLOAD_PDF": "Descarregar PDF",
       "TOP_RECIPES": "Receptes Més Elaborades",
       "TOP_USERS": "Usuaris amb Més Activitat",
-      "INVENTORY_CONSUMPTION": "Anàlisi de Consum d'Inventari"
+      "INVENTORY_CONSUMPTION": "Anàlisi de Consum d'Inventari",
+      "LABELS": {
+        "SESSIONS": "ELABORACIONS REGISTRADES",
+        "PORTIONS": "PORCIONS PREPARADES",
+        "RECIPES": "DIVERSITAT DE RECEPTES",
+        "PRODUCTS": "DIVERSITAT DE PRODUCTES",
+        "USERS": "USUARIS PARTICIPANTS",
+        "ESTIMATED_COST": "COST ESTIMAT TOTAL",
+        "AVG_PRICE": "PREU MITJÀ PER PORCIÓ",
+        "ISSUE_DATE": "DATA D'EMISSIÓ"
+      },
+      "CARDS": {
+        "ESTIMATED_SALES": "VENDES ESTIMADES",
+        "WASTE_COST": "DESPESA PER MERMA",
+        "EXPIRATION_COST": "DESPESA PER CADUCITAT",
+        "GROSS_PROFIT": "GUANY BRUT (Teòric)",
+        "NET_PROFIT": "GUANY NET (Real)"
+      },
+      "TABLE": {
+        "TIMES_PREPARED": "VEGADES PREPARADA",
+        "TOTAL_PORTIONS": "PORCIONS TOTALS",
+        "SESSIONS_COUNT": "NOMBRE D'ELABORACIONS",
+        "PRODUCT": "PRODUCTE",
+        "QUANTITY_CONSUMED": "QUANTITAT CONSUMIDA"
+      }
     },
     "SUBTITLE": "Monitorització i historial de cuina",
     "STATS": {
@@ -1338,6 +1379,7 @@
       "RECIPE": "Recepta",
       "USER": "Usuari",
       "QUANTITY": "Quantitat",
+      "PORTIONS": "Porcions",
       "DATE": "Data",
       "WEIGHT": "Pes",
       "ACTIONS": "Accions",
@@ -1400,7 +1442,8 @@
       "CUSTOM": "Personalitzat"
     },
     "FILTERS": {
-      "SEARCH_PLACEHOLDER": "Buscar en historial...",
+      "CLEAR": "Netejar Filtres",
+      "SEARCH_PLACEHOLDER": "Buscar en l'historial...",
       "RECIPE_ID": "ID Recepta",
       "USER_ID": "ID Usuari",
       "FROM": "Des de",
@@ -1686,6 +1729,10 @@
     "TOTAL_ITEMS": "({{total}} {{itemType}})"
   },
   "BATCHES": {
+    "BATCH": "Lot",
+    "NO_BATCH": "Sense lot",
+    "REMAINING": "Restant",
+    "EXPIRATION": "Caducitat",
     "TITLE": "Gestió de Lots",
     "TABS": {
       "ALL": "Tots els Lots",
@@ -2230,6 +2277,7 @@
       "RESTORE_STUDENT_SESSION_ERROR": "No s'ha pogut restaurar l'alumne en la sessió."
     },
     "DETAIL": {
+      "SESSIONS_COUNT": "{{count}} sessions",
       "WEEK_OF": "Setmana del {{date}}",
       "BACK_TO_PLANS": "Tornar a plans",
       "BACK_ARIA": "Tornar al llistat de plans setmanals",
@@ -2264,6 +2312,7 @@
       "INSUFFICIENT_STOCK": "Estoc insuficient (Falten: {{qty}} Brut)",
       "IN_ORDERS": "En comandes",
       "HAVE_STOCK_LABEL": "Hi ha estoc ({{qty}})",
+      "COVERED_BY_ORDERS": "Cobert per comandes",
       "MISSING_UNITS": "Falten unitats",
       "NO_STOCK_REQS": "No hi ha requisits d'estoc per a aquest pla.",
       "PDF_HINT": "Tria el format d'orientació per descarregar el PDF del pla setmanal.",
@@ -2315,6 +2364,7 @@
       "STEP_2_HINT": "Crea una o diverses sessions per dia. Pots afegir més sessions al mateix dia o moure-les després.",
       "NO_SESSIONS": "Encara no hi ha sessions. Usa el botó de cada dia per començar.",
       "SESSIONS_COUNT": "{{count}} sessions",
+      "STUDENTS_COUNT": "{{count}} alumnes",
       "OVERLAP_WARN_ARIA": "Veure problema de solapament a {{day}}",
       "ADD_SLOT": "Afegir sessió",
       "ADD_SLOT_ARIA": "Afegir sessió per a {{day}}",
@@ -2512,10 +2562,34 @@
       "TOGGLE_HIDDEN_SUCCESS_SINGLE": "Estat del producte actualitzat correctament."
     },
     "PDF_CONFIRM_TITLE": "Confirmar exportació",
+    "PDF_CONFIRM_MSG": "Vols descarregar la fitxa del producte en format PDF?",
     "PDF_CONFIRM_MSG_EXCEL": "Vols exportar l'inventari a Excel?"
   },
   "STOCK_MGMT": {
     "TITLE": "Gestió d'Estoc",
+    "MESSAGES": {
+      "NO_UNCOVERED_PRODUCTS": "No s'han trobat productes sense cobertura per reposar.",
+      "INTEGRITY_VALID": "Integritat verificada: {{message}}",
+      "ALL_CHAINS_VALID": "Totes les cadenes ({{count}}) són íntegres."
+    },
+    "MODALS": {
+      "CONFIRM_DOWNLOAD_TITLE": "Confirmar Descàrrega",
+      "CONFIRM_DOWNLOAD_TEXT": "Vols descarregar el report d'estoc en format PDF?"
+    },
+    "REPOSITION": {
+      "TITLE": "Generar una Ordre de Reposició",
+      "DAYS_PROMPT": "Per a quants dies vols cobrir l'estoc estimat?",
+      "DAYS_LABEL": "dies"
+    },
+    "ADJUSTMENT": {
+      "DAYS": "dies",
+      "TYPES": {
+        "ENTRADA": "ENTRADA",
+        "REVERSION": "REVERSIÓ",
+        "MERMA": "MERMA",
+        "AJUST": "AJUST"
+      }
+    },
     "TABS": {
       "ALERTS": "Alertes",
       "PREDICTIONS": "Prediccions",
@@ -2721,9 +2795,7 @@
         "REASON_PLACEHOLDER": "Ex. Correcció inventari, merma no registrada, trencament...",
         "SUBMITTING": "Registrant...",
         "SUBMIT": "Registrar Ajust",
-        "ORDER_MODAL_TITLE": "Generar una Ordre de Reposició",
-        "DAYS_COVER_PROMPT": "Per a quants dies vols cobrir l'estoc estimat?",
-        "DAYS": "dies",
+
         "TYPES": {
           "AJUSTE": "AJUST",
           "MERMA": "MERMA",
@@ -2757,7 +2829,7 @@
       "ADD_ORDER": "Afegir ordre"
     },
     "SECTIONS": {
-      "PRODUCTS_COUNT": "{{count}} producte{{count === 1 ? '' : 's'}}."
+      "PRODUCTS_COUNT": "{{count}} productes"
     },
     "TABLE": {
       "NO_SUPPLIER": "Sense proveïdor",
@@ -3001,13 +3073,13 @@
       "DETAIL_TITLE": "Detall de l'Esborrany",
       "ELABORATION": "Elaboració",
       "PRESENTATION": "Presentació",
-      "REJECTION_REASON": "Motiu de rebutj",
+      "REJECTION_REASON": "Motiu de rebuig",
       "VIEW_APPROVED": "Veure recepta aprovada",
       "APPROVE_CONFIRM_TITLE": "Aprovar esborrany",
       "APPROVE_CONFIRM_MSG": "Vols aprovar l'esborrany \"{{name}}\"?",
       "REJECT_CONFIRM_TITLE": "Rebutjar esborrany",
       "REJECT_CONFIRM_MSG": "Indica el motiu per rebutjar l'esborrany <strong>{{name}}</strong>.",
-      "REJECT_REASON_EMPTY": "Has d'indicar un motiu de rebutj",
+      "REJECT_REASON_EMPTY": "Has d'indicar un motiu de rebuig",
       "APPROVE_SUCCESS": "Esborrany \"{{name}}\" aprovat",
       "REJECT_SUCCESS": "Esborrany \"{{name}}\" rebutjat",
       "LOAD_ERROR": "Error en carregar els esborranys de receptes",

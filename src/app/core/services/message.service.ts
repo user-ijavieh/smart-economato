@@ -8,12 +8,14 @@ export interface Toast {
   type: 'success' | 'error' | 'warning' | 'info';
   duration?: number;
   persistent?: boolean;
+  translateParams?: Record<string, any>;
 }
 
 export interface ToastOptions {
   duration?: number;
   title?: string;
   persistent?: boolean;
+  translateParams?: Record<string, any>;
 }
 
 export interface ConfirmDialog {
@@ -21,6 +23,7 @@ export interface ConfirmDialog {
   message: string;
   confirmText?: string;
   cancelText?: string;
+  translateParams?: Record<string, any>;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -58,8 +61,8 @@ export class MessageService {
     this.addToast(message, 'info', { duration, ...options });
   }
 
-  confirm(title: string, message: string, confirmText?: string, cancelText?: string): Promise<boolean> {
-    this.confirmDialog$.next({ title, message, confirmText, cancelText });
+  confirm(title: string, message: string, confirmText?: string, cancelText?: string, translateParams?: Record<string, any>): Promise<boolean> {
+    this.confirmDialog$.next({ title, message, confirmText, cancelText, translateParams });
     return new Promise(resolve => {
       this.confirmResolve = resolve;
     });
@@ -80,7 +83,8 @@ export class MessageService {
       message,
       type,
       duration: options?.duration ?? 3000,
-      persistent: options?.persistent ?? false
+      persistent: options?.persistent ?? false,
+      translateParams: options?.translateParams
     };
 
     setTimeout(() => {

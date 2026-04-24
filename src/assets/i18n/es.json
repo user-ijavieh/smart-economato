@@ -4,6 +4,8 @@
     "BACK": "Volver",
     "CLOSE": "Cerrar",
     "CONFIRM": "Confirmar",
+    "APPROVE": "Aprobar",
+    "REJECT": "Rechazar",
     "SAVE": "Guardar",
     "SAVE_CHANGES": "Guardar Cambios",
     "CREATE": "Crear",
@@ -14,6 +16,7 @@
     "SAVING": "Guardando...",
     "DOWNLOADING": "Descargando...",
     "CLEAR_FILTERS": "Limpiar Filtros",
+    "CLEAR": "Limpiar",
     "FILTERS": "Filtros",
     "SHOW": "Mostrar:",
     "NAME": "Nombre",
@@ -106,6 +109,7 @@
     "STATUS_APPROVED": "Aprobada",
     "STATUS_REJECTED": "Rechazada",
     "STATUS_HIDDEN": "Desactivado",
+    "STATUS_DELETED": "Eliminado",
     "STATUS_PENDING_PLURAL": "Pendientes",
     "STATUS_APPROVED_PLURAL": "Aprobados",
     "STATUS_REJECTED_PLURAL": "Rechazados",
@@ -134,18 +138,41 @@
     "THEME_LIGHT": "Cambiar a modo claro",
     "THEME_DARK": "Cambiar a modo oscuro",
     "CLEAR_CACHE": "Limpiar caché local",
+    "BY": "Por",
+    "ORDER": "Orden",
+    "UNITS_COUNT": "{{count}} unidades",
+    "STUDENTS_COUNT": "{{count}} alumnos",
+    "COLLAPSE_COLUMN": "Colapsar columna",
+    "EXPAND_COLUMN": "Expandir columna",
+    "SEARCH_PRODUCT_PLACEHOLDER": "Buscar producto...",
+    "GROSS": "Bruto",
+    "NET": "Neto",
+    "ORDERS_COUNT": "{{count}} pedidos",
+    "SHORTAGES": "Faltantes",
+    "ACTIVATE": "Activar",
+    "COMPLETED": "Finalizado",
+    "SELECT_SUPPLIER": "Seleccionar proveedor",
+    "SELECT_PRODUCTS": "Seleccionar productos",
+    "SCAN_BARCODE": "Escanear código de barras",
+    "SHOWING_RESULTS": "Mostrando {{current}} de {{total}} resultados",
+    "PDF_DOWNLOAD": "Descargar PDF",
+    "CONFIRM_DOWNLOAD": "Confirmar descarga",
+    "CONFIRM_DOWNLOAD_PDF": "¿Deseas descargar el archivo en formato PDF?",
     "ROLES": {
       "ADMIN": "Administrador",
       "CHEF": "Chef / Profesor",
       "STUDENT": "Alumno"
     },
     "SUCCESS": "Éxito",
+    "PDF_SUCCESS": "PDF descargado correctamente",
     "ERROR": "Error",
     "WARNING": "Advertencia",
     "INFO": "Información",
     "SELECTED_COUNT_ONE": "1 seleccionado",
     "SELECTED_COUNT_OTHER": "{{count}} seleccionados",
-    "SELECT_PLACEHOLDER": "Selecciona..."
+    "SELECT_PLACEHOLDER": "Selecciona...",
+    "HIDDEN": "ocultada",
+    "SHOWN": "mostrada"
   },
   "NAV": {
     "DASHBOARD": "Inicio",
@@ -401,6 +428,16 @@
       "CONTROL_CENTER": "Centro de control",
       "INCIDENTS_MANAGEMENT": "Gestión de incidencias"
     },
+    "FORM": {
+      "TITLE": "Título",
+      "TYPE": "Tipo",
+      "DESCRIPTION": "Descripción",
+      "SEVERITY": "Severidad",
+      "NAME_PLACEHOLDER": "Ej: Contaminación cruzada",
+      "TYPE_DESCRIPTION_PLACEHOLDER": "Describe cuándo aplica este tipo de incidencia.",
+      "TITLE_PLACEHOLDER": "Ej: Producto en mal estado en cámara 2",
+      "DESCRIPTION_PLACEHOLDER": "Detalla qué ocurrió, cuándo se detectó y el impacto observado."
+    },
     "ADMIN_TITLE": "Centro de control",
     "TABS": {
       "INCIDENTS": "Incidencias",
@@ -413,6 +450,7 @@
       "SHOW_FILTERS": "Mostrar filtros",
       "HIDE_FILTERS": "Ocultar filtros",
       "NEW_INCIDENT": "Nueva incidencia",
+      "CREATE": "Crear",
       "NEW_TYPE": "Nuevo tipo",
       "FILTER": "Filtrar",
       "CLEAR": "Limpiar",
@@ -433,7 +471,8 @@
       "EDIT": "Editar",
       "ACTIVATE": "Activar",
       "DEACTIVATE": "Desactivar",
-      "ATTACH_AUDITS": "Adjuntar auditorías"
+      "ATTACH_AUDITS": "Adjuntar auditorías",
+      "DEACTIVATE_TYPE": "Desactivar tipo"
     },
     "STATS": {
       "TOTAL": "Incidencias totales",
@@ -502,6 +541,7 @@
       "RESET_IRREVERSIBLE_TITLE": "¡ACCIÓN IRREVERSIBLE!",
       "RESET_IRREVERSIBLE_TEXT": "Se perderán todos los datos de auditoría y el snapshot actual. ¿Deseas proceder definitivamente?"
     },
+
     "DETAIL": {
       "SUMMARY": "Resumen",
       "CHAT": "Chat ({{count}})",
@@ -556,6 +596,10 @@
     "CONTROL_CENTER": "Centro de control",
     "MANAGEMENT": "Gestión de incidencias",
     "MESSAGES": {
+      "TYPE_TOGGLE_CONFIRM": "¿Deseas {{action}} el tipo \"{{name}}\"?",
+      "TYPE_TOGGLE_SUCCESS": "Estado del tipo de incidencia actualizado",
+      "LOAD_TYPES_ERROR": "Error al cargar los tipos de incidencia",
+      "LOAD_INCIDENTS_ERROR": "Error al cargar las incidencias",
       "EMPTY": "No hay incidencias",
       "EMPTY_HINT": "Crea una nueva incidencia o ajusta los filtros para encontrar resultados.",
       "LOADING_CHAT": "Cargando conversación...",
@@ -1026,6 +1070,10 @@
   },
   "USERS": {
     "TITLE": "Gestión de Usuarios",
+    "MODAL": {
+      "CREATE_TITLE": "Crear Nuevo Usuario",
+      "EDIT_TITLE": "Editar Usuario"
+    },
     "TABS": {
       "USERS": "Usuarios",
       "ASSIGNMENTS": "Asignaciones",
@@ -1143,32 +1191,36 @@
       "ACTION_CONNECTED": "Conectado",
       "ACTION_DISCONNECTED": "Desconectado",
       "ACTION_SCREEN_CHANGED": "Cambio de pantalla"
+    },
+    "USER_FORM": {
+      "NAME": "Nombre",
+      "NAME_PLACEHOLDER": "Nombre completo",
+      "ERRORS": {
+        "NAME_REQUIRED": "El nombre es obligatorio",
+        "NAME_MINLENGTH": "El nombre debe tener al menos 3 caracteres",
+        "USER_REQUIRED": "El usuario es obligatorio",
+        "USER_MINLENGTH": "El usuario debe tener al menos 3 caracteres"
+      },
+      "USERNAME": "Usuario",
+      "USERNAME_PLACEHOLDER": "Ej: jgarcia",
+      "PASSWORD": "Contraseña",
+      "PASSWORD_OPTIONAL": "(dejar vacío para mantener actual)",
+      "AUTO_GEN_NOTE": "El usuario y la contraseña se generarán automáticamente al crear.",
+      "ROLE": "Rol del usuario",
+      "TEACHER": "Profesor asignado",
+      "TEACHER_PLACEHOLDER": "Buscar profesor...",
+      "SUBMIT_CREATE": "Crear Usuario",
+      "SUBMIT_EDIT": "Guardar Cambios",
+      "CREDENTIALS": {
+        "SUCCESS": "¡Usuario creado con éxito!",
+        "SAVE_NOTE": "Guarda estas credenciales. La contraseña no se podrá recuperar.",
+        "USER_LABEL": "Usuario:",
+        "PASS_LABEL": "Contraseña:",
+        "COPY_BTN": "Copiar credenciales"
+      }
     }
   },
-  "USER_FORM": {
-    "TITLE_CREATE": "Crear Usuario",
-    "TITLE_EDIT": "Editar Usuario",
-    "CREATED_SUCCESS": "¡Usuario creado con éxito!",
-    "CREDENTIALS_NOTE": "Guarda estas credenciales. La contraseña no se podrá recuperar.",
-    "COPIED": "¡Copiado!",
-    "COPY_CREDENTIALS": "Copiar credenciales",
-    "NAME": "Nombre",
-    "NAME_PLACEHOLDER": "Nombre del usuario",
-    "NAME_REQUIRED": "El nombre es requerido",
-    "NAME_MIN_LENGTH": "El nombre debe tener al menos 3 caracteres",
-    "USER": "Usuario",
-    "USER_PLACEHOLDER": "nombre_usuario",
-    "USER_REQUIRED": "El usuario es requerido",
-    "USER_MIN_LENGTH": "El usuario debe tener al menos 3 caracteres",
-    "PASSWORD": "Contraseña",
-    "PASSWORD_OPTIONAL": "(dejar vacío para no cambiar)",
-    "AUTO_GENERATE_INFO": "El usuario y la contraseña se generarán automáticamente al crear.",
-    "ROLE": "Rol",
-    "TEACHER": "Profesor asignado",
-    "UNASSIGNED": "Sin profesor",
-    "SAVE_CHANGES": "Guardar Cambios",
-    "CLOSE": "Cerrar"
-  },
+
   "SUPPLIERS": {
     "TITLE": "Gestión de Proveedores",
     "FILTERS": {
@@ -1231,7 +1283,11 @@
     "CREATE_SUCCESS": "Alérgeno \"{{name}}\" creado con éxito",
     "UPDATE_SUCCESS": "Alérgeno \"{{name}}\" actualizado con éxito",
     "DELETE_SUCCESS": "Alérgeno \"{{name}}\" eliminado correctamente",
-    "NAME_EMPTY_ERROR": "El nombre del alérgeno no puede estar vacío"
+    "NAME_EMPTY_ERROR": "El nombre del alérgeno no puede estar vacío",
+    "LOAD_ERROR": "Error al cargar los alérgenos",
+    "CREATE_ERROR": "Error al crear el alérgeno",
+    "UPDATE_ERROR": "Error al actualizar el alérgeno",
+    "DELETE_ERROR": "Error al eliminar el alérgeno"
   },
   "KITCHEN": {
     "TITLE": "Gestión de Cocina",
@@ -1239,8 +1295,16 @@
       "HISTORY": "Historial",
       "REPORTS": "Informes"
     },
-    "HISTORY": {
+    "FILTERS": {
+      "CLEAR": "Limpiar Filtros",
       "SEARCH_PLACEHOLDER": "Buscar en historial...",
+      "RECIPE_ID": "ID Receta",
+      "USER_ID": "ID Usuario",
+      "FROM": "Desde",
+      "TO": "Hasta",
+      "APPLY": "Aplicar Filtros"
+    },
+    "HISTORY": {
       "RECIPE_ID": "ID Receta",
       "USER_ID": "ID Usuario",
       "DATE_FROM": "Desde",
@@ -1274,52 +1338,39 @@
     },
     "REPORTS": {
       "LOADING": "Generando informe...",
-      "TITLE": "Reporte de Cocina",
-      "PERIOD": "Periodo:",
-      "INFO_TITLE": "Información General",
-      "SESSIONS": "ELABORACIONES REGISTRADAS:",
-      "PORTIONS": "PORCIONES PREPARADAS:",
-      "RECIPES_COUNT": "DIVERSIDAD DE RECETAS:",
-      "PRODUCTS_COUNT": "DIVERSIDAD DE PRODUCTOS:",
-      "USERS_COUNT": "USUARIOS PARTICIPANTES:",
-      "TOTAL_COST": "COSTE ESTIMADO TOTAL:",
-      "AVG_PRICE": "PRECIO MEDIO POR PORCIÓN:",
-      "ISSUE_DATE": "FECHA DE EMISIÓN:",
-      "FINANCIAL_TITLE": "Análisis Económico",
-      "REPORT_HINT": "Los periodos de reporte (diario, semanal, mensual y anual) se calculan por <strong>días y meses naturales</strong>. Esto significa que un mes 'natural' abarca desde el primer hasta el último día del calendario para darte una visión exacta del rendimiento real de la cocina.",
-      "SALES_ESTIMATED": "VENTAS ESTIMADAS",
-      "WASTE_COST": "GASTO POR MERMA",
-      "EXPIRED_COST": "GASTO POR CADUCIDAD",
-      "GROSS_PROFIT": "GANANCIA BRUTA (Teórica)",
-      "NET_PROFIT": "GANANCIA NETA (Real)",
-      "TOP_RECIPES_TITLE": "Recetas Más Elaboradas",
-      "TOP_USERS_TITLE": "Usuarios con Mayor Actividad",
-      "CONSUMPTION_TITLE": "Análisis de Consumo de Inventario",
-      "RECIPE_COL": "RECETA",
-      "TIMES_COOKED_COL": "VECES PREPARADA",
-      "TOTAL_QUANTITY_COL": "PORCIONES TOTALES",
-      "USER_COL": "USUARIO",
-      "SESSIONS_COL": "NUMERO DE ELABORACIONES",
-      "PRODUCT_COL": "PRODUCTO",
-      "QUANTITY_COL": "CANTIDAD CONSUMIDA",
-      "EMPTY_STATE": "Genera un informe para visualizar los datos.",
-      "DOWNLOAD_PDF": "Descargar PDF",
+      "REPORT_TITLE": "Reporte de Cocina",
+      "PERIOD": "Periodo",
       "GENERAL_INFO": "Información General",
-      "TOTAL_COOKINGS": "ELABORACIONES REGISTRADAS",
-      "TOTAL_PORTIONS": "PORCIONES PREPARADAS",
-      "RECIPE_DIVERSITY": "DIVERSIDAD DE RECETAS",
-      "PRODUCT_DIVERSITY": "DIVERSIDAD DE PRODUCTOS",
-      "PARTICIPATING_USERS": "USUARIOS PARTICIPANTES",
-      "TOTAL_ESTIMATED_COST": "COSTE ESTIMADO TOTAL",
-      "AVG_PORTION_PRICE": "PRECIO MEDIO POR PORCIÓN",
-      "EMISSION_DATE": "FECHA DE EMISIÓN",
       "ECONOMIC_ANALYSIS": "Análisis Económico",
-      "EXPLANATION_MSG": "Los periodos de reporte (diario, semanal, mensual y anual) se calculan por días y meses naturales.",
-      "ESTIMATED_SALES": "VENTAS ESTIMADAS",
-      "EXPIRATION_COST": "GASTO POR CADUCIDAD",
+      "EXPLANATION": "Los periodos de reporte (diario, semanal, mensual y anual) se calculan por días y meses naturales. Esto significa que un mes 'natural' abarca desde el primer hasta el último día del calendario para darte una visión exacta del rendimiento real de la cocina.",
+      "DOWNLOAD_PDF": "Descargar PDF",
       "TOP_RECIPES": "Recetas Más Elaboradas",
       "TOP_USERS": "Usuarios con Mayor Actividad",
-      "INVENTORY_CONSUMPTION": "Análisis de Consumo de Inventario"
+      "INVENTORY_CONSUMPTION": "Análisis de Consumo de Inventario",
+      "LABELS": {
+        "SESSIONS": "ELABORACIONES REGISTRADAS",
+        "PORTIONS": "PORCIONES PREPARADAS",
+        "RECIPES": "DIVERSIDAD DE RECETAS",
+        "PRODUCTS": "DIVERSIDAD DE PRODUCTOS",
+        "USERS": "USUARIOS PARTICIPANTES",
+        "ESTIMATED_COST": "COSTE ESTIMADO TOTAL",
+        "AVG_PRICE": "PRECIO MEDIO POR PORCIÓN",
+        "ISSUE_DATE": "FECHA DE EMISIÓN"
+      },
+      "CARDS": {
+        "ESTIMATED_SALES": "VENTAS ESTIMADAS",
+        "WASTE_COST": "GASTO POR MERMA",
+        "EXPIRATION_COST": "GASTO POR CADUCIDAD",
+        "GROSS_PROFIT": "GANANCIA BRUTA (Teórica)",
+        "NET_PROFIT": "GANANCIA NETA (Real)"
+      },
+      "TABLE": {
+        "TIMES_PREPARED": "VECES PREPARADA",
+        "TOTAL_PORTIONS": "PORCIONES TOTALES",
+        "SESSIONS_COUNT": "NÚMERO DE ELABORACIONES",
+        "PRODUCT": "PRODUCTO",
+        "QUANTITY_CONSUMED": "CANTIDAD CONSUMIDA"
+      }
     },
     "SUBTITLE": "Monitorización e historial de cocina",
     "STATS": {
@@ -1334,6 +1385,7 @@
       "RECIPE": "Receta",
       "USER": "Usuario",
       "QUANTITY": "Cantidad",
+      "PORTIONS": "Porciones",
       "DATE": "Fecha",
       "WEIGHT": "Peso",
       "ACTIONS": "Acciones",
@@ -1394,14 +1446,6 @@
       "YEARLY": "Anual",
       "ALL_TIME": "Histórico",
       "CUSTOM": "Personalizado"
-    },
-    "FILTERS": {
-      "SEARCH_PLACEHOLDER": "Buscar en historial...",
-      "RECIPE_ID": "ID Receta",
-      "USER_ID": "ID Usuario",
-      "FROM": "Desde",
-      "TO": "Hasta",
-      "APPLY": "Aplicar"
     },
     "TABLE": {
       "DATE": "Fecha",
@@ -1811,6 +1855,10 @@
     "TOTAL_ITEMS": "({{total}} {{itemType}})"
   },
   "BATCHES": {
+    "BATCH": "Lote",
+    "NO_BATCH": "Sin lote",
+    "REMAINING": "Restante",
+    "EXPIRATION": "Caducidad",
     "TITLE": "Gestión de Lotes",
     "TABS": {
       "ALL": "Todos los Lotes",
@@ -2355,6 +2403,7 @@
       "RESTORE_STUDENT_SESSION_ERROR": "No se pudo restaurar al alumno en la sesión."
     },
     "DETAIL": {
+      "SESSIONS_COUNT": "{{count}} sesiones",
       "WEEK_OF": "Semana del {{date}}",
       "BACK_TO_PLANS": "Volver a planes",
       "BACK_ARIA": "Volver al listado de planes semanales",
@@ -2389,6 +2438,7 @@
       "INSUFFICIENT_STOCK": "Stock insuficiente (Faltan: {{qty}} Bruto)",
       "IN_ORDERS": "En pedidos",
       "HAVE_STOCK_LABEL": "Hay stock ({{qty}})",
+      "COVERED_BY_ORDERS": "Cubierto por pedidos",
       "MISSING_UNITS": "Faltan unidades",
       "NO_STOCK_REQS": "No hay requisitos de stock para este plan.",
       "PDF_HINT": "Elige el formato de orientación para descargar el PDF del plan semanal.",
@@ -2440,6 +2490,7 @@
       "STEP_2_HINT": "Crea una o varias sesiones por día. Puedes añadir más sesiones en el mismo día o moverlas después.",
       "NO_SESSIONS": "Todavía no hay sesiones. Usa el botón de cada día para empezar.",
       "SESSIONS_COUNT": "{{count}} sesiones",
+      "STUDENTS_COUNT": "{{count}} alumnos",
       "OVERLAP_WARN_ARIA": "Ver problema de solapamiento en {{day}}",
       "ADD_SLOT": "Añadir sesión",
       "ADD_SLOT_ARIA": "Añadir sesión para {{day}}",
@@ -2637,10 +2688,34 @@
       "TOGGLE_HIDDEN_SUCCESS_SINGLE": "Estado del producto actualizado correctamente."
     },
     "PDF_CONFIRM_TITLE": "Confirmar exportación",
+    "PDF_CONFIRM_MSG": "¿Deseas descargar la ficha del producto en formato PDF?",
     "PDF_CONFIRM_MSG_EXCEL": "¿Deseas exportar el inventario a Excel?"
   },
   "STOCK_MGMT": {
     "TITLE": "Gestión de Stock",
+    "MESSAGES": {
+      "NO_UNCOVERED_PRODUCTS": "No se encontraron productos sin cobertura para reponer.",
+      "INTEGRITY_VALID": "Integridad verificada: {{message}}",
+      "ALL_CHAINS_VALID": "Todas las cadenas ({{count}}) son íntegras."
+    },
+    "MODALS": {
+      "CONFIRM_DOWNLOAD_TITLE": "Confirmar Descarga",
+      "CONFIRM_DOWNLOAD_TEXT": "¿Deseas descargar el reporte de stock en formato PDF?"
+    },
+    "REPOSITION": {
+      "TITLE": "Generar una Orden de Reposición",
+      "DAYS_PROMPT": "¿Para cuántos días deseas cubrir el stock estimado?",
+      "DAYS_LABEL": "días"
+    },
+    "ADJUSTMENT": {
+      "DAYS": "días",
+      "TYPES": {
+        "ENTRADA": "ENTRADA",
+        "REVERSION": "REVERSIÓN",
+        "MERMA": "MERMA",
+        "AJUSTE": "AJUSTE"
+      }
+    },
     "TABS": {
       "ALERTS": "Alertas",
       "PREDICTIONS": "Predicciones",
@@ -2846,9 +2921,7 @@
         "REASON_PLACEHOLDER": "Ej. Corrección inventario, merma no registrada, rotura...",
         "SUBMITTING": "Registrando...",
         "SUBMIT": "Registrar Ajuste",
-        "ORDER_MODAL_TITLE": "Generar una Orden de Reposición",
-        "DAYS_COVER_PROMPT": "¿Para cuántos días deseas cubrir el stock estimado?",
-        "DAYS": "días",
+
         "TYPES": {
           "AJUSTE": "AJUSTE",
           "MERMA": "MERMA",
@@ -2882,7 +2955,7 @@
       "ADD_ORDER": "Añadir orden"
     },
     "SECTIONS": {
-      "PRODUCTS_COUNT": "{{count}} producto{{count === 1 ? '' : 's'}}."
+      "PRODUCTS_COUNT": "{{count}} productos"
     },
     "TABLE": {
       "NO_SUPPLIER": "Sin proveedor",
