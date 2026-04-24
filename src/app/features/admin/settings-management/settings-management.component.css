@@ -382,12 +382,14 @@ th {
 }
 
 .toolbar-btn--danger {
-  background: var(--theme-error);
+  background: #ef4444;
+  border-color: #ef4444;
   color: white;
 }
 
 .toolbar-btn--danger:hover {
-  background: var(--theme-error-hover, #c82333);
+  background: #dc2626;
+  border-color: #dc2626;
 }
 
 .button-group {
