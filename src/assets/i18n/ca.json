@@ -138,6 +138,8 @@
     "THEME_LIGHT": "Canviar a mode clar",
     "THEME_DARK": "Canviar a mode fosc",
     "CLEAR_CACHE": "Netejar cau local",
+    "BY": "Per",
+    "ORDER": "Ordre",
     "UNITS_COUNT": "{{count}} unitats",
     "STUDENTS_COUNT": "{{count}} alumnes",
     "COLLAPSE_COLUMN": "Col·lapsar columna",
@@ -2561,12 +2563,27 @@
   "STOCK_MGMT": {
     "TITLE": "Gestió d'Estoc",
     "MESSAGES": {
-      "NO_UNCOVERED_PRODUCTS": "No s'han trobat productes sense cobertura per reposar."
+      "NO_UNCOVERED_PRODUCTS": "No s'han trobat productes sense cobertura per reposar.",
+      "INTEGRITY_VALID": "Integritat verificada: {{message}}",
+      "ALL_CHAINS_VALID": "Totes les cadenes ({{count}}) són íntegres."
+    },
+    "MODALS": {
+      "CONFIRM_DOWNLOAD_TITLE": "Confirmar Descàrrega",
+      "CONFIRM_DOWNLOAD_TEXT": "Vols descarregar el report d'estoc en format PDF?"
     },
     "REPOSITION": {
       "TITLE": "Generar una Ordre de Reposició",
       "DAYS_PROMPT": "Per a quants dies vols cobrir l'estoc estimat?",
       "DAYS_LABEL": "dies"
+    },
+    "ADJUSTMENT": {
+      "DAYS": "dies",
+      "TYPES": {
+        "ENTRADA": "ENTRADA",
+        "REVERSION": "REVERSIÓ",
+        "MERMA": "MERMA",
+        "AJUST": "AJUST"
+      }
     },
     "TABS": {
       "ALERTS": "Alertes",
