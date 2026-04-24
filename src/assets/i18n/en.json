@@ -4,6 +4,8 @@
     "BACK": "Back",
     "CLOSE": "Close",
     "CONFIRM": "Confirm",
+    "APPROVE": "Approve",
+    "REJECT": "Reject",
     "SAVE": "Save",
     "SAVE_CHANGES": "Save Changes",
     "CREATE": "Create",
@@ -14,6 +16,7 @@
     "SAVING": "Saving...",
     "DOWNLOADING": "Downloading...",
     "CLEAR_FILTERS": "Clear Filters",
+    "CLEAR": "Clear",
     "FILTERS": "Filters",
     "SHOW": "Show:",
     "NAME": "Name",
@@ -106,6 +109,7 @@
     "STATUS_APPROVED": "Approved",
     "STATUS_REJECTED": "Rejected",
     "STATUS_HIDDEN": "Hidden",
+    "STATUS_DELETED": "Deleted",
     "STATUS_PENDING_PLURAL": "Pending",
     "STATUS_APPROVED_PLURAL": "Approved",
     "STATUS_REJECTED_PLURAL": "Rejected",
@@ -134,18 +138,53 @@
     "THEME_LIGHT": "Switch to light mode",
     "THEME_DARK": "Switch to dark mode",
     "CLEAR_CACHE": "Clear local cache",
+    "BY": "By",
+    "ORDER": "Order",
+    "UNITS_COUNT": "{{count}} units",
+    "STUDENTS_COUNT": "{{count}} students",
+    "COLLAPSE_COLUMN": "Collapse column",
+    "EXPAND_COLUMN": "Expand column",
+    "SEARCH_PRODUCT_PLACEHOLDER": "Search product...",
+    "GROSS": "Gross",
+    "NET": "Net",
+    "ORDERS_COUNT": "{{count}} orders",
+    "SHORTAGES": "Shortages",
+    "ACTIVATE": "Activate",
+    "COMPLETED": "Completed",
+    "SELECT_SUPPLIER": "Select supplier",
+    "SELECT_PRODUCTS": "Select products",
+    "SCAN_BARCODE": "Scan barcode",
+    "SHOWING_RESULTS": "Showing {{current}} of {{total}} results",
+    "PDF_DOWNLOAD": "PDF Download",
+    "CONFIRM_DOWNLOAD": "Confirm download",
+    "CONFIRM_DOWNLOAD_PDF": "Do you want to download the file in PDF format?",
     "ROLES": {
       "ADMIN": "Administrator",
       "CHEF": "Chef / Teacher",
       "STUDENT": "Student"
     },
     "SUCCESS": "Success",
+    "PDF_SUCCESS": "PDF downloaded successfully",
     "ERROR": "Error",
     "WARNING": "Warning",
     "INFO": "Information",
     "SELECTED_COUNT_ONE": "1 selected",
     "SELECTED_COUNT_OTHER": "{{count}} selected",
-    "SELECT_PLACEHOLDER": "Select..."
+    "SELECT_PLACEHOLDER": "Select...",
+    "HIDDEN": "hidden",
+    "SHOWN": "shown",
+    "SHOWING": "Showing",
+    "RESULTS": "results",
+    "SEARCH_USER_PLACEHOLDER": "Search user...",
+    "ERROR_LOADING_USERS": "Error loading users",
+    "ADD": "Add",
+    "OPTIONAL": "Optional",
+    "VISIBLE": "Visible",
+    "SEARCH_SUPPLIER_PLACEHOLDER": "Search supplier...",
+    "PDF_CONFIRM_TITLE": "Confirm download",
+    "PDF_CONFIRM_MSG": "Do you want to download this PDF file?",
+    "CODE": "Code",
+    "ID": "ID"
   },
   "NAV": {
     "DASHBOARD": "Home",
@@ -219,70 +258,13 @@
     "INVENTORY": "Inventory",
     "ORDERS": "Orders",
     "RECEPTION": "Reception",
-    "RECIPE_MGMT": {
-      "TITLE": "Recipe Management",
-      "SEARCH_PLACEHOLDER": "Search by name...",
-      "ADD_RECIPE": "Add Recipe",
-      "NO_RECIPES_FOUND": "No recipes found",
-      "TABS": {
-        "RECIPES": "Recipes",
-        "AUDITS": "Audits",
-        "DRAFTS": "Drafts"
-      },
-      "STATS": {
-        "WITH_ALLERGENS": "With Allergens",
-        "WITHOUT_ALLERGENS": "No Allergens",
-        "AVG_COST": "Average Cost"
-      },
-      "TABLE": {
-        "COMPONENTS": "Components",
-        "TOTAL_COST": "Total Cost",
-        "ALLERGENS": "Allergens"
-      },
-      "DRAFTS": {
-        "NONE_FOUND": "No drafts found",
-        "RESENDABLE": "Resendable",
-        "DETAIL_TITLE": "Draft Detail",
-        "ELABORATION": "Preparation",
-        "PRESENTATION": "Presentation",
-        "REJECTION_REASON": "Rejection reason",
-        "VIEW_APPROVED": "View approved recipe",
-        "APPROVE_CONFIRM_TITLE": "Approve draft",
-        "APPROVE_CONFIRM_MSG": "Do you want to approve the draft \"{{name}}\"?",
-        "REJECT_CONFIRM_TITLE": "Reject draft",
-        "REJECT_CONFIRM_MSG": "Indicate the reason to reject the draft <strong>{{name}}</strong>.",
-        "REJECT_REASON_EMPTY": "You must indicate a rejection reason",
-        "APPROVE_SUCCESS": "Draft \"{{name}}\" approved",
-        "REJECT_SUCCESS": "Draft \"{{name}}\" rejected",
-        "LOAD_ERROR": "Error loading recipe drafts",
-        "APPROVE_ERROR": "Error approving the draft",
-        "REJECT_ERROR": "Error rejecting the draft",
-        "APPROVED_LOAD_ERROR": "Could not load the approved recipe"
-      },
-      "AUDITS": {
-        "SEARCH_PLACEHOLDER": "Search in audits...",
-        "NONE_FOUND": "No audits found",
-        "RECIPE_ID": "Recipe ID",
-        "DETAIL_TITLE": "Audit Detail",
-        "PREV_STATE": "Previous State",
-        "NEXT_STATE": "New State",
-        "PREV_QTY": "Previous Quantity",
-        "NEXT_QTY": "New Quantity",
-        "LOAD_ERROR": "Error loading audits"
-      },
-      "MESSAGES": {
-        "LOAD_ERROR": "Error loading recipes",
-        "TOGGLE_HIDDEN_SUCCESS": "Recipe \"{{name}}\" has been {{action}}",
-        "TOGGLE_HIDDEN_ERROR": "Error {{action}} recipe"
-      }
-    },
     "RECIPES": "Recipes",
     "KITCHEN": "Kitchen",
-    "USERS": "Students",
+    "USERS": "User Management",
     "MASTER_DATA": "Master Data",
     "PRODUCTS": "Products",
     "TRACEABILITY": "Traceability",
-    "PROFILE": "Profile"
+    "PROFILE": "Student Management"
   },
   "INVENTORY": {
     "TITLE": "Inventory",
@@ -454,19 +436,35 @@
     "SESSION_ERROR": "Session error. Please log in again."
   },
   "INCIDENTS": {
-    "TITLE": "Incident management",
+    "TITLE": {
+      "CONTROL_CENTER": "Control center",
+      "INCIDENTS_MANAGEMENT": "Incident management",
+      "ID": "Incident #{{id}}"
+    },
+    "FORM": {
+      "TITLE": "Title",
+      "TYPE": "Type",
+      "DESCRIPTION": "Description",
+      "SEVERITY": "Severity",
+      "NAME_PLACEHOLDER": "Ex: Cross contamination",
+      "TYPE_DESCRIPTION_PLACEHOLDER": "Describe when this incident type applies.",
+      "TITLE_PLACEHOLDER": "Ex: Spoiled product in fridge 2",
+      "DESCRIPTION_PLACEHOLDER": "Detail what happened, when it was detected, and observed impact."
+    },
     "ADMIN_TITLE": "Control center",
     "TABS": {
       "INCIDENTS": "Incidents",
       "TYPES": "Types",
       "SUMMARY": "Summary",
-      "CHAT": "Chat ({{count}})",
-      "AUDITS": "Audits ({{count}})"
+      "CHAT": "Chat",
+      "AUDITS": "Audits"
     },
     "ACTIONS": {
       "SHOW_FILTERS": "Show filters",
       "HIDE_FILTERS": "Hide filters",
       "NEW_INCIDENT": "New incident",
+      "CREATE": "Create",
+      "NEW_TYPE": "New type",
       "FILTER": "Filter",
       "CLEAR": "Clear",
       "VIEW": "View",
@@ -486,7 +484,8 @@
       "EDIT": "Edit Incident",
       "ACTIVATE": "Activate",
       "DEACTIVATE": "Deactivate",
-      "ATTACH_AUDITS": "Attach Audits"
+      "ATTACH_AUDITS": "Attach Audits",
+      "DEACTIVATE_TYPE": "Deactivate type"
     },
     "STATS": {
       "TOTAL": "Total incidents",
@@ -516,11 +515,17 @@
       "DATE": "Date",
       "CHAT": "Chat",
       "ACTIONS": "Actions",
-      "RESPONSIBLE": "Responsible"
+      "RESPONSIBLE": "Responsible",
+      "EMPTY": "No incidents found",
+      "EMPTY_HINT": "Create a new incident or adjust filters to see results."
     },
     "MESSAGES": {
       "EMPTY": "No incidents found",
       "EMPTY_HINT": "Create a new incident or adjust filters to see results.",
+      "TYPE_TOGGLE_CONFIRM": "Do you want to {{action}} the type \"{{name}}\"?",
+      "TYPE_TOGGLE_SUCCESS": "Incident type status updated",
+      "LOAD_TYPES_ERROR": "Error loading incident types",
+      "LOAD_INCIDENTS_ERROR": "Error loading incidents",
       "LOADING_CHAT": "Loading conversation...",
       "EMPTY_CHAT": "No messages yet.",
       "LOCKED": "The incident is closed. New messages cannot be sent.",
@@ -661,7 +666,10 @@
       "LOW": "Low",
       "MEDIUM": "Medium",
       "HIGH": "High",
-      "NONE": "No level"
+      "NONE": "No level",
+      "BAJA": "Low",
+      "MEDIA": "Medium",
+      "ALTA": "High"
     },
     "CHART": {
       "BY_STATUS": "Incidents by Status",
@@ -936,7 +944,23 @@
       "CANCEL_CONFIRM": "Cancel order #{{id}}? This action cannot be undone.",
       "CANCEL_SUCCESS": "Order cancelled",
       "CANCEL_ERROR": "Error cancelling order",
-      "DELETE_CONFIRM_MSG_ALT": "Permanently delete order #{{id}}? This action cannot be undone."
+      "DELETE_CONFIRM_MSG_ALT": "Permanently delete order #{{id}}? This action cannot be undone.",
+      "CONFIRM_ORDER_TITLE": "Confirm order",
+      "CONFIRM_ORDER_MSG": "Confirm and send order #{{id}} to reception?",
+      "CONFIRM_SUCCESS": "Order sent to reception",
+      "CONFIRM_ERROR": "Error confirming order",
+      "OPEN_ERROR": "Could not open order #{{id}}.",
+      "CREATE_SUCCESS": "Order created successfully",
+      "UPDATE_SUCCESS": "Order updated successfully",
+      "CREATE_ERROR": "Error creating order",
+      "UPDATE_ERROR": "Error updating order",
+      "LOCK_ERROR_DEFAULT": "The order is being reviewed by another user.",
+      "LOCK_OWNER_TITLE": "Active lock",
+      "LOCK_OWNER_DETAIL": "The order is in review by your active session.",
+      "LOCK_ANOTHER_USER": "Another user",
+      "LOCK_IN_PROGRESS": "Review in progress",
+      "LOCK_ADMIN_HINT": "{{name}} is reviewing it. You can continue as ADMIN.",
+      "LOCK_USER_HINT": "{{name}} opened this order. Read-only until they finish."
     },
     "STATUS_LABELS": {
       "CREATED": "Created",
@@ -967,7 +991,16 @@
       "DELTA_MISSING": "Missing",
       "DELTA_EXACT_HINT": "Exact quantity",
       "DELTA_MISSING_HINT": "Missing quantity",
-      "DELTA_EXCESS_HINT": "Too many items"
+      "DELTA_EXCESS_HINT": "Too many items",
+      "VALIDATION": {
+        "SUPPLIER_REQUIRED": "You must select a supplier",
+        "USER_REQUIRED": "You must select a user",
+        "PRODUCT_REQUIRED": "Select a product",
+        "INVALID_QUANTITY": "Enter a valid quantity",
+        "AT_LEAST_ONE": "You must add at least one product",
+        "SELECTED_USER": "selected user",
+        "CONFIRM_SUBMIT": "Create order for {{count}} products for {{name}}?"
+      }
     }
   },
   "ORDER_MODAL": {
@@ -1070,6 +1103,10 @@
   },
   "USERS": {
     "TITLE": "User Management",
+    "MODAL": {
+      "CREATE_TITLE": "Create New User",
+      "EDIT_TITLE": "Edit User"
+    },
     "TABS": {
       "USERS": "Users",
       "ASSIGNMENTS": "Assignments",
@@ -1187,31 +1224,34 @@
       "ACTION_CONNECTED": "Connected",
       "ACTION_DISCONNECTED": "Disconnected",
       "ACTION_SCREEN_CHANGED": "Screen changed"
+    },
+    "USER_FORM": {
+      "NAME": "Name",
+      "NAME_PLACEHOLDER": "Full name",
+      "ERRORS": {
+        "NAME_REQUIRED": "Name is required",
+        "NAME_MINLENGTH": "Name must be at least 3 characters",
+        "USER_REQUIRED": "Username is required",
+        "USER_MINLENGTH": "Username must be at least 3 characters"
+      },
+      "USERNAME": "Username",
+      "USERNAME_PLACEHOLDER": "e.g. jdoe",
+      "PASSWORD": "Password",
+      "PASSWORD_OPTIONAL": "(leave empty to keep current)",
+      "AUTO_GEN_NOTE": "Username and password will be automatically generated upon creation.",
+      "ROLE": "User role",
+      "TEACHER": "Assigned teacher",
+      "TEACHER_PLACEHOLDER": "Search teacher...",
+      "SUBMIT_CREATE": "Create User",
+      "SUBMIT_EDIT": "Save Changes",
+      "CREDENTIALS": {
+        "SUCCESS": "User created successfully!",
+        "SAVE_NOTE": "Save these credentials. Password cannot be recovered.",
+        "USER_LABEL": "Username:",
+        "PASS_LABEL": "Password:",
+        "COPY_BTN": "Copy credentials"
+      }
     }
-  },
-  "USER_FORM": {
-    "TITLE_CREATE": "Create User",
-    "TITLE_EDIT": "Edit User",
-    "CREATED_SUCCESS": "User created successfully!",
-    "CREDENTIALS_NOTE": "Save these credentials. Password cannot be recovered.",
-    "COPIED": "Copied!",
-    "COPY_CREDENTIALS": "Copy credentials",
-    "NAME": "Name",
-    "NAME_PLACEHOLDER": "User name",
-    "NAME_REQUIRED": "Name is required",
-    "NAME_MIN_LENGTH": "Name must be at least 3 characters",
-    "USER": "User",
-    "USER_PLACEHOLDER": "username",
-    "USER_REQUIRED": "User is required",
-    "USER_MIN_LENGTH": "User must be at least 3 characters",
-    "PASSWORD": "Password",
-    "PASSWORD_OPTIONAL": "(leave empty to not change)",
-    "AUTO_GENERATE_INFO": "Username and password will be automatically generated upon creation.",
-    "ROLE": "Role",
-    "TEACHER": "Assigned Teacher",
-    "UNASSIGNED": "No teacher",
-    "SAVE_CHANGES": "Save Changes",
-    "CLOSE": "Close"
   },
   "SUPPLIERS": {
     "TITLE": "Suppliers Management",
@@ -1275,7 +1315,11 @@
     "CREATE_SUCCESS": "Allergen \"{{name}}\" created successfully",
     "UPDATE_SUCCESS": "Allergen \"{{name}}\" updated successfully",
     "DELETE_SUCCESS": "Allergen \"{{name}}\" deleted successfully",
-    "NAME_EMPTY_ERROR": "Allergen name cannot be empty"
+    "NAME_EMPTY_ERROR": "Allergen name cannot be empty",
+    "LOAD_ERROR": "Error loading allergens",
+    "CREATE_ERROR": "Error creating allergen",
+    "UPDATE_ERROR": "Error updating allergen",
+    "DELETE_ERROR": "Error deleting allergen"
   },
   "ORDERS_MGMT": {
     "TITLE": "Orders Management",
@@ -1458,7 +1502,7 @@
     }
   },
   "RECIPE_MGMT": {
-    "TITLE": "Recipe Management",
+    "TITLE": "Recipes Management",
     "SEARCH_PLACEHOLDER": "Search by name...",
     "ADD_RECIPE": "Add Recipe",
     "NO_RECIPES_FOUND": "No recipes found",
@@ -1469,7 +1513,7 @@
     },
     "STATS": {
       "WITH_ALLERGENS": "With Allergens",
-      "WITHOUT_ALLERGENS": "No Allergens",
+      "WITHOUT_ALLERGENS": "Without Allergens",
       "AVG_COST": "Average Cost"
     },
     "TABLE": {
@@ -1509,27 +1553,9 @@
       "NEXT_QTY": "New Quantity",
       "LOAD_ERROR": "Error loading audits"
     },
-    "MESSAGES": {
-      "LOAD_ERROR": "Error loading recipes",
-      "TOGGLE_HIDDEN_SUCCESS": "Recipe \"{{name}}\" has been {{action}}",
-      "TOGGLE_HIDDEN_ERROR": "Error {{action}} recipe",
-      "CREATE_SUCCESS": "Recipe \"{{name}}\" created successfully",
-      "CREATE_ERROR": "Error creating recipe",
-      "UPDATE_SUCCESS": "Recipe \"{{name}}\" updated successfully",
-      "UPDATE_ERROR": "Error updating recipe"
-    },
-    "LABELS": {
-      "USER": "User",
-      "RECIPE": "Recipe",
-      "NONE": "None"
-    }
-  },
-  "RECIPES_MGMT": {
-    "TITLE": "Recipes Management",
     "TAB_RECIPES": "Recipes",
     "TAB_AUDITS": "Audit",
     "TAB_DRAFTS": "Drafts",
-    "ADD_RECIPE": "Add Recipe",
     "WITH_ALLERGENS": "With Allergens",
     "WITHOUT_ALLERGENS": "Without Allergens",
     "AVG_COST": "Average Cost",
@@ -1601,7 +1627,8 @@
       "ELABORATION": "Elaboration",
       "PRESENTATION": "Presentation",
       "TOTAL_COST": "Total Cost",
-      "ALLERGENS": "Allergens"
+      "ALLERGENS": "Allergens",
+      "NONE": "None"
     }
   },
   "SETTINGS": {
@@ -1956,6 +1983,7 @@
       "RESTORE_STUDENT_SESSION_ERROR": "Could not restore student in session."
     },
     "DETAIL": {
+      "SESSIONS_COUNT": "{{count}} sessions",
       "WEEK_OF": "Week of {{date}}",
       "BACK_TO_PLANS": "Back to plans",
       "BACK_ARIA": "Back to weekly plans list",
@@ -1989,7 +2017,8 @@
       "HAVE_STOCK": "Have stock ({{qty}} Net)",
       "INSUFFICIENT_STOCK": "Insufficient stock (Missing: {{qty}} Gross)",
       "IN_ORDERS": "In orders",
-      "HAVE_STOCK_LABEL": "Have stock ({{qty}})",
+      "HAVE_STOCK_LABEL": "Stock available ({{qty}})",
+      "COVERED_BY_ORDERS": "Covered by orders",
       "MISSING_UNITS": "Missing units",
       "NO_STOCK_REQS": "No stock requirements for this plan.",
       "PDF_HINT": "Choose PDF orientation for downloading the weekly plan.",
@@ -2041,6 +2070,7 @@
       "STEP_2_HINT": "Create one or more sessions per day. You can add more sessions on the same day or move them later.",
       "NO_SESSIONS": "No sessions yet. Use the button for each day to start.",
       "SESSIONS_COUNT": "{{count}} sessions",
+      "STUDENTS_COUNT": "{{count}} students",
       "OVERLAP_WARN_ARIA": "See overlap issue in {{day}}",
       "ADD_SLOT": "Add session",
       "ADD_SLOT_ARIA": "Add session for {{day}}",
@@ -2167,6 +2197,7 @@
       "STATS": "Statistics"
     },
     "FILTERS": {
+      "CLEAR": "Clear Filters",
       "SEARCH_PLACEHOLDER": "Search history...",
       "RECIPE_NAME": "Recipe Name",
       "USER_NAME": "User Name",
@@ -2233,25 +2264,40 @@
       "LOAD_ORDER_ERROR": "Could not load order #{{id}}"
     },
     "REPORTS": {
+      "LOADING": "Generating report...",
+      "REPORT_TITLE": "Kitchen Report",
+      "PERIOD": "Period",
       "GENERAL_INFO": "General Information",
-      "TOTAL_COOKINGS": "REGISTERED ELABORATIONS",
-      "TOTAL_PORTIONS": "PREPARED PORTIONS",
-      "RECIPE_DIVERSITY": "RECIPES DIVERSITY",
-      "PRODUCT_DIVERSITY": "PRODUCTS DIVERSITY",
-      "PARTICIPATING_USERS": "PARTICIPATING USERS",
-      "TOTAL_ESTIMATED_COST": "TOTAL ESTIMATED COST",
-      "AVG_PORTION_PRICE": "AVERAGE PRICE PER PORTION",
-      "EMISSION_DATE": "EMISSION DATE",
       "ECONOMIC_ANALYSIS": "Economic Analysis",
-      "EXPLANATION_MSG": "Report periods (daily, weekly, monthly and yearly) are calculated by natural days and months.",
-      "ESTIMATED_SALES": "ESTIMATED SALES",
-      "WASTE_COST": "WASTAGE COST",
-      "EXPIRATION_COST": "EXPIRATION COST",
-      "GROSS_PROFIT": "GROSS PROFIT (Theoretical)",
-      "NET_PROFIT": "NET PROFIT (Real)",
+      "EXPLANATION": "Report periods (daily, weekly, monthly and yearly) are calculated by natural days and months. This means that a 'natural' month covers from the first to the last day of the calendar to give you an exact view of actual kitchen performance.",
+      "DOWNLOAD_PDF": "Download PDF",
       "TOP_RECIPES": "Most Elaborated Recipes",
       "TOP_USERS": "Users with Highest Activity",
-      "INVENTORY_CONSUMPTION": "Inventory Consumption Analysis"
+      "INVENTORY_CONSUMPTION": "Inventory Consumption Analysis",
+      "LABELS": {
+        "SESSIONS": "REGISTERED ELABORATIONS",
+        "PORTIONS": "PREPARED PORTIONS",
+        "RECIPES": "RECIPES DIVERSITY",
+        "PRODUCTS": "PRODUCTS DIVERSITY",
+        "USERS": "PARTICIPATING USERS",
+        "ESTIMATED_COST": "TOTAL ESTIMATED COST",
+        "AVG_PRICE": "AVERAGE PRICE PER PORTION",
+        "ISSUE_DATE": "EMISSION DATE"
+      },
+      "CARDS": {
+        "ESTIMATED_SALES": "ESTIMATED SALES",
+        "WASTE_COST": "WASTAGE COST",
+        "EXPIRATION_COST": "EXPIRATION COST",
+        "GROSS_PROFIT": "GROSS PROFIT (Theoretical)",
+        "NET_PROFIT": "NET PROFIT (Real)"
+      },
+      "TABLE": {
+        "TIMES_PREPARED": "TIMES PREPARED",
+        "TOTAL_PORTIONS": "TOTAL PORTIONS",
+        "SESSIONS_COUNT": "NUMBER OF ELABORATIONS",
+        "PRODUCT": "PRODUCT",
+        "QUANTITY_CONSUMED": "QUANTITY CONSUMED"
+      }
     },
     "ACTIONS": {
       "APPLY_FILTERS": "Apply Filters",
@@ -2273,6 +2319,7 @@
       "RECIPE": "Recipe",
       "USER": "User",
       "QUANTITY": "Quantity",
+      "PORTIONS": "Portions",
       "DATE": "Date",
       "WEIGHT": "Weight",
       "ACTIONS": "Actions",
@@ -2318,10 +2365,34 @@
       "TOGGLE_HIDDEN_SUCCESS_SINGLE": "Product status updated successfully."
     },
     "PDF_CONFIRM_TITLE": "Confirm export",
+    "PDF_CONFIRM_MSG": "Do you want to download the product sheet in PDF format?",
     "PDF_CONFIRM_MSG_EXCEL": "Do you want to export the inventory to Excel?"
   },
   "STOCK_MGMT": {
     "TITLE": "Stock Management",
+    "MESSAGES": {
+      "NO_UNCOVERED_PRODUCTS": "No uncovered products found for replenishment.",
+      "INTEGRITY_VALID": "Integrity verified: {{message}}",
+      "ALL_CHAINS_VALID": "All chains ({{count}}) are integral."
+    },
+    "MODALS": {
+      "CONFIRM_DOWNLOAD_TITLE": "Confirm Download",
+      "CONFIRM_DOWNLOAD_TEXT": "Do you want to download the stock report in PDF format?"
+    },
+    "REPOSITION": {
+      "TITLE": "Generate a Replenishment Order",
+      "DAYS_PROMPT": "How many days do you want to cover the estimated stock for?",
+      "DAYS_LABEL": "days"
+    },
+    "ADJUSTMENT": {
+      "DAYS": "days",
+      "TYPES": {
+        "ENTRADA": "ENTRY",
+        "REVERSION": "REVERSION",
+        "MERMA": "WASTE",
+        "AJUSTE": "ADJUSTMENT"
+      }
+    },
     "TABS": {
       "ALERTS": "Alerts",
       "PREDICTIONS": "Predictions",
@@ -2563,7 +2634,7 @@
       "ADD_ORDER": "Add order"
     },
     "SECTIONS": {
-      "PRODUCTS_COUNT": "{{count}} product{{count === 1 ? '' : 's'}}."
+      "PRODUCTS_COUNT": "{{count}} products"
     },
     "TABLE": {
       "NO_SUPPLIER": "No supplier",
@@ -2599,6 +2670,10 @@
     }
   },
   "BATCHES": {
+    "BATCH": "Batch",
+    "NO_BATCH": "No batch",
+    "REMAINING": "Remaining",
+    "EXPIRATION": "Expiration",
     "TITLE": "Batch Management",
     "TABS": {
       "ALL": "All Batches",
@@ -2647,7 +2722,8 @@
       "DEPLETED": "Depleted",
       "EXPIRED": "Expired",
       "UPCOMING": "Upcoming",
-      "ACTIVE": "Active"
+      "ACTIVE": "Active",
+      "WITHDRAWN": "Withdrawn"
     },
     "ACTIONS": {
       "EDIT": "Edit Expiration",
@@ -2922,7 +2998,7 @@
     "UPDATE": "Update",
     "ROLES": {
       "USER": "User",
-      "IA": "AI",
+      "IA": "Chef Pio",
       "SYSTEM": "System",
       "TOOL": "Tool"
     },
@@ -3099,6 +3175,20 @@
       "ERROR_TITLE": "Error",
       "ERROR_BODY": "Something went wrong",
       "WARNING_BODY": "Important notice"
+    }
+  },
+  "INCIDENT": {
+    "SEVERITY": {
+      "BAJA": "Low",
+      "MEDIA": "Medium",
+      "ALTA": "High"
+    }
+  },
+  "INCIDENT": {
+    "SEVERITY": {
+      "BAJA": "Low",
+      "MEDIA": "Medium",
+      "ALTA": "High"
     }
   }
 }

@@ -621,10 +621,57 @@ tbody.loading { opacity: 0.6; }
 }
 
 /** ===== ORDER MODAL ELEMENTS ===== */
-.days-control { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
-.days-control label { color: var(--theme-text-secondary); font-weight: 600; font-size: 0.95rem; }
-.days-input-group { display: flex; align-items: center; gap: 8px; }
-.days-input { padding: 10px 15px; border-radius: 12px; border: 1.5px solid var(--theme-border-glass); background: var(--theme-input-bg); color: var(--theme-text-primary); width: 80px; font-size: 1rem; text-align: center; }
+.days-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  background: var(--theme-surface-glass);
+  border: 1px solid var(--theme-border-glass);
+  border-radius: var(--theme-radius-card);
+  box-shadow: var(--theme-shadow-sm);
+  flex-wrap: wrap;
+}
+.days-control label {
+  color: var(--theme-text-primary);
+  font-weight: 600;
+  font-size: 1.05rem;
+  font-family: var(--font-heading);
+}
+.days-input-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--theme-surface-glass-hover);
+  padding: 6px 16px 6px 6px;
+  border-radius: 14px;
+  border: 1px solid var(--theme-border-subtle);
+}
+.days-input {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1.5px solid transparent;
+  background: var(--theme-input-bg);
+  color: var(--theme-text-primary);
+  width: 70px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-align: center;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+.days-input:focus {
+  outline: none;
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 20%, transparent);
+}
+.days-input-group span {
+  font-weight: 600;
+  color: var(--theme-text-secondary);
+  font-size: 0.95rem;
+}
 .order-table-wrapper { background: var(--theme-surface-glass-hover); border-radius: 16px; border: 1px solid var(--theme-surface-glass-hover); overflow: hidden; overflow-x: auto; }
 .order-table th { background: var(--theme-section-header-bg-strong); }
 .order-modal-footer {

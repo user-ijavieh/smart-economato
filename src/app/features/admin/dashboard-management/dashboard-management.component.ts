@@ -61,27 +61,27 @@ export class DashboardManagementComponent implements OnInit, OnDestroy {
     scales: {
       x: {
         grid: { display: false },
-        ticks: { color: 'rgba(255, 255, 255, 0.4)', font: { size: 12 } },
+        ticks: { color: '#64748b', font: { size: 12 } },
         title: {
           display: true,
           text: 'Proveedores',
-          color: 'rgba(255, 255, 255, 0.7)',
-          font: { size: 16, weight: 500 },
+          color: '#1e293b',
+          font: { size: 16, weight: 600 },
           padding: { top: 15 }
         }
       },
       y: {
-        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+        grid: { color: 'rgba(0, 0, 0, 0.05)' },
         ticks: {
-          color: 'rgba(255, 255, 255, 0.4)',
+          color: '#64748b',
           font: { size: 12 },
           callback: (value: any) => value + ' €'
         },
         title: {
           display: true,
           text: 'Total gastos en euros',
-          color: 'rgba(255, 255, 255, 0.7)',
-          font: { size: 16, weight: 500 },
+          color: '#1e293b',
+          font: { size: 16, weight: 600 },
           padding: { bottom: 15 }
         }
       }
@@ -143,10 +143,10 @@ export class DashboardManagementComponent implements OnInit, OnDestroy {
   private updateChartTheme(theme: 'dark' | 'light'): void {
     const isDark = theme === 'dark';
 
-    // Axis title colors
-    const titleColor = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(51, 65, 85, 0.8)';
-    const tickColor = isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(100, 116, 139, 0.6)';
-    const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+    // Axis and title colors
+    const titleColor = isDark ? 'rgba(255, 255, 255, 0.9)' : '#0f172a';
+    const tickColor = isDark ? 'rgba(255, 255, 255, 0.5)' : '#475569';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
 
     if (this.barChartOptions?.scales?.['x']) {
       const xScale: any = this.barChartOptions.scales['x'];
@@ -161,7 +161,19 @@ export class DashboardManagementComponent implements OnInit, OnDestroy {
       yScale.grid.color = gridColor;
     }
 
-    this.chart?.update();
+    // Tooltip theme
+    if (this.barChartOptions?.plugins?.tooltip) {
+      const tooltip = this.barChartOptions.plugins.tooltip;
+      tooltip.backgroundColor = isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.98)';
+      tooltip.titleColor = isDark ? '#ffffff' : '#0f172a';
+      tooltip.bodyColor = isDark ? 'rgba(255, 255, 255, 0.8)' : '#334155';
+      tooltip.borderColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+      (tooltip as any).borderWidth = 1;
+    }
+
+    if (this.chart) {
+      this.chart.update();
+    }
     this.cdr.detectChanges();
   }
 
