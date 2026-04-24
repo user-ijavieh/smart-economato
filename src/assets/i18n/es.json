@@ -4,6 +4,8 @@
     "BACK": "Volver",
     "CLOSE": "Cerrar",
     "CONFIRM": "Confirmar",
+    "APPROVE": "Aprobar",
+    "REJECT": "Rechazar",
     "SAVE": "Guardar",
     "SAVE_CHANGES": "Guardar Cambios",
     "CREATE": "Crear",
@@ -14,6 +16,7 @@
     "SAVING": "Guardando...",
     "DOWNLOADING": "Descargando...",
     "CLEAR_FILTERS": "Limpiar Filtros",
+    "CLEAR": "Limpiar",
     "FILTERS": "Filtros",
     "SHOW": "Mostrar:",
     "NAME": "Nombre",
@@ -106,6 +109,7 @@
     "STATUS_APPROVED": "Aprobada",
     "STATUS_REJECTED": "Rechazada",
     "STATUS_HIDDEN": "Desactivado",
+    "STATUS_DELETED": "Eliminado",
     "STATUS_PENDING_PLURAL": "Pendientes",
     "STATUS_APPROVED_PLURAL": "Aprobados",
     "STATUS_REJECTED_PLURAL": "Rechazados",
@@ -145,7 +149,9 @@
     "INFO": "Información",
     "SELECTED_COUNT_ONE": "1 seleccionado",
     "SELECTED_COUNT_OTHER": "{{count}} seleccionados",
-    "SELECT_PLACEHOLDER": "Selecciona..."
+    "SELECT_PLACEHOLDER": "Selecciona...",
+    "HIDDEN": "ocultada",
+    "SHOWN": "mostrada"
   },
   "NAV": {
     "DASHBOARD": "Inicio",
@@ -400,6 +406,16 @@
     "TITLE": {
       "CONTROL_CENTER": "Centro de control",
       "INCIDENTS_MANAGEMENT": "Gestión de incidencias"
+    },
+    "FORM": {
+      "TITLE": "Título",
+      "TYPE": "Tipo",
+      "DESCRIPTION": "Descripción",
+      "SEVERITY": "Severidad",
+      "NAME_PLACEHOLDER": "Ej: Contaminación cruzada",
+      "TYPE_DESCRIPTION_PLACEHOLDER": "Describe cuándo aplica este tipo de incidencia.",
+      "TITLE_PLACEHOLDER": "Ej: Producto en mal estado en cámara 2",
+      "DESCRIPTION_PLACEHOLDER": "Detalla qué ocurrió, cuándo se detectó y el impacto observado."
     },
     "ADMIN_TITLE": "Centro de control",
     "TABS": {
@@ -1026,6 +1042,10 @@
   },
   "USERS": {
     "TITLE": "Gestión de Usuarios",
+    "MODAL": {
+      "CREATE_TITLE": "Crear Nuevo Usuario",
+      "EDIT_TITLE": "Editar Usuario"
+    },
     "TABS": {
       "USERS": "Usuarios",
       "ASSIGNMENTS": "Asignaciones",
@@ -1143,32 +1163,36 @@
       "ACTION_CONNECTED": "Conectado",
       "ACTION_DISCONNECTED": "Desconectado",
       "ACTION_SCREEN_CHANGED": "Cambio de pantalla"
+    },
+    "USER_FORM": {
+      "NAME": "Nombre",
+      "NAME_PLACEHOLDER": "Nombre completo",
+      "ERRORS": {
+        "NAME_REQUIRED": "El nombre es obligatorio",
+        "NAME_MINLENGTH": "El nombre debe tener al menos 3 caracteres",
+        "USER_REQUIRED": "El usuario es obligatorio",
+        "USER_MINLENGTH": "El usuario debe tener al menos 3 caracteres"
+      },
+      "USERNAME": "Usuario",
+      "USERNAME_PLACEHOLDER": "Ej: jgarcia",
+      "PASSWORD": "Contraseña",
+      "PASSWORD_OPTIONAL": "(dejar vacío para mantener actual)",
+      "AUTO_GEN_NOTE": "El usuario y la contraseña se generarán automáticamente al crear.",
+      "ROLE": "Rol del usuario",
+      "TEACHER": "Profesor asignado",
+      "TEACHER_PLACEHOLDER": "Buscar profesor...",
+      "SUBMIT_CREATE": "Crear Usuario",
+      "SUBMIT_EDIT": "Guardar Cambios",
+      "CREDENTIALS": {
+        "SUCCESS": "¡Usuario creado con éxito!",
+        "SAVE_NOTE": "Guarda estas credenciales. La contraseña no se podrá recuperar.",
+        "USER_LABEL": "Usuario:",
+        "PASS_LABEL": "Contraseña:",
+        "COPY_BTN": "Copiar credenciales"
+      }
     }
   },
-  "USER_FORM": {
-    "TITLE_CREATE": "Crear Usuario",
-    "TITLE_EDIT": "Editar Usuario",
-    "CREATED_SUCCESS": "¡Usuario creado con éxito!",
-    "CREDENTIALS_NOTE": "Guarda estas credenciales. La contraseña no se podrá recuperar.",
-    "COPIED": "¡Copiado!",
-    "COPY_CREDENTIALS": "Copiar credenciales",
-    "NAME": "Nombre",
-    "NAME_PLACEHOLDER": "Nombre del usuario",
-    "NAME_REQUIRED": "El nombre es requerido",
-    "NAME_MIN_LENGTH": "El nombre debe tener al menos 3 caracteres",
-    "USER": "Usuario",
-    "USER_PLACEHOLDER": "nombre_usuario",
-    "USER_REQUIRED": "El usuario es requerido",
-    "USER_MIN_LENGTH": "El usuario debe tener al menos 3 caracteres",
-    "PASSWORD": "Contraseña",
-    "PASSWORD_OPTIONAL": "(dejar vacío para no cambiar)",
-    "AUTO_GENERATE_INFO": "El usuario y la contraseña se generarán automáticamente al crear.",
-    "ROLE": "Rol",
-    "TEACHER": "Profesor asignado",
-    "UNASSIGNED": "Sin profesor",
-    "SAVE_CHANGES": "Guardar Cambios",
-    "CLOSE": "Cerrar"
-  },
+
   "SUPPLIERS": {
     "TITLE": "Gestión de Proveedores",
     "FILTERS": {
@@ -1274,52 +1298,39 @@
     },
     "REPORTS": {
       "LOADING": "Generando informe...",
-      "TITLE": "Reporte de Cocina",
-      "PERIOD": "Periodo:",
-      "INFO_TITLE": "Información General",
-      "SESSIONS": "ELABORACIONES REGISTRADAS:",
-      "PORTIONS": "PORCIONES PREPARADAS:",
-      "RECIPES_COUNT": "DIVERSIDAD DE RECETAS:",
-      "PRODUCTS_COUNT": "DIVERSIDAD DE PRODUCTOS:",
-      "USERS_COUNT": "USUARIOS PARTICIPANTES:",
-      "TOTAL_COST": "COSTE ESTIMADO TOTAL:",
-      "AVG_PRICE": "PRECIO MEDIO POR PORCIÓN:",
-      "ISSUE_DATE": "FECHA DE EMISIÓN:",
-      "FINANCIAL_TITLE": "Análisis Económico",
-      "REPORT_HINT": "Los periodos de reporte (diario, semanal, mensual y anual) se calculan por <strong>días y meses naturales</strong>. Esto significa que un mes 'natural' abarca desde el primer hasta el último día del calendario para darte una visión exacta del rendimiento real de la cocina.",
-      "SALES_ESTIMATED": "VENTAS ESTIMADAS",
-      "WASTE_COST": "GASTO POR MERMA",
-      "EXPIRED_COST": "GASTO POR CADUCIDAD",
-      "GROSS_PROFIT": "GANANCIA BRUTA (Teórica)",
-      "NET_PROFIT": "GANANCIA NETA (Real)",
-      "TOP_RECIPES_TITLE": "Recetas Más Elaboradas",
-      "TOP_USERS_TITLE": "Usuarios con Mayor Actividad",
-      "CONSUMPTION_TITLE": "Análisis de Consumo de Inventario",
-      "RECIPE_COL": "RECETA",
-      "TIMES_COOKED_COL": "VECES PREPARADA",
-      "TOTAL_QUANTITY_COL": "PORCIONES TOTALES",
-      "USER_COL": "USUARIO",
-      "SESSIONS_COL": "NUMERO DE ELABORACIONES",
-      "PRODUCT_COL": "PRODUCTO",
-      "QUANTITY_COL": "CANTIDAD CONSUMIDA",
-      "EMPTY_STATE": "Genera un informe para visualizar los datos.",
-      "DOWNLOAD_PDF": "Descargar PDF",
+      "REPORT_TITLE": "Reporte de Cocina",
+      "PERIOD": "Periodo",
       "GENERAL_INFO": "Información General",
-      "TOTAL_COOKINGS": "ELABORACIONES REGISTRADAS",
-      "TOTAL_PORTIONS": "PORCIONES PREPARADAS",
-      "RECIPE_DIVERSITY": "DIVERSIDAD DE RECETAS",
-      "PRODUCT_DIVERSITY": "DIVERSIDAD DE PRODUCTOS",
-      "PARTICIPATING_USERS": "USUARIOS PARTICIPANTES",
-      "TOTAL_ESTIMATED_COST": "COSTE ESTIMADO TOTAL",
-      "AVG_PORTION_PRICE": "PRECIO MEDIO POR PORCIÓN",
-      "EMISSION_DATE": "FECHA DE EMISIÓN",
       "ECONOMIC_ANALYSIS": "Análisis Económico",
-      "EXPLANATION_MSG": "Los periodos de reporte (diario, semanal, mensual y anual) se calculan por días y meses naturales.",
-      "ESTIMATED_SALES": "VENTAS ESTIMADAS",
-      "EXPIRATION_COST": "GASTO POR CADUCIDAD",
+      "EXPLANATION": "Los periodos de reporte (diario, semanal, mensual y anual) se calculan por días y meses naturales. Esto significa que un mes 'natural' abarca desde el primer hasta el último día del calendario para darte una visión exacta del rendimiento real de la cocina.",
+      "DOWNLOAD_PDF": "Descargar PDF",
       "TOP_RECIPES": "Recetas Más Elaboradas",
       "TOP_USERS": "Usuarios con Mayor Actividad",
-      "INVENTORY_CONSUMPTION": "Análisis de Consumo de Inventario"
+      "INVENTORY_CONSUMPTION": "Análisis de Consumo de Inventario",
+      "LABELS": {
+        "SESSIONS": "ELABORACIONES REGISTRADAS",
+        "PORTIONS": "PORCIONES PREPARADAS",
+        "RECIPES": "DIVERSIDAD DE RECETAS",
+        "PRODUCTS": "DIVERSIDAD DE PRODUCTOS",
+        "USERS": "USUARIOS PARTICIPANTES",
+        "ESTIMATED_COST": "COSTE ESTIMADO TOTAL",
+        "AVG_PRICE": "PRECIO MEDIO POR PORCIÓN",
+        "ISSUE_DATE": "FECHA DE EMISIÓN"
+      },
+      "CARDS": {
+        "ESTIMATED_SALES": "VENTAS ESTIMADAS",
+        "WASTE_COST": "GASTO POR MERMA",
+        "EXPIRATION_COST": "GASTO POR CADUCIDAD",
+        "GROSS_PROFIT": "GANANCIA BRUTA (Teórica)",
+        "NET_PROFIT": "GANANCIA NETA (Real)"
+      },
+      "TABLE": {
+        "TIMES_PREPARED": "VECES PREPARADA",
+        "TOTAL_PORTIONS": "PORCIONES TOTALES",
+        "SESSIONS_COUNT": "NÚMERO DE ELABORACIONES",
+        "PRODUCT": "PRODUCTO",
+        "QUANTITY_CONSUMED": "CANTIDAD CONSUMIDA"
+      }
     },
     "SUBTITLE": "Monitorización e historial de cocina",
     "STATS": {
@@ -1334,6 +1345,7 @@
       "RECIPE": "Receta",
       "USER": "Usuario",
       "QUANTITY": "Cantidad",
+      "PORTIONS": "Porciones",
       "DATE": "Fecha",
       "WEIGHT": "Peso",
       "ACTIONS": "Acciones",
