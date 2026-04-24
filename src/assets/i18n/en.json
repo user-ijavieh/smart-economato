@@ -1544,7 +1544,8 @@
     "AUDITS": {
       "SEARCH_PLACEHOLDER": "Search in audits...",
       "NONE_FOUND": "No audits found",
-      "RECIPE_ID": "Recipe ID",
+      "RECIPE_NAME": "Recipe Name",
+      "USER_NAME": "User Name",
       "DETAIL_TITLE": "Audit Detail",
       "PREV_STATE": "Previous State",
       "NEXT_STATE": "New State",
@@ -2198,8 +2199,8 @@
     "FILTERS": {
       "CLEAR": "Clear Filters",
       "SEARCH_PLACEHOLDER": "Search history...",
-      "RECIPE_ID": "Recipe ID",
-      "USER_ID": "User ID",
+      "RECIPE_NAME": "Recipe Name",
+      "USER_NAME": "User Name",
       "FROM": "From",
       "TO": "To",
       "DATE_RANGE": "Date Range",

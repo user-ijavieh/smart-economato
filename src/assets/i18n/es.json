@@ -1314,6 +1314,8 @@
     "FILTERS": {
       "CLEAR": "Limpiar Filtros",
       "SEARCH_PLACEHOLDER": "Buscar en historial...",
+      "RECIPE_NAME": "Nombre de Receta",
+      "USER_NAME": "Nombre de Usuario",
       "RECIPE_ID": "ID Receta",
       "USER_ID": "ID Usuario",
       "FROM": "Desde",
@@ -1462,6 +1464,14 @@
       "YEARLY": "Anual",
       "ALL_TIME": "Histórico",
       "CUSTOM": "Personalizado"
+    },
+    "FILTERS": {
+      "SEARCH_PLACEHOLDER": "Buscar en historial...",
+      "RECIPE_NAME": "Nombre de Receta",
+      "USER_NAME": "Nombre de Usuario",
+      "FROM": "Desde",
+      "TO": "Hasta",
+      "APPLY": "Aplicar"
     },
     "TABLE": {
       "DATE": "Fecha",
