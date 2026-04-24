@@ -1461,12 +1461,60 @@
       "EXCEL_ERROR": "Error downloading Excel"
     }
   },
-  "RECIPES_MGMT": {
+  "RECIPE_MGMT": {
     "TITLE": "Recipes Management",
+    "SEARCH_PLACEHOLDER": "Search by name...",
+    "ADD_RECIPE": "Add Recipe",
+    "NO_RECIPES_FOUND": "No recipes found",
+    "TABS": {
+      "RECIPES": "Recipes",
+      "AUDITS": "Audits",
+      "DRAFTS": "Drafts"
+    },
+    "STATS": {
+      "WITH_ALLERGENS": "With Allergens",
+      "WITHOUT_ALLERGENS": "Without Allergens",
+      "AVG_COST": "Average Cost"
+    },
+    "TABLE": {
+      "COMPONENTS": "Components",
+      "TOTAL_COST": "Total Cost",
+      "ALLERGENS": "Allergens"
+    },
+    "DRAFTS": {
+      "NONE_FOUND": "No drafts found",
+      "RESENDABLE": "Resendable",
+      "DETAIL_TITLE": "Draft Detail",
+      "ELABORATION": "Preparation",
+      "PRESENTATION": "Presentation",
+      "REJECTION_REASON": "Rejection reason",
+      "VIEW_APPROVED": "View approved recipe",
+      "APPROVE_CONFIRM_TITLE": "Approve draft",
+      "APPROVE_CONFIRM_MSG": "Do you want to approve the draft \"{{name}}\"?",
+      "REJECT_CONFIRM_TITLE": "Reject draft",
+      "REJECT_CONFIRM_MSG": "Indicate the reason to reject the draft <strong>{{name}}</strong>.",
+      "REJECT_REASON_EMPTY": "You must indicate a rejection reason",
+      "APPROVE_SUCCESS": "Draft \"{{name}}\" approved",
+      "REJECT_SUCCESS": "Draft \"{{name}}\" rejected",
+      "LOAD_ERROR": "Error loading recipe drafts",
+      "APPROVE_ERROR": "Error approving the draft",
+      "REJECT_ERROR": "Error rejecting the draft",
+      "APPROVED_LOAD_ERROR": "Could not load the approved recipe"
+    },
+    "AUDITS": {
+      "SEARCH_PLACEHOLDER": "Search in audits...",
+      "NONE_FOUND": "No audits found",
+      "RECIPE_ID": "Recipe ID",
+      "DETAIL_TITLE": "Audit Detail",
+      "PREV_STATE": "Previous State",
+      "NEXT_STATE": "New State",
+      "PREV_QTY": "Previous Quantity",
+      "NEXT_QTY": "New Quantity",
+      "LOAD_ERROR": "Error loading audits"
+    },
     "TAB_RECIPES": "Recipes",
     "TAB_AUDITS": "Audit",
     "TAB_DRAFTS": "Drafts",
-    "ADD_RECIPE": "Add Recipe",
     "WITH_ALLERGENS": "With Allergens",
     "WITHOUT_ALLERGENS": "Without Allergens",
     "AVG_COST": "Average Cost",
@@ -1538,7 +1586,8 @@
       "ELABORATION": "Elaboration",
       "PRESENTATION": "Presentation",
       "TOTAL_COST": "Total Cost",
-      "ALLERGENS": "Allergens"
+      "ALLERGENS": "Allergens",
+      "NONE": "None"
     }
   },
   "SETTINGS": {
