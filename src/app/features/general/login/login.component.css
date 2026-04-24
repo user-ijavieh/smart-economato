@@ -60,6 +60,13 @@
   transition: all 0.2s ease;
 }
 
+.login-language-selector {
+  position: absolute;
+  top: 16px;
+  right: 60px;
+  z-index: 2;
+}
+
 .login-theme-toggle:hover {
   background: rgba(0, 0, 0, 0.55);
 }

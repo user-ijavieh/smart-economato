@@ -1,5 +1,5 @@
 <div class="page-header header-perfil">
-  <h1>Perfil</h1>
+  <h1>{{ 'PROFILE.TITLE' | translate }}</h1>
 </div>
 
 <div class="page-content contenedor-principal hide-scrollbar">
@@ -9,7 +9,7 @@
       {{ userInitials }}
     </div>
     <div class="user-info">
-      <h2>{{ currentUser?.name || 'Cargando...' }}</h2>
+      <h2>{{ currentUser?.name || ('COMMON.LOADING' | translate) }}</h2>
       <p class="user-role">{{ currentUser?.role || '' }}</p>
       <p class="user-username">@{{ currentUser?.user || '' }}</p>
     </div>
@@ -19,16 +19,20 @@
   @if (isChef) {
   <div class="students-section">
     <div class="section-header">
-      <h2>Mis Alumnos</h2>
-      <span class="students-count">{{ filteredStudents.length }} visibles · {{ students.length }} total · {{ getOnlineStudentsCount() }} en línea</span>
+      <h2>{{ 'PROFILE.MY_STUDENTS' | translate }}</h2>
+      <span class="students-count">
+        {{ filteredStudents.length }} {{ 'PROFILE.VISIBLE' | translate }} · 
+        {{ students.length }} {{ 'PROFILE.TOTAL' | translate }} · 
+        {{ getOnlineStudentsCount() }} {{ 'PROFILE.ONLINE' | translate }}
+      </span>
     </div>
     <div class="students-toolbar">
       <input
         type="text"
         [(ngModel)]="studentSearchTerm"
         (ngModelChange)="onStudentSearchChange()"
-        placeholder="Buscar alumno por nombre..."
-        aria-label="Buscar alumno por nombre"
+        [placeholder]="'PROFILE.SEARCH_PLACEHOLDER' | translate"
+        [aria-label]="'PROFILE.SEARCH_PLACEHOLDER' | translate"
       />
     </div>
 
@@ -37,24 +41,24 @@
       <table class="students-table">
         <thead>
           <tr>
-            <th>Alumno</th>
-            <th>Usuario</th>
-            <th>Estado</th>
-            <th>Permisos Temporales</th>
+            <th>{{ 'PROFILE.STUDENT' | translate }}</th>
+            <th>{{ 'COMMON.USER' | translate }}</th>
+            <th>{{ 'COMMON.STATUS' | translate }}</th>
+            <th>{{ 'PROFILE.TEMP_PERMISSIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
           @for (row of [1,2,3,4,5]; track row) {
           <tr>
-            <td data-label="Alumno">
+            <td>
               <div class="student-name">
                 <div class="mini-avatar skeleton-circle"></div>
                 <span class="skeleton-text" style="width: 120px"></span>
               </div>
             </td>
-            <td data-label="Usuario"><span class="skeleton-text" style="width: 90px"></span></td>
-            <td data-label="Estado"><span class="skeleton-text" style="width: 80px"></span></td>
-            <td data-label="Permisos Temporales"><span class="skeleton-text" style="width: 100px"></span></td>
+            <td><span class="skeleton-text" style="width: 90px"></span></td>
+            <td><span class="skeleton-text" style="width: 80px"></span></td>
+            <td><span class="skeleton-text" style="width: 100px"></span></td>
           </tr>
           }
         </tbody>
@@ -62,49 +66,49 @@
     </div>
     } @else if (students.length === 0) {
     <div class="empty-state">
-      <p>No tienes alumnos asignados actualmente.</p>
+      <p>{{ 'PROFILE.NO_STUDENTS' | translate }}</p>
     </div>
     } @else if (filteredStudents.length === 0) {
     <div class="empty-state">
-      <p>No se encontraron alumnos con ese nombre.</p>
+      <p>{{ 'PROFILE.SEARCH_EMPTY' | translate }}</p>
     </div>
     } @else {
     <div class="table-container tabla-contenedor">
       <table class="students-table">
         <thead>
           <tr>
-            <th>Alumno</th>
-            <th>Usuario</th>
-            <th>Estado</th>
-            <th>Permisos Temporales</th>
+            <th>{{ 'PROFILE.STUDENT' | translate }}</th>
+            <th>{{ 'COMMON.USER' | translate }}</th>
+            <th>{{ 'COMMON.STATUS' | translate }}</th>
+            <th>{{ 'PROFILE.TEMP_PERMISSIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
           @for (student of pagedFilteredStudents; track student.id) {
           <tr>
-            <td data-label="Alumno">
+            <td [attr.data-label]="'PROFILE.STUDENT' | translate">
               <div class="student-name">
                 <div class="mini-avatar">{{ student.initials }}</div>
                 <span>{{ student.name }}</span>
               </div>
             </td>
-            <td data-label="Usuario">{{ student.user }}</td>
-            <td data-label="Estado">
+            <td [attr.data-label]="'COMMON.USER' | translate">{{ student.user }}</td>
+            <td [attr.data-label]="'COMMON.STATUS' | translate">
               @if (getStudentPresence(student.id); as presence) {
-              <span class="presence-pill connected">En línea</span>
+              <span class="presence-pill connected">{{ 'PROFILE.ONLINE' | translate }}</span>
               } @else {
-              <span class="presence-pill disconnected">Desconectado</span>
+              <span class="presence-pill disconnected">{{ 'PROFILE.OFFLINE' | translate }}</span>
               }
             </td>
-            <td data-label="Permisos Temporales">
+            <td [attr.data-label]="'PROFILE.TEMP_PERMISSIONS' | translate">
               <div class="actions-container">
                 @if (student.role !== 'ELEVATED') {
                 <button class="btn-success" (click)="openEscalateModal(student)">
-                  Dar Permisos
+                  {{ 'PROFILE.GRANT_PERMISSIONS' | translate }}
                 </button>
                 } @else {
                 <button class="btn-danger" (click)="deescalate(student)" [disabled]="isProcessing(student.id)">
-                  {{ isProcessing(student.id) ? 'Revocando...' : 'Revocar Permisos' }}
+                  {{ (isProcessing(student.id) ? 'PROFILE.REVOKING' : 'PROFILE.REVOKE_PERMISSIONS') | translate }}
                 </button>
                 }
               </div>
@@ -117,17 +121,23 @@
 
     @if (filteredStudentsTotalPages > 1) {
     <div class="students-pagination">
-      <button class="btn-success" type="button" (click)="prevStudentsPage()" [disabled]="studentsPage === 0">Anterior</button>
-      <span>Pagina {{ studentsPage + 1 }} de {{ filteredStudentsTotalPages }} · 50 por pagina</span>
-      <button class="btn-success" type="button" (click)="nextStudentsPage()" [disabled]="studentsPage >= filteredStudentsTotalPages - 1">Siguiente</button>
+      <button class="btn-success" type="button" (click)="prevStudentsPage()" [disabled]="studentsPage === 0">
+        {{ 'COMMON.PREVIOUS' | translate }}
+      </button>
+      <span>{{ 'PROFILE.PAGE_INFO' | translate:{page: studentsPage + 1, total: filteredStudentsTotalPages, size: 50} }}</span>
+      <button class="btn-success" type="button" (click)="nextStudentsPage()" [disabled]="studentsPage >= filteredStudentsTotalPages - 1">
+        {{ 'COMMON.NEXT' | translate }}
+      </button>
     </div>
     }
     }
 
     <div class="students-activity-panel">
       <div class="section-header activity-header">
-        <h2>Actividad reciente de alumnos</h2>
-        <button class="btn-success" (click)="loadStudentsActivity(true)" [disabled]="activityLoading">Refrescar</button>
+        <h2>{{ 'PROFILE.RECENT_ACTIVITY' | translate }}</h2>
+        <button class="btn-success" (click)="loadStudentsActivity(true)" [disabled]="activityLoading">
+          {{ 'COMMON.REFRESH' | translate }}
+        </button>
       </div>
 
       <div class="activity-list">
@@ -145,16 +155,16 @@
         }
 
         @if (activityLoading) {
-        <div class="empty-state">Cargando actividad...</div>
+        <div class="empty-state">{{ 'COMMON.LOADING' | translate }}</div>
         }
 
         @if (!activityLoading && activityLogs.length === 0) {
-        <div class="empty-state">Sin actividad reciente</div>
+        <div class="empty-state">{{ 'PROFILE.NO_ACTIVITY' | translate }}</div>
         }
 
         @if (!activityLoading && activityHasMore) {
         <div class="activity-load-more">
-          <button class="btn-success" (click)="loadStudentsActivity(false)">Cargar más</button>
+          <button class="btn-success" (click)="loadStudentsActivity(false)">{{ 'COMMON.LOAD_MORE' | translate }}</button>
         </div>
         }
       </div>
@@ -165,23 +175,19 @@
 
 <!-- Modal para Dar Permisos Temporales -->
 @if (showEscalateModal && selectedStudent) {
-<app-base-modal title="Permisos Temporales" size="md" (closed)="closeEscalateModal()">
+<app-base-modal [title]="'PROFILE.TEMP_PERMISSIONS' | translate" size="md" (closed)="closeEscalateModal()">
     <div class="escalate-modal-content">
-      <p>
-        Vas a escalar los permisos del alumno <strong>{{ selectedStudent.name }}</strong> a CHEF
-        temporalmente.
-      </p>
+      <p [innerHTML]="'PROFILE.ESCALATE_DESCRIPTION' | translate:{name: selectedStudent.name}"></p>
 
       <div class="form-group">
-        <label for="duration">Duración (minutos)</label>
-        <input type="number" id="duration" [(ngModel)]="durationInput" min="1" max="1440" class="duration-input"
-        />
+        <label for="duration">{{ 'PROFILE.DURATION_LABEL' | translate }}</label>
+        <input type="number" id="duration" [(ngModel)]="durationInput" min="1" max="1440" class="duration-input" />
       </div>
     </div>
 
     <div modal-footer>
       <button class="modal-btn modal-btn-primary" (click)="confirmEscalate()" [disabled]="isProcessing(selectedStudent.id)">
-        {{ isProcessing(selectedStudent.id) ? 'Aplicando...' : 'Confirmar' }}
+        {{ (isProcessing(selectedStudent.id) ? 'PROFILE.APPLYING' : 'COMMON.CONFIRM') | translate }}
       </button>
     </div>
 </app-base-modal>
