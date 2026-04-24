@@ -1462,7 +1462,7 @@
     }
   },
   "RECIPE_MGMT": {
-    "TITLE": "Recipe Management",
+    "TITLE": "Recipes Management",
     "SEARCH_PLACEHOLDER": "Search by name...",
     "ADD_RECIPE": "Add Recipe",
     "NO_RECIPES_FOUND": "No recipes found",
@@ -1473,7 +1473,7 @@
     },
     "STATS": {
       "WITH_ALLERGENS": "With Allergens",
-      "WITHOUT_ALLERGENS": "No Allergens",
+      "WITHOUT_ALLERGENS": "Without Allergens",
       "AVG_COST": "Average Cost"
     },
     "TABLE": {
@@ -1512,27 +1512,9 @@
       "NEXT_QTY": "New Quantity",
       "LOAD_ERROR": "Error loading audits"
     },
-    "MESSAGES": {
-      "LOAD_ERROR": "Error loading recipes",
-      "TOGGLE_HIDDEN_SUCCESS": "Recipe \"{{name}}\" has been {{action}}",
-      "TOGGLE_HIDDEN_ERROR": "Error {{action}} recipe",
-      "CREATE_SUCCESS": "Recipe \"{{name}}\" created successfully",
-      "CREATE_ERROR": "Error creating recipe",
-      "UPDATE_SUCCESS": "Recipe \"{{name}}\" updated successfully",
-      "UPDATE_ERROR": "Error updating recipe"
-    },
-    "LABELS": {
-      "USER": "User",
-      "RECIPE": "Recipe",
-      "NONE": "None"
-    }
-  },
-  "RECIPES_MGMT": {
-    "TITLE": "Recipes Management",
     "TAB_RECIPES": "Recipes",
     "TAB_AUDITS": "Audit",
     "TAB_DRAFTS": "Drafts",
-    "ADD_RECIPE": "Add Recipe",
     "WITH_ALLERGENS": "With Allergens",
     "WITHOUT_ALLERGENS": "Without Allergens",
     "AVG_COST": "Average Cost",
@@ -1604,7 +1586,8 @@
       "ELABORATION": "Elaboration",
       "PRESENTATION": "Presentation",
       "TOTAL_COST": "Total Cost",
-      "ALLERGENS": "Allergens"
+      "ALLERGENS": "Allergens",
+      "NONE": "None"
     }
   },
   "SETTINGS": {
