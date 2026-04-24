@@ -505,11 +505,11 @@
                     </td>
                     <td class="diff-prev"
                         [class.diff-highlight-old]="comp.status === 'changed' || comp.status === 'removed'">
-                        {{ comp.prevCantidad }}
+                        {{ comp.prevCantidad }} <span class="diff-unit">{{ comp.unit }}</span>
                     </td>
                     <td class="diff-next"
                         [class.diff-highlight-new]="comp.status === 'changed' || comp.status === 'added'">
-                        {{ comp.nextCantidad }}
+                        {{ comp.nextCantidad }} <span class="diff-unit">{{ comp.unit }}</span>
                     </td>
                 </tr>
                 }

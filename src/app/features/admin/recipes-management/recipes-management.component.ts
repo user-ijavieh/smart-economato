@@ -1051,7 +1051,7 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
         return fields;
     }
 
-    getComponentDiffs(): { nombre: string; prevCantidad: string; nextCantidad: string; status: 'added' | 'removed' | 'changed' | 'unchanged' }[] {
+    getComponentDiffs(): { nombre: string; unit: string; prevCantidad: string; nextCantidad: string; status: 'added' | 'removed' | 'changed' | 'unchanged' }[] {
         const prev = this.parsedPreviousState;
         const next = this.parsedNewState;
         if (!prev || !next) return [];
@@ -1073,15 +1073,17 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
             const p = prevMap.get(id);
             const n = nextMap.get(id);
             const name = n?.productoNombre ?? p?.productoNombre ?? `Producto #${id}`;
+            const unit = n?.productoUnidad ?? p?.productoUnidad ?? n?.productUnit ?? p?.productUnit ?? '';
 
             if (p && !n) {
-                result.push({ nombre: name, prevCantidad: p.cantidad.toString(), nextCantidad: '—', status: 'removed' });
+                result.push({ nombre: name, unit, prevCantidad: p.cantidad.toString(), nextCantidad: '—', status: 'removed' });
             } else if (!p && n) {
-                result.push({ nombre: name, prevCantidad: '—', nextCantidad: n.cantidad.toString(), status: 'added' });
+                result.push({ nombre: name, unit, prevCantidad: '—', nextCantidad: n.cantidad.toString(), status: 'added' });
             } else if (p && n) {
                 const changed = p.cantidad !== n.cantidad;
                 result.push({
                     nombre: name,
+                    unit,
                     prevCantidad: p.cantidad.toString(),
                     nextCantidad: n.cantidad.toString(),
                     status: changed ? 'changed' : 'unchanged'
