@@ -58,6 +58,7 @@ export class AlertNotificationComponent {
   readonly recoveries = this.recoveredAlerts.asReadonly();
   readonly showAlerts = signal<boolean>(this.storageService.get('layout_alerts_visible', 'local') !== 'false');
   readonly zIndex = computed(() => (this.modalStackCount() > 0 ? 80010 : 32000));
+  readonly hasAlerts = computed(() => Object.keys(this.activeFailures()).length > 0 || this.recoveredAlerts().length > 0);
 
   constructor() {
     this.webSocketService.alerts$

@@ -275,9 +275,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
         this.visibleIncidents = this.filterVisibleIncidents();
         this.cdr.markForCheck();
       },
-      error: () => {
-        this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.LOAD_ERROR') || 'No se pudieron cargar las incidencias');
-      }
+      error: () => { }
     });
   }
 
@@ -376,7 +374,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
         this.loadIncidents();
         this.openIncidentDetail(incident.id);
       },
-      error: () => this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.CREATE_ERROR') || 'No se pudo crear la incidencia')
+      error: () => { }
     });
   }
 
@@ -425,9 +423,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         this.cdr.markForCheck();
       },
-      error: () => {
-        this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.DETAIL_ERROR') || 'No se pudo cargar el detalle de la incidencia');
-      }
+      error: () => { }
     });
   }
 
@@ -876,7 +872,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
         this.downloadBlob(blob, `incidencia-${this.selectedIncidentId}.pdf`);
         this.messageService.showSuccess(this.translate.instant('INCIDENTS.MESSAGES.PDF_SUCCESS') || 'PDF descargado correctamente');
       },
-      error: () => this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.PDF_ERROR') || 'Error al generar el PDF')
+      error: () => { }
     });
   }
 
@@ -904,7 +900,7 @@ export class IncidentsComponent implements OnInit, OnDestroy, AfterViewInit {
         this.incidentTypes = types || [];
         this.cdr.markForCheck();
       },
-      error: () => this.messageService.showError(this.translate.instant('INCIDENTS.MESSAGES.TYPES_LOAD_ERROR') || 'No se pudieron cargar los tipos de incidencia')
+      error: () => { }
     });
   }
 

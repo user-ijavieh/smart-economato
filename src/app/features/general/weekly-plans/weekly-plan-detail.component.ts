@@ -262,7 +262,6 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.loading = false;
-        this.messageService.showError(this.translate.instant('WEEKLY_PLANS.MESSAGES.LOAD_ERROR'));
         this.cdr.detectChanges();
       }
     });
@@ -291,7 +290,6 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.loadingStock = false;
-        this.messageService.showError(this.translate.instant('WEEKLY_PLANS.MESSAGES.STOCK_LOAD_ERROR'));
         this.cdr.detectChanges();
       }
     });

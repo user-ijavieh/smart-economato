@@ -10,7 +10,32 @@ import { TranslateModule } from '@ngx-translate/core';
   template: `
     <div class="language-selector" (click)="toggleMenu($event)">
       <button class="selector-btn" [class.active]="isOpen()" [attr.aria-label]="'COMMON.SWITCH_LANGUAGE' | translate">
-        <span class="lang-text">{{ getActiveLanguage() | uppercase }}</span>
+        <span class="lang-content">
+          <span class="lang-text">{{ getActiveLanguage() | uppercase }}</span>
+          @if (getActiveLanguage() === 'es') {
+            <svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true">
+              <rect width="24" height="16" rx="3" fill="#AA151B"></rect>
+              <rect y="4" width="24" height="8" fill="#F1BF00"></rect>
+            </svg>
+          }
+          @if (getActiveLanguage() === 'en') {
+            <svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true">
+              <rect width="24" height="16" rx="3" fill="#FFFFFF"></rect>
+              <rect width="24" height="16" fill="none" stroke="#B22234" stroke-width="2"></rect>
+              <path d="M0 2h24M0 6h24M0 10h24M0 14h24" stroke="#B22234" stroke-width="1.4"></path>
+              <rect width="10" height="8" rx="1.5" fill="#3C3B6E"></rect>
+            </svg>
+          }
+          @if (getActiveLanguage() === 'ca') {
+            <svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true">
+              <rect width="24" height="16" rx="3" fill="#FCD116"></rect>
+              <rect y="2" width="24" height="2" fill="#A80000"></rect>
+              <rect y="6" width="24" height="2" fill="#A80000"></rect>
+              <rect y="10" width="24" height="2" fill="#A80000"></rect>
+              <rect y="14" width="24" height="2" fill="#A80000"></rect>
+            </svg>
+          }
+        </span>
         <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor" [class.rotate]="isOpen()">
           <path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/>
         </svg>
@@ -24,7 +49,32 @@ import { TranslateModule } from '@ngx-translate/core';
               [class.selected]="getActiveLanguage() === lang.code"
               (click)="selectLanguage(lang.code, $event)"
             >
-              <span class="lang-label">{{ lang.label }}</span>
+              <span class="menu-item-content">
+                <span class="lang-label">{{ lang.label }}</span>
+                @if (lang.code === 'es') {
+                  <svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true">
+                    <rect width="24" height="16" rx="3" fill="#AA151B"></rect>
+                    <rect y="4" width="24" height="8" fill="#F1BF00"></rect>
+                  </svg>
+                }
+                @if (lang.code === 'en') {
+                  <svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true">
+                    <rect width="24" height="16" rx="3" fill="#FFFFFF"></rect>
+                    <rect width="24" height="16" fill="none" stroke="#B22234" stroke-width="2"></rect>
+                    <path d="M0 2h24M0 6h24M0 10h24M0 14h24" stroke="#B22234" stroke-width="1.4"></path>
+                    <rect width="10" height="8" rx="1.5" fill="#3C3B6E"></rect>
+                  </svg>
+                }
+                @if (lang.code === 'ca') {
+                  <svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true">
+                    <rect width="24" height="16" rx="3" fill="#FCD116"></rect>
+                    <rect y="2" width="24" height="2" fill="#A80000"></rect>
+                    <rect y="6" width="24" height="2" fill="#A80000"></rect>
+                    <rect y="10" width="24" height="2" fill="#A80000"></rect>
+                    <rect y="14" width="24" height="2" fill="#A80000"></rect>
+                  </svg>
+                }
+              </span>
               @if (getActiveLanguage() === lang.code) {
                 <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor">
                   <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
@@ -58,10 +108,16 @@ import { TranslateModule } from '@ngx-translate/core';
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      min-width: 58px;
+      gap: 6px;
+      min-width: 76px;
       height: 36px;
       outline: none;
+    }
+
+    .lang-content {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .selector-btn:hover, .selector-btn.active {
@@ -81,6 +137,14 @@ import { TranslateModule } from '@ngx-translate/core';
 
     .lang-text {
       letter-spacing: 0.5px;
+    }
+
+    .flag-svg {
+      width: 18px;
+      height: 12px;
+      flex: 0 0 auto;
+      border-radius: 2px;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
     }
 
     .language-menu {
@@ -128,6 +192,13 @@ import { TranslateModule } from '@ngx-translate/core';
       cursor: pointer;
       transition: all 0.15s ease;
       text-align: left;
+    }
+
+    .menu-item-content {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
     }
 
     .menu-item:hover {
