@@ -1229,8 +1229,8 @@
     },
     "HISTORY": {
       "SEARCH_PLACEHOLDER": "Buscar en historial...",
-      "RECIPE_ID": "ID Recepta",
-      "USER_ID": "ID Usuari",
+      "RECIPE_NAME": "Nom de Recepta",
+      "USER_NAME": "Nom d'Usuari",
       "DATE_FROM": "Des de",
       "DATE_TO": "Fins a",
       "APPLY_FILTERS": "Aplicar Filtres",
@@ -1364,8 +1364,8 @@
     },
     "FILTERS": {
       "SEARCH_PLACEHOLDER": "Buscar en historial...",
-      "RECIPE_ID": "ID Recepta",
-      "USER_ID": "ID Usuari",
+      "RECIPE_NAME": "Nom de Recepta",
+      "USER_NAME": "Nom d'Usuari",
       "FROM": "Des de",
       "TO": "Fins a",
       "APPLY": "Aplicar"

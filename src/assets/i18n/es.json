@@ -1294,8 +1294,8 @@
     },
     "HISTORY": {
       "SEARCH_PLACEHOLDER": "Buscar en historial...",
-      "RECIPE_ID": "ID Receta",
-      "USER_ID": "ID Usuario",
+      "RECIPE_NAME": "Nombre de Receta",
+      "USER_NAME": "Nombre de Usuario",
       "DATE_FROM": "Desde",
       "DATE_TO": "Hasta",
       "APPLY_FILTERS": "Aplicar Filtros",
@@ -1429,8 +1429,8 @@
     },
     "FILTERS": {
       "SEARCH_PLACEHOLDER": "Buscar en historial...",
-      "RECIPE_ID": "ID Receta",
-      "USER_ID": "ID Usuario",
+      "RECIPE_NAME": "Nombre de Receta",
+      "USER_NAME": "Nombre de Usuario",
       "FROM": "Desde",
       "TO": "Hasta",
       "APPLY": "Aplicar"
