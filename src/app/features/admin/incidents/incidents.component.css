@@ -527,7 +527,7 @@
 }
 
 :host-context([data-theme="light"]) .severity-medium {
-  color: #92400e;
+  color: #f9c828;
 }
 
 .severity-low,
