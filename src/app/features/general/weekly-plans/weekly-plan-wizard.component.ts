@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { WeeklyPlanService } from '../../../core/services/weekly-plan.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { RecipeService } from '../../../core/services/recipe.service';
@@ -66,7 +67,7 @@ interface StockUsageRow {
 @Component({
   selector: 'app-weekly-plan-wizard',
   standalone: true,
-  imports: [CommonModule, FormsModule, SearchableDropdownComponent, BaseModalComponent],
+  imports: [CommonModule, FormsModule, SearchableDropdownComponent, BaseModalComponent, TranslateModule],
   templateUrl: './weekly-plan-wizard.component.html',
   styleUrls: ['./weekly-plan-wizard.component.css']
 })
@@ -82,6 +83,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private messageService = inject(MessageService);
   private storageService = inject(StorageService);
+  private translate = inject(TranslateService);
   private pendingOrdersByProduct: Record<number, number> = {};
   private pendingOrdersLookupKey = '';
   private pendingOrdersLoading = false;
@@ -148,13 +150,13 @@ export class WeeklyPlanWizardComponent implements OnInit {
   autoCreateRecipeResults: SearchableItem[] = [];
   
   days = [
-    { value: 1, label: 'Lunes' },
-    { value: 2, label: 'Martes' },
-    { value: 3, label: 'Miércoles' },
-    { value: 4, label: 'Jueves' },
-    { value: 5, label: 'Viernes' },
-    { value: 6, label: 'Sábado' },
-    { value: 7, label: 'Domingo' }
+    { value: 1, label: 'COMMON.DAYS.MONDAY' },
+    { value: 2, label: 'COMMON.DAYS.TUESDAY' },
+    { value: 3, label: 'COMMON.DAYS.WEDNESDAY' },
+    { value: 4, label: 'COMMON.DAYS.THURSDAY' },
+    { value: 5, label: 'COMMON.DAYS.FRIDAY' },
+    { value: 6, label: 'COMMON.DAYS.SATURDAY' },
+    { value: 7, label: 'COMMON.DAYS.SUNDAY' }
   ];
 
   myStudents: User[] = [];
@@ -377,7 +379,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: () => {
-        this.messageService.showError('No se pudo cargar el plan para edición.');
+        this.messageService.showError(this.translate.instant('WEEKLY_PLANS.MESSAGES.LOAD_ERROR'));
         this.router.navigate([this.getBaseRoute()]);
       }
     });
@@ -414,7 +416,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
       },
       error: () => {
         this.loadingInitial = false;
-        this.messageService.showError('No se pudo cargar el plan para duplicarlo.');
+        this.messageService.showError(this.translate.instant('WEEKLY_PLANS.WIZARD.LOAD_DUPLICATE_ERROR'));
         this.router.navigate([this.getBaseRoute()]);
       }
     });
@@ -422,7 +424,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
 
   nextStep() {
     if (this.currentStep === 1 && !this.weekStartDate) {
-      this.messageService.showWarning('Selecciona una fecha de inicio para continuar.');
+      this.messageService.showWarning(this.translate.instant('WEEKLY_PLANS.WIZARD.WEEK_START_WARN'));
       return;
     }
 
@@ -433,7 +435,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
 
     if (this.currentStep === 1 && !this.editMode && !this.duplicateMode) {
       if (this.role === 'ADMIN' && !this.chefId) {
-        this.messageService.showWarning('Selecciona un responsable (chef) para continuar.');
+        this.messageService.showWarning(this.translate.instant('WEEKLY_PLANS.WIZARD.CHEF_WARN'));
         return;
       }
       this.redirectToExistingPlanIfWeekTaken();
@@ -466,24 +468,18 @@ export class WeeklyPlanWizardComponent implements OnInit {
         this.loadingInitial = false;
         if (existingPlan) {
           if (existingPlan.status === 'DRAFT') {
-            this.messageService.showInfo(`Ya existe un plan borrador para la semana ${selectedWeek}. Se abrirá en edición.`);
+            this.messageService.showInfo(this.translate.instant('WEEKLY_PLANS.WIZARD.EXISTING_DRAFT_INFO', { week: selectedWeek }));
             this.router.navigate([this.getBaseRoute(), existingPlan.id, 'edit']);
             return;
           }
 
           if (existingPlan.status === 'ACTIVE' || existingPlan.status === 'IN_PROGRESS') {
-            this.messageService.showError(
-              `La semana ${selectedWeek} ya tiene un plan activo o en curso. ` +
-              'Selecciona otra semana o abre ese plan desde la pantalla principal.'
-            );
+            this.messageService.showError(this.translate.instant('WEEKLY_PLANS.WIZARD.EXISTING_ACTIVE_ERROR', { week: selectedWeek }));
             this.cdr.detectChanges();
             return;
           }
 
-          this.messageService.showWarning(
-            `La semana ${selectedWeek} ya tiene un plan en estado ${existingPlan.status}. ` +
-            'Selecciona otra semana o abre ese plan desde la pantalla principal.'
-          );
+          this.messageService.showWarning(this.translate.instant('WEEKLY_PLANS.WIZARD.EXISTING_PLAN_WARN', { week: selectedWeek, status: existingPlan.status }));
           this.cdr.detectChanges();
           return;
         }
@@ -599,30 +595,31 @@ export class WeeklyPlanWizardComponent implements OnInit {
   }
 
   getSlotSummary(slot: any) {
-    const recipe = slot.recipeName?.trim() || 'Sin receta';
-    return `${recipe} · ${slot.startTime || '--:--'}-${slot.endTime || '--:--'} · ${slot.studentIds?.length || 0} alumnos`;
+    const recipe = slot.recipeName?.trim() || this.translate.instant('WEEKLY_PLANS.WIZARD.NO_RECIPE');
+    const studentsLabel = this.translate.instant('WEEKLY_PLANS.WIZARD.STUDENTS_COUNT', { count: slot.studentIds?.length || 0 });
+    return `${recipe} · ${slot.startTime || '--:--'}-${slot.endTime || '--:--'} · ${studentsLabel}`;
   }
 
   getSlotWarningMessage(slot: WizardSlot) {
     const problems: string[] = [];
 
     if (!slot.recipeId) {
-      problems.push('sin receta');
+      problems.push(this.translate.instant('WEEKLY_PLANS.WIZARD.NO_RECIPE').toLowerCase());
     }
 
     if (!slot.quantity) {
-      problems.push('sin cantidad');
+      problems.push(this.translate.instant('WEEKLY_PLANS.WIZARD.NO_QUANTITY').toLowerCase());
     }
 
     if (!slot.startTime || !slot.endTime) {
-      problems.push('sin horario completo');
+      problems.push(this.translate.instant('WEEKLY_PLANS.WIZARD.NO_SCHEDULE').toLowerCase());
     }
 
     if (!slot.studentIds || slot.studentIds.length === 0) {
-      problems.push('sin alumnos asignados');
+      problems.push(this.translate.instant('WEEKLY_PLANS.WIZARD.NO_STUDENTS').toLowerCase());
     }
 
-    return problems.length > 0 ? `Sesión ${this.getSlotDisplayNumber(slot)} sin completar: ${problems.join(', ')}.` : '';
+    return problems.length > 0 ? this.translate.instant('WEEKLY_PLANS.WIZARD.SESSION_INCOMPLETE', { num: this.getSlotDisplayNumber(slot), problems: problems.join(', ') }) : '';
   }
 
   setWarning(key: string, message: string) {
@@ -666,7 +663,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
       const current = daySlots[index];
       const next = daySlots[index + 1];
       if (this.timesOverlap(current.startTime, current.endTime, next.startTime, next.endTime)) {
-        return `Hay sesiones que se pisan entre ${current.startTime}-${current.endTime} y ${next.startTime}-${next.endTime}.`;
+        return this.translate.instant('WEEKLY_PLANS.WIZARD.OVERLAP_MSG', { start1: current.startTime, end1: current.endTime, start2: next.startTime, end2: next.endTime });
       }
     }
 
@@ -691,9 +688,10 @@ export class WeeklyPlanWizardComponent implements OnInit {
       if (!this.warnedOverlapDays.has(dayOfWeek)) {
         const firstOverlap = this.getOverlapDetails(dayOfWeek);
         const warningKey = `day-${dayOfWeek}`;
-        const warningMessage = firstOverlap || `Las sesiones del ${this.getDayLabel(dayOfWeek)} se están solapando.`;
+        const dayLabel = this.translate.instant(this.getDayLabel(dayOfWeek));
+        const warningMessage = firstOverlap || this.translate.instant('WEEKLY_PLANS.WIZARD.OVERLAP_GENERIC', { day: dayLabel });
         this.setWarning(warningKey, warningMessage);
-        this.messageService.showWarning(`Las sesiones del ${this.getDayLabel(dayOfWeek)} se están solapando. Revisa los horarios.`);
+        this.messageService.showWarning(this.translate.instant('WEEKLY_PLANS.WIZARD.OVERLAP_GENERIC', { day: dayLabel }));
         this.warnedOverlapDays.add(dayOfWeek);
       }
     } else {
@@ -713,7 +711,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
       const current = daySlots[index];
       const next = daySlots[index + 1];
       if (this.timesOverlap(current.startTime, current.endTime, next.startTime, next.endTime)) {
-        return `Las sesiones ${this.getSlotDisplayNumber(current)} y ${this.getSlotDisplayNumber(next)} se chocan.`;
+        return this.translate.instant('WEEKLY_PLANS.WIZARD.OVERLAP_DETAIL', { num1: this.getSlotDisplayNumber(current), num2: this.getSlotDisplayNumber(next) });
       }
     }
 
@@ -721,7 +719,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
   }
 
   getDayLabel(dayOfWeek: number) {
-    return this.days.find(day => day.value === dayOfWeek)?.label || 'día';
+    return this.days.find(day => day.value === dayOfWeek)?.label || 'COMMON.DAYS.DAY';
   }
 
   isSlotComplete(slot: any) {
@@ -937,13 +935,13 @@ export class WeeklyPlanWizardComponent implements OnInit {
     this.clearDaySlots(targetDayOfWeek);
 
     if (this.myStudents.length === 0) {
-      this.messageService.showWarning('No hay alumnos disponibles para repartir automáticamente.');
+      this.messageService.showWarning(this.translate.instant('WEEKLY_PLANS.WIZARD.AUTO_NO_STUDENTS_WARN'));
       return;
     }
 
     const availableStudents = this.getAvailableStudentsForAutoCreate();
     if (availableStudents.length === 0) {
-      this.messageService.showWarning('No hay alumnos disponibles tras aplicar la exclusión.');
+      this.messageService.showWarning(this.translate.instant('WEEKLY_PLANS.WIZARD.AUTO_NO_STUDENTS_FILTER_WARN'));
       return;
     }
 
@@ -970,7 +968,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
     });
 
     if (candidates.length === 0) {
-      this.messageService.showWarning('No hay recetas disponibles con esos filtros de alérgenos y stock.');
+      this.messageService.showWarning(this.translate.instant('WEEKLY_PLANS.WIZARD.AUTO_NO_RECIPES_WARN'));
       return;
     }
 
@@ -988,7 +986,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
     );
 
     if (schedule.length === 0) {
-      this.messageService.showWarning('No hay espacio suficiente en el rango horario para crear sesiones con esa duración.');
+      this.messageService.showWarning(this.translate.instant('WEEKLY_PLANS.WIZARD.AUTO_NO_SPACE_WARN'));
       return;
     }
 
@@ -1005,7 +1003,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
 
     this.saveAutoCreateOptions();
     this.closeAutoCreateModal();
-    this.messageService.showSuccess(`Se han creado ${schedule.length} sesiones automáticamente para ${this.getDayLabel(targetDayOfWeek)}.`);
+    this.messageService.showSuccess(this.translate.instant('WEEKLY_PLANS.WIZARD.AUTO_SUCCESS', { count: schedule.length, day: this.translate.instant(this.getDayLabel(targetDayOfWeek)) }));
   }
 
   private clearDaySlots(dayOfWeek: number): void {
@@ -1272,7 +1270,7 @@ export class WeeklyPlanWizardComponent implements OnInit {
     }
 
     const allergenNames = recipe.allergens.map(allergen => allergen.name).join(', ');
-    this.messageService.showWarning(`La receta "${recipe.name}" contiene alérgenos: ${allergenNames}.`);
+    this.messageService.showWarning(this.translate.instant('WEEKLY_PLANS.WIZARD.RECIPE_ALLERGENS_WARN', { name: recipe.name, allergens: allergenNames }));
   }
 
   getStockUsageSummary() {
@@ -1474,14 +1472,14 @@ export class WeeklyPlanWizardComponent implements OnInit {
     }
 
     if (this.role === 'ADMIN' && !this.chefId) {
-      this.messageService.showWarning('Selecciona un chef responsable antes de guardar el plan.');
+      this.messageService.showWarning(this.translate.instant('WEEKLY_PLANS.WIZARD.CHEF_WARN'));
       return;
     }
 
     // Basic validation
     for (const slot of this.slots) {
       if (!slot.recipeId) {
-        this.messageService.showError('Todas las sesiones deben tener una receta seleccionada.');
+        this.messageService.showError(this.translate.instant('WEEKLY_PLANS.WIZARD.RECIPE_ERROR'));
         return;
       }
     }
@@ -1506,26 +1504,26 @@ export class WeeklyPlanWizardComponent implements OnInit {
       this.weeklyPlanService.updatePlan(this.planId, request).subscribe({
         next: (res) => {
           this.saving = false;
-          this.messageService.showSuccess('Plan semanal actualizado con éxito.');
+          this.messageService.showSuccess(this.translate.instant('WEEKLY_PLANS.WIZARD.UPDATE_SUCCESS'));
           this.router.navigate([this.getBaseRoute(), res.id]);
         },
         error: (err) => {
           this.saving = false;
-          const backendMessage = typeof err?.error?.message === 'string' ? err.error.message : '';
-          this.messageService.showError(backendMessage || 'Error al actualizar el plan semanal.');
+const backendMessage = typeof err?.error?.message === 'string' ? err.error.message : '';  
+          this.messageService.showError(backendMessage || this.translate.instant('WEEKLY_PLANS.WIZARD.UPDATE_ERROR') || 'Error al actualizar el plan semanal.');
         }
       });
     } else {
       this.weeklyPlanService.createPlan(request).subscribe({
         next: (res) => {
           this.saving = false;
-          this.messageService.showSuccess('Plan semanal creado con éxito en estado borrador.');
+          this.messageService.showSuccess(this.translate.instant('WEEKLY_PLANS.WIZARD.CREATE_SUCCESS'));
           this.router.navigate([this.getBaseRoute(), res.id]);
         },
         error: (err) => {
           this.saving = false;
-          const backendMessage = typeof err?.error?.message === 'string' ? err.error.message : '';
-          this.messageService.showError(backendMessage || 'Error al guardar el plan semanal.');
+const backendMessage = typeof err?.error?.message === 'string' ? err.error.message : '';  
+          this.messageService.showError(backendMessage || this.translate.instant('WEEKLY_PLANS.WIZARD.CREATE_ERROR') || 'Error al guardar el plan semanal.');
         }
       });
     }
@@ -1553,10 +1551,10 @@ export class WeeklyPlanWizardComponent implements OnInit {
   async cancel() {
     if (this.hasUnsavedChanges()) {
       const confirmed = await this.messageService.confirm(
-        'Salir sin guardar',
-        'Tienes cambios sin guardar. Si sales ahora se perderán.',
-        'Salir sin guardar',
-        'Seguir editando'
+        this.translate.instant('WEEKLY_PLANS.WIZARD.UNSAVED_TITLE'),
+        this.translate.instant('WEEKLY_PLANS.WIZARD.UNSAVED_MSG'),
+        this.translate.instant('WEEKLY_PLANS.WIZARD.UNSAVED_EXIT'),
+        this.translate.instant('WEEKLY_PLANS.WIZARD.UNSAVED_STAY')
       );
       if (!confirmed) {
         return;

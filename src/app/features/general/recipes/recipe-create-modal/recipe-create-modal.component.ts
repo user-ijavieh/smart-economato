@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnInit, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RecipeRequest } from '../../../../shared/models/recipe.model';
 import { Product } from '../../../../shared/models/product.model';
 import { Allergen } from '../../../../shared/models/allergen.model';
@@ -23,7 +24,7 @@ interface FormComponent {
 @Component({
   selector: 'app-recipe-create-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseModalComponent, BarcodeScannerComponent],
+  imports: [CommonModule, FormsModule, BaseModalComponent, BarcodeScannerComponent, TranslateModule, DecimalPipe],
   templateUrl: './recipe-create-modal.component.html',
   styleUrl: './recipe-create-modal.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -33,12 +34,13 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
   private allergenService = inject(AllergenService);
   private messageService = inject(MessageService);
   private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
 
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<RecipeRequest>();
   @Input() isAdmin = false;
-  @Input() modalTitle = 'Crear Nueva Receta';
-  @Input() actionLabel = 'Crear Receta';
+  @Input() modalTitle = '';
+  @Input() actionLabel = '';
   @Input() initialRecipe: RecipeRequest | null = null;
 
   createForm: RecipeRequest = {
@@ -67,6 +69,13 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
   private searchSubject = new Subject<{ query: string, index: number }>();
 
   ngOnInit(): void {
+    if (!this.modalTitle) {
+      this.modalTitle = this.translate.instant('RECIPES.CREATE_MODAL_TITLE');
+    }
+    if (!this.actionLabel) {
+      this.actionLabel = this.translate.instant('RECIPES.CREATE_ACTION_LABEL');
+    }
+
     this.initialiseSearchSubscription();
     this.initialiseFromInput();
     this.loadFormData();
@@ -144,7 +153,7 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError('Error al cargar productos');
+        this.messageService.showError(this.translate.instant('COMMON.ERROR_LOADING_PRODUCTS'));
         this.loadingProducts = false;
         this.loadingMoreProducts = false;
         this.cdr.markForCheck();
@@ -173,7 +182,7 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError('Error al cargar alérgenos');
+        this.messageService.showError(this.translate.instant('COMMON.ERROR_LOADING_ALLERGENS'));
         this.loadingAllergens = false;
         this.cdr.markForCheck();
       }
@@ -289,7 +298,7 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
   getProductName(productId: number): string {
     if (productId === 0) return '';
     const product = this.availableProducts.find(p => p.id === productId);
-    return product ? product.name : 'Producto no encontrado';
+    return product ? product.name : this.translate.instant('COMMON.PRODUCT_NOT_FOUND');
   }
 
   closeAllDropdowns(): void {
@@ -317,7 +326,7 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
     }
 
     this.selectProduct(product.id, this.scannerComponentIndex);
-    this.messageService.showSuccess(`Producto añadido por escaneo: ${product.name}`);
+    this.messageService.showSuccess(this.translate.instant('PRODUCT_MGMT.MESSAGES.PRODUCT_ADDED_SCAN', { name: product.name }));
     this.closeBarcodeScanner();
   }
 
@@ -327,12 +336,12 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
 
   saveRecipe(): void {
     if (!this.createForm.name.trim()) {
-      this.messageService.showError('El nombre es obligatorio');
+      this.messageService.showError(this.translate.instant('RECIPES.MESSAGES.NAME_REQUIRED'));
       return;
     }
 
     if (this.formComponents.length === 0) {
-      this.messageService.showError('Debe agregar al menos un componente');
+      this.messageService.showError(this.translate.instant('RECIPES.MESSAGES.AT_LEAST_ONE_COMPONENT'));
       return;
     }
 
@@ -344,7 +353,7 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
 
     const invalidComponents = this.createForm.components.some(c => c.productId === 0 || c.quantity <= 0);
     if (invalidComponents) {
-      this.messageService.showError('Todos los componentes deben tener un producto y cantidad válidos');
+      this.messageService.showError(this.translate.instant('RECIPES.MESSAGES.INVALID_COMPONENTS'));
       return;
     }
 
