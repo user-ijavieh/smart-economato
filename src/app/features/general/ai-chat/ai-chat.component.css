@@ -906,6 +906,13 @@
   grid-column: 1 / -1;
 }
 
+.gpt-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  width: 100%;
+}
+
 @media (max-width: 800px) {
   :host {
     height: 100dvh;

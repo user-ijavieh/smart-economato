@@ -180,7 +180,11 @@
     "ADD": "Add",
     "OPTIONAL": "Optional",
     "VISIBLE": "Visible",
-    "SEARCH_SUPPLIER_PLACEHOLDER": "Search supplier..."
+    "SEARCH_SUPPLIER_PLACEHOLDER": "Search supplier...",
+    "PDF_CONFIRM_TITLE": "Confirm download",
+    "PDF_CONFIRM_MSG": "Do you want to download this PDF file?",
+    "CODE": "Code",
+    "ID": "ID"
   },
   "NAV": {
     "DASHBOARD": "Home",

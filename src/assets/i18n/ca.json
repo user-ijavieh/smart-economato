@@ -180,7 +180,11 @@
     "ADD": "Afegir",
     "OPTIONAL": "Opcional",
     "VISIBLE": "Visible",
-    "SEARCH_SUPPLIER_PLACEHOLDER": "Cercar proveïdor..."
+    "SEARCH_SUPPLIER_PLACEHOLDER": "Cercar proveïdor...",
+    "PDF_CONFIRM_TITLE": "Confirmar descàrrega",
+    "PDF_CONFIRM_MSG": "Vols descarregar aquest arxiu PDF?",
+    "CODE": "Codi",
+    "ID": "ID"
   },
   "NAV": {
     "DASHBOARD": "Inici",

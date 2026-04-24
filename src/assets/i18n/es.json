@@ -180,7 +180,11 @@
     "ADD": "Añadir",
     "OPTIONAL": "Opcional",
     "VISIBLE": "Visible",
-    "SEARCH_SUPPLIER_PLACEHOLDER": "Buscar proveedor..."
+    "SEARCH_SUPPLIER_PLACEHOLDER": "Buscar proveedor...",
+    "PDF_CONFIRM_TITLE": "Confirmar descarga",
+    "PDF_CONFIRM_MSG": "¿Deseas descargar este archivo PDF?",
+    "CODE": "Código",
+    "ID": "ID"
   },
   "NAV": {
     "DASHBOARD": "Inicio",
