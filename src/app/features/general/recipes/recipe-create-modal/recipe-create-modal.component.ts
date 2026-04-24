@@ -18,6 +18,7 @@ interface FormComponent {
   quantity: number;
   searchText: string;
   availabilityPercentage?: number;
+  productUnit?: string;
 }
 
 @Component({
@@ -110,7 +111,8 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
         productId: c.productId,
         quantity: c.quantity,
         searchText: product ? product.name : '',
-        availabilityPercentage: product?.availabilityPercentage ?? 100
+        availabilityPercentage: product?.availabilityPercentage ?? 100,
+        productUnit: product?.unit
       };
     });
   }
@@ -158,8 +160,12 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
     }
 
     for (const component of this.formComponents) {
-      if (!component.searchText && component.productId > 0) {
-        component.searchText = this.getProductName(component.productId);
+      if (component.productId > 0) {
+        const product = this.availableProducts.find(p => p.id === component.productId);
+        if (product) {
+          if (!component.searchText) component.searchText = product.name;
+          if (!component.productUnit) component.productUnit = product.unit;
+        }
       }
     }
   }
@@ -234,6 +240,7 @@ export class RecipeCreateModalComponent implements OnInit, OnDestroy {
     }
 
     this.formComponents[index].availabilityPercentage = product?.availabilityPercentage ?? 100;
+    this.formComponents[index].productUnit = product?.unit;
 
     this.showProductDropdown[index] = false;
     this.activeComponentIndex = null;

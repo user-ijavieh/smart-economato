@@ -3,6 +3,7 @@ export type RecipeDraftStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 export interface RecipeDraftComponent {
   productId: number;
   quantity: number;
+  productUnit?: string;
 }
 
 export interface RecipeDraftRequest {

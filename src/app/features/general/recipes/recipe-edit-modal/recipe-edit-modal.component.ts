@@ -17,6 +17,7 @@ interface FormComponent {
   quantity: number;
   searchText: string;
   availabilityPercentage?: number;
+  productUnit?: string;
 }
 
 
@@ -110,7 +111,8 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
       productId: c.productId,
       quantity: c.quantity,
       searchText: c.productName || '',
-      availabilityPercentage: c.availabilityPercentage
+      availabilityPercentage: c.availabilityPercentage,
+      productUnit: c.productUnit
     }));
 
 
@@ -271,6 +273,7 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
       this.productNamesMap[productId] = selectedProduct.name;
       this.formComponents[index].searchText = selectedProduct.name;
       this.formComponents[index].availabilityPercentage = selectedProduct.availabilityPercentage != null ? selectedProduct.availabilityPercentage : 100;
+      this.formComponents[index].productUnit = selectedProduct.unit;
     }
 
 
@@ -304,6 +307,7 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
     this.formComponents[index].productId = product.id;
     this.formComponents[index].searchText = product.name;
     this.formComponents[index].availabilityPercentage = product.availabilityPercentage != null ? product.availabilityPercentage : 100;
+    this.formComponents[index].productUnit = product.unit;
     this.productNamesMap[product.id] = product.name;
     this.productsCache.set(product.id, product);
 
