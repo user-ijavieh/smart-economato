@@ -223,11 +223,11 @@
     "RECEPTION": "Recepció",
     "RECIPES": "Receptes",
     "KITCHEN": "Cuina",
-    "USERS": "Alumnes",
+    "USERS": "Gestió d'Usuaris",
     "MASTER_DATA": "Dades Mestres",
     "PRODUCTS": "Productes",
     "TRACEABILITY": "Traçabilitat",
-    "PROFILE": "Perfil"
+    "PROFILE": "Gestió d'Alumnes"
   },
   "INVENTORY": {
     "TITLE": "Inventari",
@@ -2905,7 +2905,7 @@
     "UPDATE": "Actualitzar",
     "ROLES": {
       "USER": "Usuari",
-      "IA": "IA",
+      "IA": "Chef Pio",
       "SYSTEM": "Sistema",
       "TOOL": "Eina"
     },

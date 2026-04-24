@@ -278,11 +278,11 @@
     },
     "RECIPES": "Recetas",
     "KITCHEN": "Cocina",
-    "USERS": "Alumnos",
+    "USERS": "Gestión de Usuarios",
     "MASTER_DATA": "Datos Maestros",
     "PRODUCTS": "Productos",
     "TRACEABILITY": "Trazabilidad",
-    "PROFILE": "Perfil"
+    "PROFILE": "Gestión de Alumnos"
   },
   "INVENTORY": {
     "TITLE": "Inventario",
@@ -3031,7 +3031,7 @@
     "UPDATE": "Actualizar",
     "ROLES": {
       "USER": "Usuario",
-      "IA": "IA",
+      "IA": "Chef Pio",
       "SYSTEM": "Sistema",
       "TOOL": "Herramienta"
     },
