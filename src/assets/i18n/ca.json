@@ -138,6 +138,22 @@
     "THEME_LIGHT": "Canviar a mode clar",
     "THEME_DARK": "Canviar a mode fosc",
     "CLEAR_CACHE": "Netejar cau local",
+    "UNITS_COUNT": "{{count}} unitats",
+    "STUDENTS_COUNT": "{{count}} alumnes",
+    "COLLAPSE_COLUMN": "Col·lapsar columna",
+    "EXPAND_COLUMN": "Expandir columna",
+    "SEARCH_PRODUCT_PLACEHOLDER": "Buscar producte...",
+    "GROSS": "Brut",
+    "NET": "Net",
+    "ORDERS_COUNT": "{{count}} comandes",
+    "SHORTAGES": "Faltants",
+    "ACTIVATE": "Activar",
+    "COMPLETED": "Finalitzat",
+    "SELECT_SUPPLIER": "Seleccionar proveïdor",
+    "SELECT_PRODUCTS": "Seleccionar productes",
+    "SCAN_BARCODE": "Escanejar codi de barres",
+    "SHOWING_RESULTS": "Mostrant {{current}} de {{total}} resultats",
+    "PDF_DOWNLOAD": "Descarregar PDF",
     "ROLES": {
       "ADMIN": "Administrador",
       "CHEF": "Chef / Professor",
@@ -1696,6 +1712,8 @@
     "TOTAL_ITEMS": "({{total}} {{itemType}})"
   },
   "BATCHES": {
+    "REMAINING": "Restant",
+    "EXPIRATION": "Caducitat",
     "TITLE": "Gestió de Lots",
     "TABS": {
       "ALL": "Tots els Lots",
@@ -2240,6 +2258,7 @@
       "RESTORE_STUDENT_SESSION_ERROR": "No s'ha pogut restaurar l'alumne en la sessió."
     },
     "DETAIL": {
+      "SESSIONS_COUNT": "{{count}} sessions",
       "WEEK_OF": "Setmana del {{date}}",
       "BACK_TO_PLANS": "Tornar a plans",
       "BACK_ARIA": "Tornar al llistat de plans setmanals",
@@ -2274,6 +2293,7 @@
       "INSUFFICIENT_STOCK": "Estoc insuficient (Falten: {{qty}} Brut)",
       "IN_ORDERS": "En comandes",
       "HAVE_STOCK_LABEL": "Hi ha estoc ({{qty}})",
+      "COVERED_BY_ORDERS": "Cobert per comandes",
       "MISSING_UNITS": "Falten unitats",
       "NO_STOCK_REQS": "No hi ha requisits d'estoc per a aquest pla.",
       "PDF_HINT": "Tria el format d'orientació per descarregar el PDF del pla setmanal.",
@@ -2325,6 +2345,7 @@
       "STEP_2_HINT": "Crea una o diverses sessions per dia. Pots afegir més sessions al mateix dia o moure-les després.",
       "NO_SESSIONS": "Encara no hi ha sessions. Usa el botó de cada dia per començar.",
       "SESSIONS_COUNT": "{{count}} sessions",
+      "STUDENTS_COUNT": "{{count}} alumnes",
       "OVERLAP_WARN_ARIA": "Veure problema de solapament a {{day}}",
       "ADD_SLOT": "Afegir sessió",
       "ADD_SLOT_ARIA": "Afegir sessió per a {{day}}",

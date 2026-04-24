@@ -138,6 +138,22 @@
     "THEME_LIGHT": "Switch to light mode",
     "THEME_DARK": "Switch to dark mode",
     "CLEAR_CACHE": "Clear local cache",
+    "UNITS_COUNT": "{{count}} units",
+    "STUDENTS_COUNT": "{{count}} students",
+    "COLLAPSE_COLUMN": "Collapse column",
+    "EXPAND_COLUMN": "Expand column",
+    "SEARCH_PRODUCT_PLACEHOLDER": "Search product...",
+    "GROSS": "Gross",
+    "NET": "Net",
+    "ORDERS_COUNT": "{{count}} orders",
+    "SHORTAGES": "Shortages",
+    "ACTIVATE": "Activate",
+    "COMPLETED": "Completed",
+    "SELECT_SUPPLIER": "Select supplier",
+    "SELECT_PRODUCTS": "Select products",
+    "SCAN_BARCODE": "Scan barcode",
+    "SHOWING_RESULTS": "Showing {{current}} of {{total}} results",
+    "PDF_DOWNLOAD": "PDF Download",
     "ROLES": {
       "ADMIN": "Administrator",
       "CHEF": "Chef / Teacher",
@@ -1936,6 +1952,7 @@
       "RESTORE_STUDENT_SESSION_ERROR": "Could not restore student in session."
     },
     "DETAIL": {
+      "SESSIONS_COUNT": "{{count}} sessions",
       "WEEK_OF": "Week of {{date}}",
       "BACK_TO_PLANS": "Back to plans",
       "BACK_ARIA": "Back to weekly plans list",
@@ -1969,7 +1986,8 @@
       "HAVE_STOCK": "Have stock ({{qty}} Net)",
       "INSUFFICIENT_STOCK": "Insufficient stock (Missing: {{qty}} Gross)",
       "IN_ORDERS": "In orders",
-      "HAVE_STOCK_LABEL": "Have stock ({{qty}})",
+      "HAVE_STOCK_LABEL": "Stock available ({{qty}})",
+      "COVERED_BY_ORDERS": "Covered by orders",
       "MISSING_UNITS": "Missing units",
       "NO_STOCK_REQS": "No stock requirements for this plan.",
       "PDF_HINT": "Choose PDF orientation for downloading the weekly plan.",
@@ -2021,6 +2039,7 @@
       "STEP_2_HINT": "Create one or more sessions per day. You can add more sessions on the same day or move them later.",
       "NO_SESSIONS": "No sessions yet. Use the button for each day to start.",
       "SESSIONS_COUNT": "{{count}} sessions",
+      "STUDENTS_COUNT": "{{count}} students",
       "OVERLAP_WARN_ARIA": "See overlap issue in {{day}}",
       "ADD_SLOT": "Add session",
       "ADD_SLOT_ARIA": "Add session for {{day}}",
@@ -2595,6 +2614,8 @@
     }
   },
   "BATCHES": {
+    "REMAINING": "Remaining",
+    "EXPIRATION": "Expiration",
     "TITLE": "Batch Management",
     "TABS": {
       "ALL": "All Batches",
