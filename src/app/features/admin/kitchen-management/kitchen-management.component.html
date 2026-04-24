@@ -23,8 +23,8 @@
 <div class="page-content contenedor-principal">
   <div class="controls-bar controles">
     <input type="text" [(ngModel)]="searchTerm" [placeholder]="'KITCHEN.FILTERS.SEARCH_PLACEHOLDER' | translate" (ngModelChange)="applySearchFilter()" />
-    <input type="number" [(ngModel)]="recipeIdFilter" [placeholder]="'KITCHEN.FILTERS.RECIPE_ID' | translate" min="1" class="id-input" />
-    <input type="number" [(ngModel)]="userIdFilter" [placeholder]="'KITCHEN.FILTERS.USER_ID' | translate" min="1" class="id-input" />
+    <input type="text" [(ngModel)]="recipeNameFilter" [placeholder]="'KITCHEN.FILTERS.RECIPE_NAME' | translate" class="text-input" />
+    <input type="text" [(ngModel)]="userNameFilter" [placeholder]="'KITCHEN.FILTERS.USER_NAME' | translate" class="text-input" />
     <div class="date-range-group">
       <div class="date-filter-field">
         <span class="date-field-label">{{ 'KITCHEN.FILTERS.FROM' | translate }}</span>
