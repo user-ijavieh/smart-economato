@@ -203,6 +203,10 @@ export class BatchesManagementComponent implements OnInit, OnDestroy {
     this.searchSubject.next(this.searchTerm);
   }
 
+  onFilterChange(): void {
+    this.loadBatches(0);
+  }
+
   clearFilters(): void {
     this.searchTerm = '';
     this.statusFilter = 'active';
