@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PwaInstallService } from '../../../core/services/pwa-install.service';
 import { PwaNotificationService } from '../../../core/services/pwa-notification.service';
 import { StorageService } from '../../../core/services/storage.service';
@@ -18,21 +17,21 @@ import { StorageService } from '../../../core/services/storage.service';
 @Component({
   selector: 'app-pwa-install-banner',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule],
   template: `
     <div *ngIf="showBanner" class="pwa-banner">
       <div class="pwa-banner-content">
         <div class="pwa-banner-icon">📱</div>
         <div class="pwa-banner-text">
-          <h3>{{ 'PWA.TITLE' | translate }}</h3>
+          <h3>Instala SmartEconomato</h3>
           <p>{{ instructions }}</p>
         </div>
         <div class="pwa-banner-actions">
           <button class="btn-install" (click)="onInstall()" *ngIf="showInstallBtn">
-            {{ 'PWA.INSTALL' | translate }}
+            Instalar
           </button>
           <button class="btn-share" (click)="onShare()" *ngIf="showShareBtn">
-            {{ 'PWA.SHARE' | translate }}
+            Compartir
           </button>
           <button class="btn-close" (click)="onDismiss()">✕</button>
         </div>
@@ -164,7 +163,6 @@ export class PwaInstallBannerComponent implements OnInit, OnDestroy {
   instructions = '';
   private readonly storageService = inject(StorageService);
 
-  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -202,10 +200,7 @@ export class PwaInstallBannerComponent implements OnInit, OnDestroy {
   async onInstall() {
     const success = await this.pwaInstall.installApp();
     if (success) {
-      this.notifications.showSuccess(
-        this.translate.instant('PWA.MESSAGES.INSTALL_STARTED'), 
-        this.translate.instant('PWA.MESSAGES.INSTALL_STARTED_SUB')
-      );
+      this.notifications.showSuccess('✓ Instalación iniciada', 'SmartEconomato se agregará a tu pantalla de inicio');
       this.showBanner = false;
     }
   }
@@ -213,10 +208,7 @@ export class PwaInstallBannerComponent implements OnInit, OnDestroy {
   async onShare() {
     const success = await this.pwaInstall.shareApp();
     if (success) {
-      this.notifications.showSuccess(
-        this.translate.instant('PWA.MESSAGES.SHARED'), 
-        this.translate.instant('PWA.MESSAGES.SHARED_SUB')
-      );
+      this.notifications.showSuccess('✓ Compartido', 'Link de SmartEconomato compartido');
     }
   }
 

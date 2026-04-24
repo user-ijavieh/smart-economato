@@ -1,7 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit, DestroyRef, inject } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of, switchMap } from 'rxjs';
 import { User } from '../../../../shared/models/user.model';
 import { UserService } from '../../../../core/services/user.service';
@@ -12,7 +11,7 @@ import { SearchableDropdownComponent, SearchableItem } from '../../../../shared/
 @Component({
     selector: 'app-user-form-modal',
     standalone: true,
-    imports: [ReactiveFormsModule, BaseModalComponent, SearchableDropdownComponent, TranslateModule],
+    imports: [ReactiveFormsModule, BaseModalComponent, SearchableDropdownComponent],
     templateUrl: './user-form-modal.component.html',
     styleUrl: './user-form-modal.component.css'
 })
@@ -20,7 +19,6 @@ import { SearchableDropdownComponent, SearchableItem } from '../../../../shared/
 export class UserFormModalComponent implements OnInit {
     private destroyRef = inject(DestroyRef);
     private userService = inject(UserService);
-    private translate = inject(TranslateService);
 
     @Input() user: User | null = null;
     @Input() teachers: User[] = [];
@@ -28,6 +26,11 @@ export class UserFormModalComponent implements OnInit {
     @Output() close = new EventEmitter<void>();
 
     userForm!: FormGroup;
+    roleOptions = [
+        { value: 'USER', label: 'Alumno' },
+        { value: 'CHEF', label: 'Profesor' },
+        { value: 'ADMIN', label: 'Administrador' }
+    ];
 
     // Auto-generated credentials (create mode only)
     generatedUser = '';
@@ -40,9 +43,7 @@ export class UserFormModalComponent implements OnInit {
     }
 
     get title(): string {
-        return this.isEditMode
-            ? this.translate.instant('USERS.MESSAGES.MODAL_EDIT')
-            : this.translate.instant('USERS.MESSAGES.MODAL_CREATE');
+        return this.isEditMode ? 'Editar Usuario' : 'Crear Usuario';
     }
 
     get showTeacherField(): boolean {
@@ -51,16 +52,10 @@ export class UserFormModalComponent implements OnInit {
     }
 
     get availableRoleOptions(): Array<{ value: string; label: string }> {
-        const options = [
-            { value: 'USER', label: this.translate.instant('COMMON.ROLES.STUDENT') },
-            { value: 'CHEF', label: this.translate.instant('COMMON.ROLES.CHEF') },
-            { value: 'ADMIN', label: this.translate.instant('COMMON.ROLES.ADMIN') }
-        ];
-
         if (this.isEditMode && String(this.userForm?.get('role')?.value ?? '').toUpperCase() === 'ELEVATED') {
-            return [...options, { value: 'ELEVATED', label: this.translate.instant('COMMON.ROLES.STUDENT') }];
+            return [...this.roleOptions, { value: 'ELEVATED', label: 'Alumno' }];
         }
-        return options;
+        return this.roleOptions;
     }
 
     get teacherSearchItems(): SearchableItem[] {
@@ -162,9 +157,7 @@ export class UserFormModalComponent implements OnInit {
     }
 
     copyCredentials(): void {
-        const userLabel = this.translate.instant('USERS.USER_FORM.CREDENTIALS.USER_LABEL');
-        const passLabel = this.translate.instant('USERS.USER_FORM.CREDENTIALS.PASS_LABEL');
-        const text = `${userLabel}: ${this.generatedUser}\n${passLabel}: ${this.generatedPassword}`;
+        const text = `Usuario: ${this.generatedUser}\nContraseña: ${this.generatedPassword}`;
         navigator.clipboard.writeText(text).then(() => {
             this.credentialsCopied = true;
             setTimeout(() => this.credentialsCopied = false, 2000);

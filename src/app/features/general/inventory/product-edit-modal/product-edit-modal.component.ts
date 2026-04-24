@@ -1,6 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ViewChild, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Product, ProductRequest } from '../../../../shared/models/product.model';
 import { Supplier } from '../../../../shared/models/supplier.model';
 import { MessageService } from '../../../../core/services/message.service';
@@ -11,7 +10,7 @@ import { SearchableDropdownComponent, SearchableItem } from '../../../../shared/
 @Component({
   selector: 'app-product-edit-modal',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent, BarcodeScannerComponent, SearchableDropdownComponent, TranslateModule],
+  imports: [FormsModule, BaseModalComponent, BarcodeScannerComponent, SearchableDropdownComponent],
   templateUrl: './product-edit-modal.component.html',
   styleUrl: './product-edit-modal.component.css'
 })
@@ -28,7 +27,6 @@ export class ProductEditModalComponent implements OnChanges {
   @ViewChild('editForm') editForm?: NgForm;
 
   private messageService = inject(MessageService);
-  private translate = inject(TranslateService);
   showScannerModal = false;
 
   formData = {
@@ -129,8 +127,8 @@ export class ProductEditModalComponent implements OnChanges {
     // Confirmación si cambia la cantidad por lote
     if (lotQuantity !== this.initialLotQuantity) {
       const confirmed = await this.messageService.confirm(
-        this.translate.instant('PRODUCT_EDIT.LOT_CHANGE_TITLE'),
-        this.translate.instant('PRODUCT_EDIT.LOT_CHANGE_MSG')
+        'Confirmar cambio de lote',
+        'Has modificado la cantidad por lote. Esto podría alterar la visualización y el cálculo de unidades en pedidos existentes. ¿Deseas continuar?'
       );
       if (!confirmed) return;
     }
@@ -156,13 +154,10 @@ export class ProductEditModalComponent implements OnChanges {
   }
 
   async onToggleHidden(): Promise<void> {
-    const action = this.showingHidden 
-        ? this.translate.instant('PRODUCT_EDIT.ACTIONS.ACTIVATE_VERB') 
-        : this.translate.instant('PRODUCT_EDIT.ACTIONS.ARCHIVE_VERB');
-    
+    const action = this.showingHidden ? 'activar' : 'archivar';
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('PRODUCT_EDIT.CONFIRM_TOGGLE_TITLE', { action }),
-      this.translate.instant('PRODUCT_EDIT.CONFIRM_TOGGLE_MSG', { action, name: this.product?.name })
+      `Confirmar ${action}`,
+      `¿Estás seguro de que deseas ${action} "${this.product?.name}"?`
     );
 
     if (confirmed) {
@@ -171,9 +166,7 @@ export class ProductEditModalComponent implements OnChanges {
   }
 
   getToggleButtonText(): string {
-    return this.showingHidden 
-        ? this.translate.instant('PRODUCT_EDIT.ACTIONS.ACTIVATE') 
-        : this.translate.instant('PRODUCT_EDIT.ACTIONS.ARCHIVE');
+    return this.showingHidden ? 'Activar' : 'Archivar';
   }
 
   openBarcodeScanner(): void {
@@ -189,9 +182,9 @@ export class ProductEditModalComponent implements OnChanges {
     this.showScannerModal = false;
 
     if (this.formData.barcode) {
-      this.messageService.showSuccess(this.translate.instant('PRODUCT_EDIT.SCAN_SUCCESS', { code: this.formData.barcode }));
+      this.messageService.showSuccess(`Código detectado: ${this.formData.barcode}`);
     } else {
-      this.messageService.showWarning(this.translate.instant('PRODUCT_EDIT.SCAN_ERROR'));
+      this.messageService.showWarning('No se pudo leer un código de barras válido.');
     }
   }
 

@@ -1,8 +1,7 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
-import { CommonModule, DatePipe, DecimalPipe, UpperCasePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription, catchError, of } from 'rxjs';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   Order,
   OrderDetail,
@@ -16,17 +15,15 @@ import { ScaleService } from '../../../../core/services/scale.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.component';
-import { LoggerService } from '../../../../core/services/logger.service';
 
 @Component({
   selector: 'app-order-reception-modal',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent, DatePipe, DecimalPipe, UpperCasePipe, BarcodeScannerComponent, TranslateModule],
+  imports: [FormsModule, BaseModalComponent, DatePipe, DecimalPipe, BarcodeScannerComponent],
   templateUrl: './order-reception-modal.component.html',
   styleUrl: './order-reception-modal.component.css'
 })
 export class OrderReceptionModalComponent implements OnInit, OnDestroy {
-  private logger = inject(LoggerService);
   @Input({ required: true }) order!: Order;
   @Output() closeModal = new EventEmitter<void>();
   @Output() receptionProcessed = new EventEmitter<void>();
@@ -36,7 +33,6 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
   private productService = inject(ProductService);
   private scaleService = inject(ScaleService);
   private authService = inject(AuthService);
-  public translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
 
   isProcessing = false;
@@ -56,10 +52,10 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     }
 
     return await this.messageService.confirm(
-      this.translate.instant('RECEPTION.MESSAGES.EXIT_WITHOUT_SAVING_TITLE'),
-      this.translate.instant('RECEPTION.MESSAGES.EXIT_WITHOUT_SAVING'),
-      this.translate.instant('RECEPTION.MESSAGES.EXIT_WITHOUT_SAVING_BTN'),
-      this.translate.instant('COMMON.BACK')
+      'Salir de recepción',
+      '¿Salir sin guardar? Los datos introducidos no se conservarán.',
+      'Salir sin guardar',
+      'Volver'
     );
   };
 
@@ -220,16 +216,16 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
   getFormattedQuantity(detail: any): string {
     const expected = detail.quantity || 0;
     const received = this.getTotalReceived(detail);
-    const unit = detail.unit || this.translate.instant('COMMON.UNITS_SHORT') || 'uds';
+    const unit = detail.unit || 'uds';
     return `${expected} / ${received} ${unit}`;
   }
 
   async confirmCancel() {
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('RECEPTION.MESSAGES.EXIT_WITHOUT_SAVING_TITLE'),
-      this.translate.instant('RECEPTION.MESSAGES.EXIT_WITHOUT_SAVING'),
-      this.translate.instant('RECEPTION.MESSAGES.EXIT_WITHOUT_SAVING_BTN'),
-      this.translate.instant('COMMON.BACK')
+      'Salir de recepción',
+      '¿Salir sin guardar? Los datos introducidos no se conservarán.',
+      'Salir sin guardar',
+      'Volver'
     );
     if (confirmed) {
       this.close();
@@ -265,18 +261,18 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
     }
 
     if (!this.scaleService.isSupported) {
-      this.messageService.showError(this.translate.instant('RECEPTION.MODAL.SCALE_NOT_SUPPORTED'));
+      this.messageService.showError('Este navegador no soporta conexión serial con báscula. Usa Chrome o Edge recientes.');
       return;
     }
 
     try {
       await this.scaleService.startListening({ baudRate: 9600 });
-      this.messageService.showInfo(this.translate.instant('RECEPTION.MODAL.SCALE_CONNECTED'));
+      this.messageService.showInfo('Báscula conectada. Se actualizará el peso hasta cancelar.');
     } catch (error: any) {
       this.activeScaleTarget = null;
       const detail = error?.message || 'Error desconocido';
-      this.messageService.showError(`${this.translate.instant('RECEPTION.MODAL.SCALE_ERROR')}: ${detail}`);
-      this.logger.error('Error abriendo báscula:', error);
+      this.messageService.showError(`Error de báscula: ${detail}`);
+      console.error('Error abriendo báscula:', error);
     }
   }
 
@@ -316,13 +312,13 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
 
   async processReception(): Promise<void> {
     if (this.order.status !== 'REVIEW') {
-      this.messageService.showInfo(this.translate.instant('RECEPTION.MESSAGES.ORDER_NOT_REVIEW', { id: this.order.id }));
+      this.messageService.showInfo(`La orden #${this.order.id} ya no está en revisión. Se actualizará la vista.`);
       this.close();
       return;
     }
 
     if (!this.order.details || this.order.details.length === 0) {
-      this.messageService.showError(this.translate.instant('RECEPTION.MESSAGES.NO_PRODUCTS'));
+      this.messageService.showError('La orden no tiene productos.');
       return;
     }
 
@@ -331,7 +327,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
       return total < 0 || d.lots?.some(lot => lot.quantity < 0 || lot.quantity === null || lot.quantity === undefined);
     });
     if (hasInvalidQuantities) {
-      this.messageService.showError(this.translate.instant('RECEPTION.MESSAGES.INVALID_QUANTITIES'));
+      this.messageService.showError('Por favor revisa que todas las cantidades de los lotes sean números válidos o 0.');
       return;
     }
 
@@ -339,7 +335,7 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
       d.lots && d.lots.some(lot => lot.quantity > 0 && !lot.expirationDate)
     );
     if (missingExpiration) {
-      this.messageService.showError(this.translate.instant('RECEPTION.MODAL.EXPIRATION_REQUIRED'));
+      this.messageService.showError('La fecha de caducidad es obligatoria para los lotes con cantidad recibida.');
       return;
     }
 
@@ -347,13 +343,13 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
       d.lots && d.lots.some(lot => lot.expirationDate && !/^\d{4}-\d{2}-\d{2}$/.test(lot.expirationDate))
     );
     if (hasInvalidExpirationDate) {
-      this.messageService.showError(this.translate.instant('RECEPTION.MESSAGES.INVALID_EXP_FORMAT'));
+      this.messageService.showError('Revisa el formato de fecha de caducidad.');
       return;
     }
 
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('RECEPTION.PROCESS_RECEPTION'),
-      this.translate.instant('RECEPTION.MESSAGES.CONFIRM_RECEPTION', { id: this.order.id })
+      'Procesar Recepción',
+      `¿Confirmar recepción de la orden #${this.order.id}?`
     );
 
     if (!confirmed) {
@@ -377,15 +373,14 @@ export class OrderReceptionModalComponent implements OnInit, OnDestroy {
 
     this.orderService.processReception(request).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.translate.instant('RECEPTION.MESSAGES.PROCESS_SUCCESS'));
+        this.messageService.showSuccess('Recepción procesada correctamente');
         this.isProcessing = false;
         this.receptionProcessed.emit();
         this.close();
       },
       error: (error) => {
-        this.logger.error('Error al procesar recepción:', error);
         const serverMessage = typeof error?.error?.message === 'string' ? error.error.message : '';
-        this.messageService.showError(serverMessage || this.translate.instant('RECEPTION.MESSAGES.PROCESS_ERROR'));
+        this.messageService.showError(serverMessage || 'Error al procesar la recepción');
         this.isProcessing = false;
       }
     });

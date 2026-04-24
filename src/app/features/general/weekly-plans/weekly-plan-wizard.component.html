@@ -1,60 +1,60 @@
 <div class="wizard-container" [class.is-loading]="loadingInitial">
   <div class="wizard-header">
-    <button class="btn-back" (click)="cancel()" [aria-label]="'WEEKLY_PLANS.WIZARD.CANCEL_ARIA' | translate">
+    <button class="btn-back" (click)="cancel()" aria-label="Cancelar y volver a planes semanales">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="19" y1="12" x2="5" y2="12"></line>
         <polyline points="12 19 5 12 12 5"></polyline>
       </svg>
-      {{ 'WEEKLY_PLANS.DETAIL.BACK_TO_PLANS' | translate }}
+      Volver a planes
     </button>
-    <h1>{{ (duplicateMode ? 'WEEKLY_PLANS.WIZARD.TITLE_DUPLICATE' : (editMode ? 'WEEKLY_PLANS.WIZARD.TITLE_EDIT' : 'WEEKLY_PLANS.WIZARD.TITLE_NEW')) | translate }}</h1>
-    <p class="wizard-subtitle">{{ 'WEEKLY_PLANS.WIZARD.SUBTITLE' | translate }}</p>
+    <h1>{{ duplicateMode ? 'Duplicar Plan Semanal' : (editMode ? 'Editar Plan Semanal' : 'Nuevo Plan Semanal') }}</h1>
+    <p class="wizard-subtitle">Organiza la semana paso a paso. Puedes ajustar las sesiones antes de guardar.</p>
 
     <div class="stepper">
-      <div class="step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">{{ 'WEEKLY_PLANS.WIZARD.STEP_1' | translate }}</div>
+      <div class="step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">1. Semana</div>
       <div class="stepper-line"></div>
-      <div class="step" [class.active]="currentStep === 2">{{ 'WEEKLY_PLANS.WIZARD.STEP_2' | translate }}</div>
+      <div class="step" [class.active]="currentStep === 2">2. Configurar Sesiones</div>
     </div>
   </div>
 
   <div class="wizard-content">
     @if (currentStep === 1 && !loadingInitial) {
       <div class="step-card glassmorphism fadeInStaggered">
-        <h2>{{ 'WEEKLY_PLANS.WIZARD.STEP_1_TITLE' | translate }}</h2>
+        <h2>Paso 1: Selecciona la semana</h2>
 
         <div class="form-group">
-<label for="weekStartDate">{{ 'WEEKLY_PLANS.WIZARD.WEEK_START' | translate }}</label>  
-<input id="weekStartDate" type="date" class="form-input" [ngModel]="weekStartDate" (ngModelChange)="onWeekStartDateChange($event)" />  
-<p class="field-hint">{{ 'WEEKLY_PLANS.WIZARD.WEEK_START_HINT' | translate }}</p>
+          <label for="weekStartDate">Semana de inicio (obligatorio)</label>
+          <input id="weekStartDate" type="date" class="form-input" [ngModel]="weekStartDate" (ngModelChange)="onWeekStartDateChange($event)" />
+          <p class="field-hint">Selecciona una fecha dentro de la semana que quieres planificar.</p>
         </div>
 
         <div class="wizard-actions step1-actions">
-          <button class="modal-btn modal-btn-secondary" type="button" (click)="weekStartToday()">{{ 'WEEKLY_PLANS.WIZARD.SELECT_CURRENT_WEEK' | translate }}</button>
+          <button class="modal-btn modal-btn-secondary" type="button" (click)="weekStartToday()">Seleccionar la semana actual</button>
         </div>
 
         @if (role === 'ADMIN') {
           <div class="form-group">
-            <label>{{ 'WEEKLY_PLANS.WIZARD.CHEF' | translate }}</label>
+            <label>Responsable (chef)</label>
             <app-searchable-dropdown
               [items]="chefSearchItems"
               [selectedIds]="chefId ? [chefId] : []"
               [loading]="loadingChefSearch"
               [loadingMore]="loadingChefSearchMore"
               [initialText]="selectedChefName"
-              [placeholder]="'WEEKLY_PLANS.WIZARD.SELECT_CHEF' | translate"
+              placeholder="Buscar chef por nombre o usuario"
               (search)="onChefSearch($event)"
               (scrollNearBottom)="onChefScrollNearBottom()"
               (itemSelected)="onChefSelected($event)"
             ></app-searchable-dropdown>
             <div class="wizard-actions step1-actions">
-              <button class="modal-btn modal-btn-secondary" type="button" (click)="clearChefSelection()" [disabled]="!chefId">{{ 'WEEKLY_PLANS.WIZARD.CLEAR_CHEF' | translate }}</button>
+              <button class="modal-btn modal-btn-secondary" type="button" (click)="clearChefSelection()" [disabled]="!chefId">Limpiar chef</button>
             </div>
-            <p class="field-hint">{{ 'WEEKLY_PLANS.WIZARD.CHEF_HINT' | translate }}</p>
+            <p class="field-hint">Usa coincidencia parcial: escribir "fran" traerá "Franchesco", "Francisco", etc.</p>
           </div>
         }
 
         <div class="wizard-actions">
-          <button class="modal-btn modal-btn-primary" (click)="nextStep()" [disabled]="!weekStartDate || (role === 'ADMIN' && !chefId)">{{ 'COMMON.CONTINUE' | translate }}</button>
+          <button class="modal-btn modal-btn-primary" (click)="nextStep()" [disabled]="!weekStartDate || (role === 'ADMIN' && !chefId)">Continuar</button>
         </div>
       </div>
     }
@@ -66,15 +66,15 @@
 
         <section class="participation-card stock-usage-card">
           <div class="participation-header">
-            <button class="participation-toggle" type="button" (click)="toggleStockUsage()" [attr.aria-expanded]="!isStockUsageCollapsed()" [aria-label]="'WEEKLY_PLANS.WIZARD.STOCK_PANEL_ARIA' | translate">
+            <button class="participation-toggle" type="button" (click)="toggleStockUsage()" [attr.aria-expanded]="!isStockUsageCollapsed()" aria-label="Abrir o cerrar el panel de uso de stock">
               <span class="collapse-icon" [class.is-collapsed]="isStockUsageCollapsed()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
               </span>
               <div class="participation-title">
-                <h2>{{ 'WEEKLY_PLANS.DETAIL.TAB_STOCK' | translate }}</h2>
-                <p>{{ 'WEEKLY_PLANS.WIZARD.STOCK_HINT' | translate }}</p>
+                <h2>Uso de stock</h2>
+                <p>Este panel avisa si el plan supera el stock disponible. Mas tarde podras crear una orden automatica.</p>
               </div>
             </button>
 
@@ -93,12 +93,12 @@
                 <table class="stock-table">
                   <thead>
                     <tr>
-                      <th>{{ 'COMMON.PRODUCT' | translate }}</th>
-                      <th>{{ 'WEEKLY_PLANS.DETAIL.GROSS_REQUIRED' | translate }}</th>
-                      <th>{{ 'WEEKLY_PLANS.DETAIL.NET_REQUIRED' | translate }}</th>
-                      <th>{{ 'WEEKLY_PLANS.WIZARD.REAL_AVAILABLE_NET' | translate }}</th>
-                      <th>{{ 'WEEKLY_PLANS.WIZARD.IN_ORDERS_GROSS' | translate }}</th>
-                      <th>{{ 'WEEKLY_PLANS.WIZARD.SHORTAGE_GROSS' | translate }}</th>
+                      <th>Producto</th>
+                      <th>Necesario (Bruto)</th>
+                      <th>Necesario (Neto)</th>
+                      <th>Disponible Real (Neto)</th>
+                      <th>En pedidos (Bruto)</th>
+                      <th>Faltante (Bruto)</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -107,7 +107,7 @@
                         <td>
                           <div class="product-cell-main">{{ row.productName }}</div>
                           @if (row.availabilityPercentage < 100) {
-                            <div class="merma-hint-wizard">{{ 'COMMON.MERMA' | translate }}: {{ 100 - row.availabilityPercentage | number:'1.0-0' }}%</div>
+                            <div class="merma-hint-wizard">Merma: {{ 100 - row.availabilityPercentage | number:'1.0-0' }}%</div>
                           }
                         </td>
                         <td>{{ row.grossRequired | number:'1.0-2' }} {{ row.unit }}</td>
@@ -126,22 +126,22 @@
                 </table>
               </div>
             } @else {
-              <p class="field-hint">{{ 'WEEKLY_PLANS.WIZARD.STOCK_EMPTY_HINT' | translate }}</p>
+              <p class="field-hint">Añade sesiones para ver el uso de stock proyectado.</p>
             }
           }
         </section>
 
         <section class="participation-card">
           <div class="participation-header">
-            <button class="participation-toggle" type="button" (click)="toggleParticipation()" [attr.aria-expanded]="!isParticipationCollapsed()" [aria-label]="'WEEKLY_PLANS.WIZARD.STUDENTS_PANEL_ARIA' | translate">
+            <button class="participation-toggle" type="button" (click)="toggleParticipation()" [attr.aria-expanded]="!isParticipationCollapsed()" aria-label="Abrir o cerrar el panel de participación de alumnos">
               <span class="collapse-icon" [class.is-collapsed]="isParticipationCollapsed()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
               </span>
               <div class="participation-title">
-                <h2>{{ 'WEEKLY_PLANS.WIZARD.STUDENTS_PARTICIPATION' | translate }}</h2>
-                <p>{{ 'WEEKLY_PLANS.WIZARD.STUDENTS_HINT' | translate }}</p>
+                <h2>Participación de alumnos</h2>
+                <p>La distribución se va llenando a medida que asignas alumnos a las sesiones.</p>
               </div>
             </button>
           </div>
@@ -154,11 +154,11 @@
                     <div class="participation-row-head">
                       <span class="participation-name">{{ student.name }}</span>
                       <div class="participation-metrics">
-                        <span class="participation-detail">{{ 'COMMON.ASSIGNMENTS_COUNT' | translate: { count: student.assignments } }}</span>
+                        <span class="participation-detail">{{ student.assignments }} asignaciones</span>
                         <span class="participation-separator">·</span>
                         <span class="participation-detail historical-metric" 
-                               [title]="'WEEKLY_PLANS.WIZARD.HISTORICAL_RATE_HINT' | translate">
-                          {{ student.historicalRate | number:'1.0-0' }}% {{ 'WEEKLY_PLANS.WIZARD.HISTORICAL' | translate }}
+                              title="La participación histórica indica el % de sesiones semanales que el alumno ha ocupado habitualmente, no su cantidad total de asistencias.">
+                          {{ student.historicalRate | number:'1.0-0' }}% histórico
                           <svg class="info-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"></circle>
                             <line x1="12" y1="16" x2="12" y2="12"></line>
@@ -167,8 +167,8 @@
                         </span>
                         <span class="participation-separator">·</span>
                         <span class="participation-detail attendance-metric"
-                               [title]="'WEEKLY_PLANS.WIZARD.ATTENDANCE_RATE_HINT' | translate: { rate: student.attendanceRate }">
-                          {{ student.attendanceRate | number:'1.0-0' }}% {{ 'COMMON.ATTENDANCE' | translate }}
+                              [title]="'Asistencia real: ' + student.attendanceRate + '% (Calculado sobre sesiones totales menos cancelaciones)'">
+                          {{ student.attendanceRate | number:'1.0-0' }}% asistencia
                         </span>
                       </div>
                     </div>
@@ -185,20 +185,20 @@
                 }
               </div>
             } @else {
-              <p class="field-hint">{{ 'WEEKLY_PLANS.WIZARD.STUDENTS_EMPTY_HINT' | translate }}</p>
+              <p class="field-hint">Añade alumnos para ver cómo se distribuye la participación.</p>
             }
           }
         </section>
 
         <div class="step2-header">
-          <h2>{{ 'WEEKLY_PLANS.WIZARD.STEP_2_TITLE' | translate }}</h2>
+          <h2>Paso 2: Configura las sesiones de cocina</h2>
         </div>
 
-        <p class="field-hint step2-hint">{{ 'WEEKLY_PLANS.WIZARD.STEP_2_HINT' | translate }}</p>
+        <p class="field-hint step2-hint">Crea una o varias sesiones por día. Puedes añadir más sesiones en el mismo día o moverlas después.</p>
 
         <div class="slots-list">
           @if (slots.length === 0) {
-            <div class="empty-slots">{{ 'WEEKLY_PLANS.WIZARD.NO_SESSIONS' | translate }}</div>
+            <div class="empty-slots">Todavía no hay sesiones. Usa el botón de cada día para empezar.</div>
           }
 
           @for (day of days; track day.value) {
@@ -206,20 +206,20 @@
             <section class="day-group">
               <div class="day-group-header">
                 <div class="day-group-title">
-                  <button class="day-collapse-toggle" type="button" (click)="toggleDay(day.value)" [attr.aria-expanded]="!isDayCollapsed(day.value)" [attr.aria-label]="((isDayCollapsed(day.value) ? 'COMMON.EXPAND' : 'COMMON.COLLAPSE') | translate) + ' ' + ((day.label | translate) + ' ' + ('WEEKLY_PLANS.DETAIL.TAB_BOARD' | translate))">
+                  <button class="day-collapse-toggle" type="button" (click)="toggleDay(day.value)" [attr.aria-expanded]="!isDayCollapsed(day.value)" [attr.aria-label]="(isDayCollapsed(day.value) ? 'Abrir' : 'Cerrar') + ' sesiones de ' + day.label">
                     <span class="collapse-icon" [class.is-collapsed]="isDayCollapsed(day.value)">
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="6 9 12 15 18 9"></polyline>
                       </svg>
                     </span>
                     <span class="day-title-text">
-                      {{ day.label | translate }}
-                      <span class="day-count">{{ 'WEEKLY_PLANS.SESSIONS_COUNT' | translate: { count: daySlots.length } }}</span>
+                      {{ day.label }}
+                      <span class="day-count">{{ daySlots.length }} sesiones</span>
                     </span>
                   </button>
 
                   @if (dayHasOverlap(day.value)) {
-                    <button type="button" class="warning-badge button-badge" (click)="setWarning('day-' + day.value, getOverlapDetails(day.value))" [attr.aria-label]="'WEEKLY_PLANS.WIZARD.OVERLAP_WARN_ARIA' | translate: { day: (day.label | translate) }">
+                    <button type="button" class="warning-badge button-badge" (click)="setWarning('day-' + day.value, getOverlapDetails(day.value))" [attr.aria-label]="'Ver problema de solapamiento en ' + day.label">
                       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                         <path d="M12 2 1 21h22L12 2Zm0 6 1 7h-2l1-7Zm0 11a1.25 1.25 0 1 1 0-2.5A1.25 1.25 0 0 1 12 19Z" />
                       </svg>
@@ -228,18 +228,18 @@
                 </div>
 
                 <div class="day-actions">
-                  <button class="modal-btn modal-btn-secondary btn-icon" (click)="addSlotForDay(day.value)" [attr.aria-label]="'WEEKLY_PLANS.WIZARD.ADD_SLOT_ARIA' | translate: { day: (day.label | translate) }">
+                  <button class="modal-btn modal-btn-secondary btn-icon" (click)="addSlotForDay(day.value)" aria-label="Añadir sesión para {{ day.label }}">
                     <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                       <path d="M11 5a1 1 0 1 1 2 0v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H5a1 1 0 1 1 0-2h6V5Z" />
                     </svg>
-                    {{ 'WEEKLY_PLANS.WIZARD.ADD_SLOT' | translate }}
+                    Añadir sesión
                   </button>
 
-                  <button class="modal-btn modal-btn-primary btn-icon" (click)="openAutoCreateModal(day.value)" [attr.aria-label]="'WEEKLY_PLANS.WIZARD.AUTO_DAY_ARIA' | translate: { day: (day.label | translate) }">
+                  <button class="modal-btn modal-btn-primary btn-icon" (click)="openAutoCreateModal(day.value)" aria-label="Crear sesión automática para {{ day.label }}">
                     <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                       <path d="M12.7 2.6a1 1 0 0 1 1.8 0l1.2 2.8a1 1 0 0 0 .53.53l2.8 1.2a1 1 0 0 1 0 1.84l-2.8 1.2a1 1 0 0 0-.53.53l-1.2 2.8a1 1 0 0 1-1.84 0l-1.2-2.8a1 1 0 0 0-.53-.53l-2.8-1.2a1 1 0 0 1 0-1.84l2.8-1.2a1 1 0 0 0 .53-.53l1.2-2.8ZM6 14a1 1 0 0 1 .94.66L7.8 17.2l2.54.86a1 1 0 0 1 0 1.88l-2.54.86-.86 2.54a1 1 0 0 1-1.88 0l-.86-2.54-2.54-.86a1 1 0 0 1 0-1.88l2.54-.86.86-2.54A1 1 0 0 1 6 14Z" />
                     </svg>
-                    {{ 'WEEKLY_PLANS.WIZARD.AUTO_DAY' | translate }}
+                    Crear día automáticamente
                   </button>
                 </div>
               </div>
@@ -250,7 +250,7 @@
 
               @if (dayHasOverlap(day.value)) {
                 <div class="day-overlap-warning">
-                  <span class="warning-title">{{ 'WEEKLY_PLANS.WIZARD.OVERLAP_TITLE' | translate }}</span>
+                  <span class="warning-title">Sesiones solapadas</span>
                   <p>{{ getOverlapMessage(day.value) }}</p>
                 </div>
               }
@@ -258,34 +258,34 @@
               @if (!isDayCollapsed(day.value)) {
                 <div class="day-group-content">
                   @if (daySlots.length === 0) {
-                    <div class="empty-day-slot">{{ 'WEEKLY_PLANS.WIZARD.NO_SESSIONS_IN' | translate: { day: (day.label | translate | lowercase) } }}.</div>
+                    <div class="empty-day-slot">No hay sesiones en {{ day.label.toLowerCase() }}.</div>
                   }
 
                   @for (slot of daySlots; track trackBySlotIdOrIndex($index, slot)) {
                     <div class="slot-item slideDown" [class.is-collapsed]="isSlotCollapsed(slot)">
                       <div class="slot-header">
-                        <button class="slot-collapse-toggle" type="button" (click)="toggleSlot(slot)" [attr.aria-expanded]="!isSlotCollapsed(slot)" [attr.aria-label]="((isSlotCollapsed(slot) ? 'COMMON.EXPAND' : 'COMMON.COLLAPSE') | translate) + ' ' + ('COMMON.SESSION' | translate) + ' ' + ($index + 1) + ' ' + ('COMMON.OF' | translate) + ' ' + (day.label | translate)">
+                        <button class="slot-collapse-toggle" type="button" (click)="toggleSlot(slot)" [attr.aria-expanded]="!isSlotCollapsed(slot)" [attr.aria-label]="(isSlotCollapsed(slot) ? 'Abrir' : 'Cerrar') + ' sesión ' + ($index + 1) + ' de ' + day.label">
                           <span class="collapse-icon" [class.is-collapsed]="isSlotCollapsed(slot)">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                               <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
                           </span>
                           <span class="slot-title-text">
-                            {{ 'COMMON.SESSION' | translate }} {{ $index + 1 }}
+                            Sesión {{ $index + 1 }}
                             <span class="slot-summary">{{ getSlotSummary(slot) }}</span>
                           </span>
                         </button>
 
                         <div class="slot-header-actions">
                           @if (isSlotCollapsed(slot) && !isSlotComplete(slot)) {
-                            <button type="button" class="warning-badge button-badge" (click)="setWarning(getSlotUiKey(slot), getSlotWarningMessage(slot))" [attr.aria-label]="'WEEKLY_PLANS.WIZARD.SESSION_WARN_ARIA' | translate: { num: $index + 1 }">
+                            <button type="button" class="warning-badge button-badge" (click)="setWarning(getSlotUiKey(slot), getSlotWarningMessage(slot))" [attr.aria-label]="'Ver problemas de la sesión ' + ($index + 1)">
                               <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                                 <path d="M12 2 1 21h22L12 2Zm0 6 1 7h-2l1-7Zm0 11a1.25 1.25 0 1 1 0-2.5A1.25 1.25 0 0 1 12 19Z" />
                               </svg>
                             </button>
                           }
 
-                          <button class="btn-delete" (click)="removeSlot(slots.indexOf(slot))" [attr.aria-label]="'WEEKLY_PLANS.WIZARD.REMOVE_SESSION_ARIA' | translate: { num: $index + 1, day: (day.label | translate) }">{{ 'COMMON.DELETE' | translate }}</button>
+                          <button class="btn-delete" (click)="removeSlot(slots.indexOf(slot))" [attr.aria-label]="'Eliminar sesión ' + ($index + 1) + ' de ' + day.label">Eliminar</button>
                         </div>
                       </div>
 
@@ -297,12 +297,12 @@
                         <div class="slot-body">
                           <div class="form-row">
                             <div class="form-group flex-2">
-                              <label>{{ 'WEEKLY_PLANS.WIZARD.RECIPE' | translate }}</label>
+                              <label>Receta de la sesión</label>
                               <app-searchable-dropdown
                                 [items]="recipeSearchResults"
                                 [loading]="loadingRecipes"
                                 [loadingMore]="loadingMoreRecipes"
-                                [placeholder]="'WEEKLY_PLANS.WIZARD.SELECT_RECIPE' | translate"
+                                [placeholder]="'Buscar receta por nombre...'"
                                 [initialText]="slot.recipeName"
                                 (search)="searchRecipes($event)"
                                 (scrollNearBottom)="loadMoreRecipes()"
@@ -311,27 +311,27 @@
                             </div>
 
                             <div class="form-group flex-1">
-                              <label [attr.for]="'slot-qty-' + slots.indexOf(slot)">{{ 'WEEKLY_PLANS.WIZARD.PLATES_COUNT' | translate }}</label>
+                              <label [attr.for]="'slot-qty-' + slots.indexOf(slot)">Cantidad de raciones</label>
                               <input [id]="'slot-qty-' + slots.indexOf(slot)" type="number" class="form-input" [(ngModel)]="slot.quantity" min="1" (ngModelChange)="onSlotChanged(slot)" />
                             </div>
                           </div>
 
                           <div class="form-row">
                             <div class="form-group flex-1">
-                              <label [attr.for]="'slot-start-' + slots.indexOf(slot)">{{ 'COMMON.START_TIME' | translate }}</label>
+                              <label [attr.for]="'slot-start-' + slots.indexOf(slot)">Hora de inicio</label>
                               <input [id]="'slot-start-' + slots.indexOf(slot)" type="time" class="form-input" [(ngModel)]="slot.startTime" (ngModelChange)="onSlotChanged(slot)" />
                             </div>
 
                             <div class="form-group flex-1">
-                              <label [attr.for]="'slot-end-' + slots.indexOf(slot)">{{ 'COMMON.END_TIME' | translate }}</label>
+                              <label [attr.for]="'slot-end-' + slots.indexOf(slot)">Hora de fin</label>
                               <input [id]="'slot-end-' + slots.indexOf(slot)" type="time" class="form-input" [(ngModel)]="slot.endTime" (ngModelChange)="onSlotChanged(slot)" />
                             </div>
                           </div>
 
                           <div class="students-assignment">
-                            <label class="assignment-label">{{ 'WEEKLY_PLANS.WIZARD.STUDENTS_ASSIGNED' | translate }}: {{ slot.studentIds.length }}</label>
+                            <label class="assignment-label">Alumnos asignados: {{ slot.studentIds.length }}</label>
                             @if (myStudents.length === 0) {
-                              <p class="field-hint">{{ 'WEEKLY_PLANS.WIZARD.NO_STUDENTS_AVAILABLE' | translate }}</p>
+                              <p class="field-hint">No hay alumnos disponibles para asignar.</p>
                             } @else {
                               <div class="students-pills">
                                 @for (student of myStudents; track student.id) {
@@ -341,11 +341,11 @@
                                     [class.selected]="slot.studentIds.includes(student.id)"
                                     (click)="toggleStudent(slot, student.id)"
                                     (keydown)="onStudentPillKeydown($event, slot, student.id)"
-                                    [attr.aria-label]="'WEEKLY_PLANS.WIZARD.ASSIGN_STUDENT_ARIA' | translate: { name: student.name }">
+                                    [attr.aria-label]="'Asignar alumno ' + student.name">
                                     <div class="student-name">{{ student.name }}</div>
                                     @if (studentMetrics[student.id]) {
                                       <div class="student-metric" [class.low]="studentMetrics[student.id].participationRate < 50">
-                                        {{ 'WEEKLY_PLANS.WIZARD.HISTORICAL' | translate }}: {{ studentMetrics[student.id].participationRate | number:'1.0-0' }}%
+                                        Participación histórica: {{ studentMetrics[student.id].participationRate | number:'1.0-0' }}%
                                       </div>
                                     }
                                   </div>
@@ -364,9 +364,9 @@
         </div>
 
         <div class="wizard-actions space-between">
-          <button class="modal-btn modal-btn-secondary" (click)="prevStep()">{{ 'WEEKLY_PLANS.WIZARD.BACK_TO_WEEK' | translate }}</button>
+          <button class="modal-btn modal-btn-secondary" (click)="prevStep()">Volver a semana</button>
           <button class="modal-btn modal-btn-success" (click)="save()" [disabled]="saving">
-            {{ (saving ? 'COMMON.SAVING' : (editMode ? 'WEEKLY_PLANS.WIZARD.UPDATE_PLAN' : 'WEEKLY_PLANS.WIZARD.CREATE_PLAN')) | translate }}
+            {{ saving ? 'Guardando...' : (editMode ? 'Actualizar Plan' : 'Crear Plan Semanal') }}
           </button>
         </div>
       </div>
@@ -375,96 +375,96 @@
 
   @if (showAutoCreateModal) {
     <app-base-modal
-      [title]="'WEEKLY_PLANS.WIZARD.AUTO_TITLE' | translate: { day: (getDayLabel(autoCreateDayOfWeek || 1) | translate) }"
+      [title]="'Crear sesión automática para ' + getDayLabel(autoCreateDayOfWeek || 1)"
       size="lg"
       (closed)="closeAutoCreateModal()"
     >
-      <p class="field-hint">{{ 'WEEKLY_PLANS.WIZARD.AUTO_MODAL_HINT' | translate }}</p>
+      <p class="field-hint">Configura el día automático, evita el recreo y reparte a todos los alumnos de forma equitativa.</p>
 
       <section class="auto-create-section">
-        <h3 class="auto-create-section-title">{{ 'WEEKLY_PLANS.WIZARD.AUTO_DAY_CONFIG' | translate }}</h3>
+        <h3 class="auto-create-section-title">Configuración del día</h3>
         <div class="auto-create-grid">
           <div class="form-group">
-            <label for="auto-session-count">{{ 'WEEKLY_PLANS.WIZARD.AUTO_SESSIONS_COUNT' | translate }}</label>
+            <label for="auto-session-count">Número de sesiones a crear</label>
             <input id="auto-session-count" type="number" class="form-input" min="1" max="24" [(ngModel)]="autoCreateSessionCount" />
           </div>
 
           <div class="form-group">
-            <label for="auto-plates-per-session">{{ 'WEEKLY_PLANS.WIZARD.AUTO_PLATES_PER_SESSION' | translate }}</label>
+            <label for="auto-plates-per-session">Número de platos por sesión</label>
             <input id="auto-plates-per-session" type="number" class="form-input" min="1" max="999" [(ngModel)]="autoCreatePlatesPerSession" />
           </div>
 
           <div class="form-group">
-            <label for="auto-max-students">{{ 'WEEKLY_PLANS.WIZARD.AUTO_MAX_STUDENTS' | translate }}</label>
+            <label for="auto-max-students">Número máximo de alumnos por sesión</label>
             <input id="auto-max-students" type="number" class="form-input" min="1" max="999" [(ngModel)]="autoCreateMaxStudentsPerSession" />
           </div>
 
           <div class="form-group">
-            <label for="auto-start-time">{{ 'COMMON.START_TIME' | translate }}</label>
+            <label for="auto-start-time">Hora de inicio</label>
             <input id="auto-start-time" type="time" class="form-input" [(ngModel)]="autoCreateStartTime" />
           </div>
 
           <div class="form-group">
-            <label for="auto-end-time">{{ 'COMMON.END_TIME' | translate }}</label>
+            <label for="auto-end-time">Hora de fin</label>
             <input id="auto-end-time" type="time" class="form-input" [(ngModel)]="autoCreateEndTime" />
           </div>
 
           <div class="form-group">
-            <label for="auto-duration">{{ 'WEEKLY_PLANS.WIZARD.AUTO_DURATION' | translate }}</label>
+            <label for="auto-duration">Duración de cada sesión (minutos)</label>
             <input id="auto-duration" type="number" class="form-input" min="5" step="5" [(ngModel)]="autoCreateSessionDurationMinutes" />
           </div>
 
           <div class="form-group">
-            <label for="auto-break-start">{{ 'WEEKLY_PLANS.WIZARD.AUTO_BREAK_START' | translate }}</label>
+            <label for="auto-break-start">Inicio del recreo (opcional)</label>
             <input id="auto-break-start" type="time" class="form-input" [(ngModel)]="autoCreateBreakStartTime" />
           </div>
 
           <div class="form-group">
-            <label for="auto-break-end">{{ 'WEEKLY_PLANS.WIZARD.AUTO_BREAK_END' | translate }}</label>
+            <label for="auto-break-end">Fin del recreo (opcional)</label>
             <input id="auto-break-end" type="time" class="form-input" [(ngModel)]="autoCreateBreakEndTime" />
           </div>
         </div>
-        <p class="field-hint">{{ 'WEEKLY_PLANS.WIZARD.AUTO_BREAK_HINT' | translate }}</p>
+        <p class="field-hint">Si rellenas el recreo, no se colocarán sesiones dentro de esa franja.</p>
 
         <div class="recipe-stock-toggle">
           <label class="check-item">
             <input type="checkbox" [(ngModel)]="autoCreateUseCurrentStock" />
-            <span>{{ 'WEEKLY_PLANS.WIZARD.AUTO_USE_STOCK' | translate }}</span>
+            <span>Tener en cuenta el stock actual</span>
           </label>
-          <p class="field-hint">{{ 'WEEKLY_PLANS.WIZARD.AUTO_USE_STOCK_HINT' | translate }}</p>
+          <p class="field-hint">Si lo desactivas, se generará con cualquier receta visible aunque luego pueda faltar stock.</p>
         </div>
       </section>
 
       <section class="auto-create-section">
-        <h3 class="auto-create-section-title">{{ 'WEEKLY_PLANS.WIZARD.AUTO_RECIPES_TO_USE' | translate }}</h3>
+        <h3 class="auto-create-section-title">Recetas a usar</h3>
         <div class="distribution-options">
           <label class="check-item">
             <input type="radio" name="recipeSelectionMode" value="EXCLUDE" [(ngModel)]="autoCreateRecipeSelectionMode" />
-            <span>{{ 'WEEKLY_PLANS.WIZARD.AUTO_EXCLUDE_RECIPES' | translate }}</span>
+            <span>Excluir estas recetas</span>
           </label>
           <label class="check-item">
             <input type="radio" name="recipeSelectionMode" value="INCLUDE" [(ngModel)]="autoCreateRecipeSelectionMode" />
-            <span>{{ 'WEEKLY_PLANS.WIZARD.AUTO_INCLUDE_RECIPES' | translate }}</span>
+            <span>Solo incluir estas recetas</span>
           </label>
         </div>
 
         <div class="form-group">
-          <label for="recipe-filter-search">{{ 'WEEKLY_PLANS.WIZARD.SEARCH_RECIPE' | translate }}</label>
+          <label for="recipe-filter-search">Buscar receta</label>
           <input
             id="recipe-filter-search"
             type="text"
             class="form-input"
             [ngModel]="autoCreateRecipeSearchQuery"
             (ngModelChange)="onAutoCreateRecipeSearchChange($event)"
-            [placeholder]="'WEEKLY_PLANS.WIZARD.SELECT_RECIPE' | translate"
+            placeholder="Buscar por nombre..."
           />
         </div>
 
         <div class="recipe-picker-list" (scroll)="onAutoCreateRecipeScroll($event)">
           @if (autoCreateRecipeLoading) {
-            <div class="recipe-picker-state">{{ 'COMMON.LOADING' | translate }}...</div>
+            <div class="recipe-picker-state">Cargando recetas...</div>
           } @else if (autoCreateRecipeResults.length === 0) {
-            <div class="recipe-picker-state">{{ 'WEEKLY_PLANS.WIZARD.AUTO_NO_RECIPES' | translate }}</div>
+            <div class="recipe-picker-state">No hay recetas para mostrar.</div>
           } @else {
             @for (recipe of autoCreateRecipeResults; track recipe.id) {
               <label class="recipe-picker-item">
@@ -478,19 +478,19 @@
             }
 
             @if (autoCreateRecipeLoadingMore) {
-              <div class="recipe-picker-state">{{ 'COMMON.LOADING_MORE' | translate }}...</div>
+              <div class="recipe-picker-state">Cargando más...</div>
             } @else if (autoCreateRecipeHasMore) {
-              <div class="recipe-picker-state">{{ 'COMMON.SCROLL_LOAD_MORE' | translate }}</div>
+              <div class="recipe-picker-state">Desliza para cargar más recetas.</div>
             }
           }
         </div>
       </section>
 
       <section class="auto-create-section">
-        <h3 class="auto-create-section-title">{{ 'WEEKLY_PLANS.WIZARD.AUTO_ALLERGENS_EXCLUDE' | translate }}</h3>
-        <label>{{ 'WEEKLY_PLANS.WIZARD.AUTO_EXCLUDE_ALLERGENS_LABEL' | translate }}:</label>
+        <h3 class="auto-create-section-title">Alergias a excluir</h3>
+        <label>Excluir recetas con alérgenos:</label>
         @if (getAutoCreateAllergenOptions().length === 0) {
-          <p class="field-hint">{{ 'WEEKLY_PLANS.WIZARD.AUTO_NO_ALLERGENS' | translate }}</p>
+          <p class="field-hint">No hay alérgenos registrados en el catálogo de recetas.</p>
         } @else {
           <div class="allergen-grid">
             @for (allergen of getAutoCreateAllergenOptions(); track allergen.id) {
@@ -508,28 +508,28 @@
       </section>
 
       <section class="auto-create-section">
-        <h3 class="auto-create-section-title">{{ 'WEEKLY_PLANS.WIZARD.STUDENTS_PARTICIPATION' | translate }}</h3>
+        <h3 class="auto-create-section-title">Distribución de alumnos</h3>
         <div class="distribution-options">
           <label class="check-item">
             <input type="radio" name="distributionMode" value="EQUITATIVE" [(ngModel)]="autoCreateDistributionMode" />
-            <span>{{ 'WEEKLY_PLANS.WIZARD.AUTO_DIST_EQUITATIVE' | translate }}</span>
+            <span>Equitativa</span>
           </label>
           <label class="check-item">
             <input type="radio" name="distributionMode" value="HISTORICAL" [(ngModel)]="autoCreateDistributionMode" />
-            <span>{{ 'WEEKLY_PLANS.WIZARD.AUTO_DIST_HISTORICAL' | translate }}</span>
+            <span>Balanceada por histórico</span>
           </label>
           <label class="check-item">
             <input type="radio" name="distributionMode" value="RANDOM" [(ngModel)]="autoCreateDistributionMode" />
-            <span>{{ 'WEEKLY_PLANS.WIZARD.AUTO_DIST_RANDOM' | translate }}</span>
+            <span>Aleatoria</span>
           </label>
         </div>
       </section>
 
       <section class="auto-create-section">
-        <h3 class="auto-create-section-title">{{ 'WEEKLY_PLANS.WIZARD.AUTO_EXCLUDE_STUDENTS' | translate }}</h3>
-        <label>{{ 'WEEKLY_PLANS.WIZARD.AUTO_EXCLUDE_STUDENTS_LABEL' | translate }}:</label>
+        <h3 class="auto-create-section-title">Excluir alumnos</h3>
+        <label>Los alumnos excluidos no recibirán asignaciones automáticas:</label>
         @if (getAutoCreateStudentOptions().length === 0) {
-          <p class="field-hint">{{ 'WEEKLY_PLANS.WIZARD.NO_STUDENTS_AVAILABLE' | translate }}</p>
+          <p class="field-hint">No hay alumnos disponibles.</p>
         } @else {
           <div class="allergen-grid">
             @for (student of getAutoCreateStudentOptions(); track student.id) {
@@ -547,9 +547,9 @@
       </section>
 
       <div modal-footer class="modal-actions">
-        <button class="modal-btn modal-btn-secondary" type="button" (click)="closeAutoCreateModal()">{{ 'COMMON.CANCEL' | translate }}</button>
+        <button class="modal-btn modal-btn-secondary" type="button" (click)="closeAutoCreateModal()">Cancelar</button>
         <button class="modal-btn modal-btn-primary" type="button" [disabled]="loadingCookableRecipes" (click)="createDayAutomatically()">
-          {{ (loadingCookableRecipes ? 'COMMON.LOADING' : 'WEEKLY_PLANS.WIZARD.AUTO_CREATE_BTN') | translate }}
+          {{ loadingCookableRecipes ? 'Cargando...' : 'Crear sesión automática' }}
         </button>
       </div>
     </app-base-modal>
