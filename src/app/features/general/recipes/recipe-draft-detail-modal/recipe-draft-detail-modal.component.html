@@ -55,7 +55,7 @@
             @for (component of draft.components; track component.productId) {
               <tr>
                 <td>Producto #{{ component.productId }}</td>
-                <td>{{ component.quantity }}</td>
+                <td>{{ component.quantity }} {{ component.productUnit }}</td>
               </tr>
             }
           </tbody>

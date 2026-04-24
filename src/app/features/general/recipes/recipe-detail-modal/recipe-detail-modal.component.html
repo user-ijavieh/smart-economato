@@ -44,9 +44,9 @@
                   </span>
                   }
                 </td>
-                <td class="qty-cell">{{ comp.quantity | number:'1.2-3' }}</td>
+                <td class="qty-cell">{{ comp.quantity | number:'1.2-3' }} {{ comp.productUnit }}</td>
                 <td class="qty-cell gross-cell">
-                  {{ getGrossQuantity(comp.quantity, comp.availabilityPercentage) | number:'1.2-3' }}
+                  {{ getGrossQuantity(comp.quantity, comp.availabilityPercentage) | number:'1.2-3' }} {{ comp.productUnit }}
                 </td>
                 <td class="subtotal-cell">{{ comp.subtotal | number:'1.2-2' }}&nbsp;€</td>
               </tr>

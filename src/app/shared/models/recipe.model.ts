@@ -20,6 +20,7 @@ export interface RecipeComponent {
   quantity: number;
   subtotal: number;
   availabilityPercentage?: number;
+  productUnit?: string;
 }
 
 
