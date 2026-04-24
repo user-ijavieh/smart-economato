@@ -11,7 +11,7 @@ export interface Recipe {
   components: RecipeComponent[];
   allergens: Allergen[];
 }
-
+5
 export interface RecipeComponent {
   id: number;
   parentRecipeId: number;
@@ -20,6 +20,7 @@ export interface RecipeComponent {
   quantity: number;
   subtotal: number;
   availabilityPercentage?: number;
+  productUnit?: string;
 }
 
 
