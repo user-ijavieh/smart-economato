@@ -1685,27 +1685,9 @@
       "NEXT_QTY": "Cantidad Nueva",
       "LOAD_ERROR": "Error al cargar las auditorías"
     },
-    "MESSAGES": {
-      "LOAD_ERROR": "Error al cargar las recetas",
-      "TOGGLE_HIDDEN_SUCCESS": "Receta \"{{name}}\" ha sido {{action}}",
-      "TOGGLE_HIDDEN_ERROR": "Error al {{action}} receta",
-      "CREATE_SUCCESS": "Receta \"{{name}}\" creada con éxito",
-      "CREATE_ERROR": "Error al crear la receta",
-      "UPDATE_SUCCESS": "Receta \"{{name}}\" actualizada con éxito",
-      "UPDATE_ERROR": "Error al actualizar la receta"
-    },
-    "LABELS": {
-      "USER": "Usuario",
-      "RECIPE": "Receta",
-      "NONE": "Ninguno"
-    }
-  },
-  "RECIPES_MGMT": {
-    "TITLE": "Gestión de Recetas",
     "TAB_RECIPES": "Recetas",
     "TAB_AUDITS": "Auditoría",
     "TAB_DRAFTS": "Borradores",
-    "ADD_RECIPE": "Agregar Receta",
     "WITH_ALLERGENS": "Con Alérgenos",
     "WITHOUT_ALLERGENS": "Sin Alérgenos",
     "AVG_COST": "Costo Promedio",
@@ -1777,7 +1759,8 @@
       "ELABORATION": "Elaboración",
       "PRESENTATION": "Presentación",
       "TOTAL_COST": "Coste Total",
-      "ALLERGENS": "Alérgenos"
+      "ALLERGENS": "Alérgenos",
+      "NONE": "Ninguno"
     }
   },
   "STOCK": {
