@@ -2,14 +2,14 @@ import { Component, Input, OnDestroy, OnInit, computed, inject, signal } from '@
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { Toast, MessageService } from '../../../../core/services/message.service';
 import { ModalStackService } from '../../../../core/services/modal-stack.service';
 
 @Component({
   selector: 'app-toast',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './toast.component.html',
   styleUrl: './toast.component.css'
 })
@@ -18,7 +18,6 @@ export class ToastComponent implements OnInit, OnDestroy {
 
   private messageService = inject(MessageService);
   private modalStack = inject(ModalStackService);
-  private translate = inject(TranslateService);
   private expiredSub?: Subscription;
 
   private readonly modalStackCount = toSignal(this.modalStack.stackCount$, {
@@ -67,8 +66,7 @@ export class ToastComponent implements OnInit, OnDestroy {
       info: 'COMMON.INFO'
     };
     
-    const key = keys[type];
-    return key ? this.translate.instant(key) : '';
+    return keys[type] || '';
   }
 
   getToastTitle(toast: Toast): string {

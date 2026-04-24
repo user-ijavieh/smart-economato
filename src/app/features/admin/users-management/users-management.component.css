@@ -380,7 +380,7 @@ tr.row-hidden .user-avatar-small {
   pointer-events: none;
 }
 
-.btn-editar, .btn-eliminar, .btn-ocultar, .btn-mostrar {
+.btn-ver, .btn-editar, .btn-eliminar, .btn-ocultar, .btn-mostrar {
   padding: 8px;
   border-radius: 8px;
   box-shadow: none;
