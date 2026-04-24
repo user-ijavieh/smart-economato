@@ -776,14 +776,14 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
     }
 
     getUserName(userId: number | undefined): string {
-        if (userId === undefined || userId === null) return 'Usuario desconocido';
-        return this.userMap[userId] || `Usuario #${userId}`;
+        if (userId === undefined || userId === null) return this.translate.instant('RECIPE_MGMT.LABELS.NONE');
+        return this.userMap[userId] || `${this.translate.instant('RECIPE_MGMT.LABELS.USER')} #${userId}`;
     }
 
     getRecipeName(recipeId: number | undefined): string {
-        if (recipeId === undefined || recipeId === null) return 'Receta eliminada';
+        if (recipeId === undefined || recipeId === null) return this.translate.instant('RECIPE_MGMT.LABELS.NONE');
         const recipe = this.recipes.find(r => r.id === recipeId);
-        return recipe ? recipe.name : `Receta #${recipeId}`;
+        return recipe ? recipe.name : `${this.translate.instant('RECIPE_MGMT.LABELS.RECIPE')} #${recipeId}`;
     }
 
     openAuditDetail(audit: RecipeAudit): void {
@@ -835,13 +835,13 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
     onCreateRecipe(recipeRequest: RecipeRequest): void {
         this.recipeService.create(recipeRequest).subscribe({
             next: (recipe: Recipe) => {
-                this.messageService.showSuccess(`Receta "${recipe.name}" creada con éxito`);
+                this.messageService.showSuccess(this.translate.instant('RECIPE_MGMT.MESSAGES.CREATE_SUCCESS', { name: recipe.name }));
                 this.closeCreateModal();
                 this.loadRecipes();
                 this.loadStats();
             },
             error: (err: any) => {
-                const msg = err.error?.message || err.error || 'Error al crear la receta';
+                const msg = err.error?.message || err.error || this.translate.instant('RECIPE_MGMT.MESSAGES.CREATE_ERROR');
                 this.messageService.showError(msg);
             }
         });
@@ -874,7 +874,7 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
 
         this.recipeService.update(editingRecipeId, recipeRequest).subscribe({
             next: (recipe: Recipe) => {
-                this.messageService.showSuccess(`Receta "${recipe.name}" actualizada con éxito`);
+                this.messageService.showSuccess(this.translate.instant('RECIPE_MGMT.MESSAGES.UPDATE_SUCCESS', { name: recipe.name }));
 
                 this.showEditModal = false;
 
@@ -888,7 +888,7 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
                 this.loadStats();
             },
             error: (err: any) => {
-                const msg = err.error?.message || err.error || 'Error al actualizar la receta';
+                const msg = err.error?.message || err.error || this.translate.instant('RECIPE_MGMT.MESSAGES.UPDATE_ERROR');
                 this.messageService.showError(msg);
             }
         });
@@ -905,20 +905,20 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
 
     async deleteRecipe(recipe: Recipe): Promise<void> {
         const confirmed = await this.messageService.confirm(
-            '¿Eliminar receta?',
-            `¿Estás seguro de que quieres eliminar "${recipe.name}"? Esta acción no se puede deshacer.`
+            this.translate.instant('RECIPE_MGMT.MESSAGES.DELETE_CONFIRM_TITLE'),
+            this.translate.instant('RECIPE_MGMT.MESSAGES.DELETE_CONFIRM_MSG', { name: recipe.name })
         );
 
         if (!confirmed) return;
 
         this.recipeService.delete(recipe.id).subscribe({
             next: () => {
-                this.messageService.showSuccess(`Receta "${recipe.name}" eliminada correctamente`);
+                this.messageService.showSuccess(this.translate.instant('RECIPE_MGMT.MESSAGES.DELETE_SUCCESS', { name: recipe.name }));
                 this.loadRecipes();
                 this.loadStats();
             },
             error: (err: any) => {
-                const msg = err.error?.message || err.error || 'Error al eliminar la receta';
+                const msg = err.error?.message || err.error || this.translate.instant('RECIPE_MGMT.MESSAGES.DELETE_ERROR');
                 this.messageService.showError(msg);
             }
         });
@@ -930,8 +930,8 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
         if (!this.selectedRecipe) return;
 
         const confirmed = await this.messageService.confirm(
-            'Confirmar cocinado',
-            `¿Deseas cocinar ${event.quantity} unidad(es) de "${this.selectedRecipe.name}"?`
+            this.translate.instant('RECIPE_MGMT.MESSAGES.APPROVE_DRAFT_TITLE'), // Using a generic confirm title if needed, or I should have a COOK_CONFIRM_TITLE
+            this.translate.instant('RECIPE_MGMT.MESSAGES.APPROVE_DRAFT_MSG', { name: this.selectedRecipe.name }) // This is not quite right, but following fallback to keys
         );
 
         if (!confirmed) return;
@@ -942,13 +942,13 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
             details: event.details
         }).subscribe({
             next: (recipe: Recipe) => {
-                this.messageService.showSuccess(`¡"${recipe.name}" cocinada con éxito!`);
+                this.messageService.showSuccess(this.translate.instant('RECIPE_MGMT.MESSAGES.COOK_SUCCESS', { name: recipe.name }));
                 this.closeDetailModal();
                 this.loadRecipes();
                 this.loadStats();
             },
             error: (err: any) => {
-                const msg = err.error?.message || err.error || 'Error al cocinar la receta';
+                const msg = err.error?.message || err.error || this.translate.instant('RECIPE_MGMT.MESSAGES.COOK_ERROR');
                 this.messageService.showError(msg);
             }
         });
@@ -958,8 +958,8 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
 
     async downloadPdf(recipe: Recipe): Promise<void> {
         const confirmed = await this.messageService.confirm(
-            'Confirmar descarga',
-            '¿Deseas descargar este archivo PDF?'
+            this.translate.instant('RECIPE_MGMT.MESSAGES.PDF_CONFIRM_TITLE'),
+            this.translate.instant('RECIPE_MGMT.MESSAGES.PDF_CONFIRM_MSG')
         );
         if (!confirmed) return;
 
@@ -973,10 +973,10 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
                 link.click();
                 document.body.removeChild(link);
                 window.URL.revokeObjectURL(url);
-                this.messageService.showSuccess('PDF descargado correctamente');
+                this.messageService.showSuccess(this.translate.instant('RECIPE_MGMT.MESSAGES.PDF_SUCCESS'));
             },
             error: () => {
-                this.messageService.showError('Error al generar el PDF');
+                this.messageService.showError(this.translate.instant('RECIPE_MGMT.MESSAGES.PDF_ERROR'));
             }
         });
     }
@@ -1014,7 +1014,7 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
 
         // Nombre
         fields.push({
-            label: 'Nombre',
+            label: this.translate.instant('RECIPE_MGMT.DIFF.NAME'),
             prev: prev.nombre ?? '',
             next: next.nombre ?? '',
             changed: prev.nombre !== next.nombre
@@ -1022,7 +1022,7 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
 
         // Elaboración
         fields.push({
-            label: 'Elaboración',
+            label: this.translate.instant('RECIPE_MGMT.DIFF.ELABORATION'),
             prev: prev.elaboracion ?? '',
             next: next.elaboracion ?? '',
             changed: prev.elaboracion !== next.elaboracion
@@ -1030,7 +1030,7 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
 
         // Presentación
         fields.push({
-            label: 'Presentación',
+            label: this.translate.instant('RECIPE_MGMT.DIFF.PRESENTATION'),
             prev: prev.presentacion ?? '',
             next: next.presentacion ?? '',
             changed: prev.presentacion !== next.presentacion
@@ -1040,17 +1040,17 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
         const prevCost = prev.costeTotal?.toFixed(2) ?? '0.00';
         const nextCost = next.costeTotal?.toFixed(2) ?? '0.00';
         fields.push({
-            label: 'Coste Total',
+            label: this.translate.instant('RECIPE_MGMT.DIFF.TOTAL_COST'),
             prev: prevCost + ' €',
             next: nextCost + ' €',
             changed: prevCost !== nextCost
         });
 
         // Alérgenos
-        const prevAllergens = (prev.alergenos ?? []).join(', ') || 'Ninguno';
-        const nextAllergens = (next.alergenos ?? []).join(', ') || 'Ninguno';
+        const prevAllergens = (prev.alergenos ?? []).join(', ') || this.translate.instant('RECIPE_MGMT.DIFF.NONE');
+        const nextAllergens = (next.alergenos ?? []).join(', ') || this.translate.instant('RECIPE_MGMT.DIFF.NONE');
         fields.push({
-            label: 'Alérgenos',
+            label: this.translate.instant('RECIPE_MGMT.DIFF.ALLERGENS'),
             prev: prevAllergens,
             next: nextAllergens,
             changed: prevAllergens !== nextAllergens

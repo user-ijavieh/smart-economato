@@ -143,7 +143,9 @@
     "INFO": "Informació",
     "SELECTED_COUNT_ONE": "1 seleccionat",
     "SELECTED_COUNT_OTHER": "{{count}} seleccionats",
-    "SELECT_PLACEHOLDER": "Selecciona..."
+    "SELECT_PLACEHOLDER": "Selecciona...",
+    "HIDDEN": "ocultada",
+    "SHOWN": "mostrada"
   },
   "NAV": {
     "DASHBOARD": "Inici",
@@ -217,63 +219,6 @@
     "INVENTORY": "Inventari",
     "ORDERS": "Comandes",
     "RECEPTION": "Recepció",
-    "RECIPE_MGMT": {
-      "TITLE": "Gestió de Receptes",
-      "SEARCH_PLACEHOLDER": "Buscar per nom...",
-      "ADD_RECIPE": "Afegir Recepta",
-      "NO_RECIPES_FOUND": "No s'han trobat receptes",
-      "TABS": {
-        "RECIPES": "Receptes",
-        "AUDITS": "Auditoria",
-        "DRAFTS": "Esborranys"
-      },
-      "STATS": {
-        "WITH_ALLERGENS": "Amb Al·lèrgens",
-        "WITHOUT_ALLERGENS": "Sense Al·lèrgens",
-        "AVG_COST": "Cost Mitjà"
-      },
-      "TABLE": {
-        "COMPONENTS": "Components",
-        "TOTAL_COST": "Cost Total",
-        "ALLERGENS": "Al·lèrgens"
-      },
-      "DRAFTS": {
-        "NONE_FOUND": "No s'han trobat esborranys",
-        "RESENDABLE": "Reenviable",
-        "DETAIL_TITLE": "Detall de l'Esborrany",
-        "ELABORATION": "Elaboració",
-        "PRESENTATION": "Presentació",
-        "REJECTION_REASON": "Motiu de rebutj",
-        "VIEW_APPROVED": "Veure recepta aprovada",
-        "APPROVE_CONFIRM_TITLE": "Aprovar esborrany",
-        "APPROVE_CONFIRM_MSG": "Vols aprovar l'esborrany \"{{name}}\"?",
-        "REJECT_CONFIRM_TITLE": "Rebutjar esborrany",
-        "REJECT_CONFIRM_MSG": "Indica el motiu per rebutjar l'esborrany <strong>{{name}}</strong>.",
-        "REJECT_REASON_EMPTY": "Has d'indicar un motiu de rebutj",
-        "APPROVE_SUCCESS": "Esborrany \"{{name}}\" aprovat",
-        "REJECT_SUCCESS": "Esborrany \"{{name}}\" rebutjat",
-        "LOAD_ERROR": "Error en carregar els esborranys de receptes",
-        "APPROVE_ERROR": "Error en aprovar l'esborrany",
-        "REJECT_ERROR": "Error en rebutjar l'esborrany",
-        "APPROVED_LOAD_ERROR": "No s'ha pogut carregar la recepta aprovada"
-      },
-      "AUDITS": {
-        "SEARCH_PLACEHOLDER": "Buscar en auditories...",
-        "NONE_FOUND": "No s'han trobat auditories",
-        "RECIPE_ID": "ID Recepta",
-        "DETAIL_TITLE": "Detall d'Auditoria",
-        "PREV_STATE": "Estat Anterior",
-        "NEXT_STATE": "Estat Nou",
-        "PREV_QTY": "Quantitat Anterior",
-        "NEXT_QTY": "Quantitat Nova",
-        "LOAD_ERROR": "Error en carregar les auditories"
-      },
-      "MESSAGES": {
-        "LOAD_ERROR": "Error en carregar les receptes",
-        "TOGGLE_HIDDEN_SUCCESS": "La recepta \"{{name}}\" ha estat {{action}}",
-        "TOGGLE_HIDDEN_ERROR": "Error al {{action}} recepta"
-      }
-    },
     "RECIPES": "Receptes",
     "KITCHEN": "Cuina",
     "USERS": "Alumnes",
@@ -1587,54 +1532,6 @@
       "TOTAL_COST": "Cost Total",
       "ALLERGENS_COL": "Al·lèrgens",
       "NONE": "Cap",
-      "NO_RECIPES": "No s'han trobat receptes",
-      "ALL_ACTIONS": "Totes les accions",
-      "NO_AUDITS": "No s'han trobat auditories",
-      "AUDIT_DETAIL": "Detall d'Auditoria",
-      "COMPONENTS_DIFF": "Components",
-      "INGREDIENT": "Ingredient",
-      "PREV_QTY": "Quantitat Anterior",
-      "NEW_QTY": "Quantitat Nova",
-      "ACTION": "Acció",
-      "RECIPE_ID": "ID Recepta",
-      "SEARCH_RECIPE_PLACEHOLDER": "Buscar per nom...",
-      "AUDIT_SEARCH_PLACEHOLDER": "Buscar en auditories...",
-      "REENVIABLE": "Reenviable",
-      "REJECT_BTN": "Rebutjar",
-      "REJECT_DRAFT_TITLE": "Rebutjar esborrany",
-      "REJECT_DRAFT_PROMPT": "Indica el motiu per rebutjar l'esborrany <strong>{{name}}</strong>.",
-      "REJECT_DRAFT_PLACEHOLDER": "Escriu el motiu de rebutj...",
-      "MESSAGES": {
-        "LOAD_ERROR": "Error en carregar les receptes",
-        "LOAD_AUDITS_ERROR": "Error en carregar les auditories",
-        "LOAD_DRAFTS_ERROR": "Error en carregar els esborranys de receptes",
-        "TOGGLE_HIDDEN_SUCCESS": "La recepta \"{{name}}\" ha estat {{action}}",
-        "HIDDEN": "ocultada",
-        "SHOWN": "mostrada",
-        "APPROVE_DRAFT_TITLE": "Aprovar esborrany",
-        "APPROVE_DRAFT_MSG": "Vols aprovar l'esborrany \"{{name}}\"?",
-        "APPROVE_DRAFT_SUCCESS": "Esborrany \"{{name}}\" aprovat",
-        "APPROVE_DRAFT_ERROR": "Error en aprovar l'esborrany",
-        "REJECT_DRAFT_SUCCESS": "Esborrany \"{{name}}\" rebutjat",
-        "REJECT_DRAFT_ERROR": "Error en rebutjar l'esborrany",
-        "REJECT_DRAFT_REASON_REQUIRED": "Has d'indicar un motiu de rebutj",
-        "APPROVED_RECIPE_LOAD_ERROR": "No s'ha pogut carregar la recepta aprovada",
-        "CREATE_SUCCESS": "Recepta \"{{name}}\" creada amb èxit",
-        "CREATE_ERROR": "Error en crear la recepta",
-        "UPDATE_SUCCESS": "Recepta \"{{name}}\" actualitzada amb èxit",
-        "UPDATE_ERROR": "Error en actualitzar la recepta",
-        "DELETE_CONFIRM_TITLE": "Eliminar recepta?",
-        "DELETE_CONFIRM_MSG": "Estàs segur que vols eliminar \"{{name}}\"? Aquesta acció no es pot desfer.",
-        "DELETE_SUCCESS": "Recepta \"{{name}}\" eliminada correctament",
-        "DELETE_ERROR": "Error en eliminar la recepta",
-        "COOK_SUCCESS": "\"{{name}}\" cuinada amb èxit!",
-        "COOK_ERROR": "Error en cuinar la recepta",
-        "PDF_CONFIRM_TITLE": "Confirmar descàrrega",
-        "PDF_CONFIRM_MSG": "Vols descarregar aquest arxiu PDF?",
-        "PDF_SUCCESS": "PDF descarregat correctament",
-        "PDF_ERROR": "Error en generar el PDF",
-        "TOGGLE_HIDDEN_ERROR": "Error en canviar la visibilitat de la recepta"
-      },
       "ACTIONS": {
         "CREATE": "Crear",
         "UPDATE": "Modificar",
@@ -3023,6 +2920,63 @@
       "ERROR_TITLE": "Error",
       "ERROR_BODY": "Alguna cosa ha anat malament",
       "WARNING_BODY": "Avís important"
+    }
+  },
+  "RECIPE_MGMT": {
+    "TITLE": "Gestió de Receptes",
+    "SEARCH_PLACEHOLDER": "Buscar per nom...",
+    "ADD_RECIPE": "Afegir Recepta",
+    "NO_RECIPES_FOUND": "No s'han trobat receptes",
+    "TABS": {
+      "RECIPES": "Receptes",
+      "AUDITS": "Auditoria",
+      "DRAFTS": "Esborranys"
+    },
+    "STATS": {
+      "WITH_ALLERGENS": "Amb Al·lèrgens",
+      "WITHOUT_ALLERGENS": "Sense Al·lèrgens",
+      "AVG_COST": "Cost Mitjà"
+    },
+    "TABLE": {
+      "COMPONENTS": "Components",
+      "TOTAL_COST": "Cost Total",
+      "ALLERGENS": "Al·lèrgens"
+    },
+    "DRAFTS": {
+      "NONE_FOUND": "No s'han trobat esborranys",
+      "RESENDABLE": "Reenviable",
+      "DETAIL_TITLE": "Detall de l'Esborrany",
+      "ELABORATION": "Elaboració",
+      "PRESENTATION": "Presentació",
+      "REJECTION_REASON": "Motiu de rebutj",
+      "VIEW_APPROVED": "Veure recepta aprovada",
+      "APPROVE_CONFIRM_TITLE": "Aprovar esborrany",
+      "APPROVE_CONFIRM_MSG": "Vols aprovar l'esborrany \"{{name}}\"?",
+      "REJECT_CONFIRM_TITLE": "Rebutjar esborrany",
+      "REJECT_CONFIRM_MSG": "Indica el motiu per rebutjar l'esborrany <strong>{{name}}</strong>.",
+      "REJECT_REASON_EMPTY": "Has d'indicar un motiu de rebutj",
+      "APPROVE_SUCCESS": "Esborrany \"{{name}}\" aprovat",
+      "REJECT_SUCCESS": "Esborrany \"{{name}}\" rebutjat",
+      "LOAD_ERROR": "Error en carregar els esborranys de receptes",
+      "APPROVE_ERROR": "Error en aprovar l'esborrany",
+      "REJECT_ERROR": "Error en rebutjar l'esborrany",
+      "APPROVED_LOAD_ERROR": "No s'ha pogut carregar la recepta aprovada"
+    },
+    "AUDITS": {
+      "SEARCH_PLACEHOLDER": "Buscar en auditories...",
+      "NONE_FOUND": "No s'han trobat auditories",
+      "RECIPE_ID": "ID Recepta",
+      "DETAIL_TITLE": "Detall d'Auditoria",
+      "PREV_STATE": "Estat Anterior",
+      "NEXT_STATE": "Estat Nou",
+      "PREV_QTY": "Quantitat Anterior",
+      "NEXT_QTY": "Quantitat Nova",
+      "LOAD_ERROR": "Error en carregar les auditories"
+    },
+    "MESSAGES": {
+      "LOAD_ERROR": "Error en carregar les receptes",
+      "TOGGLE_HIDDEN_SUCCESS": "La recepta \"{{name}}\" ha estat {{action}}",
+      "TOGGLE_HIDDEN_ERROR": "Error al {{action}} recepta"
     }
   }
 }

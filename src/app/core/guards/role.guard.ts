@@ -18,14 +18,16 @@ export function roleGuard(...allowedRoles: Role[]): CanActivateFn {
         const authService = inject(AuthService);
         const router = inject(Router);
 
+        const currentPath = state.url.split('?')[0];
+
         if (authService.isFirstLogin()) {
-            if (state.url === '/change-password') return true;
+            if (currentPath === '/change-password') return true;
             return router.createUrlTree(['/change-password'], {
                 queryParams: { returnUrl: state.url }
             });
         }
 
-        if (state.url === '/change-password') {
+        if (currentPath === '/change-password') {
             const role = authService.getRole();
             return router.createUrlTree([role === 'ADMIN' ? '/admin-panel' : '/welcome']);
         }

@@ -17,7 +17,7 @@ export function robustPasswordValidator(control: AbstractControl): ValidationErr
     const hasUpperCase = /[A-Z]/.test(value);
     const hasLowerCase = /[a-z]/.test(value);
     const hasNumber = /[0-9]/.test(value);
-    const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+    const hasSymbol = /[^\p{L}\p{N}\s]/u.test(value);
     const hasMinLength = value.length >= 8;
 
     const errors: any = {};
