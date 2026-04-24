@@ -1,5 +1,5 @@
 <div class="page-header header-inventario">
-  <h1>Inventario</h1>
+  <h1>{{ 'SIDEBAR.INVENTORY' | translate }}</h1>
 </div>
 
 <div class="page-content contenedor-principal hide-scrollbar">
@@ -8,12 +8,12 @@
       <input
         type="text"
         [(ngModel)]="searchTerm"
-        placeholder="Buscar producto..."
+        [placeholder]="'COMMON.SEARCH_PRODUCT' | translate"
         (ngModelChange)="onSearch()"
       />
     </div>
 
-    <button class="btn-primary" (click)="openBarcodeScanner()" title="Escanear código de barras">
+    <button class="btn-primary" (click)="openBarcodeScanner()" [title]="'PRODUCT_MGMT.SCAN_BARCODE' | translate">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         height="20px"
@@ -25,13 +25,13 @@
           d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z"
         />
       </svg>
-      Escanear
+      {{ 'PRODUCT_MGMT.SCAN' | translate }}
     </button>
 
     @if (hasActiveFilters()) {
-      <button class="btn-secondary btn-clear-filters" (click)="clearFilters()">Limpiar Filtros</button>
+      <button class="btn-secondary btn-clear-filters" (click)="clearFilters()">{{ 'COMMON.CLEAR_FILTERS' | translate }}</button>
     }
-    <button class="btn-success btn-excel" (click)="exportToExcel()" title="Descargar Excel">
+    <button class="btn-success btn-excel" (click)="exportToExcel()" [title]="'PRODUCT_MGMT.EXCEL' | translate">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"
@@ -46,20 +46,20 @@
           d="M5.75 6.75a.5.5 0 0 1 .71 0L8 8.29l1.54-1.54a.5.5 0 1 1 .71.71L8.71 9l1.54 1.54a.5.5 0 0 1-.71.71L8 9.71l-1.54 1.54a.5.5 0 0 1-.71-.71L7.29 9 5.75 7.46a.5.5 0 0 1 0-.71z"
         />
       </svg>
-      Exportar a Excel
+      {{ 'PRODUCT_MGMT.EXCEL' | translate }}
     </button>
-    <button class="btn-secondary btn-expirations" [class.alert]="expiredBatches.length > 0" (click)="toggleExpirationsPanel()" title="Ver Caducidades">
+    <button class="btn-secondary btn-expirations" [class.alert]="expiredBatches.length > 0" (click)="toggleExpirationsPanel()" [title]="'BATCHES.TAB_CONTROL' | translate">
       <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
         <path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t25-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-1 13.5l103 78-110 190-119-50q-11 8-23 15t-25 12l-16 128H370Zm110-280q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z"/>
       </svg>
-      Caducidades ({{ expiredBatches.length + expiringBatches.length }})
+      {{ 'BATCHES.TITLE' | translate }} ({{ expiredBatches.length + expiringBatches.length }})
     </button>
     @if (isAdmin) {
       <button id="btnAgregarProducto" class="btn-primary" (click)="openCreateModal()">
         <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
           <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
         </svg>
-        Agregar Producto
+        {{ 'PRODUCT_MGMT.ADD_PRODUCT' | translate }}
       </button>
     }
   </div>
@@ -68,23 +68,23 @@
   @if (showExpirationsPanel) {
     <div class="expirations-panel" [@fadeSlide]>
       <div class="panel-header">
-        <h3>Control de Caducidades</h3>
+        <h3>{{ 'BATCHES.EXPIRATION_CONTROL' | translate }}</h3>
         <button class="btn-icon" (click)="toggleExpirationsPanel()">✕</button>
       </div>
 
       <div class="panel-content">
         @if (expiredBatches.length > 0) {
           <div class="expiration-section expired">
-            <h4>Caducados ({{ expiredBatches.length }})</h4>
+            <h4>{{ 'BATCHES.STATUS.EXPIRED' | translate }} ({{ expiredBatches.length }})</h4>
             <div class="batch-list">
               @for (batch of expiredBatches; track batch.id) {
                 <div class="batch-item">
                   <div class="batch-info">
                     <span class="product-name">{{ batch.productName }}</span>
-                    <span class="batch-details">Lote #{{ batch.id }} · Cant: {{ batch.remainingQuantity }}</span>
-                    <span class="batch-date">Caducó: {{ batch.expirationDate | date:'dd/MM/yyyy' }}</span>
+                    <span class="batch-details">{{ 'BATCHES.BATCH_SHORT' | translate }} #{{ batch.id }} · {{ 'COMMON.QUANTITY_SHORT' | translate }}: {{ batch.remainingQuantity }}</span>
+                    <span class="batch-date">{{ 'BATCHES.EXPIRED_ON' | translate }}: {{ batch.expirationDate | date:'dd/MM/yyyy' }}</span>
                   </div>
-                  <button class="btn-withdraw" (click)="onWithdrawBatch(batch)">Retirar</button>
+                  <button class="btn-withdraw" (click)="onWithdrawBatch(batch)">{{ 'BATCHES.WITHDRAW' | translate }}</button>
                 </div>
               }
             </div>
@@ -93,14 +93,14 @@
 
         @if (expiringBatches.length > 0) {
           <div class="expiration-section expiring">
-            <h4>Próximos a caducar ({{ expiringBatches.length }})</h4>
+            <h4>{{ 'BATCHES.STATUS.UPCOMING' | translate }} ({{ expiringBatches.length }})</h4>
             <div class="batch-list">
               @for (batch of expiringBatches; track batch.id) {
                 <div class="batch-item">
                   <div class="batch-info">
                     <span class="product-name">{{ batch.productName }}</span>
-                    <span class="batch-details">Lote #{{ batch.id }} · Cant: {{ batch.remainingQuantity }}</span>
-                    <span class="batch-date">Caduca en {{ batch.daysUntilExpiration }} días</span>
+                    <span class="batch-details">{{ 'BATCHES.BATCH_SHORT' | translate }} #{{ batch.id }} · {{ 'COMMON.QUANTITY_SHORT' | translate }}: {{ batch.remainingQuantity }}</span>
+                    <span class="batch-date">{{ 'BATCHES.EXPIRING_IN' | translate: { days: batch.daysUntilExpiration } }}</span>
                   </div>
                 </div>
               }
@@ -109,7 +109,7 @@
         }
 
         @if (expiredBatches.length === 0 && expiringBatches.length === 0) {
-          <p class="empty-msg">No hay lotes caducados ni próximos a caducar.</p>
+          <p class="empty-msg">{{ 'BATCHES.NO_BATCHES_MSG' | translate }}</p>
         }
       </div>
     </div>
@@ -133,33 +133,33 @@
             (click)="onSortChange('name')"
             [attr.data-sort-dir]="getSortDir('name')"
           >
-            Nombre
+            {{ 'COMMON.NAME' | translate }}
           </th>
           <th
             class="sortable hide-on-mobile"
             (click)="onSortChange('unitPrice')"
             [attr.data-sort-dir]="getSortDir('unitPrice')"
           >
-            Precio (€)
+            {{ 'COMMON.PRICE' | translate }}
           </th>
           <th
             class="sortable"
             (click)="onSortChange('currentStock')"
             [attr.data-sort-dir]="getSortDir('currentStock')"
           >
-            Stock
+            {{ 'COMMON.STOCK' | translate }}
           </th>
-          <th class="hide-on-mobile">Unidad</th>
-          <th class="hide-on-mobile">Lote</th>
+          <th class="hide-on-mobile">{{ 'COMMON.UNIT' | translate }}</th>
+          <th class="hide-on-mobile">{{ 'COMMON.BATCH' | translate }}</th>
           <th
             class="sortable hide-on-mobile"
             (click)="onSortChange('supplier')"
             [attr.data-sort-dir]="getSortDir('supplier')"
           >
-            Proveedor
+            {{ 'COMMON.SUPPLIER' | translate }}
           </th>
           @if (isAdmin) {
-            <th class="hide-on-mobile">Acciones</th>
+            <th class="hide-on-mobile">{{ 'COMMON.ACTIONS' | translate }}</th>
           }
           <th class="show-on-mobile-only mobile-icon-col"></th>
         </tr>
@@ -208,12 +208,12 @@
               <td class="hide-on-mobile">{{ product.unitPrice | number: '1.2-2' }} €</td>
               <td>
                 {{ product.currentStock }}
-                <span class="mobile-unit">{{ product.unit }}</span>
+                <span class="mobile-unit">{{ 'UNITS.' + product.unit | translate }}</span>
               </td>
-              <td class="hide-on-mobile">{{ product.unit }}</td>
+              <td class="hide-on-mobile">{{ 'UNITS.' + product.unit | translate }}</td>
               <td class="hide-on-mobile">
                 @if (product.lotQuantity) {
-                  <span class="lot-badge">{{ product.lotQuantity }} {{ product.unit }}</span>
+                  <span class="lot-badge">{{ product.lotQuantity }} {{ 'UNITS.' + product.unit | translate }}</span>
                 } @else {
                   <span class="lot-badge none">—</span>
                 }
@@ -221,7 +221,7 @@
               <td class="hide-on-mobile">{{ product.supplier?.name || '—' }}</td>
               @if (isAdmin) {
                 <td class="hide-on-mobile" (click)="$event.stopPropagation()">
-                  <button class="btn-editar" (click)="editProduct(product)" title="Editar">
+                  <button class="btn-editar" (click)="editProduct(product)" [title]="'COMMON.EDIT' | translate">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
@@ -259,8 +259,8 @@
         }
         @if (products.length === 0 && !loading && !initialLoad) {
           <tr>
-            <td [attr.colspan]="isAdmin ? 6 : 5" style="text-align: center; padding: 2rem">
-              No se encontraron productos
+            <td [attr.colspan]="isAdmin ? 7 : 6" style="text-align: center; padding: 2rem">
+              {{ 'COMMON.NO_PRODUCTS_FOUND' | translate }}
             </td>
           </tr>
         }
@@ -270,22 +270,22 @@
           <td colspan="7">
             <div class="pagination-controls">
               <button class="btn-page" [disabled]="page === 0 || loading" (click)="onPageChange(page - 1)">
-                Anterior
+                {{ 'COMMON.PREVIOUS' | translate }}
               </button>
               <span class="page-info">
-                Página {{ page + 1 }} de {{ totalPages }}
-                <span class="total-info">({{ totalElements }} productos)</span>
+                {{ 'COMMON.PAGE' | translate }} {{ page + 1 }} {{ 'COMMON.OF' | translate }} {{ totalPages }}
+                <span class="total-info">({{ totalElements }} {{ 'COMMON.PRODUCTS' | translate }})</span>
               </span>
 
-              <select class="size-selector" [ngModel]="size" (change)="onSizeChange($event)" title="Productos por página">
-                <option [value]="10">10 por pág.</option>
-                <option [value]="20">20 por pág.</option>
-                <option [value]="50">50 por pág.</option>
-                <option [value]="100">100 por pág.</option>
+              <select class="size-selector" [ngModel]="size" (change)="onSizeChange($event)" [title]="'COMMON.PER_PAGE' | translate">
+                <option [value]="10">10 {{ 'COMMON.PER_PAGE' | translate }}</option>
+                <option [value]="20">20 {{ 'COMMON.PER_PAGE' | translate }}</option>
+                <option [value]="50">50 {{ 'COMMON.PER_PAGE' | translate }}</option>
+                <option [value]="100">100 {{ 'COMMON.PER_PAGE' | translate }}</option>
               </select>
 
               <button class="btn-page" [disabled]="page >= totalPages - 1 || loading" (click)="onPageChange(page + 1)">
-                Siguiente
+                {{ 'COMMON.NEXT' | translate }}
               </button>
             </div>
           </td>
@@ -328,7 +328,7 @@
 
 <!-- Modal de escáner de código de barras -->
 @if (showScannerModal) {
-  <app-base-modal title="Escanear Código de Barras" size="md" (closed)="closeBarcodeScanner()">
+  <app-base-modal [title]="'PRODUCT_MGMT.SCAN_BARCODE' | translate" size="md" (closed)="closeBarcodeScanner()">
     <div class="scanner-modal-body">
       <app-barcode-scanner (productFound)="onProductFound($event)"></app-barcode-scanner>
     </div>

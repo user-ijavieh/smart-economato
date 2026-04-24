@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, OnInit, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { SEARCH_DEBOUNCE_MS } from '../../../core/constants/search.constants';
 
@@ -12,7 +13,7 @@ export interface SearchableItem {
 @Component({
   selector: 'app-searchable-dropdown',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   template: `
     <div class="searchable-dropdown-wrapper" [class.open]="isOpen">
       <input 
@@ -21,7 +22,7 @@ export interface SearchableItem {
         (ngModelChange)="onSearch($event)"
         (focus)="open()"
         (blur)="close()"
-        [placeholder]="placeholder"
+        [placeholder]="placeholder | translate"
         class="search-input"
         autocomplete="off"
       />
@@ -39,19 +40,19 @@ export interface SearchableItem {
           }
           @if (loadingMore) {
             <div class="dropdown-item loading">
-              <span>Cargando más...</span>
+              <span>{{ 'COMMON.LOADING_MORE' | translate }}</span>
             </div>
           }
         </div>
       } @else if (isOpen && loading) {
         <div class="dropdown-menu">
           <div class="dropdown-item loading">
-            <span>{{ loadingText }}</span>
+            <span>{{ loadingText | translate }}</span>
           </div>
         </div>
       } @else if (isOpen && searchResults.length === 0 && !loading) {
         <div class="dropdown-menu">
-          <div class="dropdown-item disabled">No hay resultados</div>
+          <div class="dropdown-item disabled">{{ 'COMMON.NO_RESULTS' | translate }}</div>
         </div>
       }
     </div>
@@ -134,8 +135,8 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy {
   get items(): SearchableItem[] {
     return this._items;
   }
-  @Input() placeholder = 'Buscar...';
-  @Input() loadingText = 'Cargando...';
+  @Input() placeholder = 'COMMON.SEARCH';
+  @Input() loadingText = 'COMMON.LOADING';
   @Input() selectedIds: number[] = [];
   @Input() loading = false;
   @Input() loadingMore = false;

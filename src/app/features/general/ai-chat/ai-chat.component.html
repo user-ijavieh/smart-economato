@@ -2,23 +2,52 @@
   <header class="gpt-top-bar">
     <div class="gpt-top-left">
       <button class="toolbar-btn btn-incident-secondary" type="button" (click)="startNewChat()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
-        <span class="desktop-only-text">Nuevo Chat</span>
+        <span class="desktop-only-text">{{ 'AI_CHAT.NEW_CHAT' | translate }}</span>
       </button>
     </div>
-    
+
     <div class="gpt-top-center">
       @if (selectedChat) {
-        <span class="gpt-chat-title">{{ selectedChat.title || ('Chat #' + selectedChat.id) }}</span>
-        <button class="provider-badge-btn" type="button" (click)="openProviderModal(selectedChat)" title="Cambiar proveedor">
+        <span class="gpt-chat-title">{{
+          selectedChat.title || ('AI_CHAT.NEW_CHAT' | translate) + ' #' + selectedChat.id
+        }}</span>
+        <button
+          class="provider-badge-btn"
+          type="button"
+          (click)="openProviderModal(selectedChat)"
+          [title]="'AI_CHAT.CHANGE_PROVIDER' | translate"
+        >
           {{ selectedChat.activeProvider }}
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
         </button>
       } @else {
-        <span class="gpt-chat-title">Nuevo Chat</span>
+        <span class="gpt-chat-title">{{ 'AI_CHAT.NEW_CHAT' | translate }}</span>
         <select [(ngModel)]="providerSelection" class="top-provider-select">
           @for (provider of providers; track provider.name) {
             <option [value]="provider.name">{{ provider.displayName || provider.name }}</option>
@@ -28,8 +57,23 @@
     </div>
 
     <div class="gpt-top-right">
-      <button class="toolbar-btn btn-incident-ghost" type="button" (click)="toggleHistoryDrawer()" title="Historial de chats">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <button
+        class="toolbar-btn btn-incident-ghost"
+        type="button"
+        (click)="toggleHistoryDrawer()"
+        [title]="'AI_CHAT.HISTORY' | translate"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <polyline points="12 8 12 12 14 14"></polyline>
           <circle cx="12" cy="12" r="10"></circle>
         </svg>
@@ -38,7 +82,13 @@
   </header>
 
   <main class="gpt-main-content">
-    <div class="ai-chat-thread" #chatScroller aria-live="polite" aria-atomic="false" (scroll)="onThreadScroll($event)">
+    <div
+      class="ai-chat-thread"
+      #chatScroller
+      aria-live="polite"
+      aria-atomic="false"
+      (scroll)="onThreadScroll($event)"
+    >
       @if (loadingOlderMessages) {
         <article class="ai-message-card skeleton-card loading-older">
           <span class="table-skeleton"></span>
@@ -46,46 +96,71 @@
       }
 
       @if (loadingMessages) {
-        @for (row of [1,2,3,4,5]; track row) {
-          <article class="ai-message-card skeleton-card"><span class="table-skeleton"></span></article>
+        @for (row of [1, 2, 3, 4, 5]; track row) {
+          <article class="ai-message-card skeleton-card">
+            <span class="table-skeleton"></span>
+          </article>
         }
       } @else if (messages.length === 0 && !streamingPreview && !selectedChat) {
         <div class="empty-state-greeting">
-          <h2>¿En qué te puedo ayudar hoy?</h2>
+          <h2>{{ 'AI_CHAT.GREETING' | translate }}</h2>
         </div>
       } @else if (messages.length === 0 && !streamingPreview && selectedChat) {
         <div class="empty-state-greeting">
-          <h2>Sin mensajes en este chat</h2>
+          <h2>{{ 'AI_CHAT.NO_MESSAGES' | translate }}</h2>
         </div>
       } @else {
         @for (message of messages; track trackByMessageId($index, message)) {
-          <article class="ai-message-card" [class.is-user]="message.role === 'USER'" [class.is-tool]="message.role === 'TOOL'">
+          <article
+            class="ai-message-card"
+            [class.is-user]="message.role === 'USER'"
+            [class.is-tool]="message.role === 'TOOL'"
+          >
             <div class="ai-message-meta">
               @if (message.role === 'ASSISTANT') {
-                <img [ngSrc]="chefPioAvatar" alt="Chef Pio" class="ai-avatar" width="28" height="28" />
+                <img
+                  [ngSrc]="chefPioAvatar"
+                  alt="Chef Pio"
+                  class="ai-avatar"
+                  width="28"
+                  height="28"
+                />
               }
-              <span class="incident-pill" [class.status-open]="message.role === 'USER'" [class.status-closed]="message.role === 'ASSISTANT'" [class.status-tool]="message.role === 'TOOL'">
+              <span
+                class="incident-pill"
+                [class.status-open]="message.role === 'USER'"
+                [class.status-closed]="message.role === 'ASSISTANT'"
+                [class.status-tool]="message.role === 'TOOL'"
+              >
                 {{ formatRole(message.role) }}
               </span>
               <small>{{ formatDate(message.createdAt) }}</small>
             </div>
-            @if (message.role === 'ASSISTANT' && (message.thinkingContent || (message.toolCalls && message.toolCalls.length > 0))) {
+            @if (
+              message.role === 'ASSISTANT' &&
+              (message.thinkingContent || (message.toolCalls && message.toolCalls.length > 0))
+            ) {
               <div class="thinking-details" (click)="toggleReasoning(message.id)">
                 <div class="thinking-summary">
-                  Visualizar razonamiento
+                  {{ 'AI_CHAT.VIEW_REASONING' | translate }}
                 </div>
-                <div class="thinking-anim-wrapper" [class.expanded]="expandedReasoning[message.id] || !message.content">
+                <div
+                  class="thinking-anim-wrapper"
+                  [class.expanded]="expandedReasoning[message.id] || !message.content"
+                >
                   <div class="thinking-content-wrapper">
                     <p class="ai-message-thinking">{{ message.thinkingContent }}</p>
                     @if (message.toolCalls && message.toolCalls.length > 0) {
                       <div class="tool-calls-nested">
-                        <div class="tool-calls-header">Herramientas utilizadas</div>
+                        <div class="tool-calls-header">{{ 'AI_CHAT.TOOLS_USED' | translate }}</div>
                         <div class="tool-calls-list">
                           @for (toolCall of message.toolCalls; track $index) {
                             <div class="tool-call-item">
                               <strong>{{ toolCall.toolName }}</strong>
                               @if (toolCall.toolResult) {
-                                <p class="tool-result"><em>{{ toolCall.toolResult }}</em></p>
+                                <p class="tool-result">
+                                  <em>{{ toolCall.toolResult }}</em>
+                                </p>
                               }
                             </div>
                           }
@@ -97,12 +172,17 @@
               </div>
             }
             @if (message.role === 'ASSISTANT') {
-              <div class="ai-message-content markdown-body" [innerHTML]="parseMarkdown(message.content)"></div>
+              <div
+                class="ai-message-content markdown-body"
+                [innerHTML]="parseMarkdown(message.content)"
+              ></div>
             } @else {
               <p class="ai-message-content">{{ message.content }}</p>
             }
             @if (message.role === 'TOOL' && message.toolResult) {
-              <p class="ai-message-tool-result"><em>{{ message.toolResult }}</em></p>
+              <p class="ai-message-tool-result">
+                <em>{{ message.toolResult }}</em>
+              </p>
             }
           </article>
         }
@@ -111,20 +191,22 @@
       @if (streamingThinking && !streamingPreview) {
         <article class="ai-message-card streaming thinking">
           <div class="ai-message-meta">
-            <small class="dot-typing">Razonando</small>
+            <small class="dot-typing">{{ 'AI_CHAT.REASONING' | translate }}</small>
           </div>
           <div class="thinking-anim-wrapper expanded">
             <div class="thinking-content-wrapper">
               <p class="ai-message-thinking">{{ streamingThinking }}</p>
               @if (streamingToolCalls.length > 0) {
                 <div class="tool-calls-nested">
-                  <div class="tool-calls-header">Herramientas utilizadas</div>
+                  <div class="tool-calls-header">{{ 'AI_CHAT.TOOLS_USED' | translate }}</div>
                   <div class="tool-calls-list">
                     @for (toolCall of streamingToolCalls; track $index) {
                       <div class="tool-call-item">
                         <strong>{{ toolCall.toolName }}</strong>
                         @if (toolCall.toolResult) {
-                          <p class="tool-result"><em>{{ toolCall.toolResult }}</em></p>
+                          <p class="tool-result">
+                            <em>{{ toolCall.toolResult }}</em>
+                          </p>
                         }
                       </div>
                     }
@@ -141,9 +223,12 @@
           <div class="ai-message-meta">
             <img [ngSrc]="chefPioAvatar" alt="Chef Pio" class="ai-avatar" width="28" height="28" />
             <span class="incident-pill status-closed">Chef Pio</span>
-            <small>Generando…</small>
+            <small>{{ 'AI_CHAT.GENERATING' | translate }}</small>
           </div>
-          <div class="ai-message-content markdown-body" [innerHTML]="parseMarkdown(streamingPreview)"></div>
+          <div
+            class="ai-message-content markdown-body"
+            [innerHTML]="parseMarkdown(streamingPreview)"
+          ></div>
           <span class="typing-cursor">|</span>
         </article>
       }
@@ -157,19 +242,46 @@
           maxlength="5000"
           [(ngModel)]="messageInput"
           [disabled]="sendingMessage"
-          placeholder="Envía un mensaje a la IA..."
+          [placeholder]="'AI_CHAT.PLACEHOLDER' | translate"
           (keydown.enter)="onMessageKeyDown($event)"
         ></textarea>
         <div class="gpt-composer-actions">
           @if (sendingMessage) {
-            <button class="composer-icon-btn stop-btn" type="button" (click)="cancelStreaming()" title="Detener generación">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <button
+              class="composer-icon-btn stop-btn"
+              type="button"
+              (click)="cancelStreaming()"
+              [title]="'AI_CHAT.STOP_GEN' | translate"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <rect x="6" y="6" width="12" height="12" rx="2" ry="2"></rect>
               </svg>
             </button>
           } @else {
-            <button class="composer-icon-btn send-btn" type="button" [disabled]="!messageInput.trim() || sendingMessage" (click)="sendMessage()" title="Enviar mensaje">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <button
+              class="composer-icon-btn send-btn"
+              type="button"
+              [disabled]="!messageInput.trim() || sendingMessage"
+              (click)="sendMessage()"
+              [title]="'AI_CHAT.SEND_MSG' | translate"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
                 <line x1="22" y1="2" x2="11" y2="13"></line>
                 <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
               </svg>
@@ -186,32 +298,39 @@
   <div class="history-drawer-backdrop" (click)="closeHistoryDrawer()"></div>
   <aside class="history-drawer-panel">
     <div class="drawer-header">
-      <h2>Historial de Chats</h2>
-      <button class="close-drawer-btn" type="button" (click)="closeHistoryDrawer()" title="Cerrar">
+      <h2>{{ 'AI_CHAT.HISTORY_TITLE' | translate }}</h2>
+      <button
+        class="close-drawer-btn"
+        type="button"
+        (click)="closeHistoryDrawer()"
+        [title]="'AI_CHAT.CANCEL' | translate"
+      >
         <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          <path
+            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+          />
         </svg>
       </button>
     </div>
-    
+
     <div class="incident-filters-row history-search-row">
       <input
         type="text"
         [(ngModel)]="searchTerm"
-        placeholder="Buscar por título o ID"
+        [placeholder]="'AI_CHAT.SEARCH_PLACEHOLDER' | translate"
       />
     </div>
 
     <div class="ai-chat-list">
       @if (loadingChats && chats.length === 0) {
-        @for (row of [1,2,3,4,5,6]; track row) {
+        @for (row of [1, 2, 3, 4, 5, 6]; track row) {
           <article class="ai-chat-list-item skeleton-card">
             <span class="table-skeleton"></span>
           </article>
         }
       } @else if (visibleChats.length === 0) {
         <div class="empty-state-card">
-          <h3>Sin conversaciones</h3>
+          <h3>{{ 'AI_CHAT.NO_CONVERSATIONS' | translate }}</h3>
         </div>
       } @else {
         @for (chat of visibleChats; track trackByChatId($index, chat)) {
@@ -224,18 +343,37 @@
               <span class="incident-id">#{{ chat.id }}</span>
               <span class="incident-pill incident-pill-soft">{{ chat.activeProvider }}</span>
             </div>
-            <strong>{{ chat.title || ('Chat #' + chat.id) }}</strong>
+            <strong>{{ chat.title || ('AI_CHAT.NEW_CHAT' | translate) + ' #' + chat.id }}</strong>
             <p>
-              {{ chat.messageCount }} mensajes
+              {{ 'AI_CHAT.MESSAGES_COUNT' | translate: { count: chat.messageCount } }}
               <span>·</span>
               {{ formatDate(chat.lastMessageAt || chat.createdAt) }}
             </p>
             <div class="ai-chat-item-actions">
-              <button class="toolbar-btn btn-incident-ghost toolbar-btn-small" type="button" (click)="$event.stopPropagation(); openRenameModal(chat)">
-                Editar
+              <button
+                class="toolbar-btn btn-incident-ghost toolbar-btn-small"
+                type="button"
+                (click)="$event.stopPropagation(); openRenameModal(chat)"
+              >
+                {{ 'AI_CHAT.EDIT' | translate }}
               </button>
-              <button class="toolbar-btn btn-incident-ghost toolbar-btn-small danger" type="button" (click)="$event.stopPropagation(); archiveChat(chat)" title="Archivar chat">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <button
+                class="toolbar-btn btn-incident-ghost toolbar-btn-small danger"
+                type="button"
+                (click)="$event.stopPropagation(); archiveChat(chat)"
+                [title]="'AI_CHAT.ARCHIVE' | translate"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
@@ -249,25 +387,51 @@
 }
 
 @if (showRenameModal) {
-  <app-base-modal title="Editar chat" size="sm" (closed)="showRenameModal = false">
+  <app-base-modal
+    [title]="'AI_CHAT.RENAME_TITLE' | translate"
+    size="sm"
+    (closed)="showRenameModal = false"
+  >
     <div class="modal-form-grid">
       <label class="span-2">
-        <span>Título</span>
-        <input type="text" [(ngModel)]="renameTitle" maxlength="255" placeholder="Título del chat" />
+        <span>{{ 'AI_CHAT.RENAME_LABEL' | translate }}</span>
+        <input
+          type="text"
+          [(ngModel)]="renameTitle"
+          maxlength="255"
+          [placeholder]="'AI_CHAT.RENAME_PLACEHOLDER' | translate"
+        />
       </label>
     </div>
     <div modal-footer>
-      <button class="toolbar-btn btn-incident-ghost" type="button" (click)="showRenameModal = false">Cancelar</button>
-      <button class="toolbar-btn btn-incident-primary" type="button" [disabled]="!renameTitle.trim()" (click)="renameChat()">Guardar</button>
+      <button
+        class="toolbar-btn btn-incident-ghost"
+        type="button"
+        (click)="showRenameModal = false"
+      >
+        {{ 'AI_CHAT.CANCEL' | translate }}
+      </button>
+      <button
+        class="toolbar-btn btn-incident-primary"
+        type="button"
+        [disabled]="!renameTitle.trim()"
+        (click)="renameChat()"
+      >
+        {{ 'AI_CHAT.SAVE' | translate }}
+      </button>
     </div>
   </app-base-modal>
 }
 
 @if (showProviderModal && selectedChat) {
-  <app-base-modal title="Cambiar proveedor" size="sm" (closed)="showProviderModal = false">
+  <app-base-modal
+    [title]="'AI_CHAT.PROVIDER_MODAL_TITLE' | translate"
+    size="sm"
+    (closed)="showProviderModal = false"
+  >
     <div class="modal-form-grid">
       <label class="span-2">
-        <span>Proveedor</span>
+        <span>{{ 'AI_CHAT.PROVIDER_LABEL' | translate }}</span>
         <select [(ngModel)]="providerSelection" class="top-provider-select">
           @for (provider of providers; track provider.name) {
             <option [value]="provider.name">{{ provider.displayName || provider.name }}</option>
@@ -276,8 +440,16 @@
       </label>
     </div>
     <div modal-footer>
-      <button class="toolbar-btn btn-incident-ghost" type="button" (click)="showProviderModal = false">Cancelar</button>
-      <button class="toolbar-btn btn-incident-primary" type="button" (click)="changeProvider()">Actualizar</button>
+      <button
+        class="toolbar-btn btn-incident-ghost"
+        type="button"
+        (click)="showProviderModal = false"
+      >
+        {{ 'AI_CHAT.CANCEL' | translate }}
+      </button>
+      <button class="toolbar-btn btn-incident-primary" type="button" (click)="changeProvider()">
+        {{ 'AI_CHAT.UPDATE' | translate }}
+      </button>
     </div>
   </app-base-modal>
 }

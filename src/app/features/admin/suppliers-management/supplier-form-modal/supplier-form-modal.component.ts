@@ -1,16 +1,19 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Supplier } from '../../../../shared/models/supplier.model';
 import { BaseModalComponent } from '../../../../shared/components/base-modal/base-modal.component';
 
 @Component({
     selector: 'app-supplier-form-modal',
     standalone: true,
-    imports: [ReactiveFormsModule, BaseModalComponent],
+    imports: [ReactiveFormsModule, BaseModalComponent, TranslateModule],
     templateUrl: './supplier-form-modal.component.html',
     styleUrl: './supplier-form-modal.component.css'
 })
 export class SupplierFormModalComponent implements OnInit {
+    private translate = inject(TranslateService);
+
     @Input() supplier: Supplier | null = null;
     @Output() save = new EventEmitter<any>();
     @Output() close = new EventEmitter<void>();
@@ -22,7 +25,9 @@ export class SupplierFormModalComponent implements OnInit {
     }
 
     get title(): string {
-        return this.isEditMode ? 'Editar Proveedor' : 'Crear Proveedor';
+        return this.isEditMode 
+            ? this.translate.instant('SUPPLIER_FORM.EDIT_TITLE') 
+            : this.translate.instant('SUPPLIER_FORM.CREATE_TITLE');
     }
 
     ngOnInit(): void {
