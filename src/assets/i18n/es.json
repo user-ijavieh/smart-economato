@@ -154,6 +154,8 @@
     "SCAN_BARCODE": "Escanear código de barras",
     "SHOWING_RESULTS": "Mostrando {{current}} de {{total}} resultados",
     "PDF_DOWNLOAD": "Descargar PDF",
+    "CONFIRM_DOWNLOAD": "Confirmar descarga",
+    "CONFIRM_DOWNLOAD_PDF": "¿Deseas descargar el archivo en formato PDF?",
     "ROLES": {
       "ADMIN": "Administrador",
       "CHEF": "Chef / Profesor",

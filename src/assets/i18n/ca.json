@@ -154,6 +154,8 @@
     "SCAN_BARCODE": "Escanejar codi de barres",
     "SHOWING_RESULTS": "Mostrant {{current}} de {{total}} resultats",
     "PDF_DOWNLOAD": "Descarregar PDF",
+    "CONFIRM_DOWNLOAD": "Confirmar descàrrega",
+    "CONFIRM_DOWNLOAD_PDF": "Vols descarregar el fitxer en format PDF?",
     "ROLES": {
       "ADMIN": "Administrador",
       "CHEF": "Chef / Professor",
