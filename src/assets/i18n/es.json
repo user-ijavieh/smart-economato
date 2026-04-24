@@ -138,6 +138,22 @@
     "THEME_LIGHT": "Cambiar a modo claro",
     "THEME_DARK": "Cambiar a modo oscuro",
     "CLEAR_CACHE": "Limpiar caché local",
+    "UNITS_COUNT": "{{count}} unidades",
+    "STUDENTS_COUNT": "{{count}} alumnos",
+    "COLLAPSE_COLUMN": "Colapsar columna",
+    "EXPAND_COLUMN": "Expandir columna",
+    "SEARCH_PRODUCT_PLACEHOLDER": "Buscar producto...",
+    "GROSS": "Bruto",
+    "NET": "Neto",
+    "ORDERS_COUNT": "{{count}} pedidos",
+    "SHORTAGES": "Faltantes",
+    "ACTIVATE": "Activar",
+    "COMPLETED": "Finalizado",
+    "SELECT_SUPPLIER": "Seleccionar proveedor",
+    "SELECT_PRODUCTS": "Seleccionar productos",
+    "SCAN_BARCODE": "Escanear código de barras",
+    "SHOWING_RESULTS": "Mostrando {{current}} de {{total}} resultados",
+    "PDF_DOWNLOAD": "Descargar PDF",
     "ROLES": {
       "ADMIN": "Administrador",
       "CHEF": "Chef / Profesor",
@@ -1823,6 +1839,8 @@
     "TOTAL_ITEMS": "({{total}} {{itemType}})"
   },
   "BATCHES": {
+    "REMAINING": "Restante",
+    "EXPIRATION": "Caducidad",
     "TITLE": "Gestión de Lotes",
     "TABS": {
       "ALL": "Todos los Lotes",
@@ -2367,6 +2385,7 @@
       "RESTORE_STUDENT_SESSION_ERROR": "No se pudo restaurar al alumno en la sesión."
     },
     "DETAIL": {
+      "SESSIONS_COUNT": "{{count}} sesiones",
       "WEEK_OF": "Semana del {{date}}",
       "BACK_TO_PLANS": "Volver a planes",
       "BACK_ARIA": "Volver al listado de planes semanales",
@@ -2401,6 +2420,7 @@
       "INSUFFICIENT_STOCK": "Stock insuficiente (Faltan: {{qty}} Bruto)",
       "IN_ORDERS": "En pedidos",
       "HAVE_STOCK_LABEL": "Hay stock ({{qty}})",
+      "COVERED_BY_ORDERS": "Cubierto por pedidos",
       "MISSING_UNITS": "Faltan unidades",
       "NO_STOCK_REQS": "No hay requisitos de stock para este plan.",
       "PDF_HINT": "Elige el formato de orientación para descargar el PDF del plan semanal.",
@@ -2452,6 +2472,7 @@
       "STEP_2_HINT": "Crea una o varias sesiones por día. Puedes añadir más sesiones en el mismo día o moverlas después.",
       "NO_SESSIONS": "Todavía no hay sesiones. Usa el botón de cada día para empezar.",
       "SESSIONS_COUNT": "{{count}} sesiones",
+      "STUDENTS_COUNT": "{{count}} alumnos",
       "OVERLAP_WARN_ARIA": "Ver problema de solapamiento en {{day}}",
       "ADD_SLOT": "Añadir sesión",
       "ADD_SLOT_ARIA": "Añadir sesión para {{day}}",
