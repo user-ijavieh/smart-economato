@@ -394,7 +394,9 @@
     "CHANGING": "Canviant...",
     "SUBMIT": "Canviar Contrasenya",
     "SUCCESS": "Contrasenya canviada amb èxit. Redirigint...",
-    "ERROR": "No s'ha pogut canviar la contrasenya. Verifica les dades."
+    "ERROR": "No s'ha pogut canviar la contrasenya. Verifica les dades.",
+    "VALIDATE_ERROR": "Si us plau, revisa els errors de la contrasenya.",
+    "SESSION_ERROR": "Error de sessió. Si us plau, inicia sessió de nou."
   },
   "INCIDENTS": {
     "TITLE": {
@@ -784,6 +786,13 @@
       "LAST_UPDATE": "Última actualització",
       "REVIEWER": "Revisor",
       "MESSAGES": {
+        "LOAD_ERROR": "Error en carregar els teus esborranys.",
+        "NOT_EDITABLE": "Aquest esborrany ja no es pot editar.",
+        "DELETE_CONFIRM_TITLE": "Eliminar Esborrany",
+        "DELETE_CONFIRM_MSG": "Estàs segur que vols eliminar l'esborrany \"{{name}}\"?",
+        "DELETE_SUCCESS": "Esborrany \"{{name}}\" eliminat correctament.",
+        "DELETE_ERROR": "Error en eliminar l'esborrany.",
+        "RESUBMIT_SUCCESS": "Esborrany \"{{name}}\" reenviat per a revisió.",
         "RESUBMIT_ERROR": "Error en reenviar l'esborrany.",
         "SAVE_AND_SENT": "Esborrany \"{{name}}\" guardat i enviat per a revisió.",
         "UPDATE_SUCCESS": "Esborrany \"{{name}}\" actualitzat correctament.",
@@ -1177,8 +1186,11 @@
     "ACTIONS": {
       "ADD": "Afegir Proveïdor",
       "EDIT": "Editar",
-      "DELETE": "Eliminar"
+      "DELETE": "Eliminar",
+      "DELETE_CONFIRM_TITLE": "Eliminar Proveïdor",
+      "DELETE_CONFIRM_MSG": "Estàs segur que vols eliminar al proveïdor {{name}}? Aquesta acció no es pot desfer."
     },
+    "PAGINATION_INFO": "Pàgina {{current}} de {{totalPages}} ({{total}} proveïdors)",
     "MESSAGES": {
       "LOAD_ERROR": "Error en carregar els proveïdors"
     }
@@ -1312,6 +1324,27 @@
       "TOP_RECIPES": "Receptes Més Elaborades",
       "TOP_USERS": "Usuaris amb Més Activitat",
       "INVENTORY_CONSUMPTION": "Anàlisi de Consum d'Inventari"
+    },
+    "SUBTITLE": "Monitorització i historial de cuina",
+    "STATS": {
+      "TOTAL_COOKED": "Total Cuinat",
+      "UNIQUE_RECIPES": "Receptes Úniques",
+      "ACTIVE_CHEF": "Cuiner Més Actiu",
+      "TOTAL_WEIGHT": "Pes Total",
+      "COOKS_BY_DAY": "Cuinats per Dia",
+      "TOP_RECIPES": "Receptes Principals"
+    },
+    "LABELS": {
+      "RECIPE": "Recepta",
+      "USER": "Usuari",
+      "QUANTITY": "Quantitat",
+      "DATE": "Data",
+      "WEIGHT": "Pes",
+      "ACTIONS": "Accions",
+      "DETAILS": "Detalls",
+      "REVERT": "Revertir",
+      "DOWNLOAD": "Descarregar Informe",
+      "EMPTY_HISTORY": "No s'han trobat registres de cuina per al període seleccionat."
     },
     "TRACEABILITY": {
       "TITLE": "Traçabilitat d'Ingredients",
@@ -1562,30 +1595,11 @@
       "LOAD_ERROR": "Error en carregar els productes",
       "CREATE_SUCCESS": "Producte creat correctament",
       "UPDATE_SUCCESS": "Producte actualitzat correctament",
-      "WITHOUT_ALLERGENS": "Sense Al·lèrgens",
-      "AVG_COST": "Cost Mitjà",
-      "COMPONENTS": "Components",
-      "TOTAL_COST": "Cost Total",
-      "ALLERGENS_COL": "Al·lèrgens",
-      "NONE": "Cap",
-      "ACTIONS": {
-        "CREATE": "Crear",
-        "UPDATE": "Modificar",
-        "DELETE": "Eliminar"
-      },
-      "LABELS": {
-        "USER": "Usuari",
-        "RECIPE": "Recepta",
-        "PRODUCT": "Producte",
-        "NONE": "Cap"
-      },
-      "DIFF": {
-        "NAME": "Nom",
-        "ELABORATION": "Elaboració",
-        "PRESENTATION": "Presentació",
-        "TOTAL_COST": "Cost Total",
-        "ALLERGENS": "Al·lèrgens"
-      }
+      "TOGGLE_HIDDEN_SUCCESS": "Producte {{action}} correctament",
+      "ACTION_HIDDEN": "desactivat",
+      "ACTION_SHOWN": "activat",
+      "EXCEL_SUCCESS": "Excel descarregat correctament",
+      "EXCEL_ERROR": "Error en descarregar Excel"
     }
   },
   "STOCK": {
@@ -3012,10 +3026,82 @@
       "NEXT_QTY": "Quantitat Nova",
       "LOAD_ERROR": "Error en carregar les auditories"
     },
+    "TAB_RECIPES": "Receptes",
+    "TAB_AUDITS": "Auditoria",
+    "TAB_DRAFTS": "Esborranys",
+    "WITH_ALLERGENS": "Amb Al·lèrgens",
+    "WITHOUT_ALLERGENS": "Sense Al·lèrgens",
+    "AVG_COST": "Cost Mitjà",
+    "COMPONENTS": "Components",
+    "TOTAL_COST": "Cost Total",
+    "ALLERGENS_COL": "Al·lèrgens",
+    "NONE": "Cap",
+    "NO_RECIPES": "No s'han trobat receptes",
+    "ALL_ACTIONS": "Totes les accions",
+    "NO_AUDITS": "No s'han trobat auditories",
+    "AUDIT_DETAIL": "Detall d'Auditoria",
+    "COMPONENTS_DIFF": "Components",
+    "INGREDIENT": "Ingredient",
+    "PREV_QTY": "Quantitat Anterior",
+    "NEW_QTY": "Quantitat Nova",
+    "ACTION": "Acció",
+    "RECIPE_ID": "ID Recepta",
+    "SEARCH_RECIPE_PLACEHOLDER": "Buscar per nom...",
+    "AUDIT_SEARCH_PLACEHOLDER": "Buscar en auditories...",
+    "REENVIABLE": "Reenviable",
+    "REJECT_BTN": "Rebutjar",
+    "REJECT_DRAFT_TITLE": "Rebutjar esborrany",
+    "REJECT_DRAFT_PROMPT": "Indica el motiu per rebutjar l'esborrany <strong>{{name}}</strong>.",
+    "REJECT_DRAFT_PLACEHOLDER": "Escriu el motiu de rebuig...",
     "MESSAGES": {
       "LOAD_ERROR": "Error en carregar les receptes",
+      "LOAD_AUDITS_ERROR": "Error en carregar les auditories",
+      "LOAD_DRAFTS_ERROR": "Error en carregar els esborranys de receptes",
       "TOGGLE_HIDDEN_SUCCESS": "La recepta \"{{name}}\" ha estat {{action}}",
-      "TOGGLE_HIDDEN_ERROR": "Error al {{action}} recepta"
+      "HIDDEN": "ocultat",
+      "SHOWN": "mostrat",
+      "APPROVE_DRAFT_TITLE": "Aprovar esborrany",
+      "APPROVE_DRAFT_MSG": "Vols aprovar l'esborrany \"{{name}}\"?",
+      "APPROVE_DRAFT_SUCCESS": "Esborrany \"{{name}}\" aprovat",
+      "APPROVE_DRAFT_ERROR": "Error en aprovar l'esborrany",
+      "REJECT_DRAFT_SUCCESS": "Esborrany \"{{name}}\" rebutjat",
+      "REJECT_DRAFT_ERROR": "Error en rebutjar l'esborrany",
+      "REJECT_DRAFT_REASON_REQUIRED": "Has d'indicar un motiu de rebuig",
+      "APPROVED_RECIPE_LOAD_ERROR": "No s'ha pogut carregar la recepta aprovada",
+      "CREATE_SUCCESS": "Recepta \"{{name}}\" creada amb èxit",
+      "CREATE_ERROR": "Error en crear la recepta",
+      "UPDATE_SUCCESS": "Recepta \"{{name}}\" actualitzada amb èxit",
+      "UPDATE_ERROR": "Error en actualitzar la recepta",
+      "DELETE_CONFIRM_TITLE": "Eliminar recepta?",
+      "DELETE_CONFIRM_MSG": "Estàs segur que vols eliminar \"{{name}}\"? Aquesta acció no es pot desfer.",
+      "DELETE_SUCCESS": "Recepta \"{{name}}\" eliminada correctament",
+      "DELETE_ERROR": "Error en eliminar la recepta",
+      "COOK_SUCCESS": "\"{{name}}\" cuinada amb èxit!",
+      "COOK_ERROR": "Error en cuinar la recepta",
+      "PDF_CONFIRM_TITLE": "Confirmar descàrrega",
+      "PDF_CONFIRM_MSG": "Vols descarregar aquest arxiu PDF?",
+      "PDF_SUCCESS": "PDF descarregat correctament",
+      "PDF_ERROR": "Error en generar el PDF",
+      "TOGGLE_HIDDEN_ERROR": "Error en canviar la visibilitat de la recepta"
+    },
+    "ACTIONS": {
+      "CREATE": "Crear",
+      "UPDATE": "Modificar",
+      "DELETE": "Eliminar"
+    },
+    "LABELS": {
+      "USER": "Usuari",
+      "RECIPE": "Recepta",
+      "PRODUCT": "Producte",
+      "NONE": "Cap"
+    },
+    "DIFF": {
+      "NAME": "Nom",
+      "ELABORATION": "Elaboració",
+      "PRESENTATION": "Presentació",
+      "TOTAL_COST": "Cost Total",
+      "ALLERGENS": "Al·lèrgens",
+      "NONE": "Cap"
     }
   }
 }

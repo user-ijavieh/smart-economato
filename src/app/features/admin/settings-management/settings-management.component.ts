@@ -311,7 +311,6 @@ export class SettingsManagementComponent implements OnInit, OnDestroy {
 
         },
         error: () => {
-          this.messageService.showError(this.translate.instant('SETTINGS.MESSAGES.LOAD_ERROR'));
           this.cdr.detectChanges();
         }
       });
@@ -554,7 +553,6 @@ export class SettingsManagementComponent implements OnInit, OnDestroy {
           this.cdr.detectChanges();
         },
         error: () => {
-          this.messageService.showError(this.translate.instant('SETTINGS.MESSAGES.LOAD_AUDIT_ERROR'));
           this.cdr.detectChanges();
         }
       });

@@ -145,7 +145,7 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
         });
         this.onActiveSearch();
       },
-      error: () => this.messageService.showError(this.translate.instant('TRACEABILITY.MESSAGES.LOAD_ERROR'))
+      error: () => { }
     });
   }
 
@@ -226,7 +226,7 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
         this.supplierTotalPages = page.totalPages;
         this.cdr.markForCheck();
       },
-      error: () => this.messageService.showError(this.translate.instant('COMMON.ERROR_LOADING_SUPPLIERS'))
+      error: () => { }
     });
   }
 
@@ -316,7 +316,7 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
         this.productTotalPages = page.totalPages;
         this.cdr.markForCheck();
       },
-      error: () => this.messageService.showError(this.translate.instant('COMMON.ERROR_LOADING_PRODUCTS'))
+      error: () => { }
     });
   }
 
@@ -458,7 +458,7 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
         window.URL.revokeObjectURL(url);
         this.messageService.showSuccess(this.translate.instant('COMMON.PDF_SUCCESS'));
       },
-      error: () => this.messageService.showError(this.translate.instant('COMMON.PDF_ERROR'))
+      error: () => { }
     });
   }
 
@@ -564,7 +564,7 @@ export class TraceabilityManagementComponent implements OnInit, OnDestroy {
         this.historyTotalElements = response.totalElements;
         this.historyHasMore = this.historyPage < this.historyTotalPages - 1;
       },
-      error: () => this.messageService.showError(this.translate.instant('TRACEABILITY.MESSAGES.HISTORY_LOAD_ERROR'))
+      error: () => { }
     });
   }
 
