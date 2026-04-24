@@ -1283,7 +1283,11 @@
     "CREATE_SUCCESS": "Alérgeno \"{{name}}\" creado con éxito",
     "UPDATE_SUCCESS": "Alérgeno \"{{name}}\" actualizado con éxito",
     "DELETE_SUCCESS": "Alérgeno \"{{name}}\" eliminado correctamente",
-    "NAME_EMPTY_ERROR": "El nombre del alérgeno no puede estar vacío"
+    "NAME_EMPTY_ERROR": "El nombre del alérgeno no puede estar vacío",
+    "LOAD_ERROR": "Error al cargar los alérgenos",
+    "CREATE_ERROR": "Error al crear el alérgeno",
+    "UPDATE_ERROR": "Error al actualizar el alérgeno",
+    "DELETE_ERROR": "Error al eliminar el alérgeno"
   },
   "KITCHEN": {
     "TITLE": "Gestión de Cocina",
@@ -1291,8 +1295,16 @@
       "HISTORY": "Historial",
       "REPORTS": "Informes"
     },
-    "HISTORY": {
+    "FILTERS": {
+      "CLEAR": "Limpiar Filtros",
       "SEARCH_PLACEHOLDER": "Buscar en historial...",
+      "RECIPE_ID": "ID Receta",
+      "USER_ID": "ID Usuario",
+      "FROM": "Desde",
+      "TO": "Hasta",
+      "APPLY": "Aplicar Filtros"
+    },
+    "HISTORY": {
       "RECIPE_ID": "ID Receta",
       "USER_ID": "ID Usuario",
       "DATE_FROM": "Desde",
@@ -1434,14 +1446,6 @@
       "YEARLY": "Anual",
       "ALL_TIME": "Histórico",
       "CUSTOM": "Personalizado"
-    },
-    "FILTERS": {
-      "SEARCH_PLACEHOLDER": "Buscar en historial...",
-      "RECIPE_ID": "ID Receta",
-      "USER_ID": "ID Usuario",
-      "FROM": "Desde",
-      "TO": "Hasta",
-      "APPLY": "Aplicar"
     },
     "TABLE": {
       "DATE": "Fecha",

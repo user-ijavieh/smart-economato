@@ -11,8 +11,8 @@
 
     <!-- Contenido: título + mensaje -->
     <div class="toast-body">
-      <p class="toast-title">{{ getToastTitle(toast) }}</p>
-      <p class="toast-message">{{ toast.message }}</p>
+      <p class="toast-title">{{ getToastTitle(toast) | translate:toast.translateParams }}</p>
+      <p class="toast-message" [innerHTML]="toast.message | translate:toast.translateParams"></p>
     </div>
 
     <!-- Cerrar -->

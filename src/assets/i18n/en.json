@@ -1299,7 +1299,11 @@
     "CREATE_SUCCESS": "Allergen \"{{name}}\" created successfully",
     "UPDATE_SUCCESS": "Allergen \"{{name}}\" updated successfully",
     "DELETE_SUCCESS": "Allergen \"{{name}}\" deleted successfully",
-    "NAME_EMPTY_ERROR": "Allergen name cannot be empty"
+    "NAME_EMPTY_ERROR": "Allergen name cannot be empty",
+    "LOAD_ERROR": "Error loading allergens",
+    "CREATE_ERROR": "Error creating allergen",
+    "UPDATE_ERROR": "Error updating allergen",
+    "DELETE_ERROR": "Error deleting allergen"
   },
   "ORDERS_MGMT": {
     "TITLE": "Orders Management",
@@ -2176,6 +2180,7 @@
       "STATS": "Statistics"
     },
     "FILTERS": {
+      "CLEAR": "Clear Filters",
       "SEARCH_PLACEHOLDER": "Search history...",
       "RECIPE_ID": "Recipe ID",
       "USER_ID": "User ID",
