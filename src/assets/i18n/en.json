@@ -278,11 +278,11 @@
     },
     "RECIPES": "Recipes",
     "KITCHEN": "Kitchen",
-    "USERS": "Students",
+    "USERS": "User Management",
     "MASTER_DATA": "Master Data",
     "PRODUCTS": "Products",
     "TRACEABILITY": "Traceability",
-    "PROFILE": "Profile"
+    "PROFILE": "Student Management"
   },
   "INVENTORY": {
     "TITLE": "Inventory",
@@ -454,7 +454,10 @@
     "SESSION_ERROR": "Session error. Please log in again."
   },
   "INCIDENTS": {
-    "TITLE": "Incident management",
+    "TITLE": {
+      "CONTROL_CENTER": "Control center",
+      "INCIDENTS_MANAGEMENT": "Incident management"
+    },
     "ADMIN_TITLE": "Control center",
     "TABS": {
       "INCIDENTS": "Incidents",
@@ -467,6 +470,7 @@
       "SHOW_FILTERS": "Show filters",
       "HIDE_FILTERS": "Hide filters",
       "NEW_INCIDENT": "New incident",
+      "NEW_TYPE": "New type",
       "FILTER": "Filter",
       "CLEAR": "Clear",
       "VIEW": "View",
@@ -2921,7 +2925,7 @@
     "UPDATE": "Update",
     "ROLES": {
       "USER": "User",
-      "IA": "AI",
+      "IA": "Chef Pio",
       "SYSTEM": "System",
       "TOOL": "Tool"
     },
