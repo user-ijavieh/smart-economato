@@ -133,7 +133,7 @@
       "RECEPTION": "Order Received",
       "REVERSION": "Stock Reversion"
     },
-    "PAGE_INFO": "Page {{current}} of {{total}}",
+    "PAGE_INFO": "Page {{page}} of {{total}}",
     "TOTAL_COUNT": "({{count}} {{items}})",
     "THEME_LIGHT": "Switch to light mode",
     "THEME_DARK": "Switch to dark mode",
@@ -141,6 +141,9 @@
     "BY": "By",
     "ORDER": "Order",
     "UNITS_COUNT": "{{count}} units",
+    "LOTS_COUNT": "{{count}} lots",
+    "LOTS_OF": "{{count}} lots of {{unit}}",
+    "LOTS_SHORT": "Lots",
     "STUDENTS_COUNT": "{{count}} students",
     "COLLAPSE_COLUMN": "Collapse column",
     "EXPAND_COLUMN": "Expand column",
@@ -526,6 +529,7 @@
       "TYPE_TOGGLE_SUCCESS": "Incident type status updated",
       "LOAD_TYPES_ERROR": "Error loading incident types",
       "LOAD_INCIDENTS_ERROR": "Error loading incidents",
+      "REVERT_ERROR": "Error reverting audit",
       "LOADING_CHAT": "Loading conversation...",
       "EMPTY_CHAT": "No messages yet.",
       "LOCKED": "The incident is closed. New messages cannot be sent.",
@@ -2377,7 +2381,11 @@
     },
     "MODALS": {
       "CONFIRM_DOWNLOAD_TITLE": "Confirm Download",
-      "CONFIRM_DOWNLOAD_TEXT": "Do you want to download the stock report in PDF format?"
+      "CONFIRM_DOWNLOAD_TEXT": "Do you want to download the stock report in PDF format?",
+      "RESET_SECURITY_TITLE": "Security Confirmation",
+      "RESET_SECURITY_TEXT": "Are you SURE you want to reset the history? This action will clear the entire ledger chain.",
+      "RESET_IRREVERSIBLE_TITLE": "IRREVERSIBLE ACTION!",
+      "RESET_IRREVERSIBLE_TEXT": "All audit data and the current snapshot will be lost. Do you wish to proceed definitely?"
     },
     "REPOSITION": {
       "TITLE": "Generate a Replenishment Order",
@@ -2390,8 +2398,22 @@
         "ENTRADA": "ENTRY",
         "REVERSION": "REVERSION",
         "MERMA": "WASTE",
-        "AJUSTE": "ADJUSTMENT"
-      }
+        "AJUSTE": "ADJUSTMENT",
+        "SALIDA": "OUT"
+      },
+      "TITLE": "Manual Stock Adjustment",
+      "ENTRY": "Entry",
+      "EXIT": "Exit",
+      "QUANTITY": "Quantity",
+      "BATCH_PLACEHOLDER": "Type batch code or ID...",
+      "MOVEMENT_TYPE": "Movement type",
+      "EXPIRATION_DATE": "Expiration date",
+      "REASON": "Reason / Description",
+      "SEARCH_BATCH": "Search batch",
+      "FIFO_HINT": "If no batch is selected, FIFO (First In, First Out) logic will be applied.",
+      "NEW_BATCH_HINT": "Since this is an entry without an existing batch, a new one will be created with this date.",
+      "REASON_PLACEHOLDER": "Explain the reason for the adjustment (e.g., breakage, inventory error...)",
+      "SUBMIT": "Confirm Adjustment"
     },
     "TABS": {
       "ALERTS": "Alerts",
@@ -2402,6 +2424,7 @@
       "NEW_ORDER": "New Replenishment Order",
       "DAY": "day",
       "DAYS": "Days",
+      "PRODUCTS": "products",
       "STATS": {
         "CRITICAL": "Critical",
         "HIGH": "High",
@@ -3087,7 +3110,7 @@
     "ORDER": "Order"
   },
   "PAGINATION": {
-    "PAGE_INFO": "Page {{current}} of {{totalPages}}",
+    "PAGE_INFO": "Page {{page}} of {{total}}",
     "TOTAL_ITEMS": "({{total}} {{itemType}})"
   },
   "NOTIFICATIONS_MGMT": {
