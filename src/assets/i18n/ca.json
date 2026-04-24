@@ -162,6 +162,7 @@
       "STUDENT": "Alumne"
     },
     "SUCCESS": "Èxit",
+    "PDF_SUCCESS": "PDF descarregat correctament",
     "ERROR": "Error",
     "WARNING": "Advertència",
     "INFO": "Informació",
@@ -447,6 +448,7 @@
       "SHOW_FILTERS": "Mostrar filtres",
       "HIDE_FILTERS": "Ocultar filtres",
       "NEW_INCIDENT": "Nova incidència",
+      "CREATE": "Crear",
       "NEW_TYPE": "Nou tipus",
       "FILTER": "Filtrar",
       "CLEAR": "Netejar",
@@ -467,7 +469,8 @@
       "EDIT": "Editar",
       "ACTIVATE": "Activar",
       "DEACTIVATE": "Desactivar",
-      "ATTACH_AUDITS": "Adjuntar auditories"
+      "ATTACH_AUDITS": "Adjuntar auditories",
+      "DEACTIVATE_TYPE": "Desactivar tipus"
     },
     "STATS": {
       "TOTAL": "Incidències totals",
@@ -536,6 +539,7 @@
       "RESET_IRREVERSIBLE_TITLE": "ACCIÓ IRREVERSIBLE!",
       "RESET_IRREVERSIBLE_TEXT": "Es perdran totes les dades d'auditoria i el snapshot actual. Vols procedir definitivament?"
     },
+
     "DETAIL": {
       "SUMMARY": "Resum",
       "CHAT": "Xat ({{count}})",
@@ -590,6 +594,10 @@
     "CONTROL_CENTER": "Centre de control",
     "MANAGEMENT": "Gestió d'incidències",
     "MESSAGES": {
+      "TYPE_TOGGLE_CONFIRM": "Vols {{action}} el tipus \"{{name}}\"?",
+      "TYPE_TOGGLE_SUCCESS": "Estat del tipus d'incidència actualitzat",
+      "LOAD_TYPES_ERROR": "Error en carregar els tipus d'incidència",
+      "LOAD_INCIDENTS_ERROR": "Error en carregar les incidències",
       "EMPTY": "No hi ha incidències",
       "EMPTY_HINT": "Crea una nova incidència o ajusta els filtres per trobar resultats.",
       "LOADING_CHAT": "Carregant conversa...",
@@ -1714,6 +1722,8 @@
     "TOTAL_ITEMS": "({{total}} {{itemType}})"
   },
   "BATCHES": {
+    "BATCH": "Lot",
+    "NO_BATCH": "Sense lot",
     "REMAINING": "Restant",
     "EXPIRATION": "Caducitat",
     "TITLE": "Gestió de Lots",
@@ -2545,10 +2555,19 @@
       "TOGGLE_HIDDEN_SUCCESS_SINGLE": "Estat del producte actualitzat correctament."
     },
     "PDF_CONFIRM_TITLE": "Confirmar exportació",
+    "PDF_CONFIRM_MSG": "Vols descarregar la fitxa del producte en format PDF?",
     "PDF_CONFIRM_MSG_EXCEL": "Vols exportar l'inventari a Excel?"
   },
   "STOCK_MGMT": {
     "TITLE": "Gestió d'Estoc",
+    "MESSAGES": {
+      "NO_UNCOVERED_PRODUCTS": "No s'han trobat productes sense cobertura per reposar."
+    },
+    "REPOSITION": {
+      "TITLE": "Generar una Ordre de Reposició",
+      "DAYS_PROMPT": "Per a quants dies vols cobrir l'estoc estimat?",
+      "DAYS_LABEL": "dies"
+    },
     "TABS": {
       "ALERTS": "Alertes",
       "PREDICTIONS": "Prediccions",
@@ -2754,9 +2773,7 @@
         "REASON_PLACEHOLDER": "Ex. Correcció inventari, merma no registrada, trencament...",
         "SUBMITTING": "Registrant...",
         "SUBMIT": "Registrar Ajust",
-        "ORDER_MODAL_TITLE": "Generar una Ordre de Reposició",
-        "DAYS_COVER_PROMPT": "Per a quants dies vols cobrir l'estoc estimat?",
-        "DAYS": "dies",
+
         "TYPES": {
           "AJUSTE": "AJUST",
           "MERMA": "MERMA",
@@ -2790,7 +2807,7 @@
       "ADD_ORDER": "Afegir ordre"
     },
     "SECTIONS": {
-      "PRODUCTS_COUNT": "{{count}} producte{{count === 1 ? '' : 's'}}."
+      "PRODUCTS_COUNT": "{{count}} productes"
     },
     "TABLE": {
       "NO_SUPPLIER": "Sense proveïdor",

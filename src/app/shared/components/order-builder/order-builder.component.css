@@ -245,15 +245,18 @@
 
 .chip {
   display: inline-flex;
-  font-size: 0.68rem;
-  font-weight: 800;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: 8px;
   background: color-mix(in srgb, var(--theme-text-secondary) 15%, var(--theme-surface-strong));
   color: var(--theme-text-primary);
   text-transform: uppercase;
   border: 1px solid var(--theme-border-glass);
   letter-spacing: 0.3px;
+  white-space: normal;
+  line-height: 1.3;
 }
 
 .shortage-chip {
@@ -563,8 +566,9 @@
 
 .lot-count-badge {
   font-size: 0.65rem;
-  color: color-mix(in srgb, var(--brand-primary) 80%, black);
+  color: color-mix(in srgb, var(--brand-primary) 80%, var(--theme-text-primary));
   margin-left: 4px;
   font-weight: 800;
   opacity: 0.9;
+  display: inline-block;
 }
