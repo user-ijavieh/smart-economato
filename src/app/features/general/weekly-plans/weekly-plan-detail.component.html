@@ -327,17 +327,17 @@
             }
           </div>
           <div class="item-qty highlight">{{ 'WEEKLY_PLANS.DETAIL.GROSS_REQUIRED' | translate }}: <strong>{{ req.grossRequiredQuantity | number:'1.2-2'
-              }}</strong></div>
-          <div class="item-qty secondary">{{ 'WEEKLY_PLANS.DETAIL.NET_REQUIRED' | translate }}: {{ req.requiredQuantity | number:'1.2-2' }}</div>
+              }}</strong> {{ req.unit }}</div>
+          <div class="item-qty secondary">{{ 'WEEKLY_PLANS.DETAIL.NET_REQUIRED' | translate }}: {{ req.requiredQuantity | number:'1.2-2' }} {{ req.unit }}</div>
           <div class="item-qty">
             {{ 'WEEKLY_PLANS.DETAIL.RESERVED_BY_OTHERS' | translate }}:
-            <strong>{{ req.grossReservedByOtherPlans | number:'1.2-2' }}</strong> ({{ 'COMMON.GROSS' | translate }})
-            <small>/ {{ req.reservedByOtherPlans | number:'1.2-2' }} ({{ 'COMMON.NET' | translate }})</small>
+            <strong>{{ req.grossReservedByOtherPlans | number:'1.2-2' }}</strong> {{ req.unit }} ({{ 'COMMON.GROSS' | translate }})
+            <small>/ {{ req.reservedByOtherPlans | number:'1.2-2' }} {{ req.unit }} ({{ 'COMMON.NET' | translate }})</small>
           </div>
           <div class="item-qty">
             {{ 'WEEKLY_PLANS.DETAIL.REAL_AVAILABLE' | translate }}:
-            <strong>{{ (req.grossAvailableStock - req.grossReservedByOtherPlans) | number:'1.2-2' }}</strong> ({{ 'COMMON.GROSS' | translate }})
-            <small>/ {{ (req.availableStock - req.reservedByOtherPlans) | number:'1.2-2' }} ({{ 'COMMON.NET' | translate }})</small>
+            <strong>{{ (req.grossAvailableStock - req.grossReservedByOtherPlans) | number:'1.2-2' }}</strong> {{ req.unit }} ({{ 'COMMON.GROSS' | translate }})
+            <small>/ {{ (req.availableStock - req.reservedByOtherPlans) | number:'1.2-2' }} {{ req.unit }} ({{ 'COMMON.NET' | translate }})</small>
           </div>
 
           @if (req.expiredStock && req.expiredStock > 0) {
@@ -352,7 +352,7 @@
                 <line x1="12" y1="9" x2="12" y2="13"></line>
                 <line x1="12" y1="17" x2="12.01" y2="17"></line>
               </svg>
-              {{ 'COMMON.EXPIRED_STOCK' | translate }}: <strong>{{ req.grossExpiredStock | number:'1.2-2' }}</strong>
+              {{ 'COMMON.EXPIRED_STOCK' | translate }}: <strong>{{ req.grossExpiredStock | number:'1.2-2' }}</strong> {{ req.unit }}
             </span>
           </div>
           }
@@ -361,7 +361,7 @@
           <div class="item-qty">
             <span class="stock-warning stock-expired-warning"
               [title]="'Cantidad que caduca antes del plan y reduce el stock efectivo.'">
-              Stock que caduca antes del plan: <strong>{{ req.expiringBeforePlanStock | number:'1.2-2' }}</strong>
+              Stock que caduca antes del plan: <strong>{{ req.expiringBeforePlanStock | number:'1.2-2' }}</strong> {{ req.unit }}
             </span>
           </div>
           }
@@ -373,12 +373,12 @@
           }
           <div class="item-status" [class.insufficient]="!req.sufficient" [class.covered]="!req.sufficient && getUncoveredStockShortage(req) === 0">
             @if (req.sufficient) {
-            <span class="sufficient-label">{{ 'WEEKLY_PLANS.DETAIL.HAVE_STOCK' | translate: { qty: (getRealAvailableStock(req) | number:'1.2-2') } }}</span>
+            <span class="sufficient-label">{{ 'WEEKLY_PLANS.DETAIL.HAVE_STOCK' | translate: { qty: ((getRealAvailableStock(req) | number:'1.2-2') + ' ' + req.unit) } }}</span>
             } @else {
 @if (getUncoveredStockShortage(req) === 0) {  
     <span class="covered-label">{{ 'WEEKLY_PLANS.DETAIL.COVERED_BY_ORDERS' | translate }}</span>  
 } @else {  
-    <span class="insufficient-label">{{ 'WEEKLY_PLANS.DETAIL.INSUFFICIENT_STOCK' | translate: { qty: (getUncoveredStockShortage(req) | number:'1.2-2') } }}</span>  
+    <span class="insufficient-label">{{ 'WEEKLY_PLANS.DETAIL.INSUFFICIENT_STOCK' | translate: { qty: ((getUncoveredStockShortage(req) | number:'1.2-2') + ' ' + req.unit) } }}</span>  
 }
             }
           </div>
@@ -416,7 +416,7 @@
               fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
               style="margin-right: 4px; vertical-align: text-bottom;">
               <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>{{ 'WEEKLY_PLANS.DETAIL.HAVE_STOCK_LABEL' | translate: { qty: (getRealAvailableStock(req) | number:'1.2-2') } }}</span>
+            </svg>{{ 'WEEKLY_PLANS.DETAIL.HAVE_STOCK_LABEL' | translate: { qty: ((getRealAvailableStock(req) | number:'1.2-2') + ' ' + req.unit) } }}</span>
           } @else {
           <span class="stock-warning">
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">

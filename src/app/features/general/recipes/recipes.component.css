@@ -686,3 +686,10 @@
   }
 }
 
+
+.product-unit-badge {
+  font-size: 0.8rem;
+  color: var(--theme-text-secondary);
+  font-weight: 500;
+  margin-left: 4px;
+}
