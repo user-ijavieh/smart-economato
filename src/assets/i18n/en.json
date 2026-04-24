@@ -177,7 +177,10 @@
     "RESULTS": "results",
     "SEARCH_USER_PLACEHOLDER": "Search user...",
     "ERROR_LOADING_USERS": "Error loading users",
-    "ADD": "Add"
+    "ADD": "Add",
+    "OPTIONAL": "Optional",
+    "VISIBLE": "Visible",
+    "SEARCH_SUPPLIER_PLACEHOLDER": "Search supplier..."
   },
   "NAV": {
     "DASHBOARD": "Home",
@@ -431,7 +434,8 @@
   "INCIDENTS": {
     "TITLE": {
       "CONTROL_CENTER": "Control center",
-      "INCIDENTS_MANAGEMENT": "Incident management"
+      "INCIDENTS_MANAGEMENT": "Incident management",
+      "ID": "Incident #{{id}}"
     },
     "FORM": {
       "TITLE": "Title",
@@ -448,8 +452,8 @@
       "INCIDENTS": "Incidents",
       "TYPES": "Types",
       "SUMMARY": "Summary",
-      "CHAT": "Chat ({{count}})",
-      "AUDITS": "Audits ({{count}})"
+      "CHAT": "Chat",
+      "AUDITS": "Audits"
     },
     "ACTIONS": {
       "SHOW_FILTERS": "Show filters",
@@ -658,7 +662,10 @@
       "LOW": "Low",
       "MEDIUM": "Medium",
       "HIGH": "High",
-      "NONE": "No level"
+      "NONE": "No level",
+      "BAJA": "Low",
+      "MEDIA": "Medium",
+      "ALTA": "High"
     },
     "CHART": {
       "BY_STATUS": "Incidents by Status",
@@ -3163,6 +3170,20 @@
       "ERROR_TITLE": "Error",
       "ERROR_BODY": "Something went wrong",
       "WARNING_BODY": "Important notice"
+    }
+  },
+  "INCIDENT": {
+    "SEVERITY": {
+      "BAJA": "Low",
+      "MEDIA": "Medium",
+      "ALTA": "High"
+    }
+  },
+  "INCIDENT": {
+    "SEVERITY": {
+      "BAJA": "Low",
+      "MEDIA": "Medium",
+      "ALTA": "High"
     }
   }
 }

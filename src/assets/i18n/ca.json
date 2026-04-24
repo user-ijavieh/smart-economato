@@ -177,7 +177,10 @@
     "RESULTS": "resultats",
     "SEARCH_USER_PLACEHOLDER": "Cercar usuari...",
     "ERROR_LOADING_USERS": "Error en carregar els usuaris",
-    "ADD": "Afegir"
+    "ADD": "Afegir",
+    "OPTIONAL": "Opcional",
+    "VISIBLE": "Visible",
+    "SEARCH_SUPPLIER_PLACEHOLDER": "Cercar proveïdor..."
   },
   "NAV": {
     "DASHBOARD": "Inici",
@@ -431,7 +434,8 @@
   "INCIDENTS": {
     "TITLE": {
       "CONTROL_CENTER": "Centre de control",
-      "INCIDENTS_MANAGEMENT": "Gestió d'incidències"
+      "INCIDENTS_MANAGEMENT": "Gestió d'incidències",
+      "ID": "Incidència #{{id}}"
     },
     "FORM": {
       "TITLE": "Títol",
@@ -448,8 +452,8 @@
       "INCIDENTS": "Incidències",
       "TYPES": "Tipus",
       "SUMMARY": "Resum",
-      "CHAT": "Xat ({{count}})",
-      "AUDITS": "Auditories ({{count}})"
+      "CHAT": "Xat",
+      "AUDITS": "Auditories"
     },
     "ACTIONS": {
       "SHOW_FILTERS": "Mostrar filtres",
@@ -596,7 +600,10 @@
       "LOW": "Baixa",
       "MEDIUM": "Mitjana",
       "HIGH": "Alta",
-      "NONE": "Sense nivell"
+      "NONE": "Sense nivell",
+      "BAJA": "Baixa",
+      "MEDIA": "Mitjana",
+      "ALTA": "Alta"
     },
     "CONTROL_CENTER": "Centre de control",
     "MANAGEMENT": "Gestió d'incidències",
@@ -3180,6 +3187,20 @@
       "TOTAL_COST": "Cost Total",
       "ALLERGENS": "Al·lèrgens",
       "NONE": "Cap"
+    }
+  },
+  "INCIDENT": {
+    "SEVERITY": {
+      "BAJA": "Baixa",
+      "MEDIA": "Mitjana",
+      "ALTA": "Alta"
+    }
+  },
+  "INCIDENT": {
+    "SEVERITY": {
+      "BAJA": "Baixa",
+      "MEDIA": "Mitjana",
+      "ALTA": "Alta"
     }
   }
 }
