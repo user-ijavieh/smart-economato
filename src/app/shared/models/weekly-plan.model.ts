@@ -66,6 +66,7 @@ export interface ConfirmDayResponse {
 export interface WeeklyPlanStockRequirement {
   productId: number;
   productName: string;
+  unit: string;
   requiredQuantity: number;
   grossRequiredQuantity: number;
   availabilityPercentage: number;

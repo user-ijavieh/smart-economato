@@ -11,7 +11,7 @@ export interface Recipe {
   components: RecipeComponent[];
   allergens: Allergen[];
 }
-
+5
 export interface RecipeComponent {
   id: number;
   parentRecipeId: number;
