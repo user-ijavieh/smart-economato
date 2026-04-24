@@ -188,6 +188,18 @@
 
 .quantity-input { width: 120px; }
 
+.quantity-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.product-unit-label {
+  font-size: 0.85rem;
+  color: var(--theme-text-secondary);
+  white-space: nowrap;
+}
+
 .btn-remove {
   width: 36px;
   height: 36px;
