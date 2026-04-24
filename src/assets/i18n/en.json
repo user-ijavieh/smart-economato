@@ -154,6 +154,8 @@
     "SCAN_BARCODE": "Scan barcode",
     "SHOWING_RESULTS": "Showing {{current}} of {{total}} results",
     "PDF_DOWNLOAD": "PDF Download",
+    "CONFIRM_DOWNLOAD": "Confirm download",
+    "CONFIRM_DOWNLOAD_PDF": "Do you want to download the file in PDF format?",
     "ROLES": {
       "ADMIN": "Administrator",
       "CHEF": "Chef / Teacher",
