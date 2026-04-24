@@ -6,6 +6,7 @@ import { ConfirmDialogComponent } from './shared/components/layout/confirm-dialo
 import { AlertNotificationComponent } from './shared/components/layout/alert-notification/alert-notification.component';
 import { MessageService } from './core/services/message.service';
 import { ThemeService } from './core/services/theme.service';
+import { LanguageService } from './core/services/language.service';
 import { filter } from 'rxjs';
 
 @Component({
@@ -19,6 +20,7 @@ export class App implements OnInit {
   private messageService = inject(MessageService);
   private router = inject(Router);
   private themeService = inject(ThemeService);
+  private languageService = inject(LanguageService);
   readonly toasts$ = this.messageService.toasts;
 
   ngOnInit(): void {
