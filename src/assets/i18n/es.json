@@ -172,7 +172,19 @@
     "SELECTED_COUNT_OTHER": "{{count}} seleccionados",
     "SELECT_PLACEHOLDER": "Selecciona...",
     "HIDDEN": "ocultada",
-    "SHOWN": "mostrada"
+    "SHOWN": "mostrada",
+    "SHOWING": "Mostrando",
+    "RESULTS": "resultados",
+    "SEARCH_USER_PLACEHOLDER": "Buscar usuario...",
+    "ERROR_LOADING_USERS": "Error al cargar los usuarios",
+    "ADD": "Añadir",
+    "OPTIONAL": "Opcional",
+    "VISIBLE": "Visible",
+    "SEARCH_SUPPLIER_PLACEHOLDER": "Buscar proveedor...",
+    "PDF_CONFIRM_TITLE": "Confirmar descarga",
+    "PDF_CONFIRM_MSG": "¿Deseas descargar este archivo PDF?",
+    "CODE": "Código",
+    "ID": "ID"
   },
   "NAV": {
     "DASHBOARD": "Inicio",
@@ -426,7 +438,8 @@
   "INCIDENTS": {
     "TITLE": {
       "CONTROL_CENTER": "Centro de control",
-      "INCIDENTS_MANAGEMENT": "Gestión de incidencias"
+      "INCIDENTS_MANAGEMENT": "Gestión de incidencias",
+      "ID": "Incidencia #{{id}}"
     },
     "FORM": {
       "TITLE": "Título",
@@ -443,8 +456,8 @@
       "INCIDENTS": "Incidencias",
       "TYPES": "Tipos",
       "SUMMARY": "Resumen",
-      "CHAT": "Chat ({{count}})",
-      "AUDITS": "Auditorías ({{count}})"
+      "CHAT": "Chat",
+      "AUDITS": "Auditorías"
     },
     "ACTIONS": {
       "SHOW_FILTERS": "Mostrar filtros",
@@ -591,7 +604,10 @@
       "LOW": "Baja",
       "MEDIUM": "Media",
       "HIGH": "Alta",
-      "NONE": "Sin nivel"
+      "NONE": "Sin nivel",
+      "BAJA": "Baja",
+      "MEDIA": "Media",
+      "ALTA": "Alta"
     },
     "CONTROL_CENTER": "Centro de control",
     "MANAGEMENT": "Gestión de incidencias",
@@ -1907,7 +1923,8 @@
       "DEPLETED": "Agotado",
       "EXPIRED": "Caducado",
       "UPCOMING": "Próximo",
-      "ACTIVE": "Activo"
+      "ACTIVE": "Activo",
+      "WITHDRAWN": "Retirado"
     },
     "ACTIONS": {
       "EDIT": "Editar Caducidad",
@@ -3171,6 +3188,13 @@
       "ERROR_TITLE": "Error",
       "ERROR_BODY": "Algo salió mal",
       "WARNING_BODY": "Aviso importante"
+    }
+  },
+  "INCIDENT": {
+    "SEVERITY": {
+      "BAJA": "Baja",
+      "MEDIA": "Media",
+      "ALTA": "Alta"
     }
   }
 }
