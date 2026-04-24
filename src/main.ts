@@ -21,14 +21,10 @@ function registerServiceWorker(): void {
     return;
   }
 
-  const isLocalhost =
-    window.location.hostname === 'localhost' ||
-    window.location.hostname === '127.0.0.1' ||
-    window.location.hostname === '[::1]';
 
   // In development we must avoid SW caching dynamic chunks to prevent random
   // "Failed to fetch dynamically imported module" errors after rebuilds.
-  if (!environment.production || isLocalhost) {
+  if (!environment.production) {
     cleanupServiceWorkersAndCaches();
     return;
   }

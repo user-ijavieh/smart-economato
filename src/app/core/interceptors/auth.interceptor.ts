@@ -60,37 +60,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     });
   }
 
-  // Verificar permisos solo para peticiones API (excluyendo auth y /api/users/me)
-  if (isApiRequest && !isAuthRequest && !requestUrl.includes('/api/users/me') && userRole) {
-    const method = req.method;
-    const apiPath = isRelativeApiRequest
-      ? requestUrl.split('?')[0]
-      : requestUrl.replace(environment.apiUrl, '').split('?')[0];
-
-    if (isAllowedUserScopedRequest(method, apiPath, userRole, storageService)) {
-      return next(req).pipe(
-        catchError((error: HttpErrorResponse) => {
-          if (error.status === 401) {
-            resetSessionAndRedirectToLogin(storageService);
-          } else if (error.status === 403) {
-            logger.error('Acceso denegado:', error.error?.message);
-          }
-          return throwError(() => error);
-        })
-      );
-    }
-
-    const urlPattern = getUrlPattern(apiPath);
-
-    if (!hasPermission(userRole, method, urlPattern)) {
-      logger.error('[AUTH INTERCEPTOR] FORBIDDEN:', { method, url: req.url, pattern: urlPattern, role: userRole });
-      return throwError(() => new HttpErrorResponse({
-        error: { message: `No tienes permisos para realizar esta acción. Rol: ${userRole}` },
-        status: 403,
-        statusText: 'Forbidden'
-      }));
-    }
-  }
+  // El interceptor ya no bloquea peticiones basándose en roles del lado del cliente.
+  // Solo se encarga de inyectar el token y manejar errores 401/403 del backend.
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {

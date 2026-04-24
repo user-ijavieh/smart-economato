@@ -4,8 +4,8 @@
     <div class="welcome-banner animate-fade-in">
         <div class="user-avatar-large">{{ userInitials }}</div>
         <div class="welcome-banner-text">
-            <h2>Bienvenid@, {{ userName }}</h2>
-            <p>Monitorea y gestiona el estado operativo de Smart Economato</p>
+            <h2>{{ 'DASHBOARD.WELCOME' | translate:{name: userName} }}</h2>
+            <p>{{ 'DASHBOARD.SUBTITLE' | translate }}</p>
         </div>
     </div>
 
@@ -14,17 +14,17 @@
         <div class="stat-card">
             <span class="stat-number" *ngIf="!loading">{{ dashboardData?.kpis?.activeTeachers || 0 }}</span>
             <span class="skeleton-text" *ngIf="loading" style="width: 40px; height: 32px; display: block; margin-bottom: 8px"></span>
-            <span class="stat-label">Profesores Activos</span>
+            <span class="stat-label">{{ 'DASHBOARD.STATS.ACTIVE_TEACHERS' | translate }}</span>
         </div>
         <div class="stat-card" [class.stat-incident]="(dashboardData?.kpis?.openIncidentsCount || 0) > 0">
             <span class="stat-number" *ngIf="!loading">{{ dashboardData?.kpis?.openIncidentsCount || 0 }}</span>
             <span class="skeleton-text" *ngIf="loading" style="width: 40px; height: 32px; display: block; margin-bottom: 8px"></span>
-            <span class="stat-label">Incidencias Abiertas</span>
+            <span class="stat-label">{{ 'DASHBOARD.STATS.OPEN_INCIDENTS' | translate }}</span>
         </div>
         <div class="stat-card" [class.stat-incident]="(dashboardData?.kpis?.expiringProductsCount || 0) > 0">
             <span class="stat-number" *ngIf="!loading">{{ dashboardData?.kpis?.expiringProductsCount || 0 }}</span>
             <span class="skeleton-text" *ngIf="loading" style="width: 40px; height: 32px; display: block; margin-bottom: 8px"></span>
-            <span class="stat-label">Productos por Caducar</span>
+            <span class="stat-label">{{ 'DASHBOARD.STATS.EXPIRING_PRODUCTS' | translate }}</span>
         </div>
     </div>
 
@@ -33,7 +33,7 @@
         <!-- Top Recetas -->
         <div class="tabla-contenedor ranking-card">
             <div class="card-header-flex">
-                <h3>Top Recetas</h3>
+                <h3>{{ 'DASHBOARD.TOP_RECIPES' | translate }}</h3>
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                     <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
@@ -44,17 +44,17 @@
                     <div class="rank-pos">#{{ i + 1 }}</div>
                     <div class="item-details">
                         <span class="item-primary">{{ recipe.name }}</span>
-                        <span class="item-secondary">{{ recipe.portions }} raciones • {{ recipe.elaborations }} elaboraciones</span>
+                        <span class="item-secondary">{{ 'DASHBOARD.RECIPE_METADATA' | translate:{elaborations: recipe.elaborations, portions: recipe.portions} }}</span>
                     </div>
                 </div>
-                <div *ngIf="!loading && dashboardData?.topRecipes?.length === 0" class="empty-msg">Sin datos de ventas.</div>
+                <div *ngIf="!loading && dashboardData?.topRecipes?.length === 0" class="empty-msg">{{ 'DASHBOARD.EMPTY.RECIPES' | translate }}</div>
             </div>
         </div>
 
         <!-- Last Orders -->
         <div class="tabla-contenedor ranking-card">
             <div class="card-header-flex">
-                <h3>5 Últimos Pedidos</h3>
+                <h3>{{ 'DASHBOARD.RECENT_ORDERS' | translate }}</h3>
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M8 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
                     <path d="M4 4.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/>
@@ -68,7 +68,7 @@
                         <span class="item-secondary">{{ order.orderDate | date:'dd/MM/yyyy HH:mm' }}</span>
                     </div>
                 </div>
-                <div *ngIf="!loading && dashboardData?.recentOrders?.length === 0" class="empty-msg">No hay pedidos recientes.</div>
+                <div *ngIf="!loading && dashboardData?.recentOrders?.length === 0" class="empty-msg">{{ 'DASHBOARD.EMPTY.ORDERS' | translate }}</div>
             </div>
         </div>
 
@@ -76,18 +76,18 @@
         <!-- Inventory Control Table -->
         <div class="tabla-contenedor inventory-card full-width">
             <div class="card-header-flex">
-                <h3>Control de Inventario (Próximos 15 días)</h3>
+                <h3>{{ 'DASHBOARD.INVENTORY_CONTROL' | translate }}</h3>
             </div>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>Producto</th>
-                            <th class="hide-on-mobile">Lote</th>
-                            <th>Caducidad</th>
-                            <th class="hide-on-mobile">Días</th>
-                            <th class="hide-on-mobile">Stock</th>
-                            <th class="hide-on-mobile">Estado</th>
+                            <th>{{ 'DASHBOARD.TABLE.PRODUCT' | translate }}</th>
+                            <th class="hide-on-mobile">{{ 'DASHBOARD.TABLE.BATCH' | translate }}</th>
+                            <th>{{ 'DASHBOARD.TABLE.EXPIRATION' | translate }}</th>
+                            <th class="hide-on-mobile">{{ 'DASHBOARD.TABLE.DAYS' | translate }}</th>
+                            <th class="hide-on-mobile">{{ 'DASHBOARD.TABLE.STOCK' | translate }}</th>
+                            <th class="hide-on-mobile">{{ 'DASHBOARD.TABLE.STATUS' | translate }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -95,16 +95,16 @@
                             <td><strong>{{ p.name }}</strong></td>
                             <td class="hide-on-mobile">{{ p.batchCode || '-' }}</td>
                             <td>{{ p.expirationDate | date:'dd/MM/yyyy' }}</td>
-                            <td class="hide-on-mobile">{{ p.daysRemaining }} días</td>
+                            <td class="hide-on-mobile">{{ p.daysRemaining }} {{ 'DASHBOARD.TABLE.DAYS_UNIT' | translate }}</td>
                             <td class="hide-on-mobile">{{ p.stock }} {{ p.unit }}</td>
                             <td class="hide-on-mobile">
                                 <span class="role-badge" [class.badge-admin]="p.daysRemaining <= 5" [class.badge-chef]="p.daysRemaining > 5">
-                                    {{ p.daysRemaining <= 5 ? 'CRÍTICO' : 'PRÓXIMO' }}
+                                    {{ p.daysRemaining <= 5 ? ('DASHBOARD.BADGES.CRITICAL' | translate) : ('DASHBOARD.BADGES.UPCOMING' | translate) }}
                                 </span>
                             </td>
                         </tr>
                         <tr *ngIf="dashboardData?.expiringProducts?.length === 0">
-                            <td colspan="6" class="empty-msg">No hay productos con caducidad próxima en los lotes activos.</td>
+                            <td colspan="6" class="empty-msg">{{ 'DASHBOARD.EMPTY.PRODUCTS' | translate }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -116,7 +116,7 @@
     <!-- Expenses Chart Card (MOVED OUTSIDE GRID) -->
     <div class="tabla-contenedor chart-card-standalone animate-fade-in" style="margin-top: 1.5rem;">
         <div class="card-header-flex">
-            <h3>Gasto Total por Proveedor</h3>
+            <h3>{{ 'DASHBOARD.EXPENSES_BY_SUPPLIER' | translate }}</h3>
         </div>
         <div class="chart-wrapper">
             <canvas baseChart
@@ -126,7 +126,7 @@
             </canvas>
         </div>
         <div class="empty-msg" *ngIf="!loading && barChartData.labels?.length === 0">
-            No hay órdenes de compra registradas para mostrar estadísticas de gastos.
+            {{ 'DASHBOARD.EMPTY.CHART' | translate }}
         </div>
     </div>
 </div>
