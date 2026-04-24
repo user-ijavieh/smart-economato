@@ -131,18 +131,18 @@ export interface IncidentFilters {
 }
 
 export const INCIDENT_STATUS_OPTIONS: Array<{ value: IncidentStatus | ''; label: string }> = [
-  { value: '', label: 'Todos los estados' },
-  { value: 'CREADO', label: 'Creada' },
-  { value: 'ABIERTO', label: 'Abierta' },
-  { value: 'CERRADO_CON_RESOLUCION', label: 'Cerrada con resolución' },
-  { value: 'CERRADO_SIN_RESOLUCION', label: 'Cerrada sin resolución' }
+  { value: '', label: 'INCIDENTS.FILTERS.ALL_STATUS' },
+  { value: 'CREADO', label: 'INCIDENTS.STATUS.CREADO' },
+  { value: 'ABIERTO', label: 'INCIDENTS.STATUS.ABIERTO' },
+  { value: 'CERRADO_CON_RESOLUCION', label: 'INCIDENTS.STATUS.CERRADO_CON_RESOLUCION' },
+  { value: 'CERRADO_SIN_RESOLUCION', label: 'INCIDENTS.STATUS.CERRADO_SIN_RESOLUCION' }
 ];
 
 export const INCIDENT_SEVERITY_OPTIONS: Array<{ value: IncidentSeverity | ''; label: string }> = [
-  { value: '', label: 'Todas las severidades' },
-  { value: 'ALTA', label: 'Alta' },
-  { value: 'MEDIA', label: 'Media' },
-  { value: 'BAJA', label: 'Baja' }
+  { value: '', label: 'INCIDENTS.FILTERS.ALL_SEVERITIES' },
+  { value: 'ALTA', label: 'INCIDENTS.SEVERITY.ALTA' },
+  { value: 'MEDIA', label: 'INCIDENTS.SEVERITY.MEDIA' },
+  { value: 'BAJA', label: 'INCIDENTS.SEVERITY.BAJA' }
 ];
 
 export function incidentTypeIsActive(type: IncidentType | null | undefined): boolean {
