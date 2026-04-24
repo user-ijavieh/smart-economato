@@ -220,6 +220,10 @@ export const routes: Routes = [
         data: { animation: 26 }
       },
       {
+        path: 'general/incidencias',
+        redirectTo: '/incidents'
+      },
+      {
         path: 'ai-chat',
         loadComponent: () =>
           import('./features/general/ai-chat/ai-chat.component').then(m => m.AiChatComponent),
