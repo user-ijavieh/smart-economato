@@ -206,9 +206,7 @@
 }
 
 .btn-textual {
-  background: transparent;
-  border: none;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .status-badge.admin {
