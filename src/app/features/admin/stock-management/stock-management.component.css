@@ -368,6 +368,7 @@ tbody.loading { opacity: 0.6; }
 .severity-critical { background: var(--color-danger-bg); color: var(--color-danger-muted); border: 1px solid var(--color-danger-border); }
 .severity-high { background: rgba(249, 115, 22, 0.15); color: #fdba74; border: 1px solid rgba(249, 115, 22, 0.3); }
 .severity-medium { background: rgba(234, 179, 8, 0.15); color: #fcd34d; border: 1px solid rgba(234, 179, 8, 0.3); }
+:host-context([data-theme="light"]) .severity-medium { color: #92400e; }
 .severity-low { background: var(--color-info-bg); color: var(--color-info); border: 1px solid var(--color-info-border); }
 .severity-ok, .resolution-covered, .resolution-ok { background: var(--color-success-bg); color: var(--color-success-muted); border: 1px solid var(--color-success-border); }
 
