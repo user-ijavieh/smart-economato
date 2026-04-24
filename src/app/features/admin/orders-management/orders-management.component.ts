@@ -10,6 +10,7 @@ import { UserService } from '../../../core/services/user.service';
 import { MessageService } from '../../../core/services/message.service';
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { ScrollService } from '../../../core/services/scroll.service';
 import { Order, OrderStatus } from '../../../shared/models/order.model';
 import { OrderAudit } from '../../../shared/models/order-audit.model';
 import { Supplier } from '../../../shared/models/supplier.model';
@@ -51,6 +52,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   private userService = inject(UserService);
   private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
   private authService = inject(AuthService);
+  private scrollService = inject(ScrollService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
@@ -244,6 +246,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     if (newPage >= 0 && newPage < this.totalOrderPages) {
       this.currentOrderPage = newPage;
       this.paginateOrders();
+      this.scrollService.scrollToTop();
       this.cdr.markForCheck();
     }
   }
@@ -498,6 +501,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     const newPage = this.currentAuditPage + delta;
     if (newPage >= 0 && newPage < this.totalAuditPages) {
       this.loadAudits(newPage);
+      this.scrollService.scrollToTop();
     }
   }
 

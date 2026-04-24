@@ -526,6 +526,10 @@
   border-color: rgba(245, 158, 11, 0.22);
 }
 
+:host-context([data-theme="light"]) .severity-medium {
+  color: #92400e;
+}
+
 .severity-low,
 .severity-none {
   background: rgba(59, 130, 246, 0.14);
