@@ -107,6 +107,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
   showAuditDetailModal = false;
   loadingAuditHistory = false;
   auditTab: 'changes' | 'history' = 'changes';
+  resolvedAuditUserNames: { prev: string | null; next: string | null } = { prev: null, next: null };
 
   // ── Modals State ──
   selectedOrder: Order | null = null;
@@ -516,7 +517,32 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     this.selectedOrderHistory = [];
     this.loadingAuditHistory = true;
     this.auditTab = 'changes'; // Reset to changes tab
+    this.resolvedAuditUserNames = { prev: null, next: null };
     this.cdr.markForCheck();
+
+    // Fetch user names for prev and next states
+    const prev = this.parseAuditState(audit.previousState);
+    const next = this.parseAuditState(audit.newState);
+    
+    const prevUserId = this.getAuditStateValue(prev, ['userId', 'usuarioId', 'idUsuario']);
+    const nextUserId = this.getAuditStateValue(next, ['userId', 'usuarioId', 'idUsuario']);
+
+    const fetchUserName = (id: any, side: 'prev' | 'next') => {
+      if (!id) return;
+      this.userService.getById(Number(id)).subscribe({
+        next: (user) => {
+          this.resolvedAuditUserNames[side] = user?.name || user?.user || String(id);
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.resolvedAuditUserNames[side] = String(id);
+          this.cdr.markForCheck();
+        }
+      });
+    };
+
+    if (prevUserId) fetchUserName(prevUserId, 'prev');
+    if (nextUserId) fetchUserName(nextUserId, 'next');
 
     // Fetch full history for this order
     if (audit.orderId) {
@@ -555,6 +581,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     this.selectedAudit = null;
     this.selectedOrderHistory = [];
     this.loadingAuditHistory = false;
+    this.resolvedAuditUserNames = { prev: null, next: null };
     this.cdr.markForCheck();
   }
 
@@ -842,7 +869,15 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     });
     compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.DETAILS_COUNT'), ['numeroDetalles', 'detailsCount', 'detailCount', 'numDetails']);
     compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.ORDER_ID'), ['orderId', 'idPedido', 'id_order', 'id']);
-    compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.USER_ID'), ['userId', 'usuarioId', 'idUsuario']);
+    
+    // Mostramos la etiqueta original de ID pero con el valor parseado (el nombre)
+    compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.USER_ID'), ['userId', 'usuarioId', 'idUsuario'], (val) => {
+      const prevUserId = this.getAuditStateValue(prev, ['userId', 'usuarioId', 'idUsuario']);
+      const nextUserId = this.getAuditStateValue(next, ['userId', 'usuarioId', 'idUsuario']);
+      if (val == prevUserId && this.resolvedAuditUserNames.prev) return this.resolvedAuditUserNames.prev;
+      if (val == nextUserId && this.resolvedAuditUserNames.next) return this.resolvedAuditUserNames.next;
+      return String(val);
+    });
     compareAliases(this.translate.instant('ORDERS_MGMT.AUDITS.FIELDS.ORDER_DATE'), ['orderDate', 'fechaOrden'], (val) => this.formatAuditDateValue(val));
 
     const hasSupplier = this.getAuditStateValue(prev, ['supplierName', 'nombreProveedor']) !== null

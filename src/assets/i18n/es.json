@@ -1554,7 +1554,7 @@
         "STATUS": "Estado",
         "DETAILS_COUNT": "Nº Detalles",
         "ORDER_ID": "ID Pedido",
-        "USER_ID": "ID Usuario",
+        "USER_ID": "Usuario",
         "ORDER_DATE": "Fecha Pedido",
         "SUPPLIER": "Proveedor",
         "TOTAL_PRICE": "Precio Total",
