@@ -138,6 +138,8 @@
     "THEME_LIGHT": "Switch to light mode",
     "THEME_DARK": "Switch to dark mode",
     "CLEAR_CACHE": "Clear local cache",
+    "BY": "By",
+    "ORDER": "Order",
     "UNITS_COUNT": "{{count}} units",
     "STUDENTS_COUNT": "{{count}} students",
     "COLLAPSE_COLUMN": "Collapse column",
@@ -2347,12 +2349,27 @@
   "STOCK_MGMT": {
     "TITLE": "Stock Management",
     "MESSAGES": {
-      "NO_UNCOVERED_PRODUCTS": "No uncovered products found for replenishment."
+      "NO_UNCOVERED_PRODUCTS": "No uncovered products found for replenishment.",
+      "INTEGRITY_VALID": "Integrity verified: {{message}}",
+      "ALL_CHAINS_VALID": "All chains ({{count}}) are integral."
+    },
+    "MODALS": {
+      "CONFIRM_DOWNLOAD_TITLE": "Confirm Download",
+      "CONFIRM_DOWNLOAD_TEXT": "Do you want to download the stock report in PDF format?"
     },
     "REPOSITION": {
       "TITLE": "Generate a Replenishment Order",
       "DAYS_PROMPT": "How many days do you want to cover the estimated stock for?",
       "DAYS_LABEL": "days"
+    },
+    "ADJUSTMENT": {
+      "DAYS": "days",
+      "TYPES": {
+        "ENTRADA": "ENTRY",
+        "REVERSION": "REVERSION",
+        "MERMA": "WASTE",
+        "AJUSTE": "ADJUSTMENT"
+      }
     },
     "TABS": {
       "ALERTS": "Alerts",

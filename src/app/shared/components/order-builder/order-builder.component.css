@@ -213,6 +213,28 @@
   box-shadow: 0 0 0 1px var(--brand-primary);
 }
 
+.pool-item-card {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  padding: 14px 16px;
+}
+
+.pool-item-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.pool-item-bottom {
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 32px;
+  margin-top: -4px;
+}
+
+
 .item-selector {
   display: flex;
   align-items: center;

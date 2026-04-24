@@ -173,35 +173,39 @@
           @if (!isStockPoolSupplierCollapsed(section.key)) {
           <div class="supplier-section-items">
             @for (item of section.items; track item.productId) {
-            <article class="order-item-card" [class.selected]="isStockOrderItemSelected(item.productId)"
+            <article class="order-item-card pool-item-card" [class.selected]="isStockOrderItemSelected(item.productId)"
               draggable="true" (click)="toggleStockOrderItemSelection(item, $event)"
               (dragstart)="onStockOrderDragStart($event, item, 'pool')" (dragend)="onStockOrderDragEnd()">
-              <label class="item-selector" (click)="$event.stopPropagation()">
-                <input type="checkbox" [checked]="isStockOrderItemSelected(item.productId)"
-                  (change)="onStockOrderItemCheckboxChange(item, $event)" />
-              </label>
-              <div class="order-item-main">
-                <strong>{{ item.productName }}</strong>
-                <div class="order-badges">
-                  <span class="chip" [class.shortage-chip]="!hideStockInfo">
-                    {{ getStockOrderQuantity(item) | number:'1.0-2' }} {{ formatUnit(item.unit) }}
-                    @if (roundingMode === 'lots' && item.lotQuantity) {
-                    <span class="lot-count-badge">({{ getStockOrderQuantity(item) / item.lotQuantity | number:'1.0-1' }}
-                      lotes de {{ item.lotQuantity }} {{ formatUnit(item.unit) }})</span>
-                    }
-                  </span>
-                  @if (isLotRounded(item)) {
-                  <span class="chip lot-rounded-chip">{{ 'ORDER_BUILDER.BADGES.LOT' | translate }}</span>
+              
+              <div class="pool-item-top">
+                <label class="item-selector" (click)="$event.stopPropagation()">
+                  <input type="checkbox" [checked]="isStockOrderItemSelected(item.productId)"
+                    (change)="onStockOrderItemCheckboxChange(item, $event)" />
+                </label>
+                <div class="order-item-main">
+                  <strong>{{ item.productName }}</strong>
+                </div>
+                <div class="order-item-meta">
+                  @if (!hideStockInfo) {
+                  <div class="meta-row"><span>{{ 'COMMON.STOCK' | translate }}</span><strong>{{ item.availableStock | number:'1.0-2' }}</strong>
+                  </div>
                   }
+                  @if (item.unitPrice) { <div class="meta-row"><span>{{ 'COMMON.PRICE' | translate }}</span><strong>{{ item.unitPrice |
+                      currency:'EUR' }}</strong></div> }
                 </div>
               </div>
-              <div class="order-item-meta">
-                @if (!hideStockInfo) {
-                <div class="meta-row"><span>{{ 'COMMON.STOCK' | translate }}</span><strong>{{ item.availableStock | number:'1.0-2' }}</strong>
-                </div>
+              
+              <div class="pool-item-bottom order-badges">
+                <span class="chip" [class.shortage-chip]="!hideStockInfo">
+                  {{ getStockOrderQuantity(item) | number:'1.0-2' }} {{ formatUnit(item.unit) }}
+                  @if (roundingMode === 'lots' && item.lotQuantity) {
+                  <span class="lot-count-badge">({{ getStockOrderQuantity(item) / item.lotQuantity | number:'1.0-1' }}
+                    lotes de {{ item.lotQuantity }} {{ formatUnit(item.unit) }})</span>
+                  }
+                </span>
+                @if (isLotRounded(item)) {
+                <span class="chip lot-rounded-chip">{{ 'ORDER_BUILDER.BADGES.LOT' | translate }}</span>
                 }
-                @if (item.unitPrice) { <div class="meta-row"><span>{{ 'COMMON.PRICE' | translate }}</span><strong>{{ item.unitPrice |
-                    currency:'EUR' }}</strong></div> }
               </div>
             </article>
             }

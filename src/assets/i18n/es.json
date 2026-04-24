@@ -138,6 +138,8 @@
     "THEME_LIGHT": "Cambiar a modo claro",
     "THEME_DARK": "Cambiar a modo oscuro",
     "CLEAR_CACHE": "Limpiar caché local",
+    "BY": "Por",
+    "ORDER": "Orden",
     "UNITS_COUNT": "{{count}} unidades",
     "STUDENTS_COUNT": "{{count}} alumnos",
     "COLLAPSE_COLUMN": "Colapsar columna",
@@ -2688,12 +2690,27 @@
   "STOCK_MGMT": {
     "TITLE": "Gestión de Stock",
     "MESSAGES": {
-      "NO_UNCOVERED_PRODUCTS": "No se encontraron productos sin cobertura para reponer."
+      "NO_UNCOVERED_PRODUCTS": "No se encontraron productos sin cobertura para reponer.",
+      "INTEGRITY_VALID": "Integridad verificada: {{message}}",
+      "ALL_CHAINS_VALID": "Todas las cadenas ({{count}}) son íntegras."
+    },
+    "MODALS": {
+      "CONFIRM_DOWNLOAD_TITLE": "Confirmar Descarga",
+      "CONFIRM_DOWNLOAD_TEXT": "¿Deseas descargar el reporte de stock en formato PDF?"
     },
     "REPOSITION": {
       "TITLE": "Generar una Orden de Reposición",
       "DAYS_PROMPT": "¿Para cuántos días deseas cubrir el stock estimado?",
       "DAYS_LABEL": "días"
+    },
+    "ADJUSTMENT": {
+      "DAYS": "días",
+      "TYPES": {
+        "ENTRADA": "ENTRADA",
+        "REVERSION": "REVERSIÓN",
+        "MERMA": "MERMA",
+        "AJUSTE": "AJUSTE"
+      }
     },
     "TABS": {
       "ALERTS": "Alertas",
