@@ -454,7 +454,10 @@
     "SESSION_ERROR": "Error de sesión. Por favor inicia sesión de nuevo."
   },
   "INCIDENTS": {
-    "TITLE": "Incidencias",
+    "TITLE": {
+      "CONTROL_CENTER": "Centro de control",
+      "INCIDENTS_MANAGEMENT": "Gestión de incidencias"
+    },
     "ADMIN_TITLE": "Centro de control",
     "TABS": {
       "INCIDENTS": "Incidencias",
@@ -467,6 +470,7 @@
       "SHOW_FILTERS": "Mostrar filtros",
       "HIDE_FILTERS": "Ocultar filtros",
       "NEW_INCIDENT": "Nueva incidencia",
+      "NEW_TYPE": "Nuevo tipo",
       "FILTER": "Filtrar",
       "CLEAR": "Limpiar",
       "VIEW": "Ver",
