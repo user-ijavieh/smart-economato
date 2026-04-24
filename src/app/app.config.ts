@@ -21,7 +21,7 @@ export const appConfig: ApplicationConfig = {
     provideCharts(withDefaultRegisterables()),
     provideTranslateService({
       defaultLanguage: 'es',
-      loader: provideTranslateHttpLoader({ prefix: './assets/i18n/', suffix: '.json' })
+      loader: provideTranslateHttpLoader({ prefix: '/assets/i18n/', suffix: '.json' })
     })
   ]
 };
