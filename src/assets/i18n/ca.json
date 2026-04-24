@@ -397,7 +397,10 @@
     "ERROR": "No s'ha pogut canviar la contrasenya. Verifica les dades."
   },
   "INCIDENTS": {
-    "TITLE": "Incidències",
+    "TITLE": {
+      "CONTROL_CENTER": "Centre de control",
+      "INCIDENTS_MANAGEMENT": "Gestió d'incidències"
+    },
     "ADMIN_TITLE": "Centre de control",
     "TABS": {
       "INCIDENTS": "Incidències",
@@ -410,6 +413,7 @@
       "SHOW_FILTERS": "Mostrar filtres",
       "HIDE_FILTERS": "Ocultar filtres",
       "NEW_INCIDENT": "Nova incidència",
+      "NEW_TYPE": "Nou tipus",
       "FILTER": "Filtrar",
       "CLEAR": "Netejar",
       "VIEW": "Veure",
