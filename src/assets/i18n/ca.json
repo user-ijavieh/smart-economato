@@ -133,7 +133,7 @@
       "RECEPTION": "Comanda Rebuda",
       "REVERSION": "Reversió d'Estoc"
     },
-    "PAGE_INFO": "Pàgina {{current}} de {{total}}",
+    "PAGE_INFO": "Pàgina {{page}} de {{total}}",
     "TOTAL_COUNT": "({{count}} {{items}})",
     "THEME_LIGHT": "Canviar a mode clar",
     "THEME_DARK": "Canviar a mode fosc",
@@ -141,6 +141,9 @@
     "BY": "Per",
     "ORDER": "Ordre",
     "UNITS_COUNT": "{{count}} unitats",
+    "LOTS_COUNT": "{{count}} lots",
+    "LOTS_OF": "{{count}} lots de {{unit}}",
+    "LOTS_SHORT": "Lots",
     "STUDENTS_COUNT": "{{count}} alumnes",
     "COLLAPSE_COLUMN": "Col·lapsar columna",
     "EXPAND_COLUMN": "Expandir columna",
@@ -554,7 +557,9 @@
       "RESET_IRREVERSIBLE_TITLE": "ACCIÓ IRREVERSIBLE!",
       "RESET_IRREVERSIBLE_TEXT": "Es perdran totes les dades d'auditoria i el snapshot actual. Vols procedir definitivament?"
     },
-
+    "MESSAGES": {
+      "REVERT_ERROR": "Error al revertir l'auditoria"
+    },
     "DETAIL": {
       "SUMMARY": "Resum",
       "CHAT": "Xat ({{count}})",
@@ -1741,7 +1746,7 @@
     "ORDER": "Ordre"
   },
   "PAGINATION": {
-    "PAGE_INFO": "Pàgina {{current}} de {{totalPages}}",
+    "PAGE_INFO": "Pàgina {{page}} de {{total}}",
     "TOTAL_ITEMS": "({{total}} {{itemType}})"
   },
   "BATCHES": {
@@ -2591,7 +2596,11 @@
     },
     "MODALS": {
       "CONFIRM_DOWNLOAD_TITLE": "Confirmar Descàrrega",
-      "CONFIRM_DOWNLOAD_TEXT": "Vols descarregar el report d'estoc en format PDF?"
+      "CONFIRM_DOWNLOAD_TEXT": "Vols descarregar el report d'estoc en format PDF?",
+      "RESET_SECURITY_TITLE": "Confirmació de Seguretat",
+      "RESET_SECURITY_TEXT": "Estàs SEGUR que vols resetejar l'historial? Aquesta acció esborrarà tota la cadena del ledger.",
+      "RESET_IRREVERSIBLE_TITLE": "ACCIÓ IRREVERSIBLE!",
+      "RESET_IRREVERSIBLE_TEXT": "Es perdran totes les dades d'auditoria i el snapshot actual. Vols procedir definitivament?"
     },
     "REPOSITION": {
       "TITLE": "Generar una Ordre de Reposició",
@@ -2604,8 +2613,22 @@
         "ENTRADA": "ENTRADA",
         "REVERSION": "REVERSIÓ",
         "MERMA": "MERMA",
-        "AJUST": "AJUST"
-      }
+        "AJUSTE": "AJUST",
+        "SALIDA": "SORTIDA"
+      },
+      "TITLE": "Ajust Manual d'Estoc",
+      "ENTRY": "Entrada",
+      "EXIT": "Sortida",
+      "QUANTITY": "Quantitat",
+      "BATCH_PLACEHOLDER": "Escriu el codi o ID de lot...",
+      "MOVEMENT_TYPE": "Tipus de moviment",
+      "EXPIRATION_DATE": "Data de caducitat",
+      "REASON": "Motiu / Descripció",
+      "SEARCH_BATCH": "Buscar lot",
+      "FIFO_HINT": "Si no selecciones un lot, s'aplicarà criteri FIFO (First In, First Out).",
+      "NEW_BATCH_HINT": "En ser una entrada sense lot existent, es crearà un de nou amb aquesta data.",
+      "REASON_PLACEHOLDER": "Explica el motiu de l'ajust (ex: trencament, error d'inventari...)",
+      "SUBMIT": "Confirmar Ajust"
     },
     "TABS": {
       "ALERTS": "Alertes",
@@ -2616,6 +2639,7 @@
       "NEW_ORDER": "Nova Ordre de Reposició",
       "DAY": "dia",
       "DAYS": "Dies",
+      "PRODUCTS": "productes",
       "STATS": {
         "CRITICAL": "Crític",
         "HIGH": "Alt",
@@ -2815,6 +2839,7 @@
 
         "TYPES": {
           "AJUSTE": "AJUST",
+        "SALIDA": "SORTIDA",
           "MERMA": "MERMA",
           "ENTRADA": "ENTRADA (Extra)",
           "SALIDA": "SORTIDA (Extra)",
