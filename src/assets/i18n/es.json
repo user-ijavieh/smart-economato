@@ -172,7 +172,12 @@
     "SELECTED_COUNT_OTHER": "{{count}} seleccionados",
     "SELECT_PLACEHOLDER": "Selecciona...",
     "HIDDEN": "ocultada",
-    "SHOWN": "mostrada"
+    "SHOWN": "mostrada",
+    "SHOWING": "Mostrando",
+    "RESULTS": "resultados",
+    "SEARCH_USER_PLACEHOLDER": "Buscar usuario...",
+    "ERROR_LOADING_USERS": "Error al cargar los usuarios",
+    "ADD": "Añadir"
   },
   "NAV": {
     "DASHBOARD": "Inicio",
@@ -1907,7 +1912,8 @@
       "DEPLETED": "Agotado",
       "EXPIRED": "Caducado",
       "UPCOMING": "Próximo",
-      "ACTIVE": "Activo"
+      "ACTIVE": "Activo",
+      "WITHDRAWN": "Retirado"
     },
     "ACTIONS": {
       "EDIT": "Editar Caducidad",

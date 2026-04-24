@@ -172,7 +172,12 @@
     "SELECTED_COUNT_OTHER": "{{count}} seleccionats",
     "SELECT_PLACEHOLDER": "Selecciona...",
     "HIDDEN": "ocultada",
-    "SHOWN": "mostrada"
+    "SHOWN": "mostrada",
+    "SHOWING": "Mostrant",
+    "RESULTS": "resultats",
+    "SEARCH_USER_PLACEHOLDER": "Cercar usuari...",
+    "ERROR_LOADING_USERS": "Error en carregar els usuaris",
+    "ADD": "Afegir"
   },
   "NAV": {
     "DASHBOARD": "Inici",
@@ -1781,7 +1786,8 @@
       "DEPLETED": "Esgotat",
       "EXPIRED": "Caducat",
       "UPCOMING": "Pròxim",
-      "ACTIVE": "Actiu"
+      "ACTIVE": "Actiu",
+      "WITHDRAWN": "Retirat"
     },
     "ACTIONS": {
       "EDIT": "Editar Caducitat",
