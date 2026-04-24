@@ -115,7 +115,7 @@
 .btn-incident-primary {
   background: rgba(184, 75, 68, 0.16);
   border-color: rgba(184, 75, 68, 0.34);
-  color: var(--theme-text-primary);
+  color: var(--color-danger-soft);
 }
 
 .btn-incident-primary:hover:not(:disabled) {
