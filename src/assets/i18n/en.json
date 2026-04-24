@@ -172,7 +172,12 @@
     "SELECTED_COUNT_OTHER": "{{count}} selected",
     "SELECT_PLACEHOLDER": "Select...",
     "HIDDEN": "hidden",
-    "SHOWN": "shown"
+    "SHOWN": "shown",
+    "SHOWING": "Showing",
+    "RESULTS": "results",
+    "SEARCH_USER_PLACEHOLDER": "Search user...",
+    "ERROR_LOADING_USERS": "Error loading users",
+    "ADD": "Add"
   },
   "NAV": {
     "DASHBOARD": "Home",
@@ -2705,7 +2710,8 @@
       "DEPLETED": "Depleted",
       "EXPIRED": "Expired",
       "UPCOMING": "Upcoming",
-      "ACTIVE": "Active"
+      "ACTIVE": "Active",
+      "WITHDRAWN": "Withdrawn"
     },
     "ACTIONS": {
       "EDIT": "Edit Expiration",
