@@ -219,63 +219,6 @@
     "INVENTORY": "Inventory",
     "ORDERS": "Orders",
     "RECEPTION": "Reception",
-    "RECIPE_MGMT": {
-      "TITLE": "Recipe Management",
-      "SEARCH_PLACEHOLDER": "Search by name...",
-      "ADD_RECIPE": "Add Recipe",
-      "NO_RECIPES_FOUND": "No recipes found",
-      "TABS": {
-        "RECIPES": "Recipes",
-        "AUDITS": "Audits",
-        "DRAFTS": "Drafts"
-      },
-      "STATS": {
-        "WITH_ALLERGENS": "With Allergens",
-        "WITHOUT_ALLERGENS": "No Allergens",
-        "AVG_COST": "Average Cost"
-      },
-      "TABLE": {
-        "COMPONENTS": "Components",
-        "TOTAL_COST": "Total Cost",
-        "ALLERGENS": "Allergens"
-      },
-      "DRAFTS": {
-        "NONE_FOUND": "No drafts found",
-        "RESENDABLE": "Resendable",
-        "DETAIL_TITLE": "Draft Detail",
-        "ELABORATION": "Preparation",
-        "PRESENTATION": "Presentation",
-        "REJECTION_REASON": "Rejection reason",
-        "VIEW_APPROVED": "View approved recipe",
-        "APPROVE_CONFIRM_TITLE": "Approve draft",
-        "APPROVE_CONFIRM_MSG": "Do you want to approve the draft \"{{name}}\"?",
-        "REJECT_CONFIRM_TITLE": "Reject draft",
-        "REJECT_CONFIRM_MSG": "Indicate the reason to reject the draft <strong>{{name}}</strong>.",
-        "REJECT_REASON_EMPTY": "You must indicate a rejection reason",
-        "APPROVE_SUCCESS": "Draft \"{{name}}\" approved",
-        "REJECT_SUCCESS": "Draft \"{{name}}\" rejected",
-        "LOAD_ERROR": "Error loading recipe drafts",
-        "APPROVE_ERROR": "Error approving the draft",
-        "REJECT_ERROR": "Error rejecting the draft",
-        "APPROVED_LOAD_ERROR": "Could not load the approved recipe"
-      },
-      "AUDITS": {
-        "SEARCH_PLACEHOLDER": "Search in audits...",
-        "NONE_FOUND": "No audits found",
-        "RECIPE_ID": "Recipe ID",
-        "DETAIL_TITLE": "Audit Detail",
-        "PREV_STATE": "Previous State",
-        "NEXT_STATE": "New State",
-        "PREV_QTY": "Previous Quantity",
-        "NEXT_QTY": "New Quantity",
-        "LOAD_ERROR": "Error loading audits"
-      },
-      "MESSAGES": {
-        "LOAD_ERROR": "Error loading recipes",
-        "TOGGLE_HIDDEN_SUCCESS": "Recipe \"{{name}}\" has been {{action}}",
-        "TOGGLE_HIDDEN_ERROR": "Error {{action}} recipe"
-      }
-    },
     "RECIPES": "Recipes",
     "KITCHEN": "Kitchen",
     "USERS": "User Management",
@@ -520,7 +463,9 @@
       "DATE": "Date",
       "CHAT": "Chat",
       "ACTIONS": "Actions",
-      "RESPONSIBLE": "Responsible"
+      "RESPONSIBLE": "Responsible",
+      "EMPTY": "No incidents found",
+      "EMPTY_HINT": "Create a new incident or adjust filters to see results."
     },
     "MESSAGES": {
       "EMPTY": "No incidents found",
@@ -940,7 +885,23 @@
       "CANCEL_CONFIRM": "Cancel order #{{id}}? This action cannot be undone.",
       "CANCEL_SUCCESS": "Order cancelled",
       "CANCEL_ERROR": "Error cancelling order",
-      "DELETE_CONFIRM_MSG_ALT": "Permanently delete order #{{id}}? This action cannot be undone."
+      "DELETE_CONFIRM_MSG_ALT": "Permanently delete order #{{id}}? This action cannot be undone.",
+      "CONFIRM_ORDER_TITLE": "Confirm order",
+      "CONFIRM_ORDER_MSG": "Confirm and send order #{{id}} to reception?",
+      "CONFIRM_SUCCESS": "Order sent to reception",
+      "CONFIRM_ERROR": "Error confirming order",
+      "OPEN_ERROR": "Could not open order #{{id}}.",
+      "CREATE_SUCCESS": "Order created successfully",
+      "UPDATE_SUCCESS": "Order updated successfully",
+      "CREATE_ERROR": "Error creating order",
+      "UPDATE_ERROR": "Error updating order",
+      "LOCK_ERROR_DEFAULT": "The order is being reviewed by another user.",
+      "LOCK_OWNER_TITLE": "Active lock",
+      "LOCK_OWNER_DETAIL": "The order is in review by your active session.",
+      "LOCK_ANOTHER_USER": "Another user",
+      "LOCK_IN_PROGRESS": "Review in progress",
+      "LOCK_ADMIN_HINT": "{{name}} is reviewing it. You can continue as ADMIN.",
+      "LOCK_USER_HINT": "{{name}} opened this order. Read-only until they finish."
     },
     "STATUS_LABELS": {
       "CREATED": "Created",
@@ -971,7 +932,16 @@
       "DELTA_MISSING": "Missing",
       "DELTA_EXACT_HINT": "Exact quantity",
       "DELTA_MISSING_HINT": "Missing quantity",
-      "DELTA_EXCESS_HINT": "Too many items"
+      "DELTA_EXCESS_HINT": "Too many items",
+      "VALIDATION": {
+        "SUPPLIER_REQUIRED": "You must select a supplier",
+        "USER_REQUIRED": "You must select a user",
+        "PRODUCT_REQUIRED": "Select a product",
+        "INVALID_QUANTITY": "Enter a valid quantity",
+        "AT_LEAST_ONE": "You must add at least one product",
+        "SELECTED_USER": "selected user",
+        "CONFIRM_SUBMIT": "Create order for {{count}} products for {{name}}?"
+      }
     }
   },
   "ORDER_MODAL": {

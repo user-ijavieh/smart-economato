@@ -71,6 +71,9 @@ export class MessageService {
   }
 
   private addToast(message: string, type: Toast['type'], options?: ToastOptions): void {
+    if (this.toasts$.value.some(t => t.message === message && t.type === type)) {
+      return;
+    }
     const toast: Toast = {
       id: this.nextId++,
       title: options?.title,
