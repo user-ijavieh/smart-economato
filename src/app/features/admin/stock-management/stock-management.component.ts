@@ -361,7 +361,6 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 setTimeout(() => { this.loadingAlerts = false; this.cdr.markForCheck(); });
             },
             error: () => {
-                this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_ALERTS'));
                 setTimeout(() => { this.loadingAlerts = false; this.cdr.markForCheck(); });
             }
         });
@@ -478,8 +477,10 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             .filter(a => (a.alertType || 'PREDICTION') !== 'EXPIRATION')
             .filter(a => a.resolution === 'UNCOVERED' || a.resolution === 'PARTIALLY_COVERED')
             .map(a => a.productId);
-            
+        if (ids.length === 0) {
             this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.NO_UNCOVERED_PRODUCTS'));
+            return;
+        }
 
         this.loadingOrderData = true;
         this.stockAlertService.getBatchAlerts(ids).pipe(
@@ -516,7 +517,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 this.orderItems = data;
                 this.showOrderModal = true;
             },
-            error: () => this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_PRODUCT_DATA'))
+            error: () => this.loadingOrderData = false
         });
     }
 
@@ -533,7 +534,6 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 this.suppliers = page?.content || [];
             },
             error: () => {
-                this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_SUPPLIERS'));
             }
         });
     }
@@ -569,7 +569,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 this.showOrderModal = true;
                 this.closeMobileModal();
             },
-            error: () => this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_PRODUCT_DATA'))
+            error: () => this.loadingOrderData = false
         });
     }
 
@@ -626,7 +626,6 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             },
             error: () => {
                 this.ngZone.run(() => {
-                    this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_PREDICTIONS'));
                     this.loadingPredictions = false;
                     this.cdr.markForCheck();
                 });
@@ -725,7 +724,6 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 });
             },
             error: () => {
-                this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_CHART_DATA'));
                 this.loadingModalChart = false;
                 this.cdr.markForCheck();
             }
@@ -955,7 +953,6 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             },
             error: () => {
                 this.ledgerProducts = this.ledgerProducts || [];
-                this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_LEDGER_PRODUCTS'));
             }
         });
     }
@@ -1042,7 +1039,6 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             },
             error: () => {
                 this.loadingLedger = false;
-                this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_HISTORY'));
                 this.cdr.detectChanges();
             }
         });
@@ -1091,7 +1087,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             next: (data) => {
                 this.blockchainStats = data;
             },
-            error: () => this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_BLOCKCHAIN_STATS'))
+            error: () => { }
         });
     }
 
@@ -1106,7 +1102,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             next: (data) => {
                 this.blockchainVerification = data;
             },
-            error: () => this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_VERIFY_BLOCKCHAIN'))
+            error: () => { }
         });
     }
 
@@ -1123,7 +1119,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 this.blockchainBlocksPage = page;
                 this.blockchainBlocksTotalPages = data?.totalPages || 0;
             },
-            error: () => this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_BLOCKS'))
+            error: () => { }
         });
     }
 
@@ -1140,7 +1136,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 this.blockchainMempoolPage = page;
                 this.blockchainMempoolTotalPages = data?.totalPages || 0;
             },
-            error: () => this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_MEMPOOL'))
+            error: () => { }
         });
     }
 
@@ -1167,7 +1163,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             next: (data) => {
                 this.selectedBlockchainBlock = data;
             },
-            error: () => this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_BLOCK_DETAIL'))
+            error: () => { }
         });
     }
 
