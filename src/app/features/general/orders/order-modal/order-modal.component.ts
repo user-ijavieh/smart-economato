@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, Output, Input, EventEmitter, inject, ChangeDetectorRef } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { OrderService } from '../../../../core/services/order.service';
 import { ProductService } from '../../../../core/services/product.service';
 import { UserService } from '../../../../core/services/user.service';
@@ -29,7 +30,7 @@ interface OrderItem {
 @Component({
   selector: 'app-order-modal',
   standalone: true,
-  imports: [FormsModule, BaseModalComponent, DecimalPipe, BarcodeScannerComponent, SearchableDropdownComponent],
+  imports: [FormsModule, BaseModalComponent, DecimalPipe, BarcodeScannerComponent, SearchableDropdownComponent, TranslateModule],
   templateUrl: './order-modal.component.html',
   styleUrl: './order-modal.component.css'
 })
@@ -41,6 +42,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   private supplierService = inject(SupplierService);
   private messageService = inject(MessageService);
   private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
 
   @Output() closeModal = new EventEmitter<void>();
   @Output() orderCreated = new EventEmitter<void>();
@@ -164,7 +166,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError('Error al cargar usuarios');
+        this.messageService.showError(this.translate.instant('COMMON.ERROR_LOADING_USERS'));
         this.isLoadingUsers = false;
         this.cdr.markForCheck();
       }
@@ -227,7 +229,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError('Error al cargar proveedores');
+        this.messageService.showError(this.translate.instant('COMMON.ERROR_LOADING_SUPPLIERS'));
         this.isLoadingSuppliers = false;
         this.cdr.markForCheck();
       }
@@ -289,7 +291,7 @@ export class OrderModalComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError('Error al cargar productos');
+        this.messageService.showError(this.translate.instant('COMMON.ERROR_LOADING_PRODUCTS'));
         this.isLoadingProducts = false;
         this.cdr.markForCheck();
       }
@@ -380,17 +382,17 @@ export class OrderModalComponent implements OnInit, OnDestroy {
   onProductFound(product: Product): void {
     this.selectProduct(product);
     this.showScannerModal = false;
-    this.messageService.showSuccess(`Producto detectado: ${product.name}`);
+    this.messageService.showSuccess(this.translate.instant('PRODUCT_MGMT.MESSAGES.PRODUCT_DETECTED', { name: product.name }));
     this.cdr.markForCheck();
   }
 
   addItemToOrder(): void {
     if (!this.itemForm.productId) {
-      this.messageService.showError('Selecciona un producto');
+      this.messageService.showError(this.translate.instant('ORDERS.MODAL.VALIDATION.PRODUCT_REQUIRED'));
       return;
     }
     if (this.itemForm.quantity <= 0) {
-      this.messageService.showError('Indica una cantidad válida');
+      this.messageService.showError(this.translate.instant('ORDERS.MODAL.VALIDATION.INVALID_QUANTITY'));
       return;
     }
 
@@ -454,23 +456,23 @@ export class OrderModalComponent implements OnInit, OnDestroy {
 
   async submitOrder(): Promise<void> {
     if (this.orderItems.length === 0) {
-      this.messageService.showError('Agrega al menos un producto al pedido');
+      this.messageService.showError(this.translate.instant('ORDERS.MODAL.VALIDATION.AT_LEAST_ONE'));
       return;
     }
 
     if (!this.selectedUserId) {
-      this.messageService.showError('Selecciona un usuario para el pedido');
+      this.messageService.showError(this.translate.instant('ORDERS.MODAL.VALIDATION.USER_REQUIRED'));
       return;
     }
 
     // Obtener el nombre del usuario seleccionado para el mensaje de confirmación
     const selectedUser = this.users.find(u => u.id === this.selectedUserId);
-    const userName = selectedUser ? selectedUser.name : 'usuario seleccionado';
+    const userName = selectedUser ? selectedUser.name : this.translate.instant('ORDERS.MODAL.VALIDATION.SELECTED_USER');
 
     const totalItems = this.orderItems.length;
     const confirmed = await this.messageService.confirm(
-      'Confirmar pedido',
-      `¿Crear pedido de ${totalItems} producto${totalItems > 1 ? 's' : ''} para ${userName}?`
+      this.translate.instant('ORDERS.MESSAGES.CONFIRM_ORDER_TITLE'),
+      this.translate.instant('ORDERS.MODAL.VALIDATION.CONFIRM_SUBMIT', { count: totalItems, name: userName })
     );
 
     if (!confirmed) {
@@ -495,14 +497,18 @@ export class OrderModalComponent implements OnInit, OnDestroy {
 
     action$.subscribe({
       next: () => {
-        this.messageService.showSuccess(this.editOrder ? 'Pedido actualizado exitosamente' : 'Pedido creado exitosamente');
+        this.messageService.showSuccess(this.editOrder 
+          ? this.translate.instant('ORDERS.MESSAGES.UPDATE_SUCCESS') 
+          : this.translate.instant('ORDERS.MESSAGES.CREATE_SUCCESS'));
         this.isSubmitting = false;
         this.orderCreated.emit();
         this.closeModal.emit();
       },
       error: (error) => {
         this.logger.error('Error submitting order:', error);
-        this.messageService.showError(this.editOrder ? 'Error al actualizar el pedido' : 'Error al crear el pedido');
+        this.messageService.showError(this.editOrder 
+          ? this.translate.instant('ORDERS.MESSAGES.UPDATE_ERROR') 
+          : this.translate.instant('ORDERS.MESSAGES.CREATE_ERROR'));
         this.isSubmitting = false;
         this.cdr.markForCheck();
       }

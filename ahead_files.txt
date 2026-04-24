@@ -1,0 +1,114 @@
+
+      (online/offline), actividad reciente y mapas de pantallas/acciones
+      OF, PER_PAGE, PER_PAGE, UPDATED, LOADING_MORE, TOTAL)
+      REFRESH, NO_DATA, TOTAL, LOADING_MORE, UPDATED)
+      alérgenos y botones de acción (exportar, editar, cocinar)
+      claves de acción, PROFILE con subsecciones SCREENS y ACTIVITY,
+      en mensajes de error/confirmación y etiquetas de estado; usar TranslateModule
+      exportación a Excel y mensajes de éxito de CRUD de productos
+      mensajes de báscula y etiquetas de formulario al pipe translate
+      tabs, filtros, paginación, modales de borradores y alertas
+      y COMMON con claves de paginación (PREV, NEXT, PAGE, OF, PER_PAGE,
+      y etiquetas; extender COMMON con claves de paginación (PREV, NEXT, PAGE,
+      y paginación al sistema i18n
+    - es.json: añadir secciones RECEPTION_MODAL y RECIPES con todos los mensajes
+    - es.json: extender RECIPES con claves de UI completas, INVENTORY con
+    - inventory.component: migrar confirmaciones de retiro de lote,
+    - order-reception-modal.component: migrar validaciones, confirmaciones,
+    - profile.component: migrar etiquetas de tabla de alumnos, presencia
+    - reception.component: sustituir strings hardcodeados por translate.instant()
+    - recipe-detail-modal: migrar secciones de presentación, ingredientes,
+    - recipes.component: migrar alertas, modales de borrador, estado de recetas
+    - recipes.component: migrar todo el componente (TS + HTML) incluyendo
+    avance del i18n
+    inicio de migración del i18n al nuevo main
+    internacionalización de gestión de usuarios, proveedores y datos maestros (alérgenos)
+    migrar módulos Recepción y Recetas al sistema ngx-translate
+    migrar módulos Recetas, Inventario y Perfil a ngx-translate
+    traducción completa del módulo de Pedidos (Orders) y sus modales
+    traducción completa del módulo de inventario, layout principal y login
+Author: blablabla277 <danielpascualbezanilla@gmail.com>
+Date:   Mon Apr 20 09:25:59 2026 +0100
+Date:   Thu Apr 16 09:06:05 2026 +0100
+Date:   Thu Apr 16 09:11:59 2026 +0100
+Date:   Thu Apr 16 09:18:31 2026 +0100
+Date:   Thu Apr 16 09:33:14 2026 +0100
+Date:   Thu Apr 16 09:42:41 2026 +0100
+Date:   Thu Apr 16 10:24:23 2026 +0100
+commit 2dd2599dda950bc9322e65719f976f4a1da1c67a
+commit 3a3310abb9fe7116bf761f596e0f4dab523a89d3
+commit 495eba1a73ec0bdd6615000be3e9d75e6ea8bde4
+commit 5509d5bf63c48ba2df04c5adbe72b2c957bd21df
+commit 5ce0bee2398f04e3399623e9707e23032f744e57
+commit 7fb774dab96ec2695aa13571e37aab114335aafc
+commit dfe093e2102a815e38eb4570f27aad97f7605ef7
+package-lock.json
+package.json
+src/app/app.config.ts
+src/app/app.ts
+src/app/features/admin/admin-panel/admin-panel.component.html
+src/app/features/admin/admin-panel/admin-panel.component.ts
+src/app/features/admin/allergens-management/allergens-management.component.html
+src/app/features/admin/allergens-management/allergens-management.component.ts
+src/app/features/admin/batches-management/batches-management.component.ts
+src/app/features/admin/kitchen-management/kitchen-management.component.html
+src/app/features/admin/kitchen-management/kitchen-management.component.ts
+src/app/features/admin/orders-management/orders-management.component.html
+src/app/features/admin/orders-management/orders-management.component.ts
+src/app/features/admin/products-management/products-management.component.html
+src/app/features/admin/products-management/products-management.component.ts
+src/app/features/admin/recipes-management/recipes-management.component.html
+src/app/features/admin/recipes-management/recipes-management.component.ts
+src/app/features/admin/settings-management/settings-management.component.ts
+src/app/features/admin/stock-management/stock-management.component.html
+src/app/features/admin/stock-management/stock-management.component.ts
+src/app/features/admin/suppliers-management/supplier-form-modal/supplier-form-modal.component.html
+src/app/features/admin/suppliers-management/supplier-form-modal/supplier-form-modal.component.ts
+src/app/features/admin/suppliers-management/suppliers-management.component.html
+src/app/features/admin/suppliers-management/suppliers-management.component.ts
+src/app/features/admin/traceability-management/traceability-management.component.ts
+src/app/features/admin/users-management/user-form-modal/user-form-modal.component.html
+src/app/features/admin/users-management/user-form-modal/user-form-modal.component.ts
+src/app/features/admin/users-management/users-management.component.html
+src/app/features/admin/users-management/users-management.component.ts
+src/app/features/general/change-password/change-password.component.html
+src/app/features/general/change-password/change-password.component.ts
+src/app/features/general/inventory/inventory.component.html
+src/app/features/general/inventory/inventory.component.ts
+src/app/features/general/inventory/product-create-modal/product-create-modal.component.html
+src/app/features/general/inventory/product-create-modal/product-create-modal.component.ts
+src/app/features/general/inventory/product-detail-modal/product-detail-modal.component.html
+src/app/features/general/inventory/product-detail-modal/product-detail-modal.component.ts
+src/app/features/general/inventory/product-edit-modal/product-edit-modal.component.html
+src/app/features/general/inventory/product-edit-modal/product-edit-modal.component.ts
+src/app/features/general/inventory/product-form/product-form.component.html
+src/app/features/general/inventory/product-form/product-form.component.ts
+src/app/features/general/login/login.component.html
+src/app/features/general/login/login.component.ts
+src/app/features/general/orders/order-details-modal/order-details-modal.component.html
+src/app/features/general/orders/order-details-modal/order-details-modal.component.ts
+src/app/features/general/orders/order-modal/order-modal.component.html
+src/app/features/general/orders/order-modal/order-modal.component.ts
+src/app/features/general/orders/orders.component.html
+src/app/features/general/orders/orders.component.ts
+src/app/features/general/profile/profile.component.html
+src/app/features/general/profile/profile.component.ts
+src/app/features/general/reception/order-reception-modal/order-reception-modal.component.html
+src/app/features/general/reception/order-reception-modal/order-reception-modal.component.ts
+src/app/features/general/reception/reception.component.html
+src/app/features/general/reception/reception.component.ts
+src/app/features/general/recipes/recipe-create-modal/recipe-create-modal.component.html
+src/app/features/general/recipes/recipe-create-modal/recipe-create-modal.component.ts
+src/app/features/general/recipes/recipe-detail-modal/recipe-detail-modal.component.html
+src/app/features/general/recipes/recipe-detail-modal/recipe-detail-modal.component.ts
+src/app/features/general/recipes/recipe-edit-modal/recipe-edit-modal.component.html
+src/app/features/general/recipes/recipe-edit-modal/recipe-edit-modal.component.ts
+src/app/features/general/recipes/recipes.component.html
+src/app/features/general/recipes/recipes.component.ts
+src/app/features/general/welcome/welcome.component.html
+src/app/features/general/welcome/welcome.component.ts
+src/app/features/incidents/incidents.component.html
+src/app/features/incidents/incidents.component.ts
+src/app/shared/components/layout/sidebar/sidebar.component.html
+src/app/shared/components/layout/sidebar/sidebar.component.ts
+src/assets/i18n/es.json

@@ -1,17 +1,17 @@
 
 <div class="page-content contenedor-principal">
     <div class="controls-bar controles">
-        <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por nombre, email o teléfono..."
+        <input type="text" [(ngModel)]="searchTerm" [placeholder]="'SUPPLIERS.FILTERS.SEARCH_PLACEHOLDER' | translate"
             (ngModelChange)="onSearch()" />
         <button id="btnAgregarProveedor" class="toolbar-btn" (click)="openCreateModal()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path
                     d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z" />
             </svg>
-            Agregar Proveedor
+            {{ 'SUPPLIERS.ACTIONS.ADD' | translate }}
         </button>
         @if (hasActiveFilters()) {
-        <button class="toolbar-btn btn-clear" (click)="clearFilters()">Limpiar Filtros</button>
+        <button class="toolbar-btn btn-clear" (click)="clearFilters()">{{ 'COMMON.CLEAR_FILTERS' | translate }}</button>
         }
     </div>
 
@@ -19,10 +19,10 @@
         <table>
             <thead>
                 <tr>
-                    <th class="sortable" (click)="onSortChange('name')" [attr.data-sort-dir]="getSortDir('name')">Nombre</th>
-                    <th class="hide-on-mobile">Email</th>
-                    <th class="hide-on-mobile">Teléfono</th>
-                    <th class="hide-on-mobile">Acciones</th>
+                    <th class="sortable" (click)="onSortChange('name')" [attr.data-sort-dir]="getSortDir('name')">{{ 'SUPPLIERS.TABLE.NAME' | translate }}</th>
+                    <th class="hide-on-mobile">{{ 'SUPPLIERS.TABLE.EMAIL' | translate }}</th>
+                    <th class="hide-on-mobile">{{ 'SUPPLIERS.TABLE.PHONE' | translate }}</th>
+                    <th class="hide-on-mobile">{{ 'SUPPLIERS.TABLE.ACTIONS' | translate }}</th>
                     <th class="show-on-mobile-only mobile-icon-col"></th>
                 </tr>
             </thead>
@@ -51,7 +51,7 @@
                     <td class="hide-on-mobile">{{ supplier.phone || '—' }}</td>
                     <td class="hide-on-mobile" (click)="$event.stopPropagation()">
                         <div class="actions-cell">
-                            <button class="btn-editar" (click)="openEditModal(supplier)" title="Editar">
+                            <button class="btn-editar" (click)="openEditModal(supplier)" [title]="'COMMON.EDIT' | translate">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     viewBox="0 0 16 16">
                                     <path
@@ -60,7 +60,7 @@
                                         d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
                                 </svg>
                             </button>
-                            <button class="btn-eliminar" (click)="deleteSupplier(supplier)" title="Eliminar">
+                            <button class="btn-eliminar" (click)="deleteSupplier(supplier)" [title]="'COMMON.DELETE' | translate">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     viewBox="0 0 16 16">
                                     <path
@@ -81,7 +81,7 @@
                 @if (filteredSuppliers.length === 0 && !loading) {
                 <tr>
                     <td colspan="5" style="text-align: center; padding: 2rem; color: #999">
-                        No se encontraron proveedores
+                        {{ 'SUPPLIERS.TABLE.EMPTY' | translate }}
                     </td>
                 </tr>
                 }
@@ -94,11 +94,11 @@
     <div class="pagination-controls">
         <button class="toolbar-btn btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
-            Anterior
+            {{ 'COMMON.PREVIOUS' | translate }}
         </button>
-        <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }} <span class="total-info">({{ totalElements }} proveedores)</span></span>
+        <span class="page-info">{{ 'SUPPLIERS.PAGINATION_INFO' | translate:{current: currentPage + 1, totalPages: totalPages, total: totalElements} }}</span>
         <button class="toolbar-btn btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
-            Siguiente
+            {{ 'COMMON.NEXT' | translate }}
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
         </button>
     </div>
@@ -115,19 +115,19 @@
 @if (showMobileModal && selectedSupplierForMobile) {
 <app-base-modal [title]="selectedSupplierForMobile.name" size="sm" (closed)="closeMobileModal()">
     <div class="detail-field">
-        <span class="detail-label">Email</span>
+        <span class="detail-label">{{ 'SUPPLIERS.TABLE.EMAIL' | translate }}</span>
         <span class="detail-value">{{ selectedSupplierForMobile.email || '—' }}</span>
     </div>
     <div class="detail-field">
-        <span class="detail-label">Teléfono</span>
+        <span class="detail-label">{{ 'SUPPLIERS.TABLE.PHONE' | translate }}</span>
         <span class="detail-value">{{ selectedSupplierForMobile.phone || '—' }}</span>
     </div>
     <div modal-footer class="detail-actions">
         <button class="btn-editar btn-full" (click)="openEditFromMobile()">
-            Editar Proveedor
+            {{ 'SUPPLIERS.ACTIONS.EDIT' | translate }}
         </button>
         <button class="btn-eliminar btn-full" (click)="deleteSupplier(selectedSupplierForMobile); closeMobileModal()">
-            Eliminar Proveedor
+            {{ 'SUPPLIERS.ACTIONS.DELETE' | translate }}
         </button>
     </div>
 </app-base-modal>

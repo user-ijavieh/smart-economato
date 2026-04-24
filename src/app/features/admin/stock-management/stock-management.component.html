@@ -1,5 +1,5 @@
 <div class="admin-page-header">
-  <h1>Gestión de Stock</h1>
+  <h1>{{ 'STOCK_MGMT.TITLE' | translate }}</h1>
 </div>
 
 <!-- Tab bar -->
@@ -8,19 +8,19 @@
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor">
       <path d="M480-120q-33 0-56.5-23.5T400-200h160q0 33-23.5 56.5T480-120ZM160-240v-80h80v-280q0-83 50-149.5T420-830v-50q0-25 17.5-42.5T480-940q25 0 42.5 17.5T540-880v50q80 16 130 82.5T720-600v280h80v80H160Zm320-360q-33 0-56.5 23.5T400-520v280h160v-280q0-33-23.5-56.5T480-600Z"/>
     </svg>
-    Alertas
+    {{ 'STOCK_MGMT.TABS.ALERTS' | translate }}
   </button>
   <button class="admin-tab-btn" [class.active]="activeTab === 'predictions'" (click)="switchTab('predictions')">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor">
       <path d="M120-120v-80l80-80v160h-80Zm160 0v-240l80-80v320h-80Zm160 0v-320l80 81v239h-80Zm160 0v-239l80-80v319h-80Zm160 0v-400l80-80v480h-80ZM120-327v-113l280-280 160 160 280-280v113L560-447 400-607 120-327Z"/>
     </svg>
-    Predicciones
+    {{ 'STOCK_MGMT.TABS.PREDICTIONS' | translate }}
   </button>
   <button class="admin-tab-btn" [class.active]="activeTab === 'ledger'" (click)="onLedgerTabClick()">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor">
       <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm80-80h400v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 320v-560 560Z"/>
     </svg>
-    Historial
+    {{ 'STOCK_MGMT.TABS.LEDGER' | translate }}
   </button>
 
 </div>
@@ -34,17 +34,17 @@
       <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
         <path d="M160-160v-516L82-846l72-34 94 202h464l94-202 72 34-78 170v516H160Zm240-280h160q17 0 28.5-11.5T600-480q0-17-11.5-28.5T560-520H400q-17 0-28.5 11.5T360-480q0 17 11.5 28.5T400-440ZM240-240h480v-358H240v358Z"/>
       </svg>
-      {{ loadingOrderData ? 'Cargando...' : 'Nueva Orden de Reposición' }}
+      {{ loadingOrderData ? ('COMMON.LOADING' | translate) : ('STOCK_MGMT.ALERTS.NEW_ORDER' | translate) }}
     </button>
   </div>
 
   <!-- Stats -->
   <div class="stats-row">
-    <div class="stat-card stat-critical"><span class="stat-number">{{ countBySeverity('CRITICAL') }}</span><span class="stat-label">Crítico</span></div>
-    <div class="stat-card stat-high"><span class="stat-number">{{ countBySeverity('HIGH') }}</span><span class="stat-label">Alto</span></div>
-    <div class="stat-card stat-medium"><span class="stat-number">{{ countBySeverity('MEDIUM') }}</span><span class="stat-label">Medio</span></div>
-    <div class="stat-card stat-low"><span class="stat-number">{{ countBySeverity('LOW') }}</span><span class="stat-label">Bajo</span></div>
-    <div class="stat-card stat-total"><span class="stat-number">{{ alerts.length }}</span><span class="stat-label">Total</span></div>
+    <div class="stat-card stat-critical"><span class="stat-number">{{ countBySeverity('CRITICAL') }}</span><span class="stat-label">{{ 'STOCK_MGMT.ALERTS.STATS.CRITICAL' | translate }}</span></div>
+    <div class="stat-card stat-high"><span class="stat-number">{{ countBySeverity('HIGH') }}</span><span class="stat-label">{{ 'STOCK_MGMT.ALERTS.STATS.HIGH' | translate }}</span></div>
+    <div class="stat-card stat-medium"><span class="stat-number">{{ countBySeverity('MEDIUM') }}</span><span class="stat-label">{{ 'STOCK_MGMT.ALERTS.STATS.MEDIUM' | translate }}</span></div>
+    <div class="stat-card stat-low"><span class="stat-number">{{ countBySeverity('LOW') }}</span><span class="stat-label">{{ 'STOCK_MGMT.ALERTS.STATS.LOW' | translate }}</span></div>
+    <div class="stat-card stat-total"><span class="stat-number">{{ alerts.length }}</span><span class="stat-label">{{ 'STOCK_MGMT.ALERTS.STATS.TOTAL' | translate }}</span></div>
   </div>
 
   <!-- Table -->
@@ -57,29 +57,30 @@
             (click)="onSortChange('productName')"
             [attr.data-sort-dir]="getSortDir('productName')"
           >
-            Producto
+            {{ 'STOCK_MGMT.ALERTS.TABLE.PRODUCT' | translate }}
           </th>
           <th
             class="sortable hide-on-mobile"
             (click)="onSortChange('effectiveGap')"
             [attr.data-sort-dir]="getSortDir('effectiveGap')"
           >
-            Estado del Stock
+            {{ 'STOCK_MGMT.ALERTS.TABLE.STOCK_STATUS' | translate }}
           </th>
           <th
             class="sortable hide-on-mobile"
             (click)="onSortChange('estimatedDaysRemaining')"
             [attr.data-sort-dir]="getSortDir('estimatedDaysRemaining')"
           >
-            Días Rest.
+            {{ 'STOCK_MGMT.ALERTS.TABLE.DAYS_REMAINING' | translate }}
           </th>
           <th
             class="sortable"
             (click)="onSortChange('severity')"
             [attr.data-sort-dir]="getSortDir('severity')"
           >
-            Estado
+            {{ 'STOCK_MGMT.ALERTS.TABLE.STATUS' | translate }}
           </th>
+          <th class="hide-on-mobile action-col"></th>
           <th class="show-on-mobile-only mobile-icon-col"></th>
         </tr>
       </thead>
@@ -117,12 +118,12 @@
             </td>
             <td class="hide-on-mobile">
               <div class="stock-info-cell">
-                <div class="stock-line"><span>Actual:</span> <strong>{{ alert.currentStock | number:'1.0-2' }}</strong></div>
-                <div class="stock-line"><span>Consumido:</span>&nbsp;<strong>{{ alert.projectedConsumption | number:'1.0-2' }}</strong></div>
-                <div class="stock-line" [class.gap-negative]="alert.effectiveGap < 0"><span>Déficit:</span> <strong>{{ alert.effectiveGap | number:'1.0-2' }}</strong></div>
+                <div class="stock-line"><span>{{ 'STOCK_MGMT.ALERTS.INFO.CURRENT' | translate }}:</span> <strong>{{ alert.currentStock | number:'1.0-2' }}</strong></div>
+                <div class="stock-line"><span>{{ 'STOCK_MGMT.ALERTS.INFO.CONSUMED' | translate }}:</span>&nbsp;<strong>{{ alert.projectedConsumption | number:'1.0-2' }}</strong></div>
+                <div class="stock-line" [class.gap-negative]="alert.effectiveGap < 0"><span>{{ 'STOCK_MGMT.ALERTS.INFO.GAP' | translate }}:</span> <strong>{{ alert.effectiveGap | number:'1.0-2' }}</strong></div>
               </div>
             </td>
-            <td class="days-cell hide-on-mobile" [class.days-critical]="alert.estimatedDaysRemaining <= 3"><strong>{{ alert.estimatedDaysRemaining }} Días</strong></td>
+            <td class="days-cell hide-on-mobile" [class.days-critical]="alert.estimatedDaysRemaining <= 3"><strong>{{ alert.estimatedDaysRemaining }} {{ 'STOCK_MGMT.ALERTS.DAYS' | translate }}</strong></td>
             <td>
               <div class="status-cell">
                 <span class="severity-badge" [ngClass]="getSeverityClass(alert.severity)">{{ getSeverityLabel(alert.severity) }}</span>
@@ -131,7 +132,7 @@
               </div>
             </td>
             <td class="hide-on-mobile action-col">
-              <button class="toolbar-btn btn-crear-orden-sm" (click)="$event.stopPropagation(); openOrderModalForSingleProduct(alert)" title="Crear Orden de Compra">
+              <button class="toolbar-btn btn-crear-orden-sm" (click)="$event.stopPropagation(); openOrderModalForSingleProduct(alert)" [title]="'STOCK_MGMT.ADJUSTMENT.ORDER_MODAL_TITLE' | translate">
                 <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor">
                   <path d="M160-160v-516L82-846l72-34 94 202h464l94-202 72 34-78 170v516H160Zm240-280h160q17 0 28.5-11.5T600-480q0-17-11.5-28.5T560-520H400q-17 0-28.5 11.5T360-480q0 17 11.5 28.5T400-440ZM240-240h480v-358H240v358Z"/>
                 </svg>
@@ -146,8 +147,8 @@
           }
           @if (!alerts.length) {
           <tr><td colspan="4" class="empty-state">
-            <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="currentColor"><path d="M480-120q-134 0-227-93t-93-227q0-134 93-227t227-93q134 0 227 93t93 227q0 134-93 227t-227 93Zm0-80q100 0 170-70t70-170q0-100-70-170t-170-70q-100 0-170 70t-70 170q0 100 70 170t170 70Zm-20-80h40v-40h-40v40Zm0-120h40v-200h-40v200Z"/></svg>
-            <p>No hay alertas activas</p>
+            <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 480" width="48px" fill="currentColor"><path d="M480-120q-134 0-227-93t-93-227q0-134 93-227t227-93q134 0 227 93t93 227q0 134-93 227t-227 93Zm0-80q100 0 170-70t70-170q0-100-70-170t-170-70q-100 0-170 70t-70 170q0 100 70 170t170 70Zm-20-80h40v-40h-40v40Zm0-120h40v-200h-40v200Z"/></svg>
+            <p>{{ 'STOCK_MGMT.ALERTS.MESSAGES.EMPTY' | translate }}</p>
           </td></tr>
           }
         }
@@ -162,11 +163,11 @@
                 <table class="detail-table">
                   <tbody>
                     <tr>
-                      <td class="detail-td-label">Producto</td>
+                      <td class="detail-td-label">{{ 'STOCK_MGMT.ALERTS.TABLE.PRODUCT' | translate }}</td>
                       <td class="detail-td-value">{{ selectedAlertForMobile.productName }}</td>
                     </tr>
                     <tr>
-                      <td class="detail-td-label">Estado</td>
+                      <td class="detail-td-label">{{ 'STOCK_MGMT.ALERTS.TABLE.STATUS' | translate }}</td>
                       <td class="detail-td-value">
                         <span class="detail-val-badge severity-{{ selectedAlertForMobile.severity.toLowerCase() }}">
                           {{ getSeverityLabel(selectedAlertForMobile.severity) }}
@@ -174,7 +175,7 @@
                       </td>
                     </tr>
                     <tr>
-                      <td class="detail-td-label">Tipo</td>
+                      <td class="detail-td-label">{{ 'STOCK_MGMT.ALERTS.DETAIL.TYPE' | translate }}</td>
                       <td class="detail-td-value">
                         <span class="detail-val-badge" [ngClass]="getAlertTypeClass(selectedAlertForMobile.alertType)">
                           {{ getAlertTypeLabel(selectedAlertForMobile.alertType) }}
@@ -182,7 +183,7 @@
                       </td>
                     </tr>
                     <tr>
-                      <td class="detail-td-label">Resolución</td>
+                      <td class="detail-td-label">{{ 'STOCK_MGMT.ALERTS.DETAIL.RESOLUTION' | translate }}</td>
                       <td class="detail-td-value">
                         <span class="detail-val-badge" [ngClass]="getResolutionClass(selectedAlertForMobile.resolution)">
                           {{ getResolutionLabel(selectedAlertForMobile.resolution) }}
@@ -190,17 +191,17 @@
                       </td>
                     </tr>
                     <tr>
-                      <td class="detail-td-label">Stock Actual</td>
+                      <td class="detail-td-label">{{ 'STOCK_MGMT.ALERTS.INFO.CURRENT' | translate }}</td>
                       <td class="detail-td-value">{{ selectedAlertForMobile.currentStock | number:'1.0-2' }} {{ selectedAlertForMobile.unit }}</td>
                     </tr>
                     <tr>
-                      <td class="detail-td-label">Consumo Diario Est.</td>
-                      <td class="detail-td-value">{{ selectedAlertForMobile.estimatedDailyConsumption | number:'1.0-2' }} {{ selectedAlertForMobile.unit }}/día</td>
+                      <td class="detail-td-label">{{ 'STOCK_MGMT.ALERTS.DETAIL.ESTIMATED_DAILY' | translate }}</td>
+                      <td class="detail-td-value">{{ selectedAlertForMobile.estimatedDailyConsumption | number:'1.0-2' }} {{ selectedAlertForMobile.unit }}/{{ 'STOCK_MGMT.ALERTS.DAY' | translate }}</td>
                     </tr>
                     <tr>
-                      <td class="detail-td-label">Días Restantes</td>
+                      <td class="detail-td-label">{{ 'STOCK_MGMT.ALERTS.TABLE.DAYS_REMAINING' | translate }}</td>
                       <td class="detail-td-value" [class.days-critical]="selectedAlertForMobile.estimatedDaysRemaining <= 3">
-                        <strong>{{ selectedAlertForMobile.estimatedDaysRemaining }} Días</strong>
+                        <strong>{{ selectedAlertForMobile.estimatedDaysRemaining }} {{ 'STOCK_MGMT.ALERTS.DAYS' | translate }}</strong>
                       </td>
                     </tr>
                   </tbody>
@@ -214,7 +215,7 @@
                   @if (stockOutDay) {
                     <div class="stock-out-warning" [class.ok]="modalChartMode === 'expiration'">
                       <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
-                      {{ modalChartMode === 'expiration' ? 'Caducidad más próxima:' : 'Agotamiento estimado:' }} <strong>{{ stockOutDay }}</strong>
+                      {{ modalChartMode === 'expiration' ? ('STOCK_MGMT.LEDGER.MESSAGES.NEXT_EXPIRATION' | translate) : ('STOCK_MGMT.LEDGER.MESSAGES.ESTIMATED_OUT' | translate) }} <strong>{{ stockOutDay }}</strong>
                     </div>
                   }
                 </div>
@@ -223,7 +224,7 @@
                   @if (loadingModalChart) {
                     <div class="chart-loading">
                       <span class="spinner"></span>
-                      Procesando datos históricos y predicciones...
+                      {{ 'STOCK_MGMT.LEDGER.MESSAGES.PROCESSING_CHART' | translate }}
                     </div>
                   } @else {
                     <canvas baseChart [data]="modalChartData" [options]="modalChartOptions"></canvas>
@@ -240,7 +241,7 @@
 <div class="page-content contenedor-principal">
   <div class="info-card">
     <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
-    <span>Consumo proyectado calculado sobre los últimos <strong>14 días</strong>.</span>
+    <span [innerHTML]="'STOCK_MGMT.PREDICTIONS.INFO' | translate"></span>
   </div>
 
   <div class="tabla-contenedor">
@@ -253,21 +254,21 @@
             (click)="onSortPredictionsChange('productName')"
             [attr.data-sort-dir]="getSortPredictionsDir('productName')"
           >
-            Producto
+            {{ 'STOCK_MGMT.PREDICTIONS.TABLE.PRODUCT' | translate }}
           </th>
           <th
             class="sortable"
             (click)="onSortPredictionsChange('projectedConsumption')"
             [attr.data-sort-dir]="getSortPredictionsDir('projectedConsumption')"
           >
-            Consumo Proyectado
+            {{ 'STOCK_MGMT.PREDICTIONS.TABLE.PROJECTED_CONSUMPTION' | translate }}
           </th>
           <th
             class="sortable hide-on-mobile"
             (click)="onSortPredictionsChange('updatedAt')"
             [attr.data-sort-dir]="getSortPredictionsDir('updatedAt')"
           >
-            Última Actualización
+            {{ 'STOCK_MGMT.PREDICTIONS.TABLE.LAST_UPDATE' | translate }}
           </th>
           <th class="show-on-mobile-only mobile-icon-col"></th>
         </tr>
@@ -299,7 +300,7 @@
           @if (!predictions.length) {
           <tr><td colspan="4" class="empty-state">
             <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="currentColor"><path d="M120-120v-80l80-80v160h-80Zm160 0v-240l80-80v320h-80Zm160 0v-320l80 81v239h-80Zm160 0v-239l80-80v319h-80Zm160 0v-400l80-80v480h-80ZM120-327v-113l280-280 160 160 280-280v113L560-447 400-607 120-327Z"/></svg>
-            <p>No hay predicciones disponibles</p>
+            <p>{{ 'STOCK_MGMT.PREDICTIONS.MESSAGES.EMPTY' | translate }}</p>
           </td></tr>
           }
         }
@@ -311,11 +312,11 @@
   <div class="pagination-controls">
     <button class="toolbar-btn btn-page" [disabled]="currentPage === 0" (click)="changePage(-1)">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
-      Anterior
+      {{ 'COMMON.PREVIOUS' | translate }}
     </button>
-    <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }} <span class="total-info">({{ totalElements }} productos)</span></span>
+    <span class="page-info">{{ 'COMMON.PAGE_INFO' | translate:{page: currentPage + 1, total: totalPages} }} <span class="total-info">({{ totalElements }} {{ 'STOCK_MGMT.ALERTS.PRODUCTS' | translate }})</span></span>
     <button class="toolbar-btn btn-page" [disabled]="currentPage === totalPages - 1" (click)="changePage(1)">
-      Siguiente
+      {{ 'COMMON.NEXT' | translate }}
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
     </button>
   </div>
@@ -328,23 +329,23 @@
                 <table class="detail-table">
                   <tbody>
                     <tr>
-                      <td class="detail-td-label">Producto</td>
+                      <td class="detail-td-label">{{ 'STOCK_MGMT.ALERTS.TABLE.PRODUCT' | translate }}</td>
                       <td class="detail-td-value">{{ selectedPredictionForMobile.productName }}</td>
                     </tr>
                     <tr>
-                      <td class="detail-td-label">Stock Actual</td>
+                      <td class="detail-td-label">{{ 'STOCK_MGMT.ALERTS.INFO.CURRENT' | translate }}</td>
                       <td class="detail-td-value">{{ selectedPredictionForMobile.currentStock | number:'1.0-2' }} {{ selectedPredictionForMobile.unit }}</td>
                     </tr>
                     <tr>
-                      <td class="detail-td-label">Consumo estimado (14 días)</td>
-                      <td class="detail-td-value">{{ selectedPredictionForMobile.projectedConsumption | number:'1.0-2' }} {{ selectedPredictionForMobile.unit }}/14 días</td>
+                      <td class="detail-td-label">{{ 'STOCK_MGMT.ALERTS.DETAIL.PROJECTED_14' | translate }}</td>
+                      <td class="detail-td-value">{{ selectedPredictionForMobile.projectedConsumption | number:'1.0-2' }} {{ selectedPredictionForMobile.unit }}/14 {{ 'STOCK_MGMT.ADJUSTMENT.DAYS' | translate }}</td>
                     </tr>
                     <tr>
-                      <td class="detail-td-label">Cobertura Estimada</td>
-                      <td class="detail-td-value"><strong>{{ selectedPredictionForMobile.daysOfCoverage }} Días</strong></td>
+                      <td class="detail-td-label">{{ 'STOCK_MGMT.ALERTS.DETAIL.COVERAGE' | translate }}</td>
+                      <td class="detail-td-value"><strong>{{ selectedPredictionForMobile.daysOfCoverage }} {{ 'STOCK_MGMT.ALERTS.DAYS' | translate }}</strong></td>
                     </tr>
                     <tr>
-                      <td class="detail-td-label">Última Actualización</td>
+                      <td class="detail-td-label">{{ 'STOCK_MGMT.ALERTS.DETAIL.LAST_UPDATE' | translate }}</td>
                       <td class="detail-td-value">{{ formatDate(selectedPredictionForMobile.updatedAt) }}</td>
                     </tr>
                   </tbody>
@@ -354,11 +355,11 @@
               <!-- Combined Chart Section -->
               <div class="modal-chart-section">
                 <div class="chart-header">
-                  <h3>Análisis de Consumo y Proyección de Stock</h3>
+                  <h3>{{ modalChartTitle }}</h3>
                   @if (stockOutDay) {
                     <div class="stock-out-warning ok">
                       <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm120-410-176 176-74-74-56 56 130 130 232-232-56-56Z"/></svg>
-                      Stock proyectado hasta: <strong>{{ stockOutDay }}</strong>
+                      {{ 'STOCK_MGMT.LEDGER.MESSAGES.STOCK_PROJETED_UNTIL' | translate }} <strong>{{ stockOutDay }}</strong>
                     </div>
                   }
                 </div>
@@ -367,7 +368,7 @@
                   @if (loadingModalChart) {
                     <div class="chart-loading">
                       <span class="spinner"></span>
-                      Procesando datos históricos y predicciones...
+                      {{ 'STOCK_MGMT.LEDGER.MESSAGES.PROCESSING_CHART' | translate }}
                     </div>
                   } @else {
                     <canvas baseChart [data]="modalChartData" [options]="modalChartOptions"></canvas>
@@ -386,7 +387,7 @@
 <div class="page-content contenedor-principal">
   <div class="controls-bar controles-ledger">
     <div class="search-box">
-      <label>Seleccionar Producto:</label>
+      <label>{{ 'STOCK_MGMT.LEDGER.SELECT_PRODUCT' | translate }}</label>
       <div class="custom-select-container">
         <div class="custom-select-trigger" (click)="toggleLedgerDropdown()" [class.active]="showLedgerDropdown">
           <span class="selected-value">{{ selectedProductName }}</span>
@@ -397,14 +398,14 @@
           <div class="custom-dropdown-menu">
             <div class="dropdown-search">
               <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-732q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
-              <input type="text" [(ngModel)]="ledgerSearchTerm" (input)="onLedgerSearchInput()" placeholder="Buscar producto..." (click)="$event.stopPropagation()" focus="true" />
-              <button type="button" class="btn-scan-dropdown" (click)="$event.stopPropagation(); openLedgerBarcodeScanner()" title="Escanear código de barras">
+              <input type="text" [(ngModel)]="ledgerSearchTerm" (input)="onLedgerSearchInput()" [placeholder]="'STOCK_MGMT.LEDGER.SEARCH_PLACEHOLDER' | translate" (click)="$event.stopPropagation()" focus="true" />
+              <button type="button" class="btn-scan-dropdown" (click)="$event.stopPropagation(); openLedgerBarcodeScanner()" [title]="'STOCK_MGMT.LEDGER.SCAN_TOOLTIP' | translate">
                 <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z"/></svg>
               </button>
             </div>
             <div class="dropdown-list" (scroll)="onLedgerDropdownScroll($event)">
               <div class="dropdown-item" (click)="onProductSelect(null)" [class.selected]="!selectedProductId">
-                Ninguno
+                {{ 'STOCK_MGMT.LEDGER.NONE' | translate }}
               </div>
               @for (p of ledgerProducts; track p.id) {
                 <div class="dropdown-item" (click)="onProductSelect(p.id)" [class.selected]="selectedProductId === p.id">
@@ -414,11 +415,11 @@
               @if (loadingLedgerProducts) {
                 <div class="dropdown-loading">
                   <span class="spinner-small"></span>
-                  Cargando...
+                  {{ 'COMMON.LOADING' | translate }}
                 </div>
               }
               @if (ledgerProducts.length === 0 && !loadingLedgerProducts) {
-                <div class="dropdown-no-results">No se encontraron productos</div>
+                <div class="dropdown-no-results">{{ 'STOCK_MGMT.LEDGER.NO_RESULTS' | translate }}</div>
               }
             </div>
           </div>
@@ -430,7 +431,7 @@
     <div class="ledger-actions">
       <button class="toolbar-btn btn-verify btn-verify-all" (click)="verifyAll()" [disabled]="verifyingIntegrity">
         <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-80q105-30 172.5-115.5T720-474v-181l-240-90-240 90v181q0 113 67.5 198.5T480-160Zm0-320Z"/></svg>
-        Verificar Todo
+        {{ 'STOCK_MGMT.LEDGER.ACTIONS.VERIFY_ALL' | translate }}
       </button>
 
       @if (selectedProductId) {
@@ -441,16 +442,16 @@
 
         <button class="toolbar-btn btn-verify" (click)="verifyIntegrity()" [disabled]="verifyingIntegrity">
           <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-80q105-30 172.5-115.5T720-474v-181l-240-90-240 90v181q0 113 67.5 198.5T480-160Zm0-320Z"/></svg>
-          {{ verifyingIntegrity ? 'Verificando...' : 'Verificar Integridad' }}
+          {{ verifyingIntegrity ? ('STOCK_MGMT.LEDGER.ACTIONS.VERIFYING' | translate) : ('STOCK_MGMT.LEDGER.ACTIONS.VERIFY_INTEGRITY' | translate) }}
         </button>
         <button class="toolbar-btn btn-reset" (click)="resetProductHistory()" [disabled]="resettingHistory">
           <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T760-120H280Zm480-600H280v520h480v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
-          Limpiar Historial
+          {{ 'STOCK_MGMT.LEDGER.ACTIONS.CLEAN_HISTORY' | translate }}
         </button>
 
         <button class="toolbar-btn btn-adjust" (click)="openManualAdjustmentModal()" [disabled]="!selectedProductId || submittingAdjustment">
           <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
-          Ajuste Manual
+          {{ 'STOCK_MGMT.LEDGER.ACTIONS.MANUAL_ADJUSTMENT' | translate }}
         </button>
       }
     </div>
@@ -459,28 +460,28 @@
   @if (ledgerTechnicalMode) {
   <div class="blockchain-technical-panel">
     <div class="blockchain-technical-header">
-      <h3>Blockchain Tecnico</h3>
+      <h3>{{ 'STOCK_MGMT.LEDGER.BLOCKCHAIN_TECHNICAL' | translate }}</h3>
       <button class="toolbar-btn btn-verify" (click)="refreshBlockchainTechnicalData()" [disabled]="loadingBlockchainStats || loadingBlockchainVerification || loadingBlockchainBlocks || loadingBlockchainMempool">
-        Actualizar
+        {{ 'STOCK_MGMT.LEDGER.ACTIONS.REFRESH' | translate }}
       </button>
     </div>
 
     <div class="stats-row blockchain-stats-row">
       <div class="stat-card">
         <span class="stat-number">{{ blockchainStats?.blockCount ?? 0 }}</span>
-        <span class="stat-label">Bloques</span>
+        <span class="stat-label">{{ 'STOCK_MGMT.LEDGER.STATS.BLOCKS' | translate }}</span>
       </div>
       <div class="stat-card">
         <span class="stat-number">{{ blockchainStats?.pendingTransactions ?? 0 }}</span>
-        <span class="stat-label">Mempool</span>
+        <span class="stat-label">{{ 'STOCK_MGMT.LEDGER.STATS.MEMPOOL' | translate }}</span>
       </div>
       <div class="stat-card">
         <span class="stat-number">{{ blockchainStats?.difficulty ?? 0 }}</span>
-        <span class="stat-label">Dificultad</span>
+        <span class="stat-label">{{ 'STOCK_MGMT.LEDGER.STATS.DIFFICULTY' | translate }}</span>
       </div>
       <div class="stat-card">
         <span class="stat-number">{{ blockchainVerification?.valid ? 'OK' : 'FAIL' }}</span>
-        <span class="stat-label">Verificacion global</span>
+        <span class="stat-label">{{ 'STOCK_MGMT.LEDGER.STATS.GLOBAL_VERIFICATION' | translate }}</span>
       </div>
     </div>
 
@@ -488,16 +489,16 @@
       <table>
         <thead>
           <tr>
-            <th>Bloque</th>
-            <th>Fecha</th>
-            <th>Tx</th>
-            <th>Dificultad</th>
-            <th class="hide-on-mobile">Hash</th>
+            <th>{{ 'STOCK_MGMT.LEDGER.TABLE.BLOCK' | translate }}</th>
+            <th>{{ 'STOCK_MGMT.LEDGER.TABLE.DATE' | translate }}</th>
+            <th>{{ 'STOCK_MGMT.LEDGER.TABLE.TX' | translate }}</th>
+            <th>{{ 'STOCK_MGMT.LEDGER.STATS.DIFFICULTY' | translate }}</th>
+            <th class="hide-on-mobile">{{ 'STOCK_MGMT.LEDGER.TABLE.HASH' | translate }}</th>
           </tr>
         </thead>
         <tbody>
           @if (loadingBlockchainBlocks) {
-            <tr><td colspan="5" class="empty-state">Cargando bloques...</td></tr>
+            <tr><td colspan="5" class="empty-state">{{ 'STOCK_MGMT.LEDGER.MESSAGES.LOADING_BLOCKS' | translate }}</td></tr>
           } @else {
             @for (block of blockchainBlocks; track block.blockNumber) {
             <tr class="clickable-row" (click)="openBlockchainBlockDetail(block.blockNumber)">
@@ -509,7 +510,7 @@
             </tr>
             }
             @if (blockchainBlocks.length === 0) {
-              <tr><td colspan="5" class="empty-state">No hay bloques confirmados</td></tr>
+              <tr><td colspan="5" class="empty-state">{{ 'STOCK_MGMT.LEDGER.MESSAGES.NO_BLOCKS' | translate }}</td></tr>
             }
           }
         </tbody>
@@ -518,19 +519,19 @@
 
     @if (blockchainBlocksTotalPages > 1) {
     <div class="pagination-controls compact-pagination">
-      <button class="toolbar-btn btn-page" [disabled]="blockchainBlocksPage === 0" (click)="onBlockchainBlocksPageChange(-1)">Anterior</button>
-      <span class="page-info">Bloques {{ blockchainBlocksPage + 1 }} / {{ blockchainBlocksTotalPages }}</span>
-      <button class="toolbar-btn btn-page" [disabled]="blockchainBlocksPage >= blockchainBlocksTotalPages - 1" (click)="onBlockchainBlocksPageChange(1)">Siguiente</button>
+      <button class="toolbar-btn btn-page" [disabled]="blockchainBlocksPage === 0" (click)="onBlockchainBlocksPageChange(-1)">{{ 'COMMON.PREVIOUS' | translate }}</button>
+      <span class="page-info">{{ 'STOCK_MGMT.LEDGER.TABLE.BLOCK' | translate }} {{ blockchainBlocksPage + 1 }} / {{ blockchainBlocksTotalPages }}</span>
+      <button class="toolbar-btn btn-page" [disabled]="blockchainBlocksPage >= blockchainBlocksTotalPages - 1" (click)="onBlockchainBlocksPageChange(1)">{{ 'COMMON.NEXT' | translate }}</button>
     </div>
     }
 
     @if (selectedBlockchainBlock) {
     <div class="summary-card blockchain-detail-card">
-      <span class="summary-label">Detalle Bloque #{{ selectedBlockchainBlock.blockNumber }}</span>
-      <span class="summary-hash">Hash: {{ selectedBlockchainBlock.blockHash }}</span>
-      <span class="summary-hash">Previo: {{ selectedBlockchainBlock.previousBlockHash }}</span>
-      <span class="summary-hash">Merkle: {{ selectedBlockchainBlock.merkleRoot }}</span>
-      <span class="summary-label">Nonce {{ selectedBlockchainBlock.nonce }} | HMAC v{{ selectedBlockchainBlock.hmacKeyVersion }}</span>
+      <span class="summary-label">{{ 'STOCK_MGMT.LEDGER.BLOCK_DETAIL.TITLE' | translate:{id: selectedBlockchainBlock.blockNumber} }}</span>
+      <span class="summary-hash">{{ 'STOCK_MGMT.LEDGER.BLOCK_DETAIL.HASH' | translate }}: {{ selectedBlockchainBlock.blockHash }}</span>
+      <span class="summary-hash">{{ 'STOCK_MGMT.LEDGER.BLOCK_DETAIL.PREVIOUS' | translate }}: {{ selectedBlockchainBlock.previousBlockHash }}</span>
+      <span class="summary-hash">{{ 'STOCK_MGMT.LEDGER.BLOCK_DETAIL.MERKLE' | translate }}: {{ selectedBlockchainBlock.merkleRoot }}</span>
+      <span class="summary-label">{{ 'STOCK_MGMT.LEDGER.BLOCK_DETAIL.NONCE' | translate }} {{ selectedBlockchainBlock.nonce }} | {{ 'STOCK_MGMT.LEDGER.BLOCK_DETAIL.HMAC' | translate:{version: selectedBlockchainBlock.hmacKeyVersion} }}</span>
     </div>
     }
 
@@ -538,28 +539,28 @@
       <table>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Producto</th>
-            <th>Tipo</th>
-            <th>Delta</th>
-            <th class="hide-on-mobile">Fecha</th>
+            <th>{{ 'STOCK_MGMT.LEDGER.TABLE.ID' | translate }}</th>
+            <th>{{ 'STOCK_MGMT.LEDGER.TABLE.PRODUCT' | translate }}</th>
+            <th>{{ 'STOCK_MGMT.LEDGER.TABLE.TYPE' | translate }}</th>
+            <th>{{ 'STOCK_MGMT.LEDGER.TABLE.DELTA' | translate }}</th>
+            <th class="hide-on-mobile">{{ 'STOCK_MGMT.LEDGER.TABLE.DATE' | translate }}</th>
           </tr>
         </thead>
         <tbody>
           @if (loadingBlockchainMempool) {
-            <tr><td colspan="5" class="empty-state">Cargando mempool...</td></tr>
+            <tr><td colspan="5" class="empty-state">{{ 'STOCK_MGMT.LEDGER.MESSAGES.LOADING_MEMPOOL' | translate }}</td></tr>
           } @else {
             @for (tx of blockchainMempool; track tx.id) {
             <tr>
               <td>#{{ tx.id }}</td>
               <td>{{ tx.productName }}</td>
-              <td><span class="movement-badge" [ngClass]="getMovementTypeClass(tx.movementType)">{{ tx.movementType }}</span></td>
+              <td><span class="movement-badge" [ngClass]="getMovementTypeClass(tx.movementType)">{{ 'STOCK_MGMT.ADJUSTMENT.TYPES.' + tx.movementType | translate }}</span></td>
               <td class="delta-cell" [class.positive]="tx.quantityDelta > 0" [class.negative]="tx.quantityDelta < 0">{{ tx.quantityDelta > 0 ? '+' : '' }}{{ tx.quantityDelta | number:'1.0-3' }}</td>
               <td class="hide-on-mobile">{{ formatDate(tx.transactionTimestamp) }}</td>
             </tr>
             }
             @if (blockchainMempool.length === 0) {
-              <tr><td colspan="5" class="empty-state">No hay transacciones pendientes</td></tr>
+              <tr><td colspan="5" class="empty-state">{{ 'STOCK_MGMT.LEDGER.MESSAGES.NO_PENDING_TX' | translate }}</td></tr>
             }
           }
         </tbody>
@@ -568,9 +569,9 @@
 
     @if (blockchainMempoolTotalPages > 1) {
     <div class="pagination-controls compact-pagination">
-      <button class="toolbar-btn btn-page" [disabled]="blockchainMempoolPage === 0" (click)="onBlockchainMempoolPageChange(-1)">Anterior</button>
-      <span class="page-info">Mempool {{ blockchainMempoolPage + 1 }} / {{ blockchainMempoolTotalPages }}</span>
-      <button class="toolbar-btn btn-page" [disabled]="blockchainMempoolPage >= blockchainMempoolTotalPages - 1" (click)="onBlockchainMempoolPageChange(1)">Siguiente</button>
+      <button class="toolbar-btn btn-page" [disabled]="blockchainMempoolPage === 0" (click)="onBlockchainMempoolPageChange(-1)">{{ 'COMMON.PREVIOUS' | translate }}</button>
+      <span class="page-info">{{ 'STOCK_MGMT.LEDGER.STATS.MEMPOOL' | translate }} {{ blockchainMempoolPage + 1 }} / {{ blockchainMempoolTotalPages }}</span>
+      <button class="toolbar-btn btn-page" [disabled]="blockchainMempoolPage >= blockchainMempoolTotalPages - 1" (click)="onBlockchainMempoolPageChange(1)">{{ 'COMMON.NEXT' | translate }}</button>
     </div>
     }
   </div>
@@ -579,21 +580,21 @@
   @if (ledgerSnapshot) {
   <div id="ledgerHistoryHeader" class="ledger-summary-row">
     <div class="summary-card">
-      <span class="summary-label">Stock Actual</span>
+      <span class="summary-label">{{ 'STOCK_MGMT.LEDGER.MESSAGES.STOCK_ACTUAL' | translate }}</span>
       <span class="summary-value">{{ ledgerSnapshot.currentStock | number:'1.0-3' }} {{ selectedLedgerUnit }}</span>
     </div>
     <div class="summary-card">
-      <span class="summary-label">Última Secuencia</span>
+      <span class="summary-label">{{ 'STOCK_MGMT.LEDGER.MESSAGES.LAST_SEQUENCE' | translate }}</span>
       <span class="summary-value">#{{ ledgerSnapshot.lastSequenceNumber }}</span>
     </div>
     <div class="summary-card">
-      <span class="summary-label">Estado de Cadena</span>
+      <span class="summary-label">{{ 'STOCK_MGMT.LEDGER.MESSAGES.CHAIN_STATUS' | translate }}</span>
                 <span class="status-badge status-badge-ledger" [ngClass]="getIntegrityStatusClass(ledgerSnapshot.integrityStatus)">
-        {{ ledgerSnapshot.integrityStatus === 'VALID' ? 'VÁLIDA' : (ledgerSnapshot.integrityStatus === 'CORRUPTED' ? 'CORRUPTA' : 'PENDIENTE') }}
+        {{ 'STOCK_MGMT.LEDGER.STATUS.' + ledgerSnapshot.integrityStatus | translate }}
       </span>
     </div>
     <div class="summary-card hide-on-mobile">
-      <span class="summary-label">Último Hash</span>
+      <span class="summary-label">{{ 'STOCK_MGMT.LEDGER.MESSAGES.LAST_HASH' | translate }}</span>
       <span class="summary-hash" [title]="ledgerSnapshot.lastTransactionHash">{{ ledgerSnapshot.lastTransactionHash.substring(0, 16) }}...</span>
     </div>
   </div>
@@ -603,7 +604,7 @@
     <div class="ledger-error-box">
       <div class="error-header">
         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#f44336"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
-        <span>Se han detectado irregularidades en la cadena de este producto:</span>
+        <span>{{ 'STOCK_MGMT.LEDGER.MESSAGES.IRREGULARITIES' | translate }}</span>
       </div>
       <ul class="error-list">
         @for (err of ledgerIntegrity.errors; track $index) {
@@ -619,13 +620,13 @@
         <thead>
           <tr>
             <th class="hide-on-mobile">#</th>
-            <th class="sortable hide-on-mobile" (click)="onSortLedgerChange('sequenceNumber')" [attr.data-sort-dir]="getSortLedgerDir('sequenceNumber')">Sec.</th>
-            <th class="sortable" (click)="onSortLedgerChange('transactionTimestamp')" [attr.data-sort-dir]="getSortLedgerDir('transactionTimestamp')">Fecha</th>
-            <th>Tipo</th>
-            <th>Delta</th>
-            <th>Resultante</th>
-            <th class="hide-on-mobile">Descripción / Usuario</th>
-            <th class="hide-on-mobile">Verif.</th>
+            <th class="sortable hide-on-mobile" (click)="onSortLedgerChange('sequenceNumber')" [attr.data-sort-dir]="getSortLedgerDir('sequenceNumber')">{{ 'STOCK_MGMT.LEDGER.TABLE.SEQUENCE' | translate }}</th>
+            <th class="sortable" (click)="onSortLedgerChange('transactionTimestamp')" [attr.data-sort-dir]="getSortLedgerDir('transactionTimestamp')">{{ 'STOCK_MGMT.LEDGER.TABLE.DATE' | translate }}</th>
+            <th>{{ 'STOCK_MGMT.LEDGER.TABLE.TYPE' | translate }}</th>
+            <th>{{ 'STOCK_MGMT.LEDGER.TABLE.DELTA' | translate }}</th>
+            <th>{{ 'STOCK_MGMT.LEDGER.TABLE.RESULTING' | translate }}</th>
+            <th class="hide-on-mobile">{{ 'STOCK_MGMT.LEDGER.TABLE.DESC_USER' | translate }}</th>
+            <th class="hide-on-mobile">{{ 'STOCK_MGMT.LEDGER.TABLE.VERIF' | translate }}</th>
           </tr>
         </thead>
         <tbody [class.loading]="loadingLedger">
@@ -643,7 +644,7 @@
               <td class="date-cell-ledger">{{ formatDate(tx.transactionTimestamp) }}</td>
               <td>
                 <span class="movement-badge" [ngClass]="getMovementTypeClass(tx.movementType)">
-                  {{ tx.movementType }}
+                  {{ 'STOCK_MGMT.ADJUSTMENT.TYPES.' + tx.movementType | translate }}
                 </span>
               </td>
               <td class="delta-cell" [class.positive]="tx.quantityDelta > 0" [class.negative]="tx.quantityDelta < 0">
@@ -653,7 +654,7 @@
               <td class="hide-on-mobile">
                 <div class="desc-cell">
                   <span class="tx-desc">{{ tx.description }}</span>
-                  <span class="tx-user">por {{ tx.userName }} @if(tx.orderId){ | Orden #{{tx.orderId}} }</span>
+                  <span class="tx-user">{{ 'COMMON.BY' | translate }} {{ tx.userName }} @if(tx.orderId){ | {{ 'COMMON.ORDER' | translate }} #{{tx.orderId}} }</span>
                 </div>
               </td>
               <td class="hide-on-mobile">
@@ -666,7 +667,7 @@
             </tr>
             }
             @if (ledgerHistory.length === 0) {
-              <tr><td colspan="8" class="empty-state">No hay movimientos registrados para este producto</td></tr>
+              <tr><td colspan="8" class="empty-state">{{ 'STOCK_MGMT.LEDGER.MESSAGES.NO_MOVEMENTS' | translate }}</td></tr>
             }
           }
         </tbody>
@@ -677,11 +678,11 @@
     <div class="pagination-controls">
       <button class="toolbar-btn btn-page" [disabled]="ledgerPage === 0" (click)="onLedgerPageChange(-1)">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
-        Anterior
+        {{ 'COMMON.PREVIOUS' | translate }}
       </button>
-      <span class="page-info">Página {{ ledgerPage + 1 }} de {{ ledgerTotalPages }} <span class="total-info">({{ ledgerTotalElements }} mov.)</span></span>
+      <span class="page-info">{{ 'COMMON.PAGE_INFO' | translate:{page: ledgerPage + 1, total: ledgerTotalPages} }} <span class="total-info">({{ ledgerTotalElements }} mov.)</span></span>
       <button class="toolbar-btn btn-page" [disabled]="ledgerPage === ledgerTotalPages - 1" (click)="onLedgerPageChange(1)">
-        Siguiente
+        {{ 'COMMON.NEXT' | translate }}
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
       </button>
     </div>
@@ -689,20 +690,20 @@
   } @else {
     <div class="ledger-empty-state">
       <svg xmlns="http://www.w3.org/2000/svg" height="64px" viewBox="0 -960 960 960" width="64px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm40 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
-      <p>Selecciona un producto para ver su historial de transacciones seguro (Blockchain-verified)</p>
+      <p>{{ 'STOCK_MGMT.LEDGER.MESSAGES.EMPTY' | translate }}</p>
     </div>
   }
 
   @if (globalIntegrityResults.length > 0) {
     <div id="globalVerificationResults" class="global-integrity-section">
-      <h3>Resultado de Verificación Global</h3>
+      <h3>{{ 'STOCK_MGMT.LEDGER.MESSAGES.GLOBAL_RESULTS_TITLE' | translate }}</h3>
       <div class="global-integrity-grid">
         @for (res of globalIntegrityResults; track res.productId) {
           <div class="global-result-card" [class.is-invalid]="!res.valid">
             <div class="result-header">
               <span class="prod-name">{{ res.productName }}</span>
               <span class="status-indicator" [ngClass]="res.valid ? 'valid' : 'invalid'">
-                {{ res.valid ? 'Íntegro' : 'CORRUPTO' }}
+                {{ res.valid ? ('STOCK_MGMT.LEDGER.MESSAGES.INTEGRO' | translate) : ('STOCK_MGMT.LEDGER.MESSAGES.CORRUPTO' | translate) }}
               </span>
             </div>
             <p class="result-msg">{{ res.message }}</p>
@@ -712,13 +713,13 @@
                   <li>{{ err }}</li>
                 }
                 @if (res.errors.length > 3) {
-                  <li class="more-errors">y {{ res.errors.length - 3 }} errores más...</li>
+                  <li class="more-errors">{{ 'STOCK_MGMT.LEDGER.MESSAGES.MORE_ERRORS' | translate:{count: res.errors.length - 3} }}</li>
                 }
               </ul>
             }
             <button class="btn-pdf-small" (click)="downloadPdfById(res.productId)">
               <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="currentColor"><path d="M320-240h320v-80H320v80Zm0-160h320v-80H320v80ZM240-80q-33 0-56.5-23.5T160-200v-560q0-33 23.5-56.5T240-840h320l240 240v400q0 33-23.5 56.5T720-80H240Zm280-520v-160H240v560h480v-400H520Z"/></svg>
-              Descargar Historial
+              {{ 'STOCK_MGMT.LEDGER.MESSAGES.DOWNLOAD_HISTORY' | translate }}
             </button>
           </div>
         }
@@ -730,13 +731,13 @@
 
 <!-- Order Modal -->
 @if (showOrderModal) {
-<app-base-modal title="Generar una Orden de Reposición" size="lg" (closed)="closeOrderModal()">
+<app-base-modal [title]="'STOCK_MGMT.ADJUSTMENT.ORDER_MODAL_TITLE' | translate" size="lg" (closed)="closeOrderModal()">
   <div class="modal-container order-builder-modal">
       <div class="days-control">
-        <label>¿Para cuántos días deseas cubrir el stock estimado?</label>
+        <label>{{ 'STOCK_MGMT.ADJUSTMENT.DAYS_COVER_PROMPT' | translate }}</label>
         <div class="days-input-group">
           <input type="number" [(ngModel)]="daysAhead" (ngModelChange)="onDaysAheadChange($event)" min="1" max="90" class="days-input" />
-          <span>días</span>
+          <span>{{ 'STOCK_MGMT.ADJUSTMENT.DAYS' | translate }}</span>
         </div>
       </div>
 
@@ -756,39 +757,39 @@
 
 <!-- Ledger Transaction Detail Modal (Mobile) -->
 @if (showLedgerMobileModal && selectedLedgerTx) {
-<app-base-modal title="Detalle de Transacción" size="md" (closed)="closeLedgerMobileModal()">
+<app-base-modal [title]="'STOCK_MGMT.LEDGER.BLOCK_DETAIL.TITLE_TX' | translate" size="md" (closed)="closeLedgerMobileModal()">
   <div class="modal-container ledger-detail-modal">
       <!-- Status banner -->
       <div class="ledger-detail-status" [class.status-ok]="selectedLedgerTx.verified" [class.status-err]="!selectedLedgerTx.verified">
         @if (selectedLedgerTx.verified) {
           <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
-          Transacción verificada
+          {{ 'STOCK_MGMT.LEDGER.STATUS.VERIFIED' | translate }}
         } @else {
           <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor"><path d="m336-280 144-144 144 144 56-56-144-144 144-144-56-56-144 144-144-144-56 56 144 144-144 144 56 56ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
-          Hash no verificado
+          {{ 'STOCK_MGMT.LEDGER.STATUS.NOT_VERIFIED' | translate }}
         }
       </div>
 
       <!-- Key movement metrics -->
       <div class="ledger-detail-metrics">
         <div class="detail-metric">
-          <span class="detail-metric-label">Tipo</span>
+          <span class="detail-metric-label">{{ 'STOCK_MGMT.LEDGER.TABLE.TYPE' | translate }}</span>
           <span class="movement-badge" [ngClass]="getMovementTypeClass(selectedLedgerTx.movementType)">
-            {{ selectedLedgerTx.movementType }}
+            {{ 'STOCK_MGMT.ADJUSTMENT.TYPES.' + selectedLedgerTx.movementType | translate }}
           </span>
         </div>
         <div class="detail-metric">
-          <span class="detail-metric-label">Delta</span>
+          <span class="detail-metric-label">{{ 'STOCK_MGMT.LEDGER.TABLE.DELTA' | translate }}</span>
           <span class="detail-metric-value delta-cell" [class.positive]="selectedLedgerTx.quantityDelta > 0" [class.negative]="selectedLedgerTx.quantityDelta < 0">
             {{ selectedLedgerTx.quantityDelta > 0 ? '+' : '' }}{{ selectedLedgerTx.quantityDelta | number:'1.0-3' }}
           </span>
         </div>
         <div class="detail-metric">
-          <span class="detail-metric-label">Stock resultante</span>
+          <span class="detail-metric-label">{{ 'STOCK_MGMT.LEDGER.TABLE.RESULTING' | translate }}</span>
           <span class="detail-metric-value"><strong>{{ selectedLedgerTx.resultingStock | number:'1.0-3' }} {{ selectedLedgerUnit }}</strong></span>
         </div>
         <div class="detail-metric">
-          <span class="detail-metric-label">Secuencia</span>
+          <span class="detail-metric-label">{{ 'STOCK_MGMT.LEDGER.TABLE.SEQUENCE' | translate }}</span>
           <span class="seq-badge">#{{ selectedLedgerTx.sequenceNumber }}</span>
         </div>
       </div>
@@ -796,29 +797,29 @@
       <!-- Detail rows -->
       <div class="ledger-detail-rows">
         <div class="detail-row">
-          <span class="detail-label">Fecha</span>
+          <span class="detail-label">{{ 'STOCK_MGMT.LEDGER.TABLE.DATE' | translate }}</span>
           <span class="detail-val">{{ formatDate(selectedLedgerTx.transactionTimestamp) }}</span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">Usuario</span>
+          <span class="detail-label">{{ 'STOCK_MGMT.LEDGER.TABLE.USER' | translate }}</span>
           <span class="detail-val">{{ selectedLedgerTx.userName }}</span>
         </div>
         @if (selectedLedgerTx.orderId) {
           <div class="detail-row">
-            <span class="detail-label">Orden</span>
+            <span class="detail-label">{{ 'STOCK_MGMT.LEDGER.TABLE.ORDER' | translate }}</span>
             <span class="detail-val">#{{ selectedLedgerTx.orderId }}</span>
           </div>
         }
         <div class="detail-row">
-          <span class="detail-label">Descripción</span>
+          <span class="detail-label">{{ 'STOCK_MGMT.LEDGER.TABLE.DESC' | translate }}</span>
           <span class="detail-val">{{ selectedLedgerTx.description }}</span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">Hash actual</span>
+          <span class="detail-label">{{ 'STOCK_MGMT.LEDGER.TABLE.HASH_CURRENT' | translate }}</span>
           <span class="detail-val hash-val">{{ selectedLedgerTx.currentHash }}</span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">Hash anterior</span>
+          <span class="detail-label">{{ 'STOCK_MGMT.LEDGER.TABLE.HASH_PREVIOUS' | translate }}</span>
           <span class="detail-val hash-val">{{ selectedLedgerTx.previousHash }}</span>
         </div>
       </div>
@@ -829,37 +830,37 @@
 
 
 @if (showManualAdjustmentModal) {
-<app-base-modal title="Ajuste de Stock Manual" size="lg" (closed)="closeManualAdjustmentModal()">
+<app-base-modal [title]="'STOCK_MGMT.ADJUSTMENT.TITLE' | translate" size="lg" (closed)="closeManualAdjustmentModal()">
   <div class="modal-container">
       <div class="adjustment-type-toggle">
         <button type="button" class="toggle-btn" [class.active]="adjustmentDirection === 'ENTRY'" (click)="adjustmentDirection = 'ENTRY'">
           <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
-          Entrada
+          {{ 'STOCK_MGMT.ADJUSTMENT.ENTRY' | translate }}
         </button>
         <button type="button" class="toggle-btn" [class.active]="adjustmentDirection === 'EXIT'" (click)="adjustmentDirection = 'EXIT'">
           <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor"><path d="M200-440v-80h560v80H200Z"/></svg>
-          Salida
+          {{ 'STOCK_MGMT.ADJUSTMENT.EXIT' | translate }}
         </button>
       </div>
 
       <div class="form-row-group">
         <div class="form-item form-item-flex">
-          <label>Cantidad *</label>
+          <label>{{ 'STOCK_MGMT.ADJUSTMENT.QUANTITY' | translate }} *</label>
           <input type="number" [(ngModel)]="absoluteAdjustmentQuantity" min="0.001" step="0.001" placeholder="0.000" class="input-standard"/>
         </div>
         <div class="form-item form-item-flex">
-          <label>Tipo Movimiento</label>
+          <label>{{ 'STOCK_MGMT.ADJUSTMENT.MOVEMENT_TYPE' | translate }}</label>
           <select [(ngModel)]="adjustmentType" class="input-standard">
-            <option value="AJUSTE">AJUSTE</option>
-            <option value="MERMA">MERMA</option>
-            <option value="ENTRADA">ENTRADA (Extra)</option>
-            <option value="SALIDA">SALIDA (Extra)</option>
+            <option value="AJUSTE">{{ 'STOCK_MGMT.ADJUSTMENT.TYPES.AJUSTE' | translate }}</option>
+            <option value="MERMA">{{ 'STOCK_MGMT.ADJUSTMENT.TYPES.MERMA' | translate }}</option>
+            <option value="ENTRADA">{{ 'STOCK_MGMT.ADJUSTMENT.TYPES.ENTRADA' | translate }}</option>
+            <option value="SALIDA">{{ 'STOCK_MGMT.ADJUSTMENT.TYPES.SALIDA' | translate }}</option>
           </select>
         </div>
       </div>
       
       <div class="form-item">
-        <label>Buscar lote por ID o codigo (Opcional)</label>
+        <label>{{ 'STOCK_MGMT.ADJUSTMENT.SEARCH_BATCH' | translate }}</label>
         <input
           type="text"
           class="input-standard"
@@ -867,7 +868,7 @@
           (focus)="onAdjustmentBatchReferenceFocus()"
           (ngModelChange)="onAdjustmentBatchReferenceInput()"
           maxlength="100"
-          placeholder="Ej. 42 o LOT-2026-001" />
+          [placeholder]="'STOCK_MGMT.ADJUSTMENT.BATCH_PLACEHOLDER' | translate" />
         @if (batchTypeaheadSuggestions.length > 0) {
           <div class="custom-dropdown-menu" style="position: static; margin-top: 6px; max-height: 220px;">
             <div class="dropdown-list" style="max-height: 220px;">
@@ -877,41 +878,41 @@
                   @if (suggestion.batchCode) {
                     <span> - {{ suggestion.batchCode }}</span>
                   }
-                  <span> (Stock: {{ suggestion.remainingQuantity | number:'1.0-2' }})</span>
+                  <span> ({{ 'STOCK_MGMT.ADJUSTMENT.STOCK' | translate }}: {{ suggestion.remainingQuantity | number:'1.0-2' }})</span>
                 </div>
               }
             </div>
           </div>
         }
-        <small class="form-help">Si no seleccionas uno, se usa FIFO (salidas) o se crea lote nuevo (entradas).</small>
+        <small class="form-help">{{ 'STOCK_MGMT.ADJUSTMENT.FIFO_HINT' | translate }}</small>
       </div>
 
       <!-- Expiration Date for New Batch (Backend requires this if batchId is null for entries) -->
       @if (!adjustmentBatchId && !adjustmentBatchReference.trim() && adjustmentDirection === 'ENTRY') {
       <div class="form-item arrival-animation">
-        <label>Fecha de Caducidad (Lote Nuevo) *</label>
+        <label>{{ 'STOCK_MGMT.ADJUSTMENT.EXPIRATION_DATE' | translate }}</label>
         <input type="date" [(ngModel)]="adjustmentExpirationDate" class="input-standard" 
               [min]="todayStr" required />
-        <small class="form-help">Obligatorio al crear un nuevo lote para el inventario.</small>
+        <small class="form-help">{{ 'STOCK_MGMT.ADJUSTMENT.NEW_BATCH_HINT' | translate }}</small>
       </div>
       }
 
       <div class="form-item">
-        <label>Motivo del Ajuste *</label>
-        <textarea [(ngModel)]="adjustmentDescription" rows="3" placeholder="Ej. Corrección de inventario, merma no registrada, rotura..." class="input-standard textarea-standard"></textarea>
+        <label>{{ 'STOCK_MGMT.ADJUSTMENT.REASON' | translate }}</label>
+        <textarea [(ngModel)]="adjustmentDescription" rows="3" [placeholder]="'STOCK_MGMT.ADJUSTMENT.REASON_PLACEHOLDER' | translate" class="input-standard textarea-standard"></textarea>
       </div>
   </div>
 
   <div modal-footer>
     <button type="button" class="btn-confirm adjustment-confirm-btn" (click)="submitManualAdjustment()" [disabled]="submittingAdjustment || !absoluteAdjustmentQuantity || absoluteAdjustmentQuantity <= 0 || !adjustmentDescription">
-      {{ submittingAdjustment ? 'Registrando...' : 'Registrar Ajuste' }}
+      {{ submittingAdjustment ? ('STOCK_MGMT.ADJUSTMENT.SUBMITTING' | translate) : ('STOCK_MGMT.ADJUSTMENT.SUBMIT' | translate) }}
     </button>
   </div>
 </app-base-modal>
 }
 
 @if (showLedgerScannerModal) {
-  <app-base-modal title="Escanear Código de Barras" size="md" (closed)="closeLedgerBarcodeScanner()">
+  <app-base-modal [title]="'STOCK_MGMT.LEDGER.MESSAGES.SCAN_TITLE' | translate" size="md" (closed)="closeLedgerBarcodeScanner()">
     <div class="scanner-modal-body">
       <app-barcode-scanner (productFound)="onLedgerProductFound($event)"></app-barcode-scanner>
     </div>

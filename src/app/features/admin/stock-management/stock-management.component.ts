@@ -44,6 +44,7 @@ import { BaseModalComponent } from '../../../shared/components/base-modal/base-m
 import { BarcodeScannerComponent } from '../../general/barcode-scanner/barcode-scanner.component';
 import { OrderBuilderComponent } from '../../../shared/components/order-builder/order-builder.component';
 import { WeeklyPlanRepositionOrderItem } from '../../../shared/models/weekly-plan.model';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 
 type Tab = 'alerts' | 'predictions' | 'ledger';
@@ -53,7 +54,7 @@ type AlertChartMode = 'prediction' | 'expiration' | 'combined';
 @Component({
     selector: 'app-stock-management',
     standalone: true,
-    imports: [CommonModule, FormsModule, BaseChartDirective, BaseModalComponent, BarcodeScannerComponent, OrderBuilderComponent],
+    imports: [CommonModule, FormsModule, BaseChartDirective, BaseModalComponent, BarcodeScannerComponent, OrderBuilderComponent, TranslateModule],
     templateUrl: './stock-management.component.html',
     styleUrl: './stock-management.component.css'
 })
@@ -70,6 +71,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     private scrollService = inject(ScrollService);
     private route = inject(ActivatedRoute);
     private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
+    private translate = inject(TranslateService);
     messageService = inject(MessageService);
 
     private destroy$ = new Subject<void>();
@@ -124,7 +126,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     loadingModalChart = false;
     stockOutDay: string | null = null;
     modalChartMode: AlertChartMode = 'prediction';
-    modalChartTitle = 'Análisis de Consumo y Evolución de Stock';
+    modalChartTitle = this.translate.instant('STOCK_MGMT.ALERTS.CHART.TITLE');
 
     modalChartOptions: ChartOptions<'line' | 'bar'> = {
         responsive: true,
@@ -149,7 +151,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 display: true,
                 position: 'left',
                 beginAtZero: true,
-                title: { display: true, text: 'Stock / Consumo' },
+                title: { display: true, text: this.translate.instant('STOCK_MGMT.ALERTS.CHART.Y_AXIS') },
                 grid: { drawOnChartArea: true }
             },
             y1: {
@@ -160,7 +162,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 grid: { drawOnChartArea: false }
             },
             x: { 
-                title: { display: true, text: 'Fecha' },
+                title: { display: true, text: this.translate.instant('STOCK_MGMT.ALERTS.CHART.X_AXIS') },
                 ticks: { maxTicksLimit: 10 }
             }
         }
@@ -240,6 +242,9 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     private searchSubscription?: any;
 
 
+    private getLocale(): string {
+        return this.translate.currentLang === 'en' ? 'en-US' : 'es-ES';
+    }
 
     ngOnInit(): void {
         this.route.queryParamMap.subscribe(params => {
@@ -323,12 +328,12 @@ export class StockManagementComponent implements OnInit, OnDestroy {
 
         if (this.ledgerTabTapCount >= 5 && !this.ledgerTechnicalMode) {
             if (!this.hasBlockchainAdminAccess()) {
-                this.messageService.showWarning('Solo ADMIN puede activar la vista tecnica blockchain');
+                this.messageService.showWarning(this.translate.instant('STOCK_MGMT.MESSAGES.ADMIN_ONLY_BLOCKCHAIN'));
                 this.ledgerTabTapCount = 0;
                 return;
             }
             this.ledgerTechnicalMode = true;
-            this.messageService.showSuccess('Modo tecnico blockchain activado');
+            this.messageService.showSuccess(this.translate.instant('STOCK_MGMT.MESSAGES.BLOCKCHAIN_MODE_ACTIVE'));
             this.refreshBlockchainTechnicalData();
         }
     }
@@ -356,7 +361,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 setTimeout(() => { this.loadingAlerts = false; this.cdr.markForCheck(); });
             },
             error: () => {
-                this.messageService.showError('Error al cargar las alertas');
+                this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_ALERTS'));
                 setTimeout(() => { this.loadingAlerts = false; this.cdr.markForCheck(); });
             }
         });
@@ -386,9 +391,8 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     getSeverityClass(s: AlertSeverity): string {
         return { CRITICAL: 'severity-critical', HIGH: 'severity-high', MEDIUM: 'severity-medium', LOW: 'severity-low', OK: 'severity-ok' }[s] ?? '';
     }
-
     getSeverityLabel(s: AlertSeverity): string {
-        return { CRITICAL: 'Crítico', HIGH: 'Alto', MEDIUM: 'Medio', LOW: 'Bajo', OK: 'Normal' }[s] ?? s;
+        return this.translate.instant('STOCK_MGMT.ALERTS.STATS.' + s);
     }
 
     getResolutionClass(r: AlertResolution): string {
@@ -400,7 +404,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     }
 
     getResolutionLabel(r: AlertResolution): string {
-        return { COVERED_BY_ORDER: 'Cubierto', PARTIALLY_COVERED: 'Parcial', UNCOVERED: 'No cubierto', EXPIRING: 'Caduca pronto', OK: 'Cubierto' }[r] ?? r;
+        return this.translate.instant('STOCK_MGMT.ALERTS.RESOLUTION.' + r);
     }
 
     getAlertTypeClass(t?: AlertType): string {
@@ -408,7 +412,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     }
 
     getAlertTypeLabel(t?: AlertType): string {
-        return { PREDICTION: 'Predicción', EXPIRATION: 'Caducidad', COMBINED: 'Combinada' }[t || 'PREDICTION'] ?? 'Predicción';
+        return this.translate.instant('STOCK_MGMT.ALERTS.TYPE.' + (t || 'PREDICTION'));
     }
 
     countBySeverity(s: AlertSeverity): number { return this.alerts.filter(a => a.severity === s).length; }
@@ -475,10 +479,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             .filter(a => a.resolution === 'UNCOVERED' || a.resolution === 'PARTIALLY_COVERED')
             .map(a => a.productId);
             
-        if (!ids.length) { 
-            this.messageService.showError('No hay productos sin cubrir para generar una orden.'); 
-            return; 
-        }
+            this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.NO_UNCOVERED_PRODUCTS'));
 
         this.loadingOrderData = true;
         this.stockAlertService.getBatchAlerts(ids).pipe(
@@ -515,7 +516,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 this.orderItems = data;
                 this.showOrderModal = true;
             },
-            error: () => this.messageService.showError('Error al cargar datos de productos')
+            error: () => this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_PRODUCT_DATA'))
         });
     }
 
@@ -532,7 +533,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 this.suppliers = page?.content || [];
             },
             error: () => {
-                this.messageService.showError('Error al cargar proveedores');
+                this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_SUPPLIERS'));
             }
         });
     }
@@ -568,7 +569,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 this.showOrderModal = true;
                 this.closeMobileModal();
             },
-            error: () => this.messageService.showError('Error al cargar datos del producto')
+            error: () => this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_PRODUCT_DATA'))
         });
     }
 
@@ -625,7 +626,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             },
             error: () => {
                 this.ngZone.run(() => {
-                    this.messageService.showError('Error al cargar predicciones');
+                    this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_PREDICTIONS'));
                     this.loadingPredictions = false;
                     this.cdr.markForCheck();
                 });
@@ -703,10 +704,10 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         this.modalChartData = { labels: [], datasets: [] };
         this.modalChartMode = (alert.alertType || 'PREDICTION').toLowerCase() as AlertChartMode;
         this.modalChartTitle = alert.alertType === 'EXPIRATION'
-            ? 'Análisis de Caducidad de Lotes'
+            ? this.translate.instant('STOCK_MGMT.ALERTS.CHART.TITLE_EXPIRATION')
             : alert.alertType === 'COMBINED'
-                ? 'Análisis Combinado de Consumo y Caducidad'
-                : 'Análisis de Consumo y Proyección de Stock';
+                ? this.translate.instant('STOCK_MGMT.ALERTS.CHART.TITLE_COMBINED')
+                : this.translate.instant('STOCK_MGMT.ALERTS.CHART.TITLE_CONSUMPTION');
         this.cdr.markForCheck();
 
         forkJoin({
@@ -724,7 +725,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 });
             },
             error: () => {
-                this.messageService.showError('Error al cargar datos de la gráfica');
+                this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_CHART_DATA'));
                 this.loadingModalChart = false;
                 this.cdr.markForCheck();
             }
@@ -757,7 +758,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         const stockLevelData: (number | null)[] = [];
 
         history.breakdown.forEach((day: any) => {
-            labels.push(new Date(day.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
+            labels.push(new Date(day.date).toLocaleDateString(this.getLocale(), { day: '2-digit', month: 'short' }));
             historyData.push(day.consumed);
             predictionData.push(null);
             stockLevelData.push(null);
@@ -767,7 +768,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         const todayDateStr = today.toISOString().split('T')[0];
         const existingToday = history.breakdown.find((d: any) => d.date === todayDateStr);
 
-        labels.push('Hoy');
+        labels.push(this.translate.instant('STOCK_MGMT.ALERTS.CHART.TODAY'));
         historyData.push(existingToday ? existingToday.consumed : 0);
         predictionData.push(dailyAverage);
         stockLevelData.push(alert.currentStock);
@@ -791,7 +792,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             date.setDate(today.getDate() + i + 1);
             const dateStr = date.toISOString().split('T')[0];
 
-            labels.push(date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
+            labels.push(date.toLocaleDateString(this.getLocale(), { day: '2-digit', month: 'short' }));
             historyData.push(null);
             const dailyConsumption = forecastValues[i] || 0;
             predictionData.push(dailyConsumption);
@@ -806,7 +807,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             stockLevelData.push(tempStock);
 
             if (tempStock === 0 && !outDayFound) {
-                this.stockOutDay = date.toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
+                this.stockOutDay = date.toLocaleDateString(this.getLocale(), { day: '2-digit', month: 'long', year: 'numeric' });
                 outDayFound = true;
             }
         }
@@ -816,7 +817,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             datasets: [
                 {
                     type: 'line',
-                    label: includeExpirations ? 'Stock Estimado con Caducidades' : 'Stock Estimado',
+                    label: includeExpirations ? this.translate.instant('STOCK_MGMT.ALERTS.CHART.ESTIMATED_STOCK_EXP') : this.translate.instant('STOCK_MGMT.ALERTS.CHART.ESTIMATED_STOCK'),
                     data: stockLevelData,
                     borderColor: includeExpirations ? '#f59e0b' : '#0ea5e9',
                     backgroundColor: 'transparent',
@@ -831,7 +832,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 } as any,
                 {
                     type: 'bar',
-                    label: 'Consumo Histórico',
+                    label: this.translate.instant('STOCK_MGMT.ALERTS.CHART.HISTORY'),
                     data: historyData,
                     backgroundColor: 'rgba(54, 162, 235, 0.4)',
                     borderColor: 'rgba(54, 162, 235, 1)',
@@ -840,7 +841,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 } as any,
                 {
                     type: 'bar',
-                    label: 'Consumo Proyectado',
+                    label: this.translate.instant('STOCK_MGMT.ALERTS.CHART.PROJECTED'),
                     data: predictionData,
                     backgroundColor: includeExpirations ? 'rgba(245, 158, 11, 0.28)' : 'rgba(255, 99, 132, 0.3)',
                     borderColor: includeExpirations ? 'rgba(245, 158, 11, 1)' : 'rgba(255, 99, 132, 1)',
@@ -857,22 +858,22 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             .slice()
             .sort((left, right) => left.expirationDate!.localeCompare(right.expirationDate!));
 
-        const labels = batches.map(batch => new Date(batch.expirationDate as string).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
+        const labels = batches.map(batch => new Date(batch.expirationDate as string).toLocaleDateString(this.getLocale(), { day: '2-digit', month: 'short' }));
         const quantities = batches.map(batch => batch.remainingQuantity);
         const stockLine = batches.map(() => alert.currentStock);
 
         if (batches.length > 0) {
             this.stockOutDay = batches[0].expirationDate
-                ? new Date(batches[0].expirationDate).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })
+                ? new Date(batches[0].expirationDate).toLocaleDateString(this.getLocale(), { day: '2-digit', month: 'long', year: 'numeric' })
                 : null;
         }
 
         return {
-            labels: labels.length > 0 ? labels : ['Sin lotes próximos'],
+            labels: labels.length > 0 ? labels : [this.translate.instant('STOCK_MGMT.ALERTS.CHART.NO_BATCHES')],
             datasets: [
                 {
                     type: 'bar',
-                    label: 'Cantidad por caducidad',
+                    label: this.translate.instant('STOCK_MGMT.ALERTS.CHART.QTY_EXPIRATION'),
                     data: labels.length > 0 ? quantities : [0],
                     backgroundColor: 'rgba(245, 158, 11, 0.35)',
                     borderColor: 'rgba(245, 158, 11, 1)',
@@ -881,7 +882,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 } as any,
                 {
                     type: 'line',
-                    label: 'Stock actual',
+                    label: this.translate.instant('STOCK_MGMT.ALERTS.CHART.CURRENT_STOCK'),
                     data: labels.length > 0 ? stockLine : [alert.currentStock],
                     borderColor: '#22c55e',
                     backgroundColor: 'transparent',
@@ -897,7 +898,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
 
     formatDate(dateStr: string): string {
         if (!dateStr) return '—';
-        return new Date(dateStr).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        return new Date(dateStr).toLocaleDateString(this.getLocale(), { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
     }
 
     openLedgerMobileModal(tx: StockLedgerResponseDTO): void {
@@ -940,8 +941,8 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 const rawContent = data?.content || (Array.isArray(data) ? data : []);
                 const normalizedContent = rawContent.map((item: any) => ({
                     ...item,
-                    name: item.name || item.nombre || 'Sin nombre',
-                    unit: item.unit || item.unidad || 'Ud'
+                    name: item.name || item.nombre || this.translate.instant('STOCK_MGMT.LEDGER.NO_NAME'),
+                    unit: item.unit || item.unidad || this.translate.instant('STOCK_MGMT.LEDGER.NO_UNIT')
                 }));
 
                 if (append) {
@@ -954,7 +955,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             },
             error: () => {
                 this.ledgerProducts = this.ledgerProducts || [];
-                this.messageService.showError('Error al cargar productos con ledger');
+                this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_LEDGER_PRODUCTS'));
             }
         });
     }
@@ -1009,15 +1010,15 @@ export class StockManagementComponent implements OnInit, OnDestroy {
     }
 
     get selectedProductName(): string {
-        if (!this.selectedProductId) return 'Seleccione un producto...';
+        if (!this.selectedProductId) return this.translate.instant('STOCK_MGMT.LEDGER.SELECT_PRODUCT_PLACEHOLDER');
         const p = this.ledgerProducts.find(p => p.id === this.selectedProductId);
-        return p ? `${p.name} (${p.unit})` : 'Producto seleccionado';
+        return p ? `${p.name} (${p.unit})` : this.translate.instant('STOCK_MGMT.LEDGER.SELECTED_PRODUCT');
     }
 
     get selectedLedgerUnit(): string {
-        if (!this.selectedProductId) return 'Ud';
+        if (!this.selectedProductId) return this.translate.instant('STOCK_MGMT.LEDGER.NO_UNIT');
         const product = this.ledgerProducts.find(p => p.id === this.selectedProductId);
-        return product?.unit || 'Ud';
+        return product?.unit || this.translate.instant('STOCK_MGMT.LEDGER.NO_UNIT');
     }
 
     toggleLedgerDropdown(): void {
@@ -1041,7 +1042,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             },
             error: () => {
                 this.loadingLedger = false;
-                this.messageService.showError('Error al cargar el historial del ledger');
+                this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_HISTORY'));
                 this.cdr.detectChanges();
             }
         });
@@ -1090,7 +1091,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             next: (data) => {
                 this.blockchainStats = data;
             },
-            error: () => this.messageService.showError('Error al cargar estadisticas de blockchain')
+            error: () => this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_BLOCKCHAIN_STATS'))
         });
     }
 
@@ -1105,7 +1106,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             next: (data) => {
                 this.blockchainVerification = data;
             },
-            error: () => this.messageService.showError('Error al verificar blockchain')
+            error: () => this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_VERIFY_BLOCKCHAIN'))
         });
     }
 
@@ -1122,7 +1123,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 this.blockchainBlocksPage = page;
                 this.blockchainBlocksTotalPages = data?.totalPages || 0;
             },
-            error: () => this.messageService.showError('Error al cargar bloques confirmados')
+            error: () => this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_BLOCKS'))
         });
     }
 
@@ -1139,7 +1140,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 this.blockchainMempoolPage = page;
                 this.blockchainMempoolTotalPages = data?.totalPages || 0;
             },
-            error: () => this.messageService.showError('Error al cargar mempool')
+            error: () => this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_MEMPOOL'))
         });
     }
 
@@ -1166,7 +1167,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             next: (data) => {
                 this.selectedBlockchainBlock = data;
             },
-            error: () => this.messageService.showError('No se pudo cargar el detalle del bloque')
+            error: () => this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_BLOCK_DETAIL'))
         });
     }
 
@@ -1188,12 +1189,12 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             next: (res) => {
                 this.ledgerIntegrity = res;
                 if (res.valid) {
-                    this.messageService.showSuccess(`Integridad verificada: ${res.message}`);
+                    this.messageService.showSuccess(this.translate.instant('STOCK_MGMT.MESSAGES.INTEGRITY_VALID', {message: res.message}));
                 } else {
-                    this.messageService.showError(`¡CORRUPCIÓN DETECTADA!: ${res.message}`);
+                    this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.INTEGRITY_CORRUPTED', {message: res.message}));
                 }
             },
-            error: () => this.messageService.showError('Error al verificar integridad')
+            error: () => this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_VERIFY_INTEGRITY'))
         });
     }
 
@@ -1208,9 +1209,9 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 this.globalIntegrityResults = res;
                 const corrupted = res.filter(r => !r.valid);
                 if (corrupted.length === 0) {
-                    this.messageService.showSuccess(`Todas las cadenas (${res.length}) son íntegras.`, 5000);
+                    this.messageService.showSuccess(this.translate.instant('STOCK_MGMT.MESSAGES.ALL_CHAINS_VALID', {count: res.length}), 5000);
                 } else {
-                    this.messageService.showError(`CORRUPCIÓN: Se detectaron ${corrupted.length} productos con errores. Revisa la lista al final de la página.`, 8000);
+                    this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.GLOBAL_CORRUPTION_DETECTED', {count: corrupted.length}), 8000);
                 }
                 
                 // Scroll to results section with offset to avoid covering the title
@@ -1232,14 +1233,14 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                     }
                 }, 100);
             },
-            error: () => this.messageService.showError('Error al realizar la verificación global de integridad')
+            error: () => this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_GLOBAL_VERIFICATION'))
         });
     }
 
     async downloadPdfById(productId: number): Promise<void> {
         const confirmed = await this.messageService.confirm(
-            'Confirmar descarga',
-            '¿Deseas descargar este archivo PDF?'
+            this.translate.instant('STOCK_MGMT.MODALS.CONFIRM_DOWNLOAD_TITLE'),
+            this.translate.instant('STOCK_MGMT.MODALS.CONFIRM_DOWNLOAD_TEXT')
         );
         if (!confirmed) return;
 
@@ -1261,12 +1262,12 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 const isValid = response.headers.get('X-Ledger-Integrity-Valid') === 'true';
                 const message = response.headers.get('X-Ledger-Integrity-Message');
                 if (isValid) {
-                    this.messageService.showSuccess(`PDF generado. Estado: ${message}`);
+                    this.messageService.showSuccess(this.translate.instant('STOCK_MGMT.MESSAGES.PDF_GENERATED_OK', {message: message}));
                 } else {
-                    this.messageService.showWarning(`PDF generado con alertas: ${message}`);
+                    this.messageService.showWarning(this.translate.instant('STOCK_MGMT.MESSAGES.PDF_GENERATED_WARNING', {message: message}));
                 }
             },
-            error: () => this.messageService.showError('Error al generar el PDF del ledger')
+            error: () => this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_GENERATE_PDF'))
         });
     }
 
@@ -1279,14 +1280,14 @@ export class StockManagementComponent implements OnInit, OnDestroy {
         if (!this.selectedProductId) return;
 
         const confirm1 = await this.messageService.confirm(
-            'Confirmación de Seguridad',
-            '¿Estás SEGURO de que deseas resetear el historial? Esta acción borrará toda la cadena del ledger.'
+            this.translate.instant('STOCK_MGMT.MODALS.RESET_SECURITY_TITLE'),
+            this.translate.instant('STOCK_MGMT.MODALS.RESET_SECURITY_TEXT')
         );
         if (!confirm1) return;
 
         const confirm2 = await this.messageService.confirm(
-            '¡ACCIÓN IRREVERSIBLE!',
-            'Se perderán todos los datos de auditoría y el snapshot actual. ¿Deseas proceder definitivamente?'
+            this.translate.instant('STOCK_MGMT.MODALS.RESET_IRREVERSIBLE_TITLE'),
+            this.translate.instant('STOCK_MGMT.MODALS.RESET_IRREVERSIBLE_TEXT')
         );
         if (!confirm2) return;
 
@@ -1301,7 +1302,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 this.loadLedgerHistory(this.selectedProductId!);
                 this.loadLedgerSnapshot(this.selectedProductId!);
             },
-            error: (err) => this.messageService.showError(err.error || 'Error al resetear historial')
+            error: (err) => this.messageService.showError(err.error || this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_RESET_HISTORY'))
         });
     }
 
@@ -1326,7 +1327,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
                 this.activeBatchesForAdjustment = batches;
                 this.cdr.detectChanges();
             },
-            error: () => this.messageService.showError('Error al cargar lotes activos')
+            error: () => this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_LOAD_BATCHES'))
         });
     }
 
@@ -1390,7 +1391,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             && this.adjustmentBatchReference.trim().length === 0
             && this.adjustmentDirection === 'ENTRY'
             && !this.adjustmentExpirationDate) {
-            this.messageService.showError('La fecha de caducidad es obligatoria para un nuevo lote.');
+            this.messageService.showError(this.translate.instant('STOCK_MGMT.MESSAGES.EXPIRATION_DATE_REQUIRED'));
             return;
         }
 
@@ -1418,12 +1419,12 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             finalize(() => { this.submittingAdjustment = false; this.cdr.detectChanges(); })
         ).subscribe({
             next: () => {
-                this.messageService.showSuccess('Ajuste de stock registrado con éxito');
+                this.messageService.showSuccess(this.translate.instant('STOCK_MGMT.MESSAGES.ADJUSTMENT_SUCCESS'));
                 this.closeManualAdjustmentModal();
                 this.loadLedgerHistory(this.selectedProductId!);
                 this.loadLedgerSnapshot(this.selectedProductId!);
             },
-            error: (err) => this.messageService.showError(err.error?.message || 'Error al registrar el ajuste')
+            error: (err) => this.messageService.showError(err.error?.message || this.translate.instant('STOCK_MGMT.MESSAGES.ERROR_REGISTER_ADJUSTMENT'))
         });
     }
 
@@ -1433,6 +1434,7 @@ export class StockManagementComponent implements OnInit, OnDestroy {
             ENTRADA: 'movement-entrada',
             SALIDA: 'movement-salida',
             AJUSTE: 'movement-ajuste',
+            MERMA: 'movement-merma',
             RECEPCION: 'movement-recepcion',
             PRODUCCION: 'movement-produccion'
         };

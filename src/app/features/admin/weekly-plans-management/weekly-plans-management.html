@@ -1,36 +1,36 @@
 <div class="page-header header-planes-admin">
 	<div>
-		<h1>Planes Semanales</h1>
-		<p class="header-subtitle">Vista administrativa con resumen global y por profesor.</p>
+		<h1>{{ 'WEEKLY_PLANS_MGMT.TITLE' | translate }}</h1>
+		<p class="header-subtitle">{{ 'WEEKLY_PLANS_MGMT.SUBTITLE' | translate }}</p>
 	</div>
 	<div class="header-actions">
-		<button class="modal-btn modal-btn-primary" type="button" (click)="createPlan()">Nuevo plan</button>
+		<button class="modal-btn modal-btn-primary" type="button" (click)="createPlan()">{{ 'WEEKLY_PLANS_MGMT.NEW_PLAN' | translate }}</button>
 	</div>
 </div>
 
 <div class="page-content contenedor-principal admin-weekly-plans-page">
 	<section class="teacher-toggle-card">
 		<div class="teacher-toggle-header">
-			<strong>Visión</strong>
+			<strong>{{ 'WEEKLY_PLANS_MGMT.VISION.LABEL' | translate }}</strong>
 			<span>{{ viewTitle }}</span>
 		</div>
 
 		<div class="teacher-toggle-controls">
-			<label>Profesor</label>
+			<label>{{ 'WEEKLY_PLANS_MGMT.VISION.SEARCH_LABEL' | translate }}</label>
 			<app-searchable-dropdown
 				[items]="teacherItems"
 				[selectedIds]="selectedTeacherId ? [selectedTeacherId] : []"
 				[loading]="loadingTeachers"
 				[loadingMore]="loadingMoreTeachers"
 				[initialText]="selectedTeacherName"
-				placeholder="Buscar profesor por nombre o usuario"
+				[placeholder]="'WEEKLY_PLANS_MGMT.VISION.SEARCH_PLACEHOLDER' | translate"
 				(search)="onTeacherSearch($event)"
 				(scrollNearBottom)="onTeacherScrollNearBottom()"
 				(itemSelected)="onTeacherSelected($event)"
 			></app-searchable-dropdown>
 			<div class="teacher-toggle-actions">
 				<button class="modal-btn modal-btn-secondary modal-btn-small" type="button" (click)="clearTeacherSelection()" [disabled]="!selectedTeacherId">
-					Vista global
+					{{ 'WEEKLY_PLANS_MGMT.VISION.GLOBAL' | translate }}
 				</button>
 			</div>
 		</div>
@@ -38,54 +38,60 @@
 
 	<section class="summary-grid">
 		<article class="summary-card">
-			<span class="summary-label">Planes</span>
+			<span class="summary-label">{{ 'WEEKLY_PLANS_MGMT.SUMMARY.PLANS' | translate }}</span>
 			<strong class="summary-value">{{ totalPlans }}</strong>
 		</article>
 		<article class="summary-card">
-			<span class="summary-label">Activos / en curso</span>
+			<span class="summary-label">{{ 'WEEKLY_PLANS_MGMT.SUMMARY.ACTIVE' | translate }}</span>
 			<strong class="summary-value">{{ activePlans }}</strong>
 		</article>
 		<article class="summary-card">
-			<span class="summary-label">Borradores</span>
+			<span class="summary-label">{{ 'WEEKLY_PLANS_MGMT.SUMMARY.DRAFTS' | translate }}</span>
 			<strong class="summary-value">{{ draftPlans }}</strong>
 		</article>
 		<article class="summary-card">
-			<span class="summary-label">Finalizados</span>
+			<span class="summary-label">{{ 'WEEKLY_PLANS_MGMT.SUMMARY.COMPLETED' | translate }}</span>
 			<strong class="summary-value">{{ completedPlans }}</strong>
 		</article>
 		<article class="summary-card">
-			<span class="summary-label">Sesiones totales</span>
+			<span class="summary-label">{{ 'WEEKLY_PLANS_MGMT.SUMMARY.TOTAL_SESSIONS' | translate }}</span>
 			<strong class="summary-value">{{ totalSessions }}</strong>
 		</article>
 		<article class="summary-card">
-			<span class="summary-label">Sesiones confirmadas</span>
+			<span class="summary-label">{{ 'WEEKLY_PLANS_MGMT.SUMMARY.CONFIRMED_SESSIONS' | translate }}</span>
 			<strong class="summary-value">{{ confirmedSessions }}</strong>
 		</article>
 	</section>
 
 	<section class="plans-section">
 		<div class="plans-section-header">
-			<h2>Listado de planes</h2>
-			<span>{{ visiblePlans.length }} resultado{{ visiblePlans.length === 1 ? '' : 's' }}</span>
+			<h2>{{ 'WEEKLY_PLANS_MGMT.LIST.TITLE' | translate }}</h2>
+			<span>
+				@if (visiblePlans.length === 1) {
+					{{ 'WEEKLY_PLANS_MGMT.LIST.RESULTS' | translate: { count: visiblePlans.length } }}
+				} @else {
+					{{ 'WEEKLY_PLANS_MGMT.LIST.RESULTS_PLURAL' | translate: { count: visiblePlans.length } }}
+				}
+			</span>
 		</div>
 
 		@if (loadingPlans) {
-			<div class="empty-state">Cargando planes...</div>
+			<div class="empty-state">{{ 'WEEKLY_PLANS_MGMT.LIST.LOADING' | translate }}</div>
 		} @else if (visiblePlans.length === 0) {
-			<div class="empty-state">No hay planes para la vista seleccionada.</div>
+			<div class="empty-state">{{ 'WEEKLY_PLANS_MGMT.LIST.EMPTY' | translate }}</div>
 		} @else {
 			<div class="plans-list">
 				@for (plan of visiblePlans; track plan.id) {
 					<article class="plan-row" (click)="openPlan(plan)">
 						<div class="plan-main">
-							<strong>Semana {{ plan.weekStartDate }} - {{ plan.weekEndDate }}</strong>
-							<span>Chef: {{ plan.chefName }}</span>
-							<span>{{ plan.slots.length || 0 }} sesiones</span>
+							<strong>{{ 'WEEKLY_PLANS_MGMT.LIST.WEEK' | translate }} {{ plan.weekStartDate }} - {{ plan.weekEndDate }}</strong>
+							<span>{{ 'WEEKLY_PLANS_MGMT.LIST.CHEF' | translate }}: {{ plan.chefName }}</span>
+							<span>{{ 'WEEKLY_PLANS_MGMT.LIST.SESSIONS' | translate: { count: plan.slots.length || 0 } }}</span>
 						</div>
 						<div class="plan-meta">
 							<span class="status-badge" [ngClass]="'status-' + plan.status.toLowerCase()">{{ statusLabel(plan.status) }}</span>
-							<button class="modal-btn modal-btn-secondary modal-btn-small" type="button" (click)="editPlan(plan, $event)">Editar</button>
-							<button class="modal-btn modal-btn-secondary modal-btn-small" type="button" (click)="duplicatePlan(plan, $event)">Duplicar</button>
+							<button class="modal-btn modal-btn-secondary modal-btn-small" type="button" (click)="editPlan(plan, $event)">{{ 'WEEKLY_PLANS_MGMT.LIST.EDIT' | translate }}</button>
+							<button class="modal-btn modal-btn-secondary modal-btn-small" type="button" (click)="duplicatePlan(plan, $event)">{{ 'WEEKLY_PLANS_MGMT.LIST.DUPLICATE' | translate }}</button>
 						</div>
 					</article>
 				}

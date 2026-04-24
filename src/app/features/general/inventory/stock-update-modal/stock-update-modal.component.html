@@ -1,14 +1,14 @@
-<app-base-modal title="Actualizar Stock" size="sm" [closeOnBackdrop]="false" (closed)="onClose()">
+<app-base-modal [title]="'STOCK_UPDATE.TITLE' | translate" size="sm" [closeOnBackdrop]="false" (closed)="onClose()">
   <form #stockForm="ngForm" (ngSubmit)="onSubmit()" [class.admin-mode]="isAdmin" [class.general-mode]="!isAdmin">
     <div class="product-info">
-      <p><strong>Producto:</strong> {{ productName }}</p>
+      <p><strong>{{ 'PRODUCT_EDIT.PRODUCT' | translate }}:</strong> {{ productName }}</p>
       <p *ngIf="product">
-        <strong>Stock Actual en Sistema:</strong> {{ product.currentStock }} {{ product.unit }}
+        <strong>{{ 'STOCK_UPDATE.CURRENT_STOCK_SYSTEM' | translate }}:</strong> {{ product.currentStock }} {{ 'UNITS.' + product.unit | translate }}
       </p>
     </div>
 
     <div class="form-group">
-      <label for="newStock">Nuevo Stock Real *</label>
+      <label for="newStock">{{ 'STOCK_UPDATE.NEW_STOCK' | translate }} *</label>
       <div class="input-group">
         <input
           type="number"
@@ -20,18 +20,18 @@
           step="0.001"
           placeholder="0"
         />
-        <span class="unit-label" *ngIf="product">{{ product.unit }}</span>
+        <span class="unit-label" *ngIf="product">{{ 'UNITS.' + product.unit | translate }}</span>
       </div>
       <small class="hint">
-        El sistema calculará automáticamente la diferencia y registrará un movimiento de AJUSTE.
+        {{ 'STOCK_UPDATE.HINT' | translate }}
       </small>
     </div>
 
     <div class="form-group">
       <label for="expirationDate">
-        Fecha de Expiración
-        <span *ngIf="product && currentStock > (product.currentStock || 0); else optionalText" class="required-text">(Obligatoria en incremento) <span class="required-asterisk">*</span></span>
-        <ng-template #optionalText><span>(Opcional)</span></ng-template>
+        {{ 'STOCK_UPDATE.EXPIRATION_DATE' | translate }}
+        <span *ngIf="product && currentStock > (product.currentStock || 0); else optionalText" class="required-text">({{ 'STOCK_UPDATE.REQUIRED_ON_INCREASE' | translate }}) <span class="required-asterisk">*</span></span>
+        <ng-template #optionalText><span>({{ 'COMMON.OPTIONAL' | translate }})</span></ng-template>
       </label>
       <input
         type="date"
@@ -40,14 +40,14 @@
         name="expirationDate"
       />
       <small class="hint">
-        Si el stock aumenta, se creará un lote con esta fecha.
+        {{ 'STOCK_UPDATE.EXPIRATION_HINT' | translate }}
       </small>
     </div>
   </form>
 
   <div modal-footer>
     <button type="button" class="modal-btn modal-btn-primary modal-btn-full" (click)="onSubmit()" [disabled]="!stockForm.valid">
-      Confirmar Ajuste
+      {{ 'STOCK_UPDATE.CONFIRM' | translate }}
     </button>
   </div>
 </app-base-modal>
