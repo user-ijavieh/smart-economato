@@ -1285,7 +1285,11 @@
     "CREATE_SUCCESS": "Al·lèrgen \"{{name}}\" creat amb èxit",
     "UPDATE_SUCCESS": "Al·lèrgen \"{{name}}\" actualitzat amb èxit",
     "DELETE_SUCCESS": "Al·lèrgen \"{{name}}\" eliminat correctament",
-    "NAME_EMPTY_ERROR": "El nom de l'al·lèrgen no pot estar buit"
+    "NAME_EMPTY_ERROR": "El nom de l'al·lèrgen no pot estar buit",
+    "LOAD_ERROR": "Error en carregar els al·lèrgens",
+    "CREATE_ERROR": "Error en crear l'al·lèrgen",
+    "UPDATE_ERROR": "Error en actualitzar l'al·lèrgen",
+    "DELETE_ERROR": "Error en eliminar l'al·lèrgen"
   },
   "KITCHEN": {
     "TITLE": "Gestió de Cuina",
@@ -1438,7 +1442,8 @@
       "CUSTOM": "Personalitzat"
     },
     "FILTERS": {
-      "SEARCH_PLACEHOLDER": "Buscar en historial...",
+      "CLEAR": "Netejar Filtres",
+      "SEARCH_PLACEHOLDER": "Buscar en l'historial...",
       "RECIPE_ID": "ID Recepta",
       "USER_ID": "ID Usuari",
       "FROM": "Des de",

@@ -169,7 +169,7 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
                 },
                 error: (err: any) => {
                     this.logger.error('Error loading allergens:', err);
-                    this.messageService.showError(this.translate.instant('ALLERGENS.LOAD_ERROR') || 'Error al cargar los alérgenos');
+                    this.messageService.showError('ALLERGENS.LOAD_ERROR');
                 }
             });
         }
@@ -273,7 +273,7 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
     saveModal(): void {
         const name = this.modalName.trim();
         if (!name) {
-            this.messageService.showError(this.translate.instant('ALLERGENS.NAME_EMPTY_ERROR'));
+            this.messageService.showError('ALLERGENS.NAME_EMPTY_ERROR');
             return;
         }
 
@@ -285,12 +285,12 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
         if (this.modalMode === 'create') {
             this.allergenService.create(request).subscribe({
                 next: (allergen) => {
-                    this.messageService.showSuccess(this.translate.instant('ALLERGENS.CREATE_SUCCESS', { name: allergen.name }));
+                    this.messageService.showSuccess('ALLERGENS.CREATE_SUCCESS', undefined, { translateParams: { name: allergen.name } });
                     this.closeModal();
                     this.loadAllergens();
                 },
                 error: (err) => {
-                    const msg = err.error?.message || err.error || this.translate.instant('ALLERGENS.CREATE_ERROR');
+                    const msg = err.error?.message || err.error || 'ALLERGENS.CREATE_ERROR';
                     this.messageService.showError(msg);
                     this.modalSaving = false;
                     this.cdr.markForCheck();
@@ -300,12 +300,12 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
             if (!this.selectedAllergen) return;
             this.allergenService.update(this.selectedAllergen.id, request).subscribe({
                 next: (allergen) => {
-                    this.messageService.showSuccess(this.translate.instant('ALLERGENS.UPDATE_SUCCESS', { name: allergen.name }));
+                    this.messageService.showSuccess('ALLERGENS.UPDATE_SUCCESS', undefined, { translateParams: { name: allergen.name } });
                     this.closeModal();
                     this.loadAllergens();
                 },
                 error: (err) => {
-                    const msg = err.error?.message || err.error || this.translate.instant('ALLERGENS.UPDATE_ERROR');
+                    const msg = err.error?.message || err.error || 'ALLERGENS.UPDATE_ERROR';
                     this.messageService.showError(msg);
                     this.modalSaving = false;
                     this.cdr.markForCheck();
@@ -317,19 +317,22 @@ export class AllergensManagementComponent implements OnInit, OnDestroy {
     // ── Delete ──
     async deleteAllergen(allergen: Allergen): Promise<void> {
         const confirmed = await this.messageService.confirm(
-            this.translate.instant('ALLERGENS.DELETE_CONFIRM_TITLE'),
-            this.translate.instant('ALLERGENS.DELETE_CONFIRM_MSG', { name: allergen.name })
+            'ALLERGENS.DELETE_CONFIRM_TITLE',
+            'ALLERGENS.DELETE_CONFIRM_MSG',
+            undefined,
+            undefined,
+            { name: allergen.name }
         );
 
         if (!confirmed) return;
 
         this.allergenService.delete(allergen.id).subscribe({
             next: () => {
-                this.messageService.showSuccess(this.translate.instant('ALLERGENS.DELETE_SUCCESS', { name: allergen.name }));
+                this.messageService.showSuccess('ALLERGENS.DELETE_SUCCESS', undefined, { translateParams: { name: allergen.name } });
                 this.loadAllergens();
             },
             error: (err) => {
-                const msg = err.error?.message || err.error || this.translate.instant('ALLERGENS.DELETE_ERROR');
+                const msg = err.error?.message || err.error || 'ALLERGENS.DELETE_ERROR';
                 this.messageService.showError(msg);
             }
         });
