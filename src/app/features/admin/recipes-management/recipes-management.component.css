@@ -1001,3 +1001,10 @@ tr.clickable-row {
 }
 
 .show-on-mobile-only { display: none; }
+
+.diff-unit {
+  font-size: 0.8rem;
+  color: var(--theme-text-secondary);
+  font-weight: 500;
+  margin-left: 2px;
+}

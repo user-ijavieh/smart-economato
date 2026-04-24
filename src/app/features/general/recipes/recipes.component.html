@@ -339,7 +339,7 @@
               @for (component of selectedDraftForDetail.components; track component.productId) {
                 <tr>
                   <td>{{ 'COMMON.PRODUCT' | translate }} #{{ component.productId }}</td>
-                  <td>{{ component.quantity }}</td>
+                  <td>{{ component.quantity }} <span class="product-unit-badge">{{ component.productUnit }}</span></td>
                 </tr>
               }
             </tbody>
