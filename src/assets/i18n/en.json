@@ -278,11 +278,11 @@
     },
     "RECIPES": "Recipes",
     "KITCHEN": "Kitchen",
-    "USERS": "Students",
+    "USERS": "User Management",
     "MASTER_DATA": "Master Data",
     "PRODUCTS": "Products",
     "TRACEABILITY": "Traceability",
-    "PROFILE": "Profile"
+    "PROFILE": "Student Management"
   },
   "INVENTORY": {
     "TITLE": "Inventory",
@@ -2855,7 +2855,7 @@
     "UPDATE": "Update",
     "ROLES": {
       "USER": "User",
-      "IA": "AI",
+      "IA": "Chef Pio",
       "SYSTEM": "System",
       "TOOL": "Tool"
     },
