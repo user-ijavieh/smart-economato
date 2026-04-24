@@ -1,6 +1,7 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Product, ProductRequest } from '../../../../shared/models/product.model';
 import { Supplier } from '../../../../shared/models/supplier.model';
 import { SearchableDropdownComponent, SearchableItem } from '../../../../shared/components/searchable-dropdown/searchable-dropdown.component';
@@ -19,11 +20,12 @@ export interface ProductFormState {
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, SearchableDropdownComponent],
+  imports: [CommonModule, FormsModule, SearchableDropdownComponent, TranslateModule],
   templateUrl: './product-form.component.html',
   styleUrl: './product-form.component.css'
 })
 export class ProductFormComponent implements OnChanges {
+  private translate = inject(TranslateService);
   @Input() product: Product | null = null;
   @Input() suppliers: Supplier[] = [];
   
@@ -111,7 +113,7 @@ export class ProductFormComponent implements OnChanges {
     const stockValue = this.formProduct.stock !== null ? this.formProduct.stock : 0;
 
     if (stockValue > 0 && !this.formProduct.expirationDate) {
-      alert('La fecha de caducidad es obligatoria cuando se introduce stock inicial.');
+      alert(this.translate.instant('PRODUCT_FORM.EXPIRATION_REQUIRED'));
       return;
     }
 

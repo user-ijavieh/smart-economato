@@ -1,17 +1,17 @@
-<app-base-modal [title]="editOrder ? 'Editar Pedido #' + editOrder.id : 'Crear Nuevo Pedido'" size="lg" [closeOnBackdrop]="false" (closed)="close()">
+<app-base-modal [title]="editOrder ? ('ORDERS.MODAL.TITLE_EDIT' | translate: { id: editOrder.id }) : ('ORDERS.MODAL.TITLE_CREATE' | translate)" size="lg" [closeOnBackdrop]="false" (closed)="close()">
   <div class="order-modal-content">
       <!-- User Selection -->
       <div class="user-selection-section">
-        <h3>Seleccionar Usuario</h3>
+        <h3>{{ 'ORDERS.MODAL.SELECT_USER' | translate }}</h3>
         <div class="form-group">
-          <label for="userSelect">Usuario *</label>
+          <label for="userSelect">{{ 'COMMON.USER' | translate }} *</label>
           <app-searchable-dropdown
             [items]="userSearchItems"
             [selectedIds]="selectedUserId ? [selectedUserId] : []"
             [loading]="isLoadingUsers"
             [loadingMore]="isLoadingUsers"
             [initialText]="selectedUserName"
-            placeholder="Buscar usuario por nombre o usuario"
+            [placeholder]="'COMMON.SEARCH_USER_PLACEHOLDER' | translate"
             (search)="onUserSearch($event)"
             (scrollNearBottom)="loadUsers()"
             (itemSelected)="onUserSelected($event)"
@@ -21,16 +21,16 @@
 
       <!-- Supplier Selection -->
       <div class="user-selection-section">
-        <h3>Seleccionar Proveedor</h3>
+        <h3>{{ 'ORDERS.MODAL.SELECT_SUPPLIER' | translate }}</h3>
         <div class="form-group">
-          <label for="supplierSelect">Proveedor</label>
+          <label for="supplierSelect">{{ 'COMMON.SUPPLIER' | translate }}</label>
           <app-searchable-dropdown
             [items]="supplierSearchItems"
             [selectedIds]="selectedSupplierId ? [selectedSupplierId] : []"
             [loading]="isLoadingSuppliers"
             [loadingMore]="isLoadingSuppliers"
             [initialText]="selectedSupplierName"
-            placeholder="Buscar proveedor por nombre"
+            [placeholder]="'COMMON.SEARCH_SUPPLIER_PLACEHOLDER' | translate"
             (search)="onSupplierSearch($event)"
             (scrollNearBottom)="loadSuppliers()"
             (itemSelected)="onSupplierSelected($event)"
@@ -41,15 +41,15 @@
       <!-- Product Search Form -->
       <div class="modal-section-main">
       <div class="section-header">
-        <h3>Añadir Productos</h3>
+        <h3>{{ 'ORDERS.MODAL.ADD_PRODUCT' | translate }}</h3>
         <div class="view-mode-toggle">
-          <button type="button" [class.active]="roundingMode === 'units'" (click)="onRoundingModeChange('units')">Unidades</button>
-          <button type="button" [class.active]="roundingMode === 'lots'" (click)="onRoundingModeChange('lots')">Lotes</button>
+          <button type="button" [class.active]="roundingMode === 'units'" (click)="onRoundingModeChange('units')">{{ 'COMMON.UNITS' | translate }}</button>
+          <button type="button" [class.active]="roundingMode === 'lots'" (click)="onRoundingModeChange('lots')">{{ 'COMMON.LOTS' | translate }}</button>
         </div>
       </div>
         <div class="form-row">
           <div class="form-group flex-2">
-            <label for="productSearch">Producto *</label>
+            <label for="productSearch">{{ 'COMMON.PRODUCT' | translate }} *</label>
             <div class="autocomplete-container product-dropdown-container">
               <app-searchable-dropdown
                 [items]="productSearchItems"
@@ -57,12 +57,12 @@
                 [loading]="isLoadingProducts"
                 [loadingMore]="isLoadingProducts"
                 [initialText]="itemForm.productName"
-                placeholder="Buscar producto..."
+                [placeholder]="'ORDERS.MODAL.SEARCH_PRODUCT' | translate"
                 (search)="onProductSearch($event)"
                 (scrollNearBottom)="loadProducts()"
                 (itemSelected)="onProductSelected($event)"
               ></app-searchable-dropdown>
-              <button type="button" class="btn-scan-inline" (click)="openBarcodeScanner()" title="Escanear código de barras">
+              <button type="button" class="btn-scan-inline" (click)="openBarcodeScanner()" [title]="'COMMON.SCAN_BARCODE' | translate">
                 <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor">
                   <path d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z" />
                 </svg>
@@ -73,15 +73,15 @@
           <div class="form-group">
             <label for="quantity">
               @if (roundingMode === 'lots' && itemForm.lotQuantity > 0) {
-                Lotes (de {{ itemForm.lotQuantity }} {{ formatUnit(itemForm.unit) }}) *
+                {{ 'COMMON.LOTS_OF' | translate: { count: itemForm.lotQuantity, unit: formatUnit(itemForm.unit) } }} *
               } @else {
-                Cantidad *
+                {{ 'COMMON.QUANTITY' | translate }} *
               }
             </label>
             @if (roundingMode === 'lots' && itemForm.lotQuantity > 0) {
               <div class="input-with-unit">
                 <input type="number" id="lotQuantity" [ngModel]="getLotCount(itemForm)" (ngModelChange)="updateQuantityFromLots(itemForm, $event)" name="lotQuantity" min="0.1" step="0.1" class="form-control">
-                <span class="inline-unit lot-unit">LOTES</span>
+                <span class="inline-unit lot-unit">{{ 'COMMON.LOTS_SHORT' | translate }}</span>
               </div>
             } @else {
               <div class="input-with-unit">
@@ -93,7 +93,7 @@
 
           @if (itemForm.productId > 0) {
           <div class="form-group">
-            <label>Precio Unitario</label>
+            <label>{{ 'ORDERS.MODAL.PRICE' | translate }}</label>
             <div class="price-display">
               {{ itemForm.unitPrice | number:'1.2-2' }} €
             </div>
@@ -102,7 +102,7 @@
 
           <div class="form-group">
             <button type="button" class="btn-add-item" (click)="addItemToOrder()">
-              + Agregar
+              + {{ 'COMMON.ADD' | translate }}
             </button>
           </div>
         </div>
@@ -111,7 +111,7 @@
       <!-- Order Items List -->
       @if (orderItems.length > 0) {
       <div class="order-items-section">
-        <h3>Productos en el Pedido ({{ orderItems.length }})</h3>
+        <h3>{{ 'ORDERS.MODAL.PRODUCTS_IN_ORDER' | translate: { count: orderItems.length } }}</h3>
         <div class="items-list">
           @for (item of orderItems; track $index) {
           <div class="order-item">
@@ -119,7 +119,7 @@
               <div class="item-name">{{ item.productName }}</div>
               <div class="item-details">
                 @if (roundingMode === 'lots' && item.lotQuantity) {
-                  <strong>{{ getLotCount(item) | number:'1.1-2' }} lotes de {{ item.lotQuantity }} {{ formatUnit(item.unit) }}</strong> 
+                  <strong>{{ 'COMMON.LOTS_COUNT' | translate: { count: getLotCount(item) | number:'1.1-2', size: item.lotQuantity, unit: formatUnit(item.unit) } }}</strong> 
                   <span class="unit-breakdown">({{ item.quantity }} {{ formatUnit(item.unit) }})</span>
                 } @else {
                   <strong>{{ item.quantity }} {{ formatUnit(item.unit) }}</strong>
@@ -143,7 +143,7 @@
 
         <div class="order-summary">
           <div class="summary-row">
-            <span class="summary-label">Total:</span>
+            <span class="summary-label">{{ 'ORDERS.MODAL.ORDER_TOTAL' | translate }}:</span>
             <span class="summary-value">{{ getOrderTotal() | number:'1.2-2' }} €</span>
           </div>
         </div>
@@ -152,7 +152,7 @@
 
       @if (orderItems.length === 0) {
       <div class="empty-order">
-        <p>No hay productos agregados. Busca y agrega productos para crear el pedido.</p>
+        <p>{{ 'ORDERS.MODAL.EMPTY_HINT' | translate }}</p>
       </div>
       }
   </div>
@@ -160,13 +160,15 @@
   <div modal-footer>
     <button type="button" class="modal-btn modal-btn-primary" (click)="submitOrder()"
       [disabled]="!selectedUserId || orderItems.length === 0 || isSubmitting">
-      {{ isSubmitting ? (editOrder ? 'Actualizando...' : 'Creando...') : (editOrder ? 'Confirmar edición' : 'Crear Pedido') }}
+      {{ isSubmitting 
+        ? (editOrder ? ('COMMON.SAVING' | translate) : ('COMMON.CREATING' | translate)) 
+        : (editOrder ? ('COMMON.CONFIRM_EDIT' | translate) : ('ORDERS.MODAL.SAVE' | translate)) }}
     </button>
   </div>
 </app-base-modal>
 
 @if (showScannerModal) {
-  <app-base-modal title="Escanear Código de Barras" size="md" (closed)="closeBarcodeScanner()">
+  <app-base-modal [title]="'COMMON.SCAN_BARCODE' | translate" size="md" (closed)="closeBarcodeScanner()">
     <div class="scanner-modal-body">
       <app-barcode-scanner (productFound)="onProductFound($event)"></app-barcode-scanner>
     </div>
