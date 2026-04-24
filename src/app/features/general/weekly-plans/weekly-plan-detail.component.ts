@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom, forkJoin, Subject, takeUntil } from 'rxjs';
 import { SyncCacheInvalidationService } from '../../../core/services/sync-cache-invalidation.service';
@@ -18,7 +17,7 @@ import { OrderBuilderComponent } from '../../../shared/components/order-builder/
 @Component({
   selector: 'app-weekly-plan-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseModalComponent, OrderBuilderComponent, TranslateModule],
+  imports: [CommonModule, FormsModule, BaseModalComponent, OrderBuilderComponent],
   templateUrl: './weekly-plan-detail.component.html',
   styleUrls: ['./weekly-plan-detail.component.css']
 })
@@ -32,7 +31,6 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
   private syncCacheInvalidationService = inject(SyncCacheInvalidationService);
   private cdr = inject(ChangeDetectorRef);
   private messageService = inject(MessageService);
-  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   planId: number | null = null;
@@ -47,11 +45,11 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
   activeTab: 'tablero' | 'stock' | 'asistencia' = 'tablero';
   
   days = [
-    { value: 1, label: 'COMMON.DAYS.MONDAY' },
-    { value: 2, label: 'COMMON.DAYS.TUESDAY' },
-    { value: 3, label: 'COMMON.DAYS.WEDNESDAY' },
-    { value: 4, label: 'COMMON.DAYS.THURSDAY' },
-    { value: 5, label: 'COMMON.DAYS.FRIDAY' }
+    { value: 1, label: 'Lunes' },
+    { value: 2, label: 'Martes' },
+    { value: 3, label: 'Miércoles' },
+    { value: 4, label: 'Jueves' },
+    { value: 5, label: 'Viernes' }
   ];
 
   collapsedDays = new Set<number>();
@@ -249,8 +247,8 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
         
         // Dynamic days based on plan slots (add Sat/Sun if they exist)
         const activeDays = new Set(this.plan.slots.map(s => s.dayOfWeek));
-        if (activeDays.has(6) && !this.days.find(d => d.value === 6)) this.days.push({ value: 6, label: 'COMMON.DAYS.SATURDAY' });
-        if (activeDays.has(7) && !this.days.find(d => d.value === 7)) this.days.push({ value: 7, label: 'COMMON.DAYS.SUNDAY' });
+        if (activeDays.has(6) && !this.days.find(d => d.value === 6)) this.days.push({ value: 6, label: 'Sábado' });
+        if (activeDays.has(7) && !this.days.find(d => d.value === 7)) this.days.push({ value: 7, label: 'Domingo' });
         this.days.sort((a, b) => a.value - b.value);
 
         this.loading = false;
@@ -262,7 +260,7 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.loading = false;
-        this.messageService.showError(this.translate.instant('WEEKLY_PLANS.MESSAGES.LOAD_ERROR'));
+        this.messageService.showError('No se pudo cargar el plan semanal.');
         this.cdr.detectChanges();
       }
     });
@@ -291,7 +289,7 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.loadingStock = false;
-        this.messageService.showError(this.translate.instant('WEEKLY_PLANS.MESSAGES.STOCK_LOAD_ERROR'));
+        this.messageService.showError('No se pudo cargar el inventario necesario.');
         this.cdr.detectChanges();
       }
     });
@@ -446,7 +444,7 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
       next: (response) => {
         const blob = response.body;
         if (!blob) {
-          this.messageService.showError(this.translate.instant('WEEKLY_PLANS.MESSAGES.PDF_ERROR'));
+          this.messageService.showError('No se pudo generar el PDF del plan.');
           return;
         }
 
@@ -464,7 +462,7 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
         window.URL.revokeObjectURL(url);
       },
       error: (err) => {
-        this.messageService.showError(err.error?.message || this.translate.instant('WEEKLY_PLANS.MESSAGES.PDF_DOWNLOAD_ERROR'));
+        this.messageService.showError(err.error?.message || 'No se pudo descargar el plan semanal en PDF.');
       },
       complete: () => {
         this.downloadingPdf = false;
@@ -477,26 +475,26 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
     if (!this.planId || this.activatingPlan) return;
 
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.ACTIVATE_TITLE'),
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.ACTIVATE_MSG'),
-      this.translate.instant('COMMON.ACTIVATE'),
-      this.translate.instant('COMMON.CANCEL')
+      'Activar plan',
+      'Al activar el plan quedará listo para confirmar sesiones. ¿Deseas continuar?',
+      'Activar',
+      'Cancelar'
     );
     if (!confirmed) return;
 
     this.activatingPlan = true;
     this.weeklyPlanService.activatePlan(this.planId).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.translate.instant('WEEKLY_PLANS.MESSAGES.ACTIVATE_SUCCESS'));
+        this.messageService.showSuccess('Plan activado correctamente.');
         this.loadPlan();
       },
-      error: (err) => {  
-    const backendMessage = typeof err?.error?.message === 'string' ? err.error.message : '';  
-    if (backendMessage.toLowerCase().includes('caduc')) {  
-        this.messageService.showError(`${backendMessage} ${this.translate.instant('WEEKLY_PLANS.MESSAGES.CHECK_INVENTORY_TAB') || 'Revisa la pestaña de inventario requerido para identificar productos en riesgo.'}`);  
-    } else {  
-        this.messageService.showError(backendMessage || this.translate.instant('WEEKLY_PLANS.MESSAGES.ACTIVATE_ERROR') || 'No se pudo activar el plan.');  
-    }  
+      error: (err) => {
+        const backendMessage = typeof err?.error?.message === 'string' ? err.error.message : '';
+        if (backendMessage.toLowerCase().includes('caduc')) {
+          this.messageService.showError(`${backendMessage} Revisa la pestaña de inventario requerido para identificar productos en riesgo.`);
+        } else {
+          this.messageService.showError(backendMessage || 'No se pudo activar el plan.');
+        }
       },
       complete: () => {
         this.activatingPlan = false;
@@ -509,21 +507,21 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
     if (!this.planId || this.deactivatingPlan) return;
 
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.DEACTIVATE_TITLE'),
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.DEACTIVATE_MSG'),
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.BACK_TO_DRAFT'),
-      this.translate.instant('COMMON.CANCEL')
+      'Volver a borrador',
+      'El plan volverá a estado borrador. Esta acción se bloqueará si existen sesiones confirmadas. ¿Deseas continuar?',
+      'Volver a borrador',
+      'Cancelar'
     );
     if (!confirmed) return;
 
     this.deactivatingPlan = true;
     this.weeklyPlanService.deactivatePlan(this.planId).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.translate.instant('WEEKLY_PLANS.MESSAGES.DEACTIVATE_SUCCESS'));
+        this.messageService.showSuccess('Plan pasado a borrador correctamente.');
         this.loadPlan();
       },
       error: (err) => {
-        this.messageService.showError(err.error?.message || this.translate.instant('WEEKLY_PLANS.MESSAGES.DEACTIVATE_ERROR'));
+        this.messageService.showError(err.error?.message || 'No se pudo pasar el plan a borrador.');
       },
       complete: () => {
         this.deactivatingPlan = false;
@@ -537,7 +535,7 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
 
     const shortageRequirements = this.getRequirementsNeedingReplenishment();
     if (!shortageRequirements.length) {
-      this.messageService.showInfo(this.translate.instant('WEEKLY_PLANS.MESSAGES.NO_SHORTAGES'));
+      this.messageService.showInfo('No hay faltantes pendientes por cubrir. Los pedidos ya creados cubren la reposición necesaria.');
       return;
     }
 
@@ -561,7 +559,7 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
         this.stockOrderItems = items;
         this.showStockOrderModal = true;
       })
-      .catch(() => this.messageService.showError(this.translate.instant('WEEKLY_PLANS.MESSAGES.ORDER_PREP_ERROR')))
+      .catch(() => this.messageService.showError('No se pudo preparar la orden de reposición.'))
       .finally(() => {
         this.loadingStockOrderData = false;
         this.cdr.detectChanges();
@@ -644,10 +642,10 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
   async confirmSlot(slot: WeeklyPlanSlotResponse) {
     if (!this.planId) return;
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.CONFIRM_SESSION_TITLE'),
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.CONFIRM_SESSION_MSG', { num: slot.sortOrder + 1 }),
-      this.translate.instant('COMMON.CONFIRM_SESSION'),
-      this.translate.instant('COMMON.CANCEL')
+      'Confirmar sesión',
+      `¿Quieres confirmar la sesión ${slot.sortOrder + 1}?`,
+      'Confirmar sesión',
+      'Cancelar'
     );
     if (!confirmed) {
       return;
@@ -655,23 +653,23 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
 
     this.weeklyPlanService.confirmSlot(this.planId, slot.id).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.translate.instant('WEEKLY_PLANS.MESSAGES.CONFIRM_SESSION_SUCCESS'));
+        this.messageService.showSuccess('Sesión confirmada correctamente.');
         this.loadPlan();
       },
-error: (err) => {  
-    const backendMessage = typeof err?.error?.message === 'string' ? err.error.message : '';  
-    this.messageService.showError(backendMessage || this.translate.instant('WEEKLY_PLANS.MESSAGES.CONFIRM_SESSION_ERROR') || 'Error al confirmar la sesión. Verifica stock disponible y estado del plan.');  
-}
-  });
+      error: (err) => {
+        const backendMessage = typeof err?.error?.message === 'string' ? err.error.message : '';
+        this.messageService.showError(backendMessage || 'Error al confirmar la sesión. Verifica stock disponible y estado del plan.');
+      }
+    });
   }
 
   async cancelSlot(slot: WeeklyPlanSlotResponse) {
     if (!this.planId) return;
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.CANCEL_SESSION_TITLE'),
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.CANCEL_SESSION_MSG', { num: slot.sortOrder + 1 }),
-      this.translate.instant('COMMON.CANCEL_SESSION'),
-      this.translate.instant('COMMON.BACK')
+      'Cancelar sesión',
+      `Esta acción eliminará la sesión ${slot.sortOrder + 1}. ¿Deseas continuar?`,
+      'Cancelar sesión',
+      'Volver'
     );
     if (!confirmed) {
       return;
@@ -679,10 +677,10 @@ error: (err) => {
 
     this.weeklyPlanService.cancelSlot(this.planId, slot.id).subscribe({
       next: () => {
-        this.messageService.showInfo(this.translate.instant('WEEKLY_PLANS.MESSAGES.CANCEL_SESSION_SUCCESS'));
+        this.messageService.showInfo('Sesión cancelada.');
         this.loadPlan();
       },
-      error: (err) => this.messageService.showError(err.error?.message || this.translate.instant('WEEKLY_PLANS.MESSAGES.CANCEL_SESSION_ERROR'))
+      error: (err) => this.messageService.showError(err.error?.message || 'Error al cancelar la sesión.')
     });
   }
 
@@ -690,19 +688,19 @@ error: (err) => {
     if (!this.planId) return;
 
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.RESTORE_SESSION_TITLE'),
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.RESTORE_SESSION_MSG', { num: slot.sortOrder + 1 }),
-      this.translate.instant('COMMON.RESTORE_SESSION'),
-      this.translate.instant('COMMON.BACK')
+      'Restaurar sesión',
+      `La sesión ${slot.sortOrder + 1} volverá a estado pendiente. ¿Deseas continuar?`,
+      'Restaurar sesión',
+      'Volver'
     );
     if (!confirmed) return;
 
     this.weeklyPlanService.restoreSlot(this.planId, slot.id).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.translate.instant('WEEKLY_PLANS.MESSAGES.RESTORE_SESSION_SUCCESS'));
+        this.messageService.showSuccess('Sesión restaurada correctamente.');
         this.loadPlan();
       },
-      error: (err) => this.messageService.showError(err.error?.message || this.translate.instant('WEEKLY_PLANS.MESSAGES.RESTORE_SESSION_ERROR'))
+      error: (err) => this.messageService.showError(err.error?.message || 'Error al restaurar la sesión.')
     });
   }
 
@@ -710,20 +708,20 @@ error: (err) => {
     if (!this.planId) return;
 
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.REVERT_CONFIRM_TITLE'),
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.REVERT_CONFIRM_MSG', { name: slot.recipeName }),
-      this.translate.instant('COMMON.REVERT'),
-      this.translate.instant('COMMON.CANCEL')
+      'Revertir confirmación',
+      `Se anulará el registro de cocinado y se restaurará el stock de ${slot.recipeName}. ¿Deseas continuar?`,
+      'Revertir',
+      'Cancelar'
     );
 
     if (!confirmed) return;
 
     this.weeklyPlanService.unconfirmSlot(this.planId, slot.id).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.translate.instant('WEEKLY_PLANS.MESSAGES.REVERT_CONFIRM_SUCCESS'));
+        this.messageService.showSuccess(`Confirmación revertida correctamente.`);
         this.loadPlan();
       },
-      error: (err) => this.messageService.showError(err.error?.message || this.translate.instant('WEEKLY_PLANS.MESSAGES.REVERT_CONFIRM_ERROR'))
+      error: (err) => this.messageService.showError(err.error?.message || 'Error al revertir la confirmación.')
     });
   }
 
@@ -732,23 +730,23 @@ error: (err) => {
 
     const dayName = this.getDayLabel(dayOfWeek);
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.CONFIRM_DAY_TITLE'),
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.CONFIRM_DAY_MSG', { day: dayName }),
-      this.translate.instant('COMMON.CONFIRM_ALL'),
-      this.translate.instant('COMMON.CANCEL')
+      'Confirmar día completo',
+      `Se confirmarán todas las sesiones del ${dayName} y se descontará el stock correspondiente. ¿Deseas continuar?`,
+      'Confirmar todo',
+      'Cancelar'
     );
 
     if (!confirmed) return;
 
     this.weeklyPlanService.confirmDay(this.planId, dayOfWeek).subscribe({
       next: (res) => {
-        this.messageService.showSuccess(this.translate.instant('WEEKLY_PLANS.MESSAGES.CONFIRM_DAY_SUCCESS', { day: dayName }));
+        this.messageService.showSuccess(`Día ${dayName} confirmado correctamente.`);
         this.loadPlan();
       },
-error: (err) => {  
-    const backendMessage = typeof err?.error?.message === 'string' ? err.error.message : '';  
-    this.messageService.showError(backendMessage || this.translate.instant('WEEKLY_PLANS.MESSAGES.CONFIRM_DAY_ERROR') || 'Error al confirmar el día. Verifica stock disponible y estado del plan.');  
-}
+      error: (err) => {
+        const backendMessage = typeof err?.error?.message === 'string' ? err.error.message : '';
+        this.messageService.showError(backendMessage || 'Error al confirmar el día. Verifica stock disponible y estado del plan.');
+      }
     });
   }
 
@@ -757,20 +755,20 @@ error: (err) => {
 
     const dayName = this.getDayLabel(dayOfWeek);
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.REVERT_DAY_TITLE'),
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.REVERT_DAY_MSG', { day: dayName }),
-      this.translate.instant('COMMON.REVERT_ALL'),
-      this.translate.instant('COMMON.CANCEL')
+      'Revertir confirmación del día',
+      `Se anularán todas las sesiones confirmadas del ${dayName} y se restaurará el stock. ¿Deseas continuar?`,
+      'Revertir todo',
+      'Cancelar'
     );
 
     if (!confirmed) return;
 
     this.weeklyPlanService.unconfirmDay(this.planId, dayOfWeek).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.translate.instant('WEEKLY_PLANS.MESSAGES.REVERT_DAY_SUCCESS', { day: dayName }));
+        this.messageService.showSuccess(`Confirmaciones del ${dayName} revertidas correctamente.`);
         this.loadPlan();
       },
-      error: (err) => this.messageService.showError(err.error?.message || this.translate.instant('WEEKLY_PLANS.MESSAGES.REVERT_DAY_ERROR'))
+      error: (err) => this.messageService.showError(err.error?.message || 'Error al revertir las confirmaciones del día.')
     });
   }
 
@@ -779,20 +777,20 @@ error: (err) => {
 
     const dayName = this.getDayLabel(dayOfWeek);
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.RESTORE_DAY_TITLE'),
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.RESTORE_DAY_MSG', { day: dayName }),
-      this.translate.instant('COMMON.RESTORE'),
-      this.translate.instant('COMMON.CANCEL')
+      'Restaurar sesiones canceladas',
+      `Se restaurarán las sesiones canceladas del ${dayName}. ¿Deseas continuar?`,
+      'Restaurar',
+      'Cancelar'
     );
 
     if (!confirmed) return;
 
     this.weeklyPlanService.restoreDay(this.planId, dayOfWeek).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.translate.instant('WEEKLY_PLANS.MESSAGES.RESTORE_DAY_SUCCESS', { day: dayName }));
+        this.messageService.showSuccess(`Sesiones canceladas del ${dayName} restauradas.`);
         this.loadPlan();
       },
-      error: (err) => this.messageService.showError(err.error?.message || this.translate.instant('WEEKLY_PLANS.MESSAGES.RESTORE_DAY_ERROR'))
+      error: (err) => this.messageService.showError(err.error?.message || 'Error al restaurar las sesiones canceladas del día.')
     });
   }
 
@@ -803,10 +801,10 @@ error: (err) => {
     if (this.cancellingAttendance.has(opKey)) return;
 
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.CANCEL_STUDENT_DAY_TITLE'),
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.CANCEL_STUDENT_DAY_MSG', { name: studentName, day: this.getDayLabel(dayOfWeek) }),
-      this.translate.instant('COMMON.CANCEL_STUDENT'),
-      this.translate.instant('COMMON.BACK')
+      'Cancelar alumno del día',
+      `Se quitará a ${studentName} de todo el ${this.getDayLabel(dayOfWeek)} sin afectar al resto de alumnos. ¿Deseas continuar?`,
+      'Cancelar alumno',
+      'Volver'
     );
 
     if (!confirmed) {
@@ -816,11 +814,11 @@ error: (err) => {
     this.cancellingAttendance.add(opKey);
     this.weeklyPlanService.cancelStudentFromDay(this.planId, dayOfWeek, studentId).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.translate.instant('WEEKLY_PLANS.MESSAGES.CANCEL_STUDENT_DAY_SUCCESS', { name: studentName }));
+        this.messageService.showSuccess(`${studentName} cancelado del día correctamente.`);
         this.loadPlan();
       },
       error: (err) => {
-        this.messageService.showError(err.error?.message || this.translate.instant('WEEKLY_PLANS.MESSAGES.CANCEL_STUDENT_DAY_ERROR'));
+        this.messageService.showError(err.error?.message || 'No se pudo cancelar al alumno del día.');
       },
       complete: () => {
         this.cancellingAttendance.delete(opKey);
@@ -836,10 +834,10 @@ error: (err) => {
     if (this.restoringAttendance.has(opKey)) return;
 
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.RESTORE_STUDENT_DAY_TITLE'),
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.RESTORE_STUDENT_DAY_MSG', { name: studentName, day: this.getDayLabel(dayOfWeek) }),
-      this.translate.instant('COMMON.RESTORE'),
-      this.translate.instant('COMMON.BACK')
+      'Restaurar alumno del día',
+      `Se restaurará a ${studentName} en las sesiones canceladas del ${this.getDayLabel(dayOfWeek)}. ¿Deseas continuar?`,
+      'Restaurar',
+      'Volver'
     );
 
     if (!confirmed) {
@@ -849,11 +847,11 @@ error: (err) => {
     this.restoringAttendance.add(opKey);
     this.weeklyPlanService.restoreStudentFromDay(this.planId, dayOfWeek, studentId).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.translate.instant('WEEKLY_PLANS.MESSAGES.RESTORE_STUDENT_DAY_SUCCESS', { name: studentName }));
+        this.messageService.showSuccess(`${studentName} restaurado en el día correctamente.`);
         this.loadPlan();
       },
       error: (err) => {
-        this.messageService.showError(err.error?.message || this.translate.instant('WEEKLY_PLANS.MESSAGES.RESTORE_STUDENT_DAY_ERROR'));
+        this.messageService.showError(err.error?.message || 'No se pudo restaurar al alumno en el día.');
       },
       complete: () => {
         this.restoringAttendance.delete(opKey);
@@ -869,10 +867,10 @@ error: (err) => {
     if (this.cancellingAttendance.has(opKey)) return;
 
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.CANCEL_STUDENT_SESSION_TITLE'),
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.CANCEL_STUDENT_SESSION_MSG', { name: studentName, num: sortOrder + 1, recipe: recipeName }),
-      this.translate.instant('COMMON.CANCEL_SESSION'),
-      this.translate.instant('COMMON.BACK')
+      'Cancelar sesión al alumno',
+      `Se quitará a ${studentName} de la sesión ${sortOrder + 1} (${recipeName}) sin afectar sus otras sesiones. ¿Deseas continuar?`,
+      'Cancelar sesión',
+      'Volver'
     );
 
     if (!confirmed) {
@@ -882,11 +880,11 @@ error: (err) => {
     this.cancellingAttendance.add(opKey);
     this.weeklyPlanService.cancelStudentFromSlot(this.planId, slotId, studentId).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.translate.instant('WEEKLY_PLANS.MESSAGES.CANCEL_STUDENT_SESSION_SUCCESS', { name: studentName }));
+        this.messageService.showSuccess(`${studentName} cancelado de la sesión correctamente.`);
         this.loadPlan();
       },
       error: (err) => {
-        this.messageService.showError(err.error?.message || this.translate.instant('WEEKLY_PLANS.MESSAGES.CANCEL_STUDENT_SESSION_ERROR'));
+        this.messageService.showError(err.error?.message || 'No se pudo cancelar al alumno de la sesión.');
       },
       complete: () => {
         this.cancellingAttendance.delete(opKey);
@@ -902,10 +900,10 @@ error: (err) => {
     if (this.restoringAttendance.has(opKey)) return;
 
     const confirmed = await this.messageService.confirm(
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.RESTORE_STUDENT_SESSION_TITLE'),
-      this.translate.instant('WEEKLY_PLANS.MESSAGES.RESTORE_STUDENT_SESSION_MSG', { name: studentName, num: sortOrder + 1, recipe: recipeName }),
-      this.translate.instant('COMMON.RESTORE'),
-      this.translate.instant('COMMON.BACK')
+      'Restaurar sesión al alumno',
+      `Se restaurará a ${studentName} en la sesión ${sortOrder + 1} (${recipeName}). ¿Deseas continuar?`,
+      'Restaurar',
+      'Volver'
     );
 
     if (!confirmed) {
@@ -915,11 +913,11 @@ error: (err) => {
     this.restoringAttendance.add(opKey);
     this.weeklyPlanService.restoreStudentFromSlot(this.planId, slotId, studentId).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.translate.instant('WEEKLY_PLANS.MESSAGES.RESTORE_STUDENT_SESSION_SUCCESS', { name: studentName }));
+        this.messageService.showSuccess(`${studentName} restaurado en la sesión correctamente.`);
         this.loadPlan();
       },
       error: (err) => {
-        this.messageService.showError(err.error?.message || this.translate.instant('WEEKLY_PLANS.MESSAGES.RESTORE_STUDENT_SESSION_ERROR'));
+        this.messageService.showError(err.error?.message || 'No se pudo restaurar al alumno en la sesión.');
       },
       complete: () => {
         this.restoringAttendance.delete(opKey);
@@ -1024,18 +1022,18 @@ error: (err) => {
 
   getStatusLabel(status: string): string {
     const labels: Record<string, string> = {
-      DRAFT: this.translate.instant('WEEKLY_PLANS.STATUS.DRAFT'),
-      ACTIVE: this.translate.instant('WEEKLY_PLANS.STATUS.ACTIVE'),
-      IN_PROGRESS: this.translate.instant('WEEKLY_PLANS.STATUS.IN_PROGRESS'),
-      COMPLETED: this.translate.instant('WEEKLY_PLANS.STATUS.COMPLETED'),
-      CANCELLED: this.translate.instant('WEEKLY_PLANS.STATUS.CANCELLED')
+      DRAFT: 'Borrador',
+      ACTIVE: 'Activo',
+      IN_PROGRESS: 'En curso',
+      COMPLETED: 'Finalizado',
+      CANCELLED: 'Cancelado'
     };
 
     return labels[status] || status;
   }
 
   getDayLabel(dayOfWeek: number): string {
-    return this.translate.instant(this.days.find(day => day.value === dayOfWeek)?.label || `COMMON.DAYS.DAY_${dayOfWeek}`);
+    return this.days.find(day => day.value === dayOfWeek)?.label || `Día ${dayOfWeek}`;
   }
 
   getSlotsForStudentAndDay(studentId: number, dayOfWeek: number): WeeklyPlanSlotResponse[] {

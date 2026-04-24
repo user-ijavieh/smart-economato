@@ -1,12 +1,12 @@
 <div class="page-header header-planes">
-  <h1>{{ 'WEEKLY_PLANS.TITLE' | translate }}</h1>
+  <h1>Planes Semanales</h1>
   <div class="header-actions">
-    <button class="modal-btn modal-btn-primary" (click)="createNew()" [aria-label]="'WEEKLY_PLANS.CREATE_ARIA' | translate">
+    <button class="modal-btn modal-btn-primary" (click)="createNew()" aria-label="Crear un nuevo plan semanal">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <line x1="12" y1="5" x2="12" y2="19"></line>
         <line x1="5" y1="12" x2="19" y2="12"></line>
       </svg>
-      {{ 'WEEKLY_PLANS.CREATE_NEW' | translate }}
+      Crear nuevo plan
     </button>
   </div>
 </div>
@@ -15,7 +15,7 @@
     
     <!-- CURRENT WEEK HERO -->
     <section class="hero-section">
-      <h2>{{ 'WEEKLY_PLANS.CURRENT_WEEK' | translate }}</h2>
+      <h2>Semana en curso</h2>
       
       @if (loadingCurrent) {
         <div class="hero-card skeleton-card">
@@ -29,12 +29,12 @@
             <div class="status-badge" [ngClass]="'status-' + currentPlan.status.toLowerCase()">
               {{ getStatusLabel(currentPlan.status) }}
             </div>
-            <h3>{{ currentPlan.weekStartDate }} {{ 'COMMON.TO' | translate }} {{ currentPlan.weekEndDate }}</h3>
+            <h3>{{ currentPlan.weekStartDate }} al {{ currentPlan.weekEndDate }}</h3>
             
             <div class="progress-container">
               @let progress = calculateProgress(currentPlan);
               <div class="progress-info">
-                <span>{{ 'WEEKLY_PLANS.CONFIRMED_SESSIONS' | translate }}</span>
+                <span>Sesiones confirmadas</span>
                 <span>{{ progress.confirmed }} / {{ progress.total }} ({{ progress.percent }}%)</span>
               </div>
               <div class="progress-bar-bg">
@@ -43,7 +43,7 @@
             </div>
           </div>
           <div class="card-action">
-            <button class="btn-hero" [aria-label]="'WEEKLY_PLANS.OPEN_PLAN_ARIA' | translate">{{ 'WEEKLY_PLANS.OPEN_PLAN' | translate }}</button>
+            <button class="btn-hero" aria-label="Abrir detalle del plan semanal">Abrir plan</button>
           </div>
         </div>
       } @else {
@@ -58,13 +58,13 @@
               <path d="m16.5 16 1.5 1.5 3-3" />
             </svg>
           </div>
-          <h3>{{ 'WEEKLY_PLANS.NO_ACTIVE_PLAN' | translate }}</h3>
-          <p>{{ 'WEEKLY_PLANS.NO_ACTIVE_PLAN_HINT' | translate }}</p>
+          <h3>No hay un plan activo esta semana</h3>
+          <p>Crea tu plan para organizar sesiones, recetas y alumnos.</p>
           
           @if (currentWeekDraftPlan) {
-            <button class="modal-btn modal-btn-secondary" (click)="openDetail(currentWeekDraftPlan)">{{ 'WEEKLY_PLANS.REVIEW_DRAFT' | translate }}</button>
+            <button class="modal-btn modal-btn-secondary" (click)="openDetail(currentWeekDraftPlan)">Revisar plan en borrador</button>
           } @else {
-            <button class="modal-btn modal-btn-primary" (click)="createNew()">{{ 'WEEKLY_PLANS.START_NEW_WEEK' | translate }}</button>
+            <button class="modal-btn modal-btn-primary" (click)="createNew()">Empezar nueva semana</button>
           }
         </div>
       }
@@ -72,7 +72,7 @@
 
     <!-- UPCOMING PLANS GRID -->
     <section class="upcoming-section">
-      <h2>{{ 'WEEKLY_PLANS.UPCOMING_PLANS' | translate }}</h2>
+      <h2>Próximos planes</h2>
       
       @if (loadingList) {
         <div class="plans-grid">
@@ -89,13 +89,13 @@
                 <span class="plan-date">{{ plan.weekStartDate }}</span>
               </div>
               <div class="plan-card-body">
-                <p class="plan-chef">{{ 'WEEKLY_PLANS.RESPONSIBLE' | translate }}: {{ plan.chefName }}</p>
+                <p class="plan-chef">Responsable: {{ plan.chefName }}</p>
                 <div class="plan-stats">
-                  <span>{{ 'WEEKLY_PLANS.SESSIONS_COUNT' | translate: { count: plan.slots.length || 0 } }}</span>
+                  <span>{{ plan.slots.length || 0 }} sesiones</span>
                 </div>
                 <div class="plan-card-actions">
                   <button type="button" class="modal-btn modal-btn-secondary modal-btn-small" (click)="$event.stopPropagation(); duplicatePlan(plan)">
-                    {{ 'COMMON.DUPLICATE' | translate }}
+                    Duplicar
                   </button>
                 </div>
               </div>
@@ -103,24 +103,24 @@
           }
         </div>
       } @else {
-        <div class="empty-state-small">{{ 'WEEKLY_PLANS.NO_UPCOMING_PLANS' | translate }}</div>
+        <div class="empty-state-small">No tienes planes futuros por ahora.</div>
       }
     </section>
 
     <!-- PAST PLANS (simplified list) -->
     <section class="past-section">
-      <h2>{{ 'WEEKLY_PLANS.RECENT_HISTORY' | translate }}</h2>
+      <h2>Historial reciente</h2>
       @if (!loadingList && pastPlans.length > 0) {
         <div class="past-list">
           @for (plan of pastPlans.slice(0, 5); track plan.id) {
             <div class="past-item" (click)="openDetail(plan)">
-              <span class="past-date">{{ plan.weekStartDate }} {{ 'COMMON.TO' | translate }} {{ plan.weekEndDate }}</span>
+              <span class="past-date">{{ plan.weekStartDate }} al {{ plan.weekEndDate }}</span>
               <span class="status-text" [ngClass]="'text-' + plan.status.toLowerCase()">{{ getStatusLabel(plan.status) }}</span>
             </div>
           }
         </div>
       } @else if (!loadingList) {
-        <div class="empty-state-small">{{ 'WEEKLY_PLANS.NO_HISTORY' | translate }}</div>
+        <div class="empty-state-small">No hay historial disponible.</div>
       }
     </section>
 

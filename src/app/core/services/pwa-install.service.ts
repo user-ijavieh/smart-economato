@@ -1,8 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { LoggerService } from './logger.service';
-import { TranslateService } from '@ngx-translate/core';
-
 
 declare global {
   interface WindowEventMap {
@@ -20,7 +18,6 @@ interface BeforeInstallPromptEvent extends Event {
 })
 export class PwaInstallService {
   private readonly logger = inject(LoggerService);
-  private translate = inject(TranslateService);
   private canInstall$ = new BehaviorSubject<boolean>(false);
   private isInstalled$ = new BehaviorSubject<boolean>(this.checkIfInstalled());
   private installPrompt: BeforeInstallPromptEvent | null = null;
@@ -126,7 +123,7 @@ export class PwaInstallService {
     try {
       await navigator.share({
         title: 'SmartEconomato',
-        text: this.translate.instant('PWA.SHARE_TEXT'),
+        text: 'Instala SmartEconomato - Sistema de gestión de cocina profesional',
         url: window.location.href,
       });
       return true;
@@ -168,22 +165,22 @@ export class PwaInstallService {
    */
   getInstallInstructions(): string {
     if (this.isInstalled$.value) {
-      return this.translate.instant('PWA.INSTRUCTIONS.ALREADY_INSTALLED');
+      return 'La aplicación ya está instalada en tu dispositivo.';
     }
 
     if (this.installPrompt) {
-      return this.translate.instant('PWA.INSTRUCTIONS.INSTALL_BTN');
+      return 'Presiona el botón "Instalar" para agregar SmartEconomato a tu pantalla de inicio.';
     }
 
     // Fallback instructions for different browsers
     if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-      return this.translate.instant('PWA.INSTRUCTIONS.IOS');
+      return 'En iOS: Abre el menú (⋯) y selecciona "Agregar a la pantalla de inicio"';
     }
 
     if (/Android/.test(navigator.userAgent)) {
-      return this.translate.instant('PWA.INSTRUCTIONS.ANDROID');
+      return 'En Android: Abre el menú (⋯) y selecciona "Instalar aplicación"';
     }
 
-    return this.translate.instant('PWA.INSTRUCTIONS.NOT_SUPPORTED');
+    return 'Tu navegador no soporta la instalación de PWAs. Actualiza a una versión más reciente.';
   }
 }
