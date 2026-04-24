@@ -282,9 +282,7 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
                 this.filteredRecipes = sorted;
                 this.cdr.markForCheck();
             },
-            error: () => {
-                this.messageService.showError(this.translate.instant('RECIPE_MGMT.MESSAGES.LOAD_ERROR'));
-            }
+            error: () => { }
         });
     }
 
@@ -431,9 +429,7 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
                 this.loadUsersForAudits();
                 this.cdr.detectChanges();
             },
-            error: () => {
-                this.messageService.showError(this.translate.instant('RECIPE_MGMT.AUDITS.LOAD_ERROR'));
-            }
+            error: () => { }
         });
     }
 
@@ -562,9 +558,7 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
                 this.currentDraftPage = response.number ?? page;
                 this.cdr.markForCheck();
             },
-            error: () => {
-                this.messageService.showError(this.translate.instant('RECIPE_MGMT.DRAFTS.LOAD_ERROR'));
-            }
+            error: () => { }
         });
     }
 
@@ -701,9 +695,7 @@ export class RecipesManagementComponent implements OnInit, OnDestroy {
                 this.closeDraftDetailModal();
                 this.openDetailModal(recipe);
             },
-            error: () => {
-                this.messageService.showError(this.translate.instant('RECIPE_MGMT.DRAFTS.APPROVED_LOAD_ERROR'));
-            }
+            error: () => { }
         });
     }
 

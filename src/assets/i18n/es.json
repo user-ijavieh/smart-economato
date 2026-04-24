@@ -219,63 +219,6 @@
     "INVENTORY": "Inventario",
     "ORDERS": "Pedidos",
     "RECEPTION": "Recepción",
-    "RECIPE_MGMT": {
-      "TITLE": "Gestión de Recetas",
-      "SEARCH_PLACEHOLDER": "Buscar por nombre...",
-      "ADD_RECIPE": "Agregar Receta",
-      "NO_RECIPES_FOUND": "No se encontraron recetas",
-      "TABS": {
-        "RECIPES": "Recetas",
-        "AUDITS": "Auditoría",
-        "DRAFTS": "Borradores"
-      },
-      "STATS": {
-        "WITH_ALLERGENS": "Con Alérgenos",
-        "WITHOUT_ALLERGENS": "Sin Alérgenos",
-        "AVG_COST": "Costo Promedio"
-      },
-      "TABLE": {
-        "COMPONENTS": "Componentes",
-        "TOTAL_COST": "Costo Total",
-        "ALLERGENS": "Alérgenos"
-      },
-      "DRAFTS": {
-        "NONE_FOUND": "No se encontraron borradores",
-        "RESENDABLE": "Reenviable",
-        "DETAIL_TITLE": "Detalle del Borrador",
-        "ELABORATION": "Elaboración",
-        "PRESENTATION": "Presentación",
-        "REJECTION_REASON": "Motivo de rechazo",
-        "VIEW_APPROVED": "Ver receta aprobada",
-        "APPROVE_CONFIRM_TITLE": "Aprobar borrador",
-        "APPROVE_CONFIRM_MSG": "¿Deseas aprobar el borrador \"{{name}}\"?",
-        "REJECT_CONFIRM_TITLE": "Rechazar borrador",
-        "REJECT_CONFIRM_MSG": "Indica el motivo para rechazar el borrador <strong>{{name}}</strong>.",
-        "REJECT_REASON_EMPTY": "Debes indicar un motivo de rechazo",
-        "APPROVE_SUCCESS": "Borrador \"{{name}}\" aprobado",
-        "REJECT_SUCCESS": "Borrador \"{{name}}\" rechazado",
-        "LOAD_ERROR": "Error al cargar los borradores de recetas",
-        "APPROVE_ERROR": "Error al aprobar el borrador",
-        "REJECT_ERROR": "Error al rechazar el borrador",
-        "APPROVED_LOAD_ERROR": "No se pudo cargar la receta aprobada"
-      },
-      "AUDITS": {
-        "SEARCH_PLACEHOLDER": "Buscar en auditorías...",
-        "NONE_FOUND": "No se encontraron auditorías",
-        "RECIPE_ID": "ID Receta",
-        "DETAIL_TITLE": "Detalle de Auditoría",
-        "PREV_STATE": "Estado Anterior",
-        "NEXT_STATE": "Estado Nuevo",
-        "PREV_QTY": "Cantidad Anterior",
-        "NEXT_QTY": "Cantidad Nueva",
-        "LOAD_ERROR": "Error al cargar las auditorías"
-      },
-      "MESSAGES": {
-        "LOAD_ERROR": "Error al cargar las recetas",
-        "TOGGLE_HIDDEN_SUCCESS": "Receta \"{{name}}\" ha sido {{action}}",
-        "TOGGLE_HIDDEN_ERROR": "Error al {{action}} receta"
-      }
-    },
     "RECIPES": "Recetas",
     "KITCHEN": "Cocina",
     "USERS": "Gestión de Usuarios",
@@ -1377,6 +1320,27 @@
       "TOP_RECIPES": "Recetas Más Elaboradas",
       "TOP_USERS": "Usuarios con Mayor Actividad",
       "INVENTORY_CONSUMPTION": "Análisis de Consumo de Inventario"
+    },
+    "SUBTITLE": "Monitorización e historial de cocina",
+    "STATS": {
+      "TOTAL_COOKED": "Total Cocinado",
+      "UNIQUE_RECIPES": "Recetas Únicas",
+      "ACTIVE_CHEF": "Cocinero Más Activo",
+      "TOTAL_WEIGHT": "Peso Total",
+      "COOKS_BY_DAY": "Cocinados por Día",
+      "TOP_RECIPES": "Recetas Principales"
+    },
+    "LABELS": {
+      "RECIPE": "Receta",
+      "USER": "Usuario",
+      "QUANTITY": "Cantidad",
+      "DATE": "Fecha",
+      "WEIGHT": "Peso",
+      "ACTIONS": "Acciones",
+      "DETAILS": "Detalles",
+      "REVERT": "Revertir",
+      "DOWNLOAD": "Descargar Informe",
+      "EMPTY_HISTORY": "No se encontraron registros de cocina para el período seleccionado."
     },
     "TRACEABILITY": {
       "TITLE": "Trazabilidad de Ingredientes",
