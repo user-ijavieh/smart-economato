@@ -162,6 +162,7 @@
       "STUDENT": "Student"
     },
     "SUCCESS": "Success",
+    "PDF_SUCCESS": "PDF downloaded successfully",
     "ERROR": "Error",
     "WARNING": "Warning",
     "INFO": "Information",
@@ -447,6 +448,7 @@
       "SHOW_FILTERS": "Show filters",
       "HIDE_FILTERS": "Hide filters",
       "NEW_INCIDENT": "New incident",
+      "CREATE": "Create",
       "NEW_TYPE": "New type",
       "FILTER": "Filter",
       "CLEAR": "Clear",
@@ -467,7 +469,8 @@
       "EDIT": "Edit Incident",
       "ACTIVATE": "Activate",
       "DEACTIVATE": "Deactivate",
-      "ATTACH_AUDITS": "Attach Audits"
+      "ATTACH_AUDITS": "Attach Audits",
+      "DEACTIVATE_TYPE": "Deactivate type"
     },
     "STATS": {
       "TOTAL": "Total incidents",
@@ -504,6 +507,10 @@
     "MESSAGES": {
       "EMPTY": "No incidents found",
       "EMPTY_HINT": "Create a new incident or adjust filters to see results.",
+      "TYPE_TOGGLE_CONFIRM": "Do you want to {{action}} the type \"{{name}}\"?",
+      "TYPE_TOGGLE_SUCCESS": "Incident type status updated",
+      "LOAD_TYPES_ERROR": "Error loading incident types",
+      "LOAD_INCIDENTS_ERROR": "Error loading incidents",
       "LOADING_CHAT": "Loading conversation...",
       "EMPTY_CHAT": "No messages yet.",
       "LOCKED": "The incident is closed. New messages cannot be sent.",
@@ -1228,7 +1235,6 @@
       }
     }
   },
-
   "SUPPLIERS": {
     "TITLE": "Suppliers Management",
     "FILTERS": {
@@ -2335,10 +2341,19 @@
       "TOGGLE_HIDDEN_SUCCESS_SINGLE": "Product status updated successfully."
     },
     "PDF_CONFIRM_TITLE": "Confirm export",
+    "PDF_CONFIRM_MSG": "Do you want to download the product sheet in PDF format?",
     "PDF_CONFIRM_MSG_EXCEL": "Do you want to export the inventory to Excel?"
   },
   "STOCK_MGMT": {
     "TITLE": "Stock Management",
+    "MESSAGES": {
+      "NO_UNCOVERED_PRODUCTS": "No uncovered products found for replenishment."
+    },
+    "REPOSITION": {
+      "TITLE": "Generate a Replenishment Order",
+      "DAYS_PROMPT": "How many days do you want to cover the estimated stock for?",
+      "DAYS_LABEL": "days"
+    },
     "TABS": {
       "ALERTS": "Alerts",
       "PREDICTIONS": "Predictions",
@@ -2580,7 +2595,7 @@
       "ADD_ORDER": "Add order"
     },
     "SECTIONS": {
-      "PRODUCTS_COUNT": "{{count}} product{{count === 1 ? '' : 's'}}."
+      "PRODUCTS_COUNT": "{{count}} products"
     },
     "TABLE": {
       "NO_SUPPLIER": "No supplier",
@@ -2616,6 +2631,8 @@
     }
   },
   "BATCHES": {
+    "BATCH": "Batch",
+    "NO_BATCH": "No batch",
     "REMAINING": "Remaining",
     "EXPIRATION": "Expiration",
     "TITLE": "Batch Management",

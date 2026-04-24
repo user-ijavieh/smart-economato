@@ -162,6 +162,7 @@
       "STUDENT": "Alumno"
     },
     "SUCCESS": "Éxito",
+    "PDF_SUCCESS": "PDF descargado correctamente",
     "ERROR": "Error",
     "WARNING": "Advertencia",
     "INFO": "Información",
@@ -447,6 +448,7 @@
       "SHOW_FILTERS": "Mostrar filtros",
       "HIDE_FILTERS": "Ocultar filtros",
       "NEW_INCIDENT": "Nueva incidencia",
+      "CREATE": "Crear",
       "NEW_TYPE": "Nuevo tipo",
       "FILTER": "Filtrar",
       "CLEAR": "Limpiar",
@@ -467,7 +469,8 @@
       "EDIT": "Editar",
       "ACTIVATE": "Activar",
       "DEACTIVATE": "Desactivar",
-      "ATTACH_AUDITS": "Adjuntar auditorías"
+      "ATTACH_AUDITS": "Adjuntar auditorías",
+      "DEACTIVATE_TYPE": "Desactivar tipo"
     },
     "STATS": {
       "TOTAL": "Incidencias totales",
@@ -536,6 +539,7 @@
       "RESET_IRREVERSIBLE_TITLE": "¡ACCIÓN IRREVERSIBLE!",
       "RESET_IRREVERSIBLE_TEXT": "Se perderán todos los datos de auditoría y el snapshot actual. ¿Deseas proceder definitivamente?"
     },
+
     "DETAIL": {
       "SUMMARY": "Resumen",
       "CHAT": "Chat ({{count}})",
@@ -590,6 +594,10 @@
     "CONTROL_CENTER": "Centro de control",
     "MANAGEMENT": "Gestión de incidencias",
     "MESSAGES": {
+      "TYPE_TOGGLE_CONFIRM": "¿Deseas {{action}} el tipo \"{{name}}\"?",
+      "TYPE_TOGGLE_SUCCESS": "Estado del tipo de incidencia actualizado",
+      "LOAD_TYPES_ERROR": "Error al cargar los tipos de incidencia",
+      "LOAD_INCIDENTS_ERROR": "Error al cargar las incidencias",
       "EMPTY": "No hay incidencias",
       "EMPTY_HINT": "Crea una nueva incidencia o ajusta los filtros para encontrar resultados.",
       "LOADING_CHAT": "Cargando conversación...",
@@ -1841,6 +1849,8 @@
     "TOTAL_ITEMS": "({{total}} {{itemType}})"
   },
   "BATCHES": {
+    "BATCH": "Lote",
+    "NO_BATCH": "Sin lote",
     "REMAINING": "Restante",
     "EXPIRATION": "Caducidad",
     "TITLE": "Gestión de Lotes",
@@ -2672,10 +2682,19 @@
       "TOGGLE_HIDDEN_SUCCESS_SINGLE": "Estado del producto actualizado correctamente."
     },
     "PDF_CONFIRM_TITLE": "Confirmar exportación",
+    "PDF_CONFIRM_MSG": "¿Deseas descargar la ficha del producto en formato PDF?",
     "PDF_CONFIRM_MSG_EXCEL": "¿Deseas exportar el inventario a Excel?"
   },
   "STOCK_MGMT": {
     "TITLE": "Gestión de Stock",
+    "MESSAGES": {
+      "NO_UNCOVERED_PRODUCTS": "No se encontraron productos sin cobertura para reponer."
+    },
+    "REPOSITION": {
+      "TITLE": "Generar una Orden de Reposición",
+      "DAYS_PROMPT": "¿Para cuántos días deseas cubrir el stock estimado?",
+      "DAYS_LABEL": "días"
+    },
     "TABS": {
       "ALERTS": "Alertas",
       "PREDICTIONS": "Predicciones",
@@ -2881,9 +2900,7 @@
         "REASON_PLACEHOLDER": "Ej. Corrección inventario, merma no registrada, rotura...",
         "SUBMITTING": "Registrando...",
         "SUBMIT": "Registrar Ajuste",
-        "ORDER_MODAL_TITLE": "Generar una Orden de Reposición",
-        "DAYS_COVER_PROMPT": "¿Para cuántos días deseas cubrir el stock estimado?",
-        "DAYS": "días",
+
         "TYPES": {
           "AJUSTE": "AJUSTE",
           "MERMA": "MERMA",
@@ -2917,7 +2934,7 @@
       "ADD_ORDER": "Añadir orden"
     },
     "SECTIONS": {
-      "PRODUCTS_COUNT": "{{count}} producto{{count === 1 ? '' : 's'}}."
+      "PRODUCTS_COUNT": "{{count}} productos"
     },
     "TABLE": {
       "NO_SUPPLIER": "Sin proveedor",
