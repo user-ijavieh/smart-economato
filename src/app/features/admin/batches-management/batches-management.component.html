@@ -26,7 +26,7 @@
         <input type="text" class="input-standard" [(ngModel)]="searchTerm" [placeholder]="'BATCHES.FILTERS.SEARCH_PLACEHOLDER' | translate" (ngModelChange)="onSearch()" />
       </div>
       
-      <select [(ngModel)]="statusFilter" (change)="onSearch()" class="action-select">
+      <select [(ngModel)]="statusFilter" (change)="onFilterChange()" class="action-select">
         <option value="all">{{ 'BATCHES.FILTERS.STATUS_ALL' | translate }}</option>
         <option value="active">{{ 'BATCHES.FILTERS.STATUS_ACTIVE' | translate }}</option>
         <option value="depleted">{{ 'BATCHES.FILTERS.STATUS_DEPLETED' | translate }}</option>
