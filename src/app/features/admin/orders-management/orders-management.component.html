@@ -207,7 +207,7 @@
             {{ 'COMMON.PREVIOUS' | translate }}
         </button>
         <span class="page-info">
-            {{ 'ORDERS_MGMT.TABLE.PAGE_INFO' | translate: { current: currentOrderPage + 1, total: totalOrderPages } }} 
+            {{ 'ORDERS_MGMT.TABLE.PAGE_INFO' | translate: { page: currentOrderPage + 1, total: totalOrderPages } }} 
             <span class="total-info">{{ 'ORDERS_MGMT.TABLE.TOTAL_INFO' | translate: { count: totalOrdersCount } }}</span>
         </span>
         <button class="btn-page" [disabled]="currentOrderPage === totalOrderPages - 1" (click)="changeOrderPage(1)">
@@ -316,7 +316,7 @@
             {{ 'COMMON.PREVIOUS' | translate }}
         </button>
         <span class="page-info">
-            {{ 'ORDERS_MGMT.AUDITS.PAGE_INFO' | translate: { current: currentAuditPage + 1, total: totalAuditPages } }} 
+            {{ 'ORDERS_MGMT.AUDITS.PAGE_INFO' | translate: { page: currentAuditPage + 1, total: totalAuditPages } }} 
             <span class="total-info">{{ 'ORDERS_MGMT.AUDITS.TOTAL_INFO' | translate: { count: totalAuditsCount } }}</span>
         </span>
         <button class="btn-page" [disabled]="currentAuditPage === totalAuditPages - 1" (click)="changeAuditPage(1)">
