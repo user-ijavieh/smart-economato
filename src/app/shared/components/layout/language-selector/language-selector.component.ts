@@ -11,6 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
     <div class="language-selector" (click)="toggleMenu($event)">
       <button class="selector-btn" [class.active]="isOpen()" [attr.aria-label]="'COMMON.SWITCH_LANGUAGE' | translate">
         <span class="lang-content">
+          <span class="lang-text">{{ getActiveLanguage() | uppercase }}</span>
           @if (getActiveLanguage() === 'es') {
             <svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true">
               <rect width="24" height="16" rx="3" fill="#AA151B"></rect>
@@ -34,7 +35,6 @@ import { TranslateModule } from '@ngx-translate/core';
               <rect y="14" width="24" height="2" fill="#A80000"></rect>
             </svg>
           }
-          <span class="lang-text">{{ getActiveLanguage() | uppercase }}</span>
         </span>
         <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor" [class.rotate]="isOpen()">
           <path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/>
@@ -50,6 +50,7 @@ import { TranslateModule } from '@ngx-translate/core';
               (click)="selectLanguage(lang.code, $event)"
             >
               <span class="menu-item-content">
+                <span class="lang-label">{{ lang.label }}</span>
                 @if (lang.code === 'es') {
                   <svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true">
                     <rect width="24" height="16" rx="3" fill="#AA151B"></rect>
@@ -73,7 +74,6 @@ import { TranslateModule } from '@ngx-translate/core';
                     <rect y="14" width="24" height="2" fill="#A80000"></rect>
                   </svg>
                 }
-                <span class="lang-label">{{ lang.label }}</span>
               </span>
               @if (getActiveLanguage() === lang.code) {
                 <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor">
