@@ -231,7 +231,7 @@
 
 .product-unit-label {
   font-size: 0.85rem;
-  color: var(--text-secondary);
+  color: var(--theme-text-secondary);
   white-space: nowrap;
 }
 
