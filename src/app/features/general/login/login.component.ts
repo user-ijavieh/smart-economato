@@ -1,19 +1,16 @@
 import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
 import { MessageService } from '../../../core/services/message.service';
 import { ThemeService } from '../../../core/services/theme.service';
-import { LanguageService } from '../../../core/services/language.service';
-import { LanguageSelectorComponent } from '../../../shared/components/layout/language-selector/language-selector.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, LanguageSelectorComponent],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -24,8 +21,6 @@ export class LoginComponent {
   private messageService = inject(MessageService);
   private cdr = inject(ChangeDetectorRef);
   private themeService = inject(ThemeService);
-  private translate = inject(TranslateService);
-  private languageService = inject(LanguageService);
 
   loginForm = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -53,7 +48,7 @@ export class LoginComponent {
 
     this.authService.login(name!, password!).subscribe({
       next: () => {
-        this.messageService.showSuccess(this.translate.instant('LOGIN.SUCCESS') || 'Sesión iniciada correctamente');
+        this.messageService.showSuccess('Sesión iniciada correctamente');
         const returnUrl = this.getSafeReturnUrl();
 
         if (this.authService.isFirstLogin()) {
@@ -72,11 +67,11 @@ export class LoginComponent {
       },
       error: (err) => {
         if (err.message === 'user_hidden') {
-          this.messageService.showError(this.translate.instant('LOGIN.ERROR_USER_HIDDEN') || 'El usuario está bloqueado o inactivo y no puede acceder al sistema.');
+          this.messageService.showError('El usuario está bloqueado o inactivo y no puede acceder al sistema.');
         } else if (err instanceof HttpErrorResponse && err.status === 401) {
-          this.messageService.showError(this.translate.instant('LOGIN.ERROR_INVALID') || 'Credenciales incorrectas');
+          this.messageService.showError('Credenciales incorrectas');
         } else {
-          this.messageService.showError(this.translate.instant('LOGIN.ERROR_GENERIC') || 'Error al iniciar sesión');
+          this.messageService.showError('Error al iniciar sesión');
         }
         this.loading = false;
         this.cdr.markForCheck();

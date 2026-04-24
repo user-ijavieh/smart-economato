@@ -1,6 +1,6 @@
 <!-- Header -->
 <div class="page-header header-pedidos">
-  <h1>{{ 'ORDERS.TITLE' | translate }}</h1>
+  <h1>Pedidos</h1>
 </div>
 
 <!-- Contenido -->
@@ -8,7 +8,7 @@
   <!-- Action Button -->
   <div class="top-actions">
     <button class="btn-create-order" (click)="openCreateOrderModal()">
-      + {{ 'ORDERS.CREATE_ORDER' | translate }}
+      + Crear Pedido
     </button>
   </div>
 
@@ -58,8 +58,8 @@
     </div>
   } @else if (orders.length === 0) {
     <div class="empty-state">
-      <h3>{{ 'ORDERS.EMPTY_TITLE' | translate }}</h3>
-      <p>{{ 'ORDERS.EMPTY_MSG' | translate }}</p>
+      <h3>No hay pedidos pendientes</h3>
+      <p>Crea un nuevo pedido para comenzar</p>
     </div>
   } @else {
     <div class="orders-grid">
@@ -68,24 +68,24 @@
           <div class="order-card-header" [style.background]="getStatusBgColor(order.status)">
             <div class="order-card-user">
               <div class="user-info">
-                <h4>{{ 'ORDERS.ORDER_NUMBER' | translate: { id: order.id } }}</h4>
-                <p>{{ order.userName || ('ORDERS.UNKNOWN_USER' | translate) }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
+                <h4>Pedido #{{ order.id }}</h4>
+                <p>{{ order.userName || 'Usuario desconocido' }} @if (order.supplierName) { | <strong>{{ order.supplierName }}</strong> } </p>
               </div>
             </div>
-            <span class="order-status created">{{ 'ORDERS.STATUS.CREATED' | translate }}</span>
+            <span class="order-status created">CREADO</span>
           </div>
 
           <div class="order-card-body">
             <div class="order-detail">
-              <span class="detail-label">{{ 'ORDERS.DATE' | translate }}:</span>
+              <span class="detail-label">Fecha:</span>
               <span class="detail-value">{{ formatDate(order.orderDate) }}</span>
             </div>
             <div class="order-detail">
-              <span class="detail-label">{{ 'ORDERS.PRODUCTS' | translate }}:</span>
+              <span class="detail-label">Productos:</span>
               <span class="detail-value">{{ order.details?.length || 0 }}</span>
             </div>
             <div class="order-detail total">
-              <span class="detail-label">{{ 'ORDERS.TOTAL' | translate }}:</span>
+              <span class="detail-label">Total:</span>
               <span class="detail-value">{{ getOrderTotal(order) | number:'1.2-2' }} €</span>
             </div>
           </div>
@@ -100,17 +100,17 @@
               }
             }
             @if ((order.details?.length || 0) > 3) {
-              <div class="items-more">+{{ (order.details?.length || 0) - 3 }} {{ 'COMMON.MORE' | translate }}</div>
+              <div class="items-more">+{{ (order.details?.length || 0) - 3 }} más</div>
             }
           </div>
 
           <div class="order-card-actions">
 
             <button class="btn-action btn-details" (click)="viewOrderDetails(order)">
-              {{ 'ORDERS.ACTIONS.VIEW_DETAILS' | translate }}
+              Ver Detalles
             </button>
             <button class="btn-action btn-confirm" (click)="confirmOrder(order)">
-              {{ 'ORDERS.ACTIONS.CONFIRM_ORDER' | translate }}
+              Confirmar Pedido
             </button>
           </div>
         </div>
@@ -120,7 +120,7 @@
     @if (hasMoreOrders) {
       <div class="load-more-container">
         <button class="btn-load-more" (click)="loadMore()">
-          {{ 'ORDERS.ACTIONS.LOAD_MORE' | translate: { count: orders.length - displayCount } }}
+          Cargar más antiguas ({{ orders.length - displayCount }} restantes)
         </button>
       </div>
     }

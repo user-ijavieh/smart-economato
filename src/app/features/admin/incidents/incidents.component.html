@@ -1,15 +1,15 @@
 <section class="incidents-page">
   <header class="admin-page-header">
-    <h1>{{ isAdminArea ? ('INCIDENTS.TITLE.CONTROL_CENTER' | translate) : ('INCIDENTS.TITLE.INCIDENTS_MANAGEMENT' | translate) }}</h1>
+    <h1>{{ isAdminArea ? 'Centro de control' : 'Gestión de incidencias' }}</h1>
   </header>
 
   @if (canManageTypes()) {
-  <nav class="admin-tab-bar" [attr.aria-label]="'INCIDENTS.TABS.SECTIONS' | translate">
+  <nav class="admin-tab-bar" aria-label="Secciones de incidencias">
     <button class="admin-tab-btn" [class.active]="activeTab === 'incidents'" type="button" (click)="switchTab('incidents')">
-      {{ 'INCIDENTS.TABS.INCIDENTS' | translate }}
+      Incidencias
     </button>
     <button class="admin-tab-btn" [class.active]="activeTab === 'types'" type="button" (click)="switchTab('types')">
-      {{ 'INCIDENTS.TABS.TYPES' | translate }}
+      Tipos
     </button>
   </nav>
   }
@@ -19,21 +19,21 @@
     <section class="incidents-top-actions">
       <div class="incidents-top-actions-left">
         <button class="toolbar-btn btn-incident-secondary" [class.btn-incident-tab-active]="showFilters" type="button" (click)="toggleFilters()">
-          {{ showFilters ? ('INCIDENTS.ACTIONS.HIDE_FILTERS' | translate) : ('INCIDENTS.ACTIONS.SHOW_FILTERS' | translate) }}
+          {{ showFilters ? 'Ocultar filtros' : 'Mostrar filtros' }}
         </button>
       </div>
       <div class="incidents-top-actions-right">
         @if (canCreateIncidents) {
-        <button class="toolbar-btn btn-incident-primary" type="button" (click)="openCreateIncident()">{{ 'INCIDENTS.ACTIONS.NEW' | translate }}</button>
+        <button class="toolbar-btn btn-incident-primary" type="button" (click)="openCreateIncident()">Nueva incidencia</button>
         }
       </div>
     </section>
     }
 
     <section class="stats-row incidents-stats-row">
-      <article class="stat-card stat-incidents-total"><span class="stat-number">{{ incidentsPage?.totalElements || 0 }}</span><span class="stat-label">{{ 'INCIDENTS.STATS.TOTAL' | translate }}</span></article>
-      <article class="stat-card stat-incidents-pending"><span class="stat-number">{{ countPendingIncidents() }}</span><span class="stat-label">{{ 'INCIDENTS.STATS.PENDING' | translate }}</span></article>
-      <article class="stat-card stat-incidents-closed"><span class="stat-number">{{ countClosedIncidents() }}</span><span class="stat-label">{{ 'INCIDENTS.STATS.CLOSED' | translate }}</span></article>
+      <article class="stat-card stat-incidents-total"><span class="stat-number">{{ incidentsPage?.totalElements || 0 }}</span><span class="stat-label">Incidencias totales</span></article>
+      <article class="stat-card stat-incidents-pending"><span class="stat-number">{{ countPendingIncidents() }}</span><span class="stat-label">Pendientes y abiertas</span></article>
+      <article class="stat-card stat-incidents-closed"><span class="stat-number">{{ countClosedIncidents() }}</span><span class="stat-label">Cerradas</span></article>
     </section>
 
     @if (activeTab === 'incidents') {
@@ -43,25 +43,25 @@
       @if (showFilters) {
       <div class="incident-filters-panel">
         <div class="incident-filters-row">
-          <input type="text" name="incidentSearch" [(ngModel)]="incidentSearch" (ngModelChange)="applyIncidentSearch()" [placeholder]="'INCIDENTS.FILTERS.SEARCH_PLACEHOLDER' | translate" />
+          <input type="text" name="incidentSearch" [(ngModel)]="incidentSearch" (ngModelChange)="applyIncidentSearch()" placeholder="Buscar por título o ID..." />
           <select name="incidentStatus" [(ngModel)]="incidentFilters.status">
             @for (option of statusOptions; track option.value) {
-            <option [value]="option.value">{{ (option.value ? 'INCIDENTS.STATUS.' + option.value : 'INCIDENTS.FILTERS.ALL_STATUS') | translate }}</option>
+            <option [value]="option.value">{{ option.label }}</option>
             }
           </select>
           <select name="incidentSeverity" [(ngModel)]="incidentFilters.severity">
             @for (option of severityOptions; track option.value) {
-            <option [value]="option.value">{{ (option.value ? 'INCIDENTS.SEVERITY.' + option.value : 'INCIDENTS.FILTERS.ALL_SEVERITIES') | translate }}</option>
+            <option [value]="option.value">{{ option.label }}</option>
             }
           </select>
           <select name="incidentTypeFilter" [(ngModel)]="incidentFilters.incidentTypeId">
-            <option value="">{{ 'INCIDENTS.FILTERS.ALL_TYPES' | translate }}</option>
+            <option value="">Todos los tipos</option>
             @for (type of incidentTypes; track type.id) {
             <option [value]="type.id">{{ type.name }}</option>
             }
           </select>
           <select name="incidentCreatorFilter" [(ngModel)]="incidentFilters.createdById">
-            <option value="">{{ 'INCIDENTS.FILTERS.ALL_USERS' | translate }}</option>
+            <option value="">Todos los usuarios</option>
             @for (user of users; track user.id) {
             <option [value]="user.id">{{ user.name }}</option>
             }
@@ -70,19 +70,19 @@
 
         <div class="incident-filters-row incident-date-row">
           <div class="date-filter-field">
-            <span class="date-field-label">{{ 'INCIDENTS.FILTERS.FROM' | translate }}</span>
+            <span class="date-field-label">Desde</span>
             <input type="date" name="incidentFrom" [(ngModel)]="incidentFilters.from" />
           </div>
           <span>—</span>
           <div class="date-filter-field">
-            <span class="date-field-label">{{ 'INCIDENTS.FILTERS.TO' | translate }}</span>
+            <span class="date-field-label">Hasta</span>
             <input type="date" name="incidentTo" [(ngModel)]="incidentFilters.to" />
           </div>
           <button class="toolbar-btn btn-incident-secondary" type="button" (click)="clearIncidentFilters()" [disabled]="!hasIncidentFilters()">
-            {{ 'INCIDENTS.ACTIONS.CLEAR' | translate }}
+            Limpiar
           </button>
           <button class="toolbar-btn btn-incident-primary" type="button" (click)="loadIncidents(true)">
-            {{ 'INCIDENTS.ACTIONS.FILTER' | translate }}
+            Filtrar
           </button>
         </div>
       </div>
@@ -92,15 +92,15 @@
         <table class="incident-table">
           <thead>
             <tr>
-              <th>{{ 'INCIDENTS.TABLE.ID' | translate }}</th>
-              <th>{{ 'INCIDENTS.TABLE.TITLE' | translate }}</th>
-              <th>{{ 'INCIDENTS.TABLE.TYPE' | translate }}</th>
-              <th>{{ 'INCIDENTS.TABLE.STATUS' | translate }}</th>
-              <th>{{ 'INCIDENTS.TABLE.SEVERITY' | translate }}</th>
-              <th>{{ 'INCIDENTS.TABLE.CREATED_BY' | translate }}</th>
-              <th>{{ 'INCIDENTS.TABLE.DATE' | translate }}</th>
-              <th>{{ 'INCIDENTS.TABLE.CHAT' | translate }}</th>
-              <th>{{ 'INCIDENTS.TABLE.ACTIONS' | translate }}</th>
+              <th>ID</th>
+              <th>Título</th>
+              <th>Tipo</th>
+              <th>Estado</th>
+              <th>Severidad</th>
+              <th>Creado por</th>
+              <th>Fecha</th>
+              <th>Chat</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -118,7 +118,7 @@
                   <div class="incident-title-cell">
                     <strong>{{ incident.title }}</strong>
                     @if (incident.relatedTeacher) {
-                    <span>{{ 'INCIDENTS.TABLE.RESPONSIBLE' | translate }}: {{ incident.relatedTeacher.name }}</span>
+                    <span>Responsable: {{ incident.relatedTeacher.name }}</span>
                     }
                   </div>
                 </td>
@@ -130,7 +130,7 @@
                 <td><span class="incident-count">{{ incident.chatMessageCount || 0 }}</span></td>
                 <td>
                   <div class="incident-actions">
-                    <button class="toolbar-btn btn-incident-secondary toolbar-btn-small" type="button" (click)="$event.stopPropagation(); openIncidentDetail(incident.id)">{{ 'INCIDENTS.ACTIONS.VIEW' | translate }}</button>
+                    <button class="toolbar-btn btn-incident-secondary toolbar-btn-small" type="button" (click)="$event.stopPropagation(); openIncidentDetail(incident.id)">Ver</button>
                   </div>
                 </td>
               </tr>
@@ -141,8 +141,8 @@
             <tr>
               <td colspan="9">
                 <div class="empty-state-card">
-                  <h3>{{ 'INCIDENTS.MESSAGES.EMPTY' | translate }}</h3>
-                  <p>{{ 'INCIDENTS.MESSAGES.EMPTY_HINT' | translate }}</p>
+                  <h3>No hay incidencias</h3>
+                  <p>Crea una nueva incidencia o ajusta los filtros para encontrar resultados.</p>
                 </div>
               </td>
             </tr>
@@ -170,7 +170,7 @@
               <p>{{ incident.incidentType.name || '-' }} · {{ incident.createdBy.name || '-' }}</p>
               <div class="incident-mobile-meta">
                 <span class="incident-pill incident-pill-soft {{ incidentSeverityClass(incident.severity) }}">{{ formatSeverity(incident.severity) }}</span>
-                <span class="incident-count">{{ incident.chatMessageCount || 0 }} {{ 'INCIDENTS.CHAT.MESSAGES' | translate }}</span>
+                <span class="incident-count">{{ incident.chatMessageCount || 0 }} mensajes</span>
               </div>
             </div>
           </article>
@@ -178,8 +178,8 @@
 
           @if (!loadingIncidents && incidents.length === 0) {
           <div class="empty-state-card">
-            <h3>{{ 'INCIDENTS.MESSAGES.EMPTY' | translate }}</h3>
-            <p>{{ 'INCIDENTS.MESSAGES.EMPTY_HINT' | translate }}</p>
+            <h3>No hay incidencias</h3>
+            <p>Crea una nueva incidencia o ajusta los filtros para encontrar resultados.</p>
           </div>
           }
         }
@@ -187,9 +187,9 @@
 
       @if (incidentsPage && incidentsPage.totalPages > 1) {
       <div class="pagination-bar">
-        <button class="toolbar-btn btn-incident-secondary toolbar-btn-small" type="button" (click)="prevPage()" [disabled]="incidentsPage.first">{{ 'COMMON.PREVIOUS' | translate }}</button>
-        <span>{{ 'COMMON.PAGE_INFO' | translate:{page: (incidentFilters.page || 0) + 1, total: incidentsPage.totalPages} }}</span>
-        <button class="toolbar-btn btn-incident-secondary toolbar-btn-small" type="button" (click)="nextPage()" [disabled]="incidentsPage.last">{{ 'COMMON.NEXT' | translate }}</button>
+        <button class="toolbar-btn btn-incident-secondary toolbar-btn-small" type="button" (click)="prevPage()" [disabled]="incidentsPage.first">Anterior</button>
+        <span>Página {{ (incidentFilters.page || 0) + 1 }} de {{ incidentsPage.totalPages }}</span>
+        <button class="toolbar-btn btn-incident-secondary toolbar-btn-small" type="button" (click)="nextPage()" [disabled]="incidentsPage.last">Siguiente</button>
       </div>
       }
     </section>
@@ -198,7 +198,7 @@
     @if (activeTab === 'types' && canManageTypes()) {
     <section class="tabla-contenedor incidents-panel tab-switch-anim">
       <div class="types-toolbar">
-        <button class="toolbar-btn btn-incident-primary" type="button" (click)="openTypeModal()">{{ 'INCIDENTS.ACTIONS.NEW_TYPE' | translate }}</button>
+        <button class="toolbar-btn btn-incident-primary" type="button" (click)="openTypeModal()">Nuevo tipo</button>
       </div>
 
       <div class="types-grid">
@@ -214,16 +214,16 @@
             <div class="type-card-head">
               <div>
                 <h3>{{ type.name }}</h3>
-                <p>{{ type.description || ('INCIDENTS.MESSAGES.NO_DESCRIPTION' | translate) }}</p>
+                <p>{{ type.description || 'Sin descripción' }}</p>
               </div>
               <span class="incident-pill {{ incidentTypeActive(type) ? 'status-open' : 'status-closed' }}">
-                {{ incidentTypeActive(type) ? ('INCIDENTS.STATUS.ACTIVE' | translate) : ('INCIDENTS.STATUS.INACTIVE' | translate) }}
+                {{ incidentTypeActive(type) ? 'Activo' : 'Inactivo' }}
               </span>
             </div>
             <div class="type-card-actions">
-              <button class="toolbar-btn btn-incident-secondary toolbar-btn-small" type="button" (click)="openTypeModal(type)">{{ 'INCIDENTS.ACTIONS.EDIT' | translate }}</button>
+              <button class="toolbar-btn btn-incident-secondary toolbar-btn-small" type="button" (click)="openTypeModal(type)">Editar</button>
               <button class="toolbar-btn btn-incident-secondary toolbar-btn-small" type="button" (click)="toggleType(type)">
-                {{ incidentTypeActive(type) ? ('INCIDENTS.ACTIONS.DEACTIVATE' | translate) : ('INCIDENTS.ACTIONS.ACTIVATE' | translate) }}
+                {{ incidentTypeActive(type) ? 'Desactivar' : 'Activar' }}
               </button>
             </div>
           </article>
@@ -236,10 +236,10 @@
 </section>
 
 @if (showCreateModal) {
-<app-base-modal [title]="'INCIDENTS.MODALS.CREATE_TITLE' | translate" size="lg" (closed)="showCreateModal = false">
+<app-base-modal title="Nueva incidencia" size="lg" (closed)="showCreateModal = false">
   <div class="modal-form-grid">
     <label>
-      <span>{{ 'INCIDENTS.FORM.TYPE' | translate }}</span>
+      <span>Tipo</span>
       <select name="createIncidentType" [(ngModel)]="incidentForm.incidentTypeId">
         @for (type of activeIncidentTypes; track type.id) {
         <option [value]="type.id">{{ type.name }}</option>
@@ -247,46 +247,46 @@
       </select>
     </label>
     <label class="span-2">
-      <span>{{ 'INCIDENTS.FORM.TITLE' | translate }}</span>
-      <input type="text" name="createIncidentTitle" [(ngModel)]="incidentForm.title" maxlength="255" [placeholder]="'INCIDENTS.FORM.TITLE_PLACEHOLDER' | translate" />
+      <span>Título</span>
+      <input type="text" name="createIncidentTitle" [(ngModel)]="incidentForm.title" maxlength="255" placeholder="Ej: Producto en mal estado en cámara 2" />
     </label>
     <label class="span-2">
-      <span>{{ 'INCIDENTS.FORM.DESCRIPTION' | translate }}</span>
-      <textarea name="createIncidentDescription" [(ngModel)]="incidentForm.description" rows="6" maxlength="5000" [placeholder]="'INCIDENTS.FORM.DESCRIPTION_PLACEHOLDER' | translate"></textarea>
+      <span>Descripción</span>
+      <textarea name="createIncidentDescription" [(ngModel)]="incidentForm.description" rows="6" maxlength="5000" placeholder="Detalla qué ocurrió, cuándo se detectó y el impacto observado."></textarea>
     </label>
   </div>
   <div modal-footer>
-    <button class="toolbar-btn btn-incident-ghost" type="button" (click)="showCreateModal = false">{{ 'INCIDENTS.ACTIONS.CANCEL' | translate }}</button>
+    <button class="toolbar-btn btn-incident-ghost" type="button" (click)="showCreateModal = false">Cancelar</button>
     <button class="toolbar-btn btn-incident-primary" type="button" (click)="saveIncident()" [disabled]="creatingIncident">
-      {{ creatingIncident ? ('INCIDENTS.MESSAGES.SAVING' | translate) : ('INCIDENTS.ACTIONS.CREATE' | translate) }}
+      {{ creatingIncident ? 'Guardando...' : 'Crear incidencia' }}
     </button>
   </div>
 </app-base-modal>
 }
 
 @if (showTypeModal) {
-<app-base-modal [title]="editingType ? ('INCIDENTS.MODALS.EDIT_TYPE_TITLE' | translate) : ('INCIDENTS.MODALS.NEW_TYPE_TITLE' | translate)" size="md" (closed)="showTypeModal = false">
+<app-base-modal [title]="editingType ? 'Editar tipo' : 'Nuevo tipo'" size="md" (closed)="showTypeModal = false">
   <div class="modal-form-grid">
     <label class="span-2">
-      <span>{{ 'INCIDENTS.MODALS.TYPE_NAME' | translate }}</span>
-      <input type="text" name="typeName" [(ngModel)]="typeForm.name" maxlength="100" [placeholder]="'INCIDENTS.FORM.NAME_PLACEHOLDER' | translate" />
+      <span>Nombre</span>
+      <input type="text" name="typeName" [(ngModel)]="typeForm.name" maxlength="100" placeholder="Ej: Contaminación cruzada" />
     </label>
     <label class="span-2">
-      <span>{{ 'INCIDENTS.MODALS.TYPE_DESC' | translate }}</span>
-      <textarea name="typeDescription" [(ngModel)]="typeForm.description" rows="4" maxlength="500" [placeholder]="'INCIDENTS.FORM.TYPE_DESCRIPTION_PLACEHOLDER' | translate"></textarea>
+      <span>Descripción</span>
+      <textarea name="typeDescription" [(ngModel)]="typeForm.description" rows="4" maxlength="500" placeholder="Describe cuándo aplica este tipo de incidencia."></textarea>
     </label>
   </div>
   <div modal-footer>
-    <button class="toolbar-btn btn-incident-ghost" type="button" (click)="showTypeModal = false">{{ 'INCIDENTS.ACTIONS.CANCEL' | translate }}</button>
+    <button class="toolbar-btn btn-incident-ghost" type="button" (click)="showTypeModal = false">Cancelar</button>
     <button class="toolbar-btn btn-incident-primary" type="button" (click)="saveType()" [disabled]="savingType">
-      {{ savingType ? ('INCIDENTS.MESSAGES.SAVING' | translate) : ('INCIDENTS.ACTIONS.SAVE' | translate) }}
+      {{ savingType ? 'Guardando...' : 'Guardar' }}
     </button>
   </div>
 </app-base-modal>
 }
 
 @if (showIncidentDetailModal && selectedIncident) {
-<app-base-modal [title]="'INCIDENTS.TITLE.ID' | translate:{id: selectedIncident.id}" size="fullscreen" (closed)="closeIncidentDetail()">
+<app-base-modal [title]="'Incidencia #' + selectedIncident.id" size="fullscreen" (closed)="closeIncidentDetail()">
   <div class="detail-shell">
     <section class="detail-main">
       <div class="detail-header">
@@ -302,36 +302,36 @@
       </div>
 
       <div class="detail-tabs">
-        <button type="button" class="detail-tab" [class.active]="detailTab === 'summary'" (click)="setDetailTab('summary')">{{ 'INCIDENTS.TABS.SUMMARY' | translate }}</button>
-        <button type="button" class="detail-tab" [class.active]="detailTab === 'chat'" (click)="setDetailTab('chat')">{{ 'INCIDENTS.TABS.CHAT' | translate }} ({{ selectedIncident.chatMessageCount || chatMessages.length }})</button>
-        <button type="button" class="detail-tab" [class.active]="detailTab === 'audits'" (click)="setDetailTab('audits')">{{ 'INCIDENTS.TABS.AUDITS' | translate }} ({{ selectedIncident.attachedAudits.length || 0 }})</button>
+        <button type="button" class="detail-tab" [class.active]="detailTab === 'summary'" (click)="setDetailTab('summary')">Resumen</button>
+        <button type="button" class="detail-tab" [class.active]="detailTab === 'chat'" (click)="setDetailTab('chat')">Chat ({{ selectedIncident.chatMessageCount || chatMessages.length }})</button>
+        <button type="button" class="detail-tab" [class.active]="detailTab === 'audits'" (click)="setDetailTab('audits')">Auditorías ({{ selectedIncident.attachedAudits.length || 0 }})</button>
       </div>
 
       @if (detailTab === 'summary') {
       <div class="summary-grid detail-tab-panel">
         <article class="summary-card">
-          <span class="summary-label">{{ 'INCIDENTS.DETAIL.CREATED_BY' | translate }}</span>
+          <span class="summary-label">Creada por</span>
           <strong>{{ selectedIncident.createdBy.name || '-' }}</strong>
           <p>{{ formatFullDate(selectedIncident.createdAt) }}</p>
         </article>
         <article class="summary-card">
-          <span class="summary-label">{{ 'INCIDENTS.DETAIL.RESPONSIBLE' | translate }}</span>
-          <strong>{{ selectedIncident.relatedTeacher?.name || ('INCIDENTS.MESSAGES.PENDING' | translate) }}</strong>
-          <p>{{ 'INCIDENTS.DETAIL.RESPONSIBLE_HINT' | translate }}</p>
+          <span class="summary-label">Responsable</span>
+          <strong>{{ selectedIncident.relatedTeacher?.name || 'Sin asignar' }}</strong>
+          <p>Teacher / follow-up</p>
         </article>
         <article class="summary-card">
-          <span class="summary-label">{{ 'INCIDENTS.DETAIL.OPENING' | translate }}</span>
+          <span class="summary-label">Apertura</span>
           <strong>{{ formatFullDate(selectedIncident.openedAt) }}</strong>
-          <p>{{ selectedIncident.openedBy?.name || ('INCIDENTS.DETAIL.PENDING' | translate) }}</p>
+          <p>{{ selectedIncident.openedBy?.name || 'Pendiente' }}</p>
         </article>
         <article class="summary-card">
-          <span class="summary-label">{{ 'INCIDENTS.DETAIL.CLOSING' | translate }}</span>
+          <span class="summary-label">Cierre</span>
           <strong>{{ formatFullDate(selectedIncident.closedAt) }}</strong>
-          <p>{{ selectedIncident.closedBy?.name || ('INCIDENTS.DETAIL.PENDING' | translate) }}</p>
+          <p>{{ selectedIncident.closedBy?.name || 'Pendiente' }}</p>
         </article>
         <article class="summary-card span-2">
-          <span class="summary-label">{{ 'INCIDENTS.DETAIL.RESOLUTION' | translate }}</span>
-          <strong>{{ selectedIncident.resolution || ('INCIDENTS.MESSAGES.NO_RESOLUTION' | translate) }}</strong>
+          <span class="summary-label">Resolución</span>
+          <strong>{{ selectedIncident.resolution || 'Sin resolución' }}</strong>
         </article>
         @if (isAdminUser) {
         <article class="summary-card span-2 summary-mobile-actions">
@@ -343,7 +343,7 @@
               <line x1="16" y1="17" x2="8" y2="17" />
               <polyline points="10 9 9 9 8 9" />
             </svg>
-            {{ 'INCIDENTS.ACTIONS.EXPORT' | translate }}
+            Exportar
           </button>
         </article>
         }
@@ -352,11 +352,11 @@
 
       @if (detailTab === 'chat') {
       <div class="chat-section detail-tab-panel">
-        <div class="chat-viewport" [class.chat-viewport-empty]="chatMessages.length === 0">
-          @if (loadingChat) {
-          <div class="chat-status-msg">{{ 'INCIDENTS.MESSAGES.LOADING_CHAT' | translate }}</div>
+        <div class="chat-list">
+          @if (loadingChat && chatMessages.length === 0) {
+            <div class="chat-empty">Cargando conversación...</div>
           } @else if (chatMessages.length === 0) {
-          <div class="chat-status-msg">{{ 'INCIDENTS.MESSAGES.EMPTY_CHAT' | translate }}</div>
+            <div class="chat-empty">Todavía no hay mensajes.</div>
           } @else {
             @for (message of chatMessages; track message.id) {
             <article #chatMessageItem class="chat-message" [attr.data-message-id]="message.id" [class.chat-message-own]="isOwnChatMessage(message)" [class.chat-message-new]="message.id === latestChatMessageId">
@@ -364,35 +364,28 @@
                 <strong>{{ message.authorName }}</strong>
                 <span>{{ formatFullDate(message.createdAt) }}</span>
               </div>
-              <p>{{ message.content || ('INCIDENTS.CHAT.NO_CONTENT' | translate) }}</p>
-              @if (message.attachmentFilename) {
-                <div class="message-attachment">
-                  @if (isImageAttachment(message)) {
-                  <div class="attachment-image-box" (click)="openImageZoom(getChatImagePreviewUrl(message.id)!, message.attachmentFilename)">
-                    @if (isChatImageLoading(message.id)) {
-                    <div class="attachment-image-placeholder">{{ 'INCIDENTS.CHAT.LOAD_IMAGE' | translate }}</div>
-                    }
-                    @if (getChatImagePreviewUrl(message.id)) {
-                    <img [src]="getChatImagePreviewUrl(message.id)" [alt]="message.attachmentFilename" loading="lazy" />
-                    }
-                    <div class="attachment-image-overlay">
-                      <span>{{ 'INCIDENTS.CHAT.DOWNLOAD_ORIGINAL' | translate }}</span>
-                    </div>
-                  </div>
-                  } @else {
-                  <div class="attachment-file-box" (click)="downloadAttachment(message)">
-                    <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
-                      <polyline points="13 2 13 9 20 9" />
-                    </svg>
-                    <div class="attachment-file-info">
-                      <span class="file-name" [title]="message.attachmentFilename">{{ message.attachmentFilename }}</span>
-                      <span class="file-action">{{ 'INCIDENTS.CHAT.DOWNLOAD_FILE' | translate:{name: ''} }}</span>
-                    </div>
-                  </div>
+              <p>{{ message.content || 'Sin texto' }}</p>
+              @if (message.hasAttachment && message.attachmentFilename) {
+                @if (isImageAttachment(message)) {
+                <div class="chat-image-preview-wrap">
+                  @if (isChatImageLoading(message.id)) {
+                  <div class="chat-image-loading">Cargando imagen...</div>
                   }
+                  @if (getChatImagePreviewUrl(message.id); as previewUrl) {
+                  <button class="chat-image-preview-btn" type="button" (click)="openImageZoom(previewUrl, message.attachmentFilename || 'Adjunto')">
+                    <img class="chat-image-preview" [src]="previewUrl" [alt]="message.attachmentFilename" />
+                  </button>
+                  }
+                  <button class="toolbar-btn btn-incident-ghost toolbar-btn-small" type="button" (click)="downloadAttachment(message)">
+                    Descargar original
+                  </button>
                 </div>
+                } @else {
+                <button class="toolbar-btn btn-incident-ghost toolbar-btn-small" type="button" (click)="downloadAttachment(message)">
+                  Descargar {{ message.attachmentFilename }}
+                </button>
                 }
+              }
 
               @if (isOwnChatMessage(message)) {
               <div class="chat-read-state" [class.chat-read-state-read]="isMessageReadByOthers(message)" [attr.title]="messageReadByLabel(message)">
@@ -408,7 +401,7 @@
                   <line x1="2" y1="2" x2="22" y2="22"/>
                 </svg>
                 }
-                <span>{{ (isMessageReadByOthers(message) ? 'INCIDENTS.CHAT.READ' : 'INCIDENTS.CHAT.SENT') | translate }}</span>
+                <span>{{ isMessageReadByOthers(message) ? 'Leido' : 'Enviado' }}</span>
               </div>
               }
             </article>
@@ -416,98 +409,79 @@
           }
         </div>
 
+        @if (!isClosed(selectedIncident.status)) {
+        @if (chatFile) {
+        <div class="chat-file-attached-preview">
+          @if (chatFilePreviewUrl) {
+          <article class="chat-file-preview-card">
+            <div class="chat-file-preview-media">
+              <img [src]="chatFilePreviewUrl" [alt]="chatFile.name" class="chat-file-preview-img" />
+            </div>
+            <div class="chat-file-preview-info">
+              <strong>{{ chatFile.name }}</strong>
+              <span>{{ (chatFile.size / 1024).toFixed(2) }} KB</span>
+            </div>
+            <button class="chat-file-remove-btn" type="button" (click)="removeChatFile()" title="Eliminar archivo">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </article>
+          } @else {
+          <article class="chat-file-preview-other">
+            <svg class="chat-file-preview-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+              <polyline points="13 2 13 9 20 9"/>
+            </svg>
+            <div class="chat-file-preview-info">
+              <strong>{{ chatFile.name }}</strong>
+              <span>{{ (chatFile.size / 1024).toFixed(2) }} KB</span>
+            </div>
+            <button class="chat-file-remove-btn" type="button" (click)="removeChatFile()" title="Eliminar archivo">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </article>
+          }
+        </div>
+        }
+
+        @if (compressingChatFile) {
+        <div class="chat-typing-indicator">Optimizando imagen...</div>
+        }
+
         @if (typingIndicatorText()) {
         <div class="chat-typing-indicator">{{ typingIndicatorText() }}</div>
         }
 
-        @if (isClosed(selectedIncident.status)) {
-        <div class="chat-locked-info">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-          </svg>
-          {{ 'INCIDENTS.MESSAGES.LOCKED' | translate }}
+        <div class="chat-composer">
+          <input #chatFileInput type="file" class="chat-file-input" (change)="onChatFileSelected($event)" />
+          <input #chatCameraInput type="file" class="chat-file-input" accept="image/*" capture="environment" (change)="onChatFileSelected($event)" />
+          <textarea name="chatContent" [(ngModel)]="chatContent" (ngModelChange)="onChatInputChanged($event)" (blur)="onChatInputBlur()" rows="1" placeholder="Mensaje" (keydown)="onChatKeydown($event)" [disabled]="sendingChat || compressingChatFile"></textarea>
+          <button class="chat-action-btn" type="button" (click)="chatFileInput.click()" title="Adjuntar archivo" [disabled]="sendingChat || compressingChatFile">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+            </svg>
+          </button>
+          <button class="chat-action-btn" type="button" (click)="chatCameraInput.click()" title="Tomar foto" [disabled]="sendingChat || compressingChatFile">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+              <circle cx="12" cy="13" r="3"/>
+            </svg>
+          </button>
+          <button class="chat-action-btn chat-send-btn" type="button" (click)="sendChatMessage()" [disabled]="sendingChat || compressingChatFile" title="Enviar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
         </div>
         } @else {
-        <div class="chat-composer">
-          @if (compressingChatFile) {
-          <div class="composer-overlay">
-            <div class="spinner-small"></div>
-            <span>{{ 'INCIDENTS.CHAT.OPTIMIZING' | translate }}</span>
-          </div>
-          }
-
-          @if (chatFile) {
-          <div class="chat-file-attached-preview">
-            @if (chatFilePreviewUrl) {
-            <article class="chat-file-preview-card">
-              <div class="chat-file-preview-media">
-                <img [src]="chatFilePreviewUrl" [alt]="chatFile.name" class="chat-file-preview-img" />
-              </div>
-              <div class="chat-file-preview-info">
-                <strong>{{ chatFile.name }}</strong>
-                <span>{{ (chatFile.size / 1024).toFixed(2) }} KB</span>
-              </div>
-              <button class="chat-file-remove-btn" type="button" (click)="removeChatFile()" [title]="'INCIDENTS.ACTIONS.REMOVE_FILE' | translate">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"/>
-                  <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              </button>
-            </article>
-            } @else {
-            <article class="chat-file-preview-other">
-              <svg class="chat-file-preview-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
-                <polyline points="13 2 13 9 20 9"/>
-              </svg>
-              <div class="chat-file-preview-info">
-                <strong>{{ chatFile.name }}</strong>
-                <span>{{ (chatFile.size / 1024).toFixed(2) }} KB</span>
-              </div>
-              <button class="chat-file-remove-btn" type="button" (click)="removeChatFile()" [title]="'INCIDENTS.ACTIONS.REMOVE_FILE' | translate">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"/>
-                  <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              </button>
-            </article>
-            }
-          </div>
-          }
-
-          @if (compressingChatFile) {
-            <div class="chat-typing-indicator">{{ 'INCIDENTS.CHAT.OPTIMIZING' | translate }}</div>
-          }
-
-          @if (typingIndicatorText()) {
-            <div class="chat-typing-indicator">{{ typingIndicatorText() }}</div>
-          }
-
-          <div class="chat-composer">
-            <input #chatFileInput type="file" class="chat-file-input" (change)="onChatFileSelected($event)" hidden />
-            <input #chatCameraInput type="file" class="chat-file-input" accept="image/*" capture="environment" (change)="onChatFileSelected($event)" hidden />
-            
-            <textarea name="chatContent" [(ngModel)]="chatContent" (ngModelChange)="onChatInputChanged($event)" (blur)="onChatInputBlur()" rows="1" [placeholder]="'INCIDENTS.CHAT.PLACEHOLDER' | translate" (keydown)="onChatKeydown($event)" [disabled]="sendingChat || compressingChatFile"></textarea>
-            
-            <button class="chat-action-btn" type="button" (click)="chatFileInput.click()" [title]="'INCIDENTS.CHAT.ATTACH_FILE' | translate" [disabled]="sendingChat || compressingChatFile">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-              </svg>
-            </button>
-            <button class="chat-action-btn" type="button" (click)="chatCameraInput.click()" [title]="'INCIDENTS.CHAT.TAKE_PHOTO' | translate" [disabled]="sendingChat || compressingChatFile">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
-                <circle cx="12" cy="13" r="3"/>
-              </svg>
-            </button>
-            <button class="chat-action-btn chat-send-btn" type="button" (click)="sendChatMessage()" [disabled]="sendingChat || compressingChatFile || (!chatContent.trim() && !chatFile)" [title]="'INCIDENTS.CHAT.SEND' | translate">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="22" y1="2" x2="11" y2="13"/>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-              </svg>
-            </button>
-          </div>
+        <div class="chat-locked-msg">
+          La incidencia esta cerrada. No se pueden enviar nuevos mensajes.
         </div>
         }
       </div>
@@ -517,24 +491,24 @@
       <div class="audits-section detail-tab-panel">
         <div class="audits-toolbar">
           <button class="toolbar-btn btn-incident-primary" type="button" (click)="openAttachModal()" [disabled]="isClosed(selectedIncident.status)">
-            {{ 'INCIDENTS.ACTIONS.ATTACH_AUDITS' | translate }}
+            Adjuntar auditorías
           </button>
         </div>
 
         <div class="audit-list">
           @if (selectedIncident.attachedAudits.length === 0) {
-          <div class="chat-empty">{{ 'INCIDENTS.MESSAGES.ATTACH_EMPTY' | translate }}</div>
+          <div class="chat-empty">No hay auditorías adjuntas.</div>
           } @else {
             @for (attachment of selectedIncident.attachedAudits; track attachment.id) {
             <article class="audit-card">
               <div>
-                <strong>#{{ attachment.cookingAuditId }} - {{ attachment.recipeName || ('INCIDENTS.MESSAGES.NO_TRACE' | translate) }}</strong>
+                <strong>#{{ attachment.cookingAuditId }} - {{ attachment.recipeName || 'Auditoría' }}</strong>
                 <p>{{ formatFullDate(attachment.cookingDate) }} · {{ attachment.userName || '-' }} · {{ attachmentQuantity(attachment) }}</p>
               </div>
               <div class="audit-card-actions">
-                <span class="incident-pill {{ attachment.reverted ? 'status-closed' : 'status-open' }}">{{ attachment.reverted ? ('INCIDENTS.MESSAGES.AUDIT_REVERTED' | translate) : ('INCIDENTS.MESSAGES.AUDIT_ACTIVE' | translate) }}</span>
+                <span class="incident-pill {{ attachment.reverted ? 'status-closed' : 'status-open' }}">{{ attachment.reverted ? 'Revertida' : 'Activa' }}</span>
                 @if (isAdminUser && !attachment.reverted) {
-                <button class="toolbar-btn btn-incident-ghost toolbar-btn-small" type="button" (click)="openRevertModal(attachment)">{{ 'INCIDENTS.ACTIONS.REVERT' | translate }}</button>
+                <button class="toolbar-btn btn-incident-ghost toolbar-btn-small" type="button" (click)="openRevertModal(attachment)">Revertir</button>
                 }
               </div>
             </article>
@@ -550,10 +524,10 @@
       <div class="side-card">
         <div class="side-actions">
           @if (isAdminUser && selectedIncident.status === 'CREADO') {
-          <button class="toolbar-btn btn-incident-primary" type="button" (click)="openOpenModal()">{{ 'INCIDENTS.ACTIONS.OPEN' | translate }}</button>
+          <button class="toolbar-btn btn-incident-primary" type="button" (click)="openOpenModal()">Abrir</button>
           }
           @if (isAdminUser && selectedIncident.status === 'ABIERTO') {
-          <button class="toolbar-btn btn-incident-primary" type="button" (click)="openCloseModal()">{{ 'INCIDENTS.ACTIONS.CLOSE' | translate }}</button>
+          <button class="toolbar-btn btn-incident-primary" type="button" (click)="openCloseModal()">Cerrar</button>
           }
           @if (isAdminUser) {
           <button class="toolbar-btn btn-pdf" type="button" (click)="exportPdf()">
@@ -564,7 +538,7 @@
               <line x1="16" y1="17" x2="8" y2="17" />
               <polyline points="10 9 9 9 8 9" />
             </svg>
-            {{ 'INCIDENTS.ACTIONS.EXPORT' | translate }}
+            Exportar
           </button>
           }
         </div>
@@ -572,15 +546,15 @@
       }
 
       <div class="side-card side-card-audits">
-        <h3>{{ 'INCIDENTS.DETAIL.ATTACHED_AUDITS' | translate }}</h3>
+        <h3>Auditorías adjuntas</h3>
         <ul class="compact-list">
           @if (selectedIncident.attachedAudits.length === 0) {
-          <li>{{ 'INCIDENTS.MESSAGES.NO_AUDITS' | translate }}</li>
+          <li>No hay auditorías.</li>
           } @else {
             @for (attachment of selectedIncident.attachedAudits; track attachment.id) {
             <li>
               <span>#{{ attachment.cookingAuditId }}</span>
-              <span>{{ attachment.reverted ? ('INCIDENTS.MESSAGES.AUDIT_REVERTED' | translate) : ('INCIDENTS.MESSAGES.AUDIT_ACTIVE' | translate) }}</span>
+              <span>{{ attachment.reverted ? 'Revertida' : 'Activa' }}</span>
             </li>
             }
           }
@@ -594,63 +568,62 @@
 @if (zoomImageUrl) {
 <div class="image-zoom-overlay" (click)="closeImageZoom()">
   <div class="image-zoom-content" (click)="$event.stopPropagation()">
-    <button class="image-zoom-close" type="button" (click)="closeImageZoom()">{{ 'INCIDENTS.ACTIONS.CLOSE' | translate }}</button>
+    <button class="image-zoom-close" type="button" (click)="closeImageZoom()">Cerrar</button>
     <img class="image-zoom-img" [src]="zoomImageUrl" [alt]="zoomImageAlt" />
   </div>
 </div>
 }
 
 @if (showOpenModal) {
-<app-base-modal [title]="'INCIDENTS.MODALS.OPEN_TITLE' | translate" size="md" (closed)="showOpenModal = false">
+<app-base-modal title="Abrir incidencia" size="md" (closed)="showOpenModal = false">
   <div class="modal-form-grid">
     <label class="span-2">
-      <span>{{ 'INCIDENTS.FORM.SEVERITY' | translate }}</span>
+      <span>Severidad</span>
       <select name="openSeverity" [(ngModel)]="openSeverity">
         @for (option of severityOptions; track option.value) {
         @if (option.value) {
-        <option [value]="option.value">{{ 'INCIDENTS.SEVERITY.' + option.value | translate }}</option>
+        <option [value]="option.value">{{ option.label }}</option>
         }
         }
       </select>
     </label>
   </div>
   <div modal-footer>
-    <button class="toolbar-btn btn-incident-ghost" type="button" (click)="showOpenModal = false">{{ 'INCIDENTS.ACTIONS.CANCEL' | translate }}</button>
-    <button class="toolbar-btn btn-incident-primary" type="button" (click)="confirmOpenIncident()" [disabled]="openingIncident">{{ openingIncident ? ('INCIDENTS.MESSAGES.OPENING' | translate) : ('INCIDENTS.ACTIONS.OPEN' | translate) }}</button>
+    <button class="toolbar-btn btn-incident-ghost" type="button" (click)="showOpenModal = false">Cancelar</button>
+    <button class="toolbar-btn btn-incident-primary" type="button" (click)="confirmOpenIncident()" [disabled]="openingIncident">{{ openingIncident ? 'Abriendo...' : 'Abrir' }}</button>
   </div>
 </app-base-modal>
 }
 
 @if (showCloseModal) {
-<app-base-modal [title]="'INCIDENTS.MODALS.CLOSE_TITLE' | translate" size="md" (closed)="showCloseModal = false">
+<app-base-modal title="Cerrar incidencia" size="md" (closed)="showCloseModal = false">
   <div class="modal-form-grid">
     <label class="span-2 toggle-row">
       <input type="checkbox" name="closeHasResolution" [(ngModel)]="closeHasResolution" />
-      <span>{{ 'INCIDENTS.MODALS.CLOSE_WITH_RESOLUTION' | translate }}</span>
+      <span>Cerrar con resolución</span>
     </label>
     @if (closeHasResolution) {
     <label class="span-2">
-      <span>{{ 'INCIDENTS.MODALS.RESOLUTION' | translate }}</span>
-      <textarea name="closeResolution" [(ngModel)]="closeResolution" rows="4" maxlength="1000"></textarea>
+      <span>Resolución</span>
+      <textarea name="closeResolution" [(ngModel)]="closeResolution" rows="5" maxlength="5000"></textarea>
     </label>
     }
   </div>
   <div modal-footer>
-    <button class="toolbar-btn btn-incident-ghost" type="button" (click)="showCloseModal = false">{{ 'INCIDENTS.ACTIONS.CANCEL' | translate }}</button>
-    <button class="toolbar-btn btn-incident-primary" type="button" (click)="confirmCloseIncident()" [disabled]="closingIncident">{{ closingIncident ? ('INCIDENTS.MESSAGES.CLOSING' | translate) : ('INCIDENTS.ACTIONS.CLOSE' | translate) }}</button>
+    <button class="toolbar-btn btn-incident-ghost" type="button" (click)="showCloseModal = false">Cancelar</button>
+    <button class="toolbar-btn btn-incident-primary" type="button" (click)="confirmCloseIncident()" [disabled]="closingIncident">{{ closingIncident ? 'Cerrando...' : 'Cerrar' }}</button>
   </div>
 </app-base-modal>
 }
 
 @if (showAttachModal) {
-<app-base-modal [title]="'INCIDENTS.MODALS.ATTACH_TITLE' | translate" size="lg" (closed)="showAttachModal = false">
-  <div class="attach-container">
-    <div class="attach-list">
-      @if (loadingAttachableAudits) {
-      <div class="chat-empty">{{ 'INCIDENTS.MESSAGES.LOADING_ATTACHABLE' | translate }}</div>
-      } @else if (attachableAudits.length === 0) {
-      <div class="chat-empty">{{ 'INCIDENTS.MESSAGES.NO_ATTACHABLE' | translate }}</div>
-      } @else {
+<app-base-modal title="Adjuntar auditorías" size="lg" (closed)="showAttachModal = false">
+  <div class="attach-modal-body">
+    @if (loadingAttachableAudits) {
+    <div class="chat-empty">Cargando auditorías adjuntables...</div>
+    } @else if (attachableAudits.length === 0) {
+    <div class="chat-empty">No hay auditorías disponibles para adjuntar.</div>
+    } @else {
       <div class="attach-grid">
         @for (audit of attachableAudits; track audit.id) {
         <label class="attach-item" [class.attach-item-selected]="selectedAttachAuditIds.has(audit.id)">
@@ -662,34 +635,30 @@
         </label>
         }
       </div>
-      }
-    </div>
+    }
   </div>
   <div modal-footer>
-    <button class="toolbar-btn btn-incident-ghost" type="button" (click)="showAttachModal = false">{{ 'INCIDENTS.ACTIONS.CANCEL' | translate }}</button>
-    <button class="toolbar-btn btn-incident-primary" type="button" (click)="attachAudits()" [disabled]="attachingAudits || selectedAttachAuditIds.size === 0">
-      {{ attachingAudits ? ('INCIDENTS.MESSAGES.ATTACHING' | translate) : ('INCIDENTS.ACTIONS.ATTACH' | translate) }}
-    </button>
+    <button class="toolbar-btn btn-incident-ghost" type="button" (click)="showAttachModal = false">Cancelar</button>
+    <button class="toolbar-btn btn-incident-primary" type="button" (click)="attachAudits()" [disabled]="attachingAudits">{{ attachingAudits ? 'Adjuntando...' : 'Adjuntar' }}</button>
   </div>
 </app-base-modal>
 }
 
 @if (showRevertModal && auditToRevert) {
-<app-base-modal [title]="'INCIDENTS.MODALS.REVERT_TITLE' | translate" size="md" (closed)="showRevertModal = false">
+<app-base-modal title="Revertir auditoría" size="md" (closed)="showRevertModal = false">
   <div class="modal-form-grid">
-    <div class="span-2 revert-info">
-      <p>{{ 'INCIDENTS.MODALS.REVERT_HINT' | translate }}</p>
+    <div class="span-2 revert-summary">
+      <strong>#{{ auditToRevert.cookingAuditId }} - {{ auditToRevert.recipeName }}</strong>
+      <p>La reversión quedará registrada en la incidencia.</p>
     </div>
     <label class="span-2">
-      <span>{{ 'INCIDENTS.MODALS.REVERT_REASON' | translate }}</span>
-      <textarea name="revertReason" [(ngModel)]="revertReason" rows="4" maxlength="500"></textarea>
+      <span>Motivo</span>
+      <textarea name="revertReason" [(ngModel)]="revertReason" rows="4"></textarea>
     </label>
   </div>
   <div modal-footer>
-    <button class="toolbar-btn btn-incident-ghost" type="button" (click)="showRevertModal = false">{{ 'INCIDENTS.ACTIONS.CANCEL' | translate }}</button>
-    <button class="toolbar-btn btn-incident-primary" type="button" (click)="confirmRevertAttachment()" [disabled]="revertingAudit">
-      {{ revertingAudit ? ('INCIDENTS.MESSAGES.REVERTING' | translate) : ('INCIDENTS.ACTIONS.REVERT' | translate) }}
-    </button>
+    <button class="toolbar-btn btn-incident-ghost" type="button" (click)="showRevertModal = false">Cancelar</button>
+    <button class="toolbar-btn btn-incident-primary" type="button" (click)="confirmRevertAttachment()" [disabled]="revertingAudit">{{ revertingAudit ? 'Revirtiendo...' : 'Revertir' }}</button>
   </div>
 </app-base-modal>
 }
