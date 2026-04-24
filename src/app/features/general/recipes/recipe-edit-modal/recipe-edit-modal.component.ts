@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnInit, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Recipe, RecipeRequest } from '../../../../shared/models/recipe.model';
 import { Product } from '../../../../shared/models/product.model';
 import { Allergen } from '../../../../shared/models/allergen.model';
@@ -24,7 +25,7 @@ interface FormComponent {
 @Component({
   selector: 'app-recipe-edit-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseModalComponent, BarcodeScannerComponent],
+  imports: [CommonModule, FormsModule, BaseModalComponent, BarcodeScannerComponent, TranslateModule, DecimalPipe],
   templateUrl: './recipe-edit-modal.component.html',
   styleUrl: './recipe-edit-modal.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -34,6 +35,7 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
   private allergenService = inject(AllergenService);
   private messageService = inject(MessageService);
   private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
 
   @Input({ required: true }) recipe!: Recipe;
   @Output() close = new EventEmitter<void>();
@@ -172,7 +174,7 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
       },
 
       error: () => {
-        this.messageService.showError('Error al cargar productos');
+        this.messageService.showError(this.translate.instant('COMMON.ERROR_LOADING_PRODUCTS'));
         this.loadingProducts = false;
         this.loadingMoreProducts = false;
         this.cdr.markForCheck();
@@ -189,7 +191,7 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.messageService.showError('Error al cargar alérgenos');
+        this.messageService.showError(this.translate.instant('COMMON.ERROR_LOADING_ALLERGENS'));
         this.loadingAllergens = false;
         this.cdr.markForCheck();
       }
@@ -408,12 +410,12 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
 
   private validateForm(): boolean {
     if (!this.editForm.name.trim()) {
-      this.messageService.showError('El nombre es requerido');
+      this.messageService.showError(this.translate.instant('RECIPES.MESSAGES.NAME_REQUIRED'));
       return false;
     }
 
     if (this.formComponents.length === 0) {
-      this.messageService.showError('Debe agregar al menos un componente');
+      this.messageService.showError(this.translate.instant('RECIPES.MESSAGES.AT_LEAST_ONE_COMPONENT'));
       return false;
     }
 
@@ -421,7 +423,7 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
       c => c.productId === 0 || c.quantity <= 0
     );
     if (invalidComponents) {
-      this.messageService.showError('Todos los componentes deben tener un producto y cantidad válida');
+      this.messageService.showError(this.translate.instant('RECIPES.MESSAGES.INVALID_COMPONENTS'));
       return false;
     }
 
@@ -429,10 +431,13 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
   }
 
   async onToggleHidden(): Promise<void> {
-    const action = this.showingHidden ? 'mostrar' : 'ocultar';
+    const action = this.showingHidden 
+      ? this.translate.instant('RECIPES.MESSAGES.ACTION_SHOW') 
+      : this.translate.instant('RECIPES.MESSAGES.ACTION_HIDE');
+    
     const confirmed = await this.messageService.confirm(
-      `Confirmar ${action}`,
-      `¿Estás seguro de que deseas ${action} la receta "${this.recipe.name}"?`
+      this.translate.instant('RECIPES.MESSAGES.CONFIRM_VISIBILITY_TITLE', { action }),
+      this.translate.instant('RECIPES.MESSAGES.CONFIRM_VISIBILITY_MSG', { action, name: this.recipe.name })
     );
 
     if (confirmed) {
@@ -441,7 +446,9 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
   }
 
   getToggleButtonText(): string {
-    return this.showingHidden ? 'Mostrar' : 'Ocultar';
+    return this.showingHidden 
+      ? this.translate.instant('COMMON.SHOW') 
+      : this.translate.instant('COMMON.HIDE');
   }
 
   getGrossQuantity(net: number, availability?: number): number {
@@ -451,4 +458,3 @@ export class RecipeEditModalComponent implements OnInit, OnDestroy {
     return net * 100 / availability;
   }
 }
-

@@ -11,12 +11,15 @@ import { slideInAnimation } from '../../animations/route-animations';
 import { NotificationService, SessionNotification } from '../../../core/services/notification.service';
 import { PresenceTrackingService } from '../../../core/services/presence-tracking.service';
 import { HttpQueryCacheService } from '../../../core/services/http-query-cache.service';
+import { LanguageService } from '../../../core/services/language.service';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { StorageService } from '../../../core/services/storage.service';
+import { LanguageSelectorComponent } from './language-selector/language-selector.component';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [AsyncPipe, RouterModule, SidebarComponent, BaseModalComponent],
+  imports: [AsyncPipe, RouterModule, SidebarComponent, BaseModalComponent, TranslateModule, LanguageSelectorComponent],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.css',
   animations: [slideInAnimation],
@@ -30,6 +33,8 @@ export class LayoutComponent {
   private notificationService = inject(NotificationService);
   private presenceTrackingService = inject(PresenceTrackingService);
   private httpQueryCacheService = inject(HttpQueryCacheService);
+  private languageService = inject(LanguageService);
+  private translate = inject(TranslateService);
   private storageService = inject(StorageService);
   private destroyRef = inject(DestroyRef);
 
@@ -116,6 +121,8 @@ export class LayoutComponent {
     }
   }
 
+
+
   private navigateWithShortcut(direction: number) {
     if (!this.sidebar) return;
 
@@ -199,7 +206,7 @@ export class LayoutComponent {
   confirmClearCache(): void {
     this.httpQueryCacheService.clearAll();
     this.showClearCacheModal = false;
-    this.messageService.showSuccess('Cache limpiada. Si habias datos antiguos, se recargaran en la siguiente consulta.');
+    this.messageService.showSuccess(this.translate.instant('WELCOME.CACHE_CLEARED_SUCCESS'));
   }
 
   toggleUtilities(): void {
@@ -288,11 +295,11 @@ export class LayoutComponent {
     const diffMinutes = Math.floor(diffMs / 60000);
 
     if (diffMinutes < 1) {
-      return 'Ahora';
+      return this.translate.instant('COMMON.NOW') || 'Ahora';
     }
 
     if (diffMinutes < 60) {
-      return `Hace ${diffMinutes} min`;
+      return this.translate.instant('COMMON.AGO_MINS', { count: diffMinutes }) || `Hace ${diffMinutes} min`;
     }
 
     if (diffMinutes < 24 * 60) {

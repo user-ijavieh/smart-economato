@@ -1,0 +1,533 @@
+
+    
+    Added sacnner modal to base-modal
+    Added utilities to welcomePage
+    Alomejor se tendría que añadir incidencias también
+    Archivos que quedaban sin cambiar de px a rem
+    Centralized utilities css
+    Changed user generator system
+    Diversos fixes del excel
+    El que ponga !importants, va a la hoguera
+    Excel
+    Feat: Añadido "groq"
+    Feat: Añadido grok
+    Feat: Campo de "precio por lote" orientativo
+    Feat: Chat de IA y otros fixes menores
+    Feat: Descarga de PDF de planes semanales
+    Feat: Flujo de planes semanales estilo whizard
+    Feat: Mejorado implementacion de merma
+    Feat: Sistema live-sync y cache
+    Feat: whizard de recetas y otras cositas de productos
+    Feature/dashboard admin
+    Feature/last fixes
+    Fix: Errores provocados por merge
+    Fix: Estilo erroneo
+    Fix: Esttilos responsive y propagacion de stock reservado
+    Fix: Formateo
+    Fix: Responsive y estilos
+    Fix: Selectores html cambiados por customs
+    Fix: Selectores html¡
+    Fix: consumo FEFO pillando stock caducado
+    Fix: overlaps y propagacion de lotquantity
+    Fix: scroll erroneo
+    Fix: typo
+    Fixed overlap modal problem
+    Hotfix; nombre de campos sidebar
+    Improve sidebar configuration icon
+    Integracion de planes semanales a usuario y admin
+    Integrado whizard recetas y "cantidad por lote"
+    Merge branch 'feature/Last-fixes' into feat/planes
+    Merge branch 'feature/dashboard-admin'
+    Merge branch 'master' into feature/Last-fixes
+    Merge branch 'master' into rollback-2
+    Merge branch 'master' of https://github.com/user-ijavieh/smart-economato
+    Merge branch 'master' of https://github.com/user-ijavieh/smart-economato into rollback-2
+    Merge pull request #100 from user-ijavieh/feature/Last-fixes
+    Merge pull request #101 from user-ijavieh/rollback-2
+    Merge pull request #102 from user-ijavieh/feature/dashboard-admin
+    Merge pull request #104 from user-ijavieh/feature/Last-fixes
+    Merge pull request #105 from user-ijavieh/rollback-2
+    Merge pull request #106 from user-ijavieh/feature/dashboard-admin
+    Merge pull request #107 from user-ijavieh/feature/Last-fixes
+    Merge pull request #108 from user-ijavieh/fix/selectores-custom
+    Merge pull request #109 from user-ijavieh/feature/Last-fixes
+    Merge pull request #110 from user-ijavieh/feature/dashboard-admin
+    Merge pull request #112 from user-ijavieh/fix/selectores-custom
+    Merge pull request #96 from user-ijavieh/feat/planes
+    Merge pull request #97 from user-ijavieh/feature/Last-fixes
+    Merge pull request #98 from user-ijavieh/feature/Last-fixes
+    Merge pull request #99 from user-ijavieh/rollback-2
+    Muchos fixes
+    PDF de planes
+    Real-Time Sync
+    Removed a boton on welcome
+    Rollback 2
+    Styles: Responsive mobile fix and centralized light theme css
+    Updated change-password page on light mode
+    Updated z-index of messageService modals
+    Weekly plan updated
+    adios top usuarios
+    algunas mejoras de estilos en el dashborad-management (...queda pendiente seguir con estilos y que mostrar)
+    changed a feature from features to features/admin
+    dashboard terminado a falta de revision
+    dashboard-admin en construccion...
+    deleted many !importants
+    feature: new hamburguer sidebar
+    fix(sidebar): Changed "profile" button and visibility
+    fix: SubModals hide previous modal
+    hay algo que modifico del layout... Javi mira si tienes que cancelar esas modificaciones porfa
+    hotfix: many warnings caused by "bad" imports
+    hotfix: palabras acortadas sin sentido
+    link desde welcome general del boton de panel admin, al dashboard cambiado, ahora entra a las estadisticas del dashboard
+    mejoras en estilos del dashboard
+    new buttons on welcomePage
+    style: fix admin modal close button style
+    styles(login): fixed light mode styles on login pagen
+    styles(logout-modal): updated logout modal
+    styles(notificantiosn): changed styles on light mode
+    styles(orders): chaged dropdown color bg
+    styles(recipes-management): updated draft model and table
+    styles(user-management): Fixed view user modal
+    styles(user-management: changed edit user modal
+    styles(welcome): updated new light mode styles
+    styles: Added new rules for light mode modals
+    styles: barcode modal fixes
+    styles: centralized tables modals css
+    styles: general fixes
+    styles: modal changes
+    styles: modals responsive for mobile
+    styles: override styles on modal confirmations
+Author: FranWDev <hernandezcrosafrancisco@gmail.com>
+Author: Francisco Airam <hernandezcrosafrancisco@gmail.com>
+Author: Javier Remedios <jremedioscolmenares@gmail.com>
+Author: lorena <fmrlorena@gmail.com>
+Author: user-ijavieh <jremedioscolmenares@gmail.com>
+Date:   Fri Apr 17 07:33:38 2026 +0100
+Date:   Fri Apr 17 07:48:58 2026 +0100
+Date:   Fri Apr 17 14:53:07 2026 +0100
+Date:   Fri Apr 17 15:18:40 2026 +0100
+Date:   Fri Apr 17 15:20:47 2026 +0100
+Date:   Fri Apr 17 22:06:13 2026 +0100
+Date:   Fri Apr 17 22:19:00 2026 +0100
+Date:   Fri Apr 17 22:42:03 2026 +0100
+Date:   Fri Apr 17 22:52:15 2026 +0100
+Date:   Fri Apr 17 23:05:23 2026 +0100
+Date:   Fri Apr 17 23:08:15 2026 +0100
+Date:   Fri Apr 17 23:09:32 2026 +0100
+Date:   Fri Apr 17 23:30:01 2026 +0100
+Date:   Fri Apr 17 23:31:24 2026 +0100
+Date:   Fri Apr 17 23:33:10 2026 +0100
+Date:   Fri Apr 17 23:35:55 2026 +0100
+Date:   Fri Apr 17 23:39:23 2026 +0100
+Date:   Fri Apr 17 23:39:34 2026 +0100
+Date:   Fri Apr 17 23:49:26 2026 +0100
+Date:   Fri Apr 17 23:58:07 2026 +0100
+Date:   Mon Apr 20 07:08:49 2026 +0100
+Date:   Mon Apr 20 07:35:45 2026 +0100
+Date:   Mon Apr 20 07:46:34 2026 +0100
+Date:   Mon Apr 20 07:52:38 2026 +0100
+Date:   Mon Apr 20 12:26:56 2026 +0100
+Date:   Mon Apr 20 12:26:59 2026 +0100
+Date:   Mon Apr 20 12:35:16 2026 +0100
+Date:   Mon Apr 20 19:14:25 2026 +0100
+Date:   Mon Apr 20 19:30:21 2026 +0100
+Date:   Mon Apr 20 19:38:01 2026 +0100
+Date:   Mon Apr 20 19:52:28 2026 +0100
+Date:   Mon Apr 20 19:56:15 2026 +0100
+Date:   Mon Apr 20 19:57:26 2026 +0100
+Date:   Mon Apr 20 20:12:29 2026 +0100
+Date:   Mon Apr 20 20:19:16 2026 +0100
+Date:   Mon Apr 20 20:19:47 2026 +0100
+Date:   Mon Apr 20 20:21:04 2026 +0100
+Date:   Mon Apr 20 20:22:42 2026 +0100
+Date:   Mon Apr 20 20:27:44 2026 +0100
+Date:   Mon Apr 20 20:28:21 2026 +0100
+Date:   Mon Apr 20 21:17:38 2026 +0100
+Date:   Sat Apr 18 00:10:28 2026 +0100
+Date:   Sat Apr 18 00:15:13 2026 +0100
+Date:   Sat Apr 18 21:09:13 2026 +0100
+Date:   Sat Apr 18 22:12:09 2026 +0100
+Date:   Sat Apr 18 22:39:30 2026 +0100
+Date:   Sat Apr 18 22:42:20 2026 +0100
+Date:   Sat Apr 18 22:42:35 2026 +0100
+Date:   Sun Apr 19 13:25:05 2026 +0100
+Date:   Sun Apr 19 13:25:33 2026 +0100
+Date:   Sun Apr 19 13:44:27 2026 +0100
+Date:   Sun Apr 19 14:11:16 2026 +0100
+Date:   Sun Apr 19 16:48:26 2026 +0100
+Date:   Sun Apr 19 16:51:46 2026 +0100
+Date:   Sun Apr 19 16:53:09 2026 +0100
+Date:   Sun Apr 19 17:28:47 2026 +0100
+Date:   Sun Apr 19 21:03:10 2026 +0100
+Date:   Sun Apr 19 21:17:44 2026 +0100
+Date:   Sun Apr 19 21:26:54 2026 +0100
+Date:   Sun Apr 19 21:34:24 2026 +0100
+Date:   Sun Apr 19 22:08:58 2026 +0100
+Date:   Sun Apr 19 22:40:34 2026 +0100
+Date:   Sun Apr 19 22:41:52 2026 +0100
+Date:   Sun Apr 19 22:52:39 2026 +0100
+Date:   Sun Apr 19 22:59:21 2026 +0100
+Date:   Sun Apr 19 23:00:01 2026 +0100
+Date:   Sun Apr 19 23:00:11 2026 +0100
+Date:   Sun Apr 19 23:04:40 2026 +0100
+Date:   Sun Apr 19 23:11:23 2026 +0100
+Date:   Thu Apr 16 08:28:52 2026 +0100
+Date:   Thu Apr 16 08:50:01 2026 +0100
+Date:   Thu Apr 16 09:28:08 2026 +0100
+Date:   Thu Apr 16 09:59:11 2026 +0100
+Date:   Thu Apr 16 10:04:19 2026 +0100
+Date:   Thu Apr 16 14:25:28 2026 +0100
+Date:   Thu Apr 16 14:38:04 2026 +0100
+Date:   Thu Apr 16 18:59:21 2026 +0100
+Date:   Thu Apr 16 19:02:17 2026 +0100
+Date:   Thu Apr 16 19:02:30 2026 +0100
+Date:   Thu Apr 16 19:02:46 2026 +0100
+Date:   Thu Apr 16 19:37:08 2026 +0100
+Date:   Tue Apr 21 09:07:04 2026 +0100
+Date:   Tue Apr 21 09:38:24 2026 +0100
+Date:   Tue Apr 21 10:07:10 2026 +0100
+Date:   Tue Apr 21 10:27:25 2026 +0100
+Date:   Tue Apr 21 11:17:25 2026 +0100
+Date:   Tue Apr 21 11:21:03 2026 +0100
+Date:   Tue Apr 21 11:22:33 2026 +0100
+Date:   Tue Apr 21 11:51:42 2026 +0100
+Date:   Tue Apr 21 11:53:59 2026 +0100
+Merge: 04c123d 0b2eb8d
+Merge: 05c8ef9 1c4dce3
+Merge: 141540a 04c123d
+Merge: 1c6e00b ba64f87
+Merge: 22aff1b fdcd55f
+Merge: 3006472 5500fdd
+Merge: 3923d2f bc2778f
+Merge: 44435ca d12e885
+Merge: 513bf76 4299c8f
+Merge: 513bf76 68c92d7
+Merge: 5500fdd 68f1ecd
+Merge: 69df3be aa353fa
+Merge: 744c4a4 fa1f556
+Merge: 760f10d 3923d2f
+Merge: 84209bb cce227e
+Merge: 89900e9 e94c7c5
+Merge: 9776521 08b0e76
+Merge: 98679cb f7c1a97
+Merge: ba64f87 43046ee
+Merge: ba6ace8 7e733a0
+Merge: c0eca7f 944a021
+Merge: c4529e9 0a4157a
+Merge: d44a75b b363ea1
+Merge: f7c1a97 e3b13d9
+commit 04c123d57c4b38f65e35583d9255c9e7d86d5ea2
+commit 05c8ef9d9940fd191c3af9db80e00a3ec2b22095
+commit 0875b02afc365973c433cde116269db40b3e00fc
+commit 08b0e76c7b07066605bd5fd8e102c28c4dd56cc2
+commit 0a4157a52645507d3d26aa3569a2485cb120c6e4
+commit 0abfebc06221d372d81e76b2a3580ea4ee5f4e48
+commit 0b2eb8de6df6acceb6d2cbe5181f6fab9b549f84
+commit 141540a3fa64a99cddffc67454c91c8cdcc57370
+commit 18c7c7f41eeb08f7188a6af743655ae5382510df
+commit 18e15362b551f98c50aa5f031a4d2b7c15bd2c37
+commit 19ef062011433df8618cd04a92c1bbf59a8f4b18
+commit 1bf9b7024adc063041c20eeb8335fca14e71f6b1
+commit 1c4dce3c9014a1be80955c9fe937e71c0d3656c4
+commit 1c6e00bb93afbe2e180a9ce5190d6e1006297b88
+commit 1eb11a73c3f9f21d5bb379c7332fdcf9cfbbe7b1
+commit 219903915420dbab25cd00ab8f4f301093a2ed63
+commit 2277b85c524a2f6524825640458c81660da87a4b
+commit 22aff1b07191a282e1401d222df7675f46e13c73
+commit 25c894c7d9037137bf1454856311fc2e2196ef02
+commit 2bfebc4e990aaed5fbce095da27cb004382f4549
+commit 2ef74af22c9db204c0b164dbdfec5e8360da9911
+commit 30064720b6f61dd3302cddb65eafc2674402ef9b
+commit 3923d2f413c4fbb8fd7b8b259fb27ae7407aa707
+commit 40bfcfde7c33c0bbfeec6d9b212369c64932bfd3
+commit 42094e2d1d634d11bdef2883fa597067c508a3ed
+commit 4299c8f264ddef517f13de93f3719754615836c4
+commit 43046ee5de7fb84f46fdbbffea27b86c7fd4bd3a
+commit 44435caf318167a230b86540edf3f692836a1a83
+commit 4952fd793da34b1e76932955dc111bfecbbd4bd2
+commit 4de622bd66ad245bdc3ce86f20a28e21db64e88b
+commit 513bf7656a92f3e99eb78fa4cd00aac344ab32ee
+commit 5500fdd03fcff4d642593bb9640259fd4ffb85c0
+commit 556d7a254c708b7e9fffa14d45e90c9f7fc38dce
+commit 596bc74708644ed205a0232de0b6bcf3ac35ae8a
+commit 66878ce8b43234399675d4e2355273e48b373709
+commit 68c92d75525de08c71776a7f6d661ee5e95aace8
+commit 68f1ecd092f5a8fee4bbe5ff348f7c93896aac0b
+commit 699a6bfddab1a4d42313d32a356438e7a1906c24
+commit 722274d3bd17dac342a37affd9ed34e2243f01d7
+commit 744c4a4112adb70c687d90082546dbcfba2f4915
+commit 74d9db16c179a300ff04e99b7e15e8f5b89e8e77
+commit 760f10d84fa8c451998e693f64be95f47582d21d
+commit 7883fda398a556db60e87e56984ee16e022b222d
+commit 7e733a036140810930c1632c3bc2f9f0304060ba
+commit 82f73c1d2b117bd548f58dcd5cfd0724691af772
+commit 84209bbe9edbe35f39347f053443db64e9e702ea
+commit 89900e941732f9d7047e7906bc49c01f319e8b07
+commit 8c3b01cca866a9b945fa50e320543ff71ad9d0fb
+commit 8de428be18b330b8c3de4a3e307bc52290d66835
+commit 901c439426008c392633d017e1bc87636ffb1b4d
+commit 944a021a5be25e32e1aad1603b4b95ea0559babb
+commit 9776521a445b7c7a332e4d6ebcad98ad29693168
+commit 98103638fbb25384d68d9a0af42107124584b4e3
+commit 98679cb51bb96d72d5aee7ab3ba458e18403310d
+commit a9b2e6068b3d47b1b904e56a20c80e5a8605f7cf
+commit aa353fa1354e2612927274549e4814522f46f9e0
+commit b107dee605db129c7520532a79f5b47fc949ca33
+commit b363ea123e3075b55563581eba5d47d36437ec32
+commit ba401c9b54a41cf8650b269c76e82dc7743b8e98
+commit ba64f874ed440d69d10b211b0777c9e62730cf23
+commit ba6ace84107b219bd7691345f8c9227de753950c
+commit bc2778ffc6ffe8ebc86c57e2ef6b402b8926aed1
+commit be6847c1e0af9cec7903b3fd96de464b841ec3af
+commit c0846e4eb0e4c848386436860bc9726d8ba25490
+commit c0eca7f955a4de3eee7c426af6935b514d9cf7a5
+commit c3acf4684f1d9b5c04c2b4a6dd8ce18347a31827
+commit c4529e963348bd4057de335f98373f58546eae43
+commit c7ab37216c4dcbeab9f1712ce257ee4a88974f44
+commit c97e877b76a5968eb0973c2ff9c58017dbfd9809
+commit cb2c7375af02775d352fb6a7bc3906a0e077e65d
+commit cc9279e04c4e6aca6809d8a2b107c71bd98a6e64
+commit cce227ed4d78c5480d1da3b467900c133e9dc038
+commit d12e885cec7d188586150fb82afd29d3a0d262c6
+commit d44a75b43865b1479bcfd23f729248c886dc5785
+commit d623422af9c3b39e5a9d59aedda882ccf4afe809
+commit daa99c5dbb21c7fdf4e5fb1a91fb964be468ee35
+commit dbc9f8b640ae375a8897244398909d2f976ddbee
+commit dfd68b01e98f402d9755c76e1627bdd762a88fc2
+commit dfefa3d94f1c3ad5c1854170bf61452f4e76d920
+commit e3b13d9b2058930ce596821d4e329e4d6774d70b
+commit e4c47b14d347cc41d518b11cb88f0aa4d452b9f5
+commit e94c7c5c206f82517226e6f06caa7734da76f8a3
+commit ecf2c707c407b2a4bbfcfeffff27032f9ccc7d74
+commit ed2abaa2dd13971ea007a1a8e330b8ad4008ecf4
+commit f126cee5947f894afc17e0384bc55d745dc1af5f
+commit f30d34f03847cbc5d92135fa882f843339ab4ebd
+commit f7c1a97abb9e9098242b3cf0f0e3e9f85b883e33
+commit fa1f5562661e184941849f95e7267ab51e3f9b7c
+commit fdcd55fb88457014bd5eecfbf1fd957fed30598b
+commit fe0f0ab63f951f20b4c288f75d4fa61380fc8f78
+public/manifest.webmanifest
+public/sw.js
+src/app/app.routes.ts
+src/app/app.ts
+src/app/core/constants/search.constants.ts
+src/app/core/interceptors/auth.interceptor.ts
+src/app/core/interceptors/errorHandling.interceptor.ts
+src/app/core/services/ai-chat.service.ts
+src/app/core/services/ai-configuration.service.ts
+src/app/core/services/allergen.service.ts
+src/app/core/services/auth.service.ts
+src/app/core/services/dashboard.service.ts
+src/app/core/services/http-query-cache.service.ts
+src/app/core/services/incident.service.ts
+src/app/core/services/modal-stack.service.ts
+src/app/core/services/notification.service.ts
+src/app/core/services/order-review-collaboration-state.service.ts
+src/app/core/services/order-review-lock-state.service.ts
+src/app/core/services/order.service.ts
+src/app/core/services/product-batch.service.ts
+src/app/core/services/product.service.ts
+src/app/core/services/recipe.service.ts
+src/app/core/services/sse-stream.service.ts
+src/app/core/services/stats.service.ts
+src/app/core/services/stock-alert.service.ts
+src/app/core/services/stock-ledger.service.ts
+src/app/core/services/supplier.service.ts
+src/app/core/services/sync-cache-invalidation.service.ts
+src/app/core/services/system-config.service.ts
+src/app/core/services/traceability.service.ts
+src/app/core/services/user.service.ts
+src/app/core/services/websocket.service.ts
+src/app/core/services/weekly-plan.service.ts
+src/app/core/utils/credentials-generator.ts
+src/app/features/admin/admin-panel/admin-panel.component.css
+src/app/features/admin/allergens-management/allergens-management.component.css
+src/app/features/admin/allergens-management/allergens-management.component.html
+src/app/features/admin/allergens-management/allergens-management.component.ts
+src/app/features/admin/batches-management/batches-management.component.css
+src/app/features/admin/batches-management/batches-management.component.html
+src/app/features/admin/batches-management/batches-management.component.ts
+src/app/features/admin/dashboard-management/dashboard-management.component.css
+src/app/features/admin/dashboard-management/dashboard-management.component.html
+src/app/features/admin/dashboard-management/dashboard-management.component.ts
+src/app/features/admin/incidents/incidents.component.css
+src/app/features/admin/incidents/incidents.component.html
+src/app/features/admin/incidents/incidents.component.ts
+src/app/features/admin/kitchen-management/kitchen-management.component.css
+src/app/features/admin/kitchen-management/kitchen-management.component.html
+src/app/features/admin/kitchen-management/kitchen-management.component.ts
+src/app/features/admin/notifications-management/notifications-management.component.ts
+src/app/features/admin/orders-management/orders-management.component.css
+src/app/features/admin/orders-management/orders-management.component.html
+src/app/features/admin/orders-management/orders-management.component.ts
+src/app/features/admin/products-management/products-management.component.css
+src/app/features/admin/products-management/products-management.component.html
+src/app/features/admin/products-management/products-management.component.ts
+src/app/features/admin/recipes-management/recipes-management.component.css
+src/app/features/admin/recipes-management/recipes-management.component.html
+src/app/features/admin/recipes-management/recipes-management.component.ts
+src/app/features/admin/settings-management/settings-management.component.css
+src/app/features/admin/settings-management/settings-management.component.html
+src/app/features/admin/settings-management/settings-management.component.ts
+src/app/features/admin/stock-management/stock-management.component.css
+src/app/features/admin/stock-management/stock-management.component.html
+src/app/features/admin/stock-management/stock-management.component.ts
+src/app/features/admin/suppliers-management/supplier-form-modal/supplier-form-modal.component.css
+src/app/features/admin/suppliers-management/suppliers-management.component.css
+src/app/features/admin/suppliers-management/suppliers-management.component.html
+src/app/features/admin/suppliers-management/suppliers-management.component.ts
+src/app/features/admin/traceability-management/traceability-management.component.css
+src/app/features/admin/traceability-management/traceability-management.component.html
+src/app/features/admin/traceability-management/traceability-management.component.ts
+src/app/features/admin/users-management/user-form-modal/user-form-modal.component.css
+src/app/features/admin/users-management/user-form-modal/user-form-modal.component.html
+src/app/features/admin/users-management/user-form-modal/user-form-modal.component.ts
+src/app/features/admin/users-management/users-management.component.css
+src/app/features/admin/users-management/users-management.component.html
+src/app/features/admin/users-management/users-management.component.ts
+src/app/features/admin/weekly-plans-management/weekly-plans-management.css
+src/app/features/admin/weekly-plans-management/weekly-plans-management.html
+src/app/features/admin/weekly-plans-management/weekly-plans-management.spec.ts
+src/app/features/admin/weekly-plans-management/weekly-plans-management.ts
+src/app/features/general/ai-chat/ai-chat.component.css
+src/app/features/general/ai-chat/ai-chat.component.html
+src/app/features/general/ai-chat/ai-chat.component.ts
+src/app/features/general/barcode-scanner/barcode-scanner.component.css
+src/app/features/general/barcode-scanner/barcode-scanner.component.html
+src/app/features/general/barcode-scanner/barcode-scanner.component.ts
+src/app/features/general/change-password/change-password.component.css
+src/app/features/general/change-password/change-password.component.html
+src/app/features/general/change-password/change-password.component.ts
+src/app/features/general/inventory/inventory.component.css
+src/app/features/general/inventory/inventory.component.html
+src/app/features/general/inventory/inventory.component.ts
+src/app/features/general/inventory/product-create-modal/product-create-modal.component.css
+src/app/features/general/inventory/product-create-modal/product-create-modal.component.html
+src/app/features/general/inventory/product-create-modal/product-create-modal.component.ts
+src/app/features/general/inventory/product-detail-modal/product-detail-modal.component.css
+src/app/features/general/inventory/product-detail-modal/product-detail-modal.component.html
+src/app/features/general/inventory/product-detail-modal/product-detail-modal.component.ts
+src/app/features/general/inventory/product-edit-modal/product-edit-modal.component.css
+src/app/features/general/inventory/product-edit-modal/product-edit-modal.component.html
+src/app/features/general/inventory/product-edit-modal/product-edit-modal.component.ts
+src/app/features/general/inventory/product-form/product-form.component.css
+src/app/features/general/inventory/product-form/product-form.component.html
+src/app/features/general/inventory/product-form/product-form.component.ts
+src/app/features/general/login/login.component.css
+src/app/features/general/orders/order-details-modal/order-details-modal.component.css
+src/app/features/general/orders/order-details-modal/order-details-modal.component.html
+src/app/features/general/orders/order-details-modal/order-details-modal.component.ts
+src/app/features/general/orders/order-modal/order-modal.component.css
+src/app/features/general/orders/order-modal/order-modal.component.html
+src/app/features/general/orders/order-modal/order-modal.component.ts
+src/app/features/general/orders/orders.component.css
+src/app/features/general/orders/orders.component.html
+src/app/features/general/orders/orders.component.ts
+src/app/features/general/profile/profile.component.css
+src/app/features/general/profile/profile.component.html
+src/app/features/general/profile/profile.component.ts
+src/app/features/general/profile/weekly-plan/history/weekly-plan-history.component.css
+src/app/features/general/profile/weekly-plan/history/weekly-plan-history.component.html
+src/app/features/general/profile/weekly-plan/history/weekly-plan-history.component.ts
+src/app/features/general/profile/weekly-plan/requirements/weekly-plan-calendar-view.component.css
+src/app/features/general/profile/weekly-plan/requirements/weekly-plan-calendar-view.component.html
+src/app/features/general/profile/weekly-plan/requirements/weekly-plan-calendar-view.component.ts
+src/app/features/general/profile/weekly-plan/requirements/weekly-plan-duplicate.component.css
+src/app/features/general/profile/weekly-plan/requirements/weekly-plan-duplicate.component.html
+src/app/features/general/profile/weekly-plan/requirements/weekly-plan-duplicate.component.ts
+src/app/features/general/profile/weekly-plan/requirements/weekly-plan-form.component.css
+src/app/features/general/profile/weekly-plan/requirements/weekly-plan-form.component.html
+src/app/features/general/profile/weekly-plan/requirements/weekly-plan-form.component.ts
+src/app/features/general/profile/weekly-plan/slot-actions/weekly-plan-confirmation.component.css
+src/app/features/general/profile/weekly-plan/slot-actions/weekly-plan-confirmation.component.html
+src/app/features/general/profile/weekly-plan/slot-actions/weekly-plan-confirmation.component.ts
+src/app/features/general/profile/weekly-plan/slot-actions/weekly-plan-slot-actions.component.css
+src/app/features/general/profile/weekly-plan/slot-actions/weekly-plan-slot-actions.component.html
+src/app/features/general/profile/weekly-plan/slot-actions/weekly-plan-slot-actions.component.ts
+src/app/features/general/profile/weekly-plan/stock/weekly-plan-stock-requirements-panel.component.css
+src/app/features/general/profile/weekly-plan/stock/weekly-plan-stock-requirements-panel.component.html
+src/app/features/general/profile/weekly-plan/stock/weekly-plan-stock-requirements-panel.component.ts
+src/app/features/general/profile/weekly-plan/stock/weekly-plan-student-metrics-panel.component.css
+src/app/features/general/profile/weekly-plan/stock/weekly-plan-student-metrics-panel.component.html
+src/app/features/general/profile/weekly-plan/stock/weekly-plan-student-metrics-panel.component.ts
+src/app/features/general/profile/weekly-plan/weekly-plan-section.component.css
+src/app/features/general/profile/weekly-plan/weekly-plan-section.component.html
+src/app/features/general/profile/weekly-plan/weekly-plan-section.component.ts
+src/app/features/general/profile/weekly-plan/weekly-plan.constants.ts
+src/app/features/general/reception/order-reception-modal/order-reception-modal.component.css
+src/app/features/general/reception/order-reception-modal/order-reception-modal.component.html
+src/app/features/general/reception/order-reception-modal/order-reception-modal.component.ts
+src/app/features/general/reception/reception.component.css
+src/app/features/general/reception/reception.component.html
+src/app/features/general/reception/reception.component.ts
+src/app/features/general/recipes/recipe-create-modal/recipe-create-modal.component.css
+src/app/features/general/recipes/recipe-create-modal/recipe-create-modal.component.html
+src/app/features/general/recipes/recipe-create-modal/recipe-create-modal.component.ts
+src/app/features/general/recipes/recipe-detail-modal/recipe-detail-modal.component.css
+src/app/features/general/recipes/recipe-detail-modal/recipe-detail-modal.component.html
+src/app/features/general/recipes/recipe-detail-modal/recipe-detail-modal.component.ts
+src/app/features/general/recipes/recipe-draft-detail-modal/recipe-draft-detail-modal.component.css
+src/app/features/general/recipes/recipe-draft-detail-modal/recipe-draft-detail-modal.component.html
+src/app/features/general/recipes/recipe-edit-modal/recipe-edit-modal.component.css
+src/app/features/general/recipes/recipe-edit-modal/recipe-edit-modal.component.html
+src/app/features/general/recipes/recipe-edit-modal/recipe-edit-modal.component.ts
+src/app/features/general/recipes/recipe-order-wizard-modal/recipe-order-wizard-modal.component.css
+src/app/features/general/recipes/recipe-order-wizard-modal/recipe-order-wizard-modal.component.html
+src/app/features/general/recipes/recipe-order-wizard-modal/recipe-order-wizard-modal.component.ts
+src/app/features/general/recipes/recipes.component.css
+src/app/features/general/recipes/recipes.component.html
+src/app/features/general/recipes/recipes.component.ts
+src/app/features/general/weekly-plans/weekly-plan-detail.component.css
+src/app/features/general/weekly-plans/weekly-plan-detail.component.html
+src/app/features/general/weekly-plans/weekly-plan-detail.component.ts
+src/app/features/general/weekly-plans/weekly-plan-wizard.component.css
+src/app/features/general/weekly-plans/weekly-plan-wizard.component.html
+src/app/features/general/weekly-plans/weekly-plan-wizard.component.ts
+src/app/features/general/weekly-plans/weekly-plans.component.css
+src/app/features/general/weekly-plans/weekly-plans.component.html
+src/app/features/general/weekly-plans/weekly-plans.component.ts
+src/app/features/general/welcome/welcome.component.css
+src/app/features/general/welcome/welcome.component.html
+src/app/features/general/welcome/welcome.component.ts
+src/app/shared/components/base-modal/base-modal.component.css
+src/app/shared/components/base-modal/base-modal.component.html
+src/app/shared/components/base-modal/base-modal.component.ts
+src/app/shared/components/layout/alert-notification/alert-notification.component.css
+src/app/shared/components/layout/alert-notification/alert-notification.component.html
+src/app/shared/components/layout/alert-notification/alert-notification.component.ts
+src/app/shared/components/layout/confirm-dialog/confirm-dialog.component.css
+src/app/shared/components/layout/confirm-dialog/confirm-dialog.component.ts
+src/app/shared/components/layout/layout.component.css
+src/app/shared/components/layout/layout.component.html
+src/app/shared/components/layout/layout.component.ts
+src/app/shared/components/layout/sidebar/sidebar.component.css
+src/app/shared/components/layout/sidebar/sidebar.component.html
+src/app/shared/components/layout/sidebar/sidebar.component.ts
+src/app/shared/components/layout/toast/toast.component.css
+src/app/shared/components/layout/toast/toast.component.html
+src/app/shared/components/layout/toast/toast.component.ts
+src/app/shared/components/multi-select-dropdown/multi-select-dropdown.component.ts
+src/app/shared/components/order-builder/order-builder.component.css
+src/app/shared/components/order-builder/order-builder.component.html
+src/app/shared/components/order-builder/order-builder.component.ts
+src/app/shared/components/pwa-offline-status/pwa-offline-status.component.ts
+src/app/shared/components/searchable-dropdown/searchable-dropdown.component.ts
+src/app/shared/models/ai-chat.model.ts
+src/app/shared/models/ai-config.model.ts
+src/app/shared/models/dashboard.model.ts
+src/app/shared/models/kitchen.model.ts
+src/app/shared/models/order.model.ts
+src/app/shared/models/product.model.ts
+src/app/shared/models/recipe.model.ts
+src/app/shared/models/role-permissions.ts
+src/app/shared/models/stock-alert.model.ts
+src/app/shared/models/sync-event.model.ts
+src/app/shared/models/weekly-plan.model.ts
+src/index.html
+src/styles.css
+src/styles/_admin-layout.css
+src/styles/_forms.css
+src/styles/_modal-admin-overrides.css
+src/styles/_modal-utilities.css
+src/styles/_shared-components.css
+src/styles/_utilities-dock.css
