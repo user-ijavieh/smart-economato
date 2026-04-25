@@ -760,7 +760,7 @@
     "PROCESS_RECEPTION": "Process Reception",
     "CLAIM_MISSING": "Claim Missing Items",
     "MOVE_TO_REVIEW": "Move to Review",
-    "LOAD_OLDER": "Load {{count}} older orders",
+    "LOAD_OLDER": "Load older orders",
     "MODAL": {
       "TITLE": "Order Reception #{{id}}",
       "SUMMARY": "Reception Summary",
