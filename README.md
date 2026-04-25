@@ -297,9 +297,12 @@ Este frontend se comunica con la [Smart Economato API](https://github.com/user-i
   
 ## Autores  
   
-| Contribuidor | Rol | GitHub |  
-|-------------|-----|--------|  
-| Javier | Desarrollador principal | [@user-ijavieh](https://github.com/user-ijavieh) |  
+| Contribuidor | GitHub |  
+|-------------|-------------|  
+| Javier Daniel Remedios Colmenares | [@user-ijavieh](https://github.com/user-ijavieh) |
+| Francisco Airam Hernández Crosa | [@FranWDev](https://github.com/FranWDev) |
+| Lorena Fumero Delgado| [@lorena-fudel](https://github.com/lorena-fudel) |
+| Daniel Pascual Bezanilla| [@blablabla277](https://github.com/blablabla277) |
   
 ## Licencia  
   
