@@ -131,7 +131,8 @@
       "RECEIVE": "Recepción",
       "COOK": "Cocinado",
       "RECEPTION": "Pedido Recibido",
-      "REVERSION": "Reversión de Stock"
+      "REVERSION": "Reversión de Stock",
+      "CONFIRM": "Confirmar"
     },
     "PAGE_INFO": "Página {{page}} de {{total}}",
     "TOTAL_COUNT": "({{count}} {{items}})",
@@ -200,7 +201,34 @@
     "RESTORE": "Restaurar",
     "REVERT": "Revertir",
     "STATUS_NEW": "Nuevo",
-    "VERTICAL": "Vertical"
+    "VERTICAL": "Vertical",
+    "ITEMS_SELECTED": "Elementos seleccionados",
+    "PRODUCT_NOT_FOUND": "Producto no encontrado",
+    "ERROR_LOADING_SUPPLIERS": "Error al cargar los proveedores",
+    "SORT_ALPHA": "Orden alfabético",
+    "EXPORT_SUCCESS": "Exportado con éxito",
+    "ERROR_LOADING_PRODUCTS": "Error al cargar los productos",
+    "PDF_ERROR": "Error de PDF",
+    "PREPARING": "Preparando...",
+    "CREATING": "Creando...",
+    "SORT_SHORTAGE": "Ordenar por faltante",
+    "RESTORING": "Restaurando...",
+    "RESTORE_SESSION": "Restaurar sesión",
+    "COOK": "Cocinar",
+    "UNKNOWN_USER": "Usuario desconocido",
+    "CONFIRM_EDIT": "Confirmar edición",
+    "COLUMN_ACTIONS": "Acciones de columna",
+    "CALCULATING": "Calculando...",
+    "REVERTING": "Revirtiendo...",
+    "NO_RESULTS_SEARCH": "Sin resultados en la búsqueda",
+    "CANCELLING": "Cancelando...",
+    "CANCEL_SESSION": "Cancelar sesión",
+    "CONFIRM_ALL": "Confirmar todo",
+    "REVERT_ALL": "Revertir todo",
+    "CONFIRM_SESSION": "Confirmar sesión",
+    "HIDE": "Ocultar",
+    "ERROR_LOADING_ALLERGENS": "Error al cargar alérgenos",
+    "CANCEL_STUDENT": "Cancelar alumno"
   },
   "NAV": {
     "DASHBOARD": "Inicio",
@@ -473,7 +501,8 @@
       "TYPES": "Tipos",
       "SUMMARY": "Resumen",
       "CHAT": "Chat",
-      "AUDITS": "Auditorías"
+      "AUDITS": "Auditorías",
+      "SECTIONS": "Secciones"
     },
     "ACTIONS": {
       "SHOW_FILTERS": "Mostrar filtros",
@@ -501,7 +530,9 @@
       "ACTIVATE": "Activar",
       "DEACTIVATE": "Desactivar",
       "ATTACH_AUDITS": "Adjuntar auditorías",
-      "DEACTIVATE_TYPE": "Desactivar tipo"
+      "DEACTIVATE_TYPE": "Desactivar tipo",
+      "REMOVE_FILE": "Eliminar archivo",
+      "ACTIVATE_TYPE": "Activar tipo"
     },
     "STATS": {
       "TOTAL": "Incidencias totales",
@@ -619,7 +650,19 @@
       "WARNING_NAME": "Indica un nombre para el tipo",
       "WARNING_MESSAGE_EMPTY": "Escribe un mensaje o adjunta un archivo",
       "WARNING_WAIT_OPTIMIZE": "Espera a que termine la compresión de la imagen",
-      "WARNING_OPTIMIZE": "No se pudo optimizar la imagen. Se enviará el archivo original."
+      "WARNING_OPTIMIZE": "No se pudo optimizar la imagen. Se enviará el archivo original.",
+      "NOT_READ": "No leído",
+      "ATTACH_SUCCESS": "Adjuntado con éxito",
+      "READ_BY": "Leído por",
+      "TYPING_MULTIPLE": "Varios están escribiendo...",
+      "ATTACH_ERROR": "Error al adjuntar",
+      "DOWNLOAD_ERROR": "Error de descarga",
+      "TYPE_TOGGLE_ERROR": "Error al cambiar estado del tipo",
+      "LOADING_ATTACHABLE_ERROR": "Error al cargar archivos adjuntables",
+      "WARNING_REASON": "Advertencia: Indique un motivo",
+      "WARNING_SELECT_AUDIT": "Advertencia: Seleccione una auditoría",
+      "REVERT_SUCCESS": "Revertido con éxito",
+      "TYPING": "Escribiendo..."
     },
     "DETAIL": {
       "SUMMARY": "Resumen",
@@ -763,7 +806,8 @@
       "REVISION_CONFLICT": "{{owner}} está revisando esta orden en este momento.",
       "ORDER_CHANGED": "La orden cambió mientras la estabas revisando.",
       "COLLAB_SUCCESS": "Solicitud de colaboración enviada.",
-      "COLLAB_ERROR": "Error al enviar solicitud de colaboración."
+      "COLLAB_ERROR": "Error al enviar solicitud de colaboración.",
+      "ORDER_NOT_REVIEW": "El pedido no está en revisión"
     },
     "REQUEST_COLLAB": "Solicitar colaboración"
   },
@@ -806,7 +850,12 @@
       "CONFIGURE_ORDER": "Paso 2: Configurar Pedido",
       "STEP_HELP": "Elige las recetas que quieres preparar y la cantidad de raciones para calcular el pedido automáticamente.",
       "DESIRED_QUANTITIES": "Cantidades deseadas",
-      "BACK_TO_SELECTION": "Volver a selección de recetas"
+      "BACK_TO_SELECTION": "Volver a selección de recetas",
+      "MESSAGES": {
+        "ENRICH_ERROR": "Error al enriquecer datos",
+        "CALCULATION_ERROR": "Error de cálculo",
+        "SELECT_AT_LEAST_ONE": "Seleccione al menos uno"
+      }
     },
     "CUSTOM_ORDER": "Pedido a medida",
     "CONTAINS_ALLERGENS": "Contiene alérgenos",
@@ -875,7 +924,9 @@
         "UPDATE_ERROR": "Error al actualizar el borrador.",
         "CREATE_SUCCESS": "Sugerencia \"{{name}}\" enviada correctamente.",
         "CREATE_ERROR": "Error al enviar la sugerencia de receta."
-      }
+      },
+      "DELETE_CONFIRM_MSG": "¿Seguro que desea eliminarlo?",
+      "DELETE_CONFIRM_TITLE": "Confirmación de eliminación"
     },
     "FILTERS": {
       "ALLERGENS_ALL": "Todos los alérgenos",
@@ -895,7 +946,14 @@
       "PRINT_ERROR": "Error al generar el PDF.",
       "UPDATE_SUCCESS": "Receta \"{{name}}\" actualizada correctamente.",
       "CREATE_SUCCESS": "Receta \"{{name}}\" creada correctamente.",
-      "COOK_SUCCESS": "Cocinado de \"{{name}}\" registrado. Stock actualizado."
+      "COOK_SUCCESS": "Cocinado de \"{{name}}\" registrado. Stock actualizado.",
+      "NAME_REQUIRED": "El nombre es obligatorio",
+      "CONFIRM_VISIBILITY_TITLE": "Confirmar visibilidad",
+      "ACTION_HIDE": "Ocultar elemento",
+      "AT_LEAST_ONE_COMPONENT": "Debe tener al menos un componente",
+      "CONFIRM_VISIBILITY_MSG": "¿Desea cambiar la visibilidad?",
+      "INVALID_COMPONENTS": "Componentes inválidos",
+      "ACTION_SHOW": "Mostrar elemento"
     }
   },
   "ORDERS": {
@@ -1168,7 +1226,9 @@
       "PENDING_COUNT_OTHER": "{{count}} alumnos por asignar",
       "CONFIRM": "Confirmar Asignaciones",
       "ASSIGNING": "Asignando...",
-      "CANCEL": "Cancelar"
+      "CANCEL": "Cancelar",
+      "STUDENT_SINGULAR": "Alumno",
+      "STUDENTS_PLURAL": "Alumnos"
     },
     "ACTIONS": {
       "ADD_USER": "Agregar Usuario",
@@ -1224,7 +1284,12 @@
       "MODAL_EDIT": "Edición de usuario",
       "ACTION_CONNECTED": "Conectado",
       "ACTION_DISCONNECTED": "Desconectado",
-      "ACTION_SCREEN_CHANGED": "Cambio de pantalla"
+      "ACTION_SCREEN_CHANGED": "Cambio de pantalla",
+      "ERROR_LOADING_ASSIGNMENTS": "Error al cargar las asignaciones",
+      "ERROR_ASSIGNING": "Error al asignar alumno",
+      "LOAD_USERS_ERROR": "Error al cargar los usuarios",
+      "BATCH_PARTIAL_SUCCESS": "Éxito parcial en asignaciones por lotes",
+      "BATCH_SUCCESS": "Éxito en asignaciones por lotes"
     },
     "USER_FORM": {
       "NAME": "Nombre",
@@ -1474,7 +1539,11 @@
       "REPORT_PERIOD": "Periodo: {{period}}",
       "GENERATE_PROMPT": "Genera un informe para visualizar los datos.",
       "GENERATE_REPORT_PROMPT": "¿Deseas generar el informe de cocina?",
-      "NO_DATA": "No hay datos para mostrar"
+      "NO_DATA": "No hay datos para mostrar",
+      "CUSTOM_RANGE_WARNING": "Advertencia de rango personalizado",
+      "ORDER_LOAD_ERROR": "Error al cargar el pedido",
+      "REVERT_CONFIRM": "Confirmar reversión",
+      "FILTER_GENERAL_ERROR": "Error general al filtrar"
     },
     "RANGES": {
       "DAILY": "Diario",
@@ -1496,7 +1565,8 @@
       "CLEAR_FILTERS": "Limpiar Filtros",
       "DOWNLOAD_PDF": "Descargar PDF",
       "REVERT_COOKING": "Revertir Cocinado",
-      "VIEW_DETAIL": "Ver detalle"
+      "VIEW_DETAIL": "Ver detalle",
+      "VIEW_TRACE": "Ver trazabilidad"
     },
     "PAGINATION": {
       "NEXT": "Siguiente",
@@ -1681,7 +1751,9 @@
       "ACTION_HIDDEN": "desactivado",
       "ACTION_SHOWN": "activado",
       "EXCEL_SUCCESS": "Excel descargado correctamente",
-      "EXCEL_ERROR": "Error al descargar Excel"
+      "EXCEL_ERROR": "Error al descargar Excel",
+      "UPDATE_ERROR": "Error de actualización",
+      "CREATE_ERROR": "Error de creación"
     }
   },
   "RECIPE_MGMT": {
@@ -2276,7 +2348,8 @@
       "PURGE_PRESENCE_ERROR": "No se pudo purgar el log de presencia",
       "PURGE_NOTIFICATIONS_SUCCESS": "Se eliminaron {{count}} notificaciones",
       "PURGE_NOTIFICATIONS_ERROR": "No se pudo purgar el log de notificaciones",
-      "LOAD_AUDIT_ERROR": "No se pudo cargar la auditoría global"
+      "LOAD_AUDIT_ERROR": "No se pudo cargar la auditoría global",
+      "CACHE_REFRESH_SUCCESS": "Caché recargada con éxito"
     },
     "PURGE_PRESENCE": {
       "TITLE": "Purgar actividad de presencia",
@@ -2450,7 +2523,9 @@
       "RESTORE_STUDENT_SESSION_TITLE": "Restaurar sesión al alumno",
       "RESTORE_STUDENT_SESSION_MSG": "Se restaurará a {{name}} en la sesión {{num}} ({{recipe}}). ¿Deseas continuar?",
       "RESTORE_STUDENT_SESSION_SUCCESS": "{{name}} restaurado en la sesión correctamente.",
-      "RESTORE_STUDENT_SESSION_ERROR": "No se pudo restaurar al alumno en la sesión."
+      "RESTORE_STUDENT_SESSION_ERROR": "No se pudo restaurar al alumno en la sesión.",
+      "BACK_TO_DRAFT": "Volver a borrador",
+      "CHECK_INVENTORY_TAB": "Verificar en la pestaña de inventario"
     },
     "DETAIL": {
       "SESSIONS_COUNT": "{{count}} sesiones",
@@ -2711,7 +2786,8 @@
     },
     "ACTIONS": {
       "SCAN_AGAIN": "Escanear de nuevo"
-    }
+    },
+    "TITLE": "Título"
   },
   "UNITS": {
     "KG": "Kg",
@@ -2735,7 +2811,9 @@
     "MESSAGES": {
       "CREATE_SUCCESS": "Producto {{name}} creado correctamente.",
       "UPDATE_SUCCESS": "Producto {{name}} actualizado correctamente.",
-      "TOGGLE_HIDDEN_SUCCESS_SINGLE": "Estado del producto actualizado correctamente."
+      "TOGGLE_HIDDEN_SUCCESS_SINGLE": "Estado del producto actualizado correctamente.",
+      "PRODUCT_ADDED_SCAN": "Producto añadido mediante escáner",
+      "PRODUCT_DETECTED": "Producto detectado"
     },
     "PDF_CONFIRM_TITLE": "Confirmar exportación",
     "PDF_CONFIRM_MSG": "¿Deseas descargar la ficha del producto en formato PDF?",
@@ -2746,7 +2824,21 @@
     "MESSAGES": {
       "NO_UNCOVERED_PRODUCTS": "No se encontraron productos sin cobertura para reponer.",
       "INTEGRITY_VALID": "Integridad verificada: {{message}}",
-      "ALL_CHAINS_VALID": "Todas las cadenas ({{count}}) son íntegras."
+      "ALL_CHAINS_VALID": "Todas las cadenas ({{count}}) son íntegras.",
+      "ERROR_GENERATE_PDF": "Error al generar PDF",
+      "ERROR_GLOBAL_VERIFICATION": "Error de verificación global de la cadena",
+      "ADJUSTMENT_SUCCESS": "Ajuste de stock realizado correctamente",
+      "ERROR_VERIFY_INTEGRITY": "Error crítico verificando la integridad",
+      "ERROR_LOAD_BATCHES": "Error al cargar los bloques/lotes",
+      "ERROR_REGISTER_ADJUSTMENT": "Error al registrar el ajuste de stock",
+      "ADMIN_ONLY_BLOCKCHAIN": "Funcionalidad Blockchain solo para administradores",
+      "PDF_GENERATED_WARNING": "Advertencia generada para el PDF",
+      "PDF_GENERATED_OK": "PDF de la cadena generado correctamente",
+      "BLOCKCHAIN_MODE_ACTIVE": "Modo Ledger Blockchain activo",
+      "ERROR_RESET_HISTORY": "Error persistente al reiniciar el historial",
+      "GLOBAL_CORRUPTION_DETECTED": "¡Corrupción de cadena global detectada!",
+      "EXPIRATION_DATE_REQUIRED": "Fecha de caducidad es obligatoria",
+      "INTEGRITY_CORRUPTED": "¡Cadena corrompida!"
     },
     "MODALS": {
       "CONFIRM_DOWNLOAD_TITLE": "Confirmar Descarga",
@@ -2783,7 +2875,8 @@
       "NEW_BATCH_HINT": "Al ser una entrada sin lote existente, se creará uno nuevo con esta fecha.",
       "REASON_PLACEHOLDER": "Explica el motivo del ajuste (ej: rotura, error de inventario...)",
       "SUBMIT": "Confirmar Ajuste",
-      "STOCK": "Ajuste de Stock"
+      "STOCK": "Ajuste de Stock",
+      "SUBMITTING": "Enviando..."
     },
     "TABS": {
       "ALERTS": "Alertas",
@@ -3248,5 +3341,8 @@
       "MEDIA": "Media",
       "ALTA": "Alta"
     }
+  },
+  "LEDGER": {
+    "SCAN_TOOLTIP": "Escanear el código del lote"
   }
 }
