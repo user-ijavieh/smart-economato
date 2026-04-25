@@ -187,7 +187,20 @@
     "PDF_CONFIRM_TITLE": "Confirmar descarga",
     "PDF_CONFIRM_MSG": "¿Deseas descargar este archivo PDF?",
     "CODE": "Código",
-    "ID": "ID"
+    "ID": "ID",
+    "CANCELLED": "Cancelado",
+    "CONFIRMED": "Confirmado",
+    "COPIED": "Copiado",
+    "DUPLICATE": "Duplicar",
+    "EXPIRED_STOCK": "Stock Caducado",
+    "FIELD": "Campo",
+    "HORIZONTAL": "Horizontal",
+    "LINES": "Líneas",
+    "RECIPE": "Receta",
+    "RESTORE": "Restaurar",
+    "REVERT": "Revertir",
+    "STATUS_NEW": "Nuevo",
+    "VERTICAL": "Vertical"
   },
   "NAV": {
     "DASHBOARD": "Inicio",
@@ -558,7 +571,55 @@
       "RESET_IRREVERSIBLE_TEXT": "Se perderán todos los datos de auditoría y el snapshot actual. ¿Deseas proceder definitivamente?"
     },
     "MESSAGES": {
-      "REVERT_ERROR": "Error al revertir la auditoría"
+      "REVERT_ERROR": "Error al revertir la auditoría",
+      "TYPE_TOGGLE_CONFIRM": "¿Deseas {{action}} el tipo \"{{name}}\"?",
+      "TYPE_TOGGLE_SUCCESS": "Estado del tipo de incidencia actualizado",
+      "LOAD_TYPES_ERROR": "Error al cargar los tipos de incidencia",
+      "LOAD_INCIDENTS_ERROR": "Error al cargar las incidencias",
+      "EMPTY": "No hay incidencias",
+      "EMPTY_HINT": "Crea una nueva incidencia o ajusta los filtros para encontrar resultados.",
+      "LOADING_CHAT": "Cargando conversación...",
+      "EMPTY_CHAT": "Todavía no hay mensajes.",
+      "LOCKED": "La incidencia está cerrada. No se pueden enviar nuevos mensajes.",
+      "ATTACH_EMPTY": "No hay auditorías adjuntas.",
+      "ATTACH_SIDE_EMPTY": "No hay auditorías.",
+      "LOADING_ATTACHABLE": "Cargando auditorías adjuntables...",
+      "NO_ATTACHABLE": "No hay auditorías disponibles para adjuntar.",
+      "SAVING": "Guardando...",
+      "OPENING": "Abriendo...",
+      "CLOSING": "Cerrando...",
+      "ATTACHING": "Adjuntando...",
+      "REVERTING": "Revirtiendo...",
+      "NO_AUDITS": "No hay auditorías.",
+      "NO_RESOLUTION": "Sin resolución",
+      "PENDING": "Pendiente",
+      "NO_DESCRIPTION": "Sin descripción",
+      "NO_TRACE": "Sin trazabilidad",
+      "AUDIT_REVERTED": "Revertida",
+      "AUDIT_ACTIVE": "Activa",
+      "LOAD_ERROR": "Error al cargar las incidencias",
+      "CREATE_SUCCESS": "Incidencia creada correctamente",
+      "CREATE_ERROR": "No se pudo crear la incidencia",
+      "DETAIL_ERROR": "No se pudo cargar el detalle de la incidencia",
+      "OPEN_SUCCESS": "Incidencia abierta",
+      "OPEN_ERROR": "No se pudo abrir la incidencia",
+      "CLOSE_SUCCESS": "Incidencia cerrada",
+      "CLOSE_ERROR": "No se pudo cerrar la incidencia",
+      "SENT_SUCCESS": "Mensaje enviado",
+      "SENT_ERROR": "No se pudo enviar el mensaje",
+      "PDF_SUCCESS": "PDF descargado correctamente",
+      "PDF_ERROR": "Error al generar el PDF",
+      "TYPES_LOAD_ERROR": "No se pudieron cargar los tipos de incidencia",
+      "TYPE_SAVE_ERROR": "No se pudo guardar el tipo",
+      "TYPE_CREATE_SUCCESS": "Tipo creado correctamente",
+      "TYPE_UPDATE_SUCCESS": "Tipo actualizado correctamente",
+      "TYPE_DEACTIVATED": "Tipo desactivado",
+      "TYPE_ACTIVATED": "Tipo activado",
+      "WARNING_COMPLETE_FORM": "Completa el tipo, título y descripción",
+      "WARNING_NAME": "Indica un nombre para el tipo",
+      "WARNING_MESSAGE_EMPTY": "Escribe un mensaje o adjunta un archivo",
+      "WARNING_WAIT_OPTIMIZE": "Espera a que termine la compresión de la imagen",
+      "WARNING_OPTIMIZE": "No se pudo optimizar la imagen. Se enviará el archivo original."
     },
     "DETAIL": {
       "SUMMARY": "Resumen",
@@ -615,57 +676,7 @@
       "ALTA": "Alta"
     },
     "CONTROL_CENTER": "Centro de control",
-    "MANAGEMENT": "Gestión de incidencias",
-    "MESSAGES": {
-      "TYPE_TOGGLE_CONFIRM": "¿Deseas {{action}} el tipo \"{{name}}\"?",
-      "TYPE_TOGGLE_SUCCESS": "Estado del tipo de incidencia actualizado",
-      "LOAD_TYPES_ERROR": "Error al cargar los tipos de incidencia",
-      "LOAD_INCIDENTS_ERROR": "Error al cargar las incidencias",
-      "EMPTY": "No hay incidencias",
-      "EMPTY_HINT": "Crea una nueva incidencia o ajusta los filtros para encontrar resultados.",
-      "LOADING_CHAT": "Cargando conversación...",
-      "EMPTY_CHAT": "Todavía no hay mensajes.",
-      "LOCKED": "La incidencia está cerrada. No se pueden enviar nuevos mensajes.",
-      "ATTACH_EMPTY": "No hay auditorías adjuntas.",
-      "ATTACH_SIDE_EMPTY": "No hay auditorías.",
-      "LOADING_ATTACHABLE": "Cargando auditorías adjuntables...",
-      "NO_ATTACHABLE": "No hay auditorías disponibles para adjuntar.",
-      "SAVING": "Guardando...",
-      "OPENING": "Abriendo...",
-      "CLOSING": "Cerrando...",
-      "ATTACHING": "Adjuntando...",
-      "REVERTING": "Revirtiendo...",
-      "NO_AUDITS": "No hay auditorías.",
-      "NO_RESOLUTION": "Sin resolución",
-      "PENDING": "Pendiente",
-      "NO_DESCRIPTION": "Sin descripción",
-      "NO_TRACE": "Sin trazabilidad",
-      "AUDIT_REVERTED": "Revertida",
-      "AUDIT_ACTIVE": "Activa",
-      "LOAD_ERROR": "Error al cargar las incidencias",
-      "CREATE_SUCCESS": "Incidencia creada correctamente",
-      "CREATE_ERROR": "No se pudo crear la incidencia",
-      "DETAIL_ERROR": "No se pudo cargar el detalle de la incidencia",
-      "OPEN_SUCCESS": "Incidencia abierta",
-      "OPEN_ERROR": "No se pudo abrir la incidencia",
-      "CLOSE_SUCCESS": "Incidencia cerrada",
-      "CLOSE_ERROR": "No se pudo cerrar la incidencia",
-      "SENT_SUCCESS": "Mensaje enviado",
-      "SENT_ERROR": "No se pudo enviar el mensaje",
-      "PDF_SUCCESS": "PDF descargado correctamente",
-      "PDF_ERROR": "Error al generar el PDF",
-      "TYPES_LOAD_ERROR": "No se pudieron cargar los tipos de incidencia",
-      "TYPE_SAVE_ERROR": "No se pudo guardar el tipo",
-      "TYPE_CREATE_SUCCESS": "Tipo creado correctamente",
-      "TYPE_UPDATE_SUCCESS": "Tipo actualizado correctamente",
-      "TYPE_DEACTIVATED": "Tipo desactivado",
-      "TYPE_ACTIVATED": "Tipo activado",
-      "WARNING_COMPLETE_FORM": "Completa el tipo, título y descripción",
-      "WARNING_NAME": "Indica un nombre para el tipo",
-      "WARNING_MESSAGE_EMPTY": "Escribe un mensaje o adjunta un archivo",
-      "WARNING_WAIT_OPTIMIZE": "Espera a que termine la compresión de la imagen",
-      "WARNING_OPTIMIZE": "No se pudo optimizar la imagen. Se enviará el archivo original."
-    }
+    "MANAGEMENT": "Gestión de incidencias"
   },
   "RECEPTION": {
     "TITLE": "RECEPCIÓN DE ÓRDENES",
@@ -719,7 +730,8 @@
       "EXAMPLE_PREFIX": "Ej.",
       "COLLAB_TOOLTIP": "Solicitar colaboración con el usuario que está revisando",
       "LOT_LOWER": "lote",
-      "LOTS_LOWER": "lotes"
+      "LOTS_LOWER": "lotes",
+      "RECEIVED": "Recibido"
     },
     "MESSAGES": {
       "EXIT_WITHOUT_SAVING_TITLE": "Salir de recepción",
@@ -752,7 +764,8 @@
       "ORDER_CHANGED": "La orden cambió mientras la estabas revisando.",
       "COLLAB_SUCCESS": "Solicitud de colaboración enviada.",
       "COLLAB_ERROR": "Error al enviar solicitud de colaboración."
-    }
+    },
+    "REQUEST_COLLAB": "Solicitar colaboración"
   },
   "RECIPES": {
     "TITLE": "Recetas",
@@ -1241,7 +1254,6 @@
       }
     }
   },
-
   "SUPPLIERS": {
     "TITLE": "Gestión de Proveedores",
     "FILTERS": {
@@ -1325,7 +1337,7 @@
       "USER_ID": "ID Usuario",
       "FROM": "Desde",
       "TO": "Hasta",
-      "APPLY": "Aplicar Filtros"
+      "APPLY": "Aplicar"
     },
     "HISTORY": {
       "RECIPE_ID": "ID Receta",
@@ -1460,7 +1472,9 @@
       "LOADING_REPORT": "Generando informe...",
       "REPORT_TITLE": "Reporte de Cocina",
       "REPORT_PERIOD": "Periodo: {{period}}",
-      "GENERATE_PROMPT": "Genera un informe para visualizar los datos."
+      "GENERATE_PROMPT": "Genera un informe para visualizar los datos.",
+      "GENERATE_REPORT_PROMPT": "¿Deseas generar el informe de cocina?",
+      "NO_DATA": "No hay datos para mostrar"
     },
     "RANGES": {
       "DAILY": "Diario",
@@ -1469,14 +1483,6 @@
       "YEARLY": "Anual",
       "ALL_TIME": "Histórico",
       "CUSTOM": "Personalizado"
-    },
-    "FILTERS": {
-      "SEARCH_PLACEHOLDER": "Buscar en historial...",
-      "RECIPE_NAME": "Nombre de Receta",
-      "USER_NAME": "Nombre de Usuario",
-      "FROM": "Desde",
-      "TO": "Hasta",
-      "APPLY": "Aplicar"
     },
     "TABLE": {
       "DATE": "Fecha",
@@ -1491,6 +1497,11 @@
       "DOWNLOAD_PDF": "Descargar PDF",
       "REVERT_COOKING": "Revertir Cocinado",
       "VIEW_DETAIL": "Ver detalle"
+    },
+    "PAGINATION": {
+      "NEXT": "Siguiente",
+      "PAGE_INFO": "Página {{page}} de {{total}} ({{elements}} elementos)",
+      "PREVIOUS": "Anterior"
     }
   },
   "ORDERS_MGMT": {
@@ -2278,6 +2289,13 @@
     "LABELS": {
       "PURGE": "Purgar",
       "CANCEL": "Cancelar"
+    },
+    "PERFORMANCE": {
+      "SUPPLIERS": {
+        "HELP": "Optimizar carga de proveedores",
+        "TITLE": "Proveedores"
+      },
+      "TITLE": "Rendimiento"
     }
   },
   "NOTIFICATIONS": {
@@ -2764,7 +2782,8 @@
       "FIFO_HINT": "Si no seleccionas un lote, se aplicará criterio FIFO (First In, First Out).",
       "NEW_BATCH_HINT": "Al ser una entrada sin lote existente, se creará uno nuevo con esta fecha.",
       "REASON_PLACEHOLDER": "Explica el motivo del ajuste (ej: rotura, error de inventario...)",
-      "SUBMIT": "Confirmar Ajuste"
+      "SUBMIT": "Confirmar Ajuste",
+      "STOCK": "Ajuste de Stock"
     },
     "TABS": {
       "ALERTS": "Alertas",
@@ -2972,7 +2991,6 @@
         "REASON_PLACEHOLDER": "Ej. Corrección inventario, merma no registrada, rotura...",
         "SUBMITTING": "Registrando...",
         "SUBMIT": "Registrar Ajuste",
-
         "TYPES": {
           "AJUSTE": "AJUSTE",
           "MERMA": "MERMA",

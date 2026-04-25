@@ -187,7 +187,20 @@
     "PDF_CONFIRM_TITLE": "Confirm download",
     "PDF_CONFIRM_MSG": "Do you want to download this PDF file?",
     "CODE": "Code",
-    "ID": "ID"
+    "ID": "ID",
+    "CANCELLED": "Cancelled",
+    "CONFIRMED": "Confirmed",
+    "COPIED": "Copied",
+    "DUPLICATE": "Duplicate",
+    "EXPIRED_STOCK": "Expired Stock",
+    "FIELD": "Field",
+    "HORIZONTAL": "Horizontal",
+    "LINES": "Lines",
+    "RECIPE": "Recipe",
+    "RESTORE": "Restore",
+    "REVERT": "Revert",
+    "STATUS_NEW": "New",
+    "VERTICAL": "Vertical"
   },
   "NAV": {
     "DASHBOARD": "Home",
@@ -655,7 +668,9 @@
       "ATTACHMENT": "Attachment",
       "READ_BY": "Read by",
       "SYSTEM": "System Message",
-      "MESSAGES": "messages"
+      "MESSAGES": "messages",
+      "LOAD_IMAGE": "Cargando imagen...",
+      "NO_CONTENT": "Sin texto"
     },
     "STATUS": {
       "CREADO": "Created",
@@ -684,7 +699,9 @@
       "CHATS": "Chats",
       "ATTACHMENTS": "Attachments",
       "NO_INCIDENTS": "No incidents found"
-    }
+    },
+    "CONTROL_CENTER": "Centro de control",
+    "MANAGEMENT": "Gestión de incidencias"
   },
   "RECEPTION": {
     "TITLE": "Order Reception",
@@ -738,7 +755,8 @@
       "EXAMPLE_PREFIX": "Ex.",
       "COLLAB_TOOLTIP": "Request collaboration with the user who is reviewing",
       "LOT_LOWER": "lot",
-      "LOTS_LOWER": "lots"
+      "LOTS_LOWER": "lots",
+      "RECEIVED": "Received"
     },
     "MESSAGES": {
       "EXIT_WITHOUT_SAVING_TITLE": "Exit reception",
@@ -771,7 +789,8 @@
       "ORDER_CHANGED": "The order changed while you were reviewing it.",
       "COLLAB_SUCCESS": "Collaboration request sent.",
       "COLLAB_ERROR": "Error sending collaboration request."
-    }
+    },
+    "REQUEST_COLLAB": "Request collaboration"
   },
   "RECIPES": {
     "TITLE": "Recipes",
@@ -899,7 +918,10 @@
       "STEP_HELP": "Choose the recipes you want to prepare and the number of portions to automatically calculate the order.",
       "DESIRED_QUANTITIES": "Desired quantities",
       "BACK_TO_SELECTION": "Back to recipe selection"
-    }
+    },
+    "EDIT_MODAL_TITLE": "Editar Receta",
+    "SELLING_PRICE_CURRENCY": "Precio de Venta (€)",
+    "SUGGEST_PRICE_HINT": "Sugerir precio (Margen 20%)"
   },
   "ORDERS": {
     "TITLE": "Orders",
@@ -1555,7 +1577,8 @@
       "NEXT_STATE": "New State",
       "PREV_QTY": "Previous Quantity",
       "NEXT_QTY": "New Quantity",
-      "LOAD_ERROR": "Error loading audits"
+      "LOAD_ERROR": "Error loading audits",
+      "RECIPE_ID": "ID Receta"
     },
     "TAB_RECIPES": "Recipes",
     "TAB_AUDITS": "Audit",
@@ -1830,6 +1853,13 @@
     "LABELS": {
       "PURGE": "Purge",
       "CANCEL": "Cancel"
+    },
+    "PERFORMANCE": {
+      "SUPPLIERS": {
+        "HELP": "Optimize supplier loading",
+        "TITLE": "Suppliers"
+      },
+      "TITLE": "Performance"
     }
   },
   "NOTIFICATIONS": {
@@ -2210,7 +2240,9 @@
       "DATE_RANGE": "Date Range",
       "ALL_RECIPES": "All Recipes",
       "ALL_USERS": "All Users",
-      "APPLY": "Apply"
+      "APPLY": "Apply",
+      "RECIPE_ID": "ID Receta",
+      "USER_ID": "ID Usuario"
     },
     "TRACEABILITY": {
       "TITLE": "Ingredient Traceability",
@@ -2265,7 +2297,14 @@
       "PDF_SUCCESS": "Report downloaded successfully.",
       "PDF_ERROR": "Error downloading PDF report.",
       "REPORT_ERROR": "Could not generate kitchen report",
-      "LOAD_ORDER_ERROR": "Could not load order #{{id}}"
+      "LOAD_ORDER_ERROR": "Could not load order #{{id}}",
+      "LOAD_ERROR": "No se pudieron cargar los registros de cocina.",
+      "FILTER_RECIPE_ERROR": "Error al filtrar por receta.",
+      "FILTER_USER_ERROR": "Error al filtrar por usuario.",
+      "FILTER_DATE_ERROR": "Error al filtrar por rango de fechas.",
+      "SEARCH_ERROR": "Error al buscar auditorías de cocina.",
+      "GENERATE_REPORT_PROMPT": "Do you want to generate the kitchen report?",
+      "NO_DATA": "No data to display"
     },
     "REPORTS": {
       "LOADING": "Generating report...",
@@ -2331,6 +2370,43 @@
       "REVERT": "Revert",
       "DOWNLOAD": "Download Report",
       "EMPTY_HISTORY": "No cooking records found for the selected period."
+    },
+    "HISTORY": {
+      "RECIPE_ID": "ID Receta",
+      "USER_ID": "ID Usuario",
+      "DATE_FROM": "Desde",
+      "DATE_TO": "Hasta",
+      "APPLY_FILTERS": "Aplicar Filtros",
+      "CLEAR_FILTERS": "Limpiar Filtros",
+      "EMPTY": "No hay registros de cocina para los filtros aplicados",
+      "TABLE": {
+        "DATE": "Fecha",
+        "RECIPE": "Recipe",
+        "USER": "Usuario",
+        "QUANTITY": "Cantidad",
+        "ACTIONS": "Acciones"
+      },
+      "DETAIL": {
+        "TITLE": "Receta #{{id}}",
+        "RECIPE": "Recipe",
+        "USER": "Usuario",
+        "DATE": "Fecha de Cocinado",
+        "QUANTITY": "Cantidad (Porciones)",
+        "TRACEABILITY_TITLE": "Trazabilidad de Ingredientes",
+        "LOADING_TRACE": "Cargando origen...",
+        "EMPTY_TRACE": "No hay datos de trazabilidad.",
+        "REVERT_BTN": "Revertir Cocinado",
+        "BATCH": "Lote",
+        "ORIGIN": "Origen",
+        "SUPPLIER": "Proveedor",
+        "ORDER_CHIP": "Orden #{{id}}",
+        "INITIAL_STOCK": "Manual / Stock Inicial"
+      }
+    },
+    "PAGINATION": {
+      "NEXT": "Next",
+      "PAGE_INFO": "Page {{page}} of {{total}} ({{elements}} elements)",
+      "PREVIOUS": "Previous"
     }
   },
   "BARCODE_SCANNER": {
@@ -2413,7 +2489,8 @@
       "FIFO_HINT": "If no batch is selected, FIFO (First In, First Out) logic will be applied.",
       "NEW_BATCH_HINT": "Since this is an entry without an existing batch, a new one will be created with this date.",
       "REASON_PLACEHOLDER": "Explain the reason for the adjustment (e.g., breakage, inventory error...)",
-      "SUBMIT": "Confirm Adjustment"
+      "SUBMIT": "Confirm Adjustment",
+      "STOCK": "Stock Adjustment"
     },
     "TABS": {
       "ALERTS": "Alerts",
@@ -3198,13 +3275,6 @@
       "ERROR_TITLE": "Error",
       "ERROR_BODY": "Something went wrong",
       "WARNING_BODY": "Important notice"
-    }
-  },
-  "INCIDENT": {
-    "SEVERITY": {
-      "BAJA": "Low",
-      "MEDIA": "Medium",
-      "ALTA": "High"
     }
   },
   "INCIDENT": {
