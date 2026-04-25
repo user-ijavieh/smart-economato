@@ -1,4 +1,4 @@
-# Esta de aqui javier tebas no me la bloquea (denuncien a laliga son unos corruptos)
+# Build multi-stage: compilación con Node 20 y servicio con Nginx
 FROM mirror.gcr.io/library/node:20-alpine as build
 
 WORKDIR /app
