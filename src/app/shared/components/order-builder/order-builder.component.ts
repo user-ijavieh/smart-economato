@@ -464,14 +464,22 @@ export class OrderBuilderComponent implements OnInit {
     this.creatingStockOrders = true;
     try {
       for (const group of validGroups) {
-        const orderRequest = {
-          userId: this.userId,
-          supplierId: group.supplierId || undefined,
-          details: group.items.map(item => ({
+        const orderDetails = group.items
+          .map(item => ({
             productId: item.productId,
             quantity: this.getStockOrderQuantity(item),
             unitPrice: item.unitPrice
           }))
+          .filter(detail => detail.quantity > 0);
+
+        if (orderDetails.length === 0) {
+          continue;
+        }
+
+        const orderRequest = {
+          userId: this.userId,
+          supplierId: group.supplierId || undefined,
+          details: orderDetails
         };
         await firstValueFrom(this.orderService.create(orderRequest));
       }

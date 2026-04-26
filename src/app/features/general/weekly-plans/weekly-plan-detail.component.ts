@@ -34,6 +34,7 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
   private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
+  private readonly shortageEpsilon = 0.0001;
 
   planId: number | null = null;
   plan: WeeklyPlanResponse | null = null;
@@ -395,7 +396,15 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
 
 
   getUncoveredStockShortage(requirement: WeeklyPlanStockRequirement): number {
-    return Math.max(0, this.getStockShortage(requirement) - this.getPendingOrderQuantity(requirement));
+    const rawVal = Math.max(0, this.getStockShortage(requirement) - this.getPendingOrderQuantity(requirement));
+    return this.normalizeShortage(rawVal);
+  }
+
+  private normalizeShortage(value: number): number {
+    if (value <= this.shortageEpsilon) {
+      return 0;
+    }
+    return value;
   }
 
   canCreateStockOrder(): boolean {
@@ -404,9 +413,7 @@ export class WeeklyPlanDetailComponent implements OnInit, OnDestroy {
 
   private getRequirementsNeedingReplenishment(): WeeklyPlanStockRequirement[] {
     return this.stockRequirements.filter(requirement =>
-      this.getUncoveredStockShortage(requirement) > 0 ||
-      !requirement.sufficient ||
-      requirement.expirationRisk
+      this.getUncoveredStockShortage(requirement) > 0
     );
   }
 
