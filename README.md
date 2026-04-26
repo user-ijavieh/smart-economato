@@ -299,10 +299,10 @@ Este frontend se comunica con la [Smart Economato API](https://github.com/FranWD
   
 | Contribuidor | GitHub | LinkedIn | 
 |-------------|-------------|--------------| 
-| Javier Daniel Remedios Colmenares | [@user-ijavieh](https://github.com/user-ijavieh) | [LinkedIn](www.linkedin.com/in/javier-remedios)|
+| Javier Daniel Remedios Colmenares | [@user-ijavieh](https://github.com/user-ijavieh) | [LinkedIn](https://www.linkedin.com/in/javier-remedios)|
 | Francisco Airam Hernández Crosa | [@FranWDev](https://github.com/FranWDev) | [LinkedIn](https://www.linkedin.com/in/franciscohdezcrosa)|
-| Lorena Fumero Delgado| [@lorena-fudel](https://github.com/lorena-fudel) | [LinkedIn](www.linkedin.com/in/lorenafumerodelgado) |
-| Daniel Pascual Bezanilla| [@blablabla277](https://github.com/blablabla277) | [LinkedIn](www.linkedin.com/in/daniel-pascual-bezanilla) |
+| Lorena Fumero Delgado| [@lorena-fudel](https://github.com/lorena-fudel) | [LinkedIn](https://www.linkedin.com/in/lorenafumerodelgado) |
+| Daniel Pascual Bezanilla| [@blablabla277](https://github.com/blablabla277) | [LinkedIn](https://www.linkedin.com/in/daniel-pascual-bezanilla-35b85a28a/) |
   
 ## Licencia  
   
