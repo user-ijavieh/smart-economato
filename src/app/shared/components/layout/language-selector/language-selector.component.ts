@@ -35,6 +35,19 @@ import { TranslateModule } from '@ngx-translate/core';
               <rect y="14" width="24" height="2" fill="#A80000"></rect>
             </svg>
           }
+          @if (getActiveLanguage() === 'eu') {
+            <svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true">
+              <rect width="24" height="16" rx="3" fill="#CE1C24"></rect>
+              <path d="M0 0 L24 16 M24 0 L0 16" stroke="#009543" stroke-width="3"></path>
+              <path d="M12 0 L12 16 M0 8 L24 8" stroke="#FFFFFF" stroke-width="2"></path>
+            </svg>
+          }
+          @if (getActiveLanguage() === 'ga') {
+            <svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true">
+              <rect width="24" height="16" rx="3" fill="#FFFFFF"></rect>
+              <path d="M0 16 L24 0" stroke="#0099CC" stroke-width="3"></path>
+            </svg>
+          }
         </span>
         <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor" [class.rotate]="isOpen()">
           <path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/>
@@ -72,6 +85,19 @@ import { TranslateModule } from '@ngx-translate/core';
                     <rect y="6" width="24" height="2" fill="#A80000"></rect>
                     <rect y="10" width="24" height="2" fill="#A80000"></rect>
                     <rect y="14" width="24" height="2" fill="#A80000"></rect>
+                  </svg>
+                }
+                @if (lang.code === 'eu') {
+                  <svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true">
+                    <rect width="24" height="16" rx="3" fill="#CE1C24"></rect>
+                    <path d="M0 0 L24 16 M24 0 L0 16" stroke="#009543" stroke-width="3"></path>
+                    <path d="M12 0 L12 16 M0 8 L24 8" stroke="#FFFFFF" stroke-width="2"></path>
+                  </svg>
+                }
+                @if (lang.code === 'ga') {
+                  <svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true">
+                    <rect width="24" height="16" rx="3" fill="#FFFFFF"></rect>
+                    <path d="M0 16 L24 0" stroke="#0099CC" stroke-width="3"></path>
                   </svg>
                 }
               </span>
@@ -240,7 +266,9 @@ export class LanguageSelectorComponent {
   languages = [
     { code: 'es', label: 'Español' },
     { code: 'en', label: 'English' },
-    { code: 'ca', label: 'Català' }
+    { code: 'ca', label: 'Català' },
+    { code: 'eu', label: 'Euskara' },
+    { code: 'ga', label: 'Galego' }
   ];
 
   toggleMenu(event: MouseEvent): void {
