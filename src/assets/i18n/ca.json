@@ -131,7 +131,8 @@
       "RECEIVE": "Recepció",
       "COOK": "Cuinat",
       "RECEPTION": "Comanda Rebuda",
-      "REVERSION": "Reversió d'Estoc"
+      "REVERSION": "Reversió d'Estoc",
+      "CONFIRM": "Confirmar"
     },
     "PAGE_INFO": "Pàgina {{page}} de {{total}}",
     "TOTAL_COUNT": "({{count}} {{items}})",
@@ -187,7 +188,47 @@
     "PDF_CONFIRM_TITLE": "Confirmar descàrrega",
     "PDF_CONFIRM_MSG": "Vols descarregar aquest arxiu PDF?",
     "CODE": "Codi",
-    "ID": "ID"
+    "ID": "ID",
+    "CANCELLED": "Cancel·lat",
+    "CONFIRMED": "Confirmat",
+    "COPIED": "Copiat",
+    "DUPLICATE": "Duplicar",
+    "EXPIRED_STOCK": "Stock Caducat",
+    "FIELD": "Camp",
+    "HORIZONTAL": "Horitzontal",
+    "LINES": "Línies",
+    "RECIPE": "Recepta",
+    "RESTORE": "Restaurar",
+    "REVERT": "Revertir",
+    "STATUS_NEW": "Nou",
+    "VERTICAL": "Vertical",
+    "ITEMS_SELECTED": "Elements seleccionats",
+    "PRODUCT_NOT_FOUND": "Producte no trobat",
+    "ERROR_LOADING_SUPPLIERS": "Error en carregar els proveïdors",
+    "SORT_ALPHA": "Ordre alfabètic",
+    "EXPORT_SUCCESS": "Exportat amb èxit",
+    "ERROR_LOADING_PRODUCTS": "Error en carregar els productes",
+    "PDF_ERROR": "Error de PDF",
+    "PREPARING": "Preparant...",
+    "CREATING": "Creant...",
+    "SORT_SHORTAGE": "Ordenar per faltant",
+    "RESTORING": "Restaurant...",
+    "RESTORE_SESSION": "Restaurar sessió",
+    "COOK": "Cuinar",
+    "UNKNOWN_USER": "Usuari desconegut",
+    "CONFIRM_EDIT": "Confirmar edició",
+    "COLUMN_ACTIONS": "Accions de columna",
+    "CALCULATING": "Calculant...",
+    "REVERTING": "Revertint...",
+    "NO_RESULTS_SEARCH": "Sense resultats a la cerca",
+    "CANCELLING": "Cancel·lant...",
+    "CANCEL_SESSION": "Cancel·lar sessió",
+    "CONFIRM_ALL": "Confirmar tot",
+    "REVERT_ALL": "Revertir tot",
+    "CONFIRM_SESSION": "Confirmar sessió",
+    "HIDE": "Ocultar",
+    "ERROR_LOADING_ALLERGENS": "Error en carregar al·lèrgens",
+    "CANCEL_STUDENT": "Cancel·lar alumne"
   },
   "NAV": {
     "DASHBOARD": "Inici",
@@ -460,7 +501,8 @@
       "TYPES": "Tipus",
       "SUMMARY": "Resum",
       "CHAT": "Xat",
-      "AUDITS": "Auditories"
+      "AUDITS": "Auditories",
+      "SECTIONS": "Seccions"
     },
     "ACTIONS": {
       "SHOW_FILTERS": "Mostrar filtres",
@@ -488,7 +530,9 @@
       "ACTIVATE": "Activar",
       "DEACTIVATE": "Desactivar",
       "ATTACH_AUDITS": "Adjuntar auditories",
-      "DEACTIVATE_TYPE": "Desactivar tipus"
+      "DEACTIVATE_TYPE": "Desactivar tipus",
+      "REMOVE_FILE": "Eliminar fitxer",
+      "ACTIVATE_TYPE": "Activar tipus"
     },
     "STATS": {
       "TOTAL": "Incidències totals",
@@ -558,7 +602,67 @@
       "RESET_IRREVERSIBLE_TEXT": "Es perdran totes les dades d'auditoria i el snapshot actual. Vols procedir definitivament?"
     },
     "MESSAGES": {
-      "REVERT_ERROR": "Error al revertir l'auditoria"
+      "REVERT_ERROR": "Error al revertir l'auditoria",
+      "TYPE_TOGGLE_CONFIRM": "Vols {{action}} el tipus \"{{name}}\"?",
+      "TYPE_TOGGLE_SUCCESS": "Estat del tipus d'incidència actualitzat",
+      "LOAD_TYPES_ERROR": "Error en carregar els tipus d'incidència",
+      "LOAD_INCIDENTS_ERROR": "Error en carregar les incidències",
+      "EMPTY": "No hi ha incidències",
+      "EMPTY_HINT": "Crea una nova incidència o ajusta els filtres per trobar resultats.",
+      "LOADING_CHAT": "Carregant conversa...",
+      "EMPTY_CHAT": "Encara no hi ha missatges.",
+      "LOCKED": "La incidència està tancada. No es poden enviar nous missatges.",
+      "ATTACH_EMPTY": "No hi ha auditories adjuntes.",
+      "ATTACH_SIDE_EMPTY": "No hi ha auditories.",
+      "LOADING_ATTACHABLE": "Carregant auditories adjuntables...",
+      "NO_ATTACHABLE": "No hi ha auditories disponibles per adjuntar.",
+      "SAVING": "Guardant...",
+      "OPENING": "Obrint...",
+      "CLOSING": "Tancant...",
+      "ATTACHING": "Adjuntant...",
+      "REVERTING": "Revertint...",
+      "NO_AUDITS": "No hi ha auditories.",
+      "NO_RESOLUTION": "Sense resolució",
+      "PENDING": "Pendent",
+      "NO_DESCRIPTION": "Sense descripció",
+      "NO_TRACE": "Sense traçabilitat",
+      "AUDIT_REVERTED": "Revertida",
+      "AUDIT_ACTIVE": "Activa",
+      "LOAD_ERROR": "Error en carregar les incidències",
+      "CREATE_SUCCESS": "Incidència creada correctament",
+      "CREATE_ERROR": "No s'ha pogut crear la incidència",
+      "DETAIL_ERROR": "No s'ha pogut carregar el detall de la incidència",
+      "OPEN_SUCCESS": "Incidència oberta",
+      "OPEN_ERROR": "No s'ha pogut obrir la incidència",
+      "CLOSE_SUCCESS": "Incidència tancada",
+      "CLOSE_ERROR": "No s'ha pogut tancar la incidència",
+      "SENT_SUCCESS": "Missatge enviat",
+      "SENT_ERROR": "No s'ha pogut enviar el missatge",
+      "PDF_SUCCESS": "PDF descarregat correctament",
+      "PDF_ERROR": "Error en generar el PDF",
+      "TYPES_LOAD_ERROR": "No s'han pogut carregar els tipus d'incidència",
+      "TYPE_SAVE_ERROR": "No s'ha pogut guardar el tipus",
+      "TYPE_CREATE_SUCCESS": "Tipus creat correctament",
+      "TYPE_UPDATE_SUCCESS": "Tipus actualitzat correctament",
+      "TYPE_DEACTIVATED": "Tipus desactivat",
+      "TYPE_ACTIVATED": "Tipus activat",
+      "WARNING_COMPLETE_FORM": "Completa el tipus, títol i descripció",
+      "WARNING_NAME": "Indica un nom per al tipus",
+      "WARNING_MESSAGE_EMPTY": "Escriu un missatge o adjunta un fitxer",
+      "WARNING_WAIT_OPTIMIZE": "Espera que acabi la compressió de la imatge",
+      "WARNING_OPTIMIZE": "No s'ha pogut optimitzar la imatge. S'enviarà el fitxer original.",
+      "NOT_READ": "No llegit",
+      "ATTACH_SUCCESS": "Adjuntat amb èxit",
+      "READ_BY": "Llegit per",
+      "TYPING_MULTIPLE": "Diversos estan escrivint...",
+      "ATTACH_ERROR": "Error en adjuntar",
+      "DOWNLOAD_ERROR": "Error de descàrrega",
+      "TYPE_TOGGLE_ERROR": "Error en canviar estat del tipus",
+      "LOADING_ATTACHABLE_ERROR": "Error en carregar elements adjuntables",
+      "WARNING_REASON": "Advertiment: Indiqueu un motiu",
+      "WARNING_SELECT_AUDIT": "Advertiment: Seleccioneu una auditoria",
+      "REVERT_SUCCESS": "Revertit amb èxit",
+      "TYPING": "Escrivint..."
     },
     "DETAIL": {
       "SUMMARY": "Resum",
@@ -615,57 +719,7 @@
       "ALTA": "Alta"
     },
     "CONTROL_CENTER": "Centre de control",
-    "MANAGEMENT": "Gestió d'incidències",
-    "MESSAGES": {
-      "TYPE_TOGGLE_CONFIRM": "Vols {{action}} el tipus \"{{name}}\"?",
-      "TYPE_TOGGLE_SUCCESS": "Estat del tipus d'incidència actualitzat",
-      "LOAD_TYPES_ERROR": "Error en carregar els tipus d'incidència",
-      "LOAD_INCIDENTS_ERROR": "Error en carregar les incidències",
-      "EMPTY": "No hi ha incidències",
-      "EMPTY_HINT": "Crea una nova incidència o ajusta els filtres per trobar resultats.",
-      "LOADING_CHAT": "Carregant conversa...",
-      "EMPTY_CHAT": "Encara no hi ha missatges.",
-      "LOCKED": "La incidència està tancada. No es poden enviar nous missatges.",
-      "ATTACH_EMPTY": "No hi ha auditories adjuntes.",
-      "ATTACH_SIDE_EMPTY": "No hi ha auditories.",
-      "LOADING_ATTACHABLE": "Carregant auditories adjuntables...",
-      "NO_ATTACHABLE": "No hi ha auditories disponibles per adjuntar.",
-      "SAVING": "Guardant...",
-      "OPENING": "Obrint...",
-      "CLOSING": "Tancant...",
-      "ATTACHING": "Adjuntant...",
-      "REVERTING": "Revertint...",
-      "NO_AUDITS": "No hi ha auditories.",
-      "NO_RESOLUTION": "Sense resolució",
-      "PENDING": "Pendent",
-      "NO_DESCRIPTION": "Sense descripció",
-      "NO_TRACE": "Sense traçabilitat",
-      "AUDIT_REVERTED": "Revertida",
-      "AUDIT_ACTIVE": "Activa",
-      "LOAD_ERROR": "Error en carregar les incidències",
-      "CREATE_SUCCESS": "Incidència creada correctament",
-      "CREATE_ERROR": "No s'ha pogut crear la incidència",
-      "DETAIL_ERROR": "No s'ha pogut carregar el detall de la incidència",
-      "OPEN_SUCCESS": "Incidència oberta",
-      "OPEN_ERROR": "No s'ha pogut obrir la incidència",
-      "CLOSE_SUCCESS": "Incidència tancada",
-      "CLOSE_ERROR": "No s'ha pogut tancar la incidència",
-      "SENT_SUCCESS": "Missatge enviat",
-      "SENT_ERROR": "No s'ha pogut enviar el missatge",
-      "PDF_SUCCESS": "PDF descarregat correctament",
-      "PDF_ERROR": "Error en generar el PDF",
-      "TYPES_LOAD_ERROR": "No s'han pogut carregar els tipus d'incidència",
-      "TYPE_SAVE_ERROR": "No s'ha pogut guardar el tipus",
-      "TYPE_CREATE_SUCCESS": "Tipus creat correctament",
-      "TYPE_UPDATE_SUCCESS": "Tipus actualitzat correctament",
-      "TYPE_DEACTIVATED": "Tipus desactivat",
-      "TYPE_ACTIVATED": "Tipus activat",
-      "WARNING_COMPLETE_FORM": "Completa el tipus, títol i descripció",
-      "WARNING_NAME": "Indica un nom per al tipus",
-      "WARNING_MESSAGE_EMPTY": "Escriu un missatge o adjunta un fitxer",
-      "WARNING_WAIT_OPTIMIZE": "Espera que acabi la compressió de la imatge",
-      "WARNING_OPTIMIZE": "No s'ha pogut optimitzar la imatge. S'enviarà el fitxer original."
-    }
+    "MANAGEMENT": "Gestió d'incidències"
   },
   "RECEPTION": {
     "TITLE": "RECEPCIÓ D'ORDRES",
@@ -719,7 +773,8 @@
       "EXAMPLE_PREFIX": "Ex.",
       "COLLAB_TOOLTIP": "Sol·licitar col·laboració amb l'usuari que l'està revisant",
       "LOT_LOWER": "lot",
-      "LOTS_LOWER": "lots"
+      "LOTS_LOWER": "lots",
+      "RECEIVED": "Rebut"
     },
     "MESSAGES": {
       "EXIT_WITHOUT_SAVING_TITLE": "Sortir de recepció",
@@ -751,8 +806,10 @@
       "REVISION_CONFLICT": "{{owner}} està revisant aquesta ordre en aquest moment.",
       "ORDER_CHANGED": "L'ordre ha canviat mentre l'estaves revisant.",
       "COLLAB_SUCCESS": "Sol·licitud de col·laboració enviada.",
-      "COLLAB_ERROR": "Error en enviar sol·licitud de col·laboració."
-    }
+      "COLLAB_ERROR": "Error en enviar sol·licitud de col·laboració.",
+      "ORDER_NOT_REVIEW": "La comanda no està en revisió"
+    },
+    "REQUEST_COLLAB": "Sol·licitar col·laboració"
   },
   "RECIPES": {
     "TITLE": "Receptes",
@@ -793,7 +850,12 @@
       "CONFIGURE_ORDER": "Pas 2: Configurar Comanda",
       "STEP_HELP": "Tria les receptes que vols preparar i la quantitat de racions per calcular la comanda automàticament.",
       "DESIRED_QUANTITIES": "Quantitats desitjades",
-      "BACK_TO_SELECTION": "Tornar a selecció de receptes"
+      "BACK_TO_SELECTION": "Tornar a selecció de receptes",
+      "MESSAGES": {
+        "ENRICH_ERROR": "Error en enriquir les dades",
+        "CALCULATION_ERROR": "Error de càlcul",
+        "SELECT_AT_LEAST_ONE": "Seleccioneu-ne almenys un"
+      }
     },
     "CUSTOM_ORDER": "Comanda a mida",
     "CONTAINS_ALLERGENS": "Conté al·lèrgens",
@@ -862,7 +924,9 @@
         "UPDATE_ERROR": "Error en actualitzar l'esborrany.",
         "CREATE_SUCCESS": "Suggeriment \"{{name}}\" enviat correctament.",
         "CREATE_ERROR": "Error en enviar el suggeriment de recepta."
-      }
+      },
+      "DELETE_CONFIRM_MSG": "Esteu segur que voleu eliminar-ho?",
+      "DELETE_CONFIRM_TITLE": "Confirmació d'eliminació"
     },
     "FILTERS": {
       "ALLERGENS_ALL": "Tots els al·lèrgens",
@@ -882,7 +946,14 @@
       "PRINT_ERROR": "Error en generar el PDF.",
       "UPDATE_SUCCESS": "Recepta \"{{name}}\" actualitzada correctament.",
       "CREATE_SUCCESS": "Recepta \"{{name}}\" creada correctament.",
-      "COOK_SUCCESS": "Cuinat de \"{{name}}\" registrat. Estoc actualitzat."
+      "COOK_SUCCESS": "Cuinat de \"{{name}}\" registrat. Estoc actualitzat.",
+      "NAME_REQUIRED": "El nom és obligatori",
+      "CONFIRM_VISIBILITY_TITLE": "Confirmar visibilitat",
+      "ACTION_HIDE": "Ocultar element",
+      "AT_LEAST_ONE_COMPONENT": "Ha de tenir almenys un component",
+      "CONFIRM_VISIBILITY_MSG": "Voleu canviar la visibilitat?",
+      "INVALID_COMPONENTS": "Components invàlids",
+      "ACTION_SHOW": "Mostrar element"
     }
   },
   "ORDERS": {
@@ -1155,7 +1226,9 @@
       "PENDING_COUNT_OTHER": "{{count}} alumnes per assignar",
       "CONFIRM": "Confirmar Assignacions",
       "ASSIGNING": "Assignant...",
-      "CANCEL": "Cancel·lar"
+      "CANCEL": "Cancel·lar",
+      "STUDENT_SINGULAR": "Alumne",
+      "STUDENTS_PLURAL": "Alumnes"
     },
     "ACTIONS": {
       "ADD_USER": "Afegir Usuari",
@@ -1211,7 +1284,12 @@
       "MODAL_EDIT": "Edició d'usuari",
       "ACTION_CONNECTED": "Connectat",
       "ACTION_DISCONNECTED": "Desconnectat",
-      "ACTION_SCREEN_CHANGED": "Canvi de pantalla"
+      "ACTION_SCREEN_CHANGED": "Canvi de pantalla",
+      "ERROR_LOADING_ASSIGNMENTS": "Error en carregar les assignacions",
+      "ERROR_ASSIGNING": "Error en assignar",
+      "LOAD_USERS_ERROR": "Error en carregar usuaris",
+      "BATCH_PARTIAL_SUCCESS": "Èxit parcial al procés per lots",
+      "BATCH_SUCCESS": "Procés per lots completat amb èxit"
     },
     "USER_FORM": {
       "NAME": "Nom",
@@ -1241,7 +1319,6 @@
       }
     }
   },
-
   "SUPPLIERS": {
     "TITLE": "Gestió de Proveïdors",
     "FILTERS": {
@@ -1264,7 +1341,8 @@
     "PAGINATION_INFO": "Pàgina {{current}} de {{totalPages}} ({{total}} proveïdors)",
     "MESSAGES": {
       "LOAD_ERROR": "Error en carregar els proveïdors"
-    }
+    },
+    "LOAD_ERROR": "Error al cargar los proveedores"
   },
   "SUPPLIER_FORM": {
     "NAME": "Nom *",
@@ -1349,7 +1427,9 @@
         "SUPPLIER": "Proveïdor",
         "ORDER_CHIP": "Ordre #{{id}}",
         "INITIAL_STOCK": "Manual / Estoc Inicial"
-      }
+      },
+      "RECIPE_ID": "ID Receta",
+      "USER_ID": "ID Usuario"
     },
     "REPORTS": {
       "LOADING": "Generant informe...",
@@ -1452,7 +1532,13 @@
       "LOADING_REPORT": "Generant informe...",
       "REPORT_TITLE": "Informe de Cuina",
       "REPORT_PERIOD": "Període: {{period}}",
-      "GENERATE_PROMPT": "Genera un informe per visualitzar les dades."
+      "GENERATE_PROMPT": "Genera un informe per visualitzar les dades.",
+      "GENERATE_REPORT_PROMPT": "Vols generar l'informe de cuina?",
+      "NO_DATA": "No hi ha dades per mostrar",
+      "CUSTOM_RANGE_WARNING": "Advertiment de rang personalitzat",
+      "ORDER_LOAD_ERROR": "Error en carregar comanda",
+      "REVERT_CONFIRM": "Confirmar reversió",
+      "FILTER_GENERAL_ERROR": "Error al filtre"
     },
     "RANGES": {
       "DAILY": "Diari",
@@ -1485,7 +1571,13 @@
       "CLEAR_FILTERS": "Netejar Filtres",
       "DOWNLOAD_PDF": "Descarregar PDF",
       "REVERT_COOKING": "Revertir Cuinat",
-      "VIEW_DETAIL": "Veure detall"
+      "VIEW_DETAIL": "Veure detall",
+      "VIEW_TRACE": "Veure traçabilitat"
+    },
+    "PAGINATION": {
+      "NEXT": "Següent",
+      "PAGE_INFO": "Pàgina {{page}} de {{total}} ({{elements}} elements)",
+      "PREVIOUS": "Anterior"
     }
   },
   "ORDERS_MGMT": {
@@ -1665,7 +1757,9 @@
       "ACTION_HIDDEN": "desactivat",
       "ACTION_SHOWN": "activat",
       "EXCEL_SUCCESS": "Excel descarregat correctament",
-      "EXCEL_ERROR": "Error en descarregar Excel"
+      "EXCEL_ERROR": "Error en descarregar Excel",
+      "UPDATE_ERROR": "Error d'actualització",
+      "CREATE_ERROR": "Error de creació"
     }
   },
   "STOCK": {
@@ -2131,7 +2225,8 @@
       "PURGE_PRESENCE_ERROR": "No s'ha pogut purgar el log de presència",
       "PURGE_NOTIFICATIONS_SUCCESS": "S'han eliminat {{count}} notificacions",
       "PURGE_NOTIFICATIONS_ERROR": "No s'ha pogut purgar el log de notificacions",
-      "LOAD_AUDIT_ERROR": "No s'ha pogut carregar l'auditoria global"
+      "LOAD_AUDIT_ERROR": "No s'ha pogut carregar l'auditoria global",
+      "CACHE_REFRESH_SUCCESS": "Caché recarregada amb èxit"
     },
     "PURGE_PRESENCE": {
       "TITLE": "Purgar activitat de presència",
@@ -2144,6 +2239,13 @@
     "LABELS": {
       "PURGE": "Purgar",
       "CANCEL": "Cancel·lar"
+    },
+    "PERFORMANCE": {
+      "SUPPLIERS": {
+        "HELP": "Optimitzar càrrega de proveïdors",
+        "TITLE": "Proveïdors"
+      },
+      "TITLE": "Rendiment"
     }
   },
   "NOTIFICATIONS": {
@@ -2298,7 +2400,9 @@
       "RESTORE_STUDENT_SESSION_TITLE": "Restaurar sessió a l'alumne",
       "RESTORE_STUDENT_SESSION_MSG": "Es restaurarà a {{name}} en la sessió {{num}} ({{recipe}}). Vols continuar?",
       "RESTORE_STUDENT_SESSION_SUCCESS": "{{name}} restaurat en la sessió correctament.",
-      "RESTORE_STUDENT_SESSION_ERROR": "No s'ha pogut restaurar l'alumne en la sessió."
+      "RESTORE_STUDENT_SESSION_ERROR": "No s'ha pogut restaurar l'alumne en la sessió.",
+      "BACK_TO_DRAFT": "Tornar a esborrany",
+      "CHECK_INVENTORY_TAB": "Verificar a la pestanya d'inventari"
     },
     "DETAIL": {
       "SESSIONS_COUNT": "{{count}} sessions",
@@ -2559,7 +2663,8 @@
     },
     "ACTIONS": {
       "SCAN_AGAIN": "Escanejar de nou"
-    }
+    },
+    "TITLE": "Títol"
   },
   "UNITS": {
     "KG": "Kg",
@@ -2583,7 +2688,9 @@
     "MESSAGES": {
       "CREATE_SUCCESS": "Producte {{name}} creat correctament.",
       "UPDATE_SUCCESS": "Producte {{name}} actualitzat correctament.",
-      "TOGGLE_HIDDEN_SUCCESS_SINGLE": "Estat del producte actualitzat correctament."
+      "TOGGLE_HIDDEN_SUCCESS_SINGLE": "Estat del producte actualitzat correctament.",
+      "PRODUCT_ADDED_SCAN": "Producte afegit per escàner",
+      "PRODUCT_DETECTED": "Producte detectat"
     },
     "PDF_CONFIRM_TITLE": "Confirmar exportació",
     "PDF_CONFIRM_MSG": "Vols descarregar la fitxa del producte en format PDF?",
@@ -2594,7 +2701,21 @@
     "MESSAGES": {
       "NO_UNCOVERED_PRODUCTS": "No s'han trobat productes sense cobertura per reposar.",
       "INTEGRITY_VALID": "Integritat verificada: {{message}}",
-      "ALL_CHAINS_VALID": "Totes les cadenes ({{count}}) són íntegres."
+      "ALL_CHAINS_VALID": "Totes les cadenes ({{count}}) són íntegres.",
+      "ERROR_GENERATE_PDF": "Error a l'hora de generar PDF",
+      "ERROR_GLOBAL_VERIFICATION": "Error en la verificació global de la cadena",
+      "ADJUSTMENT_SUCCESS": "Ajust de stock realitzat correctament",
+      "ERROR_VERIFY_INTEGRITY": "Error en verificar la integritat",
+      "ERROR_LOAD_BATCHES": "Error a l'hora de carregar els lots",
+      "ERROR_REGISTER_ADJUSTMENT": "Error en registrar l'ajust d'stock",
+      "ADMIN_ONLY_BLOCKCHAIN": "Només un administrador pot accedir a Blockchain",
+      "PDF_GENERATED_WARNING": "Advertiment en generar PDF",
+      "PDF_GENERATED_OK": "PDF de la cadena generat correctament",
+      "BLOCKCHAIN_MODE_ACTIVE": "Mode Blockchain actiu",
+      "ERROR_RESET_HISTORY": "Error en reiniciar l'historial",
+      "GLOBAL_CORRUPTION_DETECTED": "Corrupció global detectada",
+      "EXPIRATION_DATE_REQUIRED": "Data de caducitat obligatòria",
+      "INTEGRITY_CORRUPTED": "Integritat corrupta"
     },
     "MODALS": {
       "CONFIRM_DOWNLOAD_TITLE": "Confirmar Descàrrega",
@@ -2630,7 +2751,9 @@
       "FIFO_HINT": "Si no selecciones un lot, s'aplicarà criteri FIFO (First In, First Out).",
       "NEW_BATCH_HINT": "En ser una entrada sense lot existent, es crearà un de nou amb aquesta data.",
       "REASON_PLACEHOLDER": "Explica el motiu de l'ajust (ex: trencament, error d'inventari...)",
-      "SUBMIT": "Confirmar Ajust"
+      "SUBMIT": "Confirmar Ajust",
+      "STOCK": "Ajust de Stock",
+      "SUBMITTING": "Enviant..."
     },
     "TABS": {
       "ALERTS": "Alertes",
@@ -2838,13 +2961,11 @@
         "REASON_PLACEHOLDER": "Ex. Correcció inventari, merma no registrada, trencament...",
         "SUBMITTING": "Registrant...",
         "SUBMIT": "Registrar Ajust",
-
         "TYPES": {
           "AJUSTE": "AJUST",
-        "SALIDA": "SORTIDA",
+          "SALIDA": "SORTIDA (Extra)",
           "MERMA": "MERMA",
           "ENTRADA": "ENTRADA (Extra)",
-          "SALIDA": "SORTIDA (Extra)",
           "RECEPCION": "RECEPCIÓ",
           "PRODUCCION": "PRODUCCIÓ"
         }
@@ -3227,11 +3348,7 @@
       "ALTA": "Alta"
     }
   },
-  "INCIDENT": {
-    "SEVERITY": {
-      "BAJA": "Baixa",
-      "MEDIA": "Mitjana",
-      "ALTA": "Alta"
-    }
+  "LEDGER": {
+    "SCAN_TOOLTIP": "Escanejar el codi del lot"
   }
 }

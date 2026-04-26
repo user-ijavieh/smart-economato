@@ -131,7 +131,8 @@
       "RECEIVE": "Reception",
       "COOK": "Cooking",
       "RECEPTION": "Order Received",
-      "REVERSION": "Stock Reversion"
+      "REVERSION": "Stock Reversion",
+      "CONFIRM": "Confirm"
     },
     "PAGE_INFO": "Page {{page}} of {{total}}",
     "TOTAL_COUNT": "({{count}} {{items}})",
@@ -187,7 +188,47 @@
     "PDF_CONFIRM_TITLE": "Confirm download",
     "PDF_CONFIRM_MSG": "Do you want to download this PDF file?",
     "CODE": "Code",
-    "ID": "ID"
+    "ID": "ID",
+    "CANCELLED": "Cancelled",
+    "CONFIRMED": "Confirmed",
+    "COPIED": "Copied",
+    "DUPLICATE": "Duplicate",
+    "EXPIRED_STOCK": "Expired Stock",
+    "FIELD": "Field",
+    "HORIZONTAL": "Horizontal",
+    "LINES": "Lines",
+    "RECIPE": "Recipe",
+    "RESTORE": "Restore",
+    "REVERT": "Revert",
+    "STATUS_NEW": "New",
+    "VERTICAL": "Vertical",
+    "ITEMS_SELECTED": "Items selected",
+    "PRODUCT_NOT_FOUND": "Product not found",
+    "ERROR_LOADING_SUPPLIERS": "Error loading suppliers",
+    "SORT_ALPHA": "Sort alpha",
+    "EXPORT_SUCCESS": "Export success",
+    "ERROR_LOADING_PRODUCTS": "Error loading products",
+    "PDF_ERROR": "Pdf error",
+    "PREPARING": "Preparing",
+    "CREATING": "Creating",
+    "SORT_SHORTAGE": "Sort shortage",
+    "RESTORING": "Restoring",
+    "RESTORE_SESSION": "Restore session",
+    "COOK": "Cook",
+    "UNKNOWN_USER": "Unknown user",
+    "CONFIRM_EDIT": "Confirm edit",
+    "COLUMN_ACTIONS": "Column actions",
+    "CALCULATING": "Calculating",
+    "REVERTING": "Reverting",
+    "NO_RESULTS_SEARCH": "No results search",
+    "CANCELLING": "Cancelling",
+    "CANCEL_SESSION": "Cancel session",
+    "CONFIRM_ALL": "Confirm all",
+    "REVERT_ALL": "Revert all",
+    "CONFIRM_SESSION": "Confirm session",
+    "HIDE": "Hide",
+    "ERROR_LOADING_ALLERGENS": "Error loading allergens",
+    "CANCEL_STUDENT": "Cancel student"
   },
   "NAV": {
     "DASHBOARD": "Home",
@@ -460,7 +501,8 @@
       "TYPES": "Types",
       "SUMMARY": "Summary",
       "CHAT": "Chat",
-      "AUDITS": "Audits"
+      "AUDITS": "Audits",
+      "SECTIONS": "Sections"
     },
     "ACTIONS": {
       "SHOW_FILTERS": "Show filters",
@@ -488,7 +530,9 @@
       "ACTIVATE": "Activate",
       "DEACTIVATE": "Deactivate",
       "ATTACH_AUDITS": "Attach Audits",
-      "DEACTIVATE_TYPE": "Deactivate type"
+      "DEACTIVATE_TYPE": "Deactivate type",
+      "REMOVE_FILE": "Remove file",
+      "ACTIVATE_TYPE": "Activate type"
     },
     "STATS": {
       "TOTAL": "Total incidents",
@@ -571,7 +615,19 @@
       "WARNING_NAME": "Provide a name for the type",
       "WARNING_MESSAGE_EMPTY": "Write a message or attach a file",
       "WARNING_WAIT_OPTIMIZE": "Wait for image compression to finish",
-      "WARNING_OPTIMIZE": "Could not optimize image. Original file will be sent."
+      "WARNING_OPTIMIZE": "Could not optimize image. Original file will be sent.",
+      "NOT_READ": "Not read",
+      "ATTACH_SUCCESS": "Attach success",
+      "READ_BY": "Read by",
+      "TYPING_MULTIPLE": "Typing multiple",
+      "ATTACH_ERROR": "Attach error",
+      "DOWNLOAD_ERROR": "Download error",
+      "TYPE_TOGGLE_ERROR": "Type toggle error",
+      "LOADING_ATTACHABLE_ERROR": "Loading attachable error",
+      "WARNING_REASON": "Warning reason",
+      "WARNING_SELECT_AUDIT": "Warning select audit",
+      "REVERT_SUCCESS": "Revert success",
+      "TYPING": "Typing"
     },
     "TYPES": {
       "NEW_TYPE": "New type",
@@ -655,7 +711,9 @@
       "ATTACHMENT": "Attachment",
       "READ_BY": "Read by",
       "SYSTEM": "System Message",
-      "MESSAGES": "messages"
+      "MESSAGES": "messages",
+      "LOAD_IMAGE": "Cargando imagen...",
+      "NO_CONTENT": "Sin texto"
     },
     "STATUS": {
       "CREADO": "Created",
@@ -684,7 +742,9 @@
       "CHATS": "Chats",
       "ATTACHMENTS": "Attachments",
       "NO_INCIDENTS": "No incidents found"
-    }
+    },
+    "CONTROL_CENTER": "Centro de control",
+    "MANAGEMENT": "Gestión de incidencias"
   },
   "RECEPTION": {
     "TITLE": "Order Reception",
@@ -738,7 +798,8 @@
       "EXAMPLE_PREFIX": "Ex.",
       "COLLAB_TOOLTIP": "Request collaboration with the user who is reviewing",
       "LOT_LOWER": "lot",
-      "LOTS_LOWER": "lots"
+      "LOTS_LOWER": "lots",
+      "RECEIVED": "Received"
     },
     "MESSAGES": {
       "EXIT_WITHOUT_SAVING_TITLE": "Exit reception",
@@ -770,8 +831,10 @@
       "REVISION_CONFLICT": "{{owner}} is reviewing this order right now.",
       "ORDER_CHANGED": "The order changed while you were reviewing it.",
       "COLLAB_SUCCESS": "Collaboration request sent.",
-      "COLLAB_ERROR": "Error sending collaboration request."
-    }
+      "COLLAB_ERROR": "Error sending collaboration request.",
+      "ORDER_NOT_REVIEW": "Order not review"
+    },
+    "REQUEST_COLLAB": "Request collaboration"
   },
   "RECIPES": {
     "TITLE": "Recipes",
@@ -856,7 +919,9 @@
         "UPDATE_ERROR": "Error updating the draft.",
         "CREATE_SUCCESS": "Suggestion \"{{name}}\" sent successfully.",
         "CREATE_ERROR": "Error sending recipe suggestion."
-      }
+      },
+      "DELETE_CONFIRM_MSG": "Delete confirm msg",
+      "DELETE_CONFIRM_TITLE": "Delete confirm title"
     },
     "WARNINGS": {
       "SLOW_LOAD_TITLE": "Loading is taking longer",
@@ -871,7 +936,14 @@
       "PRINT_ERROR": "Error generating PDF.",
       "UPDATE_SUCCESS": "Recipe \"{{name}}\" updated successfully.",
       "CREATE_SUCCESS": "Recipe \"{{name}}\" created successfully.",
-      "COOK_SUCCESS": "Cooking of \"{{name}}\" registered. Stock updated."
+      "COOK_SUCCESS": "Cooking of \"{{name}}\" registered. Stock updated.",
+      "NAME_REQUIRED": "Name required",
+      "CONFIRM_VISIBILITY_TITLE": "Confirm visibility title",
+      "ACTION_HIDE": "Action hide",
+      "AT_LEAST_ONE_COMPONENT": "At least one component",
+      "CONFIRM_VISIBILITY_MSG": "Confirm visibility msg",
+      "INVALID_COMPONENTS": "Invalid components",
+      "ACTION_SHOW": "Action show"
     },
     "NET": "Net",
     "GROSS": "Gross",
@@ -898,8 +970,16 @@
       "CONFIGURE_ORDER": "Step 2: Configure Order",
       "STEP_HELP": "Choose the recipes you want to prepare and the number of portions to automatically calculate the order.",
       "DESIRED_QUANTITIES": "Desired quantities",
-      "BACK_TO_SELECTION": "Back to recipe selection"
-    }
+      "BACK_TO_SELECTION": "Back to recipe selection",
+      "MESSAGES": {
+        "ENRICH_ERROR": "Enrich error",
+        "CALCULATION_ERROR": "Calculation error",
+        "SELECT_AT_LEAST_ONE": "Select at least one"
+      }
+    },
+    "EDIT_MODAL_TITLE": "Editar Receta",
+    "SELLING_PRICE_CURRENCY": "Precio de Venta (€)",
+    "SUGGEST_PRICE_HINT": "Sugerir precio (Margen 20%)"
   },
   "ORDERS": {
     "TITLE": "Orders",
@@ -1171,7 +1251,9 @@
       "PENDING_COUNT_OTHER": "{{count}} students to assign",
       "CONFIRM": "Confirm Assignments",
       "ASSIGNING": "Assigning...",
-      "CANCEL": "Cancel"
+      "CANCEL": "Cancel",
+      "STUDENT_SINGULAR": "Student singular",
+      "STUDENTS_PLURAL": "Students plural"
     },
     "ACTIONS": {
       "ADD_USER": "Add User",
@@ -1227,7 +1309,12 @@
       "MODAL_EDIT": "User edition",
       "ACTION_CONNECTED": "Connected",
       "ACTION_DISCONNECTED": "Disconnected",
-      "ACTION_SCREEN_CHANGED": "Screen changed"
+      "ACTION_SCREEN_CHANGED": "Screen changed",
+      "ERROR_LOADING_ASSIGNMENTS": "Error loading assignments",
+      "ERROR_ASSIGNING": "Error assigning",
+      "LOAD_USERS_ERROR": "Load users error",
+      "BATCH_PARTIAL_SUCCESS": "Batch partial success",
+      "BATCH_SUCCESS": "Batch success"
     },
     "USER_FORM": {
       "NAME": "Name",
@@ -1502,7 +1589,9 @@
       "ACTION_HIDDEN": "disabled",
       "ACTION_SHOWN": "enabled",
       "EXCEL_SUCCESS": "Excel downloaded successfully",
-      "EXCEL_ERROR": "Error downloading Excel"
+      "EXCEL_ERROR": "Error downloading Excel",
+      "UPDATE_ERROR": "Update error",
+      "CREATE_ERROR": "Create error"
     }
   },
   "RECIPE_MGMT": {
@@ -1555,7 +1644,8 @@
       "NEXT_STATE": "New State",
       "PREV_QTY": "Previous Quantity",
       "NEXT_QTY": "New Quantity",
-      "LOAD_ERROR": "Error loading audits"
+      "LOAD_ERROR": "Error loading audits",
+      "RECIPE_ID": "ID Receta"
     },
     "TAB_RECIPES": "Recipes",
     "TAB_AUDITS": "Audit",
@@ -1817,7 +1907,8 @@
       "PURGE_PRESENCE_ERROR": "Could not purge presence log",
       "PURGE_NOTIFICATIONS_SUCCESS": "Deleted {{count}} notifications",
       "PURGE_NOTIFICATIONS_ERROR": "Could not purge notifications log",
-      "LOAD_AUDIT_ERROR": "Could not load global audit"
+      "LOAD_AUDIT_ERROR": "Could not load global audit",
+      "CACHE_REFRESH_SUCCESS": "Cache refresh success"
     },
     "PURGE_PRESENCE": {
       "TITLE": "Purge presence activity",
@@ -1830,6 +1921,13 @@
     "LABELS": {
       "PURGE": "Purge",
       "CANCEL": "Cancel"
+    },
+    "PERFORMANCE": {
+      "SUPPLIERS": {
+        "HELP": "Optimize supplier loading",
+        "TITLE": "Suppliers"
+      },
+      "TITLE": "Performance"
     }
   },
   "NOTIFICATIONS": {
@@ -1984,7 +2082,9 @@
       "RESTORE_STUDENT_SESSION_TITLE": "Restore session for student",
       "RESTORE_STUDENT_SESSION_MSG": "{{name}} will be restored in session {{num}} ({{recipe}}). Continue?",
       "RESTORE_STUDENT_SESSION_SUCCESS": "{{name}} restored in session successfully.",
-      "RESTORE_STUDENT_SESSION_ERROR": "Could not restore student in session."
+      "RESTORE_STUDENT_SESSION_ERROR": "Could not restore student in session.",
+      "BACK_TO_DRAFT": "Back to draft",
+      "CHECK_INVENTORY_TAB": "Check inventory tab"
     },
     "DETAIL": {
       "SESSIONS_COUNT": "{{count}} sessions",
@@ -2210,7 +2310,9 @@
       "DATE_RANGE": "Date Range",
       "ALL_RECIPES": "All Recipes",
       "ALL_USERS": "All Users",
-      "APPLY": "Apply"
+      "APPLY": "Apply",
+      "RECIPE_ID": "ID Receta",
+      "USER_ID": "ID Usuario"
     },
     "TRACEABILITY": {
       "TITLE": "Ingredient Traceability",
@@ -2265,7 +2367,18 @@
       "PDF_SUCCESS": "Report downloaded successfully.",
       "PDF_ERROR": "Error downloading PDF report.",
       "REPORT_ERROR": "Could not generate kitchen report",
-      "LOAD_ORDER_ERROR": "Could not load order #{{id}}"
+      "LOAD_ORDER_ERROR": "Could not load order #{{id}}",
+      "LOAD_ERROR": "No se pudieron cargar los registros de cocina.",
+      "FILTER_RECIPE_ERROR": "Error al filtrar por receta.",
+      "FILTER_USER_ERROR": "Error al filtrar por usuario.",
+      "FILTER_DATE_ERROR": "Error al filtrar por rango de fechas.",
+      "SEARCH_ERROR": "Error al buscar auditorías de cocina.",
+      "GENERATE_REPORT_PROMPT": "Do you want to generate the kitchen report?",
+      "NO_DATA": "No data to display",
+      "CUSTOM_RANGE_WARNING": "Custom range warning",
+      "ORDER_LOAD_ERROR": "Order load error",
+      "REVERT_CONFIRM": "Revert confirm",
+      "FILTER_GENERAL_ERROR": "Filter general error"
     },
     "REPORTS": {
       "LOADING": "Generating report...",
@@ -2308,7 +2421,8 @@
       "CLEAR_FILTERS": "Clear Filters",
       "DOWNLOAD_PDF": "Download PDF",
       "REVERT_COOKING": "Revert Cooking",
-      "VIEW_DETAIL": "View detail"
+      "VIEW_DETAIL": "View detail",
+      "VIEW_TRACE": "View trace"
     },
     "SUBTITLE": "Cook monitoring and history",
     "STATS": {
@@ -2331,6 +2445,43 @@
       "REVERT": "Revert",
       "DOWNLOAD": "Download Report",
       "EMPTY_HISTORY": "No cooking records found for the selected period."
+    },
+    "HISTORY": {
+      "RECIPE_ID": "ID Receta",
+      "USER_ID": "ID Usuario",
+      "DATE_FROM": "Desde",
+      "DATE_TO": "Hasta",
+      "APPLY_FILTERS": "Aplicar Filtros",
+      "CLEAR_FILTERS": "Limpiar Filtros",
+      "EMPTY": "No hay registros de cocina para los filtros aplicados",
+      "TABLE": {
+        "DATE": "Fecha",
+        "RECIPE": "Recipe",
+        "USER": "Usuario",
+        "QUANTITY": "Cantidad",
+        "ACTIONS": "Acciones"
+      },
+      "DETAIL": {
+        "TITLE": "Receta #{{id}}",
+        "RECIPE": "Recipe",
+        "USER": "Usuario",
+        "DATE": "Fecha de Cocinado",
+        "QUANTITY": "Cantidad (Porciones)",
+        "TRACEABILITY_TITLE": "Trazabilidad de Ingredientes",
+        "LOADING_TRACE": "Cargando origen...",
+        "EMPTY_TRACE": "No hay datos de trazabilidad.",
+        "REVERT_BTN": "Revertir Cocinado",
+        "BATCH": "Lote",
+        "ORIGIN": "Origen",
+        "SUPPLIER": "Proveedor",
+        "ORDER_CHIP": "Orden #{{id}}",
+        "INITIAL_STOCK": "Manual / Stock Inicial"
+      }
+    },
+    "PAGINATION": {
+      "NEXT": "Next",
+      "PAGE_INFO": "Page {{page}} of {{total}} ({{elements}} elements)",
+      "PREVIOUS": "Previous"
     }
   },
   "BARCODE_SCANNER": {
@@ -2342,7 +2493,8 @@
     },
     "ACTIONS": {
       "SCAN_AGAIN": "Scan again"
-    }
+    },
+    "TITLE": "Title"
   },
   "UNITS": {
     "KG": "Kg",
@@ -2366,7 +2518,9 @@
     "MESSAGES": {
       "CREATE_SUCCESS": "Product {{name}} created successfully.",
       "UPDATE_SUCCESS": "Product {{name}} updated successfully.",
-      "TOGGLE_HIDDEN_SUCCESS_SINGLE": "Product status updated successfully."
+      "TOGGLE_HIDDEN_SUCCESS_SINGLE": "Product status updated successfully.",
+      "PRODUCT_ADDED_SCAN": "Product added scan",
+      "PRODUCT_DETECTED": "Product detected"
     },
     "PDF_CONFIRM_TITLE": "Confirm export",
     "PDF_CONFIRM_MSG": "Do you want to download the product sheet in PDF format?",
@@ -2377,7 +2531,21 @@
     "MESSAGES": {
       "NO_UNCOVERED_PRODUCTS": "No uncovered products found for replenishment.",
       "INTEGRITY_VALID": "Integrity verified: {{message}}",
-      "ALL_CHAINS_VALID": "All chains ({{count}}) are integral."
+      "ALL_CHAINS_VALID": "All chains ({{count}}) are integral.",
+      "ERROR_GENERATE_PDF": "Error generate pdf",
+      "ERROR_GLOBAL_VERIFICATION": "Error global verification",
+      "ADJUSTMENT_SUCCESS": "Adjustment success",
+      "ERROR_VERIFY_INTEGRITY": "Error verify integrity",
+      "ERROR_LOAD_BATCHES": "Error load batches",
+      "ERROR_REGISTER_ADJUSTMENT": "Error register adjustment",
+      "ADMIN_ONLY_BLOCKCHAIN": "Admin only blockchain",
+      "PDF_GENERATED_WARNING": "Pdf generated warning",
+      "PDF_GENERATED_OK": "Pdf generated ok",
+      "BLOCKCHAIN_MODE_ACTIVE": "Blockchain mode active",
+      "ERROR_RESET_HISTORY": "Error reset history",
+      "GLOBAL_CORRUPTION_DETECTED": "Global corruption detected",
+      "EXPIRATION_DATE_REQUIRED": "Expiration date required",
+      "INTEGRITY_CORRUPTED": "Integrity corrupted"
     },
     "MODALS": {
       "CONFIRM_DOWNLOAD_TITLE": "Confirm Download",
@@ -2413,7 +2581,9 @@
       "FIFO_HINT": "If no batch is selected, FIFO (First In, First Out) logic will be applied.",
       "NEW_BATCH_HINT": "Since this is an entry without an existing batch, a new one will be created with this date.",
       "REASON_PLACEHOLDER": "Explain the reason for the adjustment (e.g., breakage, inventory error...)",
-      "SUBMIT": "Confirm Adjustment"
+      "SUBMIT": "Confirm Adjustment",
+      "STOCK": "Stock Adjustment",
+      "SUBMITTING": "Submitting"
     },
     "TABS": {
       "ALERTS": "Alerts",
@@ -3207,11 +3377,7 @@
       "ALTA": "High"
     }
   },
-  "INCIDENT": {
-    "SEVERITY": {
-      "BAJA": "Low",
-      "MEDIA": "Medium",
-      "ALTA": "High"
-    }
+  "LEDGER": {
+    "SCAN_TOOLTIP": "Scan tooltip"
   }
 }
