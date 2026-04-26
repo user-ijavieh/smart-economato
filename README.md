@@ -287,7 +287,7 @@ El proyecto usa **Vitest** como framework de testing con **jsdom** como entorno 
   
 ## Relación con el backend  
   
-Este frontend se comunica con la [Smart Economato API](https://github.com/user-ijavieh/smart-economato-API), que proporciona:  
+Este frontend se comunica con la [Smart Economato API](https://github.com/FranWDev/smart-economato-API), que proporciona:  
   
 | Servicio backend | Protocolo | Uso en el frontend |  
 |-----------------|-----------|-------------------|  
@@ -297,12 +297,12 @@ Este frontend se comunica con la [Smart Economato API](https://github.com/user-i
   
 ## Autores  
   
-| Contribuidor | GitHub |  
-|-------------|-------------|  
-| Javier Daniel Remedios Colmenares | [@user-ijavieh](https://github.com/user-ijavieh) |
-| Francisco Airam Hernández Crosa | [@FranWDev](https://github.com/FranWDev) |
-| Lorena Fumero Delgado| [@lorena-fudel](https://github.com/lorena-fudel) |
-| Daniel Pascual Bezanilla| [@blablabla277](https://github.com/blablabla277) |
+| Contribuidor | GitHub | LinkedIn | 
+|-------------|-------------|--------------| 
+| Javier Daniel Remedios Colmenares | [@user-ijavieh](https://github.com/user-ijavieh) | [LinkedIn](www.linkedin.com/in/javier-remedios)|
+| Francisco Airam Hernández Crosa | [@FranWDev](https://github.com/FranWDev) | [LinkedIn](https://www.linkedin.com/in/franciscohdezcrosa)|
+| Lorena Fumero Delgado| [@lorena-fudel](https://github.com/lorena-fudel) | [LinkedIn](www.linkedin.com/in/lorenafumerodelgado) |
+| Daniel Pascual Bezanilla| [@blablabla277](https://github.com/blablabla277) | [LinkedIn](www.linkedin.com/in/daniel-pascual-bezanilla) |
   
 ## Licencia  
   
