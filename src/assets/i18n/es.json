@@ -735,7 +735,7 @@
     "PROCESS_RECEPTION": "Procesar Recepción",
     "CLAIM_MISSING": "Reclamar Faltantes",
     "MOVE_TO_REVIEW": "Mover a Revisión",
-    "LOAD_OLDER": "Cargar pedidos más antiguos",
+    "LOAD_OLDER": "Cargar {{count}} pedidos más antiguos",
     "MODAL": {
       "TITLE": "Recepción de Pedido #{{id}}",
       "SUMMARY": "Resumen de Recepción",

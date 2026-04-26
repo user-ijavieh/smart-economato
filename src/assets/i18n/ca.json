@@ -735,7 +735,7 @@
     "PROCESS_RECEPTION": "Processar Recepció",
     "CLAIM_MISSING": "Reclamar Faltants",
     "MOVE_TO_REVIEW": "Moure a Revisió",
-    "LOAD_OLDER": "Carregar comandes més antigues",
+    "LOAD_OLDER": "Carregar {{count}} comandes més antigues",
     "MODAL": {
       "TITLE": "Recepció de Comanda #{{id}}",
       "SUMMARY": "Resum de Recepció",
