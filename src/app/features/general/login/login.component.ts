@@ -67,7 +67,7 @@ export class LoginComponent {
           }
 
           const role = this.authService.getRole();
-          this.router.navigate([role === 'ADMIN' ? '/admin-panel' : '/welcome']);
+          this.router.navigate([role === 'ADMIN' ? '/admin-panel/dashboard' : '/welcome']);
         }
       },
       error: (err) => {
