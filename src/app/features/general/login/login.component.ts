@@ -72,11 +72,14 @@ export class LoginComponent {
       },
       error: (err) => {
         if (err.message === 'user_hidden') {
-          this.messageService.showError(this.translate.instant('LOGIN.ERROR_USER_HIDDEN') || 'El usuario está bloqueado o inactivo y no puede acceder al sistema.');
+          this.errorMessage = this.translate.instant('LOGIN.ERROR_USER_HIDDEN') || 'El usuario está bloqueado o inactivo y no puede acceder al sistema.';
+          this.messageService.showError(this.errorMessage);
         } else if (err instanceof HttpErrorResponse && err.status === 401) {
-          this.messageService.showError(this.translate.instant('LOGIN.ERROR_INVALID') || 'Credenciales incorrectas');
+          this.errorMessage = this.translate.instant('LOGIN.ERROR_INVALID') || 'Credenciales incorrectas';
+          this.messageService.showError(this.errorMessage);
         } else {
-          this.messageService.showError(this.translate.instant('LOGIN.ERROR_GENERIC') || 'Error al iniciar sesión');
+          this.errorMessage = this.translate.instant('LOGIN.ERROR_GENERIC') || 'Error al iniciar sesión';
+          this.messageService.showError(this.errorMessage);
         }
         this.loading = false;
         this.cdr.markForCheck();
