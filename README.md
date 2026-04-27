@@ -1,7 +1,11 @@
-# Smart Economato  
+# Smart Economato Frontend
   
 Interfaz de usuario del ecosistema **Smart Economato**: una Progressive Web App (PWA) construida con Angular 21 que proporciona la experiencia de usuario completa para la gestión de inventario, recetas, pedidos, planificación semanal y más en escuelas culinarias y cocinas profesionales. Incluye un asistente de IA conversacional, notificaciones en tiempo real vía WebSocket y soporte multiidioma.  
-  
+
+[!IMPORTANT]
+
+Este proyecto requiere [Smart Economato Backend](https://github.com/FranWDev/smart-economato-API) para funcionar correctamente.
+
 ## Arquitectura  
   
 La aplicación sigue una arquitectura modular basada en **standalone components** con carga diferida (lazy loading) y detección de cambios **Zoneless**. Se estructura en tres capas principales:  
