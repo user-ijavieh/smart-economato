@@ -4,7 +4,7 @@ Interfaz de usuario del ecosistema **Smart Economato**: una Progressive Web App 
 
 [!IMPORTANT]
 
-Este proyecto requiere [Smart Economato Backend](https://github.com/FranWDev/smart-economato-API) para funcionar correctamente.
+Este proyecto requiere [Smart Economato Backend](https://github.com/FranWDev/smart-economato-API).
 
 ## Arquitectura  
   
