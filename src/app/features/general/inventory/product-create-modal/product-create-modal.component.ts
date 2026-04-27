@@ -31,7 +31,6 @@ export class ProductCreateModalComponent {
   formData = {
     name: '',
     productCode: '',
-    barcode: '',
     unitPrice: 0,
     currentStock: 0,
     availabilityPercentage: undefined as number | undefined,
@@ -125,7 +124,6 @@ export class ProductCreateModalComponent {
       unit: this.formData.unit,
       unitPrice: unitPrice,
       productCode: this.formData.productCode.trim(),
-      barcode: this.formData.barcode.trim() || undefined,
       currentStock: currentStock,
       supplierId: supplierId,
       expirationDate: this.formData.expirationDate || undefined,
@@ -148,16 +146,15 @@ export class ProductCreateModalComponent {
   }
 
   onCodeScanned(code: string): void {
-    this.formData.barcode = code.trim();
+    this.formData.productCode = code.trim();
     this.showScannerModal = false;
-    this.messageService.showSuccess(this.translate.instant('PRODUCT_FORM.CODE_DETECTED', { code: this.formData.barcode }));
+    this.messageService.showSuccess(this.translate.instant('PRODUCT_FORM.CODE_DETECTED', { code: this.formData.productCode }));
   }
 
   resetForm(): void {
     this.formData = {
       name: '',
       productCode: '',
-      barcode: '',
       availabilityPercentage: undefined,
       unitPrice: 0,
       currentStock: 0,

@@ -34,7 +34,6 @@ export class ProductEditModalComponent implements OnChanges {
   formData = {
     name: '',
     productCode: '',
-    barcode: '',
     unitPrice: 0,
     currentStock: 0,
     availabilityPercentage: undefined as number | undefined,
@@ -82,7 +81,6 @@ export class ProductEditModalComponent implements OnChanges {
       this.formData = {
         name: this.product.name,
         productCode: this.product.productCode || '',
-        barcode: this.product.barcode || '',
         unitPrice: Number(this.product.unitPrice) || 0,
         currentStock: Number(this.product.currentStock) || 0,
         availabilityPercentage: this.product.availabilityPercentage || undefined,
@@ -142,7 +140,6 @@ export class ProductEditModalComponent implements OnChanges {
       unit: this.formData.unit,
       unitPrice: unitPrice,
       productCode: this.formData.productCode.trim(),
-      barcode: this.formData.barcode.trim() || undefined,
       currentStock: currentStock,
       supplierId: supplierId,
       lotQuantity: lotQuantity
@@ -185,11 +182,11 @@ export class ProductEditModalComponent implements OnChanges {
   }
 
   onCodeScanned(code: string): void {
-    this.formData.barcode = code.trim();
+    this.formData.productCode = code.trim();
     this.showScannerModal = false;
-
-    if (this.formData.barcode) {
-      this.messageService.showSuccess(this.translate.instant('PRODUCT_EDIT.SCAN_SUCCESS', { code: this.formData.barcode }));
+    
+    if (this.formData.productCode) {
+      this.messageService.showSuccess(this.translate.instant('PRODUCT_EDIT.SCAN_SUCCESS', { code: this.formData.productCode }));
     } else {
       this.messageService.showWarning(this.translate.instant('PRODUCT_EDIT.SCAN_ERROR'));
     }
