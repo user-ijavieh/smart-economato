@@ -1584,7 +1584,8 @@
     "TITLE": "Gestió d'Ordres",
     "TABS": {
       "ORDERS": "Ordres",
-      "AUDITS": "Auditoria"
+      "AUDITS": "Auditoria",
+      "GROUPED": "Agrupats"
     },
     "FILTERS": {
       "SEARCH_PLACEHOLDER": "Buscar per usuari o ID...",
@@ -2678,7 +2679,12 @@
     "DL": "dl",
     "UND": "Ud",
     "UNIDAD": "Ud",
-    "UDS": "Uds"
+    "UDS": "Uds",
+    "MANOJO": "Manat",
+    "PAQUETE": "Paquet",
+    "SOBRE": "Sobre",
+    "BOTE": "Pot",
+    "BOLSA": "Bossa"
   },
   "PRODUCT_MGMT": {
     "SCAN": "Escanejar",

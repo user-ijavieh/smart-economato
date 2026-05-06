@@ -1578,7 +1578,8 @@
     "TITLE": "Eskaeren Kudeaketa",
     "TABS": {
       "ORDERS": "Eskaerak",
-      "AUDITS": "Ikuskapena"
+      "AUDITS": "Ikuskapena",
+      "GROUPED": "Taldekatuak"
     },
     "FILTERS": {
       "SEARCH_PLACEHOLDER": "Bilatu erabiltzaile edo ID bidez...",
@@ -2801,7 +2802,12 @@
     "DL": "dl",
     "UND": "Unid",
     "UNIDAD": "Unid",
-    "UDS": "Unid"
+    "UDS": "Unid",
+    "MANOJO": "Sorta",
+    "PAQUETE": "Paketea",
+    "SOBRE": "Kartazala",
+    "BOTE": "Potea",
+    "BOLSA": "Poltsa"
   },
   "PRODUCT_MGMT": {
     "SCAN": "Eskaneatu",

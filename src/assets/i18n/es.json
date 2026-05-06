@@ -1578,7 +1578,8 @@
     "TITLE": "Gestión de Órdenes",
     "TABS": {
       "ORDERS": "Órdenes",
-      "AUDITS": "Auditoría"
+      "AUDITS": "Auditoría",
+      "GROUPED": "Agrupados"
     },
     "FILTERS": {
       "SEARCH_PLACEHOLDER": "Buscar por usuario o ID...",
@@ -2801,7 +2802,12 @@
     "DL": "dl",
     "UND": "Ud",
     "UNIDAD": "Ud",
-    "UDS": "Uds"
+    "UDS": "Uds",
+    "MANOJO": "Manojo",
+    "PAQUETE": "Paquete",
+    "SOBRE": "Sobre",
+    "BOTE": "Bote",
+    "BOLSA": "Bolsa"
   },
   "PRODUCT_MGMT": {
     "SCAN": "Escanear",

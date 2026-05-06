@@ -1416,7 +1416,8 @@
     "TITLE": "Orders Management",
     "TABS": {
       "ORDERS": "Orders",
-      "AUDITS": "Audit"
+      "AUDITS": "Audit",
+      "GROUPED": "Grouped"
     },
     "FILTERS": {
       "SEARCH_PLACEHOLDER": "Search by user or ID...",
@@ -2508,7 +2509,12 @@
     "DL": "dl",
     "UND": "Unit",
     "UNIDAD": "Unit",
-    "UDS": "Units"
+    "UDS": "Units",
+    "MANOJO": "Bunch",
+    "PAQUETE": "Package",
+    "SOBRE": "Sachet",
+    "BOTE": "Jar",
+    "BOLSA": "Bag"
   },
   "PRODUCT_MGMT": {
     "SCAN": "Scan",
