@@ -27,7 +27,7 @@
 /* -- Wrapper: imagen de fondo fija -- */
 /** ===== Wrapper: imagen de fondo fija ===== */
 .login-wrapper {
-  background-image: url('/assets/img/loginBackground.jpg');
+  background-image: url('/assets/img/loginBackground.webp');
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -86,13 +86,13 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(155deg, rgba(10,3,3,0.78) 0%, color-mix(in srgb, var(--brand-primary) 32%, transparent) 48%, rgba(10,3,3,0.82) 100%);
+  background: linear-gradient(155deg, rgba(10, 3, 3, 0.78) 0%, color-mix(in srgb, var(--brand-primary) 32%, transparent) 48%, rgba(10, 3, 3, 0.82) 100%);
   pointer-events: none;
   z-index: 0;
 }
 
 :host-context([data-theme="light"]) .login-wrapper::before {
-  background: linear-gradient(155deg, rgba(255,255,255,0.55) 0%, color-mix(in srgb, var(--brand-primary) 10%, transparent) 48%, rgba(255,255,255,0.35) 100%);
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.55) 0%, color-mix(in srgb, var(--brand-primary) 10%, transparent) 48%, rgba(255, 255, 255, 0.35) 100%);
 }
 
 /** ===== Card principal (Dark Glassmorphism) ===== */
@@ -126,6 +126,7 @@
     transform: translateY(0);
   }
 }
+
 /** ===== Encabezado ===== */
 .card-header {
   margin-bottom: 24px;
@@ -176,6 +177,7 @@
     transform: translateY(0);
   }
 }
+
 /** ===== Formulario ===== */
 .form-group {
   display: flex;
@@ -258,6 +260,7 @@
   color: var(--color-danger-muted);
   padding-left: 4px;
 }
+
 /** ===== Error banner ===== */
 .error-banner {
   background: var(--theme-danger-bg);
@@ -271,6 +274,7 @@
   /* space-md */
   animation: fadeUp 0.5s 0.26s both;
 }
+
 /** ===== Boton ===== */
 .btn-submit {
   width: 100%;
@@ -315,6 +319,7 @@
   cursor: not-allowed;
   filter: grayscale(0.8);
 }
+
 /** ===== Logos ===== */
 .logos {
   display: flex;
@@ -330,7 +335,7 @@
 }
 
 .logos img {
-  height:5rem;
+  height: 5rem;
   width: auto;
   object-fit: contain;
   opacity: 0.9;
@@ -341,6 +346,7 @@
   opacity: 1;
   transform: scale(1.06);
 }
+
 /** ===== Responsive ===== */
 @media (max-width: 767px) {
   .login-wrapper {
@@ -376,7 +382,7 @@
   background: rgba(255, 255, 255, 0.7);
   border-color: rgba(0, 0, 0, 0.06);
   box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08),
-              0 0 0 1px rgba(0, 0, 0, 0.03);
+    0 0 0 1px rgba(0, 0, 0, 0.03);
 }
 
 :host-context([data-theme="light"]) .form-input {

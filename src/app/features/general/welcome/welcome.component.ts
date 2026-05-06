@@ -32,9 +32,9 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   private languageService = inject(LanguageService);
 
   slides = [
-    '/assets/img/carousel/carousel1.jpg',
-    '/assets/img/carousel/carousel2.jpg',
-    '/assets/img/carousel/carousel3.jpg'
+    '/assets/img/carousel/carousel1.webp',
+    '/assets/img/carousel/carousel2.webp',
+    '/assets/img/carousel/carousel3.webp'
   ];
   currentSlide = 0;
   private intervalId: ReturnType<typeof setInterval> | null = null;
